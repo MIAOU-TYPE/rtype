@@ -102,12 +102,12 @@ SpacesInAngles: false
 # L3 - No space in parentheses -- after '(' and before ')'
 SpacesInParentheses: false
 
-# L3 - No space inb square brackets -- after '[' and before ']'
+# L3 - No space in square brackets -- after '[' and before ']'
 SpacesInSquareBrackets: false
 
 # L3 - No space in container literals
-# var a = [1, 2, 3] (<- betweebn square brackets and values)
-# f({a: 1, b: 2, c: 3}) (<- before ':' caracter)
+# var a = [1, 2, 3] (<- between square brackets and values)
+# f({a: 1, b: 2, c: 3}) (<- before ':' character)
 SpacesInContainerLiterals: false
 
 # Space after "template" keyword
@@ -157,7 +157,7 @@ MaxEmptyLinesToKeep: 1
 # Readability improvements and extras                                       #
 #===========================================================================#
 
-# Make macro declarations more eligible. Those won't trigger misplaced spaces.
+# Make macro declarations more ligible. Those won't trigger misplaced spaces.
 AlignConsecutiveMacros: true
 
 # Align backslashes when escaping linebreaks
@@ -166,7 +166,7 @@ AlignEscapedNewlines: Left
 # Align trailing comments (//)
 AlignTrailingComments: true
 
-# Allow breaking string litterals when wrapping
+# Allow breaking string literals when wrapping
 BreakStringLiterals: true
 
 # When wrapping, keep '=' on the top right, but put operators on the new line

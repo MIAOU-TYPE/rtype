@@ -1,19 +1,9 @@
 #include "SFMLInputHandler.hpp"
 
-/**
- * @brief Handles an input event.
- *
- * Currently does nothing, but can be extended to process events.
- */
 void SFMLInputHandler::handleEvent(const sf::Event& event) {
     // TODO: Implement event handling logic if needed
 }
 
-/**
- * @brief Checks if a key is currently pressed.
- *
- * Maps the abstract Key enum to SFML's sf::Keyboard::Key and checks the state.
- */
 bool SFMLInputHandler::isKeyPressed(Key key) const {
     sf::Keyboard::Key sfmlKey;
     switch (key) {

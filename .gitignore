@@ -2,7 +2,7 @@
 .vs*/
 build/
 **/br/
-r-type_server
-r-type_client
+r-type_server*
+r-type_client*
 *.o
 *.sh

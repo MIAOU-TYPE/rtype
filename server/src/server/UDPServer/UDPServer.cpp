@@ -42,7 +42,7 @@ void UDPServer::start()
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            close_socket(_socketFd);
+            net::NetWrapper::close_socket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -53,7 +53,7 @@ void UDPServer::start()
 void UDPServer::stop()
 {
     _isRunning = false;
-    close_socket(_socketFd);
+    net::NetWrapper::close_socket(_socketFd);
     _socketFd = kInvalidSocket;
     std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
 }
@@ -68,25 +68,17 @@ void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOp
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socket_handle sockfd = ::socket(static_cast<int>(params.family), params.type, params.proto);
+    socket_handle sockfd = net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
     if (sockfd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optval;
-
-#ifdef _WIN32
-    if (::setsockopt(sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt),
-            static_cast<int>(sizeof(opt)))
-        == SOCKET_ERROR) {
-        close_socket(sockfd);
-        throw ServerError("{UDPServer::setupSocket} setsockopt failed");
+    if (net::NetWrapper::setsocketopt(
+            sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt), sizeof(opt))
+        < 0) {
+        net::NetWrapper::close_socket(sockfd);
+        throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
-#else
-    if (::setsockopt(sockfd, optParams.level, optParams.optname, &opt, static_cast<socklen_t>(sizeof(opt))) == -1) {
-        close_socket(sockfd);
-        throw ServerError("{UDPServer::setupSocket} setsockopt failed");
-    }
-#endif
 
     _socketFd = sockfd;
 }

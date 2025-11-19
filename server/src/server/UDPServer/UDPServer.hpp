@@ -10,24 +10,8 @@
 #include <string>
 
 #include "AServer.hpp"
+#include "NetWrapper.hpp"
 #include "socketParams.hpp"
-
-#ifdef _WIN32
-static inline void close_socket(socket_handle s)
-{
-    if (s != kInvalidSocket)
-        ::closesocket(s);
-}
-#else
-    #include <arpa/inet.h>
-    #include <netinet/in.h>
-    #include <unistd.h>
-static inline void close_socket(socket_handle s)
-{
-    if (s != kInvalidSocket)
-        ::close(s);
-}
-#endif
 
 /**
  * @namespace Server

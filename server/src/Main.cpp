@@ -18,6 +18,9 @@ int main(void)
     try {
         udpServer.configure(ip, port);
         udpServer.start();
+        while (true) {
+            udpServer.pollOnce(1000);
+        }
         udpServer.stop();
     } catch (const Server::ServerError &e) {
         std::cerr << "{Main}" << e.what() << std::endl;

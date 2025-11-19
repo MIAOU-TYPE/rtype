@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2025
-** serverCPP
+** rtype
 ** File description:
-** socketParams (portable)
+** socketParams
 */
 
 #pragma once

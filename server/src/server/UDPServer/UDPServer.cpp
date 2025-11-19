@@ -31,7 +31,7 @@ UDPServer::~UDPServer()
 
 void UDPServer::start()
 {
-    if (_isRunning || _socketFd != -1)
+    if (_isRunning || _socketFd != kInvalidSocket)
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {

@@ -11,6 +11,8 @@
 
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
+#include "RingBuffer.hpp"
+#include "packetReceived.hpp"
 #include "socketParams.hpp"
 
 /**
@@ -60,5 +62,7 @@ namespace Server
         void setupSocket(const net::SocketConfig &params,
             const net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
         void bindSocket(net::family_t family = AF_INET); //> Binds the UDP socket to an address
+
+        Buffer::RingBuffer<PacketReceived> _rxBuffer; //> Ring buffer to store received packets
     };
 } // namespace Server

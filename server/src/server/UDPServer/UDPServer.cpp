@@ -9,7 +9,7 @@
 
 using namespace Server;
 
-UDPServer::UDPServer() : AServer()
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
 {
 #ifdef _WIN32
     WSADATA wsa;
@@ -60,25 +60,31 @@ void UDPServer::stop()
 
 void UDPServer::pollOnce(int timeout)
 {
-    (void) timeout;
-    char buffer[2048];
-    sockaddr_in clientAddr{};
-    socklen_t addrLen = sizeof(clientAddr);
+    (void)timeout;
+
+    PacketReceived pkt;
+    socklen_t addrLen = sizeof(sockaddr_in);
 
     recvfrom_return_t received = net::NetWrapper::recvfrom(
         _socketFd,
-        buffer,
-        sizeof(buffer),
+        pkt.buffer(),
+        pkt.size() == 0 ? sizeof(pkt.buffer()) : pkt.size(),
         0,
-        reinterpret_cast<sockaddr*>(&clientAddr),
+        reinterpret_cast<sockaddr*>(pkt.address()),
         &addrLen
     );
 
     if (received <= 0)
         return;
-    std::cout << "{UDPServer::pollOnce} Received " << received << " bytes from "
-              << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << std::endl;
+
+    pkt.setSize(received);
+
+    if (!_rxBuffer.push(pkt)) {
+        std::cerr << "Warning: RX buffer overflow, packet dropped\n";
+    }
+    std::cout << pkt << std::endl;
 }
+
 
 void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)
 {

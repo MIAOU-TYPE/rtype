@@ -13,7 +13,9 @@
 
 class PacketReceived {
   public:
-    PacketReceived() : _size(0)
+    static constexpr size_t MAX_SIZE = 2048;
+
+    PacketReceived()
     {
         std::memset(&_addr, 0, sizeof(_addr));
         std::memset(_buffer, 0, sizeof(_buffer));
@@ -48,12 +50,11 @@ class PacketReceived {
     }
 
   private:
-    uint8_t _buffer[2048];
-    size_t _size;
-    sockaddr_in _addr;
+    uint8_t _buffer[MAX_SIZE] = {0};
+    size_t _size = 0;
+    sockaddr_in _addr = {};
 };
 
-// Pretty print for debugging
 inline std::ostream &operator<<(std::ostream &os, const PacketReceived &pkt)
 {
     std::ostream &out = os;

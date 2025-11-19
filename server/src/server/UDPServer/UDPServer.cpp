@@ -61,6 +61,23 @@ void UDPServer::stop()
 void UDPServer::pollOnce(int timeout)
 {
     (void) timeout;
+    char buffer[2048];
+    sockaddr_in clientAddr{};
+    socklen_t addrLen = sizeof(clientAddr);
+
+    recvfrom_return_t received = net::NetWrapper::recvfrom(
+        _socketFd,
+        buffer,
+        sizeof(buffer),
+        0,
+        reinterpret_cast<sockaddr*>(&clientAddr),
+        &addrLen
+    );
+
+    if (received <= 0)
+        return;
+    std::cout << "{UDPServer::pollOnce} Received " << received << " bytes from "
+              << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << std::endl;
 }
 
 void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)

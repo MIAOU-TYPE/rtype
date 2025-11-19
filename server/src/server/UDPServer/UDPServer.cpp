@@ -35,12 +35,14 @@ void UDPServer::start()
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
-        net::SocketConfig socketParams;
-        net::SocketOptions socketOptions;
+        net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
+        net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
         setupSocket(socketParams, socketOptions);
         bindSocket(socketParams.family);
         setNonBlocking(true);
     } catch (const ServerError &e) {
+        _socketFd ? close_socket(_socketFd) : void();
+        _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
     _isRunning = true;
@@ -98,7 +100,8 @@ void UDPServer::bindSocket(net::family_t family)
     sockaddr_in addr;
     addr.sin_family = family;
     addr.sin_port = htons(_port);
-    inet_pton(family, _ip.c_str(), &addr.sin_addr);
+    if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
+        throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
     int result = bind(_socketFd, (struct sockaddr *) &addr, sizeof(addr));
     if (result != 0)

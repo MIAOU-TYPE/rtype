@@ -7,16 +7,7 @@
 
 #pragma once
 #include "IServer.hpp"
-
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-using socket_handle = SOCKET;
-constexpr socket_handle kInvalidSocket = INVALID_SOCKET;
-#else
-using socket_handle = int;
-constexpr socket_handle kInvalidSocket = -1;
-#endif
+#include "NetWrapper.hpp"
 
 /**
  * @namespace Server

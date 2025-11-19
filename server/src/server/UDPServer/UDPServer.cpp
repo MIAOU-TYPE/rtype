@@ -103,6 +103,6 @@ void UDPServer::bindSocket(net::family_t family)
     inet_pton(family, _ip.c_str(), &addr.sin_addr);
 
     int result = bind(_socketFd, (struct sockaddr *) &addr, sizeof(addr));
-    if (result < 0)
+    if (result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

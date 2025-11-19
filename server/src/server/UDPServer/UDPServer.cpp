@@ -41,7 +41,8 @@ void UDPServer::start()
         bindSocket(socketParams.family);
         setNonBlocking(true);
     } catch (const ServerError &e) {
-        _socketFd ? close_socket(_socketFd) : void();
+        if (_socketFd != kInvalidSocket)
+            close_socket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -97,13 +98,13 @@ void UDPServer::bindSocket(net::family_t family)
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::bindSocket} Invalid IP address or port number");
 
-    sockaddr_in addr;
+    sockaddr_in addr = {};
     addr.sin_family = family;
     addr.sin_port = htons(_port);
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
-    int result = bind(_socketFd, (struct sockaddr *) &addr, sizeof(addr));
+    int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
     if (result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

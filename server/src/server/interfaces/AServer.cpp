@@ -6,7 +6,6 @@
 */
 
 #include "AServer.hpp"
-#include <fcntl.h>
 
 #ifdef _WIN32
     #include <winsock2.h>

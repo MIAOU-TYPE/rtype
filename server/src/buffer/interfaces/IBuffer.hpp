@@ -50,7 +50,7 @@ namespace Buffer
      *
      * @tparam data The type of data to be stored in the buffer.
      */
-    template <typename data>
+    template <typename Tdata>
     class IBuffer {
       public:
         /**
@@ -63,21 +63,21 @@ namespace Buffer
          * @param data The data to be pushed into the buffer.
          * @return true if the data was successfully pushed, false otherwise.
          */
-        virtual bool push(const data &data) noexcept = 0;
+        virtual bool push(const Tdata &data) noexcept = 0;
 
         /**
          * @brief Pop data from the buffer.
          * @param data Reference to store the popped data.
          * @return true if data was successfully popped, false otherwise.
          */
-        virtual bool pop(data &data) noexcept = 0;
+        virtual bool pop(Tdata &data) noexcept = 0;
 
         /**
          * @brief Get the top data from the buffer without removing it.
          * @return The top data in the buffer.
          * @throws BufferError if the buffer is empty.
          */
-        virtual const data &top() noexcept = 0;
+        virtual const Tdata &top() noexcept = 0;
 
         virtual void clear() noexcept = 0;
         /**

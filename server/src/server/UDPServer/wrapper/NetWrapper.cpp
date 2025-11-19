@@ -26,6 +26,12 @@ namespace net
         return ::setsockopt(s, level, optname, (const char *) optval, optlen);
     }
 
+    recvfrom_return_t NetWrapper::recvfrom(
+        socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
+    {
+        return ::recvfrom(sockfd, (char *) buf, len, flags, src_addr, addrlen);
+    }
+
 #endif
 
 #ifndef _WIN32
@@ -38,6 +44,12 @@ namespace net
     int NetWrapper::setsocketopt(socket_handle s, int level, int optname, const void *optval, int optlen)
     {
         return ::setsockopt(s, level, optname, (const void *) optval, optlen);
+    }
+
+    recvfrom_return_t NetWrapper::recvfrom(
+        socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
+    {
+        return ::recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
     }
 #endif
 } // namespace net

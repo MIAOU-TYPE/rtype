@@ -77,9 +77,13 @@ namespace Buffer
          * @return The top data in the buffer.
          * @throws BufferError if the buffer is empty.
          */
-        virtual const Tdata &top() noexcept = 0;
+        virtual const Tdata &top() = 0;
 
+        /**
+         * @brief Clear the buffer.
+         */
         virtual void clear() noexcept = 0;
+
         /**
          * @brief Check if the buffer is empty.
          * @return true if the buffer is empty, false otherwise.

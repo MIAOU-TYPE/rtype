@@ -18,10 +18,10 @@ namespace Buffer
      *
      * This class implements a ring buffer that can store and retrieve data of type `data`.
      *
-     * @tparam data The type of data to be stored in the buffer.
+     * @tparam Tdata The type of data to be stored in the buffer.
      */
-    template <typename data>
-    class RingBuffer : public IBuffer<data> {
+    template <typename Tdata>
+    class RingBuffer : public IBuffer<Tdata> {
       public:
         /**
          * @brief Constructor to initialize the ring buffer with a given capacity.
@@ -39,21 +39,21 @@ namespace Buffer
          * @param data The data to be pushed into the buffer.
          * @return true if the data was successfully pushed, false otherwise.
          */
-        bool push(const data &data) noexcept override;
+        bool push(const Tdata &data) noexcept override;
 
         /**
          * @brief Pop data from the buffer.
          * @param data Reference to store the popped data.
          * @return true if data was successfully popped, false otherwise.
          */
-        bool pop(data &data) noexcept override;
+        bool pop(Tdata &data) noexcept override;
 
         /**
          * @brief Get the top data from the buffer without removing it.
          * @return The top data in the buffer.
          * @throws BufferError if the buffer is empty.
          */
-        const data &top() noexcept override;
+        const Tdata &top() noexcept override;
 
         /**
          * @brief Clear the buffer.
@@ -77,6 +77,6 @@ namespace Buffer
         size_t _writeIndex = 0;
         size_t _readIndex = 0;
         size_t _count = 0;
-        std::unique_ptr<data[]> _buffer;
+        std::unique_ptr<Tdata[]> _buffer;
     };
 } // namespace Buffer

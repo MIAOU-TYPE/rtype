@@ -9,14 +9,14 @@
 
 namespace Buffer
 {
-    template <typename data>
-    RingBuffer<data>::RingBuffer(size_t capacity)
-        : _capacity(capacity), _readIndex(0), _writeIndex(0), _count(0), _buffer(std::make_unique<data[]>(capacity))
+    template <typename Tdata>
+    RingBuffer<Tdata>::RingBuffer(size_t capacity)
+        : _capacity(capacity), _readIndex(0), _writeIndex(0), _count(0), _buffer(std::make_unique<Tdata[]>(capacity))
     {
     }
 
-    template <typename data>
-    bool RingBuffer<data>::push(const data &data) noexcept
+    template <typename Tdata>
+    bool RingBuffer<Tdata>::push(const Tdata &data) noexcept
     {
         if (isFull())
             return false;
@@ -26,8 +26,8 @@ namespace Buffer
         return true;
     }
 
-    template <typename data>
-    bool RingBuffer<data>::pop(data &data) noexcept
+    template <typename Tdata>
+    bool RingBuffer<Tdata>::pop(Tdata &data) noexcept
     {
         if (isEmpty())
             return false;
@@ -37,30 +37,30 @@ namespace Buffer
         return true;
     }
 
-    template <typename data>
-    const data &RingBuffer<data>::top() noexcept
+    template <typename Tdata>
+    const Tdata &RingBuffer<Tdata>::top() noexcept
     {
         if (isEmpty())
             throw BufferError("{RingBuffer::top} Buffer is empty");
         return _buffer[_readIndex];
     }
 
-    template <typename data>
-    void RingBuffer<data>::clear() noexcept
+    template <typename Tdata>
+    void RingBuffer<Tdata>::clear() noexcept
     {
         _readIndex = 0;
         _writeIndex = 0;
         _count = 0;
     }
 
-    template <typename data>
-    bool RingBuffer<data>::isEmpty() const noexcept
+    template <typename Tdata>
+    bool RingBuffer<Tdata>::isEmpty() const noexcept
     {
         return _count == 0;
     }
 
-    template <typename data>
-    bool RingBuffer<data>::isFull() const noexcept
+    template <typename Tdata>
+    bool RingBuffer<Tdata>::isFull() const noexcept
     {
         return _count == _capacity;
     }

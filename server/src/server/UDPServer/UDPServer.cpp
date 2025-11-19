@@ -14,10 +14,8 @@ UDPServer::UDPServer() : AServer()
 #ifdef _WIN32
     WSADATA wsa;
     const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
-    if (r != 0) {
-        std::fprintf(stderr, "WSAStartup failed: %d\n", r);
-        return 1;
-    }
+    if (r != 0)
+        throw ServerError("{UDPServer::UDPServer} WSAStartup failed");
 #endif
 }
 

@@ -14,7 +14,7 @@ set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
 if (NOT SRCS)
-    message(FATAL_ERROR "Aucune source .cpp trouvée sous ${SRC_DIR}")
+    message(FATAL_ERROR "No .cpp source files found under ${SRC_DIR}")
 endif()
 
 set(INCLUDE_DIRS "${SRC_DIR}")

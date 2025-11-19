@@ -56,7 +56,7 @@ namespace Server
          * @brief Polls the UDP server for incoming datagrams.
          * @param timeout The maximum time to wait for incoming datagrams, in milliseconds.
          */
-        void pollOnce(int timeout) override;
+        void readPackets() override;
 
       private:
         void setupSocket(const net::SocketConfig &params,

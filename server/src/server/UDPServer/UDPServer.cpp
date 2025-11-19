@@ -58,33 +58,21 @@ void UDPServer::stop()
     std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
 }
 
-void UDPServer::pollOnce(int timeout)
+void UDPServer::readPackets()
 {
-    (void)timeout;
-
     PacketReceived pkt;
     socklen_t addrLen = sizeof(sockaddr_in);
 
     recvfrom_return_t received = net::NetWrapper::recvfrom(
-        _socketFd,
-        pkt.buffer(),
-        pkt.size() == 0 ? sizeof(pkt.buffer()) : pkt.size(),
-        0,
-        reinterpret_cast<sockaddr*>(pkt.address()),
-        &addrLen
-    );
+        _socketFd, pkt.buffer(), PacketReceived::MAX_SIZE, 0, reinterpret_cast<sockaddr *>(pkt.address()), &addrLen);
 
     if (received <= 0)
         return;
-
     pkt.setSize(received);
 
-    if (!_rxBuffer.push(pkt)) {
+    if (!_rxBuffer.push(pkt))
         std::cerr << "Warning: RX buffer overflow, packet dropped\n";
-    }
-    std::cout << pkt << std::endl;
 }
-
 
 void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)
 {

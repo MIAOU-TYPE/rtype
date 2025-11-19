@@ -11,6 +11,7 @@
 #include <memory>
 #include <SFML/Window/Event.hpp>
 #include "../graphics/interfaces/IRenderer.hpp"
+#include "../inputs/interfaces/IInputHandler.hpp"
 
 /**
  * @class GameClient
@@ -22,6 +23,7 @@
 class GameClient {
 private:
     std::unique_ptr<IRenderer> renderer; ///< The renderer interface
+    std::unique_ptr<IInputHandler> inputHandler; ///< The input handler interface
 
 public:
     /**

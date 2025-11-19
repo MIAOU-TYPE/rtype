@@ -64,10 +64,9 @@ namespace Server
         void setRunning(bool running) noexcept override;
 
         /**
-         * @brief Polls the server for events with a specified timeout.
-         * @param timeout The maximum time to wait for events, in milliseconds.
+           * @brief reads packets from the server.
          */
-        virtual void pollOnce(int timeout) override = 0;
+        virtual void readPackets() override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.

@@ -53,7 +53,7 @@ namespace Buffer
          * @return The top data in the buffer.
          * @throws BufferError if the buffer is empty.
          */
-        const Tdata &top() noexcept override;
+        const Tdata &top() override;
 
         /**
          * @brief Clear the buffer.
@@ -80,3 +80,5 @@ namespace Buffer
         std::unique_ptr<Tdata[]> _buffer;
     };
 } // namespace Buffer
+
+#include "RingBuffer.tpp"

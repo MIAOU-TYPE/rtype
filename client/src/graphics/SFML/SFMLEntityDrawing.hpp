@@ -1,0 +1,6 @@
+#ifndef SFML_ENTITY_DRAWING_HPP
+#define SFML_ENTITY_DRAWING_HPP
+
+// SFMLEntityDrawing header
+
+#endif // SFML_ENTITY_DRAWING_HPP

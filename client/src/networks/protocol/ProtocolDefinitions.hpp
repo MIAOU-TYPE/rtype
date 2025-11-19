@@ -1,0 +1,6 @@
+#ifndef PROTOCOL_DEFINITIONS_HPP
+#define PROTOCOL_DEFINITIONS_HPP
+
+// ProtocolDefinitions header
+
+#endif // PROTOCOL_DEFINITIONS_HPP

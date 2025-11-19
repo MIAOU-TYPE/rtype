@@ -1,0 +1,6 @@
+#ifndef SFML_TEXTURE_MANAGER_HPP
+#define SFML_TEXTURE_MANAGER_HPP
+
+// SFMLTextureManager header
+
+#endif // SFML_TEXTURE_MANAGER_HPP

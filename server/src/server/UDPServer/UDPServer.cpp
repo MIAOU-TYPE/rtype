@@ -93,7 +93,7 @@ void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOp
 
 void UDPServer::bindSocket(net::family_t family)
 {
-    if (_socketFd < 0 || _socketFd == kInvalidSocket)
+    if (_socketFd == kInvalidSocket)
         throw ServerError("{UDPServer::bindSocket} Socket not initialized");
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::bindSocket} Invalid IP address or port number");

@@ -19,7 +19,7 @@ int main(void)
         udpServer.configure(ip, port);
         udpServer.start();
         while (true) {
-            udpServer.pollOnce(1000);
+            udpServer.readPackets();
         }
         udpServer.stop();
     } catch (const Server::ServerError &e) {

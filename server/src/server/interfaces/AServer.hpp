@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <cstdint>
 #include "IServer.hpp"
 
 #ifdef _WIN32

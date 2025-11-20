@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 
-namespace ecs {
+namespace Ecs {
 
 /**
  * @brief Entity class representing a unique identifier for an entity in the ECS system
@@ -27,4 +27,4 @@ private:
  */
 const Entity NULL_ENTITY(static_cast<std::size_t>(-1));
 
-} // namespace ecs
+} // namespace Ecs

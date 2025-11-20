@@ -33,8 +33,8 @@ namespace Net
         return ::recvfrom(sockFd, (char *) buf, len, flags, srcAddr, addrLen);
     }
 
-    sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
-        const struct sockaddr *destAddr, socklen_t addrLen)
+    sendto_return_t NetWrapper::sendTo(
+        socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
     {
         return ::sendto(sockFd, (const char *) buf, len, flags, destAddr, addrLen);
     }
@@ -58,8 +58,8 @@ namespace Net
         return ::recvfrom(sockFd, buf, len, flags, srcAddr, addrLen);
     }
 
-    sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
-        const struct sockaddr *destAddr, socklen_t addrLen)
+    sendto_return_t NetWrapper::sendTo(
+        socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
     {
         return ::sendto(sockFd, buf, len, flags, destAddr, addrLen);
     }

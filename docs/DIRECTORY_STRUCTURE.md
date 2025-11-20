@@ -30,7 +30,7 @@ client/
 │   ├── sounds/             # Audio files
 │   └── sprites/            # Sprite and texture files
 └── src/                    # Source code
-    ├── main.cpp            # Client entry point
+    ├── Main.cpp            # Client entry point
     ├── ecs/                # Entity Component System
     │   ├── Entity.hpp      # Entity definitions
     │   ├── components/     # ECS components

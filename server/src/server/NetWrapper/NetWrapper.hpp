@@ -85,7 +85,7 @@ namespace net
          * @param addrlen The size of the destination address structure.
          * @return The number of bytes sent, or -1 on failure.
          */
-        static sendto_return_t sendto(
-            socket_handle sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
+        static sendto_return_t sendto(socket_handle sockfd, const void *buf, size_t len, int flags,
+            const struct sockaddr *dest_addr, socklen_t addrlen);
     };
 } // namespace net

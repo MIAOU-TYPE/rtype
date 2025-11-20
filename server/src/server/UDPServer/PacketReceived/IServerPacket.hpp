@@ -7,8 +7,13 @@
 
 #pragma once
 #include <cstdint>
-#include <netinet/in.h>
 #include <stddef.h>
+#ifndef _WIN32
+    #include <netinet/in.h>
+#else
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#endif
 
 /**
  * @namespace net

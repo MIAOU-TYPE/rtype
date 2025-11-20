@@ -9,7 +9,7 @@
 
 using namespace Server;
 
-UDPServer::UDPServer() : AServer()
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
 {
 #ifdef _WIN32
     WSADATA wsa;
@@ -35,14 +35,14 @@ void UDPServer::start()
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
-        net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
-        net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
+        Net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
+        Net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
         setupSocket(socketParams, socketOptions);
         bindSocket(socketParams.family);
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            close_socket(_socketFd);
+            Net::NetWrapper::closeSocket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -53,45 +53,55 @@ void UDPServer::start()
 void UDPServer::stop()
 {
     _isRunning = false;
-    close_socket(_socketFd);
+    Net::NetWrapper::closeSocket(_socketFd);
     _socketFd = kInvalidSocket;
     std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
 }
 
-void UDPServer::pollOnce(int timeout)
+void UDPServer::readPackets()
 {
-    (void) timeout;
+    std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
+    socklen_t addrLen = sizeof(sockaddr_in);
+
+    recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
+        reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
+    if (received <= 0)
+        return;
+    pkt->setSize(received);
+
+    if (!_rxBuffer.push(pkt))
+        std::cerr << "Warning: RX buffer overflow, packet dropped\n";
+    std::cout << pkt << std::endl;
 }
 
-void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)
+bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+{
+    return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
+               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
+        != -1;
+}
+
+void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)
 {
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socket_handle sockfd = ::socket(static_cast<int>(params.family), params.type, params.proto);
-    if (sockfd == kInvalidSocket)
+    socketHandle sockFd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
+    if (sockFd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
-    int opt = optParams.optval;
-
-#ifdef _WIN32
-    if (::setsockopt(sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt),
-            static_cast<int>(sizeof(opt)))
-        == SOCKET_ERROR) {
-        close_socket(sockfd);
-        throw ServerError("{UDPServer::setupSocket} setsockopt failed");
+    int opt = optParams.optVal;
+    if (Net::NetWrapper::setSocketOpt(
+            sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt), sizeof(opt))
+        < 0) {
+        Net::NetWrapper::closeSocket(sockFd);
+        throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
-#else
-    if (::setsockopt(sockfd, optParams.level, optParams.optname, &opt, static_cast<socklen_t>(sizeof(opt))) == -1) {
-        close_socket(sockfd);
-        throw ServerError("{UDPServer::setupSocket} setsockopt failed");
-    }
-#endif
 
-    _socketFd = sockfd;
+    _socketFd = sockFd;
 }
 
-void UDPServer::bindSocket(net::family_t family)
+void UDPServer::bindSocket(Net::family_t family)
 {
     if (_socketFd == kInvalidSocket)
         throw ServerError("{UDPServer::bindSocket} Socket not initialized");

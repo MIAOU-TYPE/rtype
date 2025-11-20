@@ -191,3 +191,5 @@ IncludeCategories:
 
 # Sort 'using' declarations
 SortUsingDeclarations: true
+
+SeparateDefinitionBlocks: Always

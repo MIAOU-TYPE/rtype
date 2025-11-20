@@ -12,6 +12,7 @@ The project is organized into modular components to separate client and server l
 rtype/
 ├── CMakeLists.txt          # Root CMake configuration file
 ├── .clang-format           # Code formatting rules for clang-format
+├── .clang-tidy             # Static analysis configuration for clang-tidy
 ├── .gitignore              # Git ignore patterns
 ├── client/                 # Client application code and assets
 ├── server/                 # Server application code

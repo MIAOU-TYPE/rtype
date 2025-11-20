@@ -4,7 +4,6 @@ project(r-type_server LANGUAGES CXX)
 # Source discovery
 # -------------------------
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/uni")
 
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
 if (NOT SRCS)

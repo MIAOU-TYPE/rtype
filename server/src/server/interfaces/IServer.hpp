@@ -6,9 +6,11 @@
 */
 
 #pragma once
-#include <stdexcept>
-#include <string>
 #include <optional>
+#include <stdexcept>
+#include <cstdint>
+#include <string>
+#include "IServerPacket.hpp"
 
 /**
  * @namespace Server
@@ -101,6 +103,8 @@ namespace Server
          * @brief reads packets from the server.
          */
         virtual void readPackets() = 0;
+
+        virtual bool sendPacket(const net::IServerPacket &pkt) = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.

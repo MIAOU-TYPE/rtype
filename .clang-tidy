@@ -1,0 +1,51 @@
+Checks: >
+  -*,
+  readability-*,
+  modernize-*,
+  performance-*,
+  bugprone-*,
+  portability-*,
+  cppcoreguidelines-*,
+  concurrency-*,
+  clang-analyzer-*,
+  misc-*,
+  # Exceptions :
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-c-arrays
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: 'src/.*'
+
+AnalyzeTemporaryDtors: true
+FormatStyle:     none
+
+CheckOptions:
+  # Read/write more consistent with modern C++
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL,nullptr_t'
+  - key: modernize-use-auto.MinTypeNameLength
+    value: '5'
+
+  # performance
+  - key: performance-for-range-copy.WarnOnAllAutoCopies
+    value: true
+
+  # cppcoreguidelines
+  - key: cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllPrivateMembers
+    value: true
+
+  # Network / concurrency: avoid dangerous locks
+  - key: concurrency-mt-unsafe.StrictMode
+    value: true
+
+  # Clang analyzer (pointers, memory leaks, etc.)
+  - key: clang-analyzer-optin.performance.Padding
+    value: true
+
+  # Limit noise on ECS structures
+  - key: readability-identifier-naming.IgnoreMainLikeFunctions
+    value: true

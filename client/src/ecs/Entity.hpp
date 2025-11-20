@@ -22,9 +22,4 @@ private:
     std::size_t _id;
 };
 
-/**
- * @brief Special constant representing a null/invalid entity
- */
-const Entity NULL_ENTITY(static_cast<std::size_t>(-1));
-
 } // namespace Ecs

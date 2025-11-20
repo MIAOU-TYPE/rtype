@@ -29,7 +29,7 @@ cd "$PROJECT_ROOT"
 
 # 1. Automatic formatting
 echo -e "${BLUE}Applying format (clang-format)...${NC}"
-find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) | xargs clang-format -i
+find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 | xargs -0 clang-format -i
 echo -e "${GREEN}Format applied${NC}"
 echo
 
@@ -45,9 +45,16 @@ if [ ! -f compile_commands.json ]; then
 fi
 ln -sf compile_commands.json ..
 
-for f in $(find ../client/src ../server/src -name "*.cpp"); do
-    clang-tidy "$f" --quiet -fix -- || echo -e "${RED}clang-tidy failed for $f${NC}" >&2
-done
+TIDY_FAILED=0
+while IFS= read -r -d '' f; do
+    if ! clang-tidy "$f" --quiet -fix --; then
+        echo -e "${RED}clang-tidy failed for $f${NC}" >&2
+        TIDY_FAILED=1
+    fi
+done < <(find ../client/src ../server/src -name "*.cpp" -print0)
+if [ "$TIDY_FAILED" -eq 1 ]; then
+    exit 1
+fi
 
 # 3. Check again to ensure all fixes are applied
 cd ..

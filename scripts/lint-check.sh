@@ -32,13 +32,13 @@ cd "$PROJECT_ROOT"
 echo -e "${BLUE}Checking format (clang-format)...${NC}"
 FORMAT_ERRORS=0
 
-for f in $(find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \)); do
+while IFS= read -r -d '' f; do
     if ! clang-format --dry-run --Werror "$f"; then
         FORMAT_ERRORS=1
         echo -e "${YELLOW}File needing format: $f${NC}"
         diff -u "$f" <(clang-format -style=file "$f") || true
     fi
-done
+done < <(find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0)
 
 if [ "$FORMAT_ERRORS" -eq 0 ]; then
     echo -e "${GREEN}Format : OK${NC}"
@@ -60,11 +60,11 @@ fi
 ln -sf compile_commands.json ..
 
 TIDY_ERRORS=0
-for f in $(find ../client/src ../server/src -name "*.cpp"); do
+while IFS= read -r -d '' f; do
     if ! clang-tidy "$f" --quiet --; then
         TIDY_ERRORS=1
     fi
-done
+done < <(find ../client/src ../server/src -name "*.cpp" -print0)
 
 if [ "$TIDY_ERRORS" -eq 0 ]; then
     echo -e "${GREEN}clang-tidy : OK${NC}"

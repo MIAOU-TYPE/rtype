@@ -42,7 +42,7 @@ void UDPServer::start()
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            Net::NetWrapper::close_socket(_socketFd);
+            Net::NetWrapper::closeSocket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -53,7 +53,7 @@ void UDPServer::start()
 void UDPServer::stop()
 {
     _isRunning = false;
-    Net::NetWrapper::close_socket(_socketFd);
+    Net::NetWrapper::closeSocket(_socketFd);
     _socketFd = kInvalidSocket;
     std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
 }
@@ -63,7 +63,7 @@ void UDPServer::readPackets()
     std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = Net::NetWrapper::recvfrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
+    recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
@@ -76,7 +76,7 @@ void UDPServer::readPackets()
 
 bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
 {
-    return Net::NetWrapper::sendto(_socketFd, pkt.buffer(), pkt.size(), 0,
+    return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
                reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
         != -1;
 }
@@ -91,10 +91,10 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optval;
-    if (Net::NetWrapper::setsocketopt(
+    if (Net::NetWrapper::setSocketOpt(
             sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
-        Net::NetWrapper::close_socket(sockfd);
+        Net::NetWrapper::closeSocket(sockfd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
 

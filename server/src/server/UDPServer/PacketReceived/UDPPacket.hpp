@@ -85,6 +85,12 @@ namespace Net
     };
 } // namespace Net
 
+/**
+ * @brief Overloads the output stream operator for UDPPacket.
+ * @param os The output stream.
+ * @param pkt The UDPPacket to be printed.
+ * @return The output stream.
+ */
 inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
 {
     std::ostream &out = os;
@@ -101,6 +107,12 @@ inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
     return out;
 }
 
+/**
+ * @brief Overloads the output stream operator for shared pointers to IServerPacket.
+ * @param os The output stream.
+ * @param pkt The shared pointer to the IServerPacket to be printed.
+ * @return The output stream.
+ */
 inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<Net::IServerPacket> pkt)
 {
     return os << *pkt;

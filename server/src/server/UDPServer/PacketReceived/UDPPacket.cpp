@@ -39,6 +39,7 @@ size_t UDPPacket::size() const
 {
     return _size;
 }
+
 void UDPPacket::setSize(size_t s)
 {
     _size = s;

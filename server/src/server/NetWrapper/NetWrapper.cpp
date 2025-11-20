@@ -32,6 +32,11 @@ namespace net
         return ::recvfrom(sockfd, (char *) buf, len, flags, src_addr, addrlen);
     }
 
+    ssize_t NetWrapper::sendto(
+        int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
+    {
+        return ::sendto(sockfd, (const char *) buf, len, flags, dest_addr, addrlen);
+    }
 #endif
 
 #ifndef _WIN32
@@ -50,6 +55,12 @@ namespace net
         socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
     {
         return ::recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
+    }
+
+    ssize_t NetWrapper::sendto(
+        int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
+    {
+        return ::sendto(sockfd, buf, len, flags, dest_addr, addrlen);
     }
 #endif
 } // namespace net

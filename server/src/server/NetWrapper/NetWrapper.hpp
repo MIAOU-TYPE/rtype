@@ -14,6 +14,7 @@ constexpr socket_handle kInvalidSocket = INVALID_SOCKET;
 using recvfrom_return_t = int;
 #else
     #include <arpa/inet.h>
+    #include <sys/socket.h>
     #include <unistd.h>
 using socket_handle = int;
 constexpr socket_handle kInvalidSocket = -1;
@@ -71,5 +72,18 @@ namespace net
          */
         static recvfrom_return_t recvfrom(
             socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+
+        /**
+         * @brief Sends data to a specific address using a socket.
+         * @param sockfd The handle of the socket.
+         * @param buf A pointer to the buffer containing the data to be sent.
+         * @param len The length of the data in the buffer.
+         * @param flags Flags for the send operation.
+         * @param dest_addr A pointer to a sockaddr structure containing the destination address.
+         * @param addrlen The size of the destination address structure.
+         * @return The number of bytes sent, or -1 on failure.
+         */
+        static ssize_t sendto(
+            int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
     };
 } // namespace net

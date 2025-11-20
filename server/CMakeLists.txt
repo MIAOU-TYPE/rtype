@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
 project(r-type_server LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -25,6 +24,9 @@ else()
     )
 endif()
 
+# -------------------------
+# Source discovery
+# -------------------------
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
@@ -32,6 +34,9 @@ if (NOT SRCS)
     message(FATAL_ERROR "No .cpp source files found under ${SRC_DIR}")
 endif()
 
+# -------------------------
+# Include directories
+# -------------------------
 set(INCLUDE_DIRS "${SRC_DIR}")
 file(GLOB_RECURSE _maybe_dirs LIST_DIRECTORIES true "${SRC_DIR}/*")
 foreach(path IN LISTS _maybe_dirs)
@@ -41,8 +46,21 @@ foreach(path IN LISTS _maybe_dirs)
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
+# -------------------------
+# Main server executable
+# -------------------------
 add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+
+# -------------------------
+# Compiler warnings
+# -------------------------
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)

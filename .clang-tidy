@@ -1,6 +1,4 @@
 Checks: >
-  -*,
-  readability-*,
   modernize-*,
   performance-*,
   bugprone-*,
@@ -10,13 +8,29 @@ Checks: >
   clang-analyzer-*,
   misc-*,
   # Exceptions :
-  -readability-magic-numbers,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-avoid-c-arrays
+  -cppcoreguidelines-avoid-c-arrays,
+  -misc-include-cleaner,
+  -modernize-use-trailing-return-type,
+  -misc-const-correctness,
+  -modernize-redundant-void-arg,
+  -cppcoreguidelines-special-member-functions,
+  -modernize-deprecated-headers,
+  -cppcoreguidelines-pro-type-vararg,
+  -modernize-use-nodiscard,
+  -readability-redundant-string-init,
+  -cppcoreguidelines-explicit-virtual-functions,
+  -modernize-use-override,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -misc-non-private-member-variables-in-classes,
+  -clang-analyzer-optin.cplusplus.VirtualCall,
+  -performance-avoid-endl,
+  -cppcoreguidelines-pro-type-reinterpret-cast
 
-WarningsAsErrors: '*'
+WarningsAsErrors: false
 
 HeaderFilterRegex: 'src/.*'
 

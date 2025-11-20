@@ -1,6 +1,6 @@
 #include "Registry.hpp"
 
-namespace ecs {
+namespace Ecs {
 
 Registry::Registry() : _nextEntity(Entity(0)) {}
 
@@ -46,4 +46,4 @@ const std::vector<Entity>& Registry::get_entities() const {
     return _entities;
 }
 
-} // namespace ecs
+} // namespace Ecs

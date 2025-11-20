@@ -3,7 +3,7 @@
 
 #include "Registry.hpp"
 
-namespace ecs {
+namespace Ecs {
 
 template<typename Component>
 SparseArray<Component>& Registry::register_component() {
@@ -100,6 +100,6 @@ const Component& Registry::get_component(Entity entity) const {
     return components[entity].value();
 }
 
-} // namespace ecs
+} // namespace Ecs
 
 #endif // REGISTRY_TPP

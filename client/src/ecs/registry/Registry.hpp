@@ -12,7 +12,7 @@
 #include "../Entity.hpp"
 #include "../components/SparseArray.hpp"
 
-namespace ecs {
+namespace Ecs {
 
 /**
  * @brief Central registry for the ECS system
@@ -174,7 +174,7 @@ private:
     std::unordered_map<std::type_index, std::function<void(Entity)>> _componentErasers;
 };
 
-} // namespace ecs
+} // namespace Ecs
 
 #include "Registry.tpp"
 

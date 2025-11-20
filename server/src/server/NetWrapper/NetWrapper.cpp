@@ -28,9 +28,9 @@ namespace Net
     }
 
     recvfrom_return_t NetWrapper::recvFrom(
-        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrLen)
+        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockFd, (char *) buf, len, flags, src_addr, addrLen);
+        return ::recvfrom(sockFd, (char *) buf, len, flags, srcAddr, addrLen);
     }
 
     sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
@@ -53,9 +53,9 @@ namespace Net
     }
 
     recvfrom_return_t NetWrapper::recvFrom(
-        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrLen)
+        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockFd, buf, len, flags, src_addr, addrLen);
+        return ::recvfrom(sockFd, buf, len, flags, srcAddr, addrLen);
     }
 
     sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,

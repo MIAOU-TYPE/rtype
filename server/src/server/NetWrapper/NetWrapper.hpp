@@ -68,12 +68,12 @@ namespace Net
          * @param buf A pointer to the buffer where received data will be stored.
          * @param len The length of the buffer.
          * @param flags Flags for the receive operation.
-         * @param src_addr A pointer to a sockaddr structure to store the source address.
-         * @param addrLen A pointer to a socklen_t variable that specifies the size of src_addr.
+         * @param srcAddr A pointer to a sockaddr structure to store the source address.
+         * @param addrLen A pointer to a socklen_t variable that specifies the size of srcAddr.
          * @return The number of bytes received, or -1 on failure.
          */
         static recvfrom_return_t recvFrom(
-            socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrLen);
+            socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen);
 
         /**
          * @brief Sends data to a specific address using a socket.

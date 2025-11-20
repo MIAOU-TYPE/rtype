@@ -27,9 +27,11 @@ cd "$PROJECT_ROOT"
 echo -e "${BLUE}Checking format (clang-format)...${NC}"
 FORMAT_ERRORS=0
 
-for f in $(find client/src server/src -name "*.cpp" -o -name "*.hpp"); do
+for f in $(find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \)); do
     if ! clang-format --dry-run --Werror "$f"; then
         FORMAT_ERRORS=1
+        echo -e "${YELLOW}File needing format: $f${NC}"
+        diff -u "$f" <(clang-format -style=file "$f") || true
     fi
 done
 

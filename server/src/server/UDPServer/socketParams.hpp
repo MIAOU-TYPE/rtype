@@ -17,6 +17,7 @@
     #endif
     #include <winsock2.h>
     #include <ws2tcpip.h>
+
 namespace net
 {
     using family_t = ADDRESS_FAMILY;
@@ -25,6 +26,7 @@ namespace net
     #include <netinet/in.h>
     #include <sys/socket.h>
     #include <sys/types.h>
+
 namespace net
 {
     using family_t = sa_family_t;

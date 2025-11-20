@@ -64,9 +64,11 @@ namespace Server
         void setRunning(bool running) noexcept override;
 
         /**
-           * @brief reads packets from the server.
+         * @brief reads packets from the server.
          */
         virtual void readPackets() override = 0;
+
+        virtual bool sendPacket(const net::IServerPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.

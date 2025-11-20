@@ -12,8 +12,8 @@
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer.hpp"
-#include "packetReceived.hpp"
 #include "socketParams.hpp"
+#include "UDPPacket.hpp"
 
 /**
  * @namespace Server
@@ -58,11 +58,17 @@ namespace Server
          */
         void readPackets() override;
 
+        /**
+         * @brief Sends a packet via the UDP server.
+         * @return true if the packet was sent successfully, false otherwise.
+         */
+        virtual bool sendPacket(const net::IServerPacket &pkt) override;
+
       private:
         void setupSocket(const net::SocketConfig &params,
             const net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
         void bindSocket(net::family_t family = AF_INET); //> Binds the UDP socket to an address
 
-        Buffer::RingBuffer<PacketReceived> _rxBuffer; //> Ring buffer to store received packets
+        Buffer::RingBuffer<std::shared_ptr<net::IServerPacket>> _rxBuffer; //> Ring buffer to store received packets
     };
 } // namespace Server

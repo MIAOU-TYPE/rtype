@@ -60,18 +60,25 @@ void UDPServer::stop()
 
 void UDPServer::readPackets()
 {
-    PacketReceived pkt;
+    std::shared_ptr<net::IServerPacket> pkt = std::make_shared<net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = net::NetWrapper::recvfrom(
-        _socketFd, pkt.buffer(), PacketReceived::MAX_SIZE, 0, reinterpret_cast<sockaddr *>(pkt.address()), &addrLen);
-
+    recvfrom_return_t received = net::NetWrapper::recvfrom(_socketFd, pkt->buffer(), net::UDPPacket::MAX_SIZE, 0,
+        reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
-    pkt.setSize(received);
+    pkt->setSize(received);
 
     if (!_rxBuffer.push(pkt))
         std::cerr << "Warning: RX buffer overflow, packet dropped\n";
+    sendPacket(*pkt);
+}
+
+bool UDPServer::sendPacket(const net::IServerPacket &pkt)
+{
+    return net::NetWrapper::sendto(_socketFd, pkt.buffer(), pkt.size(), 0,
+               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
+        != -1;
 }
 
 void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)

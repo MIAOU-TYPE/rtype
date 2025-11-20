@@ -17,7 +17,8 @@
     #endif
     #include <winsock2.h>
     #include <ws2tcpip.h>
-namespace net
+
+namespace Net
 {
     using family_t = ADDRESS_FAMILY;
 }
@@ -25,17 +26,18 @@ namespace net
     #include <netinet/in.h>
     #include <sys/socket.h>
     #include <sys/types.h>
-namespace net
+
+namespace Net
 {
     using family_t = sa_family_t;
 }
 #endif
 
 /**
- * @namespace net
+ * @namespace Net
  * @brief Contains network-related structures and configurations.
  */
-namespace net
+namespace Net
 {
     /**
      * @struct SocketConfig
@@ -53,7 +55,7 @@ namespace net
      */
     struct SocketOptions {
         int level = SOL_SOCKET;
-        int optname = SO_REUSEADDR;
-        int optval = 1;
+        int optName = SO_REUSEADDR;
+        int optVal = 1;
     };
-} // namespace net
+} // namespace Net

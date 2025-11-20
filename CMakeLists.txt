@@ -9,26 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Flags for the R-Type project
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    add_compile_options(
-        -Wall
-        -Wextra
-        -Werror
-        -Wpedantic
-        -Wshadow
-        -Wnon-virtual-dtor
-        -Wold-style-cast
-        -Wcast-align
-        -Woverloaded-virtual
-        -Wconversion
-        -Wsign-conversion
-        -Wnull-dereference
-        -Wdouble-promotion
-        -Wformat=2
-    )
-endif()
-
 # Add subdirectories
 add_subdirectory(server)
 add_subdirectory(client)

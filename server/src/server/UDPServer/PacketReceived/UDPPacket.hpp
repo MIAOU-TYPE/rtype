@@ -2,14 +2,13 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** packetReceived
+** UDPPacket
 */
 
 #pragma once
-#include <arpa/inet.h>
-#include <cstring>
 #include <iomanip>
 #include <iostream>
+#include "IServerPacket.hpp"
 
 /**
  * @namespace net
@@ -18,12 +17,12 @@
 namespace net
 {
     /**
-     * @class PacketReceived
+     * @class UDPPacket
      * @brief Represents a received network packet.
      * @details This class encapsulates the data and metadata of a received packet,
      * including the buffer, size, and source address.
      */
-    class PacketReceived {
+    class UDPPacket : public IServerPacket {
       public:
         /**
          * @brief Maximum size of the packet buffer.
@@ -32,16 +31,16 @@ namespace net
         static constexpr size_t MAX_SIZE = 2048;
 
         /**
-         * @brief Constructs a new PacketReceived object.
+         * @brief Constructs a new UDPPacket object.
          * @details This constructor initializes the packet buffer and size.
          */
-        PacketReceived();
+        UDPPacket();
 
         /**
-         * @brief Destroys the PacketReceived object.
+         * @brief Destroys the UDPPacket object.
          * @details This destructor cleans up any resources associated with the packet.
          */
-        ~PacketReceived() = default;
+        ~UDPPacket() = default;
 
         /**
          * @brief Retrieves the packet buffer.
@@ -62,6 +61,12 @@ namespace net
         sockaddr_in *address();
 
         /**
+         * @brief Retrieves the source address of the packet (const version).
+         * @return A const pointer to the sockaddr_in structure representing the source address.
+         */
+        const sockaddr_in *address() const;
+
+        /**
          * @brief Retrieves the size of the packet.
          * @return The size of the packet in bytes.
          */
@@ -80,7 +85,7 @@ namespace net
     };
 } // namespace net
 
-inline std::ostream &operator<<(std::ostream &os, const net::PacketReceived &pkt)
+inline std::ostream &operator<<(std::ostream &os, const net::IServerPacket &pkt)
 {
     std::ostream &out = os;
 

@@ -3,7 +3,7 @@
 
 #include "SparseArray.hpp"
 
-namespace ecs {
+namespace Ecs {
 
 template<typename Component>
 typename SparseArray<Component>::reference_type SparseArray<Component>::operator[](size_type idx) {
@@ -14,7 +14,7 @@ typename SparseArray<Component>::reference_type SparseArray<Component>::operator
 }
 
 template<typename Component>
-typename SparseArray<Component>::const_reference_type SparseArray<Component>::operator[](size_type idx) const {
+const typename SparseArray<Component>::value_type& SparseArray<Component>::operator[](size_type idx) const {
     if (idx >= _data.size()) {
         static const value_type empty;
         return empty;
@@ -22,35 +22,6 @@ typename SparseArray<Component>::const_reference_type SparseArray<Component>::op
     return _data[idx];
 }
 
-template<typename Component>
-typename SparseArray<Component>::iterator SparseArray<Component>::begin() {
-    return _data.begin();
-}
-
-template<typename Component>
-typename SparseArray<Component>::const_iterator SparseArray<Component>::begin() const {
-    return _data.begin();
-}
-
-template<typename Component>
-typename SparseArray<Component>::const_iterator SparseArray<Component>::cbegin() const {
-    return _data.cbegin();
-}
-
-template<typename Component>
-typename SparseArray<Component>::iterator SparseArray<Component>::end() {
-    return _data.end();
-}
-
-template<typename Component>
-typename SparseArray<Component>::const_iterator SparseArray<Component>::end() const {
-    return _data.end();
-}
-
-template<typename Component>
-typename SparseArray<Component>::const_iterator SparseArray<Component>::cend() const {
-    return _data.cend();
-}
 
 template<typename Component>
 typename SparseArray<Component>::size_type SparseArray<Component>::size() const {
@@ -92,11 +63,6 @@ void SparseArray<Component>::erase(size_type pos) {
     }
 }
 
-template<typename Component>
-typename SparseArray<Component>::size_type SparseArray<Component>::get_index(const_reference_type value) const {
-    return &value - &_data[0];
-}
-
-} // namespace ecs
+} // namespace Ecs
 
 #endif // SPARSE_ARRAY_TPP

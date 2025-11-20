@@ -5,7 +5,7 @@
 #include <optional>
 #include <stdexcept>
 
-namespace ecs {
+namespace Ecs {
 
 /**
  * @brief A sparse array container that stores optional components
@@ -21,11 +21,7 @@ class SparseArray {
 public:
     using value_type = std::optional<Component>;
     using reference_type = value_type&;
-    using const_reference_type = const value_type&;
-    using container_t = std::vector<value_type>;
-    using size_type = typename container_t::size_type;
-    using iterator = typename container_t::iterator;
-    using const_iterator = typename container_t::const_iterator;
+    using size_type = std::size_t;
 
     /**
      * @brief Default constructor
@@ -69,37 +65,7 @@ public:
      * @param idx Index of the element
      * @return Const reference to the optional component
      */
-    const_reference_type operator[](size_type idx) const;
-
-    /**
-     * @brief Get iterator to the beginning
-     */
-    iterator begin();
-
-    /**
-     * @brief Get const iterator to the beginning
-     */
-    const_iterator begin() const;
-
-    /**
-     * @brief Get const iterator to the beginning
-     */
-    const_iterator cbegin() const;
-
-    /**
-     * @brief Get iterator to the end
-     */
-    iterator end();
-
-    /**
-     * @brief Get const iterator to the end
-     */
-    const_iterator end() const;
-
-    /**
-     * @brief Get const iterator to the end
-     */
-    const_iterator cend() const;
+    const value_type& operator[](size_type idx) const;
 
     /**
      * @brief Get the size of the array
@@ -138,18 +104,11 @@ public:
      */
     void erase(size_type pos);
 
-    /**
-     * @brief Get the index of a value (for iteration purposes)
-     * @param value Reference to the value
-     * @return Index of the value in the array
-     */
-    size_type get_index(const_reference_type value) const;
-
 private:
-    container_t _data;
+    std::vector<value_type> _data;
 };
 
-} // namespace ecs
+} // namespace Ecs
 
 #include "SparseArray.tpp"
 

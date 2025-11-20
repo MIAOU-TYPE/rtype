@@ -67,4 +67,4 @@ After building, you can run the server and client executables:
 
 ## Contributing
 
-Please ensure code follows the formatting rules defined in `.clang-format`.
+Please ensure code follows the project's code quality standards. See [Contributing Guidelines](CONTRIBUTING.md) for details on running linting and formatting tools.

@@ -10,24 +10,10 @@
 #include <string>
 
 #include "AServer.hpp"
+#include "NetWrapper.hpp"
+#include "RingBuffer.hpp"
+#include "UDPPacket.hpp"
 #include "socketParams.hpp"
-
-#ifdef _WIN32
-static inline void close_socket(socket_handle s)
-{
-    if (s != kInvalidSocket)
-        ::closesocket(s);
-}
-#else
-    #include <arpa/inet.h>
-    #include <netinet/in.h>
-    #include <unistd.h>
-static inline void close_socket(socket_handle s)
-{
-    if (s != kInvalidSocket)
-        ::close(s);
-}
-#endif
 
 /**
  * @namespace Server
@@ -70,11 +56,19 @@ namespace Server
          * @brief Polls the UDP server for incoming datagrams.
          * @param timeout The maximum time to wait for incoming datagrams, in milliseconds.
          */
-        void pollOnce(int timeout) override;
+        void readPackets() override;
+
+        /**
+         * @brief Sends a packet via the UDP server.
+         * @return true if the packet was sent successfully, false otherwise.
+         */
+        virtual bool sendPacket(const Net::IServerPacket &pkt) override;
 
       private:
-        void setupSocket(const net::SocketConfig &params,
-            const net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
-        void bindSocket(net::family_t family = AF_INET); //> Binds the UDP socket to an address
+        void setupSocket(const Net::SocketConfig &params,
+            const Net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
+        void bindSocket(Net::family_t family = AF_INET); //> Binds the UDP socket to an address
+
+        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; //> Ring buffer to store received packets
     };
 } // namespace Server

@@ -63,6 +63,7 @@ After building, you can run the server and client executables:
 ## Documentation
 
 - [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Detailed project organization
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to the project
 
 ## Contributing
 

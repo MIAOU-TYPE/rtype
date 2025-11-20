@@ -1,3 +1,4 @@
+#!/bin/bash
 ##
 ## EPITECH PROJECT, 2025
 ## rtype
@@ -5,7 +6,6 @@
 ## lint-check
 ##
 
-#!/bin/bash
 set -euo pipefail
 
 # lint-check.sh - C++ code linter and tester for R-Type project

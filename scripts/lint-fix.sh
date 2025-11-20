@@ -46,4 +46,4 @@ cd ..
 
 echo -e "${GREEN}clang-tidy fix completed${NC}"
 echo "==================================="
-echo -e "${GREEN}Auto-Fix completed. Please run './scripts/lint-check.sh' again.${NC}"
+echo -e "${GREEN}Auto-Fix completed.${NC}"

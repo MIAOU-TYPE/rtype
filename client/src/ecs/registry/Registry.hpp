@@ -1,5 +1,4 @@
-#ifndef REGISTRY_HPP
-#define REGISTRY_HPP
+#pragma once
 
 #include <vector>
 #include <unordered_map>
@@ -177,5 +176,3 @@ private:
 } // namespace Ecs
 
 #include "Registry.tpp"
-
-#endif // REGISTRY_HPP

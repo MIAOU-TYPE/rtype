@@ -55,7 +55,7 @@ namespace Net
      */
     struct SocketOptions {
         int level = SOL_SOCKET;
-        int optname = SO_REUSEADDR;
-        int optval = 1;
+        int optName = SO_REUSEADDR;
+        int optVal = 1;
     };
 } // namespace Net

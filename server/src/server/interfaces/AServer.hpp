@@ -92,6 +92,6 @@ namespace Server
         uint16_t _port = 0;      //> Port number the server is listening on
         bool _isRunning = false; //> Flag indicating if the server is running
 
-        socket_handle _socketFd = kInvalidSocket; //> Socket file descriptor
+        socketHandle _socketFd = kInvalidSocket; //> Socket file descriptor
     };
 } // namespace Server

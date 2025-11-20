@@ -10,58 +10,58 @@
 namespace Net
 {
 
-    socket_handle NetWrapper::socket(int domain, int type, int protocol)
+    socketHandle NetWrapper::socket(int domain, int type, int protocol)
     {
         return ::socket(domain, type, protocol);
     }
 
 #ifdef _WIN32
-    void NetWrapper::closeSocket(socket_handle s)
+    void NetWrapper::closeSocket(socketHandle s)
     {
         if (s != kInvalidSocket)
             closesocket(s);
     }
 
-    int NetWrapper::setSocketOpt(socket_handle s, int level, int optname, const void *optval, int optlen)
+    int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optname, (const char *) optval, optlen);
+        return ::setsockopt(s, level, optName, (const char *) optVal, optLen);
     }
 
     recvfrom_return_t NetWrapper::recvFrom(
-        socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
+        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockfd, (char *) buf, len, flags, src_addr, addrlen);
+        return ::recvfrom(sockFd, (char *) buf, len, flags, src_addr, addrLen);
     }
 
-    sendto_return_t NetWrapper::sendTo(socket_handle sockfd, const void *buf, size_t len, int flags,
-        const struct sockaddr *dest_addr, socklen_t addrlen)
+    sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
+        const struct sockaddr *destAddr, socklen_t addrLen)
     {
-        return ::sendto(sockfd, (const char *) buf, len, flags, dest_addr, addrlen);
+        return ::sendto(sockFd, (const char *) buf, len, flags, destAddr, addrLen);
     }
 #endif
 
 #ifndef _WIN32
-    void NetWrapper::closeSocket(socket_handle s)
+    void NetWrapper::closeSocket(socketHandle s)
     {
         if (s != kInvalidSocket)
             close(s);
     }
 
-    int NetWrapper::setSocketOpt(socket_handle s, int level, int optname, const void *optval, int optlen)
+    int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optname, (const void *) optval, optlen);
+        return ::setsockopt(s, level, optName, (const void *) optVal, optLen);
     }
 
     recvfrom_return_t NetWrapper::recvFrom(
-        socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
+        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
+        return ::recvfrom(sockFd, buf, len, flags, src_addr, addrLen);
     }
 
-    sendto_return_t NetWrapper::sendTo(socket_handle sockfd, const void *buf, size_t len, int flags,
-        const struct sockaddr *dest_addr, socklen_t addrlen)
+    sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
+        const struct sockaddr *destAddr, socklen_t addrLen)
     {
-        return ::sendto(sockfd, buf, len, flags, dest_addr, addrlen);
+        return ::sendto(sockFd, buf, len, flags, destAddr, addrLen);
     }
 #endif
 } // namespace Net

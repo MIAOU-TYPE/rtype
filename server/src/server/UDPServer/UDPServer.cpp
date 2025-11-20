@@ -86,19 +86,19 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socket_handle sockfd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
-    if (sockfd == kInvalidSocket)
+    socketHandle sockFd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
+    if (sockFd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
-    int opt = optParams.optval;
+    int opt = optParams.optVal;
     if (Net::NetWrapper::setSocketOpt(
-            sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt), sizeof(opt))
+            sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
-        Net::NetWrapper::closeSocket(sockfd);
+        Net::NetWrapper::closeSocket(sockFd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
 
-    _socketFd = sockfd;
+    _socketFd = sockFd;
 }
 
 void UDPServer::bindSocket(Net::family_t family)

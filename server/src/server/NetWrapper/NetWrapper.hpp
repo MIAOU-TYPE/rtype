@@ -84,6 +84,6 @@ namespace net
          * @return The number of bytes sent, or -1 on failure.
          */
         static ssize_t sendto(
-            int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
+            socket_handle sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
     };
 } // namespace net

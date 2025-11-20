@@ -49,7 +49,7 @@ namespace Net
          * @brief Closes a socket.
          * @param s The handle of the socket to be closed.
          */
-        static void close_socket(socket_handle s);
+        static void closeSocket(socket_handle s);
 
         /**
          * @brief Sets options on a socket.
@@ -60,7 +60,7 @@ namespace Net
          * @param optlen The size of the option value.
          * @return 0 on success, or -1 on failure.
          */
-        static int setsocketopt(socket_handle s, int level, int optname, const void *optval, int optlen);
+        static int setSocketOpt(socket_handle s, int level, int optname, const void *optval, int optlen);
 
         /**
          * @brief Receives data from a socket.
@@ -72,7 +72,7 @@ namespace Net
          * @param addrlen A pointer to a socklen_t variable that specifies the size of src_addr.
          * @return The number of bytes received, or -1 on failure.
          */
-        static recvfrom_return_t recvfrom(
+        static recvfrom_return_t recvFrom(
             socket_handle sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
 
         /**
@@ -85,7 +85,7 @@ namespace Net
          * @param addrlen The size of the destination address structure.
          * @return The number of bytes sent, or -1 on failure.
          */
-        static sendto_return_t sendto(socket_handle sockfd, const void *buf, size_t len, int flags,
+        static sendto_return_t sendTo(socket_handle sockfd, const void *buf, size_t len, int flags,
             const struct sockaddr *dest_addr, socklen_t addrlen);
     };
 } // namespace Net

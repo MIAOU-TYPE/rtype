@@ -14,6 +14,7 @@ namespace net
     {
         return ::socket(domain, type, protocol);
     }
+
 #ifdef _WIN32
     void NetWrapper::close_socket(socket_handle s)
     {

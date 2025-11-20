@@ -1,5 +1,4 @@
-#ifndef SPARSE_ARRAY_HPP
-#define SPARSE_ARRAY_HPP
+#pragma once
 
 #include <vector>
 #include <optional>
@@ -111,5 +110,3 @@ private:
 } // namespace Ecs
 
 #include "SparseArray.tpp"
-
-#endif // SPARSE_ARRAY_HPP

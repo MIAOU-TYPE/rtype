@@ -68,6 +68,11 @@ namespace Server
          */
         virtual void readPackets() override = 0;
 
+        /**
+         * @brief Sends a packet through the server.
+         * @param pkt The packet to be sent.
+         * @return True if the packet was sent successfully, false otherwise.
+         */
         virtual bool sendPacket(const net::IServerPacket &pkt) override = 0;
 
         /**

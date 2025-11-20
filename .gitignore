@@ -53,6 +53,14 @@ Thumbs.db
 *.gcno
 *.gcov
 
+# CI and testing
+.cache/
+Testing/
+test-results/
+*.xml
+*.tar.gz
+*.zip
+
 # Dependencies (uncomment as needed)
 # conan/
 # vcpkg/

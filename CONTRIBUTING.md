@@ -32,20 +32,6 @@ This script will:
 
 If any errors are reported, please fix them before submitting your merge request.
 
-### 3. Individual Scripts
-
-You can also run individual scripts as needed:
-
-- **Format all files**: `./scripts/format-all.sh`
-- **Run clang-tidy fixes**: `./scripts/tidy-all.sh`
-
-## Merge Request Requirements
-
-- All scripts must pass without errors
-- Code must compile successfully
-- Include a clear description of changes
-- Ensure tests pass (if applicable)
-
 ## Development Setup
 
 Make sure you have the following tools installed:

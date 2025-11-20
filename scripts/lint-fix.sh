@@ -1,3 +1,4 @@
+#!/bin/bash
 ##
 ## EPITECH PROJECT, 2025
 ## rtype
@@ -5,7 +6,6 @@
 ## lint-fix
 ##
 
-#!/bin/bash
 set -euo pipefail
 
 # lint-fix.sh – Automatic correction of C++ style (clang-format + tidy fix)

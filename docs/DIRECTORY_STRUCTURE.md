@@ -98,7 +98,8 @@ Contains build scripts, deployment scripts, and other utilities.
 
 ```
 scripts/
-└── # Build and utility scripts
+└── lint-fix.sh            # Script to auto-format and fix code issues
+└── lint-check.sh          # Script to check code formatting and quality
 ```
 
 ## Notes

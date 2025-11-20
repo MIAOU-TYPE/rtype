@@ -73,11 +73,11 @@ namespace Buffer
         bool isFull() const noexcept override;
 
       private:
-        size_t _capacity = 0;
-        size_t _writeIndex = 0;
-        size_t _readIndex = 0;
-        size_t _count = 0;
-        std::unique_ptr<Tdata[]> _buffer;
+        size_t _capacity = 0;             //> Maximum number of elements in the buffer
+        size_t _writeIndex = 0;           //> Index to write the next element
+        size_t _readIndex = 0;            //> Index to read the next element
+        size_t _count = 0;                //> Current number of elements in the buffer
+        std::unique_ptr<Tdata[]> _buffer; //> The buffer to store elements
     };
 } // namespace Buffer
 

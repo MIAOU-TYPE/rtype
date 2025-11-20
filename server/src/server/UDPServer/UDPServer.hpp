@@ -12,8 +12,8 @@
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer.hpp"
-#include "socketParams.hpp"
 #include "UDPPacket.hpp"
+#include "socketParams.hpp"
 
 /**
  * @namespace Server

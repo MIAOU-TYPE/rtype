@@ -6,9 +6,9 @@
 */
 
 #pragma once
+#include <cstdint>
 #include <optional>
 #include <stdexcept>
-#include <cstdint>
 #include <string>
 #include "IServerPacket.hpp"
 

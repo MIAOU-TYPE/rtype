@@ -100,3 +100,8 @@ inline std::ostream &operator<<(std::ostream &os, const net::IServerPacket &pkt)
     os << std::endl;
     return out;
 }
+
+inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<net::IServerPacket> pkt)
+{
+    return os << *pkt;
+}

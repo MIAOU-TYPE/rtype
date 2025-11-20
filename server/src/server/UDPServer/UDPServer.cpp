@@ -71,6 +71,7 @@ void UDPServer::readPackets()
 
     if (!_rxBuffer.push(pkt))
         std::cerr << "Warning: RX buffer overflow, packet dropped\n";
+    std::cout << pkt << std::endl;
 }
 
 bool UDPServer::sendPacket(const net::IServerPacket &pkt)

@@ -16,10 +16,10 @@
 #endif
 
 /**
- * @namespace net
+ * @namespace Net
  * @brief Namespace for network-related classes and functions.
  */
-namespace net
+namespace Net
 {
     /**
      * @class IServerPacket
@@ -67,4 +67,4 @@ namespace net
          */
         virtual const sockaddr_in *address() const = 0;
     };
-} // namespace net
+} // namespace Net

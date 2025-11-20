@@ -7,7 +7,7 @@
 
 #include "NetWrapper.hpp"
 
-namespace net
+namespace Net
 {
 
     socket_handle NetWrapper::socket(int domain, int type, int protocol)
@@ -64,4 +64,4 @@ namespace net
         return ::sendto(sockfd, buf, len, flags, dest_addr, addrlen);
     }
 #endif
-} // namespace net
+} // namespace Net

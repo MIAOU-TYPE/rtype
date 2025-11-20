@@ -11,10 +11,10 @@
 #include "IServerPacket.hpp"
 
 /**
- * @namespace net
+ * @namespace Net
  * @brief Namespace for network-related classes and functions.
  */
-namespace net
+namespace Net
 {
     /**
      * @class UDPPacket
@@ -83,9 +83,9 @@ namespace net
         size_t _size = 0;                //> Size of the packet
         sockaddr_in _addr = {};          //> Source address of the packet
     };
-} // namespace net
+} // namespace Net
 
-inline std::ostream &operator<<(std::ostream &os, const net::IServerPacket &pkt)
+inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
 {
     std::ostream &out = os;
 
@@ -101,7 +101,7 @@ inline std::ostream &operator<<(std::ostream &os, const net::IServerPacket &pkt)
     return out;
 }
 
-inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<net::IServerPacket> pkt)
+inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<Net::IServerPacket> pkt)
 {
     return os << *pkt;
 }

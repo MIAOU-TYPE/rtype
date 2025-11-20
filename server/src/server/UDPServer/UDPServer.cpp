@@ -35,14 +35,14 @@ void UDPServer::start()
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
-        net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
-        net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
+        Net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
+        Net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
         setupSocket(socketParams, socketOptions);
         bindSocket(socketParams.family);
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            net::NetWrapper::close_socket(_socketFd);
+            Net::NetWrapper::close_socket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -53,17 +53,17 @@ void UDPServer::start()
 void UDPServer::stop()
 {
     _isRunning = false;
-    net::NetWrapper::close_socket(_socketFd);
+    Net::NetWrapper::close_socket(_socketFd);
     _socketFd = kInvalidSocket;
     std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
 }
 
 void UDPServer::readPackets()
 {
-    std::shared_ptr<net::IServerPacket> pkt = std::make_shared<net::UDPPacket>();
+    std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = net::NetWrapper::recvfrom(_socketFd, pkt->buffer(), net::UDPPacket::MAX_SIZE, 0,
+    recvfrom_return_t received = Net::NetWrapper::recvfrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
@@ -74,34 +74,34 @@ void UDPServer::readPackets()
     std::cout << pkt << std::endl;
 }
 
-bool UDPServer::sendPacket(const net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
 {
-    return net::NetWrapper::sendto(_socketFd, pkt.buffer(), pkt.size(), 0,
+    return Net::NetWrapper::sendto(_socketFd, pkt.buffer(), pkt.size(), 0,
                reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
         != -1;
 }
 
-void UDPServer::setupSocket(const net::SocketConfig &params, const net::SocketOptions &optParams)
+void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)
 {
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socket_handle sockfd = net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
+    socket_handle sockfd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
     if (sockfd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optval;
-    if (net::NetWrapper::setsocketopt(
+    if (Net::NetWrapper::setsocketopt(
             sockfd, optParams.level, optParams.optname, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
-        net::NetWrapper::close_socket(sockfd);
+        Net::NetWrapper::close_socket(sockfd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
 
     _socketFd = sockfd;
 }
 
-void UDPServer::bindSocket(net::family_t family)
+void UDPServer::bindSocket(Net::family_t family)
 {
     if (_socketFd == kInvalidSocket)
         throw ServerError("{UDPServer::bindSocket} Socket not initialized");

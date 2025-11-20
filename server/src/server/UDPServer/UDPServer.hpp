@@ -62,13 +62,13 @@ namespace Server
          * @brief Sends a packet via the UDP server.
          * @return true if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const net::IServerPacket &pkt) override;
+        virtual bool sendPacket(const Net::IServerPacket &pkt) override;
 
       private:
-        void setupSocket(const net::SocketConfig &params,
-            const net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
-        void bindSocket(net::family_t family = AF_INET); //> Binds the UDP socket to an address
+        void setupSocket(const Net::SocketConfig &params,
+            const Net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
+        void bindSocket(Net::family_t family = AF_INET); //> Binds the UDP socket to an address
 
-        Buffer::RingBuffer<std::shared_ptr<net::IServerPacket>> _rxBuffer; //> Ring buffer to store received packets
+        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; //> Ring buffer to store received packets
     };
 } // namespace Server

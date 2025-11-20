@@ -7,7 +7,7 @@
 
 #include "UDPPacket.hpp"
 
-using namespace net;
+using namespace Net;
 
 UDPPacket::UDPPacket()
 {

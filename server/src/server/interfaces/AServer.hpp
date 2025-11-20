@@ -73,7 +73,7 @@ namespace Server
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const net::IServerPacket &pkt) override = 0;
+        virtual bool sendPacket(const Net::IServerPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.

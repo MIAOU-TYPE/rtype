@@ -25,10 +25,10 @@ using sendto_return_t = ssize_t;
 #endif
 
 /**
- * @namespace net
+ * @namespace Net
  * @brief Namespace for network-related classes and functions.
  */
-namespace net
+namespace Net
 {
     /**
      * @class NetWrapper
@@ -88,4 +88,4 @@ namespace net
         static sendto_return_t sendto(socket_handle sockfd, const void *buf, size_t len, int flags,
             const struct sockaddr *dest_addr, socklen_t addrlen);
     };
-} // namespace net
+} // namespace Net

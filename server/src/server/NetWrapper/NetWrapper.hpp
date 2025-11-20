@@ -12,6 +12,7 @@
 using socket_handle = SOCKET;
 constexpr socket_handle kInvalidSocket = INVALID_SOCKET;
 using recvfrom_return_t = int;
+using sendto_return_t = int;
 #else
     #include <arpa/inet.h>
     #include <sys/socket.h>
@@ -20,6 +21,7 @@ using socket_handle = int;
 constexpr socket_handle kInvalidSocket = -1;
 
 using recvfrom_return_t = ssize_t;
+using sendto_return_t = ssize_t;
 #endif
 
 /**
@@ -83,7 +85,7 @@ namespace net
          * @param addrlen The size of the destination address structure.
          * @return The number of bytes sent, or -1 on failure.
          */
-        static ssize_t sendto(
+        static sendto_return_t sendto(
             socket_handle sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
     };
 } // namespace net

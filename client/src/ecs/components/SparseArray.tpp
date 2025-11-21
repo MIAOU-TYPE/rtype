@@ -1,12 +1,18 @@
-#ifndef SPARSE_ARRAY_TPP
-#define SPARSE_ARRAY_TPP
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** SparseArray
+*/
+
+#pragma once
 
 #include "SparseArray.hpp"
 
 namespace Ecs {
 
 template<typename Component>
-typename SparseArray<Component>::reference_type SparseArray<Component>::operator[](size_type idx) {
+typename SparseArray<Component>::referenceType SparseArray<Component>::operator[](sizeType idx) {
     if (idx >= _data.size()) {
         _data.resize(idx + 1);
     }
@@ -14,9 +20,9 @@ typename SparseArray<Component>::reference_type SparseArray<Component>::operator
 }
 
 template<typename Component>
-const typename SparseArray<Component>::value_type& SparseArray<Component>::operator[](size_type idx) const {
+const typename SparseArray<Component>::valueType& SparseArray<Component>::operator[](sizeType idx) const {
     if (idx >= _data.size()) {
-        static const value_type empty;
+        static const valueType empty;
         return empty;
     }
     return _data[idx];
@@ -24,12 +30,12 @@ const typename SparseArray<Component>::value_type& SparseArray<Component>::opera
 
 
 template<typename Component>
-typename SparseArray<Component>::size_type SparseArray<Component>::size() const {
+typename SparseArray<Component>::sizeType SparseArray<Component>::size() const {
     return _data.size();
 }
 
 template<typename Component>
-typename SparseArray<Component>::reference_type SparseArray<Component>::insert_at(size_type pos, const Component& component) {
+typename SparseArray<Component>::referenceType SparseArray<Component>::insertAt(sizeType pos, const Component& component) {
     if (pos >= _data.size()) {
         _data.resize(pos + 1);
     }
@@ -38,7 +44,7 @@ typename SparseArray<Component>::reference_type SparseArray<Component>::insert_a
 }
 
 template<typename Component>
-typename SparseArray<Component>::reference_type SparseArray<Component>::insert_at(size_type pos, Component&& component) {
+typename SparseArray<Component>::referenceType SparseArray<Component>::insertAt(sizeType pos, Component&& component) {
     if (pos >= _data.size()) {
         _data.resize(pos + 1);
     }
@@ -48,7 +54,7 @@ typename SparseArray<Component>::reference_type SparseArray<Component>::insert_a
 
 template<typename Component>
 template<typename... Params>
-typename SparseArray<Component>::reference_type SparseArray<Component>::emplace_at(size_type pos, Params&&... params) {
+typename SparseArray<Component>::referenceType SparseArray<Component>::emplaceAt(sizeType pos, Params&&... params) {
     if (pos >= _data.size()) {
         _data.resize(pos + 1);
     }
@@ -57,12 +63,10 @@ typename SparseArray<Component>::reference_type SparseArray<Component>::emplace_
 }
 
 template<typename Component>
-void SparseArray<Component>::erase(size_type pos) {
+void SparseArray<Component>::erase(sizeType pos) {
     if (pos < _data.size()) {
         _data[pos].reset();
     }
 }
 
 } // namespace Ecs
-
-#endif // SPARSE_ARRAY_TPP

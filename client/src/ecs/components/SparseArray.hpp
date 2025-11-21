@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** SparseArray
+*/
+
 #pragma once
 
 #include <vector>
@@ -18,9 +25,9 @@ namespace Ecs {
 template<typename Component>
 class SparseArray {
 public:
-    using value_type = std::optional<Component>;
-    using reference_type = value_type&;
-    using size_type = std::size_t;
+    using valueType = std::optional<Component>;
+    using referenceType = valueType&;
+    using sizeType = std::size_t;
 
     /**
      * @brief Default constructor
@@ -57,19 +64,19 @@ public:
      * @param idx Index of the element
      * @return Reference to the optional component
      */
-    reference_type operator[](size_type idx);
+    referenceType operator[](sizeType idx);
 
     /**
      * @brief Access element at given index (const version)
      * @param idx Index of the element
      * @return Const reference to the optional component
      */
-    const value_type& operator[](size_type idx) const;
+    const valueType& operator[](sizeType idx) const;
 
     /**
      * @brief Get the size of the array
      */
-    size_type size() const;
+    sizeType size() const;
 
     /**
      * @brief Insert a component at the given position
@@ -77,7 +84,7 @@ public:
      * @param component Component to insert
      * @return Reference to the inserted component
      */
-    reference_type insert_at(size_type pos, const Component& component);
+    referenceType insertAt(sizeType pos, const Component& component);
 
     /**
      * @brief Insert a component at the given position (move version)
@@ -85,7 +92,7 @@ public:
      * @param component Component to insert
      * @return Reference to the inserted component
      */
-    reference_type insert_at(size_type pos, Component&& component);
+    referenceType insertAt(sizeType pos, Component&& component);
 
     /**
      * @brief Emplace a component at the given position
@@ -95,16 +102,16 @@ public:
      * @return Reference to the emplaced component
      */
     template<typename... Params>
-    reference_type emplace_at(size_type pos, Params&&... params);
+    referenceType emplaceAt(sizeType pos, Params&&... params);
 
     /**
      * @brief Erase the component at the given position
      * @param pos Position to erase
      */
-    void erase(size_type pos);
+    void erase(sizeType pos);
 
 private:
-    std::vector<value_type> _data;
+    std::vector<valueType> _data;
 };
 
 } // namespace Ecs

@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add subdirectories
 add_subdirectory(server)
-add_subdirectory(client)
+# add_subdirectory(client)
 
 # Tests
 if (EXISTS "${CMAKE_SOURCE_DIR}/tests")

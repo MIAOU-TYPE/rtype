@@ -52,6 +52,7 @@ namespace Signal
          * @brief Stop the signal handler
          */
         void stop() noexcept override;
+
       private:
         std::unique_ptr<ISignalHandler> _handler;
     };

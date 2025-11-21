@@ -41,18 +41,17 @@ namespace Signal
          * @param type The type of signal to handle
          * @param callback The callback function to execute when the signal is received
          */
-        void registerCallback(SignalType type, std::function<void()> callback) override;
+        void registerCallback(SignalType type, std::function<void()> callback) noexcept override;
 
         /**
          * @brief Start the signal handler
          */
-        void start() override;
+        void start() noexcept override;
 
         /**
          * @brief Stop the signal handler
          */
-        void stop() override;
-
+        void stop() noexcept override;
       private:
         std::unique_ptr<ISignalHandler> _handler;
     };

@@ -4,7 +4,7 @@ namespace Ecs {
 
 Registry::Registry() : _nextEntity(Entity(0)) {}
 
-Entity Registry::spawn_entity() {
+Entity Registry::spawnEntity() {
     Entity entity(0);
     
     if (!_availableEntities.empty()) {
@@ -19,14 +19,14 @@ Entity Registry::spawn_entity() {
     return entity;
 }
 
-Entity Registry::entity_from_index(std::size_t idx) const {
+Entity Registry::entityFromIndex(std::size_t idx) const {
     if (idx >= _entities.size()) {
         throw std::out_of_range("Entity index out of range");
     }
     return _entities[idx];
 }
 
-void Registry::kill_entity(Entity entity) {
+void Registry::killEntity(Entity entity) {
     auto it = std::find(_entities.begin(), _entities.end(), entity);
     if (it != _entities.end()) {
         _entities.erase(it);
@@ -42,7 +42,7 @@ std::size_t Registry::size() const {
     return _entities.size();
 }
 
-const std::vector<Entity>& Registry::get_entities() const {
+const std::vector<Entity>& Registry::getEntities() const {
     return _entities;
 }
 

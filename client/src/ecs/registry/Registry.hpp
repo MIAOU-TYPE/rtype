@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** Registry
+*/
+
 #pragma once
 
 #include <vector>
@@ -46,20 +53,20 @@ public:
      * @brief Create a new entity
      * @return The newly created entity ID
      */
-    Entity spawn_entity();
+    Entity spawnEntity();
 
     /**
      * @brief Get an entity from an index
      * @param idx Index of the entity
      * @return The entity at the given index
      */
-    Entity entity_from_index(std::size_t idx) const;
+    Entity entityFromIndex(std::size_t idx) const;
 
     /**
      * @brief Kill an entity and remove all its components
      * @param entity The entity to destroy
      */
-    void kill_entity(Entity entity);
+    void killEntity(Entity entity);
 
     /**
      * @brief Register a component type with the registry
@@ -67,7 +74,7 @@ public:
      * @return Reference to the SparseArray for this component type
      */
     template<typename Component>
-    SparseArray<Component>& register_component();
+    SparseArray<Component>& registerComponent();
 
     /**
      * @brief Get the SparseArray for a component type
@@ -75,7 +82,7 @@ public:
      * @return Reference to the SparseArray for this component type
      */
     template<typename Component>
-    SparseArray<Component>& get_components();
+    SparseArray<Component>& getComponents();
 
     /**
      * @brief Get the SparseArray for a component type (const version)
@@ -83,7 +90,7 @@ public:
      * @return Const reference to the SparseArray for this component type
      */
     template<typename Component>
-    const SparseArray<Component>& get_components() const;
+    const SparseArray<Component>& getComponents() const;
 
     /**
      * @brief Add a component to an entity
@@ -93,7 +100,7 @@ public:
      * @return Reference to the added component
      */
     template<typename Component>
-    typename SparseArray<Component>::reference_type add_component(Entity entity, const Component& component);
+    typename SparseArray<Component>::referenceType addComponent(Entity entity, const Component& component);
 
     /**
      * @brief Add a component to an entity (move version)
@@ -103,7 +110,7 @@ public:
      * @return Reference to the added component
      */
     template<typename Component>
-    typename SparseArray<Component>::reference_type add_component(Entity entity, Component&& component);
+    typename SparseArray<Component>::referenceType addComponent(Entity entity, Component&& component);
 
     /**
      * @brief Emplace a component for an entity
@@ -114,7 +121,7 @@ public:
      * @return Reference to the emplaced component
      */
     template<typename Component, typename... Params>
-    typename SparseArray<Component>::reference_type emplace_component(Entity entity, Params&&... params);
+    typename SparseArray<Component>::referenceType emplaceComponent(Entity entity, Params&&... params);
 
     /**
      * @brief Remove a component from an entity
@@ -122,7 +129,7 @@ public:
      * @param entity The entity to remove the component from
      */
     template<typename Component>
-    void remove_component(Entity entity);
+    void removeComponent(Entity entity);
 
     /**
      * @brief Check if an entity has a component
@@ -131,7 +138,7 @@ public:
      * @return true if the entity has the component, false otherwise
      */
     template<typename Component>
-    bool has_component(Entity entity) const;
+    bool hasComponent(Entity entity) const;
 
     /**
      * @brief Get a component from an entity
@@ -141,7 +148,7 @@ public:
      * @throws std::runtime_error if the entity doesn't have the component
      */
     template<typename Component>
-    Component& get_component(Entity entity);
+    Component& getComponent(Entity entity);
 
     /**
      * @brief Get a component from an entity (const version)
@@ -151,7 +158,7 @@ public:
      * @throws std::runtime_error if the entity doesn't have the component
      */
     template<typename Component>
-    const Component& get_component(Entity entity) const;
+    const Component& getComponent(Entity entity) const;
 
     /**
      * @brief Get the number of active entities
@@ -163,7 +170,7 @@ public:
      * @brief Get all active entities
      * @return Vector of all active entities
      */
-    const std::vector<Entity>& get_entities() const;
+    const std::vector<Entity>& getEntities() const;
 
 private:
     Entity _nextEntity;

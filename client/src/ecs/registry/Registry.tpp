@@ -1,12 +1,18 @@
-#ifndef REGISTRY_TPP
-#define REGISTRY_TPP
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** Registry
+*/
+
+#pragma once
 
 #include "Registry.hpp"
 
 namespace Ecs {
 
 template<typename Component>
-SparseArray<Component>& Registry::register_component() {
+SparseArray<Component>& Registry::registerComponent() {
     std::type_index typeIndex(typeid(Component));
     
     if (_components.find(typeIndex) == _components.end()) {
@@ -22,7 +28,7 @@ SparseArray<Component>& Registry::register_component() {
 }
 
 template<typename Component>
-SparseArray<Component>& Registry::get_components() {
+SparseArray<Component>& Registry::getComponents() {
     std::type_index typeIndex(typeid(Component));
     
     auto it = _components.find(typeIndex);
@@ -34,7 +40,7 @@ SparseArray<Component>& Registry::get_components() {
 }
 
 template<typename Component>
-const SparseArray<Component>& Registry::get_components() const {
+const SparseArray<Component>& Registry::getComponents() const {
     std::type_index typeIndex(typeid(Component));
     
     auto it = _components.find(typeIndex);
@@ -46,33 +52,33 @@ const SparseArray<Component>& Registry::get_components() const {
 }
 
 template<typename Component>
-typename SparseArray<Component>::reference_type Registry::add_component(Entity entity, const Component& component) {
-    auto& components = get_components<Component>();
-    return components.insert_at(entity, component);
+typename SparseArray<Component>::referenceType Registry::addComponent(Entity entity, const Component& component) {
+    auto& components = getComponents<Component>();
+    return components.insertAt(entity, component);
 }
 
 template<typename Component>
-typename SparseArray<Component>::reference_type Registry::add_component(Entity entity, Component&& component) {
-    auto& components = get_components<Component>();
-    return components.insert_at(entity, std::move(component));
+typename SparseArray<Component>::referenceType Registry::addComponent(Entity entity, Component&& component) {
+    auto& components = getComponents<Component>();
+    return components.insertAt(entity, std::move(component));
 }
 
 template<typename Component, typename... Params>
-typename SparseArray<Component>::reference_type Registry::emplace_component(Entity entity, Params&&... params) {
-    auto& components = get_components<Component>();
-    return components.emplace_at(entity, std::forward<Params>(params)...);
+typename SparseArray<Component>::referenceType Registry::emplaceComponent(Entity entity, Params&&... params) {
+    auto& components = getComponents<Component>();
+    return components.emplaceAt(entity, std::forward<Params>(params)...);
 }
 
 template<typename Component>
-void Registry::remove_component(Entity entity) {
-    auto& components = get_components<Component>();
+void Registry::removeComponent(Entity entity) {
+    auto& components = getComponents<Component>();
     components.erase(entity);
 }
 
 template<typename Component>
-bool Registry::has_component(Entity entity) const {
+bool Registry::hasComponent(Entity entity) const {
     try {
-        const auto& components = get_components<Component>();
+        const auto& components = getComponents<Component>();
         if (entity >= components.size()) {
             return false;
         }
@@ -83,8 +89,8 @@ bool Registry::has_component(Entity entity) const {
 }
 
 template<typename Component>
-Component& Registry::get_component(Entity entity) {
-    auto& components = get_components<Component>();
+Component& Registry::getComponent(Entity entity) {
+    auto& components = getComponents<Component>();
     if (entity >= components.size() || !components[entity].has_value()) {
         throw std::runtime_error("Entity doesn't have this component");
     }
@@ -92,8 +98,8 @@ Component& Registry::get_component(Entity entity) {
 }
 
 template<typename Component>
-const Component& Registry::get_component(Entity entity) const {
-    const auto& components = get_components<Component>();
+const Component& Registry::getComponent(Entity entity) const {
+    const auto& components = getComponents<Component>();
     if (entity >= components.size() || !components[entity].has_value()) {
         throw std::runtime_error("Entity doesn't have this component");
     }
@@ -101,5 +107,3 @@ const Component& Registry::get_component(Entity entity) const {
 }
 
 } // namespace Ecs
-
-#endif // REGISTRY_TPP

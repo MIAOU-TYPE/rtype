@@ -21,12 +21,19 @@ PosixHandler::PosixHandler() : running(false)
 
 PosixHandler::~PosixHandler()
 {
-    stop();
+    try {
+        stop();
+    } catch (...) {
+        std::cerr << "{PosixHandler::~PosixHandler} Exception occurred during destruction" << std::endl;
+    }
+    instance = nullptr;
 }
 
 void PosixHandler::start() noexcept
 {
     try {
+        if (running.load())
+            return;
         running = true;
 
         struct sigaction action{};
@@ -38,30 +45,36 @@ void PosixHandler::start() noexcept
         sigaction(SIGTERM, &action, nullptr);
         sigaction(SIGHUP, &action, nullptr);
     } catch (const std::exception &e) {
-        std::cerr << "{PosixHandler} Failed to start signal handler" << std::endl;
+        std::cerr << "{PosixHandler::start} Failed to start signal handler" << std::endl;
         running = false;
     }
 }
 
 void PosixHandler::stop() noexcept
 {
-    if (!running.load())
-        return;
-    running = false;
+    try {
+        running = false;
 
-    signal(SIGINT, SIG_DFL);
-    signal(SIGTERM, SIG_DFL);
-    signal(SIGHUP, SIG_DFL);
+        signal(SIGINT, SIG_DFL);
+        signal(SIGTERM, SIG_DFL);
+        signal(SIGHUP, SIG_DFL);
+    } catch (...) {
+        std::cerr << "{PosixHandler::stop} Failed to stop signal handler" << std::endl;
+    }
 }
 
 void PosixHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    try {
+        std::lock_guard<std::mutex> lock(mutex);
 
-    switch (type) {
-        case SignalType::Interrupt: _handlers[SignalType::Interrupt].push_back(callback); break;
-        case SignalType::Terminate: _handlers[SignalType::Terminate].push_back(callback); break;
-        case SignalType::Hangup: _handlers[SignalType::Hangup].push_back(callback); break;
+        switch (type) {
+            case SignalType::Interrupt: _handlers[SignalType::Interrupt].push_back(callback); break;
+            case SignalType::Terminate: _handlers[SignalType::Terminate].push_back(callback); break;
+            case SignalType::Hangup: _handlers[SignalType::Hangup].push_back(callback); break;
+        }
+    } catch (...) {
+        std::cerr << "{PosixHandler::registerCallback} Failed to register callback" << std::endl;
     }
 }
 

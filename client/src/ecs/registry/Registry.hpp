@@ -7,178 +7,181 @@
 
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include <typeindex>
-#include <functional>
 #include <algorithm>
 #include <any>
+#include <functional>
 #include <memory>
 #include <stdexcept>
+#include <typeindex>
+#include <vector>
 #include "../Entity.hpp"
 #include "../components/SparseArray.hpp"
+#include <unordered_map>
 
-namespace Ecs {
-
-/**
- * @brief Central registry for the ECS system
- * 
- * The Registry manages:
- * - Entity creation and destruction
- * - Component storage and retrieval
- * - Component addition and removal from entities
- * 
- * Components are stored in separate SparseArrays, one per component type.
- * This allows for efficient iteration over entities with specific components.
- */
-class Registry {
-public:
-    /**
-     * @brief Constructor
-     */
-    Registry();
+namespace Ecs
+{
 
     /**
-     * @brief Destructor
+     * @brief Central registry for the ECS system
+     *
+     * The Registry manages:
+     * - Entity creation and destruction
+     * - Component storage and retrieval
+     * - Component addition and removal from entities
+     *
+     * Components are stored in separate SparseArrays, one per component type.
+     * This allows for efficient iteration over entities with specific components.
      */
-    ~Registry() = default;
+    class Registry {
+      public:
+        /**
+         * @brief Constructor
+         */
+        Registry();
 
-    Registry(const Registry&) = delete;
-    Registry& operator=(const Registry&) = delete;
+        /**
+         * @brief Destructor
+         */
+        ~Registry() = default;
 
-    Registry(Registry&&) noexcept = default;
-    Registry& operator=(Registry&&) noexcept = default;
+        Registry(const Registry &) = delete;
+        Registry &operator=(const Registry &) = delete;
 
-    /**
-     * @brief Create a new entity
-     * @return The newly created entity ID
-     */
-    Entity spawnEntity();
+        Registry(Registry &&) noexcept = default;
+        Registry &operator=(Registry &&) noexcept = default;
 
-    /**
-     * @brief Get an entity from an index
-     * @param idx Index of the entity
-     * @return The entity at the given index
-     */
-    Entity entityFromIndex(std::size_t idx) const;
+        /**
+         * @brief Create a new entity
+         * @return The newly created entity ID
+         */
+        Entity spawnEntity();
 
-    /**
-     * @brief Kill an entity and remove all its components
-     * @param entity The entity to destroy
-     */
-    void killEntity(Entity entity);
+        /**
+         * @brief Get an entity from an index
+         * @param idx Index of the entity
+         * @return The entity at the given index
+         */
+        Entity entityFromIndex(std::size_t idx) const;
 
-    /**
-     * @brief Register a component type with the registry
-     * @tparam Component The component type to register
-     * @return Reference to the SparseArray for this component type
-     */
-    template<typename Component>
-    SparseArray<Component>& registerComponent();
+        /**
+         * @brief Kill an entity and remove all its components
+         * @param entity The entity to destroy
+         */
+        void killEntity(Entity entity);
 
-    /**
-     * @brief Get the SparseArray for a component type
-     * @tparam Component The component type
-     * @return Reference to the SparseArray for this component type
-     */
-    template<typename Component>
-    SparseArray<Component>& getComponents();
+        /**
+         * @brief Register a component type with the registry
+         * @tparam Component The component type to register
+         * @return Reference to the SparseArray for this component type
+         */
+        template <typename Component>
+        SparseArray<Component> &registerComponent();
 
-    /**
-     * @brief Get the SparseArray for a component type (const version)
-     * @tparam Component The component type
-     * @return Const reference to the SparseArray for this component type
-     */
-    template<typename Component>
-    const SparseArray<Component>& getComponents() const;
+        /**
+         * @brief Get the SparseArray for a component type
+         * @tparam Component The component type
+         * @return Reference to the SparseArray for this component type
+         */
+        template <typename Component>
+        SparseArray<Component> &getComponents();
 
-    /**
-     * @brief Add a component to an entity
-     * @tparam Component The component type
-     * @param entity The entity to add the component to
-     * @param component The component to add
-     * @return Reference to the added component
-     */
-    template<typename Component>
-    typename SparseArray<Component>::referenceType addComponent(Entity entity, const Component& component);
+        /**
+         * @brief Get the SparseArray for a component type (const version)
+         * @tparam Component The component type
+         * @return Const reference to the SparseArray for this component type
+         */
+        template <typename Component>
+        const SparseArray<Component> &getComponents() const;
 
-    /**
-     * @brief Add a component to an entity (move version)
-     * @tparam Component The component type
-     * @param entity The entity to add the component to
-     * @param component The component to add
-     * @return Reference to the added component
-     */
-    template<typename Component>
-    typename SparseArray<Component>::referenceType addComponent(Entity entity, Component&& component);
+        /**
+         * @brief Add a component to an entity
+         * @tparam Component The component type
+         * @param entity The entity to add the component to
+         * @param component The component to add
+         * @return Reference to the added component
+         */
+        template <typename Component>
+        typename SparseArray<Component>::referenceType addComponent(Entity entity, const Component &component);
 
-    /**
-     * @brief Emplace a component for an entity
-     * @tparam Component The component type
-     * @tparam Params Parameter pack for component constructor
-     * @param entity The entity to add the component to
-     * @param params Parameters to forward to component constructor
-     * @return Reference to the emplaced component
-     */
-    template<typename Component, typename... Params>
-    typename SparseArray<Component>::referenceType emplaceComponent(Entity entity, Params&&... params);
+        /**
+         * @brief Add a component to an entity (move version)
+         * @tparam Component The component type
+         * @param entity The entity to add the component to
+         * @param component The component to add
+         * @return Reference to the added component
+         */
+        template <typename Component>
+        typename SparseArray<Component>::referenceType addComponent(Entity entity, Component &&component);
 
-    /**
-     * @brief Remove a component from an entity
-     * @tparam Component The component type
-     * @param entity The entity to remove the component from
-     */
-    template<typename Component>
-    void removeComponent(Entity entity);
+        /**
+         * @brief Emplace a component for an entity
+         * @tparam Component The component type
+         * @tparam Params Parameter pack for component constructor
+         * @param entity The entity to add the component to
+         * @param params Parameters to forward to component constructor
+         * @return Reference to the emplaced component
+         */
+        template <typename Component, typename... Params>
+        typename SparseArray<Component>::referenceType emplaceComponent(Entity entity, Params &&...params);
 
-    /**
-     * @brief Check if an entity has a component
-     * @tparam Component The component type
-     * @param entity The entity to check
-     * @return true if the entity has the component, false otherwise
-     */
-    template<typename Component>
-    bool hasComponent(Entity entity) const;
+        /**
+         * @brief Remove a component from an entity
+         * @tparam Component The component type
+         * @param entity The entity to remove the component from
+         */
+        template <typename Component>
+        void removeComponent(Entity entity);
 
-    /**
-     * @brief Get a component from an entity
-     * @tparam Component The component type
-     * @param entity The entity to get the component from
-     * @return Reference to the component
-     * @throws std::runtime_error if the entity doesn't have the component
-     */
-    template<typename Component>
-    Component& getComponent(Entity entity);
+        /**
+         * @brief Check if an entity has a component
+         * @tparam Component The component type
+         * @param entity The entity to check
+         * @return true if the entity has the component, false otherwise
+         */
+        template <typename Component>
+        bool hasComponent(Entity entity) const;
 
-    /**
-     * @brief Get a component from an entity (const version)
-     * @tparam Component The component type
-     * @param entity The entity to get the component from
-     * @return Const reference to the component
-     * @throws std::runtime_error if the entity doesn't have the component
-     */
-    template<typename Component>
-    const Component& getComponent(Entity entity) const;
+        /**
+         * @brief Get a component from an entity
+         * @tparam Component The component type
+         * @param entity The entity to get the component from
+         * @return Reference to the component
+         * @throws std::runtime_error if the entity doesn't have the component
+         */
+        template <typename Component>
+        Component &getComponent(Entity entity);
 
-    /**
-     * @brief Get the number of active entities
-     * @return The number of entities
-     */
-    std::size_t size() const;
+        /**
+         * @brief Get a component from an entity (const version)
+         * @tparam Component The component type
+         * @param entity The entity to get the component from
+         * @return Const reference to the component
+         * @throws std::runtime_error if the entity doesn't have the component
+         */
+        template <typename Component>
+        const Component &getComponent(Entity entity) const;
 
-    /**
-     * @brief Get all active entities
-     * @return Vector of all active entities
-     */
-    const std::vector<Entity>& getEntities() const;
+        /**
+         * @brief Get the number of active entities
+         * @return The number of entities
+         */
+        std::size_t size() const;
 
-private:
-    Entity _nextEntity; ///< Next entity ID to be assigned
-    std::vector<Entity> _entities; ///< List of all active entities
-    std::vector<Entity> _availableEntities; ///< Pool of reusable entity IDs from killed entities
-    std::unordered_map<std::type_index, std::any> _components; ///< Storage for all component arrays, indexed by component type
-    std::unordered_map<std::type_index, std::function<void(Entity)>> _componentErasers; ///< Functions to erase components for a given entity, indexed by component type
-};
+        /**
+         * @brief Get all active entities
+         * @return Vector of all active entities
+         */
+        const std::vector<Entity> &getEntities() const;
+
+      private:
+        Entity _nextEntity;                     ///< Next entity ID to be assigned
+        std::vector<Entity> _entities;          ///< List of all active entities
+        std::vector<Entity> _availableEntities; ///< Pool of reusable entity IDs from killed entities
+        std::unordered_map<std::type_index, std::any>
+            _components; ///< Storage for all component arrays, indexed by component type
+        std::unordered_map<std::type_index, std::function<void(Entity)>>
+            _componentErasers; ///< Functions to erase components for a given entity, indexed by component type
+    };
 
 } // namespace Ecs
 

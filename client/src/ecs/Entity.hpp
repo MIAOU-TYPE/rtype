@@ -1,4 +1,12 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** Entity
+*/
+
 #pragma once
+
 #include <cstddef>
 
 namespace Ecs {

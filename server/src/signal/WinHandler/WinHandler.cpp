@@ -50,6 +50,7 @@ void WinHandler::start() noexcept
         std::signal(SIGINT, &WinHandler::handleSignal);
         std::signal(SIGTERM, &WinHandler::handleSignal);
     } catch (...) {
+        stop();
         std::cerr << "{WinHandler::start} Exception occurred while starting signal handler" << std::endl;
     }
 }

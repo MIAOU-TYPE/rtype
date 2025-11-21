@@ -46,7 +46,7 @@ void PosixHandler::start() noexcept
         sigaction(SIGHUP, &action, nullptr);
     } catch (const std::exception &e) {
         std::cerr << "{PosixHandler::start} Failed to start signal handler" << std::endl;
-        running = false;
+        stop();
     }
 }
 

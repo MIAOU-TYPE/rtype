@@ -11,8 +11,8 @@
 #else
     #include "PosixHandler.hpp"
 #endif
-#include "ISignalHandler.hpp"
 #include <memory>
+#include "ISignalHandler.hpp"
 
 /**
  * @namespace Signal

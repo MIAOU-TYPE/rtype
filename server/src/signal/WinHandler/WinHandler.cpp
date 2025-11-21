@@ -92,10 +92,8 @@ void WinHandler::handleSignal(int signum)
 
     try {
         cb();
-    } catch (const std::exception &e) {
-        std::cerr << "[WinHandler] Exception in signal callback: " << e.what() << std::endl;
     } catch (...) {
-        std::cerr << "[WinHandler] Unknown exception in signal callback" << std::endl;
+        std::cerr << "{WinHandler::handleSignal} Unknown exception in signal callback" << std::endl;
     }
 }
 

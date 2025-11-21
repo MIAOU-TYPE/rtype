@@ -1,5 +1,26 @@
 project(r-type_server LANGUAGES CXX)
 
+if (MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(
+        -Wall
+        -Wextra
+        -Werror
+        -Wpedantic
+        -Wshadow
+        -Wnon-virtual-dtor
+        -Wold-style-cast
+        -Wcast-align
+        -Woverloaded-virtual
+        -Wconversion
+        -Wsign-conversion
+        -Wnull-dereference
+        -Wdouble-promotion
+        -Wformat=2
+    )
+endif()
+
 # -------------------------
 # Source discovery
 # -------------------------
@@ -37,7 +58,6 @@ else()
     target_compile_options(${PROJECT_NAME} PRIVATE
         -Wall
         -Wextra
-        -Werror
         -Wpedantic
         -Wshadow
         -Wnon-virtual-dtor

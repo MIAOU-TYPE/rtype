@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include "PosixHandler.hpp"
 #include "UDPServer.hpp"
 
 int main(void)
@@ -15,10 +16,16 @@ int main(void)
     uint16_t port = 8080;
 
     std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
+    Signal::PosixHandler signalHandler;
+    signalHandler.start();
+    signalHandler.registerCallback(Signal::SignalType::Interrupt, [&server]() {
+        if (server->isRunning())
+            server->setRunning(false);
+    });
     try {
         server->configure(ip, port);
         server->start();
-        while (true)
+        while (server->isRunning())
             server->readPackets();
         server->stop();
     } catch (const Server::ServerError &e) {

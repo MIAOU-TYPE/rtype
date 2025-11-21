@@ -111,7 +111,7 @@ public:
     void erase(sizeType pos);
 
 private:
-    std::vector<valueType> _data;
+    std::vector<valueType> _data; ///< Internal storage for optional components
 };
 
 } // namespace Ecs

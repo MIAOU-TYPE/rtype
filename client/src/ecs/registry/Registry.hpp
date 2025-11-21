@@ -173,11 +173,11 @@ public:
     const std::vector<Entity>& getEntities() const;
 
 private:
-    Entity _nextEntity;
-    std::vector<Entity> _entities;
-    std::vector<Entity> _availableEntities;
-    std::unordered_map<std::type_index, std::any> _components;
-    std::unordered_map<std::type_index, std::function<void(Entity)>> _componentErasers;
+    Entity _nextEntity; ///< Next entity ID to be assigned
+    std::vector<Entity> _entities; ///< List of all active entities
+    std::vector<Entity> _availableEntities; ///< Pool of reusable entity IDs from killed entities
+    std::unordered_map<std::type_index, std::any> _components; ///< Storage for all component arrays, indexed by component type
+    std::unordered_map<std::type_index, std::function<void(Entity)>> _componentErasers; ///< Functions to erase components for a given entity, indexed by component type
 };
 
 } // namespace Ecs

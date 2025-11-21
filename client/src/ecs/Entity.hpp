@@ -27,7 +27,7 @@ public:
     bool operator<(const Entity& other) const { return _id < other._id; }
 
 private:
-    std::size_t _id;
+    std::size_t _id; ///< Unique identifier for the entity
 };
 
 } // namespace Ecs

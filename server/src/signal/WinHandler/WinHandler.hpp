@@ -48,11 +48,16 @@ namespace Signal
         void stop() noexcept override;
 
       private:
-        static WinHandler *instance;
+        /**
+         * @brief Static signal handler function
+         * @param signum The signal number received
+         */
         static void handleSignal(int signum);
 
-        std::atomic_bool running;
-        std::map<SignalType, std::function<void()>> callbacks;
+        static WinHandler *instance; //> Pointer to the singleton instance
+
+        std::atomic_bool running;                              //> Atomic flag to indicate if the handler is running
+        std::map<SignalType, std::function<void()>> callbacks; //> Map of signal types to their corresponding callbacks
     };
 } // namespace Signal
 

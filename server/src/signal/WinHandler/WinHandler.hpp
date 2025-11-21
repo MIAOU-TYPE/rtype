@@ -15,8 +15,8 @@ namespace Signal
 {
     /**
      * @class WinHandler
-     * @brief POSIX implementation of the ISignalHandler interface
-     * @details This class handles POSIX signals and allows registration of callbacks for specific signal types.
+     * @brief Windows implementation of the ISignalHandler interface
+     * @details This class handles Windows signals and allows registration of callbacks for specific signal types.
      */
     class WinHandler : public ISignalHandler {
       public:

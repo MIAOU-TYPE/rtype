@@ -8,17 +8,17 @@
 #include "SignalHandler.hpp"
 using namespace Signal;
 
-void SignalHandler::registerCallback(SignalType type, std::function<void()> callback)
+void SignalHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
     _handler->registerCallback(type, callback);
 }
 
-void SignalHandler::start()
+void SignalHandler::start() noexcept
 {
     _handler->start();
 }
 
-void SignalHandler::stop()
+void SignalHandler::stop() noexcept
 {
     _handler->stop();
 }

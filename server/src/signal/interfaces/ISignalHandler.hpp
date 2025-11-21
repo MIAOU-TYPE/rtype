@@ -39,16 +39,16 @@ namespace Signal
          * @param type The type of signal to handle
          * @param callback The callback function to execute when the signal is received
          */
-        virtual void registerCallback(SignalType type, std::function<void()> callback) = 0;
+        virtual void registerCallback(SignalType type, std::function<void()> callback) noexcept = 0;
 
         /**
          * @brief Start the signal handler
          */
-        virtual void start() = 0;
+        virtual void start() noexcept = 0;
 
         /**
          * @brief Stop the signal handler
          */
-        virtual void stop() = 0;
+        virtual void stop() noexcept = 0;
     };
 } // namespace Signal

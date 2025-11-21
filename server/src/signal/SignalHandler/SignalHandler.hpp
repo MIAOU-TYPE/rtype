@@ -12,6 +12,7 @@
     #include "PosixHandler.hpp"
 #endif
 #include "ISignalHandler.hpp"
+#include <memory>
 
 /**
  * @namespace Signal

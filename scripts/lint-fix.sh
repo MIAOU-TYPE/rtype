@@ -58,7 +58,7 @@ fi
 
 # 3. Check again to ensure all fixes are applied
 cd ..
-./scripts/lint-check.sh
+bash "${PROJECT_ROOT}/scripts/lint-check.sh"
 
 echo -e "${GREEN}clang-tidy fix completed${NC}"
 echo "==================================="

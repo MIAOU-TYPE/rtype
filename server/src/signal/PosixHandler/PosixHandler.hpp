@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** PosixHandler
+*/
+
 #pragma once
 
 #ifndef _WIN32

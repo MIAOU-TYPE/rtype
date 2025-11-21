@@ -21,7 +21,6 @@ int main(void)
     signalHandler.registerCallback(Signal::SignalType::Interrupt, [&server]() {
         if (server->isRunning())
             server->setRunning(false);
-        std::cout << "\n{Main} Interrupt signal received. Shutting down the server..." << std::endl;
     });
     try {
         server->configure(ip, port);

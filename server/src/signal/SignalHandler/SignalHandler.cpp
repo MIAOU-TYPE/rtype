@@ -8,6 +8,21 @@
 #include "SignalHandler.hpp"
 using namespace Signal;
 
+void SignalHandler::registerCallback(SignalType type, std::function<void()> callback)
+{
+    _handler->registerCallback(type, callback);
+}
+
+void SignalHandler::start()
+{
+    _handler->start();
+}
+
+void SignalHandler::stop()
+{
+    _handler->stop();
+}
+
 #ifdef _WIN32
 
 SignalHandler::SignalHandler()
@@ -15,40 +30,11 @@ SignalHandler::SignalHandler()
     _handler = std::make_unique<WinHandler>();
 }
 
-void SignalHandler::registerCallback(SignalType type, std::function<void()> callback)
-{
-    _handler->registerCallback(type, callback);
-}
-
-void SignalHandler::start()
-{
-    _handler->start();
-}
-
-void SignalHandler::stop()
-{
-    _handler->stop();
-}
 #endif
 
 #ifndef _WIN32
 SignalHandler::SignalHandler()
 {
     _handler = std::make_unique<PosixHandler>();
-}
-
-void SignalHandler::registerCallback(SignalType type, std::function<void()> callback)
-{
-    _handler->registerCallback(type, callback);
-}
-
-void SignalHandler::start()
-{
-    _handler->start();
-}
-
-void SignalHandler::stop()
-{
-    _handler->stop();
 }
 #endif

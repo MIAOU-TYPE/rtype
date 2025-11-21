@@ -24,21 +24,26 @@ PosixHandler::~PosixHandler()
     stop();
 }
 
-void PosixHandler::start()
+void PosixHandler::start() noexcept
 {
-    running = true;
+    try {
+        running = true;
 
-    struct sigaction action{};
-    action.sa_handler = PosixHandler::handleSignal;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0;
+        struct sigaction action{};
+        action.sa_handler = PosixHandler::handleSignal;
+        sigemptyset(&action.sa_mask);
+        action.sa_flags = 0;
 
-    sigaction(SIGINT, &action, nullptr);
-    sigaction(SIGTERM, &action, nullptr);
-    sigaction(SIGHUP, &action, nullptr);
+        sigaction(SIGINT, &action, nullptr);
+        sigaction(SIGTERM, &action, nullptr);
+        sigaction(SIGHUP, &action, nullptr);
+    } catch (const std::exception &e) {
+        std::cerr << "{PosixHandler} Failed to start signal handler" << std::endl;
+        running = false;
+    }
 }
 
-void PosixHandler::stop()
+void PosixHandler::stop() noexcept
 {
     if (!running.load())
         return;
@@ -49,7 +54,7 @@ void PosixHandler::stop()
     signal(SIGHUP, SIG_DFL);
 }
 
-void PosixHandler::registerCallback(SignalType type, std::function<void()> callback)
+void PosixHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
     std::lock_guard<std::mutex> lock(mutex);
 

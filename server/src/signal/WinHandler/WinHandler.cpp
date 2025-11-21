@@ -37,7 +37,7 @@ WinHandler::~WinHandler()
         instance = nullptr;
 }
 
-void WinHandler::start()
+void WinHandler::start() noexcept
 {
     running = true;
 
@@ -45,7 +45,7 @@ void WinHandler::start()
     std::signal(SIGTERM, &WinHandler::handleSignal);
 }
 
-void WinHandler::stop()
+void WinHandler::stop() noexcept
 {
     if (!running.load())
         return;
@@ -56,7 +56,7 @@ void WinHandler::stop()
     std::signal(SIGTERM, SIG_DFL);
 }
 
-void WinHandler::registerCallback(SignalType type, std::function<void()> callback)
+void WinHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
     callbacks[type] = std::move(callback);
 }

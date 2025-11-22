@@ -66,5 +66,11 @@ namespace Net
          * @return A pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
+
+        /**
+         * @brief Creates a clone of the current packet.
+         * @return A shared pointer to the cloned IServerPacket.
+         */
+        virtual std::shared_ptr<IServerPacket> clone() const = 0;
     };
 } // namespace Net

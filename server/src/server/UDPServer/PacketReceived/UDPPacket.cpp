@@ -25,16 +25,6 @@ const uint8_t *UDPPacket::buffer() const
     return _buffer;
 }
 
-sockaddr_in *UDPPacket::address()
-{
-    return &_addr;
-}
-
-const sockaddr_in *UDPPacket::address() const
-{
-    return &_addr;
-}
-
 size_t UDPPacket::size() const
 {
     return _size;
@@ -43,4 +33,14 @@ size_t UDPPacket::size() const
 void UDPPacket::setSize(size_t s)
 {
     _size = s;
+}
+
+const sockaddr_in *UDPPacket::address() const
+{
+    return &_addr;
+}
+
+std::shared_ptr<IServerPacket> UDPPacket::clone() const
+{
+    return std::make_shared<UDPPacket>();
 }

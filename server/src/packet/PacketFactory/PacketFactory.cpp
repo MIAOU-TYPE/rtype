@@ -14,7 +14,7 @@ PacketFactory::PacketFactory(std::shared_ptr<IServerPacket> packet) : _packet(pa
 {
 }
 
-const HeaderPacket &PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
+HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
 {
     HeaderPacket header;
 

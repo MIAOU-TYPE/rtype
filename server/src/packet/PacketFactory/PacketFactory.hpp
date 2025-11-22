@@ -12,6 +12,7 @@
 #include "DefaultPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
+#include <cstring>
 
 #define CONNECT    0x01
 #define INPUT      0x02

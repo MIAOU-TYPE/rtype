@@ -8,6 +8,7 @@
 #pragma once
 #include <cstdint>
 #include <stddef.h>
+#include <memory>
 #ifndef _WIN32
     #include <netinet/in.h>
 #else

@@ -40,6 +40,11 @@ const sockaddr_in *UDPPacket::address() const
     return &_addr;
 }
 
+void UDPPacket::setAddress(const sockaddr_in &addr)
+{
+    _addr = addr;
+}
+
 std::shared_ptr<IServerPacket> UDPPacket::clone() const
 {
     return std::make_shared<UDPPacket>();

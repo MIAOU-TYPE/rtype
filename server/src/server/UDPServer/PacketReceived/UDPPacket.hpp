@@ -75,6 +75,12 @@ namespace Net
         const sockaddr_in *address() const override;
 
         /**
+         * @brief Sets the source address of the packet.
+         * @param addr The sockaddr_in structure representing the source address to set.
+         */
+        void setAddress(const sockaddr_in &addr) override;
+
+        /**
          * @brief Creates a clone of the current packet.
          * @return A shared pointer to the cloned IServerPacket.
          */

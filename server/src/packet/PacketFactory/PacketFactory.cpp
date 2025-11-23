@@ -14,12 +14,6 @@ PacketFactory::PacketFactory(std::shared_ptr<IServerPacket> packet) : _packet(pa
 {
 }
 
-PacketFactory::~PacketFactory()
-{
-    if (_packet)
-        _packet = nullptr;
-}
-
 HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
 {
     HeaderPacket header;
@@ -63,7 +57,7 @@ std::shared_ptr<IServerPacket> PacketFactory::makeInput(
 std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept
 {
     DefaultPacket defaultPacket;
-    defaultPacket.header = makeHeader(flag, flag, sizeof(HeaderPacket));
+    defaultPacket.header = makeHeader(flag, flag, sizeof(DefaultPacket));
 
     auto buffer = _packet->clone();
     buffer->setAddress(addr);

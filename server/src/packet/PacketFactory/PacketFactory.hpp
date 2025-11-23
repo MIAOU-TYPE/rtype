@@ -55,9 +55,9 @@ namespace Net
             PacketFactory(std::shared_ptr<Net::IServerPacket> packet);
 
             /**
-             * @brief Destroys the PacketFactory object.
+             * @brief Destructor for PacketFactory.
              */
-            ~PacketFactory();
+            ~PacketFactory() = default;
 
             /**
              * @brief Creates a HeaderPacket with the specified parameters.

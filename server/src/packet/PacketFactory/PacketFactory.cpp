@@ -20,12 +20,12 @@ HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t s
 
     header.type = type;
     header.version = version;
-    header.size = size;
+    header.size = htons(size);
     return header;
 }
 
 std::shared_ptr<IServerPacket> PacketFactory::makeConnectDisconnect(
-    const sockaddr_in &addr, uint32_t clientId, uint8_t connectDisconnect) noexcept
+    const sockaddr_in &addr, uint8_t connectDisconnect, uint32_t clientId) noexcept
 {
     ConnectPacket connectPacket;
     connectPacket.clientId = htonl(clientId);

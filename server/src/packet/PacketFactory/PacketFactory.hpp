@@ -60,22 +60,13 @@ namespace Net
             ~PacketFactory() = default;
 
             /**
-             * @brief Creates a HeaderPacket with the specified parameters.
-             * @param type The type of the packet.
-             * @param version The version of the packet.
-             * @param size The size of the packet.
-             * @return The constructed HeaderPacket.
-             */
-            HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
-
-            /**
              * @brief Creates a connect or disconnect packet.
              * @param clientId The ID of the client.
              * @param connectDisconnect The type of the packet (connect or disconnect).
              * @return A reference to the created IServerPacket.
              */
             std::shared_ptr<IServerPacket> makeConnectDisconnect(
-                const sockaddr_in &addr, uint32_t clientId, uint8_t connectDisconnect) noexcept;
+                const sockaddr_in &addr, uint8_t connectDisconnect, uint32_t clientId) noexcept;
 
             std::shared_ptr<IServerPacket> makeInput(
                 const sockaddr_in &addr, uint32_t id, float dx, float dy, bool shooting) noexcept;
@@ -93,6 +84,15 @@ namespace Net
             std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) noexcept;
 
           private:
+            /**
+             * @brief Creates a HeaderPacket with the specified parameters.
+             * @param type The type of the packet.
+             * @param version The version of the packet.
+             * @param size The size of the packet.
+             * @return The constructed HeaderPacket.
+             */
+            HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
+
             std::shared_ptr<IServerPacket> _packet =
                 nullptr; //> Pointer to the template IServerPacket used for creating packets.
         };

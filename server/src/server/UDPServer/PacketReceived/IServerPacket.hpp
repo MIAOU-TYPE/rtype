@@ -7,8 +7,8 @@
 
 #pragma once
 #include <cstdint>
-#include <stddef.h>
 #include <memory>
+#include <stddef.h>
 #ifndef _WIN32
     #include <netinet/in.h>
 #else
@@ -67,6 +67,12 @@ namespace Net
          * @return A pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
+
+        /**
+         * @brief Sets the source address of the packet.
+         * @param addr The sockaddr_in structure representing the source address to set.
+         */
+        virtual void setAddress(const sockaddr_in &addr) = 0;
 
         /**
          * @brief Creates a clone of the current packet.

@@ -6,13 +6,13 @@
 */
 
 #pragma once
+#include <cstring>
 #include <map>
 #include <memory>
 #include "ConnectPacket.hpp"
 #include "DefaultPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
-#include <cstring>
 
 #define CONNECT    0x01
 #define INPUT      0x02
@@ -55,6 +55,11 @@ namespace Net
             PacketFactory(std::shared_ptr<Net::IServerPacket> packet);
 
             /**
+             * @brief Destroys the PacketFactory object.
+             */
+            ~PacketFactory();
+
+            /**
              * @brief Creates a HeaderPacket with the specified parameters.
              * @param type The type of the packet.
              * @param version The version of the packet.
@@ -69,20 +74,23 @@ namespace Net
              * @param connectDisconnect The type of the packet (connect or disconnect).
              * @return A reference to the created IServerPacket.
              */
-            std::shared_ptr<IServerPacket> makeConnectDisconnect(uint32_t clientId, uint8_t connectDisconnect) noexcept;
+            std::shared_ptr<IServerPacket> makeConnectDisconnect(
+                const sockaddr_in &addr, uint32_t clientId, uint8_t connectDisconnect) noexcept;
 
-            std::shared_ptr<IServerPacket> makeInput(uint32_t id, float dx, float dy, bool shooting) noexcept;
+            std::shared_ptr<IServerPacket> makeInput(
+                const sockaddr_in &addr, uint32_t id, float dx, float dy, bool shooting) noexcept;
 
             /**
              * @brief Creates a default packet with the specified flag.
              * @param flag The flag to set in the default packet.
              * @return A reference to the created IServerPacket.
              */
-            std::shared_ptr<IServerPacket> makeDefault(uint8_t flag) noexcept;
+            std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
 
-            std::shared_ptr<IServerPacket> makeEntityCreate(uint32_t id, float x, float y, uint16_t sprite) noexcept;
-            std::shared_ptr<IServerPacket> makeEntityDestroy(uint32_t id) noexcept;
-            std::shared_ptr<IServerPacket> makeDamage(uint32_t id, uint16_t amount) noexcept;
+            std::shared_ptr<IServerPacket> makeEntityCreate(
+                const sockaddr_in &addr, uint32_t id, float x, float y, uint16_t sprite) noexcept;
+            std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, uint32_t id) noexcept;
+            std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) noexcept;
 
           private:
             std::shared_ptr<IServerPacket> _packet =

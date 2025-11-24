@@ -6,10 +6,10 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/core/Registry.hpp"
+#include "ecs/components/Health.hpp"
 #include "ecs/components/Position.hpp"
 #include "ecs/components/Velocity.hpp"
-#include "ecs/components/Health.hpp"
+#include "ecs/core/Registry.hpp"
 
 TEST(Registry, create_entities)
 {
@@ -65,13 +65,11 @@ TEST(Registry, view_position_velocity)
 
     int processed = 0;
 
-    registry.view<Ecs::Position, Ecs::Velocity>(
-        [&](Ecs::Entity, Ecs::Position &pos, Ecs::Velocity &vel) {
-            pos.x += vel.vx;
-            pos.y += vel.vy;
-            processed++;
-        }
-    );
+    registry.view<Ecs::Position, Ecs::Velocity>([&](Ecs::Entity, Ecs::Position &pos, Ecs::Velocity &vel) {
+        pos.x += vel.vx;
+        pos.y += vel.vy;
+        processed++;
+    });
 
     ASSERT_EQ(processed, 2);
 

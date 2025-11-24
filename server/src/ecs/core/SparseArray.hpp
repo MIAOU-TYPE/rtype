@@ -26,7 +26,7 @@ namespace Ecs
      */
     template <typename Component>
     class SparseArray {
-    public:
+      public:
         SparseArray() = default;
         ~SparseArray() = default;
 
@@ -59,7 +59,7 @@ namespace Ecs
          */
         size_t size() const noexcept;
 
-    private:
+      private:
         /** @brief Underlying container */
         std::vector<std::optional<Component>> _components;
     };

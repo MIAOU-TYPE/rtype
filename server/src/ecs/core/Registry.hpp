@@ -10,9 +10,9 @@
 #include <cstddef>
 #include <functional>
 #include <typeindex>
-#include <unordered_map>
 #include "Entity.hpp"
 #include "SparseArray.hpp"
+#include <unordered_map>
 
 /**
  * @namespace Ecs
@@ -32,7 +32,6 @@ namespace Ecs
      */
     class Registry {
       public:
-
         /**
          * @brief Creates a new entity.
          * @return A newly created Entity with a unique ID.
@@ -104,7 +103,6 @@ namespace Ecs
         void view(Function fn);
 
       private:
-
         /** @brief Counter used to assign unique IDs to entities */
         size_t _entityCounter = 0;
 

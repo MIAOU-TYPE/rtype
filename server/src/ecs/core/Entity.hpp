@@ -22,12 +22,14 @@ namespace Ecs
      * It does not store any data besides this identifier.
      */
     class Entity {
-    public:
+      public:
         /**
          * @brief Construct an Entity with a given ID.
          * @param id Unique identifier for the entity (default: 0)
          */
-        explicit Entity(size_t id = 0) : _id(id) {}
+        explicit Entity(size_t id = 0) : _id(id)
+        {
+        }
 
         /**
          * @brief Implicit conversion to size_t.
@@ -38,7 +40,7 @@ namespace Ecs
             return _id;
         }
 
-    private:
+      private:
         /** @brief Unique identifier of the entity */
         size_t _id = 0;
     };

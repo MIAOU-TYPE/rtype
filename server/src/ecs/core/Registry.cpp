@@ -21,4 +21,4 @@ namespace Ecs
         for (auto &func : _destroyers)
             func(*this, entity);
     }
-}
+} // namespace Ecs

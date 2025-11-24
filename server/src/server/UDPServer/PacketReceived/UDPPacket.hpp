@@ -87,9 +87,9 @@ namespace Net
         std::shared_ptr<IServerPacket> clone() const override;
 
       private:
-        uint8_t _buffer[MAX_SIZE] = {0}; //> Buffer to store packet data
-        size_t _size = 0;                //> Size of the packet
-        sockaddr_in _addr = {};          //> Source address of the packet
+        uint8_t _buffer[MAX_SIZE] = {0}; ///> Buffer to store packet data
+        size_t _size = 0;                ///> Size of the packet
+        sockaddr_in _addr = {};          ///> Source address of the packet
     };
 } // namespace Net
 

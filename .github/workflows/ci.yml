@@ -61,7 +61,7 @@ jobs:
     name: Linter
     runs-on: ubuntu-latest
     needs: check-changes
-    if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true'
+    if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout code
@@ -76,12 +76,7 @@ jobs:
         run: |
           chmod +x ./scripts/lint-check.sh
           echo "Running linter..."
-          if ./scripts/lint-check.sh; then
-            echo "Lint check passed."
-          else
-            echo "Lint check failed. Please fix the issues."
-            exit 1
-          fi
+          ./scripts/lint-check.sh
 
   build-server:
     name: Build Server

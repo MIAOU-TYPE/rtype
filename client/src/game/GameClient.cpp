@@ -15,7 +15,7 @@ using namespace Graphics;
 using namespace Input;
 using namespace Game;
 
-void GameClient::init()
+void GameClient::init(int width, int height)
 {
     try {
         renderer = std::make_unique<SFMLRenderer>();
@@ -23,7 +23,7 @@ void GameClient::init()
             throw InitializationException("Renderer", "Failed to create renderer instance");
         }
 
-        renderer->createWindow(800, 600, "R-Type");
+        renderer->createWindow(width, height, "R-Type");
 
         inputHandler = std::make_unique<SFMLInputHandler>();
         if (!inputHandler) {

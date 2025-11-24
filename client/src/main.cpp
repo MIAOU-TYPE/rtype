@@ -18,7 +18,7 @@ int main()
     try {
         GameClient client;
 
-        client.init();
+        client.init(800, 600);
         client.run();
 
         return 0;

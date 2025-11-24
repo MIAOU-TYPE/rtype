@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** real_r_type
+** File description:
+** SFMLInputHandler
+*/
+
 #include "SFMLInputHandler.hpp"
 
 void SFMLInputHandler::handleEvent(const sf::Event& event) {

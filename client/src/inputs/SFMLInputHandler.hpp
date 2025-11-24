@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** real_r_type
+** File description:
+** SFMLInputHandler
+*/
+
 #ifndef SFML_INPUT_HANDLER_HPP
 #define SFML_INPUT_HANDLER_HPP
 

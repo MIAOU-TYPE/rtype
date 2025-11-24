@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** real_r_type
+** File description:
+** IInputHandler
+*/
+
 #ifndef IINPUT_HANDLER_HPP
 #define IINPUT_HANDLER_HPP
 

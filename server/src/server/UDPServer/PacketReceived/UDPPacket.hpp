@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <array>
 #include <cstring>
 #include <iomanip>
 #include <iostream>

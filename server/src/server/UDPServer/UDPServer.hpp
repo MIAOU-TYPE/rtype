@@ -9,10 +9,10 @@
 #include <iostream>
 #include <string>
 
-#include "../../buffer/RingBuffer/RingBuffer.hpp"
-#include "../NetWrapper/NetWrapper.hpp"
-#include "../interfaces/AServer.hpp"
-#include "PacketReceived/UDPPacket.hpp"
+#include "AServer.hpp"
+#include "NetWrapper.hpp"
+#include "RingBuffer.hpp"
+#include "UDPPacket.hpp"
 #include "socketParams.hpp"
 
 /**

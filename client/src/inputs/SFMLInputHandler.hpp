@@ -9,7 +9,8 @@
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include "interfaces/IInputHandler.hpp"
+#include <iostream>
+#include "IInputHandler.hpp"
 
 namespace Input
 {

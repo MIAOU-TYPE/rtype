@@ -11,6 +11,7 @@ using namespace Input;
 
 void SFMLInputHandler::handleEvent(const sf::Event &event)
 {
+    std::cout << "Handling event of type: " << event.type << std::endl;
     // TODO: Implement event handling logic if needed
 }
 

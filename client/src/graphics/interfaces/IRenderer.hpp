@@ -33,7 +33,7 @@ namespace Graphics
          * @param height The height of the window.
          * @param title The title of the window.
          */
-        virtual void createWindow(int width, int height, const std::string &title) = 0;
+        virtual void createWindow(unsigned int width, unsigned int height, const std::string &title) = 0;
 
         /**
          * @brief Checks if the window is open.

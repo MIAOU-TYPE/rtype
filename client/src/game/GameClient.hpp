@@ -9,8 +9,8 @@
 
 #include <SFML/Window/Event.hpp>
 #include <memory>
-#include "../graphics/interfaces/IRenderer.hpp"
-#include "../inputs/interfaces/IInputHandler.hpp"
+#include "IInputHandler.hpp"
+#include "IRenderer.hpp"
 
 namespace Game
 {
@@ -60,7 +60,7 @@ namespace Game
          *
          * Sets up the renderer and other necessary components.
          */
-        void init(int width = 800, int height = 600);
+        void init(unsigned int width = 800, unsigned int height = 600);
 
         /**
          * @brief Runs the main game loop.

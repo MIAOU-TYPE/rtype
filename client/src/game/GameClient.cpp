@@ -6,14 +6,14 @@
 */
 
 #include "GameClient.hpp"
-#include "../graphics/SFML/SFMLRenderer.hpp"
-#include "../inputs/SFMLInputHandler.hpp"
+#include "SFMLInputHandler.hpp"
+#include "SFMLRenderer.hpp"
 
 using namespace Graphics;
 using namespace Input;
 using namespace Game;
 
-void GameClient::init(int width, int height)
+void GameClient::init(unsigned int width, unsigned int height)
 {
     try {
         renderer = std::make_unique<SFMLRenderer>();

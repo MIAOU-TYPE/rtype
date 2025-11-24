@@ -7,7 +7,7 @@
 
 #include <exception>
 #include <iostream>
-#include "game/GameClient.hpp"
+#include "GameClient.hpp"
 
 using namespace Game;
 

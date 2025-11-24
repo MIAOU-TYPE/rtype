@@ -9,7 +9,7 @@
 
 using namespace Graphics;
 
-void SFMLRenderer::createWindow(int width, int height, const std::string &title)
+void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
     window.create(sf::VideoMode(width, height), title);
 }

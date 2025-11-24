@@ -8,7 +8,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "../interfaces/IRenderer.hpp"
+#include "IRenderer.hpp"
 
 namespace Graphics
 {
@@ -30,7 +30,7 @@ namespace Graphics
          * @param height The height of the window.
          * @param title The title of the window.
          */
-        void createWindow(int width, int height, const std::string &title) override;
+        void createWindow(unsigned int width, unsigned int height, const std::string &title) override;
 
         /**
          * @brief Checks if the SFML window is open.

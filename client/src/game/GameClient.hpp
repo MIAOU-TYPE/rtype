@@ -9,6 +9,7 @@
 
 #include <SFML/Window/Event.hpp>
 #include <memory>
+#include <exception>
 #include "IInputHandler.hpp"
 #include "IRenderer.hpp"
 

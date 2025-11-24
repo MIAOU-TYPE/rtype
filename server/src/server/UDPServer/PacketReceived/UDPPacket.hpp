@@ -121,7 +121,7 @@ inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
  * @param pkt The shared pointer to the IServerPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<Net::IServerPacket> pkt)
+inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Net::IServerPacket>& pkt)
 {
     return os << *pkt;
 }

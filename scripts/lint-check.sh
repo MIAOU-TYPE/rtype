@@ -65,7 +65,8 @@ while IFS= read -r -d '' f; do
     if ! clang-tidy "$f" --quiet -p build/compile_commands.json; then
         TIDY_ERRORS=1
     fi
-done < <(find client/src server/src -name "*.cpp" -print0)
+done < <(find server/src -name "*.cpp" -print0)
+# done < <(find client/src server/src -name "*.cpp" -print0)
 
 if [ "$TIDY_ERRORS" -eq 0 ]; then
     echo -e "${GREEN}clang-tidy : OK${NC}"

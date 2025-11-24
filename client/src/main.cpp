@@ -10,13 +10,6 @@
 #include <iostream>
 #include <exception>
 
-/**
- * @brief Main entry point of the R-Type client application.
- *
- * Initializes the GameClient and starts the game loop with proper exception handling.
- *
- * @return Exit status: 0 on success, 1 on error.
- */
 int main() {
     try {
         GameClient client;

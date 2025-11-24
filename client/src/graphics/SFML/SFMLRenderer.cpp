@@ -7,6 +7,8 @@
 
 #include "SFMLRenderer.hpp"
 
+using namespace Graphics;
+
 void SFMLRenderer::createWindow(int width, int height, const std::string &title)
 {
     window.create(sf::VideoMode(width, height), title);

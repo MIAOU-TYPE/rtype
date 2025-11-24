@@ -10,6 +10,11 @@
 #include "../graphics/SFML/SFMLRenderer.hpp"
 #include "../inputs/SFMLInputHandler.hpp"
 
+using namespace Exceptions;
+using namespace Graphics;
+using namespace Input;
+using namespace Game;
+
 void GameClient::init()
 {
     try {

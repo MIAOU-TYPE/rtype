@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <string>
 
+namespace Exceptions {
+
 /**
  * @class GameException
  * @brief Base exception class for game-related errors.
@@ -116,3 +118,5 @@ class GameLoopException : public GameException {
     {
     }
 };
+
+} // namespace Exceptions

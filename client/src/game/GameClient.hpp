@@ -12,6 +12,8 @@
 #include "../graphics/interfaces/IRenderer.hpp"
 #include "../inputs/interfaces/IInputHandler.hpp"
 
+namespace Game {
+
 /**
  * @class GameClient
  * @brief Main client class responsible for initializing and running the game.
@@ -21,8 +23,8 @@
  */
 class GameClient {
   private:
-    std::unique_ptr<IRenderer> renderer;         ///< The renderer interface
-    std::unique_ptr<IInputHandler> inputHandler; ///< The input handler interface
+    std::unique_ptr<Graphics::IRenderer> renderer;         ///< The renderer interface
+    std::unique_ptr<Input::IInputHandler> inputHandler; ///< The input handler interface
 
   public:
     /**
@@ -39,3 +41,5 @@ class GameClient {
      */
     void run();
 };
+
+} // namespace Game

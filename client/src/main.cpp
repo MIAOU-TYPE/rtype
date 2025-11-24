@@ -10,6 +10,9 @@
 #include "exceptions/GameExceptions.hpp"
 #include "game/GameClient.hpp"
 
+using namespace Game;
+using namespace Exceptions;
+
 int main()
 {
     try {

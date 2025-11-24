@@ -7,6 +7,8 @@
 
 #include "SFMLInputHandler.hpp"
 
+using namespace Input;
+
 void SFMLInputHandler::handleEvent(const sf::Event &event)
 {
     // TODO: Implement event handling logic if needed

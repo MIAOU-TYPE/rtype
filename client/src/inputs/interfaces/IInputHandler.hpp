@@ -9,6 +9,8 @@
 
 #include <SFML/Window/Event.hpp>
 
+namespace Input {
+
 /**
  * @enum Key
  * @brief Enumeration of keyboard keys.
@@ -147,3 +149,5 @@ class IInputHandler {
      */
     virtual bool isKeyPressed(Key key) const = 0;
 };
+
+} // namespace Input

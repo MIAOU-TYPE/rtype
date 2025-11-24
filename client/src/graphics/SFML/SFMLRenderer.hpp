@@ -10,6 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include "../interfaces/IRenderer.hpp"
 
+namespace Graphics {
+
 /**
  * @class SFMLRenderer
  * @brief SFML implementation of the IRenderer interface.
@@ -64,3 +66,5 @@ class SFMLRenderer : public IRenderer {
      */
     bool isWindowCloseEvent(const sf::Event &event) const override;
 };
+
+} // namespace Graphics

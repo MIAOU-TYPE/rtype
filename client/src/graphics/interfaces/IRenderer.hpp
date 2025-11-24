@@ -10,6 +10,8 @@
 #include <SFML/Window/Event.hpp>
 #include <string>
 
+namespace Graphics {
+
 /**
  * @class IRenderer
  * @brief Interface for rendering operations.
@@ -67,3 +69,5 @@ class IRenderer {
      */
     virtual bool isWindowCloseEvent(const sf::Event &event) const = 0;
 };
+
+} // namespace Graphics

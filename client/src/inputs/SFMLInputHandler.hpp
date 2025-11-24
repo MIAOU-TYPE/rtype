@@ -11,6 +11,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include "interfaces/IInputHandler.hpp"
 
+namespace Input {
+
 /**
  * @class SFMLInputHandler
  * @brief SFML implementation of the IInputHandler interface.
@@ -32,3 +34,5 @@ class SFMLInputHandler : public IInputHandler {
      */
     bool isKeyPressed(Key key) const override;
 };
+
+} // namespace Input

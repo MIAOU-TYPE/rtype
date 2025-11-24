@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <functional>
 #include <typeindex>
+#include <vector>
 #include "Entity.hpp"
 #include "SparseArray.hpp"
 #include <unordered_map>

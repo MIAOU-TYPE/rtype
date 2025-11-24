@@ -34,7 +34,7 @@ namespace Ecs
          * @brief Implicit conversion to size_t.
          * @return The entity ID.
          */
-        operator size_t() const noexcept;
+        explicit operator size_t() const noexcept;
 
       private:
         /** @brief Unique identifier of the entity */

@@ -40,7 +40,7 @@ namespace Buffer
         }
 
       private:
-        std::string _message; //> The error message
+        std::string _message; ///> The error message
     };
 
     /**

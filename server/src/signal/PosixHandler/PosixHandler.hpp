@@ -67,11 +67,11 @@ namespace Signal
          */
         void dispatch(SignalType type);
 
-        static PosixHandler *instance;                                      //> Pointer to the singleton instance
-        std::map<SignalType, std::vector<std::function<void()>>> _handlers; //> Map of signal handlers
+        static PosixHandler *instance;                                      ///> Pointer to the singleton instance
+        std::map<SignalType, std::vector<std::function<void()>>> _handlers; ///> Map of signal handlers
 
-        std::mutex mutex;                 //> Mutex for thread-safe access to handlers
-        std::atomic<bool> running{false}; //> Atomic flag indicating if the handler is running
+        std::mutex mutex;                 ///> Mutex for thread-safe access to handlers
+        std::atomic<bool> running{false}; ///> Atomic flag indicating if the handler is running
     };
 } // namespace Signal
 

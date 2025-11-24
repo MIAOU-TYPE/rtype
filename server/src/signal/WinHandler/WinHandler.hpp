@@ -54,10 +54,10 @@ namespace Signal
          */
         static void handleSignal(int signum);
 
-        static WinHandler *instance; //> Pointer to the singleton instance
+        static WinHandler *instance; ///> Pointer to the singleton instance
 
-        std::atomic_bool running;                              //> Atomic flag to indicate if the handler is running
-        std::map<SignalType, std::function<void()>> callbacks; //> Map of signal types to their corresponding callbacks
+        std::atomic_bool running;                              ///> Atomic flag to indicate if the handler is running
+        std::map<SignalType, std::function<void()>> callbacks; ///> Map of signal types to their corresponding callbacks
     };
 } // namespace Signal
 

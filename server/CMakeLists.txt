@@ -34,10 +34,10 @@ endif()
 # Include directories
 # -------------------------
 set(INCLUDE_DIRS "${SRC_DIR}")
-file(GLOB_RECURSE _maybe_dirs LIST_DIRECTORIES true "${SRC_DIR}/*")
-foreach(path IN LISTS _maybe_dirs)
-    if (IS_DIRECTORY "${path}")
-        list(APPEND INCLUDE_DIRS "${path}")
+file(GLOB_RECURSE SERVER_INCLUDE_DIRS LIST_DIRECTORIES true "${SRC_DIR}/*")
+foreach(path ${SERVER_INCLUDE_DIRS})
+    if(IS_DIRECTORY ${path})
+        list(APPEND INCLUDE_DIRS ${path})
     endif()
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
@@ -47,6 +47,11 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 # -------------------------
 add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+
+# -------------------------
+# Set output directory for the executable
+# -------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 # -------------------------
 # Compiler warnings
@@ -71,7 +76,6 @@ else()
     )
 endif()
 
-
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -81,6 +85,9 @@ if (WIN32)
     )
 endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
-)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+
+#if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+#    add_subdirectory(tests)
+#endif()
+

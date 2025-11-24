@@ -12,7 +12,7 @@ using namespace Net;
 UDPPacket::UDPPacket()
 {
     std::memset(&_addr, 0, sizeof(_addr));
-    std::memset(static_cast<void*>(_buffer), 0, sizeof(_buffer));
+    std::memset(static_cast<void *>(_buffer), 0, sizeof(_buffer));
 }
 
 uint8_t *UDPPacket::buffer()

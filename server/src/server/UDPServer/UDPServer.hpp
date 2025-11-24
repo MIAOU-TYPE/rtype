@@ -66,9 +66,9 @@ namespace Server
 
       private:
         void setupSocket(const Net::SocketConfig &params,
-            const Net::SocketOptions &optParams);        //> Sets up the UDP socket with specified parameters
-        void bindSocket(Net::family_t family = AF_INET); //> Binds the UDP socket to an address
+            const Net::SocketOptions &optParams);        ///> Sets up the UDP socket with specified parameters
+        void bindSocket(Net::family_t family = AF_INET); ///> Binds the UDP socket to an address
 
-        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; //> Ring buffer to store received packets
+        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; ///> Ring buffer to store received packets
     };
 } // namespace Server

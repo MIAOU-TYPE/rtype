@@ -8,8 +8,8 @@
 #pragma once
 
 #include <SFML/Window/Event.hpp>
-#include <memory>
 #include <exception>
+#include <memory>
 #include "IInputHandler.hpp"
 #include "IRenderer.hpp"
 

@@ -5,8 +5,7 @@
 ** SFMLInputHandler
 */
 
-#ifndef SFML_INPUT_HANDLER_HPP
-#define SFML_INPUT_HANDLER_HPP
+#pragma once
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
@@ -33,5 +32,3 @@ public:
      */
     bool isKeyPressed(Key key) const override;
 };
-
-#endif // SFML_INPUT_HANDLER_HPP

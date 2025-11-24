@@ -5,8 +5,7 @@
 ** IRenderer
 */
 
-#ifndef IRENDERER_HPP
-#define IRENDERER_HPP
+#pragma once
 
 #include <string>
 #include <SFML/Window/Event.hpp>
@@ -68,5 +67,3 @@ public:
      */
     virtual bool isWindowCloseEvent(const sf::Event& event) const = 0;
 };
-
-#endif // IRENDERER_HPP

@@ -5,8 +5,7 @@
 ** SFMLRenderer
 */
 
-#ifndef SFML_RENDERER_HPP
-#define SFML_RENDERER_HPP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "../interfaces/IRenderer.hpp"
@@ -65,5 +64,3 @@ public:
      */
     bool isWindowCloseEvent(const sf::Event& event) const override;
 };
-
-#endif // SFML_RENDERER_HPP

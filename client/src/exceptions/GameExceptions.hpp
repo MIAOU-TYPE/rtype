@@ -5,8 +5,7 @@
 ** GameExceptions
 */
 
-#ifndef GAME_EXCEPTIONS_HPP
-#define GAME_EXCEPTIONS_HPP
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -107,5 +106,3 @@ public:
     explicit GameLoopException(const std::string& reason)
         : GameException("Game loop error: " + reason) {}
 };
-
-#endif // GAME_EXCEPTIONS_HPP

@@ -5,8 +5,7 @@
 ** GameClient
 */
 
-#ifndef GAME_CLIENT_HPP
-#define GAME_CLIENT_HPP
+#pragma once
 
 #include <memory>
 #include <SFML/Window/Event.hpp>
@@ -40,5 +39,3 @@ public:
      */
     void run();
 };
-
-#endif // GAME_CLIENT_HPP

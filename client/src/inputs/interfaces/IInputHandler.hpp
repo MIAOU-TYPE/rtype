@@ -5,8 +5,7 @@
 ** IInputHandler
 */
 
-#ifndef IINPUT_HANDLER_HPP
-#define IINPUT_HANDLER_HPP
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -59,5 +58,3 @@ public:
      */
     virtual bool isKeyPressed(Key key) const = 0;
 };
-
-#endif // IINPUT_HANDLER_HPP

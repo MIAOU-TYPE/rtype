@@ -8,6 +8,7 @@
 #pragma once
 #include <cstddef>
 #include <memory>
+#include <vector>
 #include "../interfaces/IBuffer.hpp"
 
 namespace Buffer
@@ -77,7 +78,7 @@ namespace Buffer
         size_t _writeIndex = 0;           //> Index to write the next element
         size_t _readIndex = 0;            //> Index to read the next element
         size_t _count = 0;                //> Current number of elements in the buffer
-        std::unique_ptr<Tdata[]> _buffer; //> The buffer to store elements
+        std::vector<Tdata> _buffer;       //> The buffer to store elements
     };
 } // namespace Buffer
 

@@ -5,14 +5,13 @@
 ** RingBuffer
 */
 
-#include "RingBuffer.hpp"
-
 namespace Buffer
 {
     template <typename Tdata>
     RingBuffer<Tdata>::RingBuffer(size_t capacity)
-        : _capacity(capacity),  _buffer(std::make_unique<Tdata[]>(capacity))
+        : _capacity(capacity)
     {
+        _buffer.resize(capacity);
     }
 
     template <typename Tdata>

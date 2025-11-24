@@ -19,7 +19,7 @@ namespace Ecs
      * @brief Contains rendering information of an entity.
      */
     struct Drawable {
-        std::string sprite;   ///< Sprite identifier or path
-        bool drawable = true; ///< If false, entity is not rendered
+        std::string sprite;   ///> Sprite identifier or path
+        bool drawable = true; ///> If false, entity is not rendered
     };
 } // namespace Ecs

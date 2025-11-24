@@ -18,7 +18,7 @@ namespace Ecs
      * @brief Stores the health of an entity.
      */
     struct Health {
-        int hp = 100;    ///< Current health points
-        int maxHp = 100; ///< Maximum health points
+        int hp = 100;    ///> Current health points
+        int maxHp = 100; ///> Maximum health points
     };
 } // namespace Ecs

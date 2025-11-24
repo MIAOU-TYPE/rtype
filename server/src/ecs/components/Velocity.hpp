@@ -18,7 +18,7 @@ namespace Ecs
      * @brief Defines the movement speed of an entity.
      */
     struct Velocity {
-        float vx = 0.f; ///< Speed on X axis
-        float vy = 0.f; ///< Speed on Y axis
+        float vx = 0.f; ///> Speed on X axis
+        float vy = 0.f; ///> Speed on Y axis
     };
 } // namespace Ecs

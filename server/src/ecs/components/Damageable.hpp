@@ -18,6 +18,6 @@ namespace Ecs
      * @brief Defines if an entity can receive damage.
      */
     struct Damageable {
-        bool canBeDamaged = true; ///< If false, entity ignores damage
+        bool canBeDamaged = true; ///> If false, entity ignores damage
     };
 } // namespace Ecs

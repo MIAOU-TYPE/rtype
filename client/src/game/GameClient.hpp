@@ -66,8 +66,8 @@ namespace Game
         void run();
 
       private:
-        std::unique_ptr<Graphics::IRenderer> renderer;      ///< The renderer interface
-        std::unique_ptr<Input::IInputHandler> inputHandler; ///< The input handler interface
+        std::unique_ptr<Graphics::IRenderer> renderer = nullptr;      ///> The renderer interface
+        std::unique_ptr<Input::IInputHandler> inputHandler = nullptr; ///> The input handler interface
     };
 
 } // namespace Game

@@ -66,7 +66,7 @@ namespace Graphics
         bool isWindowCloseEvent(const sf::Event &event) const override;
 
       private:
-        sf::RenderWindow window; ///< The SFML render window
+        sf::RenderWindow window; ///> The SFML render window
     };
 
 } // namespace Graphics

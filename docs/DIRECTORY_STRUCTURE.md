@@ -99,7 +99,7 @@ Contains build scripts, deployment scripts, and other utilities.
 
 ```
 scripts/
-└── lint-fix.sh            # Script to auto-format and fix code issues
+├── lint-fix.sh            # Script to auto-format and fix code issues
 └── lint-check.sh          # Script to check code formatting and quality
 ```
 

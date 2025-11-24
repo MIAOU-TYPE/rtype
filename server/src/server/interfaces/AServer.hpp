@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
 
@@ -88,10 +89,10 @@ namespace Server
         bool isStoredPortCorrect() const noexcept override;
 
       protected:
-        std::string _ip = "";    //> IP address the server is bound to
-        uint16_t _port = 0;      //> Port number the server is listening on
-        bool _isRunning = false; //> Flag indicating if the server is running
+        std::string _ip = "";    ///> IP address the server is bound to
+        uint16_t _port = 0;      ///> Port number the server is listening on
+        bool _isRunning = false; ///> Flag indicating if the server is running
 
-        socketHandle _socketFd = kInvalidSocket; //> Socket file descriptor
+        socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor
     };
 } // namespace Server

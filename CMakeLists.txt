@@ -9,12 +9,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Tests
+enable_testing()
+
 # Add subdirectories
 add_subdirectory(server)
-add_subdirectory(client)
-
-# Tests
-if (EXISTS "${CMAKE_SOURCE_DIR}/tests")
-    enable_testing()
-    add_subdirectory(tests)
-endif()
+#add_subdirectory(client)

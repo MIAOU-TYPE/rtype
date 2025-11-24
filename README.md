@@ -30,6 +30,28 @@ For detailed information about the directory structure, see [Directory Structure
 - C++20 compatible compiler
 - SFML library (for client graphics)
 
+### Installation
+
+#### Linux (Ubuntu/Debian)
+
+```bash
+sudo apt update
+sudo apt install cmake build-essential clang-format clang-tidy libsfml-dev
+```
+
+#### macOS
+
+```bash
+brew install cmake sfml llvm  # llvm for clang-format and clang-tidy
+```
+
+#### Windows
+
+- Install CMake from [cmake.org](https://cmake.org/download/)
+- Install Visual Studio with C++ support
+- Install SFML from [sfml-dev.org](https://www.sfml-dev.org/download.php)
+- For clang-format and clang-tidy, install LLVM from [llvm.org](https://llvm.org/)
+
 ### Build Instructions
 
 ```bash

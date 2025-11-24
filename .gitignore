@@ -72,3 +72,7 @@ test-results/
 *.sh
 
 !scripts/*.sh
+
+# Package managers
+vcpkg_installed/
+vcpkg/

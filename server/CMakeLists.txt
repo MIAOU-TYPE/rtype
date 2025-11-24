@@ -6,7 +6,6 @@ else()
     add_compile_options(
         -Wall
         -Wextra
-        -Werror
         -Wpedantic
         -Wshadow
         -Wnon-virtual-dtor

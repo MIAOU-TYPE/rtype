@@ -8,7 +8,6 @@
 #pragma once
 #include <cstddef>
 #include <memory>
-#include <vector>
 #include "IBuffer.hpp"
 
 namespace Buffer

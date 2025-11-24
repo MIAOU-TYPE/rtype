@@ -88,7 +88,6 @@ void PosixHandler::handleSignal(int sig)
         case SIGINT: instance->dispatch(SignalType::Interrupt); break;
         case SIGTERM: instance->dispatch(SignalType::Terminate); break;
         case SIGHUP: instance->dispatch(SignalType::Hangup); break;
-        default: std::cerr << "{PosixHandler::handleSignal} Unknown signal: " << sig << std::endl; break;
     }
 }
 

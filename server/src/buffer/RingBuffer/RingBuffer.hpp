@@ -8,7 +8,7 @@
 #pragma once
 #include <cstddef>
 #include <memory>
-#include "IBuffer.hpp"
+#include "../interfaces/IBuffer.hpp"
 
 namespace Buffer
 {

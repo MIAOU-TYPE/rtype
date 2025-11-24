@@ -7,8 +7,8 @@
 
 #include <iostream>
 #include <string>
-#include "SignalHandler.hpp"
-#include "UDPServer.hpp"
+#include "server/UDPServer/UDPServer.hpp"
+#include "signal/SignalHandler/SignalHandler.hpp"
 
 int main(void)
 {

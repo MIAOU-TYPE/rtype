@@ -6,8 +6,8 @@
 */
 
 #pragma once
+#include "../NetWrapper/NetWrapper.hpp"
 #include "IServer.hpp"
-#include "NetWrapper.hpp"
 
 /**
  * @namespace Server

@@ -12,7 +12,7 @@
     #include <atomic>
     #include <map>
     #include <signal.h>
-    #include "ISignalHandler.hpp"
+    #include "../interfaces/ISignalHandler.hpp"
 
 /**
  * @namespace Signal

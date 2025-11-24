@@ -90,7 +90,7 @@ namespace Network
         if (buffer.size() < sizeof(PacketDisconnect)) {
             throw Client::Exception::BufferException("Buffer size is insufficient for PacketDisconnect serialization");
         }
-        
+
         std::memcpy(buffer.data(), &packet, sizeof(PacketDisconnect));
         return buffer;
     }

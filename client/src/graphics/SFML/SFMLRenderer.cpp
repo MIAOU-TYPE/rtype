@@ -43,3 +43,18 @@ bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const
 {
     return event.type == sf::Event::Closed;
 }
+
+void SFMLRenderer::drawSprite(const sf::Sprite &sprite)
+{
+    _window.draw(sprite);
+}
+
+unsigned int SFMLRenderer::getWindowWidth() const
+{
+    return _window.getSize().x;
+}
+
+unsigned int SFMLRenderer::getWindowHeight() const
+{
+    return _window.getSize().y;
+}

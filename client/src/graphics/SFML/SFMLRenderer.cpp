@@ -30,3 +30,7 @@ void SFMLRenderer::display() {
 bool SFMLRenderer::pollEvent(sf::Event& event) {
     return window.pollEvent(event);
 }
+
+bool SFMLRenderer::isWindowCloseEvent(const sf::Event& event) const {
+    return event.type == sf::Event::Closed;
+}

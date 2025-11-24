@@ -57,6 +57,13 @@ public:
      * @return True if an event was polled, false otherwise.
      */
     bool pollEvent(sf::Event& event) override;
+
+    /**
+     * @brief Checks if the event is a window close event.
+     * @param event The event to check.
+     * @return True if the event is a window close event, false otherwise.
+     */
+    bool isWindowCloseEvent(const sf::Event& event) const override;
 };
 
 #endif // SFML_RENDERER_HPP

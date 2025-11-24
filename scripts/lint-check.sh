@@ -47,7 +47,7 @@ else
 fi
 echo
 
-# 2. Clang-tidy analysis (server only - client requires SFML)
+# 2. Clang-tidy analysis
 echo -e "${BLUE}Static analysis (clang-tidy)...${NC}"
 mkdir -p build
 cd build
@@ -65,7 +65,7 @@ while IFS= read -r -d '' f; do
     if ! clang-tidy "$f" --quiet -p build/compile_commands.json; then
         TIDY_ERRORS=1
     fi
-done < <(find server/src -name "*.cpp" -print0)
+done < <(find client/src server/src -name "*.cpp" -print0)
 
 if [ "$TIDY_ERRORS" -eq 0 ]; then
     echo -e "${GREEN}clang-tidy : OK${NC}"

@@ -9,10 +9,10 @@
 #ifdef _WIN32
     #include "WinHandler.hpp"
 #else
-    #include "../PosixHandler/PosixHandler.hpp"
+    #include "PosixHandler.hpp"
 #endif
 #include <memory>
-#include "../interfaces/ISignalHandler.hpp"
+#include "ISignalHandler.hpp"
 
 /**
  * @namespace Signal

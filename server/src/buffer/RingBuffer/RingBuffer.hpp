@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <memory>
 #include <vector>
-#include "../interfaces/IBuffer.hpp"
+#include "IBuffer.hpp"
 
 namespace Buffer
 {

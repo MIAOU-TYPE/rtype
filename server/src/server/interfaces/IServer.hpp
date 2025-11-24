@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <string>
-#include "../UDPServer/PacketReceived/IServerPacket.hpp"
+#include "IServerPacket.hpp"
 
 /**
  * @namespace Server

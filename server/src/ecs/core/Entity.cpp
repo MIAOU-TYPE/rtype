@@ -17,4 +17,4 @@ namespace Ecs
     {
         return _id;
     }
-}
+} // namespace Ecs

@@ -12,17 +12,17 @@ using namespace Net;
 UDPPacket::UDPPacket()
 {
     std::memset(&_addr, 0, sizeof(_addr));
-    std::memset(_buffer, 0, sizeof(_buffer));
+    std::memset(static_cast<void*>(_buffer), 0, sizeof(_buffer));
 }
 
 uint8_t *UDPPacket::buffer()
 {
-    return _buffer;
+    return &(_buffer[0]);
 }
 
 const uint8_t *UDPPacket::buffer() const
 {
-    return _buffer;
+    return &(_buffer[0]);
 }
 
 sockaddr_in *UDPPacket::address()

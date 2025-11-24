@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** real_r_type
 ** File description:
-** main
+** Main
 */
 
 #include <exception>

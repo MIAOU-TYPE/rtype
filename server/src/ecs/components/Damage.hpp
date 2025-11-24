@@ -18,6 +18,6 @@ namespace Ecs
      * @brief Represents damage dealt by an entity.
      */
     struct Damage {
-        int amount = 0; //< Damage amount
+        int amount = 0; ///< Damage amount
     };
 } // namespace Ecs

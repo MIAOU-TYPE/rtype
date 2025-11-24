@@ -18,7 +18,7 @@ namespace Ecs
      * @brief Defines the collision box of an entity.
      */
     struct Collision {
-        float width = 0.f;  //< Collision width
-        float height = 0.f; //< Collision height
+        float width = 0.f;  ///< Collision width
+        float height = 0.f; ///< Collision height
     };
 } // namespace Ecs

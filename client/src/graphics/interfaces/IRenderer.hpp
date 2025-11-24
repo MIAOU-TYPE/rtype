@@ -10,6 +10,10 @@
 #include <SFML/Window/Event.hpp>
 #include <string>
 
+/**
+ * @namespace Graphics
+ * @brief Contains all graphics-related classes and interfaces.
+ */
 namespace Graphics
 {
 

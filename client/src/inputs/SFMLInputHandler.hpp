@@ -12,9 +12,12 @@
 #include <iostream>
 #include "IInputHandler.hpp"
 
+/**
+ * @namespace Input
+ * @brief Contains all input-related classes and interfaces.
+ */
 namespace Input
 {
-
     /**
      * @class SFMLInputHandler
      * @brief SFML implementation of the IInputHandler interface.

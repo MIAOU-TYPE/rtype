@@ -10,6 +10,10 @@
 #include <SFML/Graphics.hpp>
 #include "IRenderer.hpp"
 
+/**
+ * @namespace Graphics
+ * @brief Contains all graphics-related classes and interfaces.
+ */
 namespace Graphics
 {
 
@@ -65,7 +69,7 @@ namespace Graphics
         bool isWindowCloseEvent(const sf::Event &event) const override;
 
       private:
-        sf::RenderWindow window; ///> The SFML render window
+        sf::RenderWindow _window; ///> The SFML render window
     };
 
 } // namespace Graphics

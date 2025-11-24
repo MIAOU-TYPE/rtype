@@ -9,6 +9,10 @@
 
 #include <SFML/Window/Event.hpp>
 
+/**
+ * @namespace Input
+ * @brief Contains all input-related classes and interfaces.
+ */
 namespace Input
 {
 

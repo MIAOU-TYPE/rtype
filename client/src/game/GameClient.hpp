@@ -13,6 +13,10 @@
 #include "IInputHandler.hpp"
 #include "IRenderer.hpp"
 
+/**
+ * @namespace Game
+ * @brief Contains all game-related classes and interfaces.
+ */
 namespace Game
 {
     /**
@@ -67,8 +71,8 @@ namespace Game
         void run();
 
       private:
-        std::unique_ptr<Graphics::IRenderer> renderer = nullptr;      ///> The renderer interface
-        std::unique_ptr<Input::IInputHandler> inputHandler = nullptr; ///> The input handler interface
+        std::unique_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> The renderer interface
+        std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr; ///> The input handler interface
     };
 
 } // namespace Game

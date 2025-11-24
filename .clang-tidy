@@ -29,7 +29,8 @@ Checks: |
   -misc-non-private-member-variables-in-classes,         # Same as above
   -clang-analyzer-optin.cplusplus.VirtualCall,           # Virtual call warnings are too noisy
   -performance-avoid-endl,                               # Use of endl is intentional in some places
-  -cppcoreguidelines-pro-type-reinterpret-cast           # reinterpret_cast is required for low-level code
+  -cppcoreguidelines-pro-type-reinterpret-cast,           # reinterpret_cast is required for low-level code
+  -cppcoreguidelines-pro-type-const-cast,                 # const_cast is required for low-level code
 
 WarningsAsErrors: false
 

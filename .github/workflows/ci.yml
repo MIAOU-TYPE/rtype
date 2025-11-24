@@ -152,4 +152,4 @@ jobs:
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: ${{ env.MIRROR_REPO_URL }}
-          ssh_private_key: ${{ secrets.EPITECH_SSH_KEY }}
+          ssh_private_key: ${{ secrets.R_TYPE_SSH_KEY }}

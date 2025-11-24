@@ -49,16 +49,18 @@ namespace Ecs
         if (static_cast<size_t>(entity) >= arr.size())
             return false;
         return arr[static_cast<size_t>(entity)].has_value();
-}
-
+    }
 
     template <typename... Components, typename Function>
     void Registry::view(Function func)
     {
-        auto &first = getComponents<std::tuple_element_t<0, std::tuple<Components...>>>();
+        if ((!_entityToIndex.contains(std::type_index(typeid(Components))) || ...))
+            return;
+        auto arrays = std::forward_as_tuple(getComponents<Components>()...);
+        auto &first = std::get<0>(arrays);
         for (size_t i = 0; i < first.size(); ++i) {
-            if ((hasComponent<Components>(Entity(i)) && ...))
-                func(Entity(i), *getComponents<Components>()[i]...);
+            if ((std::get<SparseArray<Components>&>(arrays)[i].has_value() && ...))
+                func(Entity(i), *std::get<SparseArray<Components>&>(arrays)[i]...);
         }
     }
 }

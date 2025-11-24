@@ -29,6 +29,11 @@ add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 
 # -------------------------
+# Set output directory for the executable
+# -------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+# -------------------------
 # Compiler warnings
 # -------------------------
 if (MSVC)
@@ -51,7 +56,6 @@ else()
     )
 endif()
 
-
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -66,3 +70,4 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     add_subdirectory(tests)
 endif()
+

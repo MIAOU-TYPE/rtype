@@ -1,9 +1,13 @@
+# CMakeLists.txt for unit tests using GoogleTest framework
 file(GLOB TEST_SOURCES "*.cpp")
-file(GLOB_RECURSE ECS_SOURCES "${CMAKE_SOURCE_DIR}/server/src/ecs/*.cpp")
 
-add_executable(unit_tests ${TEST_SOURCES} ${ECS_SOURCES})
+# Recursively find all server sources (all subfolders)
+file(GLOB_RECURSE SERVER_SOURCES "${CMAKE_SOURCE_DIR}/server/src/*.cpp")
 
-# Include directories
+# Create executable
+add_executable(unit_tests ${TEST_SOURCES} ${SERVER_SOURCES})
+
+# Include directories (all subfolders)
 file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${CMAKE_SOURCE_DIR}/server/src")
 target_include_directories(unit_tests PRIVATE ${ALL_INCLUDE_DIRS})
 
@@ -21,6 +25,4 @@ target_compile_features(unit_tests PRIVATE cxx_std_20)
 
 # Enable CTest
 enable_testing()
-
-# Add test manually (most reliable method)
 add_test(NAME unit_tests COMMAND unit_tests)

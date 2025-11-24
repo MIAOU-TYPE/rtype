@@ -27,7 +27,9 @@ namespace Ecs
     template <typename Component>
     class SparseArray {
       public:
+        /** @brief Default constructor and destructor */
         SparseArray() = default;
+        //** @brief Default destructor */
         ~SparseArray() = default;
 
         /**

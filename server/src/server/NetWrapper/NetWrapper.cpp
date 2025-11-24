@@ -24,7 +24,7 @@ namespace Net
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optName, (optVal), (optLen));
+        return ::setsockopt(s, level, optName, (const char *) optVal, optLen);
     }
 
     recvfrom_return_t NetWrapper::recvFrom(

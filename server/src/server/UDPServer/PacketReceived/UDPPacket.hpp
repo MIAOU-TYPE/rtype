@@ -83,8 +83,8 @@ namespace Net
 
       private:
         std::array<uint8_t, MAX_SIZE> _buffer = {}; //> Buffer to store packet data
-        size_t _size = 0;                //> Size of the packet
-        sockaddr_in _addr = {};          //> Source address of the packet
+        size_t _size = 0;                           //> Size of the packet
+        sockaddr_in _addr = {};                     //> Source address of the packet
     };
 } // namespace Net
 

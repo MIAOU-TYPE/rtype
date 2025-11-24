@@ -8,16 +8,7 @@
 #pragma once
 #include <cstdint>
 #include "IServer.hpp"
-
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-using socket_handle = SOCKET;
-constexpr socket_handle kInvalidSocket = INVALID_SOCKET;
-#else
-using socket_handle = int;
-constexpr socket_handle kInvalidSocket = -1;
-#endif
+#include "NetWrapper.hpp"
 
 /**
  * @namespace Server
@@ -74,10 +65,16 @@ namespace Server
         void setRunning(bool running) noexcept override;
 
         /**
-         * @brief Polls the server for events with a specified timeout.
-         * @param timeout The maximum time to wait for events, in milliseconds.
+         * @brief reads packets from the server.
          */
-        virtual void pollOnce(int timeout) override = 0;
+        virtual void readPackets() override = 0;
+
+        /**
+         * @brief Sends a packet through the server.
+         * @param pkt The packet to be sent.
+         * @return True if the packet was sent successfully, false otherwise.
+         */
+        virtual bool sendPacket(const Net::IServerPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -96,6 +93,6 @@ namespace Server
         uint16_t _port = 0;      //> Port number the server is listening on
         bool _isRunning = false; //> Flag indicating if the server is running
 
-        socket_handle _socketFd = kInvalidSocket; //> Socket file descriptor
+        socketHandle _socketFd = kInvalidSocket; //> Socket file descriptor
     };
 } // namespace Server

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include "SignalHandler.hpp"
 #include "UDPServer.hpp"
 
 int main(void)
@@ -14,14 +15,24 @@ int main(void)
     std::string ip = "127.0.0.1";
     uint16_t port = 8080;
 
-    Server::UDPServer udpServer;
+    std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
+    Signal::SignalHandler signalHandler;
+    signalHandler.start();
+    signalHandler.registerCallback(Signal::SignalType::Interrupt, [&server]() {
+        if (server->isRunning())
+            server->setRunning(false);
+    });
     try {
-        udpServer.configure(ip, port);
-        udpServer.start();
-        udpServer.stop();
+        server->configure(ip, port);
+        server->start();
+        while (server->isRunning())
+            server->readPackets();
+        server->stop();
     } catch (const Server::ServerError &e) {
         std::cerr << "{Main}" << e.what() << std::endl;
+        signalHandler.stop();
         return 1;
     }
+    signalHandler.stop();
     return 0;
 }

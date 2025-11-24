@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <string>
+#include "IServerPacket.hpp"
 
 /**
  * @namespace Server
@@ -98,10 +99,16 @@ namespace Server
         virtual void setRunning(bool running) noexcept = 0;
 
         /**
-         * @brief Polls the server for events with a specified timeout.
-         * @param timeout The maximum time to wait for events, in milliseconds.
+         * @brief reads packets from the server.
          */
-        virtual void pollOnce(int timeout) = 0;
+        virtual void readPackets() = 0;
+
+        /**
+         * @brief Sends a packet through the server.
+         * @param pkt The packet to be sent.
+         * @return True if the packet was sent successfully, false otherwise.
+         */
+        virtual bool sendPacket(const Net::IServerPacket &pkt) = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.

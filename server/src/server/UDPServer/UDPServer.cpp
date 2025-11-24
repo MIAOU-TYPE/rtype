@@ -67,7 +67,7 @@ void UDPServer::readPackets()
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
-    pkt->setSize(static_cast<size_t>(received));
+    pkt->setSize(received);
 
     if (!_rxBuffer.push(pkt))
         std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";

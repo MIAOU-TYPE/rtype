@@ -19,7 +19,7 @@ void GameClient::run() {
     while (renderer->isOpen()) {
         sf::Event event;
         while (renderer->pollEvent(event)) {
-            if (event.type == sf::Event::Closed || inputHandler->isKeyPressed(Key::Escape)) {
+            if (renderer->isWindowCloseEvent(event) || inputHandler->isKeyPressed(Key::Escape)) {
                 renderer->close();
             }
             inputHandler->handleEvent(event);

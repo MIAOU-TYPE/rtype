@@ -60,6 +60,13 @@ public:
      * @return True if an event was polled, false otherwise.
      */
     virtual bool pollEvent(sf::Event& event) = 0;
+
+    /**
+     * @brief Checks if the event is a window close event.
+     * @param event The event to check.
+     * @return True if the event is a window close event, false otherwise.
+     */
+    virtual bool isWindowCloseEvent(const sf::Event& event) const = 0;
 };
 
 #endif // IRENDERER_HPP

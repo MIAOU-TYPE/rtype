@@ -11,32 +11,32 @@ using namespace Graphics;
 
 void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
-    window.create(sf::VideoMode(width, height), title);
+    _window.create(sf::VideoMode(width, height), title);
 }
 
 bool SFMLRenderer::isOpen() const
 {
-    return window.isOpen();
+    return _window.isOpen();
 }
 
 void SFMLRenderer::close()
 {
-    window.close();
+    _window.close();
 }
 
 void SFMLRenderer::clear()
 {
-    window.clear();
+    _window.clear();
 }
 
 void SFMLRenderer::display()
 {
-    window.display();
+    _window.display();
 }
 
 bool SFMLRenderer::pollEvent(sf::Event &event)
 {
-    return window.pollEvent(event);
+    return _window.pollEvent(event);
 }
 
 bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const

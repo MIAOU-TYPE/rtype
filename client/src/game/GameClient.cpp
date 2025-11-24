@@ -16,15 +16,15 @@ using namespace Game;
 void GameClient::init(unsigned int width, unsigned int height)
 {
     try {
-        renderer = std::make_unique<SFMLRenderer>();
-        if (!renderer) {
+        _renderer = std::make_unique<SFMLRenderer>();
+        if (!_renderer) {
             throw GameClientError("Failed to create renderer instance");
         }
 
-        renderer->createWindow(width, height, "R-Type");
+        _renderer->createWindow(width, height, "R-Type");
 
-        inputHandler = std::make_unique<SFMLInputHandler>();
-        if (!inputHandler) {
+        _inputHandler = std::make_unique<SFMLInputHandler>();
+        if (!_inputHandler) {
             throw GameClientError("Failed to create input handler instance");
         }
     } catch (const std::exception &e) {
@@ -34,23 +34,23 @@ void GameClient::init(unsigned int width, unsigned int height)
 
 void GameClient::run()
 {
-    if (!renderer || !inputHandler) {
+    if (!_renderer || !_inputHandler) {
         throw GameClientError("Game components not properly initialized");
     }
 
     try {
-        while (renderer->isOpen()) {
+        while (_renderer->isOpen()) {
             sf::Event event;
-            while (renderer->pollEvent(event)) {
-                if (renderer->isWindowCloseEvent(event) || inputHandler->isKeyPressed(Key::Escape)) {
-                    renderer->close();
+            while (_renderer->pollEvent(event)) {
+                if (_renderer->isWindowCloseEvent(event) || _inputHandler->isKeyPressed(Key::Escape)) {
+                    _renderer->close();
                 }
-                inputHandler->handleEvent(event);
+                _inputHandler->handleEvent(event);
             }
 
-            renderer->clear();
+            _renderer->clear();
             // TODO: Add rendering logic here
-            renderer->display();
+            _renderer->display();
         }
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));

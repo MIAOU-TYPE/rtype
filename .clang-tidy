@@ -36,7 +36,6 @@ WarningsAsErrors: false
 
 HeaderFilterRegex: 'src/.*'
 
-AnalyzeTemporaryDtors: true
 FormatStyle: none
 
 CheckOptions:

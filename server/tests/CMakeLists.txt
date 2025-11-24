@@ -4,6 +4,9 @@ file(GLOB TEST_SOURCES "*.cpp")
 # Recursively find all server sources (all subfolders)
 file(GLOB_RECURSE SERVER_SOURCES "${CMAKE_SOURCE_DIR}/server/src/*.cpp")
 
+# Exclude Main.cpp
+list(FILTER SERVER_SOURCES EXCLUDE REGEX ".*/Main\\.cpp$")
+
 # Create executable
 add_executable(unit_tests ${TEST_SOURCES} ${SERVER_SOURCES})
 

@@ -6,11 +6,9 @@
 */
 
 #include "GameClient.hpp"
-#include "../exceptions/GameExceptions.hpp"
 #include "../graphics/SFML/SFMLRenderer.hpp"
 #include "../inputs/SFMLInputHandler.hpp"
 
-using namespace Exceptions;
 using namespace Graphics;
 using namespace Input;
 using namespace Game;
@@ -20,28 +18,24 @@ void GameClient::init(int width, int height)
     try {
         renderer = std::make_unique<SFMLRenderer>();
         if (!renderer) {
-            throw InitializationException("Renderer", "Failed to create renderer instance");
+            throw GameClientError("Failed to create renderer instance");
         }
 
         renderer->createWindow(width, height, "R-Type");
 
         inputHandler = std::make_unique<SFMLInputHandler>();
         if (!inputHandler) {
-            throw InitializationException("InputHandler", "Failed to create input handler instance");
+            throw GameClientError("Failed to create input handler instance");
         }
-    } catch (const std::bad_alloc &e) {
-        throw InitializationException("GameClient", "Memory allocation failed: " + std::string(e.what()));
-    } catch (const GameException &) {
-        throw; // Re-throw game exceptions as-is
     } catch (const std::exception &e) {
-        throw InitializationException("GameClient", "Unexpected error: " + std::string(e.what()));
+        throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }
 }
 
 void GameClient::run()
 {
     if (!renderer || !inputHandler) {
-        throw GameLoopException("Game components not properly initialized");
+        throw GameClientError("Game components not properly initialized");
     }
 
     try {
@@ -58,9 +52,7 @@ void GameClient::run()
             // TODO: Add rendering logic here
             renderer->display();
         }
-    } catch (const GameException &) {
-        throw; // Re-throw game exceptions as-is
     } catch (const std::exception &e) {
-        throw GameLoopException("Unexpected error during execution: " + std::string(e.what()));
+        throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
 }

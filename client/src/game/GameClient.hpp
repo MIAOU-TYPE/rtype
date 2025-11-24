@@ -14,6 +14,33 @@
 
 namespace Game
 {
+    /**
+     * @class GameClientError
+     * @brief Exception class for client-related errors.
+     * Inherits from std::exception to provide error handling capabilities.
+     */
+    class GameClientError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for GameClientError.
+         * @param message The error message to be associated with the exception.
+         */
+        explicit GameClientError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; //> Error message
+    };
 
     /**
      * @class GameClient

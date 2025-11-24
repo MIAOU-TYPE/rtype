@@ -64,8 +64,7 @@ void UDPServer::readPackets()
     socklen_t addrLen = sizeof(sockaddr_in);
 
     recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
-        reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())),
-        &addrLen);
+        reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
     pkt->setSize(static_cast<size_t>(received));
@@ -78,8 +77,7 @@ void UDPServer::readPackets()
 bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
 {
     return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
-               reinterpret_cast<const sockaddr *>(pkt.address()),
-               sizeof(sockaddr_in))
+               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
         != -1;
 }
 
@@ -93,8 +91,8 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optVal;
-    if (Net::NetWrapper::setSocketOpt(sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt),
-            sizeof(opt))
+    if (Net::NetWrapper::setSocketOpt(
+            sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
         Net::NetWrapper::closeSocket(sockFd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
@@ -116,8 +114,7 @@ void UDPServer::bindSocket(Net::family_t family)
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
-    int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr),
-        sizeof(addr));
+    int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
     if (result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

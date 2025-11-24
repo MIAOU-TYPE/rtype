@@ -50,10 +50,6 @@ namespace Game
      * between different subsystems like rendering, networking, and ECS.
      */
     class GameClient {
-      private:
-        std::unique_ptr<Graphics::IRenderer> renderer;      ///< The renderer interface
-        std::unique_ptr<Input::IInputHandler> inputHandler; ///< The input handler interface
-
       public:
         /**
          * @brief Initializes the game client.
@@ -68,6 +64,10 @@ namespace Game
          * Handles events, updates game state, and renders the scene.
          */
         void run();
+
+      private:
+        std::unique_ptr<Graphics::IRenderer> renderer;      ///< The renderer interface
+        std::unique_ptr<Input::IInputHandler> inputHandler; ///< The input handler interface
     };
 
 } // namespace Game

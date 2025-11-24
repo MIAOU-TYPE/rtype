@@ -20,8 +20,6 @@ namespace Graphics
      * This class provides rendering functionality using the SFML library.
      */
     class SFMLRenderer : public IRenderer {
-      private:
-        sf::RenderWindow window; ///< The SFML render window
 
       public:
         /**
@@ -66,6 +64,9 @@ namespace Graphics
          * @return True if the event is a window close event, false otherwise.
          */
         bool isWindowCloseEvent(const sf::Event &event) const override;
+
+      private:
+        sf::RenderWindow window; ///< The SFML render window
     };
 
 } // namespace Graphics

@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <string>
 #include <SFML/Window/Event.hpp>
+#include <string>
 
 /**
  * @class IRenderer
@@ -18,7 +18,7 @@
  * (e.g., SFML, SDL) to be used interchangeably.
  */
 class IRenderer {
-public:
+  public:
     /**
      * @brief Virtual destructor for IRenderer.
      */
@@ -30,7 +30,7 @@ public:
      * @param height The height of the window.
      * @param title The title of the window.
      */
-    virtual void createWindow(int width, int height, const std::string& title) = 0;
+    virtual void createWindow(int width, int height, const std::string &title) = 0;
 
     /**
      * @brief Checks if the window is open.
@@ -58,12 +58,12 @@ public:
      * @param event The event to fill if available.
      * @return True if an event was polled, false otherwise.
      */
-    virtual bool pollEvent(sf::Event& event) = 0;
+    virtual bool pollEvent(sf::Event &event) = 0;
 
     /**
      * @brief Checks if the event is a window close event.
      * @param event The event to check.
      * @return True if the event is a window close event, false otherwise.
      */
-    virtual bool isWindowCloseEvent(const sf::Event& event) const = 0;
+    virtual bool isWindowCloseEvent(const sf::Event &event) const = 0;
 };

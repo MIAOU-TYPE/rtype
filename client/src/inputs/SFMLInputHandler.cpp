@@ -7,11 +7,13 @@
 
 #include "SFMLInputHandler.hpp"
 
-void SFMLInputHandler::handleEvent(const sf::Event& event) {
+void SFMLInputHandler::handleEvent(const sf::Event &event)
+{
     // TODO: Implement event handling logic if needed
 }
 
-bool SFMLInputHandler::isKeyPressed(Key key) const {
+bool SFMLInputHandler::isKeyPressed(Key key) const
+{
     sf::Keyboard::Key sfmlKey;
     switch (key) {
         case Key::A: sfmlKey = sf::Keyboard::A; break;

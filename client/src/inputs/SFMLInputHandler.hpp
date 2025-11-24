@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include "interfaces/IInputHandler.hpp"
 
 /**
@@ -18,12 +18,12 @@
  * This class provides input handling functionality using the SFML library.
  */
 class SFMLInputHandler : public IInputHandler {
-public:
+  public:
     /**
      * @brief Handles an input event.
      * @param event The input event to handle.
      */
-    void handleEvent(const sf::Event& event) override;
+    void handleEvent(const sf::Event &event) override;
 
     /**
      * @brief Checks if a key is currently pressed.

@@ -18,21 +18,24 @@
  * providing a consistent interface for error handling.
  */
 class GameException : public std::exception {
-protected:
+  protected:
     std::string message; ///< The error message
 
-public:
+  public:
     /**
      * @brief Constructor for GameException.
      * @param msg The error message.
      */
-    explicit GameException(const std::string& msg) : message(msg) {}
+    explicit GameException(const std::string &msg) : message(msg)
+    {
+    }
 
     /**
      * @brief Returns the error message.
      * @return The error message as a C-string.
      */
-    const char* what() const noexcept override {
+    const char *what() const noexcept override
+    {
         return message.c_str();
     }
 };
@@ -45,14 +48,16 @@ public:
  * its components (renderer, input handler, etc.).
  */
 class InitializationException : public GameException {
-public:
+  public:
     /**
      * @brief Constructor for InitializationException.
      * @param component The component that failed to initialize.
      * @param reason The reason for the failure.
      */
-    InitializationException(const std::string& component, const std::string& reason)
-        : GameException("Failed to initialize " + component + ": " + reason) {}
+    InitializationException(const std::string &component, const std::string &reason)
+        : GameException("Failed to initialize " + component + ": " + reason)
+    {
+    }
 };
 
 /**
@@ -63,14 +68,16 @@ public:
  * (window creation, drawing, etc.).
  */
 class RenderException : public GameException {
-public:
+  public:
     /**
      * @brief Constructor for RenderException.
      * @param operation The rendering operation that failed.
      * @param reason The reason for the failure.
      */
-    RenderException(const std::string& operation, const std::string& reason)
-        : GameException("Rendering error during " + operation + ": " + reason) {}
+    RenderException(const std::string &operation, const std::string &reason)
+        : GameException("Rendering error during " + operation + ": " + reason)
+    {
+    }
 };
 
 /**
@@ -80,14 +87,16 @@ public:
  * This exception is thrown when input handling operations fail.
  */
 class InputException : public GameException {
-public:
+  public:
     /**
      * @brief Constructor for InputException.
      * @param operation The input operation that failed.
      * @param reason The reason for the failure.
      */
-    InputException(const std::string& operation, const std::string& reason)
-        : GameException("Input error during " + operation + ": " + reason) {}
+    InputException(const std::string &operation, const std::string &reason)
+        : GameException("Input error during " + operation + ": " + reason)
+    {
+    }
 };
 
 /**
@@ -98,11 +107,12 @@ public:
  * an unrecoverable error.
  */
 class GameLoopException : public GameException {
-public:
+  public:
     /**
      * @brief Constructor for GameLoopException.
      * @param reason The reason for the game loop failure.
      */
-    explicit GameLoopException(const std::string& reason)
-        : GameException("Game loop error: " + reason) {}
+    explicit GameLoopException(const std::string &reason) : GameException("Game loop error: " + reason)
+    {
+    }
 };

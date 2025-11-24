@@ -17,17 +17,17 @@
  * This class provides rendering functionality using the SFML library.
  */
 class SFMLRenderer : public IRenderer {
-private:
+  private:
     sf::RenderWindow window; ///< The SFML render window
 
-public:
+  public:
     /**
      * @brief Creates the SFML window.
      * @param width The width of the window.
      * @param height The height of the window.
      * @param title The title of the window.
      */
-    void createWindow(int width, int height, const std::string& title) override;
+    void createWindow(int width, int height, const std::string &title) override;
 
     /**
      * @brief Checks if the SFML window is open.
@@ -55,12 +55,12 @@ public:
      * @param event The event to fill if available.
      * @return True if an event was polled, false otherwise.
      */
-    bool pollEvent(sf::Event& event) override;
+    bool pollEvent(sf::Event &event) override;
 
     /**
      * @brief Checks if the event is a window close event.
      * @param event The event to check.
      * @return True if the event is a window close event, false otherwise.
      */
-    bool isWindowCloseEvent(const sf::Event& event) const override;
+    bool isWindowCloseEvent(const sf::Event &event) const override;
 };

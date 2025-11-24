@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <memory>
 #include <SFML/Window/Event.hpp>
+#include <memory>
 #include "../graphics/interfaces/IRenderer.hpp"
 #include "../inputs/interfaces/IInputHandler.hpp"
 
@@ -20,11 +20,11 @@
  * between different subsystems like rendering, networking, and ECS.
  */
 class GameClient {
-private:
-    std::unique_ptr<IRenderer> renderer; ///< The renderer interface
+  private:
+    std::unique_ptr<IRenderer> renderer;         ///< The renderer interface
     std::unique_ptr<IInputHandler> inputHandler; ///< The input handler interface
 
-public:
+  public:
     /**
      * @brief Initializes the game client.
      *

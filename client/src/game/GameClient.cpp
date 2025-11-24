@@ -6,6 +6,7 @@
 */
 
 #include "GameClient.hpp"
+#include <SFML/System/Clock.hpp>
 #include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
@@ -27,6 +28,22 @@ void GameClient::init(unsigned int width, unsigned int height)
         if (!_inputHandler) {
             throw GameClientError("Failed to create input handler instance");
         }
+
+        _textureManager = std::make_unique<SFMLTextureManager>();
+        if (!_textureManager) {
+            throw GameClientError("Failed to create texture manager instance");
+        }
+
+        _textureManager->setRenderer(
+            std::shared_ptr<Graphics::IRenderer>(_renderer.get(), [](Graphics::IRenderer *) { /* no delete */ }));
+
+        _gameScene = std::make_unique<GameScene>(
+            std::shared_ptr<Graphics::IRenderer>(_renderer.get(), [](Graphics::IRenderer *) { /* no delete */ }),
+            std::shared_ptr<Graphics::ITextureManager>(
+                _textureManager.get(), [](Graphics::ITextureManager *) { /* no delete */ }));
+        if (!_gameScene) {
+            throw GameClientError("Failed to create game scene instance");
+        }
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }
@@ -34,12 +51,16 @@ void GameClient::init(unsigned int width, unsigned int height)
 
 void GameClient::run()
 {
-    if (!_renderer || !_inputHandler) {
+    if (!_renderer || !_inputHandler || !_gameScene) {
         throw GameClientError("Game components not properly initialized");
     }
 
+    sf::Clock clock;
+
     try {
         while (_renderer->isOpen()) {
+            float deltaTime = clock.restart().asSeconds();
+
             sf::Event event;
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(event) || _inputHandler->isKeyPressed(Key::Escape)) {
@@ -48,8 +69,12 @@ void GameClient::run()
                 _inputHandler->handleEvent(event);
             }
 
+            _gameScene->update(deltaTime);
+
             _renderer->clear();
-            // TODO: Add rendering logic here
+
+            _gameScene->render();
+
             _renderer->display();
         }
     } catch (const std::exception &e) {

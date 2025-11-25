@@ -30,9 +30,6 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
 
         _textureManager = std::make_unique<SFMLTextureManager>();
-        if (!_textureManager) {
-            throw GameClientError("Failed to create texture manager instance");
-        }
 
         _textureManager->setRenderer(
             std::shared_ptr<Graphics::IRenderer>(_renderer.get(), [](Graphics::IRenderer *) { /* no delete */ }));

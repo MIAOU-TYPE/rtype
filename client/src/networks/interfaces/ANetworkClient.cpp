@@ -6,13 +6,21 @@
 */
 
 #include "ANetworkClient.hpp"
-#include <fcntl.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+    #include <fcntl.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+#endif
 
 namespace Network
 {
-    ANetworkClient::ANetworkClient() : _socketFd(-1), _serverPort(0), _running(false)
+    ANetworkClient::ANetworkClient() : _socketFd(kInvalidSocket), _serverPort(0), _running(false)
     {
-        // Initialize default socket configuration
         _socketConfig.family = AF_INET;
         _socketConfig.type = SOCK_DGRAM;
         _socketConfig.protocol = IPPROTO_UDP;
@@ -31,15 +39,19 @@ namespace Network
 
     bool ANetworkClient::isConnected() const
     {
-        return _running && _socketFd >= 0;
+        return _running && _socketFd != kInvalidSocket;
     }
 
     void ANetworkClient::setupSocket(const SocketConfig &config)
     {
-        _socketFd = socket(config.family, config.type, config.protocol);
+        _socketFd = NetWrapper::socket(config.family, config.type, config.protocol);
 
-        if (_socketFd < 0) {
+        if (_socketFd == kInvalidSocket) {
+#ifdef _WIN32
+            throw Client::Exception::SocketException("Failed to create socket", WSAGetLastError());
+#else
             throw Client::Exception::SocketException("Failed to create socket", errno);
+#endif
         }
 
         _socketConfig = config;
@@ -47,13 +59,17 @@ namespace Network
 
     void ANetworkClient::applySocketOptions(const SocketOptions &options)
     {
-        if (_socketFd < 0) {
+        if (_socketFd == kInvalidSocket) {
             throw Client::Exception::SocketException("Socket not initialized", 0);
         }
 
         int opt = options.optVal;
-        if (setsockopt(_socketFd, options.level, options.optName, &opt, sizeof(opt)) < 0) {
+        if (NetWrapper::setSocketOpt(_socketFd, options.level, options.optName, &opt, sizeof(opt)) < 0) {
+#ifdef _WIN32
+            throw Client::Exception::SocketException("Failed to set socket options", WSAGetLastError());
+#else
             throw Client::Exception::SocketException("Failed to set socket options", errno);
+#endif
         }
     }
 
@@ -77,10 +93,16 @@ namespace Network
 
     void ANetworkClient::setNonBlocking(bool nonBlocking)
     {
-        if (_socketFd < 0) {
+        if (_socketFd == kInvalidSocket) {
             throw Client::Exception::SocketException("Socket not initialized", 0);
         }
 
+#ifdef _WIN32
+        u_long mode = nonBlocking ? 1 : 0;
+        if (ioctlsocket(_socketFd, FIONBIO, &mode) != 0) {
+            throw Client::Exception::SocketException("Failed to set socket non-blocking mode", WSAGetLastError());
+        }
+#else
         int flags = fcntl(_socketFd, F_GETFL, 0);
         if (flags == -1) {
             throw Client::Exception::SocketException("Failed to get socket flags", errno);
@@ -91,6 +113,7 @@ namespace Network
         if (fcntl(_socketFd, F_SETFL, newFlags) == -1) {
             throw Client::Exception::SocketException("Failed to set socket flags", errno);
         }
+#endif
     }
 
     bool ANetworkClient::isStoredIpCorrect() const noexcept

@@ -6,16 +6,13 @@
 */
 
 #pragma once
-#include <arpa/inet.h>
 #include <atomic>
 #include <cstring>
 #include <mutex>
-#include <netinet/in.h>
 #include <queue>
 #include <string>
-#include <sys/socket.h>
 #include <thread>
-#include <unistd.h>
+#include "../wrappers/NetWrapper.hpp"
 #include "INetworkClient.hpp"
 #include "SocketConfig.hpp"
 
@@ -117,7 +114,7 @@ namespace Network
          */
         bool isStoredPortCorrect() const noexcept;
 
-        int _socketFd;                                               ///< Socket file descriptor
+        socketHandle _socketFd;                                      ///< Socket file descriptor
         sockaddr_in _serverAddr;                                     ///< Server address structure
         std::string _serverIp;                                       ///< Server IP address (for validation)
         uint16_t _serverPort;                                        ///< Server port (for validation)

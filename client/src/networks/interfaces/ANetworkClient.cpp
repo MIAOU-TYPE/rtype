@@ -83,7 +83,7 @@ namespace Network
         }
 
         std::memset(&_serverAddr, 0, sizeof(_serverAddr));
-        _serverAddr.sin_family = _socketConfig.family;
+        _serverAddr.sin_family = static_cast<sa_family_t>(_socketConfig.family);
         _serverAddr.sin_port = htons(port);
 
         if (inet_pton(_socketConfig.family, ip.c_str(), &_serverAddr.sin_addr) <= 0) {
@@ -123,6 +123,6 @@ namespace Network
 
     bool ANetworkClient::isStoredPortCorrect() const noexcept
     {
-        return _serverPort > 0 && _serverPort <= 65535;
+        return _serverPort > 0;
     }
 } // namespace Network

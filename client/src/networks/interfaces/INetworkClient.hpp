@@ -8,10 +8,17 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "NetworkException.hpp"
+
+// Forward declaration
+namespace Network
+{
+    class IClientPacket;
+}
 
 namespace Network
 {
@@ -51,11 +58,11 @@ namespace Network
         virtual void sendPacket(const std::vector<uint8_t> &data) = 0;
 
         /**
-         * @brief Poll for incoming packets from the server
+         * @brief Poll for incoming packets with metadata from the server
          *
-         * @return std::vector<std::vector<uint8_t>> List of received packet data
+         * @return std::vector<std::shared_ptr<IClientPacket>> List of received packets with metadata
          */
-        virtual std::vector<std::vector<uint8_t>> poll() = 0;
+        virtual std::vector<std::shared_ptr<IClientPacket>> pollPackets() = 0;
 
         /**
          * @brief Check if the client is connected to the server

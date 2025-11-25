@@ -42,19 +42,19 @@ namespace Net
          * @brief Destroys the UDPPacket object.
          * @details This destructor cleans up any resources associated with the packet.
          */
-        ~UDPPacket() = default;
+        ~UDPPacket() override = default;
 
         /**
          * @brief Retrieves the packet buffer.
          * @return A pointer to the packet buffer.
          */
-        uint8_t *buffer();
+        uint8_t *buffer() override;
 
         /**
          * @brief Retrieves the packet buffer (const version).
          * @return A const pointer to the packet buffer.
          */
-        const uint8_t *buffer() const;
+        const uint8_t *buffer() const override;
 
         /**
          * @brief Retrieves the source address of the packet.
@@ -66,19 +66,19 @@ namespace Net
          * @brief Retrieves the source address of the packet (const version).
          * @return A const pointer to the sockaddr_in structure representing the source address.
          */
-        const sockaddr_in *address() const;
+        const sockaddr_in *address() const override;
 
         /**
          * @brief Retrieves the size of the packet.
          * @return The size of the packet in bytes.
          */
-        size_t size() const;
+        size_t size() const override;
 
         /**
          * @brief Sets the size of the packet.
          * @param s The size to set for the packet.
          */
-        void setSize(size_t s);
+        void setSize(size_t s) override;
 
       private:
         uint8_t _buffer[MAX_SIZE] = {0}; ///> Buffer to store packet data
@@ -115,7 +115,7 @@ inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
  * @param pkt The shared pointer to the IServerPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<Net::IServerPacket> pkt)
+inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Net::IServerPacket> &pkt)
 {
     return os << *pkt;
 }

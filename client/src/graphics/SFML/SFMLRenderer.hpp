@@ -68,6 +68,30 @@ namespace Graphics
          */
         bool isWindowCloseEvent(const sf::Event &event) const override;
 
+        /**
+         * @brief Draws a sprite to the render target.
+         * @param sprite The sprite to draw.
+         */
+        void drawSprite(const sf::Sprite &sprite) override;
+
+        /**
+         * @brief Renders an ISprite to the screen.
+         * @param sprite The sprite to render.
+         */
+        void renderSprite(const ISprite &sprite) override;
+
+        /**
+         * @brief Gets the window width.
+         * @return The width of the window.
+         */
+        unsigned int getWindowWidth() const override;
+
+        /**
+         * @brief Gets the window height.
+         * @return The height of the window.
+         */
+        unsigned int getWindowHeight() const override;
+
       private:
         sf::RenderWindow _window; ///> The SFML render window
     };

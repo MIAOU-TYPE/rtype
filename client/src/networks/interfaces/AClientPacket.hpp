@@ -6,11 +6,11 @@
 */
 
 #pragma once
-#include "IClientPacket.hpp"
-#include <cstring>
-#include <vector>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <cstring>
+#include <netinet/in.h>
+#include <vector>
+#include "IClientPacket.hpp"
 
 /**
  * @namespace Network
@@ -82,7 +82,6 @@ namespace Network
         static constexpr size_t MAX_SIZE = 2048;
 
       protected:
-
         /**
          * @brief Constructor for AClientPacket.
          * @details Initializes the packet buffer and size to zero.

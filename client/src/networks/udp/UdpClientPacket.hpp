@@ -54,10 +54,9 @@ inline std::ostream &operator<<(std::ostream &os, const Network::IClientPacket &
 {
     char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(pkt.address()->sin_addr), ip, INET_ADDRSTRLEN);
-    
-    os << "[Packet from " << ip << ":" << ntohs(pkt.address()->sin_port) 
-       << " | Size: " << pkt.size() << " bytes] ";
-    
+
+    os << "[Packet from " << ip << ":" << ntohs(pkt.address()->sin_port) << " | Size: " << pkt.size() << " bytes] ";
+
     for (size_t i = 0; i < pkt.size(); ++i) {
         uint8_t c = pkt.buffer()[i];
         if (std::isprint(c))
@@ -65,7 +64,7 @@ inline std::ostream &operator<<(std::ostream &os, const Network::IClientPacket &
         else
             os << ".";
     }
-    
+
     return os;
 }
 

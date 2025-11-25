@@ -62,16 +62,10 @@ namespace Network
             while (_running) {
                 auto packet = std::make_shared<UdpClientPacket>();
                 socklen_t senderAddrLen = sizeof(sockaddr_in);
-                
-                ssize_t receivedBytes = recvfrom(
-                    _socketFd, 
-                    packet->buffer(), 
-                    AClientPacket::MAX_SIZE, 
-                    0, 
-                    reinterpret_cast<sockaddr *>(packet->address()), 
-                    &senderAddrLen
-                );
-                
+
+                ssize_t receivedBytes = recvfrom(_socketFd, packet->buffer(), AClientPacket::MAX_SIZE, 0,
+                    reinterpret_cast<sockaddr *>(packet->address()), &senderAddrLen);
+
                 if (receivedBytes > 0) {
                     packet->setSize(receivedBytes);
                     std::lock_guard<std::mutex> lock(_receiveMutex);

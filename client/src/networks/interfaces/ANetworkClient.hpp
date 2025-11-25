@@ -6,8 +6,6 @@
 */
 
 #pragma once
-#include "INetworkClient.hpp"
-#include "SocketConfig.hpp"
 #include <arpa/inet.h>
 #include <atomic>
 #include <cstring>
@@ -18,6 +16,8 @@
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
+#include "INetworkClient.hpp"
+#include "SocketConfig.hpp"
 
 /**
  * @namespace Network
@@ -117,14 +117,14 @@ namespace Network
          */
         bool isStoredPortCorrect() const noexcept;
 
-        int _socketFd;                                                ///< Socket file descriptor
-        sockaddr_in _serverAddr;                                      ///< Server address structure
-        std::string _serverIp;                                        ///< Server IP address (for validation)
-        uint16_t _serverPort;                                         ///< Server port (for validation)
-        std::thread _receiverThread;                                  ///< Thread for receiving packets
-        std::atomic<bool> _running;                                   ///< Flag to control receiver thread
-        std::mutex _receiveMutex;                                     ///< Mutex for thread-safe packet access
-        std::queue<std::shared_ptr<IClientPacket>> _receivedPackets;  ///< Queue of received packets with metadata
-        SocketConfig _socketConfig;                                   ///< Socket configuration
+        int _socketFd;                                               ///< Socket file descriptor
+        sockaddr_in _serverAddr;                                     ///< Server address structure
+        std::string _serverIp;                                       ///< Server IP address (for validation)
+        uint16_t _serverPort;                                        ///< Server port (for validation)
+        std::thread _receiverThread;                                 ///< Thread for receiving packets
+        std::atomic<bool> _running;                                  ///< Flag to control receiver thread
+        std::mutex _receiveMutex;                                    ///< Mutex for thread-safe packet access
+        std::queue<std::shared_ptr<IClientPacket>> _receivedPackets; ///< Queue of received packets with metadata
+        SocketConfig _socketConfig;                                  ///< Socket configuration
     };
 } // namespace Network

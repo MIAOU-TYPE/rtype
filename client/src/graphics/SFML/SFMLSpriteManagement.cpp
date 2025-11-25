@@ -9,7 +9,7 @@
 
 using namespace Graphics;
 
-SFMLSprite::SFMLSprite(sf::Sprite sprite) : _sprite(std::move(sprite))
+SFMLSprite::SFMLSprite(const sf::Sprite &sprite) : _sprite(sprite)
 {
 }
 

@@ -45,7 +45,7 @@ namespace Game
         }
 
       private:
-        std::string _message = ""; ///< Error message
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -82,9 +82,9 @@ namespace Game
         void render();
 
       private:
-        std::shared_ptr<Graphics::IRenderer> _renderer;             ///< The renderer interface
-        std::shared_ptr<Graphics::ITextureManager> _textureManager; ///< The texture manager interface
-        std::unique_ptr<Background::Starfield> _starfield;          ///< The starfield background
+        std::shared_ptr<Graphics::IRenderer> _renderer;             ///> The renderer interface
+        std::shared_ptr<Graphics::ITextureManager> _textureManager; ///> The texture manager interface
+        std::unique_ptr<Background::Starfield> _starfield;          ///> The starfield background
     };
 
 } // namespace Game

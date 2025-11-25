@@ -44,7 +44,7 @@ namespace Background
         }
 
       private:
-        std::string _message = ""; ///< Error message
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -81,17 +81,17 @@ namespace Background
         void render();
 
       private:
-        std::shared_ptr<Graphics::IRenderer> _renderer;             ///< The renderer interface
-        std::shared_ptr<Graphics::ITextureManager> _textureManager; ///< The texture manager interface
+        std::shared_ptr<Graphics::IRenderer> _renderer;             ///> The renderer interface
+        std::shared_ptr<Graphics::ITextureManager> _textureManager; ///> The texture manager interface
 
-        float _scrollSpeed = 100.0f;   ///< Speed of background scrolling in pixels per second
-        float _background1X = 0.0f;    ///< X position of first background sprite
-        float _background2X = 0.0f;    ///< X position of second background sprite
-        float _backgroundWidth = 0.0f; ///< Width of the background texture
-        float _scaleY = 1.0f;          ///< Y scale factor to fit window height
+        float _scrollSpeed = 100.0f;   ///> Speed of background scrolling in pixels per second
+        float _background1X = 0.0f;    ///> X position of first background sprite
+        float _background2X = 0.0f;    ///> X position of second background sprite
+        float _backgroundWidth = 0.0f; ///> Width of the background texture
+        float _scaleY = 1.0f;          ///> Y scale factor to fit window height
 
-        std::unique_ptr<Graphics::ISprite> _sprite1; ///< First background sprite
-        std::unique_ptr<Graphics::ISprite> _sprite2; ///< Second background sprite
+        std::unique_ptr<Graphics::ISprite> _sprite1; ///> First background sprite
+        std::unique_ptr<Graphics::ISprite> _sprite2; ///> Second background sprite
 
         const std::string BACKGROUND_TEXTURE_PATH = "client/assets/sprites/background_space.png";
     };

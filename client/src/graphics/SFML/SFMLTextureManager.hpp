@@ -64,7 +64,7 @@ namespace Graphics
         const sf::Sprite &getSFMLSprite() const;
 
       private:
-        sf::Sprite _sprite; ///< The underlying SFML sprite
+        sf::Sprite _sprite; ///> The underlying SFML sprite
     };
 
     /**
@@ -102,8 +102,8 @@ namespace Graphics
         void setRenderer(std::shared_ptr<IRenderer> renderer) override;
 
       private:
-        std::unordered_map<std::string, sf::Texture> _textures; ///< Map of loaded textures
-        std::shared_ptr<IRenderer> _renderer;                   ///< The renderer interface
+        std::unordered_map<std::string, sf::Texture> _textures; ///> Map of loaded textures
+        std::shared_ptr<IRenderer> _renderer;                   ///> The renderer interface
     };
 
 } // namespace Graphics

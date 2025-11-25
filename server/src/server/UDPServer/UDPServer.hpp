@@ -62,7 +62,7 @@ namespace Server
          * @brief Sends a packet via the UDP server.
          * @return true if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const Net::IServerPacket &pkt) override;
+        bool sendPacket(const Net::IServerPacket &pkt) override;
 
       private:
         void setupSocket(const Net::SocketConfig &params,

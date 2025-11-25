@@ -14,7 +14,7 @@ using namespace Signal;
 
 PosixHandler *PosixHandler::instance = nullptr;
 
-PosixHandler::PosixHandler() : running(false)
+PosixHandler::PosixHandler() : mutex(), running(false)
 {
     instance = this;
 }
@@ -67,13 +67,14 @@ void PosixHandler::stop() noexcept
 void PosixHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
     try {
+        if (!callback)
+            return;
         std::lock_guard<std::mutex> lock(mutex);
-
-        switch (type) {
-            case SignalType::Interrupt: _handlers[SignalType::Interrupt].push_back(callback); break;
-            case SignalType::Terminate: _handlers[SignalType::Terminate].push_back(callback); break;
-            case SignalType::Hangup: _handlers[SignalType::Hangup].push_back(callback); break;
-        }
+        if (!running.load())
+            return;
+        if (type != SignalType::Interrupt && type != SignalType::Terminate && type != SignalType::Hangup)
+            return;
+        _handlers[type].push_back(callback);
     } catch (...) {
         std::cerr << "{PosixHandler::registerCallback} Failed to register callback" << std::endl;
     }

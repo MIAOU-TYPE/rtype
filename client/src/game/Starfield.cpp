@@ -28,7 +28,7 @@ Starfield::Starfield(
     _sprite1 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
     _sprite2 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
 
-    _backgroundWidth = _sprite1->getWidth();
+    // _backgroundWidth = _sprite1->getWidth();
 
     unsigned int windowHeight = _renderer->getWindowHeight();
     float spriteHeight = _sprite1->getHeight();
@@ -40,6 +40,8 @@ Starfield::Starfield(
 
     _sprite1->setScale(_scaleY, _scaleY);
     _sprite2->setScale(_scaleY, _scaleY);
+
+    _backgroundWidth = _sprite1->getWidth();
 
     _background1X = 0.0f;
     _background2X = _backgroundWidth;
@@ -62,12 +64,12 @@ void Starfield::render()
 {
     try {
         if (_sprite1) {
-            _sprite1->setPosition(_background1X * _scaleY, 0.0f);
+            _sprite1->setPosition(_background1X, 0.0f);
             _renderer->renderSprite(*_sprite1);
         }
 
         if (_sprite2) {
-            _sprite2->setPosition(_background2X * _scaleY, 0.0f);
+            _sprite2->setPosition(_background2X, 0.0f);
             _renderer->renderSprite(*_sprite2);
         }
     } catch (const std::exception &e) {

@@ -91,7 +91,7 @@ namespace Network
                     AClientPacket::MAX_SIZE, 0, reinterpret_cast<sockaddr *>(packet->address()), &senderAddrLen);
 
                 if (receivedBytes > 0) {
-                    packet->setSize(receivedBytes);
+                    packet->setSize(static_cast<size_t>(receivedBytes));
                     std::lock_guard<std::mutex> lock(_receiveMutex);
                     _receivedPackets.push(packet);
                 } else if (receivedBytes < 0) {

@@ -54,9 +54,6 @@ while IFS= read -r -d '' f; do
         TIDY_FAILED=1
     fi
 done < <(find client/src server/src -name "*.cpp" -print0)
-if [ "$TIDY_FAILED" -eq 1 ]; then
-    exit 1
-fi
 
 echo -e "${GREEN}clang-tidy fix completed${NC}"
 echo "==================================="

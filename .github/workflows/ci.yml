@@ -3,13 +3,8 @@
 name: CI
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore: [ "**/*.md", "docs/**" ]
-
   pull_request:
     branches: [ "*" ]
-    paths: [ "client/**", "server/**", ".github/workflows/ci.yml" ]
   workflow_dispatch:
 
 env:

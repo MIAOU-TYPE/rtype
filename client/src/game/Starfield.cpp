@@ -26,18 +26,13 @@ Starfield::Starfield(
     }
 
     auto sprite = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
-    if (!sprite) {
-        throw StarfieldError("Failed to create background sprite");
-    }
 
     _backgroundWidth = sprite->getWidth();
 
-    // Calculate scale factor to fit window height
     unsigned int windowHeight = _renderer->getWindowHeight();
     float spriteHeight = sprite->getHeight();
     _scaleY = static_cast<float>(windowHeight) / spriteHeight;
 
-    // Create the two sprites for seamless scrolling
     _sprite1 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
     _sprite2 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
 
@@ -45,7 +40,6 @@ Starfield::Starfield(
         throw StarfieldError("Failed to create background sprites");
     }
 
-    // Set initial scale for both sprites
     _sprite1->setScale(_scaleY, _scaleY);
     _sprite2->setScale(_scaleY, _scaleY);
 

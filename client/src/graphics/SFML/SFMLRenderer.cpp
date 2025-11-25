@@ -6,7 +6,7 @@
 */
 
 #include "SFMLRenderer.hpp"
-#include "SFMLTextureManager.hpp"
+#include "SFMLSpriteManagement.hpp"
 
 using namespace Graphics;
 

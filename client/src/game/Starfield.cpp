@@ -28,8 +28,6 @@ Starfield::Starfield(
     _sprite1 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
     _sprite2 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
 
-    // _backgroundWidth = _sprite1->getWidth();
-
     unsigned int windowHeight = _renderer->getWindowHeight();
     float spriteHeight = _sprite1->getHeight();
     _scaleY = static_cast<float>(windowHeight) / spriteHeight;

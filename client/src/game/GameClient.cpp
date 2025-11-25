@@ -38,9 +38,6 @@ void GameClient::init(unsigned int width, unsigned int height)
             std::shared_ptr<Graphics::IRenderer>(_renderer.get(), [](Graphics::IRenderer *) { /* no delete */ }),
             std::shared_ptr<Graphics::ITextureManager>(
                 _textureManager.get(), [](Graphics::ITextureManager *) { /* no delete */ }));
-        if (!_gameScene) {
-            throw GameClientError("Failed to create game scene instance");
-        }
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }

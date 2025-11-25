@@ -67,9 +67,11 @@ void PosixHandler::stop() noexcept
 void PosixHandler::registerCallback(SignalType type, std::function<void()> callback) noexcept
 {
     try {
-        if (!running.load() || !callback)
+        if (!callback)
             return;
         std::lock_guard<std::mutex> lock(mutex);
+        if (!running.load())
+            return;
         if (type != SignalType::Interrupt && type != SignalType::Terminate && type != SignalType::Hangup)
             return;
         _handlers[type].push_back(callback);

@@ -42,7 +42,7 @@ namespace Graphics
         std::unique_ptr<ISprite> createSprite(const std::string &texturePath) override;
 
       private:
-        std::unordered_map<std::string, sf::Texture> _textures; ///> Map of loaded textures
+        std::unordered_map<std::string, sf::Texture> _textures = {}; ///> Map of loaded textures
     };
 
 } // namespace Graphics

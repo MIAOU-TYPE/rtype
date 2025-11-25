@@ -10,10 +10,10 @@
 #include <SFML/Window/Event.hpp>
 #include <exception>
 #include <memory>
+#include "GameScene.hpp"
 #include "IInputHandler.hpp"
 #include "IRenderer.hpp"
 #include "SFMLTextureManager.hpp"
-#include "GameScene.hpp"
 
 /**
  * @namespace Game
@@ -73,10 +73,10 @@ namespace Game
         void run();
 
       private:
-    std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
-    std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr;        ///> The input handler interface
-    std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
-    std::unique_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
+        std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr;        ///> The input handler interface
+        std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
+        std::unique_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
     };
 
 } // namespace Game

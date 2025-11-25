@@ -9,8 +9,8 @@
 
 using namespace Game;
 
-GameScene::GameScene(std::shared_ptr<Graphics::IRenderer> renderer, 
-                    std::shared_ptr<Graphics::ITextureManager> textureManager)
+GameScene::GameScene(
+    std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager)
     : _renderer(renderer), _textureManager(textureManager)
 {
     if (!_renderer) {
@@ -37,9 +37,9 @@ void GameScene::update(float deltaTime)
         if (_starfield) {
             _starfield->update(deltaTime);
         }
-        
+
         // TODO: Update other game entities here
-        
+
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to update game scene: " + std::string(e.what()));
     }
@@ -51,9 +51,9 @@ void GameScene::render()
         if (_starfield) {
             _starfield->render();
         }
-        
+
         // TODO: Render other game entities here
-        
+
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));
     }

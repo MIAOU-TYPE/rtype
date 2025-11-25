@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <memory>
 #include <exception>
+#include <memory>
 #include <string>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
@@ -62,8 +62,8 @@ namespace Game
          * @param renderer Shared pointer to the renderer.
          * @param textureManager Shared pointer to the texture manager.
          */
-        GameScene(std::shared_ptr<Graphics::IRenderer> renderer, 
-                 std::shared_ptr<Graphics::ITextureManager> textureManager);
+        GameScene(
+            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager);
 
         /**
          * @brief Destructor for GameScene.
@@ -82,9 +82,9 @@ namespace Game
         void render();
 
       private:
-        std::shared_ptr<Graphics::IRenderer> _renderer;             ///> The renderer interface
-        std::shared_ptr<Graphics::ITextureManager> _textureManager; ///> The texture manager interface
-        std::unique_ptr<Background::Starfield> _starfield;          ///> The starfield background
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
+        std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
+        std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
     };
 
 } // namespace Game

@@ -61,9 +61,9 @@ namespace Net
             std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
 
             std::shared_ptr<IServerPacket> makeEntityCreate(
-                const sockaddr_in &addr, uint32_t id, float x, float y, uint16_t sprite) noexcept;
-            std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, uint32_t id) noexcept;
-            std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) noexcept;
+                const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept;
+            std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept;
+            std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) noexcept;
 
           private:
             /**

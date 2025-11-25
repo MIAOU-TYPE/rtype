@@ -40,7 +40,7 @@ std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &add
 // TODO
 //==============
 std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
-    const sockaddr_in &addr, uint32_t id, float x, float y, uint16_t sprite) noexcept
+    const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept
 {
     (void) id;
     (void) x;
@@ -55,7 +55,7 @@ std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
 //==============
 // TODO
 //==============
-std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, uint32_t id) noexcept
+std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept
 {
     (void) id;
 
@@ -67,7 +67,7 @@ std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_i
 //==============
 // TODO
 //==============
-std::shared_ptr<IServerPacket> PacketFactory::makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) noexcept
+std::shared_ptr<IServerPacket> PacketFactory::makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) noexcept
 {
     (void) id;
     (void) amount;

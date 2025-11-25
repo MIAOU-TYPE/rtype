@@ -12,6 +12,13 @@
 #include <vector>
 #include "AClientPacket.hpp"
 
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+#endif
+
 /**
  * @namespace Network
  * @brief Namespace for network-related classes and functions.

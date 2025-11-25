@@ -24,60 +24,57 @@
 
 /**
  * @namespace Net
- * @brief Namespace for network-related classes and functions.
+ * @brief Namespace for networking-related classes and functions.
  */
-namespace Net
+/**
+ * @namespace Factory
+ * @brief Namespace for factory classes related to networking.
+ */
+namespace Net::Factory
 {
     /**
-     * @namespace Factory
-     * @brief Namespace for factory classes related to packet creation.
+     * @class PacketFactory
+     * @brief Factory class for creating various types of network packets.
+     * @details This class provides methods to create different types of packets
+     * such as connect/disconnect, input, default, entity creation/destruction, and damage events.
      */
-    namespace Factory
-    {
+    class PacketFactory {
+      public:
         /**
-         * @class PacketFactory
-         * @brief Factory class for creating various types of network packets.
-         * @details This class provides methods to create different types of packets
-         * such as connect/disconnect, input, default, entity creation/destruction, and damage events.
+         * @brief Constructs a new PacketFactory object.
+         * @param packet A shared pointer to an IServerPacket used as a template for creating packets.
          */
-        class PacketFactory {
-          public:
-            /**
-             * @brief Constructs a new PacketFactory object.
-             * @param packet A shared pointer to an IServerPacket used as a template for creating packets.
-             */
-            PacketFactory(std::shared_ptr<Net::IServerPacket> packet);
+        PacketFactory(const std::shared_ptr<Net::IServerPacket> &packet);
 
-            /**
-             * @brief Destructor for PacketFactory.
-             */
-            ~PacketFactory() = default;
+        /**
+         * @brief Destructor for PacketFactory.
+         */
+        ~PacketFactory() = default;
 
-            /**
-             * @brief Creates a default packet with the specified flag.
-             * @param flag The flag to set in the default packet.
-             * @return A reference to the created IServerPacket.
-             */
-            std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
+        /**
+         * @brief Creates a default packet with the specified flag.
+         * @param flag The flag to set in the default packet.
+         * @return A reference to the created IServerPacket.
+         */
+        std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
 
-            std::shared_ptr<IServerPacket> makeEntityCreate(
-                const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept;
-            std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept;
-            std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) noexcept;
+        std::shared_ptr<IServerPacket> makeEntityCreate(
+            const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept;
+        std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept;
+        std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) noexcept;
 
-          private:
-            /**
-             * @brief Creates a HeaderPacket with the specified parameters.
-             * @param type The type of the packet.
-             * @param version The version of the packet.
-             * @param size The size of the packet.
-             * @return The constructed HeaderPacket.
-             */
-            HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
+      private:
+        /**
+         * @brief Creates a HeaderPacket with the specified parameters.
+         * @param type The type of the packet.
+         * @param version The version of the packet.
+         * @param size The size of the packet.
+         * @return The constructed HeaderPacket.
+         */
+        HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
 
-            std::shared_ptr<IServerPacket> _packet =
-                nullptr; //> Pointer to the template IServerPacket used for creating packets.
-        };
+        std::shared_ptr<IServerPacket> _packet =
+            nullptr; //> Pointer to the template IServerPacket used for creating packets.
+    };
 
-    } // namespace Factory
-} // namespace Net
+} // namespace Net::Factory

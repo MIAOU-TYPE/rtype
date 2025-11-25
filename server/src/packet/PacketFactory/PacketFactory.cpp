@@ -7,10 +7,12 @@
 
 #include "PacketFactory.hpp"
 
+#include <utility>
+
 using namespace Net;
 using namespace Factory;
 
-PacketFactory::PacketFactory(std::shared_ptr<IServerPacket> packet) : _packet(packet)
+PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet) : _packet(packet)
 {
 }
 

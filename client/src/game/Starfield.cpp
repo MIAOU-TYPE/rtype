@@ -22,7 +22,7 @@ Starfield::Starfield(
     }
 
     if (!_textureManager->loadTexture(BACKGROUND_TEXTURE_PATH)) {
-        throw StarfieldError("Failed to load background texture: " + std::string(BACKGROUND_TEXTURE_PATH));
+        throw StarfieldError("Failed to load background texture: " + BACKGROUND_TEXTURE_PATH);
     }
 
     auto sprite = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);

@@ -17,7 +17,7 @@ using namespace Game;
 void GameClient::init(unsigned int width, unsigned int height)
 {
     try {
-        _renderer = std::make_unique<SFMLRenderer>();
+        _renderer = std::make_shared<SFMLRenderer>();
         if (!_renderer) {
             throw GameClientError("Failed to create renderer instance");
         }
@@ -26,15 +26,12 @@ void GameClient::init(unsigned int width, unsigned int height)
 
         _inputHandler = std::make_unique<SFMLInputHandler>();
 
-        _textureManager = std::make_unique<SFMLTextureManager>();
+        _textureManager = std::make_shared<SFMLTextureManager>();
         if (!_textureManager) {
             throw GameClientError("Failed to create texture manager instance");
         }
 
-        _gameScene = std::make_unique<GameScene>(
-            std::shared_ptr<Graphics::IRenderer>(_renderer.get(), [](Graphics::IRenderer *) { /* no delete */ }),
-            std::shared_ptr<Graphics::ITextureManager>(
-                _textureManager.get(), [](Graphics::ITextureManager *) { /* no delete */ }));
+        _gameScene = std::make_unique<GameScene>(_renderer, _textureManager);
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }

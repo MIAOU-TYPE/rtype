@@ -9,15 +9,9 @@
 #include <cstring>
 #include <map>
 #include <memory>
-#include "ConnectPacket.hpp"
 #include "DefaultPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
-
-#define CONNECT    0x01
-#define INPUT      0x02
-#define PING       0x03
-#define DISCONNECT 0x04
 
 #define ACCEPT         0x10
 #define REJECT         0x11
@@ -58,18 +52,6 @@ namespace Net
              * @brief Destructor for PacketFactory.
              */
             ~PacketFactory() = default;
-
-            /**
-             * @brief Creates a connect or disconnect packet.
-             * @param clientId The ID of the client.
-             * @param connectDisconnect The type of the packet (connect or disconnect).
-             * @return A reference to the created IServerPacket.
-             */
-            std::shared_ptr<IServerPacket> makeConnectDisconnect(
-                const sockaddr_in &addr, uint8_t connectDisconnect, uint32_t clientId) noexcept;
-
-            std::shared_ptr<IServerPacket> makeInput(
-                const sockaddr_in &addr, uint32_t id, float dx, float dy, bool shooting) noexcept;
 
             /**
              * @brief Creates a default packet with the specified flag.

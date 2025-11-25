@@ -24,36 +24,6 @@ HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t s
     return header;
 }
 
-std::shared_ptr<IServerPacket> PacketFactory::makeConnectDisconnect(
-    const sockaddr_in &addr, uint8_t connectDisconnect, uint32_t clientId) noexcept
-{
-    ConnectPacket connectPacket;
-    connectPacket.clientId = htonl(clientId);
-    connectPacket.header = makeHeader(connectDisconnect, connectDisconnect, sizeof(ConnectPacket));
-
-    auto buffer = _packet->clone();
-    buffer->setAddress(addr);
-    std::memcpy(buffer->buffer(), &connectPacket, sizeof(ConnectPacket));
-    buffer->setSize(sizeof(ConnectPacket));
-    return buffer;
-}
-
-//==============
-// TODO
-//==============
-std::shared_ptr<IServerPacket> PacketFactory::makeInput(
-    const sockaddr_in &addr, uint32_t id, float dx, float dy, bool shooting) noexcept
-{
-    (void) id;
-    (void) dx;
-    (void) dy;
-    (void) shooting;
-
-    auto buffer = _packet->clone();
-    buffer->setAddress(addr);
-    return buffer;
-}
-
 std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept
 {
     DefaultPacket defaultPacket;

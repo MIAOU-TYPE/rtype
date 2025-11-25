@@ -25,7 +25,6 @@ namespace Network
     UdpClient::UdpClient() : ANetworkClient()
     {
 #ifdef _WIN32
-        // Initialize Winsock
         WSADATA wsaData;
         int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (result != 0) {
@@ -41,7 +40,6 @@ namespace Network
     {
         disconnectFromServer();
 #ifdef _WIN32
-        // Cleanup Winsock
         WSACleanup();
 #endif
     }

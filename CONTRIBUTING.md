@@ -49,17 +49,12 @@ To run the test suite:
    ctest
    ```
 
-Or run tests directly from the build directory:
-```bash
-cd build
-ctest
-```
 
 Ensure all tests pass before submitting a pull request.
 
 ## Code Quality Standards
 
-Before opening a merge request, please ensure your code adheres to our quality standards by running the following scripts:
+Before opening a pull request, please ensure your code adheres to our quality standards by running the following scripts:
 
 ### Automatic Code Formatting and Fixing
 
@@ -85,7 +80,7 @@ This script will:
 - Check that all files are properly formatted with clang-format
 - Run clang-tidy static analysis on all C++ source files
 
-If any errors are reported, please fix them before submitting your merge request.
+If any errors are reported, please fix them before submitting your pull request.
 
 ## CI Expectations Before Merging
 

@@ -70,7 +70,7 @@ void UDPServer::readPackets()
     pkt->setSize(received);
 
     if (!_rxBuffer.push(pkt))
-        std::cerr << "Warning: RX buffer overflow, packet dropped\n";
+        std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
     std::cout << pkt << std::endl;
 }
 

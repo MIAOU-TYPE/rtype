@@ -7,19 +7,17 @@
 
 #pragma once
 
-#include <arpa/inet.h>
 #include <atomic>
 #include <cstdint>
 #include <cstring>
 #include <memory>
 #include <mutex>
-#include <netinet/in.h>
 #include <queue>
 #include <string>
 #include <thread>
-#include <unistd.h>
 #include <vector>
 
+#include "../wrappers/NetWrapper.hpp"
 #include "ANetworkClient.hpp"
 #include "PacketSerializer.hpp"
 #include "SocketConfig.hpp"

@@ -6,11 +6,17 @@
 */
 
 #pragma once
-#include <arpa/inet.h>
 #include <cstring>
-#include <netinet/in.h>
 #include <vector>
 #include "IClientPacket.hpp"
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
+#endif
 
 /**
  * @namespace Network

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window/Event.hpp>
 #include <string>
 
@@ -16,6 +17,8 @@
  */
 namespace Graphics
 {
+    // Forward declaration
+    class ISprite;
 
     /**
      * @class IRenderer
@@ -73,6 +76,30 @@ namespace Graphics
          * @return True if the event is a window close event, false otherwise.
          */
         virtual bool isWindowCloseEvent(const sf::Event &event) const = 0;
+
+        /**
+         * @brief Draws a sprite to the render target.
+         * @param sprite The sprite to draw.
+         */
+        virtual void drawSprite(const sf::Sprite &sprite) = 0;
+
+        /**
+         * @brief Renders an ISprite to the screen.
+         * @param sprite The sprite to render.
+         */
+        virtual void renderSprite(const ISprite &sprite) = 0;
+
+        /**
+         * @brief Gets the window width.
+         * @return The width of the window.
+         */
+        virtual unsigned int getWindowWidth() const = 0;
+
+        /**
+         * @brief Gets the window height.
+         * @return The height of the window.
+         */
+        virtual unsigned int getWindowHeight() const = 0;
     };
 
 } // namespace Graphics

@@ -8,6 +8,7 @@
 #pragma once
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 /**
  * @namespace Buffer
@@ -25,7 +26,7 @@ namespace Buffer
          * @brief Constructor with error message.
          * @param message The error message.
          */
-        explicit BufferError(const std::string &message) : _message(message)
+        explicit BufferError(std::string message) : _message(std::move(message))
         {
         }
 
@@ -39,7 +40,7 @@ namespace Buffer
         }
 
       private:
-        std::string _message; ///> The error message
+        std::string _message = ""; ///> The error message
     };
 
     /**

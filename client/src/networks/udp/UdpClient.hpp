@@ -11,6 +11,7 @@
 #include <atomic>
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <netinet/in.h>
 #include <queue>
@@ -19,8 +20,10 @@
 #include <unistd.h>
 #include <vector>
 
-#include "INetworkClient.hpp"
+#include "ANetworkClient.hpp"
 #include "PacketSerializer.hpp"
+#include "SocketConfig.hpp"
+#include "UdpClientPacket.hpp"
 
 namespace Network
 {
@@ -30,10 +33,11 @@ namespace Network
      *
      * This class manages the UDP connection to the game server,
      * including sending serialized packets such as connection requests
-     * and player inputs.
+     * and player inputs. It inherits from ANetworkClient which provides
+     * common client functionality.
      */
 
-    class UdpClient : public INetworkClient {
+    class UdpClient : public ANetworkClient {
       public:
         /**
          * @brief Construct a new UdpClient object
@@ -43,7 +47,7 @@ namespace Network
         /**
          * @brief Destroy the UdpClient object
          */
-        ~UdpClient();
+        ~UdpClient() override;
 
         /**
          * @brief Connect to the game server
@@ -65,33 +69,11 @@ namespace Network
          */
         void sendPacket(const std::vector<uint8_t> &data) override;
 
-        /**
-         * @brief Poll for incoming packets from the server
-         *
-         * @return std::vector<std::vector<uint8_t>> List of received packet data
-         */
-        std::vector<std::vector<uint8_t>> poll() override;
-
-        /**
-         * @brief Check if the client is connected to the server
-         *
-         * @return true if connected, false otherwise
-         */
-        bool isConnected() const override;
-
       protected:
         /**
          * @brief Internal method to handle receiving packets
          */
         void receiveLoop();
-
-      private:
-        int _socketFd;                                     ///< UDP socket file descriptor
-        sockaddr_in _serverAddr;                           ///< Server address structure
-        std::thread _receiverThread;                       ///< Thread for receiving packets
-        std::atomic<bool> _running;                        ///< Flag to control receiver thread
-        std::mutex _receiveMutex;                          ///< Mutex for thread-safe packet access
-        std::queue<std::vector<uint8_t>> _receivedPackets; ///< Queue of received packets
     };
 
 } // namespace Network

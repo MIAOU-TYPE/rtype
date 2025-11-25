@@ -44,10 +44,17 @@ void GameClient::run()
     }
 
     sf::Clock clock;
+    const float UPDATE_INTERVAL_MS = 16.67f;
 
     try {
         while (_renderer->isOpen()) {
-            float deltaTime = clock.restart().asSeconds();
+            float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
+
+            if (frameTime >= UPDATE_INTERVAL_MS) {
+                float deltaTime = frameTime / 1000.0f;
+                clock.restart();
+                _gameScene->update(deltaTime);
+            }
 
             sf::Event event;
             while (_renderer->pollEvent(event)) {
@@ -57,12 +64,8 @@ void GameClient::run()
                 _inputHandler->handleEvent(event);
             }
 
-            _gameScene->update(deltaTime);
-
             _renderer->clear();
-
             _gameScene->render();
-
             _renderer->display();
         }
     } catch (const std::exception &e) {

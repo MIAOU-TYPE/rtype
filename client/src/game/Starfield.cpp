@@ -25,16 +25,14 @@ Starfield::Starfield(
         throw StarfieldError("Failed to load background texture: " + BACKGROUND_TEXTURE_PATH);
     }
 
-    auto sprite = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
-
-    _backgroundWidth = sprite->getWidth();
-
-    unsigned int windowHeight = _renderer->getWindowHeight();
-    float spriteHeight = sprite->getHeight();
-    _scaleY = static_cast<float>(windowHeight) / spriteHeight;
-
     _sprite1 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
     _sprite2 = _textureManager->createSprite(BACKGROUND_TEXTURE_PATH);
+
+    _backgroundWidth = _sprite1->getWidth();
+
+    unsigned int windowHeight = _renderer->getWindowHeight();
+    float spriteHeight = _sprite1->getHeight();
+    _scaleY = static_cast<float>(windowHeight) / spriteHeight;
 
     if (!_sprite1 || !_sprite2) {
         throw StarfieldError("Failed to create background sprites");

@@ -34,10 +34,6 @@ Starfield::Starfield(
     float spriteHeight = _sprite1->getHeight();
     _scaleY = static_cast<float>(windowHeight) / spriteHeight;
 
-    if (!_sprite1 || !_sprite2) {
-        throw StarfieldError("Failed to create background sprites");
-    }
-
     _sprite1->setScale(_scaleY, _scaleY);
     _sprite2->setScale(_scaleY, _scaleY);
 

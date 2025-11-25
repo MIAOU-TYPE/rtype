@@ -25,9 +25,6 @@ void GameClient::init(unsigned int width, unsigned int height)
         _renderer->createWindow(width, height, "R-Type");
 
         _inputHandler = std::make_unique<SFMLInputHandler>();
-        if (!_inputHandler) {
-            throw GameClientError("Failed to create input handler instance");
-        }
 
         _textureManager = std::make_unique<SFMLTextureManager>();
         if (!_textureManager) {

@@ -24,19 +24,19 @@ namespace Network
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optName, (const char *) optVal, optLen);
+        return ::setsockopt(s, level, optName, static_cast<const char *>(optVal), optLen);
     }
 
     recvfrom_return_t NetWrapper::recvFrom(
         socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockFd, (char *) buf, len, flags, srcAddr, addrLen);
+        return ::recvfrom(sockFd, static_cast<char *>(buf), static_cast<int>(len), flags, srcAddr, addrLen);
     }
 
     sendto_return_t NetWrapper::sendTo(
         socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
     {
-        return ::sendto(sockFd, (const char *) buf, len, flags, destAddr, addrLen);
+        return ::sendto(sockFd, static_cast<const char *>(buf), static_cast<int>(len), flags, destAddr, addrLen);
     }
 #endif
 
@@ -49,7 +49,7 @@ namespace Network
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optName, (const void *) optVal, optLen);
+        return ::setsockopt(s, level, optName, optVal, static_cast<socklen_t>(optLen));
     }
 
     recvfrom_return_t NetWrapper::recvFrom(

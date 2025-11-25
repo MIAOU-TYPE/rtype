@@ -61,7 +61,7 @@ namespace Graphics
         const sf::Sprite &getSFMLSprite() const;
 
       private:
-        sf::Sprite _sprite; ///< The underlying SFML sprite
+        sf::Sprite _sprite; ///> The underlying SFML sprite
     };
 
 } // namespace Graphics

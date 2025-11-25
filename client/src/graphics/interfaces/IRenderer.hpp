@@ -17,6 +17,8 @@
  */
 namespace Graphics
 {
+    // Forward declaration
+    class ISprite;
 
     /**
      * @class IRenderer
@@ -80,6 +82,12 @@ namespace Graphics
          * @param sprite The sprite to draw.
          */
         virtual void drawSprite(const sf::Sprite &sprite) = 0;
+
+        /**
+         * @brief Renders an ISprite to the screen.
+         * @param sprite The sprite to render.
+         */
+        virtual void renderSprite(const ISprite &sprite) = 0;
 
         /**
          * @brief Gets the window width.

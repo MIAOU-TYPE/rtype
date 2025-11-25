@@ -71,12 +71,12 @@ void Starfield::render()
     try {
         if (_sprite1) {
             _sprite1->setPosition(_background1X * _scaleY, 0.0f);
-            _textureManager->renderSprite(*_sprite1);
+            _renderer->renderSprite(*_sprite1);
         }
 
         if (_sprite2) {
             _sprite2->setPosition(_background2X * _scaleY, 0.0f);
-            _textureManager->renderSprite(*_sprite2);
+            _renderer->renderSprite(*_sprite2);
         }
     } catch (const std::exception &e) {
         throw StarfieldError("Failed to render starfield: " + std::string(e.what()));

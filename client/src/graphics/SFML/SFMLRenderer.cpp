@@ -6,6 +6,7 @@
 */
 
 #include "SFMLRenderer.hpp"
+#include "SFMLTextureManager.hpp"
 
 using namespace Graphics;
 
@@ -47,6 +48,14 @@ bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const
 void SFMLRenderer::drawSprite(const sf::Sprite &sprite)
 {
     _window.draw(sprite);
+}
+
+void SFMLRenderer::renderSprite(const ISprite &sprite)
+{
+    const auto *sfmlSprite = dynamic_cast<const SFMLSprite *>(&sprite);
+    if (sfmlSprite) {
+        _window.draw(sfmlSprite->getSFMLSprite());
+    }
 }
 
 unsigned int SFMLRenderer::getWindowWidth() const

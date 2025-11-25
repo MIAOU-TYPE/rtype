@@ -75,6 +75,12 @@ namespace Graphics
         void drawSprite(const sf::Sprite &sprite) override;
 
         /**
+         * @brief Renders an ISprite to the screen.
+         * @param sprite The sprite to render.
+         */
+        void renderSprite(const ISprite &sprite) override;
+
+        /**
          * @brief Gets the window width.
          * @return The width of the window.
          */

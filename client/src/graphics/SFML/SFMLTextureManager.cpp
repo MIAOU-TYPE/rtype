@@ -6,7 +6,6 @@
 */
 
 #include "SFMLTextureManager.hpp"
-#include "SFMLRenderer.hpp"
 
 using namespace Graphics;
 
@@ -64,24 +63,4 @@ std::unique_ptr<ISprite> SFMLTextureManager::createSprite(const std::string &tex
     sprite.setTexture(_textures[texturePath]);
 
     return std::make_unique<SFMLSprite>(std::move(sprite));
-}
-
-void SFMLTextureManager::renderSprite(const ISprite &sprite)
-{
-    if (!_renderer) {
-        return;
-    }
-
-    const auto *sfmlSprite = dynamic_cast<const SFMLSprite *>(&sprite);
-    if (sfmlSprite) {
-        auto *sfmlRenderer = dynamic_cast<SFMLRenderer *>(_renderer.get());
-        if (sfmlRenderer) {
-            sfmlRenderer->drawSprite(sfmlSprite->getSFMLSprite());
-        }
-    }
-}
-
-void SFMLTextureManager::setRenderer(std::shared_ptr<IRenderer> renderer)
-{
-    _renderer = renderer;
 }

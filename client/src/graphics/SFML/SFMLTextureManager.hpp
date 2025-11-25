@@ -9,7 +9,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include <unordered_map>
 
@@ -89,21 +88,8 @@ namespace Graphics
          */
         std::unique_ptr<ISprite> createSprite(const std::string &texturePath) override;
 
-        /**
-         * @brief Renders a sprite to the screen.
-         * @param sprite The sprite to render.
-         */
-        void renderSprite(const ISprite &sprite) override;
-
-        /**
-         * @brief Sets the renderer for rendering sprites.
-         * @param renderer Shared pointer to the renderer.
-         */
-        void setRenderer(std::shared_ptr<IRenderer> renderer) override;
-
       private:
         std::unordered_map<std::string, sf::Texture> _textures; ///> Map of loaded textures
-        std::shared_ptr<IRenderer> _renderer;                   ///> The renderer interface
     };
 
 } // namespace Graphics

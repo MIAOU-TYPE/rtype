@@ -16,8 +16,6 @@
  */
 namespace Graphics
 {
-    // Forward declaration
-    class IRenderer;
 
     /**
      * @class ISprite
@@ -87,18 +85,6 @@ namespace Graphics
          * @return A unique pointer to the created sprite.
          */
         virtual std::unique_ptr<ISprite> createSprite(const std::string &texturePath) = 0;
-
-        /**
-         * @brief Renders a sprite to the screen.
-         * @param sprite The sprite to render.
-         */
-        virtual void renderSprite(const ISprite &sprite) = 0;
-
-        /**
-         * @brief Sets the renderer for rendering sprites.
-         * @param renderer Shared pointer to the renderer.
-         */
-        virtual void setRenderer(std::shared_ptr<IRenderer> renderer) = 0;
     };
 
 } // namespace Graphics

@@ -108,10 +108,10 @@ namespace Ecs
         size_t _entityCounter = 0;
 
         /** @brief Stores all registered component arrays indexed by type */
-        std::unordered_map<std::type_index, std::any> _entityToIndex;
+        std::unordered_map<std::type_index, std::any> _entityToIndex = {};
 
         /** @brief List of cleanup functions called during entity destruction */
-        std::vector<std::function<void(Registry &, Entity)>> _destroyers;
+        std::vector<std::function<void(Registry &, Entity)>> _destroyers = {};
     };
 } // namespace Ecs
 

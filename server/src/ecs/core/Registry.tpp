@@ -5,8 +5,6 @@
 ** Registry
 */
 
-#include "Registry.hpp"
-
 namespace Ecs
 {
     template <typename T>

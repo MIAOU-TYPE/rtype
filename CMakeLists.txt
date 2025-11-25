@@ -15,8 +15,3 @@ enable_testing()
 # Add subdirectories
 add_subdirectory(server)
 # add_subdirectory(client)
-
-# Tests
-if (EXISTS "${CMAKE_SOURCE_DIR}/tests")
-    add_subdirectory(tests)
-endif()

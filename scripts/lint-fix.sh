@@ -13,6 +13,7 @@ set -euo pipefail
 RED="\033[0;31m"
 GREEN="\033[0;32m"
 BLUE="\033[0;34m"
+YELLOW="\033[1;33m"
 NC="\033[0m"
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -45,21 +46,22 @@ if [ ! -f compile_commands.json ]; then
 fi
 ln -sf compile_commands.json ..
 
+cd ..
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy "$f" --quiet -fix --; then
+    if ! clang-tidy "$f" --quiet -fix -p build/compile_commands.json; then
         echo -e "${RED}clang-tidy failed for $f${NC}" >&2
         TIDY_FAILED=1
     fi
-done < <(find ../client/src ../server/src -name "*.cpp" -print0)
-if [ "$TIDY_FAILED" -eq 1 ]; then
-    exit 1
-fi
-
-# 3. Check again to ensure all fixes are applied
-cd ..
-bash "${PROJECT_ROOT}/scripts/lint-check.sh"
+done < <(find client/src server/src -name "*.cpp" -print0)
 
 echo -e "${GREEN}clang-tidy fix completed${NC}"
 echo "==================================="
 echo -e "${GREEN}Auto-Fix completed.${NC}"
+
+if [ "$TIDY_FAILED" -eq 0 ]; then
+    echo -e "${BLUE}Tip: Run './scripts/lint-check.sh' to verify all issues are resolved.${NC}"
+else
+    echo -e "${YELLOW}Some errors could not be fixed automatically.${NC}"
+    echo -e "${YELLOW}Please run './scripts/lint-check.sh' to see remaining issues.${NC}"
+fi

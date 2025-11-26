@@ -72,118 +72,78 @@ jobs:
           fi
 
   # -----------------------------
-  # Build Environment Image
-  # -----------------------------
-  build-environment:
-    name: Build Environment Image
-    runs-on: ubuntu-latest
-    outputs:
-      image: rtype-build:latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare cache directory
-        run: |
-          mkdir -p ${{ env.BUILDX_CACHE }}
-
-      - name: Build Environment Image with cache
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/build.Dockerfile
-          tags: rtype-build:latest
-          load: true
-          cache-from: type=local,src=${{ env.BUILDX_CACHE }}
-          cache-to: type=local,dest=${{ env.BUILDX_CACHE }}-new,mode=max
-
-      - name: Rotate buildx cache
-        run: |
-          rm -rf ${{ env.BUILDX_CACHE }} || true
-          if [ -d "${{ env.BUILDX_CACHE }}-new" ]; then
-            mv "${{ env.BUILDX_CACHE }}-new" "${{ env.BUILDX_CACHE }}"
-          fi
-
-  # -----------------------------
-  # Linter (runs inside build image)
+  # Linter
   # -----------------------------
   linter:
     name: Linter
     runs-on: ubuntu-latest
-    needs: [build-environment, check-changes]
+    needs: [check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install clang tools
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install -y clang-format-20 clang-tidy-20
+
       - name: Run linter
         run: |
-          docker run --rm -v $PWD:/work -w /work rtype-build:latest sh -c "
-            chmod +x ./scripts/lint-check.sh || true
-            echo "Running linter..."
-            if [ -x ./scripts/lint-check.sh ]; then
-              ./scripts/lint-check.sh
-            else
-              echo "No linter script found."
-            fi
-          "
+          echo "Running linter..."
+          if [ -x ./scripts/lint-check.sh ]; then
+            ./scripts/lint-check.sh
+          else
+            echo "No linter script found."
+          fi
 
   # -----------------------------
-  # Build and Test (server + client) inside build image
+  # Build and Test (server + client)
   # Produces artifacts: build/server/r-type_server, build/client/r-type_client
   # -----------------------------
   build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest
-    needs: [build-environment, check-changes]
+    needs: [check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Ensure ccache directory for runner
+      - name: Install dependencies
         run: |
-          mkdir -p ~/.cache/ccache
+          sudo apt-get update &&
+          sudo apt-get install -y cmake g++ ccache libsfml-dev libgtest-dev
 
-      - name: Build and Test inside build container
+      - name: Configure + Build server
         run: |
-          docker run --rm \
-            -v $PWD:/work \
-            -v ~/.cache/ccache:/root/.cache/ccache \
-            -w /work \
-            rtype-build:latest sh -euxc "
-              # Build server if changes or always build both to keep simple
-              if [ -d server ] ; then
-                cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
-                cmake --build build/server --target r-type_server -j$(nproc)
-                if [ -f r-type_server ]; then
-                  echo 'Server binary built at root'
-                fi
-                # run server tests if present
-                if [ -d server/tests ]; then
-                  cd build/server && ctest --output-on-failure || true
-                fi
-              fi
+          cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/server --target r-type_server -j$(nproc)
+          cp build/server/r-type_server ./r-type_server
 
-              # Build client if present
-              # Temporarily disabled - no CMakeLists.txt yet
-              # if [ -d client ] ; then
-              #   cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
-              #   cmake --build build/client --target r-type_client -j$(nproc)
-              #   if [ -f r-type_client ]; then
-              #     echo 'Client binary built at root'
-              #   fi
-              #   # run client tests if present
-              #   if [ -d client/tests ]; then
-              #     cd build/client && ctest --output-on-failure || true
-              #   fi
-              # fi
-            "
+      - name: Configure + Build client
+        run: |
+            cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
+            cmake --build build/client --target r-type_client -j$(nproc)
+            cp build/client/r-type_client ./r-type_client
+
+      - name: Run server tests
+        run: |
+          if [ -d server/tests ]; then
+            cd build/server && ctest --output-on-failure || true
+          else
+            echo "No server tests found."
+          fi
+
+      - name: Run client tests
+        run: |
+          if [ -d client/tests ]; then
+            cd build/client && ctest --output-on-failure || true
+          else
+            echo "No client tests found."
+          fi
 
       - name: Upload Server Artifact (if exists)
         if: always()
@@ -203,63 +163,12 @@ jobs:
           if-no-files-found: ignore
 
   # -----------------------------
-  # Build Runtime Images (server + client) using cache
-  # -----------------------------
-  docker-build:
-    name: Build Runtime Images
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare cache directory
-        run: |
-          mkdir -p /tmp/.buildx-cache-server
-          mkdir -p /tmp/.buildx-cache-client
-
-      - name: Build server runtime image with cache
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/server.Dockerfile
-          tags: rtype-server:latest
-          load: true
-          cache-from: type=local,src=/tmp/.buildx-cache-server
-          cache-to: type=local,dest=/tmp/.buildx-cache-server-new,mode=max
-          
-
-      - name: Build client runtime image with cache
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/client.Dockerfile
-          tags: rtype-client:latest
-          load: true
-          cache-from: type=local,src=/tmp/.buildx-cache-client
-          cache-to: type=local,dest=/tmp/.buildx-cache-client-new,mode=max
-
-      - name: Rotate buildx cache
-        run: |
-          rm -rf /tmp/.buildx-cache-server || true
-          rm -rf /tmp/.buildx-cache-client || true
-          if [ -d "/tmp/.buildx-cache-server-new" ]; then
-            mv "/tmp/.buildx-cache-server-new" "/tmp/.buildx-cache-server"
-          fi
-          if [ -d "/tmp/.buildx-cache-client-new" ]; then
-            mv "/tmp/.buildx-cache-client-new" "/tmp/.buildx-cache-client"
-          fi
-
-  # -----------------------------
   # Create Release on Tag Push
   # -----------------------------
   create-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [ build-and-test, docker-build ]
+    needs: [ build-and-test ]
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
@@ -284,7 +193,8 @@ jobs:
 
       - name: Prepare release package
         run: |
-          mkdir -p release && cd artifacts
+          mkdir -p release
+          cd artifacts
           FILES=""
           if [ -f ./r-type_server ]; then FILES="$FILES r-type_server"; fi
           if [ -f ./r-type_client ]; then FILES="$FILES r-type_client"; fi
@@ -302,7 +212,7 @@ jobs:
           echo "## Release ${{ github.ref_name }}" > release_notes.md
           echo "" >> release_notes.md
           echo "### Changelog" >> release_notes.md
-          git log --no-pager --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> release_notes.md 2>/dev/null || echo "- Initial release" >> release_notes.md
+          git log --no-pager --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> release_notes.md || echo "- Initial release" >> release_notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

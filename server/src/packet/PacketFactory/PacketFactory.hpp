@@ -86,6 +86,7 @@ namespace Net::Factory
 
         /**
          * @brief Creates a DamagePacket for the specified entity ID and damage amount.
+         * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity receiving damage.
          * @param amount The amount of damage to apply.
          * @return A shared pointer to the created IServerPacket.

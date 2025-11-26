@@ -7,11 +7,13 @@
 
 #include "GameScene.hpp"
 
+#include <utility>
+
 using namespace Game;
 
 GameScene::GameScene(
     std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager)
-    : _renderer(renderer), _textureManager(textureManager)
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
 {
     if (!_renderer) {
         throw GameSceneError("Renderer cannot be null");

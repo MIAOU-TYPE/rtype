@@ -26,7 +26,7 @@ namespace Graphics
          * @brief Constructor for SFMLSprite.
          * @param sprite The SFML sprite to wrap.
          */
-        explicit SFMLSprite(const sf::Sprite &sprite);
+        explicit SFMLSprite(sf::Sprite sprite);
 
         /**
          * @brief Sets the position of the sprite.

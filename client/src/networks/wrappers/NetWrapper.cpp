@@ -40,7 +40,8 @@ namespace Network
     recvfrom_return_t NetWrapper::recvFrom(
         socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
     {
-        recvfrom_return_t result = ::recvfrom(sockFd, static_cast<char *>(buf), static_cast<int>(len), flags, srcAddr, addrLen);
+        recvfrom_return_t result =
+            ::recvfrom(sockFd, static_cast<char *>(buf), static_cast<int>(len), flags, srcAddr, addrLen);
 
         if (result == SOCKET_ERROR) {
             throw NetWrapperError("Failed to receive data from socket");
@@ -51,7 +52,8 @@ namespace Network
     sendto_return_t NetWrapper::sendTo(
         socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
     {
-        sendto_return_t result = ::sendto(sockFd, static_cast<const char *>(buf), static_cast<int>(len), flags, destAddr, addrLen);
+        sendto_return_t result =
+            ::sendto(sockFd, static_cast<const char *>(buf), static_cast<int>(len), flags, destAddr, addrLen);
 
         if (result == SOCKET_ERROR) {
             throw NetWrapperError("Failed to send data to socket");

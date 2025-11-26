@@ -26,6 +26,16 @@ GameScene::GameScene(
         if (!_starfield) {
             throw GameSceneError("Failed to create starfield instance");
         }
+
+        _entityDrawing = std::make_unique<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
+        if (!_entityDrawing) {
+            throw GameSceneError("Failed to create entity drawing instance");
+        }
+
+        _entityDrawing->createEntity(100.0f, 300.0f, "player");
+        _entityDrawing->createEntity(400.0f, 200.0f, "enemie");
+        _entityDrawing->createEntity(500.0f, 400.0f, "enemie");
+
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to initialize game scene: " + std::string(e.what()));
     }
@@ -52,7 +62,9 @@ void GameScene::render()
             _starfield->render();
         }
 
-        // TODO: Render other game entities here
+        if (_entityDrawing) {
+            _entityDrawing->renderAllEntities();
+        }
 
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));

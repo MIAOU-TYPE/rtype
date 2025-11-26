@@ -81,7 +81,7 @@ inline std::ostream &operator<<(std::ostream &os, const Network::IClientPacket &
  * @param pkt The shared pointer to the IClientPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, std::shared_ptr<Network::IClientPacket> pkt)
+inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Network::IClientPacket> &pkt)
 {
     return os << *pkt;
 }

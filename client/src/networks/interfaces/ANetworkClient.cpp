@@ -19,7 +19,7 @@
 
 namespace Network
 {
-    ANetworkClient::ANetworkClient() : _socketFd(kInvalidSocket), _serverPort(0), _running(false)
+    ANetworkClient::ANetworkClient() : _socketFd(kInvalidSocket), _running(false)
     {
         _socketConfig.family = AF_INET;
         _socketConfig.type = SOCK_DGRAM;

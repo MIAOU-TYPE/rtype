@@ -10,13 +10,9 @@
 namespace Network
 {
 
-    PacketSerializer::PacketSerializer()
-    {
-    }
+    PacketSerializer::PacketSerializer() = default;
 
-    PacketSerializer::~PacketSerializer()
-    {
-    }
+    PacketSerializer::~PacketSerializer() = default;
 
     std::vector<uint8_t> PacketSerializer::serializeConnectPacket(uint32_t clientId)
     {
@@ -38,11 +34,6 @@ namespace Network
 
     std::vector<uint8_t> PacketSerializer::serializeInputPacket(uint32_t entity, float dx, float dy, uint8_t shooting)
     {
-        if (entity < 0) {
-            throw Client::Exception::InvalidPacketException(
-                "Entity ID cannot be negative for PacketInput serialization");
-        }
-
         PacketInput packet{};
         packet.header.type = static_cast<uint8_t>(PacketType::INPUT);
         packet.header.version = 1;

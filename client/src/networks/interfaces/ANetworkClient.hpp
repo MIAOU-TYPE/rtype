@@ -117,7 +117,7 @@ namespace Network
         socketHandle _socketFd;                                      ///< Socket file descriptor
         sockaddr_in _serverAddr;                                     ///< Server address structure
         std::string _serverIp;                                       ///< Server IP address (for validation)
-        uint16_t _serverPort;                                        ///< Server port (for validation)
+        uint16_t _serverPort{0};                                     ///< Server port (for validation)
         std::thread _receiverThread;                                 ///< Thread for receiving packets
         std::atomic<bool> _running;                                  ///< Flag to control receiver thread
         std::mutex _receiveMutex;                                    ///< Mutex for thread-safe packet access

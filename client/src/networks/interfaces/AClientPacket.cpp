@@ -9,7 +9,7 @@
 
 namespace Network
 {
-    AClientPacket::AClientPacket() : _size(0)
+    AClientPacket::AClientPacket()
     {
         std::memset(_buffer, 0, MAX_SIZE);
         std::memset(&_addr, 0, sizeof(_addr));

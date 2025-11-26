@@ -20,7 +20,7 @@
 #include "PacketTypes.hpp"
 #include "ProtocolDefinitions.hpp"
 
-    namespace Network
+namespace Network
 {
     /**
      * @brief Serializes network packets for client-to-server communication

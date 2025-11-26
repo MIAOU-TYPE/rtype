@@ -35,8 +35,8 @@ void UDPServer::start()
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
-        Net::SocketConfig socketParams = {.family = AF_INET, .type = SOCK_DGRAM, .proto = IPPROTO_UDP};
-        Net::SocketOptions socketOptions = {.level = SOL_SOCKET, .optName = SO_REUSEADDR, .optVal = 1};
+        Net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
+        Net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
         setupSocket(socketParams, socketOptions);
         bindSocket(socketParams.family);
         setNonBlocking(true);

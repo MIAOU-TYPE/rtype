@@ -7,7 +7,12 @@
 
 #pragma once
 
-#include <arpa/inet.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+#endif
 #include <cstdint>
 #include <cstring>
 #include <vector>
@@ -15,9 +20,8 @@
 #include "PacketTypes.hpp"
 #include "ProtocolDefinitions.hpp"
 
-namespace Network
+    namespace Network
 {
-
     /**
      * @brief Serializes network packets for client-to-server communication
      *

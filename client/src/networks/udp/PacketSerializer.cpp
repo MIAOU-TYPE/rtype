@@ -28,7 +28,7 @@ namespace Network
 
         std::vector<uint8_t> buffer(sizeof(PacketConnect));
 
-        if (buffer.size() < sizeof(PacketConnect)) {
+        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketConnect)) {
             throw Client::Exception::BufferException("Buffer size is insufficient for PacketConnect serialization");
         }
 
@@ -38,8 +38,9 @@ namespace Network
 
     std::vector<uint8_t> PacketSerializer::serializeInputPacket(uint32_t entity, float dx, float dy, uint8_t shooting)
     {
-        if (entity == 0) {
-            throw Client::Exception::InvalidPacketException("Entity ID cannot be zero for PacketInput serialization");
+        if (entity < 0) {
+            throw Client::Exception::InvalidPacketException(
+                "Entity ID cannot be negative for PacketInput serialization");
         }
 
         PacketInput packet{};
@@ -53,7 +54,7 @@ namespace Network
 
         std::vector<uint8_t> buffer(sizeof(PacketInput));
 
-        if (buffer.size() < sizeof(PacketInput)) {
+        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketInput)) {
             throw Client::Exception::BufferException("Buffer size is insufficient for PacketInput serialization");
         }
 
@@ -70,7 +71,7 @@ namespace Network
 
         std::vector<uint8_t> buffer(sizeof(PacketPing));
 
-        if (buffer.size() < sizeof(PacketPing)) {
+        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketPing)) {
             throw Client::Exception::BufferException("Buffer size is insufficient for PacketPing serialization");
         }
 
@@ -87,7 +88,7 @@ namespace Network
 
         std::vector<uint8_t> buffer(sizeof(PacketDisconnect));
 
-        if (buffer.size() < sizeof(PacketDisconnect)) {
+        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketDisconnect)) {
             throw Client::Exception::BufferException("Buffer size is insufficient for PacketDisconnect serialization");
         }
 

@@ -30,13 +30,13 @@ namespace Net
     recvfrom_return_t NetWrapper::recvFrom(
         socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
     {
-        return ::recvfrom(sockFd, (char *) buf, len, flags, srcAddr, addrLen);
+        return ::recvfrom(sockFd, (char *) buf, static_cast<int>(len), flags, srcAddr, addrLen);
     }
 
     sendto_return_t NetWrapper::sendTo(
         socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
     {
-        return ::sendto(sockFd, (const char *) buf, len, flags, destAddr, addrLen);
+        return ::sendto(sockFd, (const char *) buf, static_cast<int>(len), flags, destAddr, addrLen);
     }
 #endif
 

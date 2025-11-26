@@ -18,15 +18,6 @@
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
 
-constexpr uint8_t ACCEPT = 0x10;
-constexpr uint8_t REJECT = 0x11;
-constexpr uint8_t SNAPSHOT = 0x12;
-constexpr uint8_t ENTITY_CREATE = 0x13;
-constexpr uint8_t ENTITY_DESTROY = 0x14;
-constexpr uint8_t PONG = 0x15;
-constexpr uint8_t DAMAGE_EVENT = 0x16;
-constexpr uint8_t GAME_OVER = 0x17;
-
 /**
  * @namespace Net
  * @brief Namespace for networking-related classes and functions.
@@ -37,6 +28,15 @@ constexpr uint8_t GAME_OVER = 0x17;
  */
 namespace Net::Factory
 {
+    constexpr uint8_t ACCEPT = 0x10;
+    constexpr uint8_t REJECT = 0x11;
+    constexpr uint8_t SNAPSHOT = 0x12;
+    constexpr uint8_t ENTITY_CREATE = 0x13;
+    constexpr uint8_t ENTITY_DESTROY = 0x14;
+    constexpr uint8_t PONG = 0x15;
+    constexpr uint8_t DAMAGE_EVENT = 0x16;
+    constexpr uint8_t GAME_OVER = 0x17;
+
     /**
      * @class PacketFactory
      * @brief Factory class for creating various types of network packets.

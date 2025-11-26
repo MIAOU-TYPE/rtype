@@ -6,6 +6,10 @@
 */
 
 #pragma once
+
+#include <exception>
+#include <string>
+
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -15,8 +19,6 @@ using recvfrom_return_t = int;
 using sendto_return_t = int;
 #else
     #include <arpa/inet.h>
-    #include <exception>
-    #include <string>
     #include <sys/socket.h>
     #include <unistd.h>
 using socketHandle = int;

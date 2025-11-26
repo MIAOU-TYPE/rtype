@@ -59,12 +59,14 @@ namespace Net::Factory
         /**
          * @brief Creates a default packet with the specified flag.
          * @param flag The flag to set in the default packet.
+         * @param addr The address to which the packet will be sent.
          * @return A shared pointer to the created IServerPacket.
          */
-        std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
+        std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
 
         /**
          * @brief Creates an EntityCreatePacket with the specified parameters.
+         * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity to create.
          * @param x The x-coordinate of the entity.
          * @param y The y-coordinate of the entity.
@@ -72,14 +74,15 @@ namespace Net::Factory
          * @return A shared pointer to the created IServerPacket.
          */
         std::shared_ptr<IServerPacket> makeEntityCreate(
-            const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept;
+            const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept;
 
         /**
          * @brief Creates an EntityDestroyPacket for the specified entity ID.
+         * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity to destroy.
          * @return A shared pointer to the created IServerPacket.
          */
-        std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept;
+        std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
 
         /**
          * @brief Creates a DamagePacket for the specified entity ID and damage amount.
@@ -97,7 +100,7 @@ namespace Net::Factory
          * @param size The size of the packet.
          * @return The constructed HeaderPacket.
          */
-        HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
+        static HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
 
         std::shared_ptr<IServerPacket> _packet =
             nullptr; //> Pointer to the template IServerPacket used for creating packets.

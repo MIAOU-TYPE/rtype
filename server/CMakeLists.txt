@@ -31,7 +31,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 # -------------------------
 # Set output directory for the executable
 # -------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+
+add_custom_command(
+    TARGET r-type_server POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "$<TARGET_FILE:r-type_server>"
+    "${CMAKE_SOURCE_DIR}/r-type_server"
+)
 
 # -------------------------
 # Compiler warnings

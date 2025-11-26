@@ -18,6 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/bin
-COPY --from=build /app/build/client/r-type_client .
+COPY --from=build /app/r-type_client .
 
 CMD ["./r-type_client"]

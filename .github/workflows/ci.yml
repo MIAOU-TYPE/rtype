@@ -113,7 +113,7 @@ jobs:
   linter:
     name: Linter
     runs-on: ubuntu-latest
-    needs: check-changes
+    needs: [build-environment, check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true'
 
     steps:
@@ -161,8 +161,8 @@ jobs:
               if [ -d server ] ; then
                 cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
                 cmake --build build/server --target r-type_server -j$(nproc)
-                if [ -d build/server ] && [ -f build/server/r-type_server ]; then
-                  echo 'Server binary built'
+                if [ -f r-type_server ]; then
+                  echo 'Server binary built at root'
                 fi
                 # run server tests if present
                 if [ -d server/tests ]; then
@@ -171,17 +171,18 @@ jobs:
               fi
 
               # Build client if present
-              if [ -d client ] ; then
-                cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
-                cmake --build build/client --target r-type_client -j$(nproc)
-                if [ -d build/client ] && [ -f build/client/r-type_client ]; then
-                  echo 'Client binary built'
-                fi
-                # run client tests if present
-                if [ -d client/tests ]; then
-                  cd build/client && ctest --output-on-failure || true
-                fi
-              fi
+              # Temporarily disabled - no CMakeLists.txt yet
+              # if [ -d client ] ; then
+              #   cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
+              #   cmake --build build/client --target r-type_client -j$(nproc)
+              #   if [ -f r-type_client ]; then
+              #     echo 'Client binary built at root'
+              #   fi
+              #   # run client tests if present
+              #   if [ -d client/tests ]; then
+              #     cd build/client && ctest --output-on-failure || true
+              #   fi
+              # fi
             "
 
       - name: Upload Server Artifact (if exists)
@@ -189,15 +190,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: r-type_server-${{ runner.os }}
-          path: build/server/r-type_server
+          path: r-type_server
           if-no-files-found: ignore
+          
 
       - name: Upload Client Artifact (if exists)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: r-type_client-${{ runner.os }}
-          path: build/client/r-type_client
+          path: r-type_client
           if-no-files-found: ignore
 
   # -----------------------------
@@ -228,6 +230,7 @@ jobs:
           load: true
           cache-from: type=local,src=/tmp/.buildx-cache-server
           cache-to: type=local,dest=/tmp/.buildx-cache-server-new,mode=max
+          
 
       - name: Build client runtime image with cache
         uses: docker/build-push-action@v5
@@ -283,12 +286,13 @@ jobs:
         run: |
           mkdir -p release && cd artifacts
           FILES=""
-          if [ -f ./r-type_server ]; && FILES="$FILES r-type_server"
-          if [ -f ./r-type_client ]; && FILES="$FILES r-type_client"
+          if [ -f ./r-type_server ]; then FILES="$FILES r-type_server"; fi
+          if [ -f ./r-type_client ]; then FILES="$FILES r-type_client"; fi
           if [ -z "$FILES" ]; then
             echo "No artifacts found to include in the release."
             touch ../release/empty_release.txt
           else
+            chmod +x $FILES
             tar -czvf ../release/r-type-${{ github.ref_name }}-linux-x64.tar.gz $FILES
           fi
 
@@ -297,9 +301,8 @@ jobs:
         run: |
           echo "## Release ${{ github.ref_name }}" > release_notes.md
           echo "" >> release_notes.md
-          echo "Changelog" >> release_notes.md
-          git log --no-pager log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> release_notes.md || echo "- Initial release" >> release_notes.md
-          echo "::set-output name=body::$(cat release_notes.md)"
+          echo "### Changelog" >> release_notes.md
+          git log --no-pager --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> release_notes.md 2>/dev/null || echo "- Initial release" >> release_notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -326,19 +329,3 @@ jobs:
         with:
           target_repo_url: ${{ env.MIRROR_REPO_URL }}
           ssh_private_key: ${{ secrets.R_TYPE_SSH_KEY }}
-
-      - name: Upload Server Artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: r-type_server-${{ runner.os }}
-          path: build/server/r-type_server
-          if-no-files-found: ignore
-
-      - name: Upload Client Artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: r-type_client-${{ runner.os }}
-          path: build/client/r-type_client
-          if-no-files-found: ignore

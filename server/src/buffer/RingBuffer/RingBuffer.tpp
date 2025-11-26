@@ -5,6 +5,8 @@
 ** RingBuffer
 */
 
+#pragma once
+
 namespace Buffer
 {
     template <typename Tdata>

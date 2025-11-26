@@ -9,18 +9,21 @@
 #include <cstring>
 #include <map>
 #include <memory>
+#include <utility>
 #include "DefaultPacket.hpp"
+#include "Endian.hpp"
+#include "EntityCreatePacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
 
-#define ACCEPT         0x10
-#define REJECT         0x11
-#define SNAPSHOT       0x12
-#define ENTITY_CREATE  0x13
-#define ENTITY_DESTROY 0x14
-#define PONG           0x15
-#define DAMAGE_EVENT   0x16
-#define GAME_OVER      0x17
+constexpr uint8_t ACCEPT = 0x10;
+constexpr uint8_t REJECT = 0x11;
+constexpr uint8_t SNAPSHOT = 0x12;
+constexpr uint8_t ENTITY_CREATE = 0x13;
+constexpr uint8_t ENTITY_DESTROY = 0x14;
+constexpr uint8_t PONG = 0x15;
+constexpr uint8_t DAMAGE_EVENT = 0x16;
+constexpr uint8_t GAME_OVER = 0x17;
 
 /**
  * @namespace Net

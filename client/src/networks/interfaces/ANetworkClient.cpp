@@ -87,7 +87,7 @@ namespace Network
         _serverAddr.sin_port = htons(port);
 
         if (inet_pton(_socketConfig.family, ip.c_str(), &_serverAddr.sin_addr) <= 0) {
-            throw Client::Exception::ConnectionException("Invalid server IP address : " + ip);
+            throw Client::Exception::ConnectionException("Invalid server IP address: " + ip);
         }
     }
 

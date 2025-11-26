@@ -8,10 +8,58 @@
 #include "NetworkException.hpp"
 #include <sstream>
 
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <cstring>
+#endif
+
 namespace Client
 {
     namespace Exception
     {
+
+        /**
+         * @brief Get error message from system error code in a cross-platform way
+         *
+         * @param errorCode System error code
+         * @return std::string Error message
+         */
+        static std::string getSystemErrorMessage(int errorCode)
+        {
+#ifdef _WIN32
+            if (errorCode == 0) {
+                return "";
+            }
+
+            char *messageBuffer = nullptr;
+            size_t size = FormatMessageA(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
+                errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR) &messageBuffer, 0, NULL);
+
+            std::string message;
+            if (size > 0 && messageBuffer != nullptr) {
+                message = std::string(messageBuffer, size);
+                // Remove trailing newlines
+                while (!message.empty() && (message.back() == '\n' || message.back() == '\r')) {
+                    message.pop_back();
+                }
+            }
+
+            if (messageBuffer) {
+                LocalFree(messageBuffer);
+            }
+
+            return message.empty() ? "Unknown error" : message;
+#else
+            if (errorCode == 0) {
+                return "";
+            }
+
+            const char *errorStr = std::strerror(errorCode);
+            return errorStr ? std::string(errorStr) : "Unknown error";
+#endif
+        }
 
         NetworkException::NetworkException(const std::string &message)
             : _message(message), _fullMessage(message), _errorCode(0)
@@ -27,8 +75,8 @@ namespace Client
             if (errorCode != 0) {
                 oss << " (Error code: " << errorCode;
 
-                const char *errorStr = std::strerror(errorCode);
-                if (errorStr) {
+                std::string errorStr = getSystemErrorMessage(errorCode);
+                if (!errorStr.empty()) {
                     oss << " - " << errorStr;
                 }
                 oss << ")";

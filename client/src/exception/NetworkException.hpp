@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <cstring>
 #include <exception>
 #include <string>
 

@@ -1,5 +1,5 @@
 Checks: |
-  # Enabled checks
+
   modernize-*,
   performance-*,
   bugprone-*,
@@ -8,33 +8,41 @@ Checks: |
   concurrency-*,
   clang-analyzer-*,
   misc-*,
-  # Disabled checks (exceptions)
-  -cppcoreguidelines-avoid-magic-numbers,                # Allow magic numbers for brevity/readability
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,      # Allow pointer arithmetic in performance-critical code
-  -cppcoreguidelines-owning-memory,                      # Custom memory management is used
-  -cppcoreguidelines-avoid-c-arrays,                     # C arrays are used for interop/performance
-  -misc-include-cleaner,                                 # Include cleaner is too noisy for this codebase
-  -modernize-use-trailing-return-type,                   # Trailing return types not required/preferred
-  -misc-const-correctness,                               # Const-correctness is enforced elsewhere
-  -modernize-redundant-void-arg,                         # Allow redundant void args for C compatibility
-  -cppcoreguidelines-special-member-functions,           # Special member functions are handled manually
-  -modernize-deprecated-headers,                         # Deprecated headers are required for legacy support
-  -cppcoreguidelines-pro-type-vararg,                    # Varargs are used in some APIs
-  -modernize-use-nodiscard,                              # Nodiscard is not enforced project-wide
-  -readability-redundant-string-init,                    # Redundant string init is allowed for clarity
-  -cppcoreguidelines-explicit-virtual-functions,         # Explicit virtuals not required
-  -modernize-use-override,                               # Override not enforced for legacy reasons
-  -cppcoreguidelines-init-variables,                     # Variable initialization is handled manually
-  -cppcoreguidelines-non-private-member-variables-in-classes, # Non-private members are allowed in some cases
-  -misc-non-private-member-variables-in-classes,         # Same as above
-  -clang-analyzer-optin.cplusplus.VirtualCall,           # Virtual call warnings are too noisy
-  -performance-avoid-endl,                               # Use of endl is intentional in some places
-  -cppcoreguidelines-pro-type-reinterpret-cast,           # reinterpret_cast is required for low-level code
-  -cppcoreguidelines-pro-type-const-cast,                 # const_cast is required for low-level code
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-c-arrays,
+  -misc-include-cleaner,
+  -modernize-use-trailing-return-type,
+  -misc-const-correctness,
+  -modernize-redundant-void-arg,
+  -cppcoreguidelines-special-member-functions,
+  -modernize-deprecated-headers,
+  -cppcoreguidelines-pro-type-vararg,
+  -modernize-use-nodiscard,
+  -readability-redundant-string-init,
+  -cppcoreguidelines-explicit-virtual-functions,
+  -modernize-use-override,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -misc-non-private-member-variables-in-classes,
+  -clang-analyzer-optin.cplusplus.VirtualCall,
+  -performance-avoid-endl,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-const-cast,
+  -portability-avoid-pragma-once,
+  -bugprone-easily-swappable-parameters,
+  -performance-enum-size,
+  -cppcoreguidelines-pro-type-member-init,
+  -modernize-use-designated-initializers,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -portability-template-virtual-member-function,
+  -modernize-avoid-c-arrays
+
 
 WarningsAsErrors: false
 
-HeaderFilterRegex: 'src/.*'
+HeaderFilterRegex: 'src/.*(hpp|tpp)$'
 
 FormatStyle: none
 

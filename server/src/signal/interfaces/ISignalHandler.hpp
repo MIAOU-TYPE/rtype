@@ -21,7 +21,7 @@ namespace Signal
      * @enum SignalType
      * @brief Types of signals that can be handled
      */
-    enum class SignalType { Interrupt, Terminate, Hangup };
+    enum class SignalType : std::uint8_t { Interrupt, Terminate, Hangup };
 
     /**
      * @interface ISignalHandler

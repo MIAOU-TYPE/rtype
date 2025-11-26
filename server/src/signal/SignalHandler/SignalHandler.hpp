@@ -55,6 +55,6 @@ namespace Signal
         void stop() noexcept override;
 
       private:
-        std::unique_ptr<ISignalHandler> _handler; ///> Pointer to platform-specific signal handler
+        std::unique_ptr<ISignalHandler> _handler = nullptr; ///> Pointer to platform-specific signal handler
     };
 } // namespace Signal

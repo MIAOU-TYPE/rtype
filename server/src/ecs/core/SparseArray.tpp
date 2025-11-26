@@ -5,8 +5,6 @@
 ** sparseArray
 */
 
-#include "SparseArray.hpp"
-
 namespace Ecs
 {
     template <typename Component>

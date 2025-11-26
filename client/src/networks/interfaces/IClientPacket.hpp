@@ -23,6 +23,24 @@
  */
 namespace Network
 {
+    class PacketError : public std::exception {
+      public:
+        /**
+         * @brief Constructs an PacketError with a given message.
+         * @param message The error message.
+         */
+        explicit PacketError(const std::string &message) : msg_(message) {}
+
+        /**
+         * @brief Retrieves the error message.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override { return msg_.c_str(); }
+
+      private:
+        std::string msg_;
+    };
+
     /**
      * @class IClientPacket
      * @brief Interface for a client packet.

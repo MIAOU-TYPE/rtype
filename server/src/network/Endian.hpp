@@ -1,52 +1,37 @@
-/*
-** EPITECH PROJECT, 2025
-** rtype
-** File description:
-** Endian
-*/
-
 #pragma once
 
-#include <arpa/inet.h>
 #include <cstdint>
 #include <cstring>
 
 #if defined(__APPLE__)
+
     #include <libkern/OSByteOrder.h>
+    inline uint64_t htobe64(uint64_t x) { return OSSwapHostToBigInt64(x); }
+    inline uint64_t be64toh(uint64_t x) { return OSSwapBigToHostInt64(x); }
 
-inline uint64_t htobe64(uint64_t x)
-{
-    return OSSwapHostToBigInt64(x);
-}
-
-inline uint64_t be64toh(uint64_t x)
-{
-    return OSSwapBigToHostInt64(x);
-}
 #elif defined(__linux__)
+    #include <arpa/inet.h>
     #include <endian.h>
 
-inline uint64_t htobe64(uint64_t x)
-{
-    return htobe64(x);
-}
-
-inline uint64_t be64toh(uint64_t x)
-{
-    return be64toh(x);
-}
 #elif defined(_WIN32)
+
     #include <winsock2.h>
+    #include <windows.h>
 
-inline uint64_t htobe64(uint64_t x)
-{
-    return htonll(x);
-}
+    inline uint64_t htobe64(uint64_t x)
+    {
+        uint32_t high = htonl((uint32_t)(x >> 32));
+        uint32_t low  = htonl((uint32_t)(x & 0xFFFFFFFFULL));
+        return (uint64_t)low << 32 | high;
+    }
 
-inline uint64_t be64toh(uint64_t x)
-{
-    return ntohll(x);
-}
+    inline uint64_t be64toh(uint64_t x)
+    {
+        uint32_t high = ntohl((uint32_t)(x >> 32));
+        uint32_t low  = ntohl((uint32_t)(x & 0xFFFFFFFFULL));
+        return (uint64_t)low << 32 | high;
+    }
+
 #endif
 
 inline uint32_t htonf(float f)

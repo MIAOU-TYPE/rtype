@@ -7,11 +7,13 @@
 
 #include "Starfield.hpp"
 
+#include <utility>
+
 using namespace Background;
 
 Starfield::Starfield(
     std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager)
-    : _renderer(renderer), _textureManager(textureManager)
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
 {
     if (!_renderer) {
         throw StarfieldError("Renderer cannot be null");

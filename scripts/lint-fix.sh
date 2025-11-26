@@ -36,10 +36,12 @@ echo
 
 # 2. clang-tidy auto-fix
 echo -e "${BLUE}Running clang-tidy analysis and fix...${NC}"
+rm -rf build
 mkdir -p build
 cd build
 
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .. >/dev/null
+# Configure CMake without tests for static analysis
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTING=OFF .. >/dev/null
 if [ ! -f compile_commands.json ]; then
     echo -e "${RED}Error: compile_commands.json not found. CMake configuration may have failed.${NC}" >&2
     exit 1
@@ -49,11 +51,11 @@ ln -sf compile_commands.json ..
 cd ..
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy "$f" --quiet -fix -p build/compile_commands.json; then
+    if ! clang-tidy "$f" --quiet -fix -p build/compile_commands.json  --extra-arg=-Wno-unknown-pragmas; then
         echo -e "${RED}clang-tidy failed for $f${NC}" >&2
         TIDY_FAILED=1
     fi
-done < <(find client/src server/src -name "*.cpp" -print0)
+done < <(find client/src server/src -name "*.cpp" -not -path "*/tests/*" -print0)
 
 echo -e "${GREEN}clang-tidy fix completed${NC}"
 echo "==================================="

@@ -20,7 +20,7 @@ bool SFMLTextureManager::loadTexture(const std::string &filePath)
         return false;
     }
 
-    _textures[filePath] = std::move(texture);
+    _textures[filePath] = texture;
     return true;
 }
 

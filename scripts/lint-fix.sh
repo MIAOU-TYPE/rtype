@@ -19,7 +19,7 @@ NC="\033[0m"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Check required tools
-for tool in clang-format clang-tidy cmake; do
+for tool in clang-format-20 clang-tidy-20 cmake; do
     command -v "$tool" >/dev/null 2>&1 || { echo -e "${RED}Error: $tool is not installed${NC}"; exit 1; }
 done
 
@@ -30,7 +30,7 @@ cd "$PROJECT_ROOT"
 
 # 1. Automatic formatting
 echo -e "${BLUE}Applying format (clang-format)...${NC}"
-find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 | xargs -0 clang-format -i
+find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 | xargs -0 clang-format-20 -i
 echo -e "${GREEN}Format applied${NC}"
 echo
 
@@ -51,7 +51,7 @@ ln -sf compile_commands.json ..
 cd ..
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy "$f" --quiet -fix -p build/compile_commands.json  --extra-arg=-Wno-unknown-pragmas; then
+    if ! clang-tidy-20 "$f" --quiet -fix -p build/compile_commands.json  --extra-arg=-Wno-unknown-pragmas; then
         echo -e "${RED}clang-tidy failed for $f${NC}" >&2
         TIDY_FAILED=1
     fi

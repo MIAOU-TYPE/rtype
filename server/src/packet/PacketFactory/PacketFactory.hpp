@@ -13,6 +13,7 @@
 #include "DefaultPacket.hpp"
 #include "Endian.hpp"
 #include "EntityCreatePacket.hpp"
+#include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
 
@@ -57,13 +58,34 @@ namespace Net::Factory
         /**
          * @brief Creates a default packet with the specified flag.
          * @param flag The flag to set in the default packet.
-         * @return A reference to the created IServerPacket.
+         * @return A shared pointer to the created IServerPacket.
          */
         std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept;
 
+        /**
+         * @brief Creates an EntityCreatePacket with the specified parameters.
+         * @param id The ID of the entity to create.
+         * @param x The x-coordinate of the entity.
+         * @param y The y-coordinate of the entity.
+         * @param sprite The sprite ID of the entity.
+         * @return A shared pointer to the created IServerPacket.
+         */
         std::shared_ptr<IServerPacket> makeEntityCreate(
             const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept;
+
+        /**
+         * @brief Creates an EntityDestroyPacket for the specified entity ID.
+         * @param id The ID of the entity to destroy.
+         * @return A shared pointer to the created IServerPacket.
+         */
         std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept;
+
+        /**
+         * @brief Creates a DamagePacket for the specified entity ID and damage amount.
+         * @param id The ID of the entity receiving damage.
+         * @param amount The amount of damage to apply.
+         * @return A shared pointer to the created IServerPacket.
+         */
         std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) noexcept;
 
       private:

@@ -7,22 +7,6 @@
 
 #include "PacketFactory.hpp"
 
-// static uint32_t htonf(float f)
-// {
-//     uint32_t tmp;
-//     std::memcpy(&tmp, &f, sizeof(f));
-//     tmp = htonl(tmp);
-//     return tmp;
-// }
-
-// static float ntohf(uint32_t v)
-// {
-//     v = ntohl(v);
-//     float f;
-//     std::memcpy(&f, &v, sizeof(f));
-//     return f;
-// }
-
 namespace Net::Factory
 {
 
@@ -52,9 +36,6 @@ namespace Net::Factory
         return buffer;
     }
 
-    //==============
-    // TODO
-    //==============
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
         const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept
     {
@@ -72,9 +53,6 @@ namespace Net::Factory
         return buffer;
     }
 
-    //==============
-    // TODO
-    //==============
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept
     {
         (void) id;

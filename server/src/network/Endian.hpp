@@ -1,6 +1,11 @@
+/*
+** EPITECH PROJECT, 2025
+** RType
+** File description:
+** Endian
+*/
 #pragma once
 
-#include <cstdint>
 #include <cstring>
 
 #if defined(__APPLE__)

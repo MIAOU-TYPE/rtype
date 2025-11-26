@@ -33,6 +33,12 @@ void SFMLSprite::setScale(float scaleX, float scaleY)
     _sprite.setScale(scaleX, scaleY);
 }
 
+void SFMLSprite::setTextureRect(float left, float top, float width, float height)
+{
+    _sprite.setTextureRect(
+        sf::IntRect(static_cast<int>(left), static_cast<int>(top), static_cast<int>(width), static_cast<int>(height)));
+}
+
 const sf::Sprite &SFMLSprite::getSFMLSprite() const
 {
     return _sprite;

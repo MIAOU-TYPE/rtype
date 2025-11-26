@@ -3,7 +3,7 @@
 # -------------------------
 # Test source discovery
 # -------------------------
-file(GLOB TEST_SOURCES "*.cpp")
+file(GLOB CONFIGURE_DEPENDS TEST_SOURCES "*.cpp")
 
 # -------------------------
 # Client sources (exclude Main.cpp)

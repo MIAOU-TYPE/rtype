@@ -38,7 +38,6 @@ namespace Client::Exception
         std::string message;
         if (size > 0 && messageBuffer != nullptr) {
             message = std::string(messageBuffer, size);
-            // Remove trailing newlines
             while (!message.empty() && (message.back() == '\n' || message.back() == '\r')) {
                 message.pop_back();
             }

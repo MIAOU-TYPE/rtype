@@ -21,6 +21,13 @@ namespace Network
 {
     ANetworkClient::ANetworkClient() : _socketFd(kInvalidSocket), _running(false)
     {
+        #ifdef _WIN32
+            WSADATA wsaData;
+            int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+            if (result != 0) {
+                throw Client::Exception::SocketException("WSAStartup failed", result);
+            }
+        #endif
         _socketConfig.family = AF_INET;
         _socketConfig.type = SOCK_DGRAM;
         _socketConfig.protocol = IPPROTO_UDP;

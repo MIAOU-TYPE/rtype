@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <stddef.h>
+#include <vector>
 
 /**
  * @namespace Network

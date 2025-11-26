@@ -11,8 +11,6 @@ namespace Network
 {
     AClientPacket::AClientPacket()
     {
-        std::memset(_buffer, 0, MAX_SIZE);
-        std::memset(&_addr, 0, sizeof(_addr));
     }
 
     uint8_t *AClientPacket::buffer()

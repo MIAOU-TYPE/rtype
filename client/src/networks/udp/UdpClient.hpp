@@ -19,7 +19,6 @@
 
 #include "../wrappers/NetWrapper.hpp"
 #include "ANetworkClient.hpp"
-#include "PacketSerializer.hpp"
 #include "SocketConfig.hpp"
 #include "UdpClientPacket.hpp"
 

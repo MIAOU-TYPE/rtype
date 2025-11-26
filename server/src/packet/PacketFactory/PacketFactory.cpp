@@ -45,16 +45,13 @@ namespace Net::Factory
         return makePacket<EntityCreatePacket>(addr, entityCreatePacket);
     }
 
-    //==============
-    // TODO
-    //==============
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
     {
-        (void) id;
+        EntityDestroyPacket entityDestroyPacket;
+        entityDestroyPacket.header = makeHeader(ENTITY_DESTROY, ENTITY_DESTROY, sizeof(EntityDestroyPacket));
+        entityDestroyPacket.id = htobe64(id);
 
-        auto buffer = _packet->clone();
-        buffer->setAddress(addr);
-        return buffer;
+        return makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeDamage(

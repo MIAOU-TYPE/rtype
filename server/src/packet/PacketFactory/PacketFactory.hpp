@@ -15,6 +15,7 @@
 #include "EntityCreatePacket.hpp"
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
+#include "DamagePacket.hpp"
 #include "IServerPacket.hpp"
 
 constexpr uint8_t ACCEPT = 0x10;

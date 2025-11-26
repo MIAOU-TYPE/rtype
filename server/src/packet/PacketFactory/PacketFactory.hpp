@@ -10,12 +10,12 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include "DamagePacket.hpp"
 #include "DefaultPacket.hpp"
 #include "Endian.hpp"
 #include "EntityCreatePacket.hpp"
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
-#include "DamagePacket.hpp"
 #include "IServerPacket.hpp"
 
 constexpr uint8_t ACCEPT = 0x10;
@@ -91,7 +91,6 @@ namespace Net::Factory
          * @return A shared pointer to the created IServerPacket.
          */
         std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) const noexcept;
-
 
       private:
         /**

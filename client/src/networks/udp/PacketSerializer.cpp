@@ -23,11 +23,6 @@ namespace Network
         packet.clientId = htonl(clientId);
 
         std::vector<uint8_t> buffer(sizeof(PacketConnect));
-
-        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketConnect)) {
-            throw Client::Exception::BufferException("Buffer size is insufficient for PacketConnect serialization");
-        }
-
         std::memcpy(buffer.data(), &packet, sizeof(PacketConnect));
         return buffer;
     }
@@ -44,11 +39,6 @@ namespace Network
         packet.shooting = shooting;
 
         std::vector<uint8_t> buffer(sizeof(PacketInput));
-
-        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketInput)) {
-            throw Client::Exception::BufferException("Buffer size is insufficient for PacketInput serialization");
-        }
-
         std::memcpy(buffer.data(), &packet, sizeof(PacketInput));
         return buffer;
     }
@@ -61,11 +51,6 @@ namespace Network
         packet.header.size = htons(sizeof(PacketPing));
 
         std::vector<uint8_t> buffer(sizeof(PacketPing));
-
-        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketPing)) {
-            throw Client::Exception::BufferException("Buffer size is insufficient for PacketPing serialization");
-        }
-
         std::memcpy(buffer.data(), &packet, sizeof(PacketPing));
         return buffer;
     }
@@ -78,11 +63,6 @@ namespace Network
         packet.header.size = htons(sizeof(PacketDisconnect));
 
         std::vector<uint8_t> buffer(sizeof(PacketDisconnect));
-
-        if (buffer.size() <= 0 || buffer.size() < sizeof(PacketDisconnect)) {
-            throw Client::Exception::BufferException("Buffer size is insufficient for PacketDisconnect serialization");
-        }
-
         std::memcpy(buffer.data(), &packet, sizeof(PacketDisconnect));
         return buffer;
     }

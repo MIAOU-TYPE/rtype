@@ -25,8 +25,6 @@ namespace Network
     {
         if (s != kInvalidSocket)
             closesocket(s);
-        else 
-            throw NetWrapperError("Invalid socket handle");
     }
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
@@ -67,8 +65,6 @@ namespace Network
     {
         if (s != kInvalidSocket)
             close(s);
-        else 
-            throw NetWrapperError("Invalid socket handle");
     }
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)

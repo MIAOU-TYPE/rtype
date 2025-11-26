@@ -76,7 +76,7 @@ namespace Network
          * @param optName The option name.
          * @param optVal A pointer to the option value.
          * @param optLen The size of the option value.
-         * @return 0 on success, or -1 on failure.
+         * @return 0 on success
          */
         static int setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen);
 
@@ -88,7 +88,7 @@ namespace Network
          * @param flags Flags for the receive operation.
          * @param srcAddr A pointer to a sockaddr structure to store the source address.
          * @param addrLen A pointer to a socklen_t variable that specifies the size of srcAddr.
-         * @return The number of bytes received, or -1 on failure.
+         * @return The number of bytes received
          */
         static recvfrom_return_t recvFrom(
             socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen);
@@ -101,7 +101,7 @@ namespace Network
          * @param flags Flags for the send operation.
          * @param destAddr A pointer to a sockaddr structure containing the destination address.
          * @param addrLen The size of the destination address structure.
-         * @return The number of bytes sent, or -1 on failure.
+         * @return The number of bytes sent
          */
         static sendto_return_t sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
             const struct sockaddr *destAddr, socklen_t addrLen);

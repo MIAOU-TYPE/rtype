@@ -72,8 +72,6 @@ make
 
 ## Running
 
-### Native Execution
-
 After building, you can run the server and client executables:
 
 ```bash
@@ -83,46 +81,6 @@ After building, you can run the server and client executables:
 # Start the client (in another terminal)
 ./r-type_client
 ```
-
-### Docker Deployment
-
-The easiest way to run the R-Type server is using Docker:
-
-#### Using Docker Compose (Recommended)
-
-```bash
-# Build and start the server
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop the server
-docker-compose down
-```
-
-#### Manual Docker Commands
-
-```bash
-# Build the server image
-docker build -t rtype-server -f docker/server.Dockerfile .
-
-# Build the client image (optional)
-docker build -t rtype-client -f docker/client.Dockerfile .
-
-# Run the server
-docker run -d -p 4242:4242/udp --name rtype-server rtype-server
-
-# View logs
-docker logs -f rtype-server
-
-# Stop the server
-docker stop rtype-server
-```
-
-**Server Configuration:**
-- Port: `4242/udp` (configurable via docker-compose.yaml)
-- Protocol: UDP for low-latency gameplay
 
 ## Documentation
 

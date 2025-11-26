@@ -10,8 +10,7 @@
 namespace Network
 {
     AClientPacket::AClientPacket()
-    {
-    }
+    = default;
 
     uint8_t *AClientPacket::buffer()
     {

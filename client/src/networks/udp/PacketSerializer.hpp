@@ -39,7 +39,7 @@ namespace Network
         /**
          * @brief Destroy the PacketSerializer object
          */
-        ~PacketSerializer();
+        ~PacketSerializer() = default;
 
         /**
          * @brief Serialize a connection request packet

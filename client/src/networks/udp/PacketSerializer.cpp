@@ -12,7 +12,7 @@ namespace Network
 
     PacketSerializer::PacketSerializer() = default;
 
-    PacketSerializer::~PacketSerializer() = default;
+    
 
     std::vector<uint8_t> PacketSerializer::serializeConnectPacket(uint32_t clientId)
     {

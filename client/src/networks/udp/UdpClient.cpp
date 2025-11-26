@@ -112,7 +112,7 @@ namespace Network
                 }
             }
         } catch (const Client::Exception::ReceiveException &e) {
-            // To Do: Handle receive exception (log it, cleanup, etc.)
+            // TODO: Handle receive exception (log it, cleanup, etc.)
             _running = false;
         }
     }

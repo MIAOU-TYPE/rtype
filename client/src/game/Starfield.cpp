@@ -9,8 +9,6 @@
 
 #include <utility>
 
-#include <utility>
-
 using namespace Background;
 
 Starfield::Starfield(

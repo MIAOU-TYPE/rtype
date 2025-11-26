@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** NetWrapper - Cross-platform network socket wrapper for client
+** NetWrapper
 */
 
 #pragma once
@@ -17,6 +17,8 @@ using sendto_return_t = int;
     #include <arpa/inet.h>
     #include <sys/socket.h>
     #include <unistd.h>
+    #include <exception>
+    #include <string>
 using socketHandle = int;
 constexpr socketHandle kInvalidSocket = -1;
 using recvfrom_return_t = ssize_t;
@@ -29,6 +31,21 @@ using sendto_return_t = ssize_t;
  */
 namespace Network
 {
+    class NetWrapperError : public std::exception {
+      public:
+        explicit NetWrapperError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
+
     /**
      * @class NetWrapper
      * @brief A wrapper class for network socket operations (client-side).

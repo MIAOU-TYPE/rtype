@@ -91,7 +91,7 @@ namespace Net::Factory
          * @param amount The amount of damage to apply.
          * @return A shared pointer to the created IServerPacket.
          */
-        std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) const noexcept;
+        std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
 
       private:
         /**

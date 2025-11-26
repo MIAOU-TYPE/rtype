@@ -55,7 +55,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeDamage(
-        const sockaddr_in &addr, size_t id, uint16_t amount) const noexcept
+        const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {
         DamagePacket damagePacket;
         damagePacket.header = makeHeader(DAMAGE_EVENT, DAMAGE_EVENT, sizeof(DamagePacket));

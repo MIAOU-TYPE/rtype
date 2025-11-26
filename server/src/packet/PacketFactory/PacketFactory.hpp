@@ -92,6 +92,7 @@ namespace Net::Factory
          */
         std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, size_t id, uint16_t amount) const noexcept;
 
+
       private:
         /**
          * @brief Creates a HeaderPacket with the specified parameters.
@@ -102,8 +103,20 @@ namespace Net::Factory
          */
         static HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
 
+        /**
+         * @brief Creates a packet of the specified type with the given address and packet data.
+         * @tparam Type The type of the packet data. (struct representing the packet)
+         * @param addr The address to which the packet will be sent.
+         * @param packetData The data to be included in the packet.
+         * @return A shared pointer to the created IServerPacket.
+         */
+        template <typename Type>
+        std::shared_ptr<IServerPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const noexcept;
+
         std::shared_ptr<IServerPacket> _packet =
             nullptr; //> Pointer to the template IServerPacket used for creating packets.
     };
 
 } // namespace Net::Factory
+
+#include "PacketFactory.tpp"

@@ -29,11 +29,7 @@ namespace Net::Factory
         DefaultPacket defaultPacket;
         defaultPacket.header = makeHeader(flag, flag, sizeof(DefaultPacket));
 
-        auto buffer = _packet->clone();
-        buffer->setAddress(addr);
-        std::memcpy(buffer->buffer(), &defaultPacket, sizeof(DefaultPacket));
-        buffer->setSize(sizeof(DefaultPacket));
-        return buffer;
+        return makePacket<DefaultPacket>(addr, defaultPacket);
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
@@ -46,11 +42,7 @@ namespace Net::Factory
         entityCreatePacket.y = htonf(y);
         entityCreatePacket.sprite = htons(sprite);
 
-        auto buffer = _packet->clone();
-        buffer->setAddress(addr);
-        std::memcpy(buffer->buffer(), &entityCreatePacket, sizeof(EntityCreatePacket));
-        buffer->setSize(sizeof(EntityCreatePacket));
-        return buffer;
+        return makePacket<EntityCreatePacket>(addr, entityCreatePacket);
     }
 
     //==============
@@ -73,10 +65,6 @@ namespace Net::Factory
         damagePacket.id = htonl(id);
         damagePacket.amount = htons(amount);
 
-        auto buffer = _packet->clone();
-        buffer->setAddress(addr);
-        std::memcpy(buffer->buffer(), &damagePacket, sizeof(DamagePacket));
-        buffer->setSize(sizeof(DamagePacket));
-        return buffer;
+        return makePacket<DamagePacket>(addr, damagePacket);
     }
 } // namespace Net::Factory

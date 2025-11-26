@@ -5,8 +5,6 @@
 ** PacketFactory
 */
 
-#pragma once
-
 template<typename Type>
 std::shared_ptr<Net::IServerPacket> Net::Factory::PacketFactory::makePacket(const sockaddr_in &addr, const Type &packetData) const noexcept
 {

@@ -4,7 +4,6 @@
 ** File description:
 ** Registry
 */
-#pragma once
 
 namespace Ecs
 {

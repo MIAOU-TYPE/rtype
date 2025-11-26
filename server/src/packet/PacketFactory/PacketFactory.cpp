@@ -24,7 +24,7 @@ namespace Net::Factory
         return header;
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) noexcept
+    std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
     {
         DefaultPacket defaultPacket;
         defaultPacket.header = makeHeader(flag, flag, sizeof(DefaultPacket));
@@ -37,7 +37,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
-        const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) noexcept
+        const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept
     {
         EntityCreatePacket entityCreatePacket;
         entityCreatePacket.header = makeHeader(ENTITY_CREATE, ENTITY_CREATE, sizeof(EntityCreatePacket));
@@ -53,7 +53,7 @@ namespace Net::Factory
         return buffer;
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) noexcept
+    std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
     {
         (void) id;
 
@@ -62,15 +62,13 @@ namespace Net::Factory
         return buffer;
     }
 
-    //==============
-    // TODO
-    //==============
     std::shared_ptr<IServerPacket> PacketFactory::makeDamage(
         const sockaddr_in &addr, size_t id, uint16_t amount) noexcept
     {
-        (void) id;
-        (void) amount;
-
+        DamagePacket damagePacket;
+        damagePacket.header = makeHeader(DAMAGE_EVENT, DAMAGE_EVENT, sizeof(DamagePacket));
+        damagePacket.id = htonl(id);
+        damagePacket.amount = htons(amount);
         auto buffer = _packet->clone();
         buffer->setAddress(addr);
         return buffer;

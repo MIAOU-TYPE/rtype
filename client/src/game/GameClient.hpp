@@ -46,7 +46,7 @@ namespace Game
         }
 
       private:
-        std::string _message = ""; //> Error message
+        std::string _message = ""; ///> Error message
     };
 
     /**

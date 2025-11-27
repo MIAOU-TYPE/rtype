@@ -14,7 +14,10 @@
 #endif
 
 #include <cstdint>
+#include <exception>
 #include <stddef.h>
+#include <string>
+#include <utility>
 #include <vector>
 
 /**
@@ -29,7 +32,7 @@ namespace Network
          * @brief Constructs an PacketError with a given message.
          * @param message The error message.
          */
-        explicit PacketError(const std::string &message) : msg_(message)
+        explicit PacketError(std::string message) : msg_(std::move(message))
         {
         }
 

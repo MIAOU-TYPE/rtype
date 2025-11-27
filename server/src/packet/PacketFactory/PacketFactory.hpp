@@ -17,6 +17,7 @@
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
+#include <iostream>
 
 /**
  * @namespace Net

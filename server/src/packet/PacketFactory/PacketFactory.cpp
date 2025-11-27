@@ -13,7 +13,7 @@ namespace Net::Factory
     PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet)
     {
         if (!packet)
-            throw FactoryError("{Net::Factory::PacketFactory::PacketFactory} Invalid IServerPacket pointer");
+            throw FactoryError("{PacketFactory::PacketFactory} Invalid IServerPacket pointer");
         _packet = packet;
     }
 
@@ -36,6 +36,7 @@ namespace Net::Factory
             auto packet = makePacket<DefaultPacket>(addr, defaultPacket);
             return packet;
         } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::makeDefault} " << e.what() << std::endl;
             return nullptr;
         }
     }
@@ -54,6 +55,7 @@ namespace Net::Factory
             auto packet = makePacket<EntityCreatePacket>(addr, entityCreatePacket);
             return packet;
         } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::makeEntityCreate} " << e.what() << std::endl;
             return nullptr;
         }
     }
@@ -68,6 +70,7 @@ namespace Net::Factory
             auto packet = makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
             return packet;
         } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::makeEntityDestroy} " << e.what() << std::endl;
             return nullptr;
         }
     }
@@ -84,6 +87,7 @@ namespace Net::Factory
             auto packet = makePacket<DamagePacket>(addr, damagePacket);
             return packet;
         } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::makeDamage} " << e.what() << std::endl;
             return nullptr;
         }
     }

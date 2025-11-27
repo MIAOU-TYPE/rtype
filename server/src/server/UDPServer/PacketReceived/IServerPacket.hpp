@@ -79,5 +79,11 @@ namespace Net
          * @return A shared pointer to the cloned IServerPacket.
          */
         virtual std::shared_ptr<IServerPacket> clone() const = 0;
+
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The capacity of the packet buffer.
+         */
+        virtual size_t capacity() const noexcept = 0;
     };
 } // namespace Net

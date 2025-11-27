@@ -26,10 +26,10 @@ namespace Network
 {
     /**
      * @class UDPClientPacket
-     * @brief Abstract base class for client packets.
+     * @brief Concrete base class for client packets.
      * @details This class provides common functionality for packet management,
      * including buffer, size, and address handling. Derived classes can use
-     * this implementation or override specific methods as needed.
+     * this implementation directly or override specific methods as needed.
      * @note This class inherits from IClientPacket and provides default implementations.
      */
     class UDPClientPacket : public IClientPacket {

@@ -12,10 +12,10 @@
 
 struct EntityCreatePacket {
     HeaderPacket header;
-    uint64_t id;
-    uint32_t x;
-    uint32_t y;
-    uint16_t sprite;
+    uint64_t id = 0;
+    uint32_t x = 0;
+    uint32_t y = 0;
+    uint16_t sprite = 0;
 };
 
 #pragma pack(pop)

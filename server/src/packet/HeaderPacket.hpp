@@ -11,9 +11,9 @@
 #pragma pack(push, 1)
 
 struct HeaderPacket {
-    uint8_t type;
-    uint8_t version;
-    uint16_t size;
+    uint8_t type = 0;
+    uint8_t version = 0;
+    uint16_t size = 0;
 };
 
 #pragma pack(pop)

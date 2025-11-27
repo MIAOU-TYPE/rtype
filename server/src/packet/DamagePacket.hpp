@@ -12,8 +12,8 @@
 
 struct DamagePacket {
     HeaderPacket header;
-    uint32_t id;
-    uint16_t amount;
+    uint32_t id = 0;
+    uint16_t amount = 0;
 };
 
 #pragma pack(pop)

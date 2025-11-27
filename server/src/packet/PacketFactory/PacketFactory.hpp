@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstring>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <utility>
@@ -17,7 +18,6 @@
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IServerPacket.hpp"
-#include <iostream>
 
 /**
  * @namespace Net

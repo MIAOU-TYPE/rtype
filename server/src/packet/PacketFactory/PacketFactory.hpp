@@ -49,7 +49,7 @@ namespace Net::Factory
          * @brief Constructs a new PacketFactory object.
          * @param packet A shared pointer to an IServerPacket used as a template for creating packets.
          */
-        PacketFactory(const std::shared_ptr<Net::IServerPacket> &packet);
+        explicit PacketFactory(const std::shared_ptr<Net::IServerPacket> &packet);
 
         /**
          * @brief Destructor for PacketFactory.

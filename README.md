@@ -20,7 +20,7 @@ The project is organized into the following main directories:
 - `docs/` - Documentation files
 - `scripts/` - Build and utility scripts
 
-For detailed information about the directory structure, see [Directory Structure](docs/DIRECTORY_STRUCTURE.md).
+For detailed information about the directory structure, see [Directory Structure](docss/DIRECTORY_STRUCTURE.md).
 
 ## Building
 
@@ -84,7 +84,7 @@ After building, you can run the server and client executables:
 
 ## Documentation
 
-- [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Detailed project organization
+- [Directory Structure](docss/DIRECTORY_STRUCTURE.md) - Detailed project organization
 - [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to the project
 
 ## Contributing

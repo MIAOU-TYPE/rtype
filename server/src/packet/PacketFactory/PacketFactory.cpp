@@ -10,8 +10,11 @@
 namespace Net::Factory
 {
 
-    PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet) : _packet(packet)
+    PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet)
     {
+        if (!packet)
+            throw FactoryError("{Net::Factory::PacketFactory::PacketFactory} Invalid IServerPacket pointer");
+        _packet = packet;
     }
 
     HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
@@ -29,7 +32,12 @@ namespace Net::Factory
         DefaultPacket defaultPacket;
         defaultPacket.header = makeHeader(flag, flag, sizeof(DefaultPacket));
 
-        return makePacket<DefaultPacket>(addr, defaultPacket);
+        try {
+            auto packet = makePacket<DefaultPacket>(addr, defaultPacket);
+            return packet;
+        } catch (const FactoryError &e) {
+            return nullptr;
+        }
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
@@ -42,7 +50,12 @@ namespace Net::Factory
         entityCreatePacket.y = htonf(y);
         entityCreatePacket.sprite = htons(sprite);
 
-        return makePacket<EntityCreatePacket>(addr, entityCreatePacket);
+        try {
+            auto packet = makePacket<EntityCreatePacket>(addr, entityCreatePacket);
+            return packet;
+        } catch (const FactoryError &e) {
+            return nullptr;
+        }
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
@@ -51,7 +64,12 @@ namespace Net::Factory
         entityDestroyPacket.header = makeHeader(ENTITY_DESTROY, ENTITY_DESTROY, sizeof(EntityDestroyPacket));
         entityDestroyPacket.id = htobe64(id);
 
-        return makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
+        try {
+            auto packet = makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
+            return packet;
+        } catch (const FactoryError &e) {
+            return nullptr;
+        }
     }
 
     std::shared_ptr<IServerPacket> PacketFactory::makeDamage(
@@ -62,6 +80,11 @@ namespace Net::Factory
         damagePacket.id = htonl(id);
         damagePacket.amount = htons(amount);
 
-        return makePacket<DamagePacket>(addr, damagePacket);
+        try {
+            auto packet = makePacket<DamagePacket>(addr, damagePacket);
+            return packet;
+        } catch (const FactoryError &e) {
+            return nullptr;
+        }
     }
 } // namespace Net::Factory

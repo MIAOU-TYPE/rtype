@@ -21,9 +21,9 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketHeader {
-        uint8_t type;    ///< Type of the packet (see PacketTypes.hpp for definitions)
-        uint8_t version; ///< Protocol version
-        uint16_t size;   ///< Total size of the packet in bytes (network byte order)
+        uint8_t type;    ///> Type of the packet (see PacketTypes.hpp for definitions)
+        uint8_t version; ///> Protocol version
+        uint16_t size;   ///> Total size of the packet in bytes (network byte order)
     };
 
 #pragma pack(pop)

@@ -20,7 +20,7 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketBase {
-        PacketHeader header; ///< Common packet header
+        PacketHeader header; ///> Common packet header
     };
 
 #pragma pack(pop)

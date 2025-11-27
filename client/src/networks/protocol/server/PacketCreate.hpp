@@ -19,11 +19,11 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketEntityCreate {
-        PacketHeader header; ///< Common packet header
-        uint32_t id;         ///< Entity ID (network byte order)
-        uint32_t x;          ///< X position (network byte order)
-        uint32_t y;          ///< Y position (network byte order)
-        uint16_t sprite;     ///< Sprite ID (network byte order)
+        PacketHeader header; ///> Common packet header
+        uint32_t id;         ///> Entity ID (network byte order)
+        uint32_t x;          ///> X position (network byte order)
+        uint32_t y;          ///> Y position (network byte order)
+        uint16_t sprite;     ///> Sprite ID (network byte order)
     };
 
 #pragma pack(pop)

@@ -20,8 +20,8 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketConnect {
-        PacketHeader header; ///< Common packet header
-        uint32_t clientId;   ///< Unique client identifier (network byte order)
+        PacketHeader header; ///> Common packet header
+        uint32_t clientId;   ///> Unique client identifier (network byte order)
     };
 
 #pragma pack(pop)

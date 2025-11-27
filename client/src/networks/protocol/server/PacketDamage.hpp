@@ -19,9 +19,9 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketDamage {
-        PacketHeader header; ///< Common packet header
-        uint32_t id;         ///< Entity ID (network byte order)
-        uint16_t amount;     ///< Damage amount (network byte order)
+        PacketHeader header; ///> Common packet header
+        uint32_t id;         ///> Entity ID (network byte order)
+        uint16_t amount;     ///> Damage amount (network byte order)
     };
 
 #pragma pack(pop)

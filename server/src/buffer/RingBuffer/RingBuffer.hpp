@@ -27,7 +27,7 @@ namespace Buffer
          * @brief Constructor to initialize the ring buffer with a given capacity.
          * @param capacity The maximum number of elements the buffer can hold.
          */
-        RingBuffer(size_t capacity);
+        explicit RingBuffer(size_t capacity);
 
         /**
          * @brief Destructor to clean up resources.

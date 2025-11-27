@@ -57,18 +57,6 @@ namespace Net
         const uint8_t *buffer() const override;
 
         /**
-         * @brief Retrieves the source address of the packet.
-         * @return A pointer to the sockaddr_in structure representing the source address.
-         */
-        sockaddr_in *address();
-
-        /**
-         * @brief Retrieves the source address of the packet (const version).
-         * @return A const pointer to the sockaddr_in structure representing the source address.
-         */
-        const sockaddr_in *address() const override;
-
-        /**
          * @brief Retrieves the size of the packet.
          * @return The size of the packet in bytes.
          */
@@ -79,6 +67,30 @@ namespace Net
          * @param s The size to set for the packet.
          */
         void setSize(size_t s) override;
+
+        /**
+         * @brief Retrieves the source address of the packet (const version).
+         * @return A const pointer to the sockaddr_in structure representing the source address.
+         */
+        const sockaddr_in *address() const override;
+
+        /**
+         * @brief Sets the source address of the packet.
+         * @param addr The sockaddr_in structure representing the source address to set.
+         */
+        void setAddress(const sockaddr_in &addr) override;
+
+        /**
+         * @brief Creates a clone of the current packet.
+         * @return A shared pointer to the cloned IServerPacket.
+         */
+        std::shared_ptr<IServerPacket> clone() const override;
+
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The maximum capacity of the packet buffer in bytes.
+         */
+        size_t capacity() const noexcept override;
 
       private:
         uint8_t _buffer[MAX_SIZE] = {0}; ///> Buffer to store packet data

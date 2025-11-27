@@ -27,9 +27,9 @@ inline uint64_t be64toh(uint64_t x)
     #include <endian.h>
 
 #elif defined(_WIN32)
-#include <winsock2.h>
-#include <windows.h>
-#include <intrin.h>
+    #include <intrin.h>
+    #include <windows.h>
+    #include <winsock2.h>
 
 static inline uint64_t htobe64(uint64_t x)
 {
@@ -41,7 +41,6 @@ static inline uint64_t be64toh(uint64_t x)
     return _byteswap_uint64(x);
 }
 #endif
-
 
 inline uint32_t htonf(float f)
 {

@@ -37,6 +37,29 @@ namespace Net::Factory
     constexpr uint8_t DAMAGE_EVENT = 0x16;
     constexpr uint8_t GAME_OVER = 0x17;
 
+    class FactoryError : std::exception {
+      public:
+        /**
+         * @brief Constructs a new FactoryError object with the specified message.
+         * @param message The error message.
+         */
+        explicit FactoryError(std::string message) : _message(std::move(message))
+        {
+        }
+
+        /**
+         * @brief Returns the error message.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message = ""; ///< The error message.
+    };
+
     /**
      * @class PacketFactory
      * @brief Factory class for creating various types of network packets.
@@ -111,7 +134,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IServerPacket.
          */
         template <typename Type>
-        std::shared_ptr<IServerPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const noexcept;
+        std::shared_ptr<IServerPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
 
         std::shared_ptr<IServerPacket> _packet =
             nullptr; //> Pointer to the template IServerPacket used for creating packets.

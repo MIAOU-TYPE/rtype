@@ -140,7 +140,6 @@ namespace Net::Factory
             nullptr; ///> Pointer to the template IServerPacket used for creating packets.
 
         static constexpr uint8_t VERSION = 1.0; ///> The version of the packet factory.
-
     };
 
 } // namespace Net::Factory

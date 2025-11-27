@@ -28,20 +28,20 @@ inline uint64_t be64toh(uint64_t x)
 
 #elif defined(_WIN32)
 
-#include <windows.h>
-#include <winsock2.h>
+    #include <windows.h>
+    #include <winsock2.h>
 
 static inline uint64_t htobe64(uint64_t x)
 {
     uint32_t high = htonl(uint32_t(x >> 32));
-    uint32_t low  = htonl(uint32_t(x & 0xFFFFFFFFULL));
+    uint32_t low = htonl(uint32_t(x & 0xFFFFFFFFULL));
     return (uint64_t(high) << 32) | low;
 }
 
 static inline uint64_t be64toh(uint64_t x)
 {
     uint32_t high = ntohl(uint32_t(x >> 32));
-    uint32_t low  = ntohl(uint32_t(x & 0xFFFFFFFFULL));
+    uint32_t low = ntohl(uint32_t(x & 0xFFFFFFFFULL));
     return (uint64_t(high) << 32) | low;
 }
 

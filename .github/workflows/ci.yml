@@ -124,7 +124,7 @@ jobs:
         run: |
           cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
           cmake --build build/server --target r-type_server -j$(nproc)
-          cp build/server/r-type_server ./r-type_server
+          cp server/r-type_server ./r-type_server
 
       - name: Run server tests
         run: |
@@ -165,7 +165,7 @@ jobs:
         run: |
             cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
             cmake --build build/client --target r-type_client -j$(nproc)
-            cp build/client/r-type_client ./r-type_client
+            cp client/r-type_client ./r-type_client
 
       - name: Run client tests
         run: |

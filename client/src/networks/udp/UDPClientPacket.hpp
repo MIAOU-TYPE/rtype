@@ -44,7 +44,7 @@ namespace Network
         /**
          * @brief Virtual destructor for UDPClientPacket.
          */
-        virtual ~UDPClientPacket() = default;
+        ~UDPClientPacket() = default;
 
         /**
          * @brief Retrieves the packet buffer.

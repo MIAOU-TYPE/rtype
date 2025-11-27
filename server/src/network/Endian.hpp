@@ -34,14 +34,14 @@ inline uint64_t be64toh(uint64_t x)
 static inline uint64_t htobe64(uint64_t x)
 {
     uint32_t high = htonl(uint32_t(x >> 32));
-    uint32_t low  = htonl(uint32_t(x & 0xFFFFFFFFULL));
+    uint32_t low = htonl(uint32_t(x & 0xFFFFFFFFULL));
     return (uint64_t(low) << 32) | high;
 }
 
 static inline uint64_t be64toh(uint64_t x)
 {
     uint32_t high = ntohl(uint32_t(x >> 32));
-    uint32_t low  = ntohl(uint32_t(x & 0xFFFFFFFFULL));
+    uint32_t low = ntohl(uint32_t(x & 0xFFFFFFFFULL));
     return (uint64_t(low) << 32) | high;
 }
 

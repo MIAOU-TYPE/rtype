@@ -106,7 +106,7 @@ jobs:
   # Produces artifacts: build/server/r-type_server
   # -----------------------------
   build-and-test-server:
-    name: Build & Test
+    name: Build & Test server
     runs-on: ubuntu-latest
     needs: [check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.server == 'true'
@@ -147,7 +147,7 @@ jobs:
   # Produces artifacts: build/client/r-type_client
   # -----------------------------
   build-and-test-client:
-    name: Build & Test
+    name: Build & Test client
     runs-on: ubuntu-latest
     needs: [check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.client == 'true'

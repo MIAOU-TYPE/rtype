@@ -13,9 +13,9 @@
     #include <netinet/in.h>
 #endif
 
+#include <cstddef>
 #include <cstdint>
 #include <exception>
-#include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>

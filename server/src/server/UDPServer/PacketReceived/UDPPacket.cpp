@@ -49,3 +49,8 @@ std::shared_ptr<IServerPacket> UDPPacket::clone() const
 {
     return std::make_shared<UDPPacket>();
 }
+
+size_t UDPPacket::capacity() const noexcept
+{
+    return MAX_SIZE;
+}

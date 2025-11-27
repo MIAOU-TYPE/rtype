@@ -86,6 +86,12 @@ namespace Net
          */
         std::shared_ptr<IServerPacket> clone() const override;
 
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The maximum capacity of the packet buffer in bytes.
+         */
+        size_t capacity() const noexcept override;
+
       private:
         uint8_t _buffer[MAX_SIZE] = {0}; ///> Buffer to store packet data
         size_t _size = 0;                ///> Size of the packet

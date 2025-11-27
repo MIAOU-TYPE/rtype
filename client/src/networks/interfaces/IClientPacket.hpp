@@ -32,7 +32,7 @@ namespace Network
          * @brief Constructs an PacketError with a given message.
          * @param message The error message.
          */
-        explicit PacketError(std::string message) : msg_(std::move(message))
+        explicit PacketError(std::string message) : _msg(std::move(message))
         {
         }
 
@@ -42,11 +42,11 @@ namespace Network
          */
         const char *what() const noexcept override
         {
-            return msg_.c_str();
+            return _msg.c_str();
         }
 
       private:
-        std::string msg_;
+        std::string _msg;
     };
 
     /**

@@ -118,7 +118,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update &&
-          sudo apt-get install -y cmake g++ ccache gtest-dev
+          sudo apt-get install -y cmake g++ ccache libgtest-dev
 
       - name: Configure + Build server
         run: |

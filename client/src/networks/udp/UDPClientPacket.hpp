@@ -76,12 +76,6 @@ namespace Network
         void setSize(size_t s) override;
 
         /**
-         * @brief Converts the packet data to a vector.
-         * @return A vector containing the packet data.
-         */
-        std::vector<uint8_t> toVector() const override;
-
-        /**
          * @brief Maximum size of the packet buffer.
          * @note Derived classes can override this value if needed.
          */

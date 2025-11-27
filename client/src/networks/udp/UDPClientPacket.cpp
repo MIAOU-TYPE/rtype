@@ -40,9 +40,4 @@ namespace Network
     {
         _size = (s > MAX_SIZE) ? MAX_SIZE : s;
     }
-
-    std::vector<uint8_t> UDPClientPacket::toVector() const
-    {
-        return std::vector<uint8_t>(_buffer, _buffer + _size);
-    }
 } // namespace Network

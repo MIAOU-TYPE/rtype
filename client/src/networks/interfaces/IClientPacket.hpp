@@ -100,11 +100,5 @@ namespace Network
          * @return A const pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
-
-        /**
-         * @brief Converts the packet data to a vector.
-         * @return A vector containing the packet data.
-         */
-        virtual std::vector<uint8_t> toVector() const = 0;
     };
 } // namespace Network

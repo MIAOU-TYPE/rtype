@@ -39,7 +39,7 @@ namespace Network
          * @brief Constructor for UDPClientPacket.
          * @details Initializes the packet buffer and size to zero.
          */
-        UDPClientPacket();
+        UDPClientPacket() = default;
 
         /**
          * @brief Virtual destructor for UDPClientPacket.

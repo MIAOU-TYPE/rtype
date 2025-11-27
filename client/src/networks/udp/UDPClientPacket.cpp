@@ -9,8 +9,6 @@
 
 namespace Network
 {
-    UDPClientPacket::UDPClientPacket() = default;
-
     uint8_t *UDPClientPacket::buffer()
     {
         return _buffer;

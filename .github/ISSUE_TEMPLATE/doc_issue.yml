@@ -6,7 +6,7 @@ body:
   - type: textarea
     attributes:
       label: Affected Section
-      description: Which part of the docs does this affect?
+      description: Which part of the docss does this affect?
     validations:
       required: true
 

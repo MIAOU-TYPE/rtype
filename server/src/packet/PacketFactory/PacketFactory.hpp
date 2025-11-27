@@ -29,14 +29,14 @@
  */
 namespace Net::Factory
 {
-    constexpr uint8_t ACCEPT = 0x10;
-    constexpr uint8_t REJECT = 0x11;
-    constexpr uint8_t SNAPSHOT = 0x12;
-    constexpr uint8_t ENTITY_CREATE = 0x13;
-    constexpr uint8_t ENTITY_DESTROY = 0x14;
-    constexpr uint8_t PONG = 0x15;
-    constexpr uint8_t DAMAGE_EVENT = 0x16;
-    constexpr uint8_t GAME_OVER = 0x17;
+    constexpr uint8_t ACCEPT = 0x10;         ///> Packet type for accept packets.
+    constexpr uint8_t REJECT = 0x11;         ///> Packet type for reject packets.
+    constexpr uint8_t SNAPSHOT = 0x12;       ///> Packet type for snapshot packets.
+    constexpr uint8_t ENTITY_CREATE = 0x13;  ///> Packet type for entity creation packets.
+    constexpr uint8_t ENTITY_DESTROY = 0x14; ///> Packet type for entity destruction packets.
+    constexpr uint8_t PONG = 0x15;           ///> Packet type for pong packets.
+    constexpr uint8_t DAMAGE_EVENT = 0x16;   ///> Packet type for damage event packets.
+    constexpr uint8_t GAME_OVER = 0x17;      ///> Packet type for game over packets.
 
     class FactoryError : std::exception {
       public:

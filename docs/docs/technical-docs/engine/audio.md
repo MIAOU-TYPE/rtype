@@ -20,3 +20,4 @@ The audio module manages all sound effects and background music.
 ```cpp
 AudioSystem::playSound("laser.wav");
 AudioSystem::playMusic("background.mp3", loop=true);
+```

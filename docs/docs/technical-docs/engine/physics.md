@@ -22,3 +22,4 @@ CollisionSystem::update(ecs);
 if (CollisionSystem::check(player, enemy)) {
     HealthSystem::applyDamage(player, 1);
 }
+```

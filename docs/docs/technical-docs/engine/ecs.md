@@ -124,6 +124,7 @@ To implement a new component:
        int current;
        int max;
    };
+   ```
 
 2. **Register the component** with the Registry:
 

@@ -28,3 +28,4 @@ The rendering system handles drawing all visual elements of the game.
 for (auto entity : ecs.getEntitiesWith<Sprite>()) {
     renderer.draw(entity.get<Sprite>().texture, entity.get<Position>());
 }
+```

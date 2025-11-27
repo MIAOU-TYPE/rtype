@@ -21,3 +21,4 @@ The AI system manages enemy behaviors and automated game logic.
 EnemyAI ai;
 ai.setPattern(PATTERN_ZIGZAG);
 ai.update(enemy, player);
+```

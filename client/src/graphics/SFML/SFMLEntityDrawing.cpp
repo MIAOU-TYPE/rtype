@@ -54,7 +54,7 @@ SFMLEntityDrawing::SpriteInfo SFMLEntityDrawing::getSpriteInfoFromName(const std
         return it->second;
     }
 
-    return {"client/assets/sprites/" + spriteName + ".png", 32.0f, 32.0f};
+    throw std::runtime_error("Unknown sprite name: '" + spriteName + "'. Please add it to _spriteInfo map with proper dimensions.");
 }
 
 std::string SFMLEntityDrawing::getSpritePathFromName(const std::string &spriteName)

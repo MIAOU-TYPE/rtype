@@ -7,9 +7,11 @@
 
 #include "SFMLSpriteManagement.hpp"
 
+#include <utility>
+
 using namespace Graphics;
 
-SFMLSprite::SFMLSprite(const sf::Sprite &sprite) : _sprite(sprite)
+SFMLSprite::SFMLSprite(sf::Sprite sprite) : _sprite(std::move(sprite))
 {
 }
 

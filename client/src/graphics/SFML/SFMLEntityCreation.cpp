@@ -6,13 +6,17 @@
 */
 
 #include "SFMLEntityCreation.hpp"
+
+#include <utility>
+
+#include <utility>
 #include "SFMLEntityDrawing.hpp"
 
 using namespace Graphics;
 
 GraphicalEntity::GraphicalEntity(
     float x, float y, const std::string &spriteName, std::shared_ptr<ITextureManager> textureManager)
-    : _x(x), _y(y), _spriteName(spriteName), _textureManager(textureManager)
+    : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(std::move(textureManager)))
 {
     if (!_textureManager) {
         throw std::runtime_error("Texture manager cannot be null");
@@ -57,7 +61,7 @@ float GraphicalEntity::getHeight() const
     return info.height;
 }
 
-void GraphicalEntity::render(std::shared_ptr<IRenderer> renderer)
+void GraphicalEntity::render(const std::shared_ptr<IRenderer>& renderer)
 {
     if (renderer && _sprite) {
         renderer->renderSprite(*_sprite);

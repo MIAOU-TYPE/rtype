@@ -12,6 +12,7 @@
 #include <string>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "SFMLEntityDrawing.hpp"
 #include "Starfield.hpp"
 
 /**
@@ -85,6 +86,7 @@ namespace Game
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
+        // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
     };
 
 } // namespace Game

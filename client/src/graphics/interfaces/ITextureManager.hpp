@@ -56,6 +56,15 @@ namespace Graphics
          * @param scaleY The Y scale factor.
          */
         virtual void setScale(float scaleX, float scaleY) = 0;
+
+        /**
+         * @brief Sets the texture rectangle (sub-area of the texture to display).
+         * @param left The left coordinate of the rectangle.
+         * @param top The top coordinate of the rectangle.
+         * @param width The width of the rectangle.
+         * @param height The height of the rectangle.
+         */
+        virtual void setTextureRect(float left, float top, float width, float height) = 0;
     };
 
     /**

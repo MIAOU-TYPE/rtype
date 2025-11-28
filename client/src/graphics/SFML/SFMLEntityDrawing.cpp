@@ -12,8 +12,8 @@
 using namespace Graphics;
 
 std::unordered_map<std::string, SFMLEntityDrawing::SpriteInfo> SFMLEntityDrawing::_spriteInfo = {
-    {"player", {.path = "client/assets/sprites/player.png", .width = 33.1f, .height = 18.0f}},
-    {"enemie", {.path = "client/assets/sprites/enemie.png", .width = 65.1f, .height = 66.0f}}};
+    {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f}},
+    {"enemie", {"client/assets/sprites/enemie.png", 65.1f, 66.0f}}};
 
 SFMLEntityDrawing::SFMLEntityDrawing(
     std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager)
@@ -54,7 +54,7 @@ SFMLEntityDrawing::SpriteInfo SFMLEntityDrawing::getSpriteInfoFromName(const std
         return it->second;
     }
 
-    return {.path = "client/assets/sprites/" + spriteName + ".png", .width = 32.0f, .height = 32.0f};
+    return {"client/assets/sprites/" + spriteName + ".png", 32.0f, 32.0f};
 }
 
 std::string SFMLEntityDrawing::getSpritePathFromName(const std::string &spriteName)

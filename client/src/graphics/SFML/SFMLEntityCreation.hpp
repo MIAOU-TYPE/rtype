@@ -95,11 +95,11 @@ namespace Graphics
         void render(std::shared_ptr<IRenderer> renderer);
 
       private:
-        float _x;                                         ///< X position
-        float _y;                                         ///< Y position
-        std::string _spriteName;                          ///< Name of the sprite
-        std::shared_ptr<ITextureManager> _textureManager; ///< Texture manager
-        std::unique_ptr<ISprite> _sprite;                 ///< The sprite instance
+        float _x;                                         ///> X position
+        float _y;                                         ///> Y position
+        std::string _spriteName;                          ///> Name of the sprite
+        std::shared_ptr<ITextureManager> _textureManager; ///> Texture manager
+        std::unique_ptr<ISprite> _sprite;                 ///> The sprite instance
     };
 
 } // namespace Graphics

@@ -54,9 +54,9 @@ namespace Graphics
          * @brief Structure containing sprite information.
          */
         struct SpriteInfo {
-            std::string path; ///< Path to the sprite file
-            float width;      ///< Width of the sprite
-            float height;     ///< Height of the sprite
+            std::string path; ///> Path to the sprite file
+            float width;      ///> Width of the sprite
+            float height;     ///> Height of the sprite
         };
 
         /**
@@ -74,10 +74,10 @@ namespace Graphics
         static std::string getSpritePathFromName(const std::string &spriteName);
 
       private:
-        std::shared_ptr<IRenderer> _renderer;                           ///< The renderer
-        std::shared_ptr<ITextureManager> _textureManager;               ///< The texture manager
-        std::vector<std::shared_ptr<GraphicalEntity>> _entities;        ///< List of entities
-        static std::unordered_map<std::string, SpriteInfo> _spriteInfo; ///< Mapping sprite names to info
+        std::shared_ptr<IRenderer> _renderer;                           ///> The renderer
+        std::shared_ptr<ITextureManager> _textureManager;               ///> The texture manager
+        std::vector<std::shared_ptr<GraphicalEntity>> _entities;        ///> List of entities
+        static std::unordered_map<std::string, SpriteInfo> _spriteInfo; ///> Mapping sprite names to info
     };
 
 } // namespace Graphics

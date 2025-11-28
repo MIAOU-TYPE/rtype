@@ -13,7 +13,7 @@ using namespace Graphics;
 
 std::unordered_map<std::string, SFMLEntityDrawing::SpriteInfo> SFMLEntityDrawing::_spriteInfo = {
     {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f}},
-    {"enemie", {"client/assets/sprites/enemie.png", 65.1f, 66.0f}}};
+    {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f}}};
 
 SFMLEntityDrawing::SFMLEntityDrawing(
     std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager)

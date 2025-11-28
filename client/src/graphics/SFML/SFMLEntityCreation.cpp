@@ -61,7 +61,7 @@ float GraphicalEntity::getHeight() const
     return info.height;
 }
 
-void GraphicalEntity::render(const std::shared_ptr<IRenderer>& renderer)
+void GraphicalEntity::render(const std::shared_ptr<IRenderer> &renderer)
 {
     if (renderer && _sprite) {
         renderer->renderSprite(*_sprite);

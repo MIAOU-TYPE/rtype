@@ -92,7 +92,7 @@ namespace Graphics
          * @brief Renders the entity.
          * @param renderer The renderer to use.
          */
-        void render(const std::shared_ptr<IRenderer>& renderer);
+        void render(const std::shared_ptr<IRenderer> &renderer);
 
       private:
         float _x;                                         ///> X position

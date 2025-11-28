@@ -13,7 +13,7 @@ using namespace Game;
 
 GameScene::GameScene(
     std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager)
-    : _renderer(std::move(std::move(renderer))), _textureManager(std::move(std::move(textureManager)))
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
 {
     if (!_renderer) {
         throw GameSceneError("Renderer cannot be null");
@@ -35,8 +35,8 @@ GameScene::GameScene(
         // }
 
         // _entityDrawing->createEntity(100.0f, 300.0f, "player");
-        // _entityDrawing->createEntity(400.0f, 200.0f, "enemie");
-        // _entityDrawing->createEntity(500.0f, 400.0f, "enemie");
+        // _entityDrawing->createEntity(400.0f, 200.0f, "enemy");
+        // _entityDrawing->createEntity(500.0f, 400.0f, "enemy");
 
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to initialize game scene: " + std::string(e.what()));

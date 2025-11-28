@@ -17,7 +17,7 @@ std::unordered_map<std::string, SFMLEntityDrawing::SpriteInfo> SFMLEntityDrawing
 
 SFMLEntityDrawing::SFMLEntityDrawing(
     std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager)
-    : _renderer(std::move(std::move(renderer))), _textureManager(std::move(std::move(textureManager)))
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
 {
     if (!_renderer) {
         throw std::runtime_error("Renderer cannot be null");

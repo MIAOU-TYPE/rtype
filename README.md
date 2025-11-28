@@ -85,8 +85,8 @@ After building, you can run the server and client executables:
 ## Documentation
 
 - [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Detailed project organization
-- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to the project
+- [Contributing Guidelines](docs/CONTRIBUTING.md) - How to contribute to the project
 
 ## Contributing
 
-Please ensure code follows the project's code quality standards. See [Contributing Guidelines](CONTRIBUTING.md) for details on running linting and formatting tools.
+Please ensure code follows the project's code quality standards. See [Contributing Guidelines](docs/CONTRIBUTING.md) for details on running linting and formatting tools.

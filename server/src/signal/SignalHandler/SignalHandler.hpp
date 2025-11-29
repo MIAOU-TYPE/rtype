@@ -35,7 +35,7 @@ namespace Signal
         /**
          * @brief Destroys the SignalHandler object
          */
-        ~SignalHandler() override;
+        ~SignalHandler() override = default;
 
         /**
          * @brief Register a callback for a specific signal type

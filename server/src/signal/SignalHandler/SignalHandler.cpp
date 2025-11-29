@@ -24,11 +24,6 @@ void SignalHandler::stop() noexcept
     _handler = nullptr;
 }
 
-SignalHandler::~SignalHandler()
-{
-    stop();
-}
-
 #ifdef _WIN32
 
 SignalHandler::SignalHandler()

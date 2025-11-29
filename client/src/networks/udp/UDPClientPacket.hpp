@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** AClientPacket
+** UDPClientPacket
 */
 
 #pragma once
@@ -25,19 +25,25 @@
 namespace Network
 {
     /**
-     * @class AClientPacket
-     * @brief Abstract base class for client packets.
+     * @class UDPClientPacket
+     * @brief Concrete base class for client packets.
      * @details This class provides common functionality for packet management,
      * including buffer, size, and address handling. Derived classes can use
-     * this implementation or override specific methods as needed.
+     * this implementation directly or override specific methods as needed.
      * @note This class inherits from IClientPacket and provides default implementations.
      */
-    class AClientPacket : public IClientPacket {
+    class UDPClientPacket : public IClientPacket {
       public:
         /**
-         * @brief Virtual destructor for AClientPacket.
+         * @brief Constructor for UDPClientPacket.
+         * @details Initializes the packet buffer and size to zero.
          */
-        virtual ~AClientPacket() = default;
+        UDPClientPacket() = default;
+
+        /**
+         * @brief Virtual destructor for UDPClientPacket.
+         */
+        ~UDPClientPacket() = default;
 
         /**
          * @brief Retrieves the packet buffer.
@@ -76,26 +82,14 @@ namespace Network
         void setSize(size_t s) override;
 
         /**
-         * @brief Converts the packet data to a vector.
-         * @return A vector containing the packet data.
-         */
-        std::vector<uint8_t> toVector() const override;
-
-        /**
          * @brief Maximum size of the packet buffer.
          * @note Derived classes can override this value if needed.
          */
         static constexpr size_t MAX_SIZE = 2048;
 
-      protected:
-        /**
-         * @brief Constructor for AClientPacket.
-         * @details Initializes the packet buffer and size to zero.
-         */
-        AClientPacket();
-
-        uint8_t _buffer[MAX_SIZE] = { 0 }; ///< Buffer to store packet data
-        size_t _size = 0;                  ///< Size of the packet
-        sockaddr_in _addr = {};            ///< Source address of the packet
+      private:
+        uint8_t _buffer[MAX_SIZE] = {0}; ///> Buffer to store packet data
+        size_t _size = 0;                ///> Size of the packet
+        sockaddr_in _addr = {};          ///> Source address of the packet
     };
 } // namespace Network

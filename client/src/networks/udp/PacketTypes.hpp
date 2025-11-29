@@ -13,24 +13,21 @@ namespace Network
 {
 
     /**
-     * @brief Enumeration of all network packet types
-     *
-     * Defines the different types of packets that can be exchanged
-     * between client and server in the R-Type game protocol.
+     * @brief Enumeration of UDP packet types.
+     * @details This enumeration defines the various types of UDP packets
+     * used in the network communication between client and server.
      */
-    enum class PacketType : uint8_t {
-        CONNECT,        ///< Client -> Server : Request to connect
-        INPUT,          ///< Client -> Server : Send player input
-        PING,           ///< Client -> Server : Ping request
-        DISCONNECT,     ///< Client -> Server : Notify disconnection
-        ACCEPT,         ///< Server -> Client : Accept connection
-        REJECT,         ///< Server -> Client : Reject connection
-        SNAPSHOT,       ///< Server -> Client : Send game state
-        ENTITY_CREATE,  ///< Server -> Client : Notify entity creation
-        ENTITY_DESTROY, ///< Server -> Client : Notify entity destruction
-        PONG,           ///< Server -> Client : Pong response
-        DAMAGE_EVENT,   ///< Server -> Client : Notify damage event
-        GAME_OVER,      ///< Server -> Client : Notify game over
-    };
+    constexpr uint8_t CONNECT = 0x01;
+    constexpr uint8_t DISCONNECT = 0x02;
+    constexpr uint8_t INPUT = 0x03;
+    constexpr uint8_t PING = 0x04;
+    constexpr uint8_t ACCEPT = 0x10;
+    constexpr uint8_t REJECT = 0x11;
+    constexpr uint8_t SNAPSHOT = 0x12;
+    constexpr uint8_t ENTITY_CREATE = 0x13;
+    constexpr uint8_t ENTITY_DESTROY = 0x14;
+    constexpr uint8_t PONG = 0x15;
+    constexpr uint8_t DAMAGE_EVENT = 0x16;
+    constexpr uint8_t GAME_OVER = 0x17;
 
 } // namespace Network

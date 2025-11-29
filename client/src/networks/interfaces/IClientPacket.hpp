@@ -13,8 +13,11 @@
     #include <netinet/in.h>
 #endif
 
+#include <cstddef>
 #include <cstdint>
-#include <stddef.h>
+#include <exception>
+#include <string>
+#include <utility>
 #include <vector>
 
 /**
@@ -23,6 +26,29 @@
  */
 namespace Network
 {
+    class PacketError : public std::exception {
+      public:
+        /**
+         * @brief Constructs an PacketError with a given message.
+         * @param message The error message.
+         */
+        explicit PacketError(std::string message) : _msg(std::move(message))
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _msg.c_str();
+        }
+
+      private:
+        std::string _msg;
+    };
+
     /**
      * @class IClientPacket
      * @brief Interface for a client packet.
@@ -74,11 +100,5 @@ namespace Network
          * @return A const pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
-
-        /**
-         * @brief Converts the packet data to a vector.
-         * @return A vector containing the packet data.
-         */
-        virtual std::vector<uint8_t> toVector() const = 0;
     };
 } // namespace Network

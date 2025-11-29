@@ -1,0 +1,49 @@
+.heroBanner {
+  background: linear-gradient(120deg, #1f1c2c, #928dab);
+  color: white;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.heroContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.main {
+  padding: 4rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.section p,
+.section ul,
+.section ol {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.section ul li,
+.section ol li {
+  margin-bottom: 0.5rem;
+}

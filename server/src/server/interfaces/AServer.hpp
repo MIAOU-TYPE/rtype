@@ -9,6 +9,7 @@
 #include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
+#include <atomic>
 
 /**
  * @namespace Server
@@ -94,10 +95,11 @@ namespace Server
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
         virtual bool popPacket(Net::IServerPacket &pkt) override = 0;
+
       protected:
-        std::string _ip = "";    ///> IP address the server is bound to
-        uint16_t _port = 0;      ///> Port number the server is listening on
-        bool _isRunning = false; ///> Flag indicating if the server is running
+        std::string _ip = "";                 ///> IP address the server is bound to
+        uint16_t _port = 0;                   ///> Port number the server is listening on
+        std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the server is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor
     };

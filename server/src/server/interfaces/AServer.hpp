@@ -6,10 +6,10 @@
 */
 
 #pragma once
+#include <atomic>
 #include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
-#include <atomic>
 
 /**
  * @namespace Server
@@ -97,8 +97,8 @@ namespace Server
         virtual bool popPacket(Net::IServerPacket &pkt) override = 0;
 
       protected:
-        std::string _ip = "";                 ///> IP address the server is bound to
-        uint16_t _port = 0;                   ///> Port number the server is listening on
+        std::string _ip = "";                ///> IP address the server is bound to
+        uint16_t _port = 0;                  ///> Port number the server is listening on
         std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the server is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor

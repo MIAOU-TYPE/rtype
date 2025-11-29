@@ -7,18 +7,17 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
 #include "SignalHandler.hpp"
 #include "UDPServer.hpp"
 
-
-static std::shared_ptr<Signal::SignalHandler> startSignalHandler(std::shared_ptr<Server::IServer> server)
+static std::shared_ptr<Signal::SignalHandler> startSignalHandler(bool &run)
 {
     std::shared_ptr<Signal::SignalHandler> signalHandler = std::make_shared<Signal::SignalHandler>();
 
     signalHandler->start();
-    signalHandler->registerCallback(Signal::SignalType::Interrupt, [&server]() {
-        if (server->isRunning())
-            server->setRunning(false);
+    signalHandler->registerCallback(Signal::SignalType::Interrupt, [&run]() {
+        run = false;
     });
     return signalHandler;
 }
@@ -29,23 +28,26 @@ int main(void)
     uint16_t port = 8080;
 
     std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
-    auto signalHandler =  startSignalHandler(server);
+    bool run = false;
+    std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(run);
     try {
         server->configure(ip, port);
         server->start();
-        while (server->isRunning()) {
-            server->readPackets();
-            Net::IServerPacket pkt;
-            while (server->popPacket(pkt)) {
-                std::cout << pkt << std::endl;
+        run = server->isRunning();
+        std::thread reader ([&]() {
+            while (run) {
+                server->readPackets();
             }
+        });
+        while (run) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+        server->setRunning(false);
+        reader.join();
         server->stop();
     } catch (const Server::ServerError &e) {
         std::cerr << "{Main}" << e.what() << std::endl;
-        signalHandler->stop();
         return 1;
     }
-    signalHandler->stop();
     return 0;
 }

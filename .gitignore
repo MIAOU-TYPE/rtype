@@ -76,3 +76,4 @@ test-results/
 # Package managers
 vcpkg_installed/
 vcpkg/
+package-lock.json

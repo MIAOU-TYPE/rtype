@@ -33,8 +33,13 @@ int main(void)
     try {
         server->configure(ip, port);
         server->start();
-        while (server->isRunning())
+        while (server->isRunning()) {
             server->readPackets();
+            Net::IServerPacket pkt;
+            while (server->popPacket(pkt)) {
+                std::cout << pkt << std::endl;
+            }
+        }
         server->stop();
     } catch (const Server::ServerError &e) {
         std::cerr << "{Main}" << e.what() << std::endl;

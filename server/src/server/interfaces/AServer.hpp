@@ -88,6 +88,12 @@ namespace Server
          */
         bool isStoredPortCorrect() const noexcept override;
 
+        /**
+         * @brief Pops a received packet from the server's packet queue.
+         * @param pkt Reference to a Net::IServerPacket where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the queue was empty.
+         */
+        virtual bool popPacket(Net::IServerPacket &pkt) override = 0;
       protected:
         std::string _ip = "";    ///> IP address the server is bound to
         uint16_t _port = 0;      ///> Port number the server is listening on

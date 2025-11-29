@@ -69,8 +69,13 @@ void UDPServer::readPackets()
         return;
     pkt->setSize(static_cast<size_t>(received));
 
-    if (!_rxBuffer.push(pkt))
-        std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
+    {
+        std::lock_guard<std::mutex> lock(_rxMutex);
+        if (!_rxBuffer.push(pkt)) {
+            std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
+            return;
+        }
+    }
     std::cout << pkt << std::endl;
 }
 
@@ -79,6 +84,17 @@ bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
     return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
                reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
         != -1;
+}
+
+bool UDPServer::popPacket(Net::IServerPacket &pkt)
+{
+    std::lock_guard<std::mutex> lock(_rxMutex);
+
+    std::shared_ptr<Net::IServerPacket> sharedPkt;
+    if (!_rxBuffer.pop(sharedPkt))
+        return false;
+    pkt = *sharedPkt;
+    return true;
 }
 
 void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)

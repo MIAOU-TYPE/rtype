@@ -54,6 +54,8 @@ void PosixHandler::start() noexcept
 void PosixHandler::stop() noexcept
 {
     try {
+        if (!running.load())
+            return;
         running = false;
 
         signal(SIGINT, SIG_DFL);

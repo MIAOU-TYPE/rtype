@@ -17,7 +17,9 @@ module.exports = {
       type: 'category',
       label: 'Networking',
       items: [
-        'technical-docs/network',
+        'technical-docs/network/overview',
+        'technical-docs/network/udp-server',
+        'technical-docs/network/netwrapper-and-sockets'
       ],
     },
     {

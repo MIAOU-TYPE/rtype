@@ -46,7 +46,7 @@ namespace Ecs
         auto &arr = std::any_cast<SparseArray<T>&>(_entityToIndex[typeIdx]);
         if (static_cast<size_t>(entity) >= arr.size())
             return false;
-        return arr[static_cast<size_t>(entity)].has_value();
+        return arr[entity].has_value();
     }
 
     template <typename... Components, typename Function>
@@ -57,7 +57,7 @@ namespace Ecs
         auto arrays = std::forward_as_tuple(getComponents<Components>()...);
         auto &first = std::get<0>(arrays);
         for (size_t i = 0; i < first.size(); ++i) {
-            if ((std::get<SparseArray<Components>&>(arrays)[i].has_value() && ...))
+            if ((std::get<SparseArray<Components>&>(arrays)[Entity(i)].has_value() && ...))
                 func(Entity(i), *std::get<SparseArray<Components>&>(arrays)[i]...);
         }
     }

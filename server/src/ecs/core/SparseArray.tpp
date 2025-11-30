@@ -23,10 +23,10 @@ namespace Ecs
     }
 
     template <typename Component>
-    std::optional<Component> &SparseArray<Component>::operator[](const Entity &entity)
+    std::optional<Component> &
+    SparseArray<Component>::operator[](size_t index)
     {
         static std::optional<Component> empty = std::nullopt;
-        size_t index = static_cast<size_t>(entity);
         if (index >= _components.size())
             return empty;
         return _components[index];

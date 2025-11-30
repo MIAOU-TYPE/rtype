@@ -66,10 +66,10 @@ namespace Server
 
         /**
          * @brief Pops a received packet from the server's packet queue.
-         * @param pkt Reference to a Net::IServerPacket where the popped packet will be stored.
+         * @param pkt Shared pointer to a Net::IServerPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(Net::IServerPacket &pkt) override;
+        bool popPacket(std::shared_ptr<Net::IServerPacket> &pkt) override;
 
       private:
         void setupSocket(const Net::SocketConfig &params,

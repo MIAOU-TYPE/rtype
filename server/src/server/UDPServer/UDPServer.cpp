@@ -79,7 +79,6 @@ void UDPServer::readPackets()
             return;
         }
     }
-    std::cout << pkt << std::endl;
 }
 
 bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
@@ -89,14 +88,12 @@ bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
         != -1;
 }
 
-bool UDPServer::popPacket(Net::IServerPacket &pkt)
+bool UDPServer::popPacket(std::shared_ptr<Net::IServerPacket> &pkt)
 {
     std::lock_guard<std::mutex> lock(_rxMutex);
 
-    std::shared_ptr<Net::IServerPacket> sharedPkt;
-    if (!_rxBuffer.pop(sharedPkt))
+    if (!_rxBuffer.pop(pkt))
         return false;
-    pkt = *sharedPkt;
     return true;
 }
 

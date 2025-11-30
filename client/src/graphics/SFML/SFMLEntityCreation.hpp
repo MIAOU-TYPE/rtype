@@ -66,10 +66,8 @@ namespace Graphics
          * @param textureManager Shared pointer to the texture manager.
          * @param entityDrawing Reference to the entity drawing manager for sprite info.
          */
-        GraphicalEntity(
-            float x, float y, const std::string &spriteName, 
-            std::shared_ptr<ITextureManager> textureManager,
-            const SFMLEntityDrawing &entityDrawing);
+        GraphicalEntity(float x, float y, const std::string &spriteName,
+            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing);
 
         /**
          * @brief Destructor for GraphicalEntity.
@@ -129,12 +127,12 @@ namespace Graphics
         void render(const std::shared_ptr<IRenderer> &renderer);
 
       private:
-        float _x;                                         ///> X position
-        float _y;                                         ///> Y position
-        std::string _spriteName;                          ///> Name of the sprite
-        std::shared_ptr<ITextureManager> _textureManager; ///> Texture manager
-        std::unique_ptr<ISprite> _sprite;                 ///> The sprite instance
-        const SFMLEntityDrawing &_entityDrawing;         ///> Reference to entity drawing for sprite info
+        float _x = 0.0f;                                            ///> X position
+        float _y = 0.0f;                                            ///> Y position
+        std::string _spriteName = "";                               ///> Name of the sprite
+        std::shared_ptr<ITextureManager> _textureManager = nullptr; ///> Texture manager
+        std::unique_ptr<ISprite> _sprite = nullptr;                 ///> The sprite instance
+        const SFMLEntityDrawing &_entityDrawing;                    ///> Reference to entity drawing for sprite info
     };
 
 } // namespace Graphics

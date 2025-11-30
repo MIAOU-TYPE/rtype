@@ -11,10 +11,8 @@
 
 using namespace Graphics;
 
-GraphicalEntity::GraphicalEntity(
-    float x, float y, const std::string &spriteName, 
-    std::shared_ptr<ITextureManager> textureManager,
-    const SFMLEntityDrawing &entityDrawing)
+GraphicalEntity::GraphicalEntity(float x, float y, const std::string &spriteName,
+    std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing)
     : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager)), _entityDrawing(entityDrawing)
 {
     if (!_textureManager) {

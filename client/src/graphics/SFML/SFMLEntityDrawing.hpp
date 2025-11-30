@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <exception>
 #include <memory>
 #include <string>
 #include <vector>
@@ -21,6 +22,34 @@
  */
 namespace Graphics
 {
+    /**
+     * @class SFMLEntityDrawingError
+     * @brief Exception class for SFML entity drawing-related errors.
+     * Inherits from std::exception to provide error handling capabilities.
+     */
+    class SFMLEntityDrawingError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for SFMLEntityDrawingError.
+         * @param message The error message to be associated with the exception.
+         */
+        explicit SFMLEntityDrawingError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
+
     /**
      * @brief Structure containing sprite information.
      */

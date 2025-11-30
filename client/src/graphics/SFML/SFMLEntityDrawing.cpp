@@ -6,6 +6,7 @@
 */
 
 #include "SFMLEntityDrawing.hpp"
+#include "SFMLEntityCreation.hpp"
 #include <utility>
 #include <vector>
 
@@ -16,10 +17,10 @@ SFMLEntityDrawing::SFMLEntityDrawing(
     : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
 {
     if (!_renderer) {
-        throw std::runtime_error("Renderer cannot be null");
+        throw SFMLEntityDrawingError("Renderer cannot be null");
     }
     if (!_textureManager) {
-        throw std::runtime_error("Texture manager cannot be null");
+        throw SFMLEntityDrawingError("Texture manager cannot be null");
     }
 
     _spriteInfo = {
@@ -35,7 +36,7 @@ std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float 
         _entities.push_back(entity);
         return entity;
     } catch (const std::exception &e) {
-        throw std::runtime_error("Failed to create entity '" + spriteName + "': " + std::string(e.what()));
+        throw SFMLEntityDrawingError("Failed to create entity '" + spriteName + "': " + std::string(e.what()));
     }
 }
 
@@ -55,7 +56,7 @@ SpriteInfo SFMLEntityDrawing::getSpriteInfoFromName(const std::string &spriteNam
         return it->second;
     }
 
-    throw std::runtime_error(
+    throw SFMLEntityDrawingError(
         "Unknown sprite name: '" + spriteName + "'. Please add it to _spriteInfo map with proper dimensions.");
 }
 

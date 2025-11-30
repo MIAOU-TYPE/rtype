@@ -16,7 +16,7 @@ void InputEventManager::registerHandler(InputAction action, std::shared_ptr<Inpu
         return;
     }
 
-    _handlers[action].push_back(std::weak_ptr<InputEventHandler>(handler));
+    _handlers[action].push_back(handler);
 }
 
 void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<InputEventHandler> handler)
@@ -27,8 +27,8 @@ void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<In
 
     auto &handlers = _handlers[action];
     handlers.erase(std::remove_if(handlers.begin(), handlers.end(),
-                       [&handler](const std::weak_ptr<InputEventHandler> &h) {
-                           return h.expired() || h.lock() == handler;
+                       [&handler](const std::shared_ptr<InputEventHandler> &h) {
+                           return h == handler;
                        }),
         handlers.end());
 }
@@ -46,12 +46,9 @@ void InputEventManager::dispatchEvent(const InputEvent &event)
     auto it = _handlers.find(event.action);
     if (it != _handlers.end()) {
         auto &handlers = it->second;
-        for (auto handlerIt = handlers.begin(); handlerIt != handlers.end();) {
-            if (auto handler = handlerIt->lock()) {
+        for (auto &handler : handlers) {
+            if (handler) {
                 handler->onInputEvent(event);
-                ++handlerIt;
-            } else {
-                handlerIt = handlers.erase(handlerIt);
             }
         }
     }
@@ -71,12 +68,9 @@ void InputEventManager::updateHeldActions(float deltaTime)
             auto it = _handlers.find(action);
             if (it != _handlers.end()) {
                 auto &handlers = it->second;
-                for (auto handlerIt = handlers.begin(); handlerIt != handlers.end();) {
-                    if (auto handler = handlerIt->lock()) {
+                for (auto &handler : handlers) {
+                    if (handler) {
                         handler->onInputEvent(heldEvent);
-                        ++handlerIt;
-                    } else {
-                        handlerIt = handlers.erase(handlerIt);
                     }
                 }
             }

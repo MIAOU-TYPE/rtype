@@ -92,7 +92,7 @@ namespace Events
         void updateHeldActions(float deltaTime);
 
       private:
-        std::unordered_map<InputAction, std::vector<std::weak_ptr<InputEventHandler>>> _handlers = {};
+        std::unordered_map<InputAction, std::vector<std::shared_ptr<InputEventHandler>>> _handlers = {};
         std::unordered_map<InputAction, bool> _heldActions = {};
         std::unordered_map<InputAction, float> _heldTimes = {};
     };

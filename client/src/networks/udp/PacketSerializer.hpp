@@ -16,9 +16,8 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
-#include "NetworkException.hpp"
 #include "PacketTypes.hpp"
-#include "ProtocolDefinitions.hpp"
+#include "PacketSnapshot.hpp"
 
 namespace Network
 {
@@ -34,7 +33,7 @@ namespace Network
         /**
          * @brief Construct a new PacketSerializer object
          */
-        PacketSerializer();
+        PacketSerializer() = default;
 
         /**
          * @brief Destroy the PacketSerializer object
@@ -42,37 +41,26 @@ namespace Network
         ~PacketSerializer() = default;
 
         /**
-         * @brief Serialize a connection request packet
+         * @brief Serialize a packet of type T into a byte buffer
          *
-         * @param clientId Unique identifier for the client
-         * @return std::vector<uint8_t> Serialized packet data
+         * @tparam T The packet structure type to serialize
+         * @param packet The packet instance to serialize
+         * @return std::vector<uint8_t> The serialized byte buffer
          */
-        std::vector<uint8_t> serializeConnectPacket(uint32_t clientId);
+        template<typename T>
+        std::vector<uint8_t> serialize(const T& packet);
 
         /**
-         * @brief Serialize a player input packet
+         * @brief Serialize a PacketSnapshot with variable-length entity array
          *
-         * @param entity Entity ID to control
-         * @param dx Horizontal movement axis (-1.0 to 1.0)
-         * @param dy Vertical movement axis (-1.0 to 1.0)
-         * @param shooting Shooting action flag (0 or 1)
-         * @return std::vector<uint8_t> Serialized packet data
+         * @param packet The PacketSnapshot instance to serialize
+         * @param entityCount The number of entities in the snapshot
+         * @return std::vector<uint8_t> The serialized byte buffer
          */
-        std::vector<uint8_t> serializeInputPacket(uint32_t entity, float dx, float dy, uint8_t shooting);
+        std::vector<uint8_t> serialize(const PacketSnapshot& packet, uint16_t entityCount);
 
-        /**
-         * @brief Serialize a ping packet
-         *
-         * @return std::vector<uint8_t> Serialized packet data
-         */
-        std::vector<uint8_t> serializePingPacket();
-
-        /**
-         * @brief Serialize a disconnection packet
-         *
-         * @return std::vector<uint8_t> Serialized packet data
-         */
-        std::vector<uint8_t> serializeDisconnectPacket();
     };
 
 } // namespace Network
+
+#include "PacketSerializer.tpp"

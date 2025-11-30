@@ -18,6 +18,7 @@
  */
 namespace Graphics
 {
+    class SFMLEntityDrawing; // Forward declaration
     /**
      * @class GraphicalEntity
      * @brief Represents a graphical entity with position and sprite.
@@ -33,9 +34,12 @@ namespace Graphics
          * @param y The Y position of the entity.
          * @param spriteName The name of the sprite (without path).
          * @param textureManager Shared pointer to the texture manager.
+         * @param entityDrawing Reference to the entity drawing manager for sprite info.
          */
         GraphicalEntity(
-            float x, float y, const std::string &spriteName, std::shared_ptr<ITextureManager> textureManager);
+            float x, float y, const std::string &spriteName, 
+            std::shared_ptr<ITextureManager> textureManager,
+            const SFMLEntityDrawing &entityDrawing);
 
         /**
          * @brief Destructor for GraphicalEntity.
@@ -100,6 +104,7 @@ namespace Graphics
         std::string _spriteName;                          ///> Name of the sprite
         std::shared_ptr<ITextureManager> _textureManager; ///> Texture manager
         std::unique_ptr<ISprite> _sprite;                 ///> The sprite instance
+        const SFMLEntityDrawing &_entityDrawing;         ///> Reference to entity drawing for sprite info
     };
 
 } // namespace Graphics

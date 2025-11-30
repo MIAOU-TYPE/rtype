@@ -12,14 +12,16 @@
 using namespace Graphics;
 
 GraphicalEntity::GraphicalEntity(
-    float x, float y, const std::string &spriteName, std::shared_ptr<ITextureManager> textureManager)
-    : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager))
+    float x, float y, const std::string &spriteName, 
+    std::shared_ptr<ITextureManager> textureManager,
+    const SFMLEntityDrawing &entityDrawing)
+    : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager)), _entityDrawing(entityDrawing)
 {
     if (!_textureManager) {
         throw std::runtime_error("Texture manager cannot be null");
     }
 
-    SFMLEntityDrawing::SpriteInfo spriteInfo = SFMLEntityDrawing::getSpriteInfoFromName(spriteName);
+    SpriteInfo spriteInfo = entityDrawing.getSpriteInfoFromName(spriteName);
 
     if (!_textureManager->loadTexture(spriteInfo.path)) {
         throw std::runtime_error("Failed to load texture: " + spriteInfo.path);
@@ -48,13 +50,13 @@ void GraphicalEntity::setPosition(float x, float y)
 
 float GraphicalEntity::getWidth() const
 {
-    SFMLEntityDrawing::SpriteInfo info = SFMLEntityDrawing::getSpriteInfoFromName(_spriteName);
+    SpriteInfo info = _entityDrawing.getSpriteInfoFromName(_spriteName);
     return info.width;
 }
 
 float GraphicalEntity::getHeight() const
 {
-    SFMLEntityDrawing::SpriteInfo info = SFMLEntityDrawing::getSpriteInfoFromName(_spriteName);
+    SpriteInfo info = _entityDrawing.getSpriteInfoFromName(_spriteName);
     return info.height;
 }
 

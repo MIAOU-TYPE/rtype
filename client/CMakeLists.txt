@@ -1,8 +1,8 @@
 project(r-type_client LANGUAGES CXX)
 
-# -------------------------
-# Source discovery
-# -------------------------
+# ------------------------------
+# SOURCE COLLECTION
+# ------------------------------
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
@@ -10,9 +10,9 @@ if (NOT SRCS)
     message(FATAL_ERROR "No .cpp source files found under ${SRC_DIR}")
 endif()
 
-# -------------------------
-# Include directories
-# -------------------------
+# ------------------------------
+# INCLUDE DIRS
+# ------------------------------
 set(INCLUDE_DIRS "${SRC_DIR}")
 file(GLOB_RECURSE _maybe_dirs LIST_DIRECTORIES true "${SRC_DIR}/*")
 foreach(path IN LISTS _maybe_dirs)
@@ -25,56 +25,50 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 # -------------------------
 # SFML dependency
 # -------------------------
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 
-# -------------------------
-# Main client executable
-# -------------------------
+# ------------------------------
+# EXECUTABLE
+# ------------------------------
 add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
 
-# -------------------------
-# Compiler warnings
-# -------------------------
+# Cross-platform linking
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
+            ws2_32
+    )
+elseif(APPLE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
+            "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo"
+    )
+else() # Linux
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
+            pthread
+    )
+endif()
+
+# ---------- WARNINGS ----------
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE
-        -Wall
-        -Wextra
-        -Werror
-        -Wpedantic
-        -Wshadow
-        -Wnon-virtual-dtor
-        -Wold-style-cast
-        -Wcast-align
-        -Woverloaded-virtual
-        -Wconversion
-        -Wsign-conversion
-        -Wnull-dereference
-        -Wdouble-promotion
-        -Wformat=2
-    )
-endif()
-
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        _WIN32_WINNT=0x0601
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
+            -Wall -Wextra -Wpedantic
+            -Wshadow -Wnon-virtual-dtor -Wold-style-cast
+            -Wcast-align -Woverloaded-virtual -Wconversion
+            -Wsign-conversion -Wnull-dereference -Wdouble-promotion
+            -Wformat=2
     )
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
 
-# -------------------------
-# Tests
-# -------------------------
+# TESTS
 if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     add_subdirectory(tests)
 endif()

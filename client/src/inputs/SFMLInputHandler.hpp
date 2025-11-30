@@ -9,8 +9,9 @@
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include <iostream>
-#include "IInputHandler.hpp"
+#include <memory>
+#include "InputEvents.hpp"
+#include <unordered_map>
 
 /**
  * @namespace Input
@@ -20,24 +21,74 @@ namespace Input
 {
     /**
      * @class SFMLInputHandler
-     * @brief SFML implementation of the IInputHandler interface.
+     * @brief Modern SFML input handler with pure event-driven architecture.
      *
-     * This class provides input handling functionality using the SFML library.
+     * This class converts SFML input events to game action events and dispatches
+     * them through our modern event system. Clean and simple!
      */
-    class SFMLInputHandler : public IInputHandler {
+    class SFMLInputHandler {
       public:
         /**
-         * @brief Handles an input event.
-         * @param event The input event to handle.
+         * @brief Constructor.
+         * @param eventManager Shared pointer to the input event manager.
          */
-        void handleEvent(const sf::Event &event) override;
+        explicit SFMLInputHandler(std::shared_ptr<Events::InputEventManager> eventManager);
 
         /**
-         * @brief Checks if a key is currently pressed.
-         * @param key The key to check.
+         * @brief Handles SFML input events.
+         * @param event The SFML event to handle.
+         */
+        void handleEvent(const sf::Event &event);
+
+        /**
+         * @brief Updates the input handler (processes held keys).
+         * @param deltaTime Time elapsed since last update.
+         */
+        void update(float deltaTime);
+
+        /**
+         * @brief Maps a physical key to a game action.
+         * @param key The SFML keyboard key.
+         * @param action The game action to map to.
+         */
+        void mapKey(sf::Keyboard::Key key, Events::InputAction action);
+
+        /**
+         * @brief Unmaps a physical key.
+         * @param key The SFML keyboard key to unmap.
+         */
+        void unmapKey(sf::Keyboard::Key key);
+
+        /**
+         * @brief Checks if a key is mapped to any action.
+         * @param key The SFML keyboard key.
+         * @return True if the key is mapped, false otherwise.
+         */
+        bool isMapped(sf::Keyboard::Key key) const;
+
+        /**
+         * @brief Checks if a specific SFML key is currently pressed.
+         * @param key The SFML key to check.
          * @return True if the key is pressed, false otherwise.
          */
-        bool isKeyPressed(Key key) const override;
+        bool isKeyPressed(sf::Keyboard::Key key) const;
+
+      public:
+        /**
+         * @brief Loads default key mappings.
+         * Made public so users can reload defaults if needed.
+         */
+        void loadDefaultMappings();
+
+      private:
+        /**
+         * @brief Handles keyboard events (internal processing).
+         * @param event The SFML keyboard event.
+         */
+        void handleKeyboardEvent(const sf::Event &event);
+
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;
+        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {};
     };
 
 } // namespace Input

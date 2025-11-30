@@ -12,6 +12,9 @@
 #include <SFML/System/Vector2.hpp>
 #include <utility>
 #include "ITextureManager.hpp"
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <utility>
 
 /**
  * @namespace Graphics

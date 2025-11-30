@@ -51,7 +51,7 @@ else()
 endif()
 
 # ------------------------------
-# WARNINGS (same philosophy as server)
+# WARNINGS
 # ------------------------------
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)

@@ -22,6 +22,15 @@
 namespace Graphics
 {
     /**
+     * @brief Structure containing sprite information.
+     */
+    struct SpriteInfo {
+        std::string path; ///< Path to the sprite file
+        float width;      ///< Width of the sprite
+        float height;     ///< Height of the sprite
+    };
+
+    /**
      * @class SFMLEntityDrawing
      * @brief Manager for drawing entities using SFML.
      *
@@ -51,21 +60,12 @@ namespace Graphics
         void renderAllEntities();
 
         /**
-         * @brief Structure containing sprite information.
-         */
-        struct SpriteInfo {
-            std::string path; ///> Path to the sprite file
-            float width;      ///> Width of the sprite
-            float height;     ///> Height of the sprite
-        };
-
-        /**
          * @brief Gets the sprite info from sprite name.
          * @param spriteName The name of the sprite.
          * @return The sprite information (path and dimensions).
          * @throws std::runtime_error if the sprite name is not found in _spriteInfo.
          */
-        static SpriteInfo getSpriteInfoFromName(const std::string &spriteName);
+        SpriteInfo getSpriteInfoFromName(const std::string &spriteName) const;
 
         /**
          * @brief Gets the sprite path from sprite name.
@@ -73,13 +73,13 @@ namespace Graphics
          * @return The full path to the sprite file.
          * @throws std::runtime_error if the sprite name is not found in _spriteInfo.
          */
-        static std::string getSpritePathFromName(const std::string &spriteName);
+        std::string getSpritePathFromName(const std::string &spriteName) const;
 
       private:
-        std::shared_ptr<IRenderer> _renderer = nullptr;                 ///> The renderer
-        std::shared_ptr<ITextureManager> _textureManager = nullptr;     ///> The texture manager
-        std::vector<std::shared_ptr<GraphicalEntity>> _entities = {};   ///> List of entities
-        static std::unordered_map<std::string, SpriteInfo> _spriteInfo; ///> Mapping sprite names to info
+        std::shared_ptr<IRenderer> _renderer = nullptr;             ///< The renderer
+        std::shared_ptr<ITextureManager> _textureManager = nullptr; ///< The texture manager
+        std::vector<std::shared_ptr<GraphicalEntity>> _entities = {}; ///< List of entities
+        std::unordered_map<std::string, SpriteInfo> _spriteInfo;    ///< Mapping sprite names to info
     };
 
 } // namespace Graphics

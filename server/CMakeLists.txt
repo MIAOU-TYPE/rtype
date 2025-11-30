@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(r-type_server LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # ------------------------------
-# SOURCE FILES
+# SOURCE & INCLUDE PATHS
 # ------------------------------
 set(SERVER_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
@@ -13,11 +10,11 @@ file(GLOB_RECURSE SERVER_SOURCES CONFIGURE_DEPENDS
         "${SERVER_SRC_DIR}/*.cpp"
 )
 
-# ------------------------------
-# INCLUDE DIRS
-# ------------------------------
 file(GLOB_RECURSE SERVER_INCLUDES LIST_DIRECTORIES true "${SERVER_SRC_DIR}/*")
 
+# ------------------------------
+# EXECUTABLE
+# ------------------------------
 add_executable(${PROJECT_NAME}
         ${SERVER_SOURCES}
 )
@@ -27,12 +24,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${SERVER_INCLUDES}
 )
 
-# Windows networking
+# ------------------------------
+# PLATFORM-SPECIFIC LIBS
+# ------------------------------
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
 endif()
 
-# Executable output path
+# ------------------------------
+# OUTPUT LOCATION
+# ------------------------------
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )

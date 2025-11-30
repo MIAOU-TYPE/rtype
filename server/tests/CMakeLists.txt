@@ -1,9 +1,16 @@
+# ------------------------------
+# COLLECT TEST SOURCES
+# ------------------------------
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+# Remove server Main.cpp from unit tests
 list(FILTER SERVER_SOURCES EXCLUDE REGEX "Main\\.cpp$")
 
+# ------------------------------
+# TEST EXECUTABLE
+# ------------------------------
 add_executable(unit_tests
         ${TEST_SOURCES}
         ${SERVER_SOURCES}
@@ -14,6 +21,9 @@ target_include_directories(unit_tests PRIVATE
         ${SERVER_INCLUDES}
 )
 
+# ------------------------------
+# GTEST
+# ------------------------------
 find_package(GTest CONFIG REQUIRED)
 
 target_link_libraries(unit_tests PRIVATE
@@ -25,4 +35,7 @@ if (WIN32)
     target_link_libraries(unit_tests PRIVATE ws2_32)
 endif()
 
+# ------------------------------
+# REGISTER TESTS
+# ------------------------------
 add_test(NAME unit_tests COMMAND unit_tests)

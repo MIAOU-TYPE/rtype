@@ -61,7 +61,7 @@ namespace Graphics
          * @param width The width of the rectangle.
          * @param height The height of the rectangle.
          */
-        void setTextureRect(float left, float top, float width, float height) override;
+        void setTextureRect(int left, int top, int width, int height) override;
 
         /**
          * @brief Gets the underlying SFML sprite.

@@ -64,7 +64,7 @@ namespace Graphics
          * @param width The width of the rectangle.
          * @param height The height of the rectangle.
          */
-        virtual void setTextureRect(float left, float top, float width, float height) = 0;
+        virtual void setTextureRect(int left, int top, int width, int height) = 0;
     };
 
     /**

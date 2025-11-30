@@ -35,10 +35,9 @@ void SFMLSprite::setScale(float scaleX, float scaleY)
     _sprite.setScale(scaleX, scaleY);
 }
 
-void SFMLSprite::setTextureRect(float left, float top, float width, float height)
+void SFMLSprite::setTextureRect(int left, int top, int width, int height)
 {
-    _sprite.setTextureRect(
-        sf::IntRect(static_cast<int>(left), static_cast<int>(top), static_cast<int>(width), static_cast<int>(height)));
+    _sprite.setTextureRect(sf::IntRect(left, top, width, height));
 }
 
 const sf::Sprite &SFMLSprite::getSFMLSprite() const

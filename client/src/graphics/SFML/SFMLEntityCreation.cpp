@@ -31,7 +31,7 @@ GraphicalEntity::GraphicalEntity(
     }
 
     if (spriteInfo.width > 0.0f && spriteInfo.height > 0.0f) {
-        _sprite->setTextureRect(0.0f, 0.0f, spriteInfo.width, spriteInfo.height);
+        _sprite->setTextureRect(0, 0, static_cast<int>(spriteInfo.width), static_cast<int>(spriteInfo.height));
     }
 
     _sprite->setPosition(_x, _y);

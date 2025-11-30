@@ -76,9 +76,9 @@ namespace Graphics
         static std::string getSpritePathFromName(const std::string &spriteName);
 
       private:
-        std::shared_ptr<IRenderer> _renderer;                           ///> The renderer
-        std::shared_ptr<ITextureManager> _textureManager;               ///> The texture manager
-        std::vector<std::shared_ptr<GraphicalEntity>> _entities;        ///> List of entities
+        std::shared_ptr<IRenderer> _renderer = nullptr;                 ///> The renderer
+        std::shared_ptr<ITextureManager> _textureManager = nullptr;     ///> The texture manager
+        std::vector<std::shared_ptr<GraphicalEntity>> _entities = {};   ///> List of entities
         static std::unordered_map<std::string, SpriteInfo> _spriteInfo; ///> Mapping sprite names to info
     };
 

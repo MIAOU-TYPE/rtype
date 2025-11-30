@@ -1,39 +1,38 @@
+cmake_minimum_required(VERSION 3.20)
 project(r-type_client LANGUAGES CXX)
 
 # ------------------------------
-# SOURCE COLLECTION
+# SOURCE & INCLUDE PATHS
 # ------------------------------
-set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CLIENT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
-if (NOT SRCS)
-    message(FATAL_ERROR "No .cpp source files found under ${SRC_DIR}")
-endif()
+file(GLOB_RECURSE CLIENT_SOURCES CONFIGURE_DEPENDS
+        "${CLIENT_SRC_DIR}/*.cpp"
+)
+
+# Collect all include folders inside src/
+file(GLOB_RECURSE CLIENT_INCLUDES LIST_DIRECTORIES true "${CLIENT_SRC_DIR}/*")
 
 # ------------------------------
-# INCLUDE DIRS
+# SFML DEPENDENCIES
 # ------------------------------
-set(INCLUDE_DIRS "${SRC_DIR}")
-file(GLOB_RECURSE _maybe_dirs LIST_DIRECTORIES true "${SRC_DIR}/*")
-foreach(path IN LISTS _maybe_dirs)
-    if (IS_DIRECTORY "${path}")
-        list(APPEND INCLUDE_DIRS "${path}")
-    endif()
-endforeach()
-list(REMOVE_DUPLICATES INCLUDE_DIRS)
-
-# -------------------------
-# SFML dependency
-# -------------------------
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 
 # ------------------------------
 # EXECUTABLE
 # ------------------------------
-add_executable(${PROJECT_NAME} ${SRCS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+add_executable(${PROJECT_NAME}
+        ${CLIENT_SOURCES}
+)
 
-# Cross-platform linking
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CLIENT_SRC_DIR}
+        ${CLIENT_INCLUDES}
+)
+
+# ------------------------------
+# PLATFORM-SPECIFIC LIBRARIES
+# ------------------------------
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE
             SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
@@ -44,14 +43,16 @@ elseif(APPLE)
             SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
             "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo"
     )
-else() # Linux
+else()
     target_link_libraries(${PROJECT_NAME} PRIVATE
             SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
             pthread
     )
 endif()
 
-# ---------- WARNINGS ----------
+# ------------------------------
+# WARNINGS (same philosophy as server)
+# ------------------------------
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()
@@ -64,11 +65,16 @@ else()
     )
 endif()
 
+# ------------------------------
+# OUTPUT LOCATION
+# ------------------------------
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
 
-# TESTS
+# ------------------------------
+# TESTS (optional)
+# ------------------------------
 if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     add_subdirectory(tests)
 endif()

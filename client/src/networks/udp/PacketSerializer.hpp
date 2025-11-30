@@ -15,12 +15,40 @@
 #endif
 #include <cstdint>
 #include <cstring>
+#include <exception>
 #include <vector>
-#include "PacketTypes.hpp"
 #include "PacketSnapshot.hpp"
+#include "PacketTypes.hpp"
 
 namespace Network
 {
+    /**
+     * @class SerializerError
+     * @brief Exception class for serialization errors.
+     */
+    class SerializerError : public std::exception {
+      public:
+        /**
+         * @brief Constructor with error message.
+         * @param message The error message.
+         */
+        explicit SerializerError(const char *message) : msg_(message)
+        {
+        }
+
+        /**
+         * @brief Get the error message.
+         * @return The error message as a C-style string.
+         */
+        virtual const char *what() const noexcept override
+        {
+            return msg_;
+        }
+
+      private:
+        const char *msg_; ///> The error message
+    };
+
     /**
      * @brief Serializes network packets for client-to-server communication
      *
@@ -47,8 +75,8 @@ namespace Network
          * @param packet The packet instance to serialize
          * @return std::vector<uint8_t> The serialized byte buffer
          */
-        template<typename T>
-        std::vector<uint8_t> serialize(const T& packet);
+        template <typename T>
+        std::vector<uint8_t> serialize(const T &packet);
 
         /**
          * @brief Serialize a PacketSnapshot with variable-length entity array
@@ -57,8 +85,7 @@ namespace Network
          * @param entityCount The number of entities in the snapshot
          * @return std::vector<uint8_t> The serialized byte buffer
          */
-        std::vector<uint8_t> serialize(const PacketSnapshot& packet, uint16_t entityCount);
-
+        std::vector<uint8_t> serialize(const PacketSnapshot &packet, uint16_t entityCount);
     };
 
 } // namespace Network

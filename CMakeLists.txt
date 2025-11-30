@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 
+# =============================================
+# VCPKG TOOLCHAIN (auto-fetch + integration)
+# =============================================
 include(FetchContent)
 
-# =============================================
-# VCPKG (BOOTSTRAP + TOOLCHAIN)
-# =============================================
 FetchContent_Declare(
         vcpkg
         GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
@@ -18,7 +18,7 @@ set(CMAKE_TOOLCHAIN_FILE
 )
 
 # =============================================
-# PROJECT
+# PROJECT CONFIG
 # =============================================
 project(RType LANGUAGES CXX VERSION 1.0)
 
@@ -27,5 +27,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
 
+# =============================================
+# SUBMODULES
+# =============================================
 add_subdirectory(server)
 add_subdirectory(client)

@@ -21,4 +21,8 @@ target_link_libraries(unit_tests PRIVATE
         GTest::gtest_main
 )
 
+if (WIN32)
+    target_link_libraries(unit_tests PRIVATE ws2_32)
+endif()
+
 add_test(NAME unit_tests COMMAND unit_tests)

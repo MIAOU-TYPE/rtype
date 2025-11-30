@@ -7,12 +7,12 @@
 
 #include "GameClient.hpp"
 #include <SFML/System/Clock.hpp>
-#include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
 using namespace Graphics;
 using namespace Input;
 using namespace Game;
+using namespace Events;
 
 void GameClient::init(unsigned int width, unsigned int height)
 {
@@ -21,17 +21,30 @@ void GameClient::init(unsigned int width, unsigned int height)
         if (!_renderer) {
             throw GameClientError("Failed to create renderer instance");
         }
-
         _renderer->createWindow(width, height, "R-Type");
-
-        _inputHandler = std::make_unique<SFMLInputHandler>();
 
         _textureManager = std::make_shared<SFMLTextureManager>();
         if (!_textureManager) {
             throw GameClientError("Failed to create texture manager instance");
         }
 
-        _gameScene = std::make_unique<GameScene>(_renderer, _textureManager);
+        _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
+
+        _eventManager = std::make_shared<InputEventManager>();
+        _inputHandler = std::make_unique<SFMLInputHandler>(_eventManager);
+
+        _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
+
+        _eventManager->registerHandler(InputAction::MoveUp, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::MoveDown, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::MoveLeft, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::MoveRight, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::Shoot, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::Pause, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::Quit, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::Confirm, _gameInputHandler);
+        _eventManager->registerHandler(InputAction::Cancel, _gameInputHandler);
+
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }
@@ -39,28 +52,31 @@ void GameClient::init(unsigned int width, unsigned int height)
 
 void GameClient::run()
 {
-    if (!_renderer || !_inputHandler || !_gameScene) {
+    if (!_renderer || !_inputHandler || !_gameScene || !_eventManager) {
         throw GameClientError("Game components not properly initialized");
     }
 
     sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
+    bool shouldQuit = false;
 
     try {
-        while (_renderer->isOpen()) {
+        while (_renderer->isOpen() && !shouldQuit) {
             float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
 
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
                 clock.restart();
+                _inputHandler->update(deltaTime);
                 _gameScene->update(deltaTime);
             }
 
             sf::Event event;
             while (_renderer->pollEvent(event)) {
-                if (_renderer->isWindowCloseEvent(event) || _inputHandler->isKeyPressed(Key::Escape)) {
+                if (_renderer->isWindowCloseEvent(event))
                     _renderer->close();
-                }
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+                    shouldQuit = true;
                 _inputHandler->handleEvent(event);
             }
 

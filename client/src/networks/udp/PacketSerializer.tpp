@@ -10,7 +10,7 @@
 namespace Network
 {
     template<typename T>
-    static std::vector<uint8_t> serialize(const T& packet) {
+    std::vector<uint8_t> serialize(const T& packet) {
         std::vector<uint8_t> buffer(sizeof(T));
         std::memcpy(buffer.data(), &packet, sizeof(T));
         return buffer;

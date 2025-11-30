@@ -77,6 +77,6 @@ namespace Server
         void bindSocket(Net::family_t family = AF_INET); ///> Binds the UDP socket to an address
 
         Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; ///> Ring buffer to store received packets
-        std::mutex _rxMutex;
+        std::mutex _rxMutex; ///> Mutex for synchronizing access to the receive buffer
     };
 } // namespace Server

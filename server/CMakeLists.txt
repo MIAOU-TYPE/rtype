@@ -1,73 +1,51 @@
+cmake_minimum_required(VERSION 3.20)
 project(r-type_server LANGUAGES CXX)
 
-# -------------------------
-# Source discovery
-# -------------------------
-set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "${SRC_DIR}/*.cpp")
-if (NOT SRCS)
-    message(FATAL_ERROR "No .cpp source files found under ${SRC_DIR}")
-endif()
+# ------------------------------
+# SOURCE FILES
+# ------------------------------
+set(SERVER_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-# -------------------------
-# Include directories
-# -------------------------
-set(INCLUDE_DIRS "${SRC_DIR}")
-file(GLOB_RECURSE SERVER_INCLUDE_DIRS LIST_DIRECTORIES true "${SRC_DIR}/*")
-foreach(path ${SERVER_INCLUDE_DIRS})
-    if(IS_DIRECTORY ${path})
-        list(APPEND INCLUDE_DIRS ${path})
-    endif()
-endforeach()
-list(REMOVE_DUPLICATES INCLUDE_DIRS)
+file(GLOB_RECURSE SERVER_SOURCES CONFIGURE_DEPENDS
+        "${SERVER_SRC_DIR}/*.cpp"
+)
 
-# -------------------------
-# Main server executable
-# -------------------------
-add_executable(${PROJECT_NAME} ${SRCS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+# ------------------------------
+# INCLUDE DIRS
+# ------------------------------
+file(GLOB_RECURSE SERVER_INCLUDES LIST_DIRECTORIES true "${SERVER_SRC_DIR}/*")
 
-# -------------------------
-# Set output directory for the executable
-# -------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+add_executable(${PROJECT_NAME}
+        ${SERVER_SOURCES}
+)
 
-# -------------------------
-# Compiler warnings
-# -------------------------
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-else()
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        -Wall
-        -Wextra
-        -Wpedantic
-        -Wshadow
-        -Wnon-virtual-dtor
-        -Wold-style-cast
-        -Wcast-align
-        -Woverloaded-virtual
-        -Wconversion
-        -Wsign-conversion
-        -Wnull-dereference
-        -Wdouble-promotion
-        -Wformat=2
-    )
-endif()
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${SERVER_SRC_DIR}
+        ${SERVER_INCLUDES}
+)
 
+# Windows networking
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        _WIN32_WINNT=0x0601
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
 endif()
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+# Executable output path
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
 
-#if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
-#    add_subdirectory(tests)
-#endif()
+# ------------------------------
+# EXPORT VARIABLES FOR TESTS
+# ------------------------------
+set(SERVER_SOURCES ${SERVER_SOURCES} PARENT_SCOPE)
+set(SERVER_SRC_DIR ${SERVER_SRC_DIR} PARENT_SCOPE)
+set(SERVER_INCLUDES ${SERVER_INCLUDES} PARENT_SCOPE)
 
+# ------------------------------
+# TESTS
+# ------------------------------
+enable_testing()
+add_subdirectory(tests)

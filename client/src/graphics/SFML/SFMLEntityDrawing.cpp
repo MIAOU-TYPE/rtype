@@ -6,9 +6,9 @@
 */
 
 #include "SFMLEntityDrawing.hpp"
-#include "SFMLEntityCreation.hpp"
 #include <utility>
 #include <vector>
+#include "SFMLEntityCreation.hpp"
 
 using namespace Graphics;
 
@@ -23,10 +23,8 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         throw SFMLEntityDrawingError("Texture manager cannot be null");
     }
 
-    _spriteInfo = {
-        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f}}
-    };
+    _spriteInfo = {{"player", {"client/assets/sprites/player.png", 33.1f, 18.0f}},
+        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float y, const std::string &spriteName)

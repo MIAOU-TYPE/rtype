@@ -7,12 +7,14 @@
 
 #include "SFMLRenderer.hpp"
 #include "SFMLSpriteManagement.hpp"
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Event.hpp>
 
 using namespace Graphics;
 
 void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
-    _window.create(sf::VideoMode(width, height), title);
+    _window.create(sf::VideoMode({width, height}), title);
 }
 
 bool SFMLRenderer::isOpen() const
@@ -37,12 +39,16 @@ void SFMLRenderer::display()
 
 bool SFMLRenderer::pollEvent(sf::Event &event)
 {
-    return _window.pollEvent(event);
+    if (auto opt = _window.pollEvent()) {
+        event = *opt;
+        return true;
+    }
+    return false;
 }
 
 bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const
 {
-    return event.type == sf::Event::Closed;
+    return event.is<sf::Event::Closed>();
 }
 
 void SFMLRenderer::drawSprite(const sf::Sprite &sprite)

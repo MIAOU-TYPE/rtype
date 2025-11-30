@@ -7,8 +7,6 @@
 
 #include "SFMLSpriteManagement.hpp"
 
-#include <utility>
-
 using namespace Graphics;
 
 SFMLSprite::SFMLSprite(sf::Sprite sprite) : _sprite(std::move(sprite))
@@ -17,22 +15,24 @@ SFMLSprite::SFMLSprite(sf::Sprite sprite) : _sprite(std::move(sprite))
 
 void SFMLSprite::setPosition(float x, float y)
 {
-    _sprite.setPosition(x, y);
+    _sprite.setPosition(sf::Vector2f{x, y});
 }
 
 float SFMLSprite::getWidth() const
 {
-    return _sprite.getGlobalBounds().width;
+    auto bounds = _sprite.getGlobalBounds();
+    return bounds.size.x;
 }
 
 float SFMLSprite::getHeight() const
 {
-    return _sprite.getGlobalBounds().height;
+    auto bounds = _sprite.getGlobalBounds();
+    return bounds.size.y;
 }
 
 void SFMLSprite::setScale(float scaleX, float scaleY)
 {
-    _sprite.setScale(scaleX, scaleY);
+    _sprite.setScale(sf::Vector2f{scaleX, scaleY});
 }
 
 const sf::Sprite &SFMLSprite::getSFMLSprite() const

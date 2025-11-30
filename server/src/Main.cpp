@@ -10,6 +10,7 @@
 #include <thread>
 #include "SignalHandler.hpp"
 #include "UDPServer.hpp"
+#include "UDPPacket.hpp"
 
 static std::shared_ptr<Signal::SignalHandler> startSignalHandler(const std::shared_ptr<Server::IServer> &server)
 {
@@ -39,7 +40,10 @@ int main(void)
             }
         });
         while (server->isRunning()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::shared_ptr<Net::IServerPacket> packet;
+            if (server->popPacket(packet)) {
+                std::cout << "{Main} Received packet: " << *packet;
+            }
         }
         server->setRunning(false);
         reader.join();

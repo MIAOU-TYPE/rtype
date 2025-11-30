@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <exception>
 #include <memory>
 #include <string>
 #include "IRenderer.hpp"
@@ -19,6 +20,35 @@
 namespace Graphics
 {
     class SFMLEntityDrawing; // Forward declaration
+
+    /**
+     * @class GraphicalEntityError
+     * @brief Exception class for graphical entity-related errors.
+     * Inherits from std::exception to provide error handling capabilities.
+     */
+    class GraphicalEntityError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for GraphicalEntityError.
+         * @param message The error message to be associated with the exception.
+         */
+        explicit GraphicalEntityError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
+
     /**
      * @class GraphicalEntity
      * @brief Represents a graphical entity with position and sprite.

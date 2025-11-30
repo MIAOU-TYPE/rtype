@@ -18,18 +18,18 @@ GraphicalEntity::GraphicalEntity(
     : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager)), _entityDrawing(entityDrawing)
 {
     if (!_textureManager) {
-        throw std::runtime_error("Texture manager cannot be null");
+        throw GraphicalEntityError("Texture manager cannot be null");
     }
 
     SpriteInfo spriteInfo = entityDrawing.getSpriteInfoFromName(spriteName);
 
     if (!_textureManager->loadTexture(spriteInfo.path)) {
-        throw std::runtime_error("Failed to load texture: " + spriteInfo.path);
+        throw GraphicalEntityError("Failed to load texture: " + spriteInfo.path);
     }
 
     _sprite = _textureManager->createSprite(spriteInfo.path);
     if (!_sprite) {
-        throw std::runtime_error("Failed to create sprite for: " + spriteName);
+        throw GraphicalEntityError("Failed to create sprite for: " + spriteName);
     }
 
     if (spriteInfo.width > 0.0f && spriteInfo.height > 0.0f) {

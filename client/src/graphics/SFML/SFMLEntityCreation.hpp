@@ -85,28 +85,19 @@ namespace Graphics
          * @brief Gets the X position of the entity.
          * @return The X position.
          */
-        float getX() const
-        {
-            return _x;
-        }
+        float getX() const;
 
         /**
          * @brief Gets the Y position of the entity.
          * @return The Y position.
          */
-        float getY() const
-        {
-            return _y;
-        }
+        float getY() const;
 
         /**
          * @brief Gets the sprite name.
          * @return The sprite name.
          */
-        const std::string &getSpriteName() const
-        {
-            return _spriteName;
-        }
+        const std::string &getSpriteName() const;
 
         /**
          * @brief Gets the width of the entity sprite.

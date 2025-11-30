@@ -46,6 +46,21 @@ void GraphicalEntity::setPosition(float x, float y)
     }
 }
 
+float GraphicalEntity::getX() const
+{
+    return _x;
+}
+
+float GraphicalEntity::getY() const
+{
+    return _y;
+}
+
+const std::string &GraphicalEntity::getSpriteName() const
+{
+    return _spriteName;
+}
+
 float GraphicalEntity::getWidth() const
 {
     SpriteInfo info = _entityDrawing.getSpriteInfoFromName(_spriteName);

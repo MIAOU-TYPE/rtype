@@ -65,6 +65,16 @@ void ServerRuntime::runProcessor()
         std::shared_ptr<Net::IServerPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
             packetrouter.handlePacket(packet);
+            // TODO:
+            //  When the real GameServer is implemented (instead of tempMessageSink),
+            //  call gameServer->update(dt) here.
+            //  This will:
+            //  - process inputs stored in ECS components
+            //  - tick movement / physics / collision / AI systems
+            //  - compute world state changes
+            //  - generate a snapshot for clients using PacketFactory
+            //
+            //  This is the place where the game simulation runs every frame.
         }
     }
 }

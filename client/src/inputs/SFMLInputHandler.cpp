@@ -6,12 +6,13 @@
 */
 
 #include "SFMLInputHandler.hpp"
+#include <utility>
 
 using namespace Input;
 using namespace Events;
 
 SFMLInputHandler::SFMLInputHandler(std::shared_ptr<Events::InputEventManager> eventManager)
-    : _eventManager(eventManager)
+    : _eventManager(std::move(eventManager))
 {
     if (!_eventManager) {
         throw SFMLInputHandlerError("InputEventManager cannot be null");

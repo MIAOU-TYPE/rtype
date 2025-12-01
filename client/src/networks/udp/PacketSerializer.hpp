@@ -51,11 +51,8 @@ namespace Network
     };
 
     /**
-     * @brief Serializes network packets for client-to-server communication
-     *
-     * This class handles the serialization of various packet types into
-     * byte buffers ready for network transmission. It ensures proper byte
-     * ordering (network byte order) for multi-byte fields.
+     * @class PacketSerializer
+     * @brief A class for serializing network packets into byte buffers.
      */
     class PacketSerializer {
       public:

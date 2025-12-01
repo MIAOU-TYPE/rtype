@@ -102,8 +102,8 @@ namespace Events
         std::unordered_map<InputAction, std::vector<std::shared_ptr<InputEventHandler>>> _handlers = {};
         std::unordered_map<InputAction, bool> _heldActions = {};
         std::unordered_map<InputAction, float> _heldTimes = {};
-        std::unordered_map<InputAction, float> _lastHeldEventTimes = {}; ///< Time since last Held event dispatch
-        float _heldEventInterval = 0.0f; ///< Minimum interval between Held events (0 = every frame)
+        std::unordered_map<InputAction, float> _lastHeldEventTimes = {}; ///> Time since last Held event dispatch
+        float _heldEventInterval = 0.0f; ///> Minimum interval between Held events (0 = every frame)
     };
 
 } // namespace Events

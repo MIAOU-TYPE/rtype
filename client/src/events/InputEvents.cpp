@@ -36,13 +36,20 @@ void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<In
 void InputEventManager::dispatchEvent(const InputEvent &event)
 {
     if (event.state == InputState::Pressed) {
-        _heldActions[event.action] = true;
-        _heldTimes[event.action] = 0.0f;
-        _lastHeldEventTimes[event.action] = 0.0f;
+        _actionRefCounts[event.action]++;
+        if (_actionRefCounts[event.action] == 1) {
+            _heldActions[event.action] = true;
+            _heldTimes[event.action] = 0.0f;
+            _lastHeldEventTimes[event.action] = 0.0f;
+        }
     } else if (event.state == InputState::Released) {
-        _heldActions[event.action] = false;
-        _heldTimes[event.action] = 0.0f;
-        _lastHeldEventTimes[event.action] = 0.0f;
+        _actionRefCounts[event.action]--;
+        if (_actionRefCounts[event.action] <= 0) {
+            _actionRefCounts[event.action] = 0;
+            _heldActions[event.action] = false;
+            _heldTimes[event.action] = 0.0f;
+            _lastHeldEventTimes[event.action] = 0.0f;
+        }
     }
 
     auto it = _handlers.find(event.action);

@@ -103,6 +103,7 @@ namespace Events
         std::unordered_map<InputAction, bool> _heldActions = {};
         std::unordered_map<InputAction, float> _heldTimes = {};
         std::unordered_map<InputAction, float> _lastHeldEventTimes = {}; ///> Time since last Held event dispatch
+        std::unordered_map<InputAction, int> _actionRefCounts = {};      ///> Reference count for multi-key actions
         float _heldEventInterval = 0.0f; ///> Minimum interval between Held events (0 = every frame)
     };
 

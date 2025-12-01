@@ -51,13 +51,13 @@ bool SFMLInputHandler::isKeyPressed(sf::Keyboard::Key key) const
 
 void SFMLInputHandler::loadDefaultMappings()
 {
-    _keyMappings[sf::Keyboard::W] = InputAction::MoveUp;
+    _keyMappings[sf::Keyboard::Z] = InputAction::MoveUp;
     _keyMappings[sf::Keyboard::Up] = InputAction::MoveUp;
 
     _keyMappings[sf::Keyboard::S] = InputAction::MoveDown;
     _keyMappings[sf::Keyboard::Down] = InputAction::MoveDown;
 
-    _keyMappings[sf::Keyboard::A] = InputAction::MoveLeft;
+    _keyMappings[sf::Keyboard::Q] = InputAction::MoveLeft;
     _keyMappings[sf::Keyboard::Left] = InputAction::MoveLeft;
 
     _keyMappings[sf::Keyboard::D] = InputAction::MoveRight;

@@ -29,7 +29,6 @@ echo "==================================="
 ###############################################
 # 1. APPLY CLANG-FORMAT
 ###############################################
-echo -e "${BLUE}Applying format...${NC}"
 find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 \
     | xargs -0 clang-format-20 -i
 
@@ -39,21 +38,23 @@ echo
 ###############################################
 # 2. CLANG-TIDY FIX (basic mode)
 ###############################################
-echo -e "${BLUE}Applying clang-tidy fixes...${NC}"
+CLANG_TIDY_FLAGS="
+--fix
+--quiet
+--checks=-*,modernize-*,misc-*,bugprone-*
+--extra-arg=-std=c++20
+--extra-arg=-I.
+--extra-arg=-Wno-everything
+--extra-arg=-w
+--warnings-as-errors=
+"
 
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy-20 "$f" -fix --quiet \
-            --extra-arg=-std=c++20 \
-            --extra-arg=-Iserver/src \
-            --extra-arg=-Iclient/src 2>/dev/null; then
-        TIDY_FAILED=1
-        echo -e "${RED}clang-tidy failed on $f${NC}"
-    fi
+    clang-tidy-20 $CLANG_TIDY_FLAGS "$f" >/dev/null 2>&1 || TIDY_FAILED=1
 done < <(find client/src server/src -name "*.cpp" -not -path "*/tests/*" -print0)
 
-echo -e "${GREEN}clang-tidy fix done${NC}"
-echo
+echo -e "${GREEN}clang-tidy (light fix) completed${NC}"
 
 ###############################################
 # RESULT

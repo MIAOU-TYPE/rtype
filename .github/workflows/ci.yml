@@ -1,3 +1,5 @@
+# R-Type CI Workflow
+
 name: CI
 
 on:
@@ -9,31 +11,6 @@ env:
   MIRROR_REPO_URL: "git@github.com:EpitechPGE3-2025/G-CPP-500-NAN-5-2-rtype-8.git"
 
 jobs:
-  setup-vcpkg:
-    runs-on: ubuntu-latest
-    outputs:
-      toolchain: ${{ steps.setpath.outputs.toolchain }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git curl zip unzip tar
-
-      - name: Install vcpkg
-        id: install
-        run: |
-          git clone https://github.com/microsoft/vcpkg.git
-          ./vcpkg/bootstrap-vcpkg.sh
-
-      - name: Export toolchain path
-        id: setpath
-        run: echo "toolchain=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" >> "$GITHUB_OUTPUT"
-
-  # ====================================================
-  # =============== PATH FILTERING =====================
-  # ====================================================
   check-changes:
     runs-on: ubuntu-latest
     permissions:
@@ -88,7 +65,10 @@ jobs:
       - name: Install LLVM tools and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy clang-tools
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
+          sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
+          sudo apt-get update
+          sudo apt-get install -y clang-20 clang-tools-20 clang-format-20 clang-tidy-20 libsfml-dev libgtest-dev
 
       - name: Run linter
         run: |
@@ -99,7 +79,7 @@ jobs:
   build-server:
     name: Build Server
     runs-on: ubuntu-latest
-    needs: [check-changes, setup-vcpkg]
+    needs: check-changes
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.server == 'true'
 
     steps:
@@ -109,16 +89,12 @@ jobs:
       - name: Enable compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
 
-      - name: Configure Server
+      - name: Configure and Build Server
         run: |
-          cmake -S server -B build/server \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE=${{ needs.setup-vcpkg.outputs.toolchain }}
+          cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/server --target r-type_server -j$(nproc)
 
-      - name: Build Server
-        run: cmake --build build/server --target r-type_server -j$(nproc)
-
-      - name: Run Server Tests
+      - name: Run tests
         run: |
           cd build/server
           ctest --output-on-failure
@@ -126,25 +102,27 @@ jobs:
   build-client:
     name: Build Client
     runs-on: ubuntu-latest
-    needs: [check-changes, setup-vcpkg]
+    needs: check-changes
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: hendrikmuhs/ccache-action@v1.2
-
-      - name: Configure Client
+      - name: Install dependencies
         run: |
-          cmake -S client -B build/client \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE=${{ needs.setup-vcpkg.outputs.toolchain }}
+          sudo apt-get update
+          sudo apt-get install -y libsfml-dev
 
-      - name: Build Client
-        run: cmake --build build/client --target r-type_client -j$(nproc)
+      - name: Enable compiler cache
+        uses: hendrikmuhs/ccache-action@v1.2
 
-      - name: Run Client Tests
+      - name: Configure and Build Client
+        run: |
+          cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/client --target r-type_client -j$(nproc)
+
+      - name: Run tests
         run: |
           cd build/client
           ctest --output-on-failure

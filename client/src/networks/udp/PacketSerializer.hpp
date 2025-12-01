@@ -17,8 +17,9 @@
 #include <cstring>
 #include <exception>
 #include <vector>
-#include "PacketSnapshot.hpp"
+#include <string>
 #include "PacketTypes.hpp"
+#include "PacketSnapshot.hpp"
 
 namespace Network
 {
@@ -32,7 +33,7 @@ namespace Network
          * @brief Constructor with error message.
          * @param message The error message.
          */
-        explicit SerializerError(const char *message) : msg_(message)
+        explicit SerializerError(const std::string &message) : _msg("\n\t" + message)
         {
         }
 
@@ -42,11 +43,11 @@ namespace Network
          */
         virtual const char *what() const noexcept override
         {
-            return msg_;
+            return _msg.c_str();
         }
 
       private:
-        const char *msg_; ///> The error message
+        std::string _msg; ///> The error message
     };
 
     /**

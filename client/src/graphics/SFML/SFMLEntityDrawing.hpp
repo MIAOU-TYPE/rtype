@@ -92,7 +92,7 @@ namespace Graphics
          * @brief Gets the sprite info from sprite name.
          * @param spriteName The name of the sprite.
          * @return The sprite information (path and dimensions).
-         * @throws std::runtime_error if the sprite name is not found in _spriteInfo.
+         * @throws SFMLEntityDrawingError if the sprite name is not found in _spriteInfo.
          */
         SpriteInfo getSpriteInfoFromName(const std::string &spriteName) const;
 
@@ -100,7 +100,6 @@ namespace Graphics
          * @brief Gets the sprite path from sprite name.
          * @param spriteName The name of the sprite.
          * @return The full path to the sprite file.
-         * @throws std::runtime_error if the sprite name is not found in _spriteInfo.
          */
         std::string getSpritePathFromName(const std::string &spriteName) const;
 

@@ -7,20 +7,6 @@
 
 #include "PacketRouter.hpp"
 
-#include <cstring>
-#include <iostream>
-
-#include "IMessageSink.hpp"  // implémentation à fournir
-#include "NetMessages.hpp"   // PlayerInputMessage
-#include "PacketFactory.hpp" // pour Net::Factory::{CONNECT, INPUT, PING, DISCONNECT}
-
-#ifndef _WIN32
-    #include <arpa/inet.h>
-#else
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-#endif
-
 PacketRouter::PacketRouter(std::shared_ptr<SessionManager> &sessions, std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {

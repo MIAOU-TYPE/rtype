@@ -86,6 +86,7 @@ After building, you can run the server and client executables:
 
 - [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Detailed project organization
 - [Contributing Guidelines](docs/CONTRIBUTING.md) - How to contribute to the project
+- [UX & Accessibility Guidelines](docs/ux_accessibility_guidelines.md) - Player experience, UI/HUD standards, and accessibility requirements
 
 ## Contributing
 

@@ -56,33 +56,22 @@ jobs:
     name: Linter
     runs-on: ubuntu-latest
     needs: check-changes
-    if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      needs.check-changes.outputs.ci == 'true' ||
+      needs.check-changes.outputs.server == 'true' ||
+      needs.check-changes.outputs.client == 'true'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install LLVM tools and dependencies
+      - name: Install LLVM tools
         run: |
           sudo apt-get update
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
           sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
           sudo apt-get update
-
-          sudo apt-get install -y \
-            clang-20 clang-tools-20 clang-format-20 clang-tidy-20
-
-          sudo apt-get install -y \
-            build-essential \
-            ninja-build \
-            curl zip unzip tar \
-            libx11-dev \
-            libxi-dev \
-            libxrandr-dev \
-            libxcursor-dev \
-            libudev-dev \
-            libgl1-mesa-dev \
-            git
+          sudo apt-get install -y clang-format-20 clang-tidy-20 clang-tools-20
 
       - name: Run linter
         run: |
@@ -106,17 +95,14 @@ jobs:
 
       - name: Install system deps for SFML 3 + build tools
         run: |
-            sudo apt-get install -y \
+          sudo apt-get update
+          sudo apt-get install -y \
             build-essential \
             ninja-build \
             curl zip unzip tar \
-            libx11-dev \
-            libxi-dev \
-            libxrandr-dev \
-            libxcursor-dev \
-            libudev-dev \
-            libgl1-mesa-dev \
-            libglu1-mesa-dev \
+            libx11-dev libxi-dev libxrandr-dev \
+            libxcursor-dev libudev-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
             git
 
       - name: Restore vcpkg cache
@@ -148,7 +134,7 @@ jobs:
       - name: Build tests
         run: cmake --build build --target unit_tests -j$(nproc)
 
-      - name: Run tests (all)
+      - name: Run tests
         run: |
           cd build
           ctest --output-on-failure

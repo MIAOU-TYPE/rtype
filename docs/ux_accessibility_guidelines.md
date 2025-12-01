@@ -32,7 +32,7 @@ This document formalizes the user experience, interface design, and accessibilit
 These guidelines apply to:
 - Client application UI and HUD
 - In-game visual and audio feedback
-- Input systems (keyboard, gamepad)
+- Input systems (keyboard)
 - Settings and configuration interfaces
 
 <div style="page-break-before: always;"></div>
@@ -91,9 +91,9 @@ The R-Type experience should evoke the classic feel of arcade shooters while ret
 
 #### Boss Enemy Threat Telegraphing
 
-- Telegraph duration : 1000-1500ms
-- Visual Cues : Flashing warning + charge anim
-- Audio Cues : Loud charge + warning beep
+- Telegraph duration: 1000-1500ms
+- Visual Cues: Flashing warning + charge anim
+- Audio Cues: Loud charge + warning beep
 
 **Implementation Requirements:**
 - Telegraph effects must be distinct from background
@@ -199,7 +199,7 @@ Second proposed layout (alternative):
 ```
 ┌─────────────────────────────────────────────┐
 │                                             │
-|                                             |
+│                                             │
 │                                             │
 │                                             │
 │             MAIN PLAY AREA                  │  ← No HUD Overlap
@@ -240,7 +240,7 @@ The game must be playable by the widest possible audience, including players wit
 
 *Keyboard (WASD):*
 ```
-Movement: WASD (ZQSD) or Arrow Keys
+Movement: WASD (or ZQSD for AZERTY keyboards) or Arrow Keys
 Shoot: Space or Left Ctrl
 Special: E or Right Shift
 Pause: Esc or P
@@ -389,7 +389,6 @@ Pause: Esc or P
 | Metric | Target | Hardware Reference |
 |--------|--------|-------------------|
 | Frame Rate | 60 FPS stable | Mid-range PC (GTX 1060 / RX 580) |
-| Input Latency | < 50ms (input → visual response) | Using standard USB keyboard/gamepad |
 | Loading Time | < 3s for level transitions | SSD storage |
 | Network Latency Tolerance | Playable up to 150ms RTT | Multiplayer mode |
 
@@ -398,7 +397,7 @@ Pause: Esc or P
 - Test on minimum spec hardware
 - 30-minute stress test with no frame drops
 
-------
+---
 
 ### Accessibility Feature Coverage
 
@@ -427,8 +426,6 @@ Pause: Esc or P
 |------------|--------|------------------------|
 | Keyboard | Movement | 16ms (1 frame @ 60fps) |
 | Keyboard | Shoot | 33ms (2 frames @ 60fps) |
-| Gamepad | Movement | 16ms (1 frame @ 60fps) |
-| Gamepad | Shoot | 33ms (2 frames @ 60fps) |
 | Menu Navigation | Button press → action | 100ms |
 
 **Measurement:**
@@ -468,11 +465,10 @@ Use this checklist to ensure compliance with all guidelines during development a
 
 #### Accessibility - Input
 
-- [ ] All game actions are remappable (keyboard + gamepad)
+- [ ] All game actions are remappable (keyboard)
 - [ ] Rebinding system detects and warns of conflicts
 - [ ] Default key bindings are documented
 - [ ] Toggle autofire option is implemented
-- [ ] Gamepad dead zone is adjustable (5%-30%)
 - [ ] Input buffering is implemented (50ms window)
 
 #### Accessibility - Visual
@@ -539,7 +535,6 @@ Use this checklist to ensure compliance with all guidelines during development a
 
 ### Internal Documentation
 
-- [Technical Documentation](technical-docs/overview.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 - [Directory Structure](DIRECTORY_STRUCTURE.md)
 

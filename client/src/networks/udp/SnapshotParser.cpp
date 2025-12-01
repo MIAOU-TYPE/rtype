@@ -58,29 +58,21 @@ namespace Network
         SnapshotEntity entity;
         size_t offset = 0;
 
-        // Read networkId (uint32_t - convert from network byte order)
         uint32_t networkId;
         std::memcpy(&networkId, buffer + offset, sizeof(uint32_t));
         entity.id = ntohl(networkId);
         offset += sizeof(uint32_t);
-
-        // Read position (x, y) - floats don't need byte order conversion
         std::memcpy(&entity.x, buffer + offset, sizeof(float));
         offset += sizeof(float);
         std::memcpy(&entity.y, buffer + offset, sizeof(float));
         offset += sizeof(float);
-
-        // Read velocity (vx, vy) - floats don't need byte order conversion
         std::memcpy(&entity.vx, buffer + offset, sizeof(float));
         offset += sizeof(float);
         std::memcpy(&entity.vy, buffer + offset, sizeof(float));
         offset += sizeof(float);
-
-        // Read spriteId (uint16_t - convert from network byte order)
         uint16_t networkSprite;
         std::memcpy(&networkSprite, buffer + offset, sizeof(uint16_t));
         entity.sprite = ntohs(networkSprite);
-
         return entity;
     }
 

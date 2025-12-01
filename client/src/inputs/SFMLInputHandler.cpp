@@ -84,6 +84,17 @@ void SFMLInputHandler::handleKeyboardEvent(const sf::Event &event)
         return;
     }
 
+    // Filter key repeat events by tracking pressed keys
+    if (event.type == sf::Event::KeyPressed) {
+        // If key is already in the pressed set, it's a repeat event - ignore it
+        if (_pressedKeys.find(event.key.code) != _pressedKeys.end()) {
+            return;
+        }
+        _pressedKeys.insert(event.key.code);
+    } else if (event.type == sf::Event::KeyReleased) {
+        _pressedKeys.erase(event.key.code);
+    }
+
     InputEvent inputEvent;
     inputEvent.action = it->second;
 

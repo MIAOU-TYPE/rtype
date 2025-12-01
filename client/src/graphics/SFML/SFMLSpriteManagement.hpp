@@ -64,7 +64,7 @@ namespace Graphics
          * @param width  Width of the sub-rectangle.
          * @param height Height of the sub-rectangle.
          */
-        void setTextureRect(int left, int top, int width, int height);
+        void setTextureRect(int left, int top, int width, int height) override;
 
         /**
          * @brief Gets the underlying SFML sprite.

@@ -16,10 +16,10 @@
 #include <cstdint>
 #include <cstring>
 #include <exception>
-#include <vector>
 #include <string>
-#include "PacketTypes.hpp"
+#include <vector>
 #include "PacketSnapshot.hpp"
+#include "PacketTypes.hpp"
 
 namespace Network
 {

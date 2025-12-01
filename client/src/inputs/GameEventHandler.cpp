@@ -7,18 +7,19 @@
 
 #include "GameEventHandler.hpp"
 #include <iostream>
+#include <utility>
 #include "GameScene.hpp"
 
 using namespace Input;
 using namespace Events;
 
-GameEventHandler::GameEventHandler(std::shared_ptr<Game::GameScene> gameScene) : _gameScene(gameScene)
+GameEventHandler::GameEventHandler(std::shared_ptr<Game::GameScene> gameScene) : _gameScene(std::move(std::move(gameScene)))
 {
 }
 
 void GameEventHandler::setQuitCallback(std::function<void()> callback)
 {
-    _quitCallback = callback;
+    _quitCallback = std::move(callback);
 }
 
 void GameEventHandler::onInputEvent(const InputEvent &event)

@@ -35,6 +35,8 @@ void GameClient::init(unsigned int width, unsigned int height)
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
 
+        _gameInputHandler->setQuitCallback([this]() { _renderer->close(); });
+
         _eventManager->registerHandler(InputAction::MoveUp, _gameInputHandler);
         _eventManager->registerHandler(InputAction::MoveDown, _gameInputHandler);
         _eventManager->registerHandler(InputAction::MoveLeft, _gameInputHandler);
@@ -58,10 +60,9 @@ void GameClient::run()
 
     sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
-    bool shouldQuit = false;
 
     try {
-        while (_renderer->isOpen() && !shouldQuit) {
+        while (_renderer->isOpen()) {
             float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
 
             if (frameTime >= UPDATE_INTERVAL_MS) {
@@ -75,8 +76,6 @@ void GameClient::run()
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(event))
                     _renderer->close();
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
-                    shouldQuit = true;
                 _inputHandler->handleEvent(event);
             }
 

@@ -26,7 +26,7 @@ void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<In
     }
 
     auto &handlers = _handlers[action];
-    handlers.erase(std::ranges::remove_if(handlers,
+    handlers.erase(std::remove_if(handlers.begin(), handlers.end(),
                        [&handler](const std::shared_ptr<InputEventHandler> &h) {
                            return h == handler;
                        }),

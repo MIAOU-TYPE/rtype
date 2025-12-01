@@ -35,7 +35,9 @@ void GameClient::init(unsigned int width, unsigned int height)
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
 
-        _gameInputHandler->setQuitCallback([this]() { _renderer->close(); });
+        _gameInputHandler->setQuitCallback([this]() {
+            _renderer->close();
+        });
 
         _eventManager->registerHandler(InputAction::MoveUp, _gameInputHandler);
         _eventManager->registerHandler(InputAction::MoveDown, _gameInputHandler);

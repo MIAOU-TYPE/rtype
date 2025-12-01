@@ -34,6 +34,5 @@ int main(void)
     server->configure("127.0.0.1", 8080);
     runtime.start();
     runtime.wait();
-    runtime.stop();
     return 0;
 }

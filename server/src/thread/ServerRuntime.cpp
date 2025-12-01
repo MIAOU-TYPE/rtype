@@ -13,7 +13,8 @@ ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server
 
 ServerRuntime::~ServerRuntime()
 {
-    stop();
+    if (!_stopRequested)
+        stop();
     _server = nullptr;
 }
 
@@ -57,10 +58,12 @@ void ServerRuntime::runReceiver()
 
 void ServerRuntime::runProcessor()
 {
+
     while (_server->isRunning()) {
-        std::shared_ptr<Net::IServerPacket> packet;
+        std::shared_ptr<Net::IServerPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
             std::cout << "{ServerRuntime} Processing packet: " << packet;
+            std::cout << std::endl;
             std::flush(std::cout);
         }
     }

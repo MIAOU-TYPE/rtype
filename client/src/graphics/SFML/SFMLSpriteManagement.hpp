@@ -8,10 +8,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "ITextureManager.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <utility>
+#include "ITextureManager.hpp"
 
 /**
  * @namespace Graphics

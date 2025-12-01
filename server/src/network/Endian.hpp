@@ -28,9 +28,9 @@ inline uint64_t be64toh(uint64_t x)
 
 #elif defined(_WIN32)
     #define WIN32_LEAN_AND_MEAN
+    #include <intrin.h>
     #include <windows.h>
     #include <winsock2.h>
-    #include <intrin.h>
 
 inline uint64_t htobe64(uint64_t x)
 {

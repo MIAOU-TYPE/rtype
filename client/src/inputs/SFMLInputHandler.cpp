@@ -47,16 +47,15 @@ bool SFMLInputHandler::isKeyPressed(Key key) const
         case Key::Z: sfmlKey = sf::Keyboard::Key::Z; break;
 
         case Key::Escape: sfmlKey = sf::Keyboard::Key::Escape; break;
-        case Key::Space:  sfmlKey = sf::Keyboard::Key::Space; break;
-        case Key::Enter:  sfmlKey = sf::Keyboard::Key::Enter; break;
+        case Key::Space: sfmlKey = sf::Keyboard::Key::Space; break;
+        case Key::Enter: sfmlKey = sf::Keyboard::Key::Enter; break;
 
-        case Key::Left:  sfmlKey = sf::Keyboard::Key::Left; break;
+        case Key::Left: sfmlKey = sf::Keyboard::Key::Left; break;
         case Key::Right: sfmlKey = sf::Keyboard::Key::Right; break;
-        case Key::Up:    sfmlKey = sf::Keyboard::Key::Up; break;
-        case Key::Down:  sfmlKey = sf::Keyboard::Key::Down; break;
+        case Key::Up: sfmlKey = sf::Keyboard::Key::Up; break;
+        case Key::Down: sfmlKey = sf::Keyboard::Key::Down; break;
 
-        default:
-            return false;
+        default: return false;
     }
     return sf::Keyboard::isKeyPressed(sfmlKey);
 }

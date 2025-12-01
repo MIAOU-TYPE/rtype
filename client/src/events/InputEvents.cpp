@@ -10,7 +10,7 @@
 
 using namespace Events;
 
-void InputEventManager::registerHandler(InputAction action, std::shared_ptr<InputEventHandler> handler)
+void InputEventManager::registerHandler(InputAction action, const std::shared_ptr<InputEventHandler>& handler)
 {
     if (!handler) {
         return;
@@ -26,7 +26,7 @@ void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<In
     }
 
     auto &handlers = _handlers[action];
-    handlers.erase(std::remove_if(handlers.begin(), handlers.end(),
+    handlers.erase(std::ranges::remove_if(handlers,
                        [&handler](const std::shared_ptr<InputEventHandler> &h) {
                            return h == handler;
                        }),

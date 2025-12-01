@@ -50,7 +50,7 @@ ENV PATH="${VCPKG_ROOT}:${PATH}"
 # Copy the project
 # ---------------------------------------------
 WORKDIR /app
-COPY .. .
+COPY . .
 
 # ---------------------------------------------
 # Configure + Build

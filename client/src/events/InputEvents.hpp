@@ -91,10 +91,19 @@ namespace Events
          */
         void updateHeldActions(float deltaTime);
 
+        /**
+         * @brief Sets the held event dispatch interval.
+         * @param interval Minimum time (in seconds) between consecutive Held events for the same action.
+         *                 Default is 0.0f (dispatch every frame).
+         */
+        void setHeldEventInterval(float interval);
+
       private:
         std::unordered_map<InputAction, std::vector<std::shared_ptr<InputEventHandler>>> _handlers = {};
         std::unordered_map<InputAction, bool> _heldActions = {};
         std::unordered_map<InputAction, float> _heldTimes = {};
+        std::unordered_map<InputAction, float> _lastHeldEventTimes = {}; ///< Time since last Held event dispatch
+        float _heldEventInterval = 0.0f; ///< Minimum interval between Held events (0 = every frame)
     };
 
 } // namespace Events

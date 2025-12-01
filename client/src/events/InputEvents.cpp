@@ -38,9 +38,11 @@ void InputEventManager::dispatchEvent(const InputEvent &event)
     if (event.state == InputState::Pressed) {
         _heldActions[event.action] = true;
         _heldTimes[event.action] = 0.0f;
+        _lastHeldEventTimes[event.action] = 0.0f;
     } else if (event.state == InputState::Released) {
         _heldActions[event.action] = false;
         _heldTimes[event.action] = 0.0f;
+        _lastHeldEventTimes[event.action] = 0.0f;
     }
 
     auto it = _handlers.find(event.action);
@@ -54,25 +56,32 @@ void InputEventManager::dispatchEvent(const InputEvent &event)
     }
 }
 
+void InputEventManager::setHeldEventInterval(float interval)
+{
+    _heldEventInterval = interval;
+}
+
 void InputEventManager::updateHeldActions(float deltaTime)
 {
     for (auto &[action, isHeld] : _heldActions) {
         if (isHeld) {
             _heldTimes[action] += deltaTime;
-
-            InputEvent heldEvent;
-            heldEvent.action = action;
-            heldEvent.state = InputState::Held;
-            heldEvent.deltaTime = _heldTimes[action];
-
-            auto it = _handlers.find(action);
-            if (it != _handlers.end()) {
-                auto &handlers = it->second;
-                for (auto &handler : handlers) {
-                    if (handler) {
-                        handler->onInputEvent(heldEvent);
+            _lastHeldEventTimes[action] += deltaTime;
+            if (_lastHeldEventTimes[action] >= _heldEventInterval) {
+                InputEvent heldEvent;
+                heldEvent.action = action;
+                heldEvent.state = InputState::Held;
+                heldEvent.deltaTime = _heldTimes[action];
+                auto it = _handlers.find(action);
+                if (it != _handlers.end()) {
+                    auto &handlers = it->second;
+                    for (auto &handler : handlers) {
+                        if (handler) {
+                            handler->onInputEvent(heldEvent);
+                        }
                     }
                 }
+                _lastHeldEventTimes[action] = 0.0f;
             }
         }
     }

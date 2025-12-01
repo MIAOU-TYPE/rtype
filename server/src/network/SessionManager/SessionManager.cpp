@@ -7,11 +7,11 @@
 
 #include "SessionManager.hpp"
 
-int SessionManager::getOrCreateSession(const sockaddr_in& addr)
+int SessionManager::getOrCreateSession(const sockaddr_in &addr)
 {
     std::lock_guard<std::mutex> lock(_mutex);
 
-    AddressKey key{ addr.sin_addr.s_addr, addr.sin_port };
+    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     auto it = _addressToId.find(key);
     if (it != _addressToId.end())
@@ -23,9 +23,9 @@ int SessionManager::getOrCreateSession(const sockaddr_in& addr)
     return newId;
 }
 
-int SessionManager::getSessionId(const sockaddr_in& addr) const
+int SessionManager::getSessionId(const sockaddr_in &addr) const
 {
-    AddressKey key{ addr.sin_addr.s_addr, addr.sin_port };
+    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     auto it = _addressToId.find(key);
     if (it != _addressToId.end())
@@ -33,7 +33,6 @@ int SessionManager::getSessionId(const sockaddr_in& addr) const
 
     return -1;
 }
-
 
 void SessionManager::removeSession(int sessionId)
 {
@@ -43,7 +42,7 @@ void SessionManager::removeSession(int sessionId)
     if (it == _idToAddress.end())
         return;
 
-    AddressKey key{ it->second.sin_addr.s_addr, it->second.sin_port };
+    AddressKey key{it->second.sin_addr.s_addr, it->second.sin_port};
 
     _idToAddress.erase(sessionId);
     _addressToId.erase(key);

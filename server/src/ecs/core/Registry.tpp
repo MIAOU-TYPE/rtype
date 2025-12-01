@@ -44,7 +44,7 @@ namespace Ecs
         if (!_entityToIndex.contains(typeIdx))
             return false;
         auto &arr = std::any_cast<SparseArray<T>&>(_entityToIndex[typeIdx]);
-        size_t idx = static_cast<size_t>(entity);
+        auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
         return arr[idx].has_value();

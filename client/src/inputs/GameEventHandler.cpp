@@ -13,8 +13,7 @@
 using namespace Input;
 using namespace Events;
 
-GameEventHandler::GameEventHandler(std::shared_ptr<Game::GameScene> gameScene)
-    : _gameScene(std::move(std::move(gameScene)))
+GameEventHandler::GameEventHandler(std::shared_ptr<Game::GameScene> gameScene) : _gameScene(std::move(gameScene))
 {
 }
 

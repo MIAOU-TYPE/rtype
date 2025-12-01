@@ -67,6 +67,6 @@ endif()
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     add_subdirectory(tests)
 endif()

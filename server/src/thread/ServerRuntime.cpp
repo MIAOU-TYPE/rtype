@@ -9,6 +9,16 @@
 
 ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server(server)
 {
+    // TODO: Une fois le GameServer (implémentation réelle de IMessageSink) en place,
+    //       appeler gameServer->update(dt) ici pour exécuter la logique ECS :
+    //         - appliquer les inputs reçus (InputSystem)
+    //         - déplacer les entités (MovementSystem)
+    //         - gérer collisions & dégâts (CollisionSystem)
+    //         - mettre à jour IA / projectiles
+    //         - générer et envoyer les snapshots aux clients
+    //
+    //       Pour l’instant, tempMessageSink ne fait rien,
+    //       donc cette étape sera activée quand l’ECS sera finalisé.
     _sink = std::make_shared<tempMessageSink>();
     _sessionManager = std::make_shared<SessionManager>();
 }

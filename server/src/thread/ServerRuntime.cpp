@@ -6,10 +6,11 @@
 */
 
 #include "ServerRuntime.hpp"
-#include "SessionManager.hpp"
 
 ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server(server)
 {
+    _sink = std::make_shared<tempMessageSink>();
+    _sessionManager = std::make_shared<SessionManager>();
 }
 
 ServerRuntime::~ServerRuntime()
@@ -59,16 +60,11 @@ void ServerRuntime::runReceiver()
 
 void ServerRuntime::runProcessor()
 {
-    SessionManager _sessionManager;
-
+    PacketRouter packetrouter(_sessionManager, _sink);
     while (_server->isRunning()) {
         std::shared_ptr<Net::IServerPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
-            _sessionManager.getOrCreateSession(*packet->address());
-            std::cout << "Session id: " << _sessionManager.getSessionId(*packet->address()) << std::endl;
-            std::cout << "{ServerRuntime} Processing packet: " << packet;
-            std::cout << std::endl;
-            std::flush(std::cout);
+            packetrouter.handlePacket(packet);
         }
     }
 }

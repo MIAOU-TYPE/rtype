@@ -10,7 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include "IMessageSink.hpp"
 #include "IServer.hpp"
+#include "PacketRouter.hpp"
+#include "SessionManager.hpp"
 
 /**
  * @brief The ServerRuntime class is responsible for managing the server's runtime operations,
@@ -58,12 +61,17 @@ class ServerRuntime {
     void runProcessor();
 
     std::shared_ptr<Server::IServer> _server = nullptr; ///> The server instance
+
+    std::shared_ptr<SessionManager> _sessionManager = nullptr; ///> Manages client sessions
+    std::shared_ptr<IMessageSink> _sink = nullptr;             ///> Message sink for handling incoming messages
+    std::shared_ptr<PacketRouter> _packetRouter = nullptr;     ///> Routes incoming packets to appropriate handlers
+
     std::atomic<bool> _running = false; ///> Atomic flag to indicate if the server is running
 
-    std::thread _receiverThread; ///> Thread for receiving packets
+    std::thread _receiverThread;  ///> Thread for receiving packets
     std::thread _processorThread; ///> Thread for processing packets
 
-    std::mutex _mutex; ///> Mutex for synchronizing access
+    std::mutex _mutex;           ///> Mutex for synchronizing access
     std::condition_variable _cv; ///> Condition variable for signaling
     bool _stopRequested = false; ///> Flag to indicate if a stop has been requested
 };

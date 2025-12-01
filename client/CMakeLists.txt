@@ -10,7 +10,17 @@ file(GLOB_RECURSE CLIENT_SOURCES CONFIGURE_DEPENDS
 )
 
 # Collect all include folders inside src/
-file(GLOB_RECURSE CLIENT_INCLUDES LIST_DIRECTORIES true "${CLIENT_SRC_DIR}/*")
+file(GLOB_RECURSE CLIENT_HEADERS CONFIGURE_DEPENDS
+        "${CLIENT_SRC_DIR}/*.hpp"
+        "${CLIENT_SRC_DIR}/*.tpp"
+)
+
+set(CLIENT_INCLUDE_DIRS "${CLIENT_SRC_DIR}")
+foreach(header ${CLIENT_HEADERS})
+    get_filename_component(dir "${header}" DIRECTORY)
+    list(APPEND CLIENT_INCLUDE_DIRS "${dir}")
+endforeach()
+list(REMOVE_DUPLICATES CLIENT_INCLUDE_DIRS)
 
 # ------------------------------
 # SFML DEPENDENCIES
@@ -25,8 +35,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CLIENT_SRC_DIR}
-        ${CLIENT_INCLUDES}
+        ${CLIENT_INCLUDE_DIRS}
 )
 
 # ------------------------------
@@ -70,6 +79,13 @@ endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
+
+# ------------------------------
+# EXPORT VARIABLES FOR TESTS
+# ------------------------------
+set(CLIENT_SOURCES ${CLIENT_SOURCES} PARENT_SCOPE)
+set(CLIENT_SRC_DIR ${CLIENT_SRC_DIR} PARENT_SCOPE)
+set(CLIENT_INCLUDE_DIRS ${CLIENT_INCLUDE_DIRS} PARENT_SCOPE)
 
 # ------------------------------
 # TESTS (optional)

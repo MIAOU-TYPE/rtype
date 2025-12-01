@@ -17,8 +17,7 @@ add_executable(unit_tests
 )
 
 target_include_directories(unit_tests PRIVATE
-        ${SERVER_SRC_DIR}
-        ${SERVER_INCLUDES}
+        ${SERVER_INCLUDE_DIRS}
 )
 
 # ------------------------------

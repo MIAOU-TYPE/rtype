@@ -9,7 +9,17 @@ file(GLOB_RECURSE SERVER_SOURCES CONFIGURE_DEPENDS
         "${SERVER_SRC_DIR}/*.cpp"
 )
 
-file(GLOB_RECURSE SERVER_INCLUDES LIST_DIRECTORIES true "${SERVER_SRC_DIR}/*")
+file(GLOB_RECURSE SERVER_HEADERS CONFIGURE_DEPENDS
+        "${SERVER_SRC_DIR}/*.hpp"
+        "${SERVER_SRC_DIR}/*.tpp"
+)
+
+set(SERVER_INCLUDE_DIRS "${SERVER_SRC_DIR}")
+foreach(header ${SERVER_HEADERS})
+    get_filename_component(dir "${header}" DIRECTORY)
+    list(APPEND SERVER_INCLUDE_DIRS "${dir}")
+endforeach()
+list(REMOVE_DUPLICATES SERVER_INCLUDE_DIRS)
 
 # ------------------------------
 # EXECUTABLE
@@ -19,8 +29,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-        ${SERVER_SRC_DIR}
-        ${SERVER_INCLUDES}
+        ${SERVER_INCLUDE_DIRS}
 )
 
 # ------------------------------
@@ -42,7 +51,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # ------------------------------
 set(SERVER_SOURCES ${SERVER_SOURCES} PARENT_SCOPE)
 set(SERVER_SRC_DIR ${SERVER_SRC_DIR} PARENT_SCOPE)
-set(SERVER_INCLUDES ${SERVER_INCLUDES} PARENT_SCOPE)
+set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 
 # ------------------------------
 # TESTS

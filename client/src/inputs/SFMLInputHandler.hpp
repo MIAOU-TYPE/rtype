@@ -103,7 +103,6 @@ namespace Input
          */
         bool isKeyPressed(sf::Keyboard::Key key) const;
 
-      public:
         /**
          * @brief Loads default key mappings.
          * Made public so users can reload defaults if needed.

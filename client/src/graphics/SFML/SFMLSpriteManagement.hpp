@@ -12,9 +12,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <utility>
 #include "ITextureManager.hpp"
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <utility>
 
 /**
  * @namespace Graphics
@@ -68,7 +65,6 @@ namespace Graphics
          * @param height Height of the sub-rectangle.
          */
         void setTextureRect(int left, int top, int width, int height);
-
 
         /**
          * @brief Gets the underlying SFML sprite.

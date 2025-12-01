@@ -20,19 +20,25 @@ void SFMLSprite::setPosition(float x, float y)
 
 float SFMLSprite::getWidth() const
 {
-    auto bounds = _sprite.getGlobalBounds();
+    const auto bounds = _sprite.getGlobalBounds();
     return bounds.size.x;
 }
 
 float SFMLSprite::getHeight() const
 {
-    auto bounds = _sprite.getGlobalBounds();
+    const auto bounds = _sprite.getGlobalBounds();
     return bounds.size.y;
 }
 
 void SFMLSprite::setScale(float scaleX, float scaleY)
 {
     _sprite.setScale(sf::Vector2f{scaleX, scaleY});
+}
+
+void SFMLSprite::setTextureRect(int left, int top, int width, int height)
+{
+    sf::IntRect rect{sf::Vector2i{left, top}, sf::Vector2i{width, height}};
+    _sprite.setTextureRect(rect);
 }
 
 const sf::Sprite &SFMLSprite::getSFMLSprite() const

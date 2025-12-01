@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <utility>
@@ -56,6 +56,15 @@ namespace Graphics
          * @param scaleY The Y scale factor.
          */
         void setScale(float scaleX, float scaleY) override;
+
+        /**
+         * @brief Sets the texture rectangle of the sprite.
+         * @param left   Left position in the texture.
+         * @param top    Top position in the texture.
+         * @param width  Width of the sub-rectangle.
+         * @param height Height of the sub-rectangle.
+         */
+        void setTextureRect(int left, int top, int width, int height);
 
         /**
          * @brief Gets the underlying SFML sprite.

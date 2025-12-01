@@ -55,6 +55,15 @@ namespace Graphics
         void setScale(float scaleX, float scaleY) override;
 
         /**
+         * @brief Sets the texture rectangle (sub-area of the texture to display).
+         * @param left The left coordinate of the rectangle.
+         * @param top The top coordinate of the rectangle.
+         * @param width The width of the rectangle.
+         * @param height The height of the rectangle.
+         */
+        void setTextureRect(int left, int top, int width, int height) override;
+
+        /**
          * @brief Gets the underlying SFML sprite.
          * @return Reference to the SFML sprite.
          */

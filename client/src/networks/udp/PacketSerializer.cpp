@@ -11,7 +11,7 @@ namespace Network
 {
     std::vector<uint8_t> PacketSerializer::serialize(const PacketSnapshot &packet, uint16_t entityCount)
     {
-        if (entityCount != packet.entityCount) {
+        if (entityCount != packet.entities.size() || entityCount != packet.entityCount) {
             throw SerializerError("Entity count does not match the size of the entities vector");
         }
         size_t totalSize = sizeof(PacketSnapshot) + entityCount * sizeof(SnapshotEntity);

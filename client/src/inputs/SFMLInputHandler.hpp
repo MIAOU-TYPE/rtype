@@ -12,8 +12,8 @@
 #include <exception>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include "InputEvents.hpp"
+#include <unordered_map>
 
 /**
  * @namespace Input

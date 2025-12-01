@@ -39,15 +39,12 @@ void GameClient::init(unsigned int width, unsigned int height)
             _renderer->close();
         });
 
-        _eventManager->registerHandler(InputAction::MoveUp, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::MoveDown, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::MoveLeft, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::MoveRight, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::Shoot, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::Pause, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::Quit, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::Confirm, _gameInputHandler);
-        _eventManager->registerHandler(InputAction::Cancel, _gameInputHandler);
+        std::vector<InputAction> actions = {InputAction::MoveUp, InputAction::MoveDown, InputAction::MoveLeft,
+            InputAction::MoveRight, InputAction::Shoot, InputAction::Pause, InputAction::Quit, InputAction::Confirm,
+            InputAction::Cancel};
+
+        for (const auto &action : actions)
+            _eventManager->registerHandler(action, _gameInputHandler);
 
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));

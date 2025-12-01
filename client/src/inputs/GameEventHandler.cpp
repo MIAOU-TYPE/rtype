@@ -16,6 +16,11 @@ GameEventHandler::GameEventHandler(std::shared_ptr<Game::GameScene> gameScene) :
 {
 }
 
+void GameEventHandler::setQuitCallback(std::function<void()> callback)
+{
+    _quitCallback = callback;
+}
+
 void GameEventHandler::onInputEvent(const InputEvent &event)
 {
     switch (event.action) {
@@ -67,7 +72,12 @@ void GameEventHandler::handleSystemActions(InputAction action, InputState state)
 
     switch (action) {
         case InputAction::Pause: std::cout << "Game paused/unpaused" << std::endl; break;
-        case InputAction::Quit: std::cout << "Quit game requested" << std::endl; break;
+        case InputAction::Quit:
+            std::cout << "Quit game requested" << std::endl;
+            if (_quitCallback) {
+                _quitCallback();
+            }
+            break;
         case InputAction::Confirm: std::cout << "Confirm action" << std::endl; break;
         case InputAction::Cancel: std::cout << "Cancel action" << std::endl; break;
         default: break;

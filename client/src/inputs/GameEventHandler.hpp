@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 #include "InputEvents.hpp"
 
@@ -43,6 +44,12 @@ namespace Input
          */
         void onInputEvent(const Events::InputEvent &event) override;
 
+        /**
+         * @brief Sets the quit callback function.
+         * @param callback Function to call when quit is requested.
+         */
+        void setQuitCallback(std::function<void()> callback);
+
       private:
         /**
          * @brief Handles movement actions.
@@ -66,6 +73,7 @@ namespace Input
         void handleSystemActions(Events::InputAction action, Events::InputState state);
 
         std::shared_ptr<Game::GameScene> _gameScene = nullptr; ///> Shared pointer to the game scene
+        std::function<void()> _quitCallback = nullptr;         ///> Callback for quit action
     };
 
 } // namespace Input

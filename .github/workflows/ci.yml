@@ -106,8 +106,7 @@ jobs:
 
       - name: Install system deps for SFML 3 + build tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+            sudo apt-get install -y \
             build-essential \
             ninja-build \
             curl zip unzip tar \
@@ -117,6 +116,7 @@ jobs:
             libxcursor-dev \
             libudev-dev \
             libgl1-mesa-dev \
+            libglu1-mesa-dev \
             git
 
       - name: Restore vcpkg cache

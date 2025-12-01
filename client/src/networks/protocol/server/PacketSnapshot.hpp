@@ -38,10 +38,10 @@ namespace Network
 #pragma pack(push, 1)
 
     struct PacketSnapshot {
-        PacketHeader header;       ///> Common packet header
-        uint32_t tick;             ///> Server frame number (network byte order)
-        uint16_t entityCount;      ///> Number of entities (network byte order)
-        SnapshotEntity entities[]; ///> Array of entity snapshots
+        PacketHeader header;                  ///> Common packet header
+        uint32_t tick;                        ///> Server frame number (network byte order)
+        uint16_t entityCount;                 ///> Number of entities (network byte order)
+        std::vector<SnapshotEntity> entities; ///> Array of entity snapshots
     };
 
 #pragma pack(pop)

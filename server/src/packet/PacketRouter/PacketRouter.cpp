@@ -80,13 +80,11 @@ void PacketRouter::handlePacket(const std::shared_ptr<Net::IServerPacket> &packe
     const std::size_t payloadSize = totalSize - sizeof(HeaderPacket);
     const std::uint8_t *payload = rawBuffer + sizeof(HeaderPacket);
 
-    using namespace Net::Factory;
-
     switch (header.type) {
-        case CONNECT: handleConnect(sessionId); break;
-        case INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case PING: handlePing(sessionId, payload, payloadSize); break;
-        case DISCONNECT: handleDisconnect(sessionId); break;
+        case Net::Factory::CONNECT: handleConnect(sessionId); break;
+        case Net::Factory::INPUT: handleInput(sessionId, payload, payloadSize); break;
+        case Net::Factory::PING: handlePing(sessionId, payload, payloadSize); break;
+        case Net::Factory::DISCONNECT: handleDisconnect(sessionId); break;
         default:
             std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << std::endl;
             break;

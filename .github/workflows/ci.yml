@@ -76,25 +76,66 @@ jobs:
           echo "Running linter..."
           ./scripts/lint-check.sh
 
+  setup-vcpkg:
+    runs-on: ubuntu-latest
+    outputs:
+      vcpkg-root: ${{ steps.set-output.outputs.vcpkg-root }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build curl zip unzip tar
+
+      - name: Clone & bootstrap vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          ./vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/vcpkg_installed
+          key: vcpkg-${{ runner.os }}
+
+      - name: Output vcpkg path
+        id: set-output
+        run: echo "vcpkg-root=$PWD/vcpkg" >> $GITHUB_OUTPUT
+
   build-server:
     name: Build Server
     runs-on: ubuntu-latest
-    needs: check-changes
-    if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.server == 'true'
+    needs:  [check-changes, setup-vcpkg]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Enable compiler cache
-        uses: hendrikmuhs/ccache-action@v1.2
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/vcpkg_installed
+          key: vcpkg-${{ runner.os }}
 
-      - name: Configure and Build Server
+      - name: Configure (with vcpkg)
         run: |
-          cmake -S server -B build/server -DCMAKE_BUILD_TYPE=Release
-          cmake --build build/server --target r-type_server -j$(nproc)
+          cmake -S server -B build/server \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=${{ needs.setup-vcpkg.outputs.vcpkg-root }}/scripts/buildsystems/vcpkg.cmake
 
-      - name: Run tests
+      - name: Build server
+        run: cmake --build build/server --target r-type_server -j$(nproc)
+
+      - name: Run server tests
         run: |
           cd build/server
           ctest --output-on-failure
@@ -102,27 +143,30 @@ jobs:
   build-client:
     name: Build Client
     runs-on: ubuntu-latest
-    needs: check-changes
-    if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.client == 'true'
+    needs: setup-vcpkg
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/vcpkg_installed
+          key: vcpkg-${{ runner.os }}
+
+      - name: Configure (with vcpkg)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libsfml-dev
+          cmake -S client -B build/client \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=${{ needs.setup-vcpkg.outputs.vcpkg-root }}/scripts/buildsystems/vcpkg.cmake
 
-      - name: Enable compiler cache
-        uses: hendrikmuhs/ccache-action@v1.2
+      - name: Build client
+        run: cmake --build build/client --target r-type_client -j$(nproc)
 
-      - name: Configure and Build Client
-        run: |
-          cmake -S client -B build/client -DCMAKE_BUILD_TYPE=Release
-          cmake --build build/client --target r-type_client -j$(nproc)
-
-      - name: Run tests
+      - name: Run client tests
         run: |
           cd build/client
           ctest --output-on-failure

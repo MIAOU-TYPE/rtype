@@ -24,9 +24,6 @@ void GameClient::init(unsigned int width, unsigned int height)
         _renderer->createWindow(width, height, "R-Type");
 
         _textureManager = std::make_shared<SFMLTextureManager>();
-        if (!_textureManager) {
-            throw GameClientError("Failed to create texture manager instance");
-        }
 
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
 

@@ -19,7 +19,7 @@ void InputEventManager::registerHandler(InputAction action, const std::shared_pt
     _handlers[action].push_back(handler);
 }
 
-void InputEventManager::unregisterHandler(InputAction action, std::shared_ptr<InputEventHandler> handler)
+void InputEventManager::unregisterHandler(InputAction action, const std::shared_ptr<InputEventHandler> &handler)
 {
     if (!handler) {
         return;

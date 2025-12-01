@@ -77,7 +77,7 @@ namespace Events
          * @param action The input action to stop listening for.
          * @param handler Shared pointer to the event handler to remove.
          */
-        void unregisterHandler(InputAction action, std::shared_ptr<InputEventHandler> handler);
+        void unregisterHandler(InputAction action, const std::shared_ptr<InputEventHandler> &handler);
 
         /**
          * @brief Dispatches an input event to all registered handlers.

@@ -14,6 +14,7 @@
 #include "IServer.hpp"
 #include "PacketRouter.hpp"
 #include "SessionManager.hpp"
+#include <condition_variable>
 
 /**
  * @brief The ServerRuntime class is responsible for managing the server's runtime operations,

@@ -148,6 +148,9 @@ jobs:
       - name: Build client
         run: cmake --build build --target r-type_client -j$(nproc)
 
+      - name: Build tests
+        run: cmake --build build --target unit_tests -j$(nproc)
+
       - name: Run tests (all)
         run: |
           cd build

@@ -65,10 +65,18 @@ jobs:
       - name: Install LLVM tools and dependencies
         run: |
           sudo apt-get update
+          # LLVM / clang
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
           sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
           sudo apt-get update
-          sudo apt-get install -y clang-20 clang-tools-20 clang-format-20 clang-tidy-20 libsfml-dev libgtest-dev
+          sudo apt-get install -y \
+            clang-20 clang-tools-20 clang-format-20 clang-tidy-20 \
+            # outils de build pour CMake
+            build-essential ninja-build \
+            curl zip unzip tar \
+            # dépendances système demandées par le port SFML 3 de vcpkg
+            libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev \
+            git
 
       - name: Run linter
         run: |

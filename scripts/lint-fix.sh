@@ -51,7 +51,7 @@ ln -sf compile_commands.json ..
 cd ..
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy-20 "$f" --quiet -fix -p build/compile_commands.json  --extra-arg=-Wno-unknown-pragmas; then
+    if ! clang-tidy-20 "$f" --quiet -fix -p build/compile_commands.json --extra-arg=-Wno-unknown-pragmas --extra-arg=-w; then
         echo -e "${RED}clang-tidy failed for $f${NC}" >&2
         TIDY_FAILED=1
     fi

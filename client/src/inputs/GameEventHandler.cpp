@@ -39,7 +39,7 @@ void GameEventHandler::onInputEvent(const InputEvent &event)
     }
 }
 
-void GameEventHandler::handleMovement(InputAction action, InputState state, float /* deltaTime */)
+void GameEventHandler::handleMovement(InputAction action, InputState state, float deltaTime)
 {
     if (_gameScene) {
         if (state == InputState::Pressed) {
@@ -48,6 +48,22 @@ void GameEventHandler::handleMovement(InputAction action, InputState state, floa
                 case InputAction::MoveDown: std::cout << "Player starts moving down" << std::endl; break;
                 case InputAction::MoveLeft: std::cout << "Player starts moving left" << std::endl; break;
                 case InputAction::MoveRight: std::cout << "Player starts moving right" << std::endl; break;
+                default: break;
+            }
+        } else if (state == InputState::Held) {
+            switch (action) {
+                case InputAction::MoveUp:
+                    std::cout << "Player continues moving up (Held), deltaTime: " << deltaTime << std::endl;
+                    break;
+                case InputAction::MoveDown:
+                    std::cout << "Player continues moving down (Held), deltaTime: " << deltaTime << std::endl;
+                    break;
+                case InputAction::MoveLeft:
+                    std::cout << "Player continues moving left (Held), deltaTime: " << deltaTime << std::endl;
+                    break;
+                case InputAction::MoveRight:
+                    std::cout << "Player continues moving right (Held), deltaTime: " << deltaTime << std::endl;
+                    break;
                 default: break;
             }
         } else if (state == InputState::Released) {

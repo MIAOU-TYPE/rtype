@@ -45,6 +45,7 @@ void ServerRuntime::stop()
         _receiverThread.join();
     if (_processorThread.joinable())
         _processorThread.join();
+    _server->stop();
 }
 
 void ServerRuntime::runReceiver()

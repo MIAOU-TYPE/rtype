@@ -66,6 +66,7 @@ namespace Graphics
          */
         void setTextureRect(int left, int top, int width, int height);
 
+
         /**
          * @brief Gets the underlying SFML sprite.
          * @return Reference to the SFML sprite.

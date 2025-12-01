@@ -14,7 +14,7 @@ SFMLInputHandler::SFMLInputHandler(std::shared_ptr<Events::InputEventManager> ev
     : _eventManager(eventManager)
 {
     if (!_eventManager) {
-        throw std::runtime_error("InputEventManager cannot be null");
+        throw SFMLInputHandlerError("InputEventManager cannot be null");
     }
     loadDefaultMappings();
 }

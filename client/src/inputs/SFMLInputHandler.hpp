@@ -9,7 +9,9 @@
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <exception>
 #include <memory>
+#include <string>
 #include "InputEvents.hpp"
 #include <unordered_map>
 
@@ -19,6 +21,34 @@
  */
 namespace Input
 {
+    /**
+     * @class SFMLInputHandlerError
+     * @brief Exception class for SFML input handler-related errors.
+     * Inherits from std::exception to provide error handling capabilities.
+     */
+    class SFMLInputHandlerError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for SFMLInputHandlerError.
+         * @param message The error message to be associated with the exception.
+         */
+        explicit SFMLInputHandlerError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
+
     /**
      * @class SFMLInputHandler
      * @brief Modern SFML input handler with pure event-driven architecture.

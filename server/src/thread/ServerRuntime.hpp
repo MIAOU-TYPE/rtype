@@ -12,27 +12,58 @@
 #include <thread>
 #include "IServer.hpp"
 
+/**
+ * @brief The ServerRuntime class is responsible for managing the server's runtime operations,
+ * including starting, stopping, and handling incoming packets.
+ */
 class ServerRuntime {
   public:
+    /**
+     * @brief Construct a new Server Runtime object
+     * @param server A shared pointer to the server instance
+     */
     explicit ServerRuntime(std::shared_ptr<Server::IServer> &server);
 
+    /**
+     * @brief Destroy the Server Runtime object
+     */
     ~ServerRuntime();
 
+    /**
+     * @brief Wait for the server to stop
+     */
     void wait();
+
+    /**
+     * @brief Start the server runtime
+     * Launches threads for receiving and processing packets
+     */
     void start();
+
+    /**
+     * @brief Stop the server runtime
+     * Safely stops the server and joins threads
+     */
     void stop();
 
   private:
+    /**
+     * @brief Thread function to handle receiving packets
+     */
     void runReceiver();
+
+    /**
+     * @brief Thread function to handle processing packets
+     */
     void runProcessor();
 
-    std::shared_ptr<Server::IServer> _server;
-    std::atomic<bool> _running = false;
+    std::shared_ptr<Server::IServer> _server = nullptr; ///> The server instance
+    std::atomic<bool> _running = false; ///> Atomic flag to indicate if the server is running
 
-    std::thread _receiverThread;
-    std::thread _processorThread;
+    std::thread _receiverThread; ///> Thread for receiving packets
+    std::thread _processorThread; ///> Thread for processing packets
 
-    std::mutex _mutex;
-    std::condition_variable _cv;
-    bool _stopRequested = false;
+    std::mutex _mutex; ///> Mutex for synchronizing access
+    std::condition_variable _cv; ///> Condition variable for signaling
+    bool _stopRequested = false; ///> Flag to indicate if a stop has been requested
 };

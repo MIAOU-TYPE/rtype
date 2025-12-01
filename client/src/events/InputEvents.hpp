@@ -41,7 +41,7 @@ namespace Events
     struct InputEvent {
         InputAction action;
         InputState state;
-        float deltaTime = 0.0f; ///< Time since last frame for held actions
+        float deltaTime = 0.0f; ///> Time since last frame for held actions
     };
 
     /**

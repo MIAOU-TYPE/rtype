@@ -65,16 +65,13 @@ jobs:
       - name: Install LLVM tools and dependencies
         run: |
           sudo apt-get update
-          # LLVM / clang
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
           sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
           sudo apt-get update
 
-          # Outils clang / llvm
           sudo apt-get install -y \
             clang-20 clang-tools-20 clang-format-20 clang-tidy-20
 
-          # Outils de build + deps SFML 3 (vcpkg a besoin de ça)
           sudo apt-get install -y \
             build-essential \
             ninja-build \

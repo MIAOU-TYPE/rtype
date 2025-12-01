@@ -10,7 +10,7 @@
 
 using namespace Events;
 
-void InputEventManager::registerHandler(InputAction action, const std::shared_ptr<InputEventHandler>& handler)
+void InputEventManager::registerHandler(InputAction action, const std::shared_ptr<InputEventHandler> &handler)
 {
     if (!handler) {
         return;

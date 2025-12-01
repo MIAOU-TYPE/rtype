@@ -70,7 +70,7 @@ namespace Events
          * @param action The input action to listen for.
          * @param handler Shared pointer to the event handler.
          */
-        void registerHandler(InputAction action, const std::shared_ptr<InputEventHandler>& handler);
+        void registerHandler(InputAction action, const std::shared_ptr<InputEventHandler> &handler);
 
         /**
          * @brief Unregisters an event handler for a specific action.

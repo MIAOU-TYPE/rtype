@@ -29,6 +29,11 @@
  */
 namespace Net::Factory
 {
+    constexpr uint8_t CONNECT = 0x01;       ///> Packet type for connect packets.
+    constexpr uint8_t INPUT = 0x02;         ///> Packet type for input packets.
+    constexpr uint8_t PING = 0x03;          ///> Packet type for ping packets.
+    constexpr uint8_t DISCONNECT = 0x04;    ///> Packet type for disconnect packets.
+
     constexpr uint8_t ACCEPT = 0x10;         ///> Packet type for accept packets.
     constexpr uint8_t REJECT = 0x11;         ///> Packet type for reject packets.
     constexpr uint8_t SNAPSHOT = 0x12;       ///> Packet type for snapshot packets.

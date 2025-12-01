@@ -17,53 +17,50 @@ YELLOW="\033[1;33m"
 NC="\033[0m"
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-# Check required tools
-for tool in clang-format-20 clang-tidy-20 cmake; do
-    command -v "$tool" >/dev/null 2>&1 || { echo -e "${RED}Error: $tool is not installed${NC}"; exit 1; }
-done
-
-echo -e "${BLUE}Auto-Fix C++ code${NC}"
-echo "==================================="
-
 cd "$PROJECT_ROOT"
 
-# 1. Automatic formatting
-echo -e "${BLUE}Applying format (clang-format)...${NC}"
-find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 | xargs -0 clang-format-20 -i
+for tool in clang-format-20 clang-tidy-20; do
+    command -v "$tool" >/dev/null 2>&1 || { echo -e "${RED}Missing $tool${NC}"; exit 1; }
+done
+
+echo -e "${BLUE}Lint Fix (format + tidy)${NC}"
+echo "==================================="
+
+###############################################
+# 1. APPLY CLANG-FORMAT
+###############################################
+echo -e "${BLUE}Applying format...${NC}"
+find client/src server/src \( -name "*.cpp" -o -name "*.hpp" \) -print0 \
+    | xargs -0 clang-format-20 -i
+
 echo -e "${GREEN}Format applied${NC}"
 echo
 
-# 2. clang-tidy auto-fix
-echo -e "${BLUE}Running clang-tidy analysis and fix...${NC}"
-rm -rf build
-mkdir -p build
-cd build
+###############################################
+# 2. CLANG-TIDY FIX (basic mode)
+###############################################
+echo -e "${BLUE}Applying clang-tidy fixes...${NC}"
 
-# Configure CMake without tests for static analysis
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTING=OFF .. >/dev/null
-if [ ! -f compile_commands.json ]; then
-    echo -e "${RED}Error: compile_commands.json not found. CMake configuration may have failed.${NC}" >&2
-    exit 1
-fi
-ln -sf compile_commands.json ..
-
-cd ..
 TIDY_FAILED=0
 while IFS= read -r -d '' f; do
-    if ! clang-tidy-20 "$f" --quiet -fix -p build/compile_commands.json --extra-arg=-Wno-unknown-pragmas --extra-arg=-w; then
-        echo -e "${RED}clang-tidy failed for $f${NC}" >&2
+    if ! clang-tidy-20 "$f" -fix --quiet \
+            --extra-arg=-std=c++20 \
+            --extra-arg=-Iserver/src \
+            --extra-arg=-Iclient/src 2>/dev/null; then
         TIDY_FAILED=1
+        echo -e "${RED}clang-tidy failed on $f${NC}"
     fi
 done < <(find client/src server/src -name "*.cpp" -not -path "*/tests/*" -print0)
 
-echo -e "${GREEN}clang-tidy fix completed${NC}"
-echo "==================================="
-echo -e "${GREEN}Auto-Fix completed.${NC}"
+echo -e "${GREEN}clang-tidy fix done${NC}"
+echo
 
-if [ "$TIDY_FAILED" -eq 0 ]; then
-    echo -e "${BLUE}Tip: Run './scripts/lint-check.sh' to verify all issues are resolved.${NC}"
+###############################################
+# RESULT
+###############################################
+echo "==================================="
+if [[ $TIDY_FAILED -eq 0 ]]; then
+    echo -e "${GREEN}All auto-fixes applied successfully${NC}"
 else
-    echo -e "${YELLOW}Some errors could not be fixed automatically.${NC}"
-    echo -e "${YELLOW}Please run './scripts/lint-check.sh' to see remaining issues.${NC}"
+    echo -e "${YELLOW}Some issues could not be fixed automatically${NC}"
 fi

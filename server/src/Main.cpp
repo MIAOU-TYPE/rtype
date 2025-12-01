@@ -5,14 +5,10 @@
 ** Main
 */
 
-#include <iostream>
 #include <string>
-#include <thread>
 #include "ServerRuntime.hpp"
 #include "SignalHandler.hpp"
-#include "UDPPacket.hpp"
 #include "UDPServer.hpp"
-#include "thread/ServerRuntime.hpp"
 
 static std::shared_ptr<Signal::SignalHandler> startSignalHandler(ServerRuntime &runtime)
 {

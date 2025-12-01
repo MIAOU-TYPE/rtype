@@ -65,13 +65,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LLVM tools
+      - name: Install clang-format
         run: |
           sudo apt-get update
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
-          sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
-          sudo apt-get update
-          sudo apt-get install -y clang-format-20 clang-tidy-20 clang-tools-20
+          sudo apt-get install -y clang-format-20
 
       - name: Run linter
         run: |
@@ -113,14 +110,14 @@ jobs:
             vcpkg_installed
           key: vcpkg-${{ runner.os }}-sfml3-gtest
 
-      - name: Setup vcpkg if needed
+      - name: Setup vcpkg
         run: |
           if [ ! -d vcpkg ]; then
             git clone https://github.com/microsoft/vcpkg.git
             ./vcpkg/bootstrap-vcpkg.sh
           fi
 
-      - name: Configure (root CMake with vcpkg toolchain)
+      - name: Configure
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake

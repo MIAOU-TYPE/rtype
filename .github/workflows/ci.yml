@@ -10,7 +10,6 @@ on:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
-      # Note: paths-ignore is ignored for tag pushes
   pull_request:
     branches: [ "*" ]
   workflow_dispatch:
@@ -46,7 +45,7 @@ jobs:
             ci:
               - '.github/workflows/**'
               - 'scripts/**'
-              - 'docker/**'
+              - 'Dockerfile'
               - '.clang-format'
               - '.clang-tidy'
 
@@ -79,7 +78,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-changes]
     if: github.event_name == 'workflow_dispatch' || needs.check-changes.outputs.ci == 'true' || needs.check-changes.outputs.server == 'true' || needs.check-changes.outputs.client == 'true' || startsWith(github.ref, 'refs/tags/v')
-    # Note: check-changes is not strictly needed for tag pushes since path filtering doesn't apply, but it runs anyway
 
     steps:
       - name: Checkout code
@@ -88,10 +86,7 @@ jobs:
       - name: Install clang tools
         run: |
           sudo apt-get update
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.asc
-          sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
-          sudo apt-get update
-          sudo apt-get install -y clang-20 clang-tools-20 clang-format-20 clang-tidy-20 libsfml-dev libgtest-dev
+          sudo apt-get install -y clang-format-20
 
       - name: Run linter
         run: |

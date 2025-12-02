@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstdint>
+#include <memory>
 #include <stddef.h>
 #ifndef _WIN32
     #include <netinet/in.h>
@@ -66,5 +67,23 @@ namespace Net
          * @return A pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
+
+        /**
+         * @brief Sets the source address of the packet.
+         * @param addr The sockaddr_in structure representing the source address to set.
+         */
+        virtual void setAddress(const sockaddr_in &addr) = 0;
+
+        /**
+         * @brief Creates a clone of the current packet.
+         * @return A shared pointer to the cloned IServerPacket.
+         */
+        virtual std::shared_ptr<IServerPacket> clone() const = 0;
+
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The capacity of the packet buffer.
+         */
+        virtual size_t capacity() const noexcept = 0;
     };
 } // namespace Net

@@ -30,8 +30,16 @@ GraphicalEntity::GraphicalEntity(float x, float y, const std::string &spriteName
         throw GraphicalEntityError("Failed to create sprite for: " + spriteName);
     }
 
-    if (spriteInfo.width > 0.0f && spriteInfo.height > 0.0f) {
-        _sprite->setTextureRect(0, 0, static_cast<int>(spriteInfo.width), static_cast<int>(spriteInfo.height));
+    try {
+        _animationManager = entityDrawing.createAnimationManager(spriteName);
+        if (_animationManager) {
+            const AnimationFrame &frame = _animationManager->getCurrentFrame();
+            _sprite->setTextureRect(frame.x, frame.y, frame.width, frame.height);
+        }
+    } catch (const std::exception &) {
+        if (spriteInfo.width > 0.0f && spriteInfo.height > 0.0f) {
+            _sprite->setTextureRect(0, 0, static_cast<int>(spriteInfo.width), static_cast<int>(spriteInfo.height));
+        }
     }
 
     _sprite->setPosition(_x, _y);
@@ -76,6 +84,40 @@ float GraphicalEntity::getHeight() const
 void GraphicalEntity::render(const std::shared_ptr<IRenderer> &renderer)
 {
     if (renderer && _sprite) {
+        if (_animationManager) {
+            try {
+                const AnimationFrame &frame = _animationManager->getCurrentFrame();
+                _sprite->setTextureRect(frame.x, frame.y, frame.width, frame.height);
+            } catch (const SFMLAnimationManagerError &) {
+            }
+        }
+
         renderer->renderSprite(*_sprite);
     }
+}
+
+void GraphicalEntity::update(float deltaTime)
+{
+    if (_animationManager) {
+        _animationManager->update(deltaTime);
+    }
+}
+
+void GraphicalEntity::setAnimation(const std::string &animationName)
+{
+    if (!_animationManager) {
+        throw GraphicalEntityError("No animation manager available for entity '" + _spriteName + "'");
+    }
+
+    try {
+        _animationManager->setCurrentAnimation(animationName);
+    } catch (const SFMLAnimationManagerError &e) {
+        throw GraphicalEntityError(
+            "Failed to set animation '" + animationName + "' for entity '" + _spriteName + "': " + e.what());
+    }
+}
+
+std::shared_ptr<SFMLAnimationManager> GraphicalEntity::getAnimationManager() const
+{
+    return _animationManager;
 }

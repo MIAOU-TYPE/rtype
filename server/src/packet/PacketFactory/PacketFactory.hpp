@@ -43,7 +43,7 @@ namespace Net::Factory
     constexpr uint8_t DAMAGE_EVENT = 0x16;   ///> Packet type for damage event packets.
     constexpr uint8_t GAME_OVER = 0x17;      ///> Packet type for game over packets.
 
-    class FactoryError : std::exception {
+    class FactoryError : public std::exception {
       public:
         /**
          * @brief Constructs a new FactoryError object with the specified message.
@@ -145,9 +145,8 @@ namespace Net::Factory
         std::shared_ptr<IServerPacket> _packet =
             nullptr; ///> Pointer to the template IServerPacket used for creating packets.
 
-        static constexpr uint8_t VERSION = 1.0; ///> The version of the packet factory.
+        static constexpr uint8_t VERSION = 1; ///> The version of the packet factory.
     };
-
 } // namespace Net::Factory
 
 #include "PacketFactory.tpp"

@@ -13,6 +13,8 @@
 #include <vector>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "SFMLAnimation.hpp"
+#include "SFMLAnimationManager.hpp"
 #include "SFMLEntityCreation.hpp"
 #include <unordered_map>
 
@@ -22,6 +24,17 @@
  */
 namespace Graphics
 {
+    /**
+     * @brief Structure containing sprite information.
+     */
+    struct SpriteInfo {
+        std::string path;                                       ///> Path to the sprite file
+        float width;                                            ///> Width of the sprite
+        float height;                                           ///> Height of the sprite
+        std::vector<std::shared_ptr<SFMLAnimation>> animations; ///> List of animations for this sprite
+        std::string defaultAnimation;                           ///> Name of the default animation
+    };
+
     /**
      * @class SFMLEntityDrawingError
      * @brief Exception class for SFML entity drawing-related errors.
@@ -51,15 +64,6 @@ namespace Graphics
     };
 
     /**
-     * @brief Structure containing sprite information.
-     */
-    struct SpriteInfo {
-        std::string path; ///> Path to the sprite file
-        float width;      ///> Width of the sprite
-        float height;     ///> Height of the sprite
-    };
-
-    /**
      * @class SFMLEntityDrawing
      * @brief Manager for drawing entities using SFML.
      *
@@ -84,6 +88,12 @@ namespace Graphics
         std::shared_ptr<GraphicalEntity> createEntity(float x, float y, const std::string &spriteName);
 
         /**
+         * @brief Updates all entities (including animations).
+         * @param deltaTime Time elapsed since last update in seconds.
+         */
+        void updateAllEntities(float deltaTime);
+
+        /**
          * @brief Renders all entities.
          */
         void renderAllEntities();
@@ -102,6 +112,14 @@ namespace Graphics
          * @return The full path to the sprite file.
          */
         std::string getSpritePathFromName(const std::string &spriteName) const;
+
+        /**
+         * @brief Creates an animation manager for a specific sprite.
+         * @param spriteName The name of the sprite.
+         * @return Shared pointer to the created animation manager.
+         * @throws SFMLEntityDrawingError if sprite name is not found.
+         */
+        std::shared_ptr<SFMLAnimationManager> createAnimationManager(const std::string &spriteName) const;
 
       private:
         std::shared_ptr<IRenderer> _renderer = nullptr;               ///> The renderer

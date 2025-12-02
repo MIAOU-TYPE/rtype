@@ -20,7 +20,7 @@ SFMLInputHandler::SFMLInputHandler(std::shared_ptr<Events::InputEventManager> ev
     loadDefaultMappings();
 }
 
-void SFMLInputHandler::handleEvent(const sf::Event &event)
+void SFMLInputHandler::handleEvent(const sf::Event &)
 {
     handleKeyboardEvent(event);
 }

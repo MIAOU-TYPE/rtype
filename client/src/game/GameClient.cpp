@@ -7,6 +7,9 @@
 
 #include "GameClient.hpp"
 #include <SFML/System/Clock.hpp>
+#include <SFML/Window/Event.hpp>
+#include <optional>
+#include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
 using namespace Graphics;
@@ -68,7 +71,7 @@ void GameClient::run()
                 _gameScene->update(deltaTime);
             }
 
-            sf::Event event;
+            sf::Event event{sf::Event::Closed{}};
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(event))
                     _renderer->close();

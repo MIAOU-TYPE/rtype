@@ -7,7 +7,10 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <utility>
 #include "ITextureManager.hpp"
 
 /**
@@ -55,11 +58,11 @@ namespace Graphics
         void setScale(float scaleX, float scaleY) override;
 
         /**
-         * @brief Sets the texture rectangle (sub-area of the texture to display).
-         * @param left The left coordinate of the rectangle.
-         * @param top The top coordinate of the rectangle.
-         * @param width The width of the rectangle.
-         * @param height The height of the rectangle.
+         * @brief Sets the texture rectangle of the sprite.
+         * @param left   Left position in the texture.
+         * @param top    Top position in the texture.
+         * @param width  Width of the sub-rectangle.
+         * @param height Height of the sub-rectangle.
          */
         void setTextureRect(int left, int top, int width, int height) override;
 

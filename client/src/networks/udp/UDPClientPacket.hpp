@@ -7,8 +7,8 @@
 
 #pragma once
 #include <cstring>
-#include <vector>
 #include <memory>
+#include <vector>
 #include "IClientPacket.hpp"
 
 #ifdef _WIN32

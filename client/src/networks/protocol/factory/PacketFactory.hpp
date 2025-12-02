@@ -87,8 +87,7 @@ namespace Network
          * @param shooting Shooting action flag
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<IClientPacket> makeInput(
-            uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept;
+        std::shared_ptr<IClientPacket> makeInput(uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept;
 
         /**
          * @brief Creates a ping packet

@@ -40,6 +40,29 @@ if (WIN32)
 endif()
 
 # ------------------------------
+# WARNINGS
+# ------------------------------
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
+            -Wshadow
+            -Wnon-virtual-dtor
+            -Wold-style-cast
+            -Wcast-align
+            -Woverloaded-virtual
+            -Wconversion
+            -Wsign-conversion
+            -Wnull-dereference
+            -Wdouble-promotion
+            -Wformat=2
+    )
+endif()
+
+# ------------------------------
 # OUTPUT LOCATION
 # ------------------------------
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -11,7 +11,7 @@ using namespace Graphics;
 
 bool SFMLTextureManager::loadTexture(const std::string &filePath)
 {
-    if (_textures.find(filePath) != _textures.end()) {
+    if (_textures.contains(filePath)) {
         return true;
     }
 
@@ -20,7 +20,7 @@ bool SFMLTextureManager::loadTexture(const std::string &filePath)
         return false;
     }
 
-    _textures[filePath] = texture;
+    _textures.emplace(filePath, std::move(texture));
     return true;
 }
 
@@ -30,8 +30,7 @@ std::unique_ptr<ISprite> SFMLTextureManager::createSprite(const std::string &tex
         return nullptr;
     }
 
-    sf::Sprite sprite;
-    sprite.setTexture(_textures[texturePath]);
+    sf::Sprite sprite(_textures.at(texturePath));
 
     return std::make_unique<SFMLSprite>(std::move(sprite));
 }

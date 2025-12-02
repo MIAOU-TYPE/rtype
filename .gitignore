@@ -23,8 +23,8 @@ Debug/
 *.dll
 
 # Executables
-r-type_server
-r-type_client
+r-type_server*
+r-type_client*
 
 # IDEs and editors
 .vscode/

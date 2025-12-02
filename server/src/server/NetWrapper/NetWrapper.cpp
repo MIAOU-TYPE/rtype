@@ -49,7 +49,7 @@ namespace Net
 
     int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optName, (const void *) optVal, optLen);
+        return ::setsockopt(s, level, optName, static_cast<const void*>(optVal), static_cast<socklen_t>(optLen));
     }
 
     recvfrom_return_t NetWrapper::recvFrom(

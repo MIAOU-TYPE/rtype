@@ -87,5 +87,5 @@ set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 # TESTS
 # ------------------------------
-#enable_testing()
-#add_subdirectory(tests)
+enable_testing()
+add_subdirectory(tests)

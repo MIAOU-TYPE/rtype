@@ -53,11 +53,6 @@ namespace Graphics
         int width;      ///> Width of the frame
         int height;     ///> Height of the frame
         float duration; ///> Duration of this frame in seconds
-
-        AnimationFrame(int x, int y, int width, int height, float duration = 0.1f)
-            : x(x), y(y), width(width), height(height), duration(duration)
-        {
-        }
     };
 
     /**

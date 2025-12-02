@@ -28,8 +28,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 
 # =============================================
-# LLVM FIX FOR macOS + HOMEBREW LLVM BUG
+# fix for macOS + Homebrew LLVM bug
 # (__hash_memory missing symbol)
+# Force linking against Homebrew libc++ instead of Apple SDK libc++
 # =============================================
 if(APPLE)
     find_package(LLVM QUIET CONFIG)

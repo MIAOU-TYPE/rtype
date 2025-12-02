@@ -151,8 +151,6 @@ The CI also runs the linter automatically.
 * 📄 **[Directory Structure](docs/DIRECTORY_STRUCTURE.md)**
 * 📄 **[Contributing Guidelines](docs/CONTRIBUTING.md)**
 
----
-
 ## 🤝 Contributing
 
 Contributions are welcome!

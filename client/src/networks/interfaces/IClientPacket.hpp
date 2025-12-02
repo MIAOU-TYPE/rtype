@@ -100,5 +100,17 @@ namespace Network
          * @return A const pointer to the sockaddr_in structure representing the source address.
          */
         virtual const sockaddr_in *address() const = 0;
+
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The maximum capacity of the packet buffer in bytes.
+         */
+        virtual size_t capacity() const = 0;
+
+        /**
+         * @brief Creates a clone of the packet.
+         * @return A shared pointer to a new IClientPacket instance with the same buffer capacity.
+         */
+        virtual std::shared_ptr<IClientPacket> clone() const = 0;
     };
 } // namespace Network

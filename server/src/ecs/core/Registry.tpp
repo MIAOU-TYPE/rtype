@@ -41,24 +41,38 @@ namespace Ecs
     bool Registry::hasComponent(Entity entity)
     {
         auto typeIdx = std::type_index(typeid(T));
-        if (_entityToIndex.find(typeIdx) == _entityToIndex.end())
+        if (!_entityToIndex.contains(typeIdx))
             return false;
         auto &arr = std::any_cast<SparseArray<T>&>(_entityToIndex[typeIdx]);
-        if (static_cast<size_t>(entity) >= arr.size())
+        auto idx = static_cast<size_t>(entity);
+        if (idx >= arr.size())
             return false;
-        return arr[static_cast<size_t>(entity)].has_value();
+        return arr[idx].has_value();
     }
 
     template <typename... Components, typename Function>
-    void Registry::view(Function func)
+    void Registry::view(Function fn)
     {
         if ((!_entityToIndex.contains(std::type_index(typeid(Components))) || ...))
             return;
         auto arrays = std::forward_as_tuple(getComponents<Components>()...);
         auto &first = std::get<0>(arrays);
-        for (size_t i = 0; i < first.size(); ++i) {
-            if ((std::get<SparseArray<Components>&>(arrays)[i].has_value() && ...))
-                func(Entity(i), *std::get<SparseArray<Components>&>(arrays)[i]...);
+        size_t maxSize = first.size();
+
+        for (size_t i = 0; i < maxSize; ++i) {
+
+            bool ok = (
+                (i < std::get<SparseArray<Components>&>(arrays).size() &&
+                 std::get<SparseArray<Components>&>(arrays)[i].has_value()) && ...);
+
+            if (!ok)
+                continue;
+
+            fn(
+                Entity(i),
+                *std::get<SparseArray<Components>&>(arrays)[i]...
+            );
         }
     }
+
 }

@@ -1,31 +1,40 @@
-# CMakeLists.txt for unit tests using GoogleTest framework
-file(GLOB TEST_SOURCES "*.cpp")
+# ------------------------------
+# COLLECT TEST SOURCES
+# ------------------------------
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
 
-# Recursively find all server sources (all subfolders)
-file(GLOB_RECURSE SERVER_SOURCES "${CMAKE_SOURCE_DIR}/server/src/*.cpp")
+# Remove server Main.cpp from unit tests
+list(FILTER SERVER_SOURCES EXCLUDE REGEX "Main\\.cpp$")
 
-# Exclude Main.cpp
-list(FILTER SERVER_SOURCES EXCLUDE REGEX ".*/Main\\.cpp$")
+# ------------------------------
+# TEST EXECUTABLE
+# ------------------------------
+add_executable(unit_tests
+        ${TEST_SOURCES}
+        ${SERVER_SOURCES}
+)
 
-# Create executable
-add_executable(unit_tests ${TEST_SOURCES} ${SERVER_SOURCES})
+target_include_directories(unit_tests PRIVATE
+        ${SERVER_INCLUDE_DIRS}
+)
 
-# Include directories (all subfolders)
-file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${CMAKE_SOURCE_DIR}/server/src")
-target_include_directories(unit_tests PRIVATE ${ALL_INCLUDE_DIRS})
-
-# Link GoogleTest
+# ------------------------------
+# GTEST
+# ------------------------------
 find_package(GTest CONFIG REQUIRED)
-target_link_libraries(unit_tests PRIVATE GTest::gtest GTest::gtest_main)
 
-# Platform-specific libs
-if(UNIX AND NOT APPLE)
-    target_link_libraries(unit_tests PRIVATE pthread)
+target_link_libraries(unit_tests PRIVATE
+        GTest::gtest
+        GTest::gtest_main
+)
+
+if (WIN32)
+    target_link_libraries(unit_tests PRIVATE ws2_32)
 endif()
 
-# C++20
-target_compile_features(unit_tests PRIVATE cxx_std_20)
-
-# Enable CTest
-enable_testing()
+# ------------------------------
+# REGISTER TESTS
+# ------------------------------
 add_test(NAME unit_tests COMMAND unit_tests)

@@ -1,0 +1,129 @@
+/*
+** EPITECH PROJECT, 2025
+** real_r_type
+** File description:
+** SFMLEntityCreation
+*/
+
+#pragma once
+
+#include <exception>
+#include <memory>
+#include <string>
+#include "IRenderer.hpp"
+#include "ITextureManager.hpp"
+
+/**
+ * @namespace Graphics
+ * @brief Contains all graphics-related classes and interfaces.
+ */
+namespace Graphics
+{
+    class SFMLEntityDrawing; // Forward declaration
+
+    /**
+     * @class GraphicalEntityError
+     * @brief Exception class for graphical entity-related errors.
+     * Inherits from std::exception to provide error handling capabilities.
+     */
+    class GraphicalEntityError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for GraphicalEntityError.
+         * @param message The error message to be associated with the exception.
+         */
+        explicit GraphicalEntityError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
+
+    /**
+     * @class GraphicalEntity
+     * @brief Represents a graphical entity with position and sprite.
+     *
+     * This class handles the graphical representation of game entities
+     * with a position and associated sprite.
+     */
+    class GraphicalEntity {
+      public:
+        /**
+         * @brief Constructor for GraphicalEntity.
+         * @param x The X position of the entity.
+         * @param y The Y position of the entity.
+         * @param spriteName The name of the sprite (without path).
+         * @param textureManager Shared pointer to the texture manager.
+         * @param entityDrawing Reference to the entity drawing manager for sprite info.
+         */
+        GraphicalEntity(float x, float y, const std::string &spriteName,
+            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing);
+
+        /**
+         * @brief Destructor for GraphicalEntity.
+         */
+        ~GraphicalEntity() = default;
+
+        /**
+         * @brief Sets the position of the entity.
+         * @param x The new X position.
+         * @param y The new Y position.
+         */
+        void setPosition(float x, float y);
+
+        /**
+         * @brief Gets the X position of the entity.
+         * @return The X position.
+         */
+        float getX() const;
+
+        /**
+         * @brief Gets the Y position of the entity.
+         * @return The Y position.
+         */
+        float getY() const;
+
+        /**
+         * @brief Gets the sprite name.
+         * @return The sprite name.
+         */
+        const std::string &getSpriteName() const;
+
+        /**
+         * @brief Gets the width of the entity sprite.
+         * @return The width in pixels.
+         */
+        float getWidth() const;
+
+        /**
+         * @brief Gets the height of the entity sprite.
+         * @return The height in pixels.
+         */
+        float getHeight() const;
+
+        /**
+         * @brief Renders the entity.
+         * @param renderer The renderer to use.
+         */
+        void render(const std::shared_ptr<IRenderer> &renderer);
+
+      private:
+        float _x = 0.0f;                                            ///> X position
+        float _y = 0.0f;                                            ///> Y position
+        std::string _spriteName = "";                               ///> Name of the sprite
+        std::shared_ptr<ITextureManager> _textureManager = nullptr; ///> Texture manager
+        std::unique_ptr<ISprite> _sprite = nullptr;                 ///> The sprite instance
+        const SFMLEntityDrawing &_entityDrawing;                    ///> Reference to entity drawing for sprite info
+    };
+
+} // namespace Graphics

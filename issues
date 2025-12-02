@@ -1,0 +1,213 @@
+
+---
+
+# ✅ **Issues for Graphical Client Display (R-Type)**
+
+---
+
+### **1. Title:** Implement window creation & main render loop
+
+**What needs to be accomplished?:**
+Set up the graphical window and the continuous refresh loop.
+**List the actions required.:**
+
+Create the client window
+Set up the rendering loop with proper framerate control
+Handle clean shutdown logic
+  **Label(s):** graphics, setup
+
+---
+
+### **2. Title:** Draw scrolling starfield background
+
+**What needs to be accomplished?:**
+Add a parallax-style animated background similar to R-Type.
+**List the actions required.:**
+
+Generate stars procedurally or load background textures
+Implement horizontal scrolling animation
+Ensure scrolling speed uses delta-time
+  **Label(s):** graphics, enhancement
+
+---
+
+### **3. Title:** Render player spaceship
+
+**What needs to be accomplished?:**
+Display the player's ship with its assigned sprite.
+**List the actions required.:**
+
+Load player sprite assets
+Display the sprite on screen
+Apply real-time position updates from the server
+  **Label(s):** graphics, game-engine
+
+---
+
+### **4. Title:** Render enemy entities
+
+**What needs to be accomplished?:**
+Draw enemy ships and obstacles based on server updates.
+**List the actions required.:**
+
+Load enemy sprites
+Render enemies at server-defined positions
+Handle creation and deletion (spawn/despawn)
+  **Label(s):** graphics, game-engine
+
+---
+
+### **5. Title:** Render player and enemy missiles
+
+**What needs to be accomplished?:**
+Display projectiles from both players and enemies.
+**List the actions required.:**
+
+Load missile textures
+Render missiles with delta-time animation
+Remove missiles when notified by server
+  **Label(s):** graphics
+
+---
+
+### **6. Title:** Sprite animation support
+
+**What needs to be accomplished?:**
+Enable frame-based animation in the graphical client.
+**List the actions required.:**
+
+Implement sprite sheet support
+Add animation component for entities
+Manage timing per frame
+  **Label(s):** graphics, enhancement, game-engine
+
+---
+
+### **7. Title:** Interpolate entity movement
+
+**What needs to be accomplished?:**
+Smooth out movement between server updates.
+**List the actions required.:**
+
+Store last-known and new entity positions
+Implement linear interpolation
+Apply interpolation every render frame
+  **Label(s):** graphics, enhancement, network
+
+---
+
+### **8. Title:** Display HUD (score, lives, player ID)
+
+**What needs to be accomplished?:**
+Add on-screen information for the user.
+**List the actions required.:**
+
+Render score counter
+Render remaining lives
+Display player color/identifier
+  **Label(s):** graphics, enhancement
+
+---
+
+### **9. Title:** Add explosion and death animations
+
+**What needs to be accomplished?:**
+Improve visuals when entities are destroyed.
+**List the actions required.:**
+
+Load explosion animation frames
+Display animation on entity death
+Remove entity only after animation completes
+  **Label(s):** graphics, enhancement
+
+---
+
+### **10. Title:** Implement delta-time based rendering
+
+**What needs to be accomplished?:**
+Ensure animations and movement are independent from CPU speed.
+**List the actions required.:**
+
+Add clock/time management
+Convert movement to time-based
+Verify consistent behavior at various framerates
+  **Label(s):** graphics, game-engine
+
+
+### **12. Title:** Implement texture caching & asset manager
+
+**What needs to be accomplished?:**
+Improve loading performance and memory usage.
+**List the actions required.:**
+
+Create a central texture manager
+Avoid reloading assets multiple times
+Add error handling for missing assets
+  **Label(s):** game-engine, enhancement
+
+---
+
+### **13. Title:** Display network debug overlay
+
+**What needs to be accomplished?:**
+Show useful info for debugging networking issues.
+**List the actions required.:**
+
+Add FPS counter
+Add ping & packet loss indicators
+Toggle overlay with a debug key
+  **Label(s):** graphics, tests, network
+
+---
+
+### **14. Title:** Implement GUI for main menu
+
+**What needs to be accomplished?:**
+Create the entry point of the game experience.
+**List the actions required.:**
+
+Draw menu buttons (Play, Quit, Settings)
+Handle input and interactions
+Transition to gameplay scene
+  **Label(s):** graphics, enhancement
+
+---
+
+### **15. Title:** Implement in-game pause menu
+
+**What needs to be accomplished?:**
+Add a pause menu accessible during gameplay.
+**List the actions required.:**
+
+Draw menu overlay
+Freeze rendering/gameplay updates
+Add “Resume” and “Quit” options
+  **Label(s):** graphics, enhancement, game-engine
+
+---
+
+### **16. Title:** Add audio feedback for visuals
+
+**What needs to be accomplished?:**
+Synchronize simple sound effects with visuals.
+**List the actions required.:**
+
+Play sound on explosion
+Play sound when shooting
+Volume control in settings
+  **Label(s):** enhancement, graphics (even if audio)
+
+---
+
+### **18. Title:** Add support for different screen resolutions
+
+**What needs to be accomplished?:**
+Allow the client to run on various screen sizes.
+**List the actions required.:**
+
+Add resolution configuration
+Scale UI elements properly
+Maintain correct aspect ratio
+  **Label(s):** graphics, enhancement, setup
+
+---

@@ -9,11 +9,12 @@
 
 #include <cstring>
 #include <exception>
+#include <iostream>
 #include <memory>
 #include <string>
 #include "Endian.hpp"
 #include "IClientPacket.hpp"
-#include "PacketConnect.hpp"
+#include "PacketBase.hpp"
 #include "PacketHeader.hpp"
 #include "PacketInput.hpp"
 #include "PacketTypes.hpp"
@@ -67,17 +68,11 @@ namespace Network
         ~PacketFactory() = default;
 
         /**
-         * @brief Creates a connect packet
-         * @param clientId The client identifier
+         * @brief Creates a base packet
+         * @param flag The flag indicating the type of base packet
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<IClientPacket> makeConnect(uint32_t clientId) const noexcept;
-
-        /**
-         * @brief Creates a disconnect packet
-         * @return A shared pointer to the created packet
-         */
-        std::shared_ptr<IClientPacket> makeDisconnect() const noexcept;
+        std::shared_ptr<IClientPacket> makeBase(uint8_t flag) const noexcept;
 
         /**
          * @brief Creates an input packet
@@ -88,12 +83,6 @@ namespace Network
          * @return A shared pointer to the created packet
          */
         std::shared_ptr<IClientPacket> makeInput(uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept;
-
-        /**
-         * @brief Creates a ping packet
-         * @return A shared pointer to the created packet
-         */
-        std::shared_ptr<IClientPacket> makePing() const noexcept;
 
       private:
         /**

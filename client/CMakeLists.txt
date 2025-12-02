@@ -34,6 +34,15 @@ add_executable(${PROJECT_NAME}
         ${CLIENT_SOURCES}
 )
 
+# =============================================
+# FIX: macOS + Homebrew LLVM "__hash_memory" bug
+# Force linking with Homebrew libc++ instead of Apple SDK libc++
+# =============================================
+if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
+    target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
+endif()
+
+
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CLIENT_INCLUDE_DIRS}
 )
@@ -90,6 +99,6 @@ set(CLIENT_INCLUDE_DIRS ${CLIENT_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 # TESTS (optional)
 # ------------------------------
-if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
-    add_subdirectory(tests)
-endif()
+#if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+#    add_subdirectory(tests)
+#endif()

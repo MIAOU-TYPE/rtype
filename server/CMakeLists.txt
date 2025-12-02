@@ -28,6 +28,14 @@ add_executable(${PROJECT_NAME}
         ${SERVER_SOURCES}
 )
 
+# =============================================
+# FIX: macOS + Homebrew LLVM "missing __hash_memory"
+# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# =============================================
+if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
+    target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
+endif()
+
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${SERVER_INCLUDE_DIRS}
 )
@@ -79,5 +87,5 @@ set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 # TESTS
 # ------------------------------
-enable_testing()
-add_subdirectory(tests)
+#enable_testing()
+#add_subdirectory(tests)

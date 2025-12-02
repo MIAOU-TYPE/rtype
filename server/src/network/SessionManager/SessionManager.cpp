@@ -7,6 +7,16 @@
 
 #include "SessionManager.hpp"
 
+bool AddressKey::operator==(const AddressKey &other) const noexcept
+{
+    return ip == other.ip && port == other.port;
+}
+
+std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
+{
+    return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
+}
+
 int SessionManager::getOrCreateSession(const sockaddr_in &addr)
 {
     std::lock_guard<std::mutex> lock(_mutex);

@@ -148,8 +148,9 @@ The CI also runs the linter automatically.
 
 ## 📚 Documentation
 
-* 📄 **[Directory Structure](docs/DIRECTORY_STRUCTURE.md)**
-* 📄 **[Contributing Guidelines](docs/CONTRIBUTING.md)**
+- [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Detailed project organization
+- [Contributing Guidelines](docs/CONTRIBUTING.md) - How to contribute to the project
+- [UX & Accessibility Guidelines](docs/ux_accessibility_guidelines.md) - Player experience, UI/HUD standards, and accessibility requirements
 
 ## 🤝 Contributing
 

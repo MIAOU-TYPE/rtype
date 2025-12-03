@@ -282,8 +282,16 @@ jobs:
       - name: Check downloaded artifacts
         run: |
           echo "Checking downloaded artifacts..."
-          ls -la ./artifacts/ || true
-          find ./artifacts/ -type f || true
+          ls -la ./artifacts/
+          find ./artifacts/ -type f
+          if [ ! -f ./artifacts/r-type_server ]; then
+            echo "Error: r-type_server artifact not found!";
+            exit 1
+          fi
+          if [ ! -f ./artifacts/r-type_client ]; then
+            echo "Error: r-type_client artifact not found!";
+            exit 1
+          fi
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** RType
 ** File description:
-** ServerRuntime.hpp
+** ServerRuntime.cpp
 */
 
 #include "ServerRuntime.hpp"
@@ -25,6 +25,7 @@ ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server
 
 ServerRuntime::~ServerRuntime()
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;
@@ -70,11 +71,11 @@ void ServerRuntime::runReceiver()
 
 void ServerRuntime::runProcessor()
 {
-    PacketRouter packetrouter(_sessionManager, _sink);
+    PacketRouter packetRouter(_sessionManager, _sink);
     while (_server->isRunning()) {
         std::shared_ptr<Net::IServerPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
-            packetrouter.handlePacket(packet);
+            packetRouter.handlePacket(packet);
             // TODO:
             //  When the real GameServer is implemented (instead of tempMessageSink),
             //  call gameServer->update(dt) here.

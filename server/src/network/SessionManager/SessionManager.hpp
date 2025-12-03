@@ -10,9 +10,9 @@
 #include <cstdint>
 #include <mutex>
 #ifndef _WIN32
-  #include <netinet/in.h>
+    #include <netinet/in.h>
 #else
-  #include <winsock2.h>
+    #include <winsock2.h>
 #endif
 #include <unordered_map>
 

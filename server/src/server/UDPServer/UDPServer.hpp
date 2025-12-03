@@ -7,8 +7,8 @@
 
 #pragma once
 #include <iostream>
-#include <string>
 #include <mutex>
+#include <string>
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer.hpp"

@@ -32,6 +32,7 @@ module.exports = {
             'technical-docs/server/network/overview',
             'technical-docs/server/network/udp-server',
             'technical-docs/server/network/netwrapper-and-sockets',
+            'technical-docs/server/network/protocol',
           ],
         },
         'technical-docs/server/gameplay',

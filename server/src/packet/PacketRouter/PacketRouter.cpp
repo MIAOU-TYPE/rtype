@@ -7,7 +7,7 @@
 
 #include "PacketRouter.hpp"
 
-PacketRouter::PacketRouter(std::shared_ptr<SessionManager> &sessions, std::shared_ptr<IMessageSink> &sink)
+PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {
 }
@@ -15,7 +15,7 @@ PacketRouter::PacketRouter(std::shared_ptr<SessionManager> &sessions, std::share
 bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const
 {
     if (pkt.size() < sizeof(HeaderPacket)) {
-        std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small (" << pkt.size() << " bytes)"
+        std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)"
                   << std::endl;
         return false;
     }
@@ -36,45 +36,68 @@ bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPac
     return true;
 }
 
-void PacketRouter::handlePacket(const std::shared_ptr<Net::IServerPacket> &packet)
+bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept
 {
     if (!packet)
-        return;
+        return false;
 
     if (packet->size() < sizeof(HeaderPacket)) {
-        std::cerr << "{PacketRouter} Dropped: packet too small" << std::endl;
-        return;
+        std::cerr << "{PacketRouter} Dropped: packet too small\n";
+        return false;
     }
+    return true;
+}
 
-    const std::uint8_t *rawBuffer = packet->buffer();
+bool PacketRouter::extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept
+{
+    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderPacket));
 
-    HeaderPacket header{};
-    std::memcpy(&header, rawBuffer, sizeof(HeaderPacket));
+    if (!validateHeader(packet, outHeader))
+        return false;
+    return true;
+}
 
-    if (!validateHeader(*packet, header))
-        return;
-
-    const sockaddr_in *addr = packet->address();
+int PacketRouter::resolveSession(const Net::IServerPacket &packet)
+{
+    const sockaddr_in *addr = packet.address();
     if (!addr) {
-        std::cerr << "{PacketRouter} Dropped: null address in packet" << std::endl;
-        return;
+        std::cerr << "{PacketRouter} Dropped: null address in packet\n";
+        return -1;
     }
+    return _sessions->getOrCreateSession(*addr);
+}
 
-    int sessionId = _sessions->getOrCreateSession(*addr);
-
-    const std::size_t totalSize = packet->size();
-    const std::size_t payloadSize = totalSize - sizeof(HeaderPacket);
-    const std::uint8_t *payload = rawBuffer + sizeof(HeaderPacket);
-
+void PacketRouter::dispatchPacket(
+    int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize)
+{
     switch (header.type) {
         case Net::Factory::CONNECT: handleConnect(sessionId); break;
         case Net::Factory::INPUT: handleInput(sessionId, payload, payloadSize); break;
         case Net::Factory::PING: handlePing(sessionId, payload, payloadSize); break;
         case Net::Factory::DISCONNECT: handleDisconnect(sessionId); break;
-        default:
-            std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << std::endl;
-            break;
+        default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
+}
+
+void PacketRouter::handlePacket(const std::shared_ptr<Net::IServerPacket> &packet)
+{
+    if (!isPacketValid(packet))
+        return;
+
+    HeaderPacket header{};
+    if (!extractHeader(*packet, header))
+        return;
+
+    int sessionId = resolveSession(*packet);
+    if (sessionId < 0)
+        return;
+
+    const std::uint8_t *raw = packet->buffer();
+    const std::size_t total = packet->size();
+    const std::size_t payloadSize = total - sizeof(HeaderPacket);
+    const std::uint8_t *payload = raw + sizeof(HeaderPacket);
+
+    dispatchPacket(sessionId, header, payload, payloadSize);
 }
 
 void PacketRouter::handleConnect(int sessionId)

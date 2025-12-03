@@ -43,7 +43,7 @@ class PacketRouter {
      * @param sessions Shared pointer to the SessionManager for managing player sessions.
      * @param sink Shared pointer to the IMessageSink for handling routed messages.
      */
-    PacketRouter(std::shared_ptr<SessionManager> &sessions, std::shared_ptr<IMessageSink> &sink);
+    PacketRouter(const std::shared_ptr<SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
 
     /**
      * @brief Handles an incoming packet by routing it to the appropriate handler.
@@ -89,6 +89,37 @@ class PacketRouter {
     void handleDisconnect(int sessionId);
 
   private:
+    /**
+     * @brief Validates the incoming packet.
+     * @param packet Shared pointer to the incoming IServerPacket to validate.
+     * @return True if the packet is valid, false otherwise.
+     */
+    bool isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept;
+
+    /**
+     * @brief Extracts the header from the incoming packet.
+     * @param packet The incoming IServerPacket to extract the header from.
+     * @param outHeader Reference to the HeaderPacket to populate with extracted data.
+     * @return True if the header was successfully extracted and validated, false otherwise.
+     */
+    bool extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept;
+
+    /**
+     * @brief Resolves the session ID for the incoming packet.
+     * @param packet The incoming IServerPacket to resolve the session for.
+     * @return The session ID associated with the packet, or -1 if resolution fails.
+     */
+    int resolveSession(const Net::IServerPacket &packet);
+
+    /**
+     * @brief Dispatches the packet to the appropriate handler based on its type.
+     * @param sessionId The ID of the player session.
+     * @param header The HeaderPacket of the incoming packet.
+     * @param payload Pointer to the payload data of the packet.
+     * @param payloadSize Size of the payload data.
+     */
+    void dispatchPacket(int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize);
+
     std::shared_ptr<SessionManager> _sessions =
         nullptr;                                   ///> Pointer to the SessionManager for managing player sessions.
     std::shared_ptr<IMessageSink> _sink = nullptr; ///> Pointer to the IMessageSink for handling routed messages.

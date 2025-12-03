@@ -20,12 +20,26 @@ set(CMAKE_TOOLCHAIN_FILE
 # =============================================
 # PROJECT CONFIG
 # =============================================
-project(RType LANGUAGES CXX VERSION 1.0)
+project(R-Type LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
+
+# =============================================
+# fix for macOS + Homebrew LLVM bug
+# (__hash_memory missing symbol)
+# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# =============================================
+if(APPLE)
+    find_package(LLVM QUIET CONFIG)
+    if(LLVM_FOUND)
+        link_directories("${LLVM_LIBRARY_DIR}/c++")
+        set(LLVM_LIBCXX_DIR "${LLVM_LIBRARY_DIR}/c++" CACHE STRING "" FORCE)
+    endif()
+endif()
+
 
 # =============================================
 # SUBMODULES

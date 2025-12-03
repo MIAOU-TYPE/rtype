@@ -34,6 +34,16 @@ add_executable(${PROJECT_NAME}
         ${CLIENT_SOURCES}
 )
 
+# -------------------------------------
+# fix for macOS + Homebrew LLVM bug
+# (__hash_memory missing symbol)
+# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# -------------------------------------
+if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
+    target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
+endif()
+
+
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CLIENT_INCLUDE_DIRS}
 )

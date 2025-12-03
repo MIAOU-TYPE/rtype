@@ -137,6 +137,18 @@ namespace Graphics
          */
         std::shared_ptr<SFMLAnimationManager> getAnimationManager() const;
 
+        /**
+         * @brief Checks if the current animation is finished (for non-looping animations).
+         * @return True if the current animation is finished, false otherwise.
+         */
+        bool isCurrentAnimationFinished() const;
+
+        /**
+         * @brief Gets the name of the current animation.
+         * @return The name of the current animation, empty if no animation manager.
+         */
+        std::string getCurrentAnimationName() const;
+
       private:
         float _x = 0.0f;                                            ///> X position
         float _y = 0.0f;                                            ///> Y position

@@ -22,7 +22,6 @@ docs/        # Documentation (technical docs, guides…)
 scripts/     # Tools (lint, formatting, CI helpers)
 vcpkg.json   # Dependency manifest (SFML, GTest, etc.)
 CMakeLists.txt
-
 ````
 
 See the detailed description here:  
@@ -143,30 +142,6 @@ Windows:
 ```
 
 The client connects to the server using **UDP** for low-latency interactions.
-
----
-
-## 🧪 Testing
-
-Unit tests use **GoogleTest**, installed automatically through vcpkg:
-
-```bash
-cd build
-ctest --test-dir build -V
-```
-
----
-
-## 🧹 Code Quality Tools
-
-Lint scripts are available:
-
-```bash
-./scripts/lint-check.sh   # Run format checks
-./scripts/lint-fix.sh     # Auto-format code
-```
-
-The CI pipeline also runs formatting checks.
 
 ---
 

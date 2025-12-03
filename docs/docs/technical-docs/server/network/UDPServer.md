@@ -26,10 +26,10 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │                                                           │
 │   ┌───────────────┐     ┌──────────────────────────────┐  │
 │   │  GameServer   │     │          IGameWorld          │  │
-│   │ (IMessageSink)│<--->│  (ton moteur de jeu / ECS)   │  │
+│   │ (IMessageSink)│<--->│     (ECS / game engine)      │  │
 │   └──────▲────────┘     └──────────────────────────────┘  │
 │          │                            ▲                   │
-│          │ événements réseau          │ API jeu           │
+│          │ network→game events        │ game API          │
 │   ┌──────┴────────┐                   │                   │
 │   │ IMessageSink  │ interface         │                   │
 │   └──────▲────────┘                   │                   │
@@ -41,7 +41,7 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │                                                           │
 │   ┌─────────────────────────────────────────────────────┐ │
 │   │                 ServerRuntime                       │ │
-│   │  - démarre IServer/UdpServer                        │ │
+│   │  - starts IServer/UdpServer                         │ │
 │   │  - thread 1: runReceiver → readPackets()            │ │
 │   │  - thread 2: runProcessor → popPacket()             │ │
 │   │                        │                            │ │
@@ -51,12 +51,12 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │                   │                                       │
 │   ┌───────────────┴─────────────┐     ┌─────────────────┐ │
 │   │        PacketRouter         │     │ SessionManager  │ │
-│   │ - lit HeaderPacket          │     │ - sockaddr→id   │ │
-│   │ - valide (taille/version)   │     │ - id→sockaddr   │ │
+│   │ - reads PacketHeader        │     │ - sockaddr → id │ │
+│   │ - validates (size/version)  │     │ - id → sockaddr │ │
 │   │ - getOrCreateSession(addr)  │     └─────────────────┘ │
-│   │ - parse payload (CONNECT,   │                         │
+│   │ - parses payload (CONNECT,  │                         │
 │   │   INPUT, PING, DISCONNECT)  │                         │
-│   │ - appelle IMessageSink      │                         │
+│   │ - calls IMessageSink        │                         │
 │   └─────────────────────────────┘                         │
 │                                                           │
 │   ┌─────────────────────────────────────────────────────┐ │

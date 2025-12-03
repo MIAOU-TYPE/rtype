@@ -259,6 +259,8 @@ jobs:
   upload-release-assets:
     name: Upload Release Assets
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: [build-server, build-client]
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -280,15 +282,8 @@ jobs:
       - name: Check downloaded artifacts
         run: |
           echo "Checking downloaded artifacts..."
-          ls -la ./artifacts/
-          if [ ! -f "./artifacts/r-type_server" ]; then
-            echo "::warning::Server binary not found, skipping upload"
-            exit 0
-          fi
-          if [ ! -f "./artifacts/r-type_client" ]; then
-            echo "::warning::Client binary not found, skipping upload"
-            exit 0
-          fi
+          ls -la ./artifacts/ || true
+          find ./artifacts/ -type f || true
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1

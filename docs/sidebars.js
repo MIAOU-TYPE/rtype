@@ -1,32 +1,40 @@
 module.exports = {
   technicalSidebar: [
-    'technical-docs/overview',
+    'technical-docs/server/overview',
     {
       type: 'category',
-      label: 'Engine',
+      label: 'Client',
       items: [
-        'technical-docs/engine/overview',
-        'technical-docs/engine/ecs',
-        'technical-docs/engine/rendering',
-        'technical-docs/engine/audio',
-        'technical-docs/engine/physics',
-        'technical-docs/engine/ai',
+        'technical-docs/client/graphic/graphic_doc',
+        'technical-docs/client/network/client_network_doc',
       ],
     },
     {
       type: 'category',
-      label: 'Networking',
+      label: 'Server',
       items: [
-        'technical-docs/network/overview',
-        'technical-docs/network/udp-server',
-        'technical-docs/network/netwrapper-and-sockets'
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Gameplay',
-      items: [
-        'technical-docs/gameplay',
+        {
+          type: 'category',
+          label: 'Engine',
+          items: [
+            'technical-docs/server/engine/overview',
+            'technical-docs/server/engine/ecs',
+            'technical-docs/server/engine/rendering',
+            'technical-docs/server/engine/audio',
+            'technical-docs/server/engine/physics',
+            'technical-docs/server/engine/ai',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Networking',
+          items: [
+            'technical-docs/server/network/overview',
+            'technical-docs/server/network/udp-server',
+            'technical-docs/server/network/netwrapper-and-sockets',
+          ],
+        },
+        'technical-docs/server/gameplay',
       ],
     },
   ],

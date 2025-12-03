@@ -15,8 +15,7 @@ PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, cons
 bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const
 {
     if (pkt.size() < sizeof(HeaderPacket)) {
-        std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)"
-                  << std::endl;
+        std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
         return false;
     }
 

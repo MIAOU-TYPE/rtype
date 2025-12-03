@@ -21,6 +21,7 @@ ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server
     //       donc cette étape sera activée quand l’ECS sera finalisé.
     _sink = std::make_shared<tempMessageSink>();
     _sessionManager = std::make_shared<SessionManager>();
+    _packetRouter(_sessionManager, _sink);
 }
 
 ServerRuntime::~ServerRuntime()
@@ -71,11 +72,10 @@ void ServerRuntime::runReceiver()
 
 void ServerRuntime::runProcessor()
 {
-    PacketRouter packetRouter(_sessionManager, _sink);
     while (_server->isRunning()) {
         std::shared_ptr<Net::IServerPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
-            packetRouter.handlePacket(packet);
+            _packetRouter.handlePacket(packet);
             // TODO:
             //  When the real GameServer is implemented (instead of tempMessageSink),
             //  call gameServer->update(dt) here.

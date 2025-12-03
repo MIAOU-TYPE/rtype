@@ -67,8 +67,6 @@ class ServerRuntime {
     std::shared_ptr<IMessageSink> _sink = nullptr;             ///> Message sink for handling incoming messages
     std::shared_ptr<PacketRouter> _packetRouter = nullptr;     ///> Routes incoming packets to appropriate handlers
 
-    std::atomic<bool> _running = false; ///> Atomic flag to indicate if the server is running
-
     std::thread _receiverThread;  ///> Thread for receiving packets
     std::thread _processorThread; ///> Thread for processing packets
 

@@ -108,8 +108,9 @@ void PacketRouter::handlePing(int sessionId, const std::uint8_t *payload, std::s
         return;
     }
 
-    std::uint64_t timestamp = 0;
-    std::memcpy(&timestamp, payload, sizeof(std::uint64_t));
+    std::uint64_t timestampNet = 0;
+    std::memcpy(&timestampNet, payload, sizeof(std::uint64_t));
+    std::uint64_t timestamp = ntohll(timestampNet);
 
     _sink->onPing(sessionId, timestamp);
 }

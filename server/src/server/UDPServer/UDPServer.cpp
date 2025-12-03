@@ -92,9 +92,7 @@ bool UDPServer::popPacket(std::shared_ptr<Net::IServerPacket> &pkt)
 {
     std::lock_guard<std::mutex> lock(_rxMutex);
 
-    if (!_rxBuffer.pop(pkt))
-        return false;
-    return true;
+    return _rxBuffer.pop(pkt);
 }
 
 void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)

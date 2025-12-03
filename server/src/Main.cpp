@@ -27,8 +27,14 @@ int main(void)
     ServerRuntime runtime(server);
     std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(runtime);
 
-    server->configure("127.0.0.1", 8080);
-    runtime.start();
-    runtime.wait();
+    try {
+        server->configure("127.0.0.1", 8080);
+        runtime.start();
+        runtime.wait();
+        signalHandler->stop();
+    } catch (const std::exception &e) {
+        std::cerr << "{main}: " << e.what() << std::endl;
+        return 84;
+    }
     return 0;
 }

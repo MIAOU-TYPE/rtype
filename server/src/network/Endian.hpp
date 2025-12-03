@@ -26,6 +26,11 @@ inline uint64_t be64toh(uint64_t x)
     #include <arpa/inet.h>
     #include <endian.h>
 
+    static inline std::uint64_t ntohll(std::uint64_t x)
+    {
+        return be64toh(x);
+    }
+
 #elif defined(_WIN32)
     #define WIN32_LEAN_AND_MEAN
     #include <intrin.h>

@@ -38,8 +38,16 @@ SFMLEntityDrawing::SFMLEntityDrawing(
 
     auto enemyIdleAnim = std::make_shared<SFMLAnimation>("idle", enemyIdleFrames, true);
 
-    _spriteInfo = {{"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {playerIdleAnim}, "idle"}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {enemyIdleAnim}, "idle"}}};
+    std::vector<AnimationFrame> missileFlyFrames = {
+        AnimationFrame(0, 0, 16, 12, 0.1f), AnimationFrame(16, 0, 16, 12, 0.3f)};
+
+    auto missileFlyAnim = std::make_shared<SFMLAnimation>("fly", missileFlyFrames, false);
+
+    _spriteInfo = {
+        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo(playerIdleAnim, true)}, "idle"}},
+        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo(enemyIdleAnim, true)}, "idle"}},
+        {"missile",
+            {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo(missileFlyAnim, false)}, "fly"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float y, const std::string &spriteName)
@@ -93,17 +101,45 @@ std::shared_ptr<SFMLAnimationManager> SFMLEntityDrawing::createAnimationManager(
 
     auto animationManager = std::make_shared<SFMLAnimationManager>();
 
-    for (const auto &animation : spriteInfo.animations) {
-        animationManager->addAnimation(animation);
+    for (const auto &animInfo : spriteInfo.animations) {
+        if (animInfo.animation) {
+            animationManager->addAnimation(animInfo.animation);
+        }
     }
 
     if (!spriteInfo.defaultAnimation.empty() && animationManager->hasAnimation(spriteInfo.defaultAnimation)) {
         animationManager->setCurrentAnimation(spriteInfo.defaultAnimation);
-    } else if (!spriteInfo.animations.empty()) {
-        animationManager->setCurrentAnimation(spriteInfo.animations[0]->getName());
+    } else if (!spriteInfo.animations.empty() && spriteInfo.animations[0].animation) {
+        animationManager->setCurrentAnimation(spriteInfo.animations[0].animation->getName());
     } else {
         throw SFMLEntityDrawingError("No animations available for sprite '" + spriteName + "'");
     }
 
     return animationManager;
+}
+
+std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::getEntity(size_t index) const
+{
+    if (index >= _entities.size()) {
+        return nullptr;
+    }
+    return _entities[index];
+}
+
+size_t SFMLEntityDrawing::getEntityCount() const
+{
+    return _entities.size();
+}
+
+bool SFMLEntityDrawing::shouldAnimationLoop(const std::string &spriteName, const std::string &animationName) const
+{
+    const SpriteInfo &spriteInfo = getSpriteInfoFromName(spriteName);
+
+    for (const auto &animInfo : spriteInfo.animations) {
+        if (animInfo.animation && animInfo.animation->getName() == animationName) {
+            return animInfo.shouldLoop;
+        }
+    }
+
+    throw SFMLEntityDrawingError("Animation '" + animationName + "' not found for sprite '" + spriteName + "'");
 }

@@ -25,14 +25,22 @@
 namespace Graphics
 {
     /**
+     * @brief Structure containing animation information with loop control.
+     */
+    struct AnimationInfo {
+        std::shared_ptr<SFMLAnimation> animation; ///> The animation
+        bool shouldLoop;                          ///> Whether this animation should loop
+    };
+
+    /**
      * @brief Structure containing sprite information.
      */
     struct SpriteInfo {
-        std::string path;                                       ///> Path to the sprite file
-        float width;                                            ///> Width of the sprite
-        float height;                                           ///> Height of the sprite
-        std::vector<std::shared_ptr<SFMLAnimation>> animations; ///> List of animations for this sprite
-        std::string defaultAnimation;                           ///> Name of the default animation
+        std::string path;                      ///> Path to the sprite file
+        float width;                           ///> Width of the sprite
+        float height;                          ///> Height of the sprite
+        std::vector<AnimationInfo> animations; ///> List of animations with loop info
+        std::string defaultAnimation;          ///> Name of the default animation
     };
 
     /**
@@ -120,6 +128,28 @@ namespace Graphics
          * @throws SFMLEntityDrawingError if sprite name is not found.
          */
         std::shared_ptr<SFMLAnimationManager> createAnimationManager(const std::string &spriteName) const;
+
+        /**
+         * @brief Gets an entity by index for external animation control.
+         * @param index The index of the entity.
+         * @return Shared pointer to the entity, nullptr if index is invalid.
+         */
+        std::shared_ptr<GraphicalEntity> getEntity(size_t index) const;
+
+        /**
+         * @brief Gets the number of entities.
+         * @return The number of entities.
+         */
+        size_t getEntityCount() const;
+
+        /**
+         * @brief Checks if an animation should loop for a specific sprite.
+         * @param spriteName The name of the sprite.
+         * @param animationName The name of the animation.
+         * @return True if the animation should loop, false otherwise.
+         * @throws SFMLEntityDrawingError if sprite or animation is not found.
+         */
+        bool shouldAnimationLoop(const std::string &spriteName, const std::string &animationName) const;
 
       private:
         std::shared_ptr<IRenderer> _renderer = nullptr;               ///> The renderer

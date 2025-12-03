@@ -18,7 +18,7 @@ It inherits from `AServer` (which implements the generic server interface `IServ
 This page explains the **public interface**, the **lifecycle**, and the **internal behavior** of `UDPServer`.
 
 
-# Schéma : flux UDP
+# Diagram: UDP Flow
 
 ```text
 ┌───────────────────────────────────────────────────────────┐

@@ -85,6 +85,16 @@ add_subdirectory(
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
+# NetPluginLib
+# ------------------------------
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Library
+    ${CMAKE_BINARY_DIR}/NetPluginLib_build
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE NetPluginLib)
+
+
+# ------------------------------
 # NetWrapperLib
 # ------------------------------
 add_subdirectory(

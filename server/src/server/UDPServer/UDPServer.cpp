@@ -9,13 +9,8 @@
 
 using namespace Server;
 
-UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("shared/NetWrapper/build/libNetPluginLib.so")
 {
-    try {
-        _netWrapper("shared/NetWrapper/build/libNetWrapperLib.so")
-    } catch (const Net::NetWrapperError &e) {
-        throw ServerError(std::string("{UDPServer::UDPServer} ") + e.what());
-    }
     setRunning(false);
     #ifdef _WIN32
         WSADATA wsa;

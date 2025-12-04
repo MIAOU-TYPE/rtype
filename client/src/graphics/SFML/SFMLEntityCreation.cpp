@@ -12,8 +12,9 @@
 using namespace Graphics;
 
 GraphicalEntity::GraphicalEntity(float x, float y, const std::string &spriteName,
-    std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing)
-    : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager)), _entityDrawing(entityDrawing)
+    std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing, size_t id)
+    : _x(x), _y(y), _spriteName(spriteName), _textureManager(std::move(textureManager)), _entityDrawing(entityDrawing),
+      _id(id)
 {
     if (!_textureManager) {
         throw GraphicalEntityError("Texture manager cannot be null");
@@ -143,4 +144,14 @@ std::string GraphicalEntity::getCurrentAnimationName() const
     }
 
     return _animationManager->getCurrentAnimationName();
+}
+
+size_t GraphicalEntity::getId() const
+{
+    return _id;
+}
+
+void GraphicalEntity::setId(size_t id)
+{
+    _id = id;
 }

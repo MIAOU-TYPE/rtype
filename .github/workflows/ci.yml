@@ -234,7 +234,16 @@ jobs:
       issues: write
       pull-requests: write
     needs: [check-repository, linter, build-server, build-client]
-    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.check-repository.outputs.same_repository == 'false' && needs.linter.result == 'success'
+    if: |
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      needs.check-repository.outputs.same_repository == 'false' &&
+      needs.linter.result == 'success' &&
+      (
+        needs.build-server.result == 'success' ||
+        needs.build-client.result == 'success'
+      )
 
     steps:
       - name: Checkout code

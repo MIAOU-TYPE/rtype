@@ -11,7 +11,7 @@
 
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
-#include "RingBuffer.hpp"
+#include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket.hpp"
 #include "socketParams.hpp"
 
@@ -70,5 +70,7 @@ namespace Server
         void bindSocket(Net::family_t family = AF_INET); ///> Binds the UDP socket to an address
 
         Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; ///> Ring buffer to store received packets
+
+        Net::NetWrapper _netWrapper; ///> Network wrapper for socket operations
     };
 } // namespace Server

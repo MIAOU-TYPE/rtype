@@ -7,8 +7,8 @@
 
 #pragma once
 #include <iostream>
+#include <mutex>
 #include <string>
-
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
@@ -64,6 +64,13 @@ namespace Server
          */
         bool sendPacket(const Net::IServerPacket &pkt) override;
 
+        /**
+         * @brief Pops a received packet from the server's packet queue.
+         * @param pkt Shared pointer to a Net::IServerPacket where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the queue was empty.
+         */
+        bool popPacket(std::shared_ptr<Net::IServerPacket> &pkt) override;
+
       private:
         void setupSocket(const Net::SocketConfig &params,
             const Net::SocketOptions &optParams);        ///> Sets up the UDP socket with specified parameters
@@ -72,5 +79,6 @@ namespace Server
         Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; ///> Ring buffer to store received packets
 
         Net::NetWrapper _netWrapper; ///> Network wrapper for socket operations
+        std::mutex _rxMutex;         ///> Mutex for synchronizing access to the receive buffer
     };
 } // namespace Server

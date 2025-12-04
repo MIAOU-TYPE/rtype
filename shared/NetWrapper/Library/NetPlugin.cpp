@@ -47,7 +47,7 @@ extern "C" {
 
     int net_setOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
     {
-        return ::setsockopt(s, level, optName, static_cast<const void*>(optVal), static_cast<socklen_t>(optLen));
+        return ::setsockopt(s, level, optName, static_cast<const void *>(optVal), static_cast<socklen_t>(optLen));
     }
 
     recvfrom_return_t net_recvFrom(

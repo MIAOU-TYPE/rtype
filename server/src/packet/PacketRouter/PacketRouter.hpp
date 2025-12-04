@@ -1,0 +1,127 @@
+/*
+** EPITECH PROJECT, 2025
+** RType
+** File description:
+** PacketRouter
+*/
+
+#pragma once
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+
+#include <iostream>
+#include "HeaderPacket.hpp"
+#include "IMessageSink.hpp"
+#include "IServerPacket.hpp"
+#include "NetMessages.hpp"
+#include "PacketFactory.hpp"
+#include "SessionManager.hpp"
+
+#ifndef _WIN32
+    #include <arpa/inet.h>
+#else
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#endif
+
+/**
+ * @class PacketRouter
+ * @brief Routes incoming packets to appropriate handlers based on packet type.
+ *
+ * The PacketRouter class is responsible for processing incoming packets,
+ * validating their headers, and routing them to the correct handler functions
+ * based on the packet type. It interacts with a SessionManager to manage
+ * player sessions and an IMessageSink to notify about various events such as
+ * player connections, disconnections, inputs, and pings.
+ */
+class PacketRouter {
+  public:
+    /**
+     * @brief Constructs a PacketRouter with the given SessionManager and IMessageSink.
+     * @param sessions Shared pointer to the SessionManager for managing player sessions.
+     * @param sink Shared pointer to the IMessageSink for handling routed messages.
+     */
+    PacketRouter(const std::shared_ptr<SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
+
+    /**
+     * @brief Handles an incoming packet by routing it to the appropriate handler.
+     * @param packet Shared pointer to the incoming IServerPacket to be processed.
+     */
+    void handlePacket(const std::shared_ptr<Net::IServerPacket> &packet);
+
+  private:
+    /**
+     * @brief Validates the header of an incoming packet.
+     * @param pkt The incoming IServerPacket to validate.
+     * @param header The HeaderPacket extracted from the incoming packet.
+     * @return True if the header is valid, false otherwise.
+     */
+    bool validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const;
+
+    /**
+     * @brief Handler for player connection packets.
+     * @param sessionId The ID of the connected player.
+     */
+    void handleConnect(int sessionId);
+
+    /**
+     * @brief Handler for player input packets.
+     * @param sessionId The ID of the player.
+     * @param payload Pointer to the payload data of the input packet.
+     * @param payloadSize Size of the payload data.
+     */
+    void handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
+
+    /**
+     * @brief Handler for player ping packets.
+     * @param sessionId The ID of the player.
+     * @param payload Pointer to the payload data of the ping packet.
+     * @param payloadSize Size of the payload data.
+     */
+    void handlePing(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
+
+    /**
+     * @brief Handler for player disconnection packets.
+     * @param sessionId The ID of the disconnected player.
+     */
+    void handleDisconnect(int sessionId);
+
+  private:
+    /**
+     * @brief Validates the incoming packet.
+     * @param packet Shared pointer to the incoming IServerPacket to validate.
+     * @return True if the packet is valid, false otherwise.
+     */
+    bool isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept;
+
+    /**
+     * @brief Extracts the header from the incoming packet.
+     * @param packet The incoming IServerPacket to extract the header from.
+     * @param outHeader Reference to the HeaderPacket to populate with extracted data.
+     * @return True if the header was successfully extracted and validated, false otherwise.
+     */
+    bool extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept;
+
+    /**
+     * @brief Resolves the session ID for the incoming packet.
+     * @param packet The incoming IServerPacket to resolve the session for.
+     * @return The session ID associated with the packet, or -1 if resolution fails.
+     */
+    int resolveSession(const Net::IServerPacket &packet);
+
+    /**
+     * @brief Dispatches the packet to the appropriate handler based on its type.
+     * @param sessionId The ID of the player session.
+     * @param header The HeaderPacket of the incoming packet.
+     * @param payload Pointer to the payload data of the packet.
+     * @param payloadSize Size of the payload data.
+     */
+    void dispatchPacket(int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize);
+
+    std::shared_ptr<SessionManager> _sessions; ///> Pointer to the SessionManager for managing player sessions.
+    std::shared_ptr<IMessageSink> _sink;       ///> Pointer to the IMessageSink for handling routed messages.
+
+    static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
+};

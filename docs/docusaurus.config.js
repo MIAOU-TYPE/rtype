@@ -13,6 +13,8 @@ export default {
       'classic',
       {
         docs: {
+          path: './docs',
+          routeBasePath: '/docs',
           sidebarPath: './sidebars.js',
         },
         theme: {
@@ -28,7 +30,7 @@ export default {
       items: [
         {
           label: 'Technical Documentation',
-          to: '/docs/technical-docs/overview',
+          to: '/docs/technical-docs/server/overview',
           position: 'left',
         },
         {

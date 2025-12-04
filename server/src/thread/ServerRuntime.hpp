@@ -61,11 +61,11 @@ class ServerRuntime {
      */
     void runProcessor();
 
-    std::shared_ptr<Server::IServer> _server = nullptr; ///> The server instance
+    std::shared_ptr<Server::IServer> _server; ///> The server instance
 
-    std::shared_ptr<SessionManager> _sessionManager = nullptr; ///> Manages client sessions
-    std::shared_ptr<IMessageSink> _sink = nullptr;             ///> Message sink for handling incoming messages
-    std::shared_ptr<PacketRouter> _packetRouter = nullptr;     ///> Routes incoming packets to appropriate handlers
+    std::shared_ptr<SessionManager> _sessionManager; ///> Manages client sessions
+    std::shared_ptr<IMessageSink> _sink;             ///> Message sink for handling incoming messages
+    std::shared_ptr<PacketRouter> _packetRouter;     ///> Routes incoming packets to appropriate handlers
 
     std::thread _receiverThread;  ///> Thread for receiving packets
     std::thread _processorThread; ///> Thread for processing packets

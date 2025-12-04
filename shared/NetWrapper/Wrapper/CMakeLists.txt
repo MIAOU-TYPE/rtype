@@ -5,7 +5,7 @@ project(NetWrapperLib LANGUAGES CXX)
 # Sources
 # ------------------------------
 set(SOURCES
-    NetWrapper.cpp
+    src/NetWrapper.cpp
 )
 
 # ------------------------------
@@ -18,8 +18,8 @@ add_library(NetWrapperLib SHARED ${SOURCES})
 # ------------------------------
 target_include_directories(NetWrapperLib
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}               # pour NetWrapper.hpp
-        ${CMAKE_SOURCE_DIR}/shared/DLLoader/src   # pour DLLoader.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/shared/DLLoader/src
 )
 
 # ------------------------------
@@ -40,7 +40,7 @@ endif()
 # DLLoader est une librairie séparée que NetWrapper utilise
 add_subdirectory(${CMAKE_SOURCE_DIR}/shared/DLLoader
                  ${CMAKE_BINARY_DIR}/DLLoader_build)
-target_link_libraries(NetWrapperLib PRIVATE Library_DLLoader)
+target_link_libraries(NetWrapperLib PRIVATE DLLoaderLib)
 
 set_target_properties(NetWrapperLib PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"

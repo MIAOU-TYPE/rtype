@@ -4,8 +4,8 @@ project(NetPluginLib LANGUAGES CXX)
 # ------------------------------
 # Sources
 # ------------------------------
-set(SOURCES
-    NetPlugin.cpp
+file(GLOB SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
 # ------------------------------

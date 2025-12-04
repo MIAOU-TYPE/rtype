@@ -2,10 +2,10 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** NetWrapper
+** NetPlugin
 */
 
-#include "NetWrapper.hpp"
+#include "NetPlugin.hpp"
 
 extern "C" {
     socketHandle net_socket(int domain, int type, int protocol)

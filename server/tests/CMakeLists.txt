@@ -22,6 +22,8 @@ target_include_directories(unit_tests PRIVATE
 
 target_link_libraries(unit_tests PRIVATE Buffer)
 target_link_libraries(unit_tests PRIVATE NetWrapperLib)
+target_link_libraries(unit_tests PRIVATE NetPacketLib)
+target_link_libraries(unit_tests PRIVATE NetPluginLib)
 target_include_directories(unit_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )

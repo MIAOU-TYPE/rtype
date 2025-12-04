@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.20)
+project(NetPacketLib LANGUAGES CXX)
+
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
+add_library(NetPacketLib SHARED ${SOURCES})
+
+target_include_directories(NetPacketLib
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/interfaces
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/UDPPacket
+)
+
+target_compile_features(NetPacketLib PUBLIC cxx_std_17)
+
+set_target_properties(NetPacketLib PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
+)

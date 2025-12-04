@@ -12,7 +12,7 @@
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
-#include "UDPPacket.hpp"
+#include "UDPPacket/UDPPacket.hpp"
 #include "socketParams.hpp"
 
 /**

@@ -106,6 +106,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
+# ------------------------------
+# NetPacketLib
+# ------------------------------
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/shared/NetPacket
+    ${CMAKE_BINARY_DIR}/NetPacketLib_build
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 
 # ------------------------------
 # OUTPUT LOCATION

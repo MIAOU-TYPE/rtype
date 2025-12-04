@@ -12,7 +12,7 @@ using namespace Net;
 NetWrapper::NetWrapper(const std::string &pluginPath)
 {
     try {
-        _loader = std::make_unique<Library::DLLoader>("shared/NetWrapper/build/libNetWrapperLib.so");
+        _loader = std::make_unique<Library::DLLoader>(pluginPath);
 
         _socketFn = _loader->getSymbol<socketHandle (*)(int, int, int)>("net_socket");
         _closeFn = _loader->getSymbol<void (*)(socketHandle)>("net_close");

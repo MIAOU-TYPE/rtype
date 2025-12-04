@@ -72,6 +72,32 @@ else()
 endif()
 
 # ------------------------------
+# DEPENDENCIES
+# ------------------------------
+
+# ------------------------------
+# Buffer
+# ------------------------------
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/shared/Buffer
+    ${CMAKE_BINARY_DIR}/buffer_build
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
+
+# ------------------------------
+# NetWrapperLib
+# ------------------------------
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+    ${CMAKE_BINARY_DIR}/NetWrapper_build
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+)
+
+
+# ------------------------------
 # OUTPUT LOCATION
 # ------------------------------
 set_target_properties(${PROJECT_NAME} PROPERTIES

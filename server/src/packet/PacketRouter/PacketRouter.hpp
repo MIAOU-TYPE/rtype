@@ -120,9 +120,8 @@ class PacketRouter {
      */
     void dispatchPacket(int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize);
 
-    std::shared_ptr<SessionManager> _sessions =
-        nullptr;                                   ///> Pointer to the SessionManager for managing player sessions.
-    std::shared_ptr<IMessageSink> _sink = nullptr; ///> Pointer to the IMessageSink for handling routed messages.
+    std::shared_ptr<SessionManager> _sessions; ///> Pointer to the SessionManager for managing player sessions.
+    std::shared_ptr<IMessageSink> _sink;       ///> Pointer to the IMessageSink for handling routed messages.
 
     static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
 };

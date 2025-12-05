@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
+
+# ------------------------------
+# Project definition
+# ------------------------------
 project(NetPluginLib LANGUAGES CXX)
 
 # ------------------------------
@@ -24,7 +28,7 @@ target_include_directories(NetPluginLib
 # ------------------------------
 # Compile options
 # ------------------------------
-target_compile_features(NetPluginLib PUBLIC cxx_std_17)
+target_compile_features(NetPluginLib PUBLIC cxx_std_20)
 
 # ------------------------------
 # Optional: set output directory

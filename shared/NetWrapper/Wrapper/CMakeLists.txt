@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
+
+# ------------------------------
+# Project definition
+# ------------------------------
 project(NetWrapperLib LANGUAGES CXX)
 
 # ------------------------------
@@ -25,7 +29,7 @@ target_include_directories(NetWrapperLib
 # ------------------------------
 # Compile options
 # ------------------------------
-target_compile_features(NetWrapperLib PUBLIC cxx_std_17)
+target_compile_features(NetWrapperLib PUBLIC cxx_std_20)
 
 # ------------------------------
 # Platform-specific libraries

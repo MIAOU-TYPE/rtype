@@ -73,7 +73,7 @@ void ServerRuntime::runReceiver()
 void ServerRuntime::runProcessor()
 {
     while (_server->isRunning()) {
-        std::shared_ptr<Net::IServerPacket> packet = nullptr;
+        std::shared_ptr<Net::IPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
             _packetRouter->handlePacket(packet);
             // TODO:

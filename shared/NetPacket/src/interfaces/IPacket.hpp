@@ -23,20 +23,20 @@
 namespace Net
 {
     /**
-     * @class IServerPacket
+     * @class IPacket
      * @brief Interface for a server packet.
      * @details This interface defines the essential methods for accessing and modifying
      * the properties of a server packet, including the buffer, size, and source address.
      * @note This interface should be implemented by any server packet class.
      */
-    class IServerPacket {
+    class IPacket {
       public:
         /**
-         * @brief Virtual destructor for IServerPacket interface.
+         * @brief Virtual destructor for IPacket interface.
          * Ensures proper cleanup of derived classes.
          * @note Always declare destructors in interfaces as virtual.
          */
-        virtual ~IServerPacket() = default;
+        virtual ~IPacket() = default;
 
         /**
          * @brief Retrieves the packet buffer.
@@ -76,9 +76,9 @@ namespace Net
 
         /**
          * @brief Creates a clone of the current packet.
-         * @return A shared pointer to the cloned IServerPacket.
+         * @return A shared pointer to the cloned IPacket.
          */
-        virtual std::shared_ptr<IServerPacket> clone() const = 0;
+        virtual std::shared_ptr<IPacket> clone() const = 0;
 
         /**
          * @brief Retrieves the capacity of the packet buffer.

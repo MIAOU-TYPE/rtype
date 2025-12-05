@@ -10,10 +10,10 @@
 namespace Net::Factory
 {
 
-    PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet)
+    PacketFactory::PacketFactory(const std::shared_ptr<IPacket> &packet)
     {
         if (!packet)
-            throw FactoryError("{PacketFactory::PacketFactory} Invalid IServerPacket pointer");
+            throw FactoryError("{PacketFactory::PacketFactory} Invalid IPacket pointer");
         _packet = packet;
     }
 
@@ -27,7 +27,7 @@ namespace Net::Factory
         return header;
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
     {
         DefaultPacket defaultPacket;
         defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultPacket));
@@ -41,7 +41,7 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
+    std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
         const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept
     {
         EntityCreatePacket entityCreatePacket;
@@ -60,7 +60,7 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
     {
         EntityDestroyPacket entityDestroyPacket;
         entityDestroyPacket.header = makeHeader(ENTITY_DESTROY, VERSION, sizeof(EntityDestroyPacket));
@@ -75,7 +75,7 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeDamage(
+    std::shared_ptr<IPacket> PacketFactory::makeDamage(
         const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {
         DamagePacket damagePacket;

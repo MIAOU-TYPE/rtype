@@ -14,7 +14,7 @@
 #include <iostream>
 #include "HeaderPacket.hpp"
 #include "IMessageSink.hpp"
-#include "IServerPacket.hpp"
+#include "IPacket.hpp"
 #include "NetMessages.hpp"
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
@@ -47,18 +47,18 @@ class PacketRouter {
 
     /**
      * @brief Handles an incoming packet by routing it to the appropriate handler.
-     * @param packet Shared pointer to the incoming IServerPacket to be processed.
+     * @param packet Shared pointer to the incoming IPacket to be processed.
      */
-    void handlePacket(const std::shared_ptr<Net::IServerPacket> &packet);
+    void handlePacket(const std::shared_ptr<Net::IPacket> &packet);
 
   private:
     /**
      * @brief Validates the header of an incoming packet.
-     * @param pkt The incoming IServerPacket to validate.
+     * @param pkt The incoming IPacket to validate.
      * @param header The HeaderPacket extracted from the incoming packet.
      * @return True if the header is valid, false otherwise.
      */
-    bool validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const;
+    bool validateHeader(const Net::IPacket &pkt, const HeaderPacket &header) const;
 
     /**
      * @brief Handler for player connection packets.
@@ -91,25 +91,25 @@ class PacketRouter {
   private:
     /**
      * @brief Validates the incoming packet.
-     * @param packet Shared pointer to the incoming IServerPacket to validate.
+     * @param packet Shared pointer to the incoming IPacket to validate.
      * @return True if the packet is valid, false otherwise.
      */
-    bool isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept;
+    bool isPacketValid(const std::shared_ptr<Net::IPacket> &packet) const noexcept;
 
     /**
      * @brief Extracts the header from the incoming packet.
-     * @param packet The incoming IServerPacket to extract the header from.
+     * @param packet The incoming IPacket to extract the header from.
      * @param outHeader Reference to the HeaderPacket to populate with extracted data.
      * @return True if the header was successfully extracted and validated, false otherwise.
      */
-    bool extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept;
+    bool extractHeader(const Net::IPacket &packet, HeaderPacket &outHeader) const noexcept;
 
     /**
      * @brief Resolves the session ID for the incoming packet.
-     * @param packet The incoming IServerPacket to resolve the session for.
+     * @param packet The incoming IPacket to resolve the session for.
      * @return The session ID associated with the packet, or -1 if resolution fails.
      */
-    int resolveSession(const Net::IServerPacket &packet);
+    int resolveSession(const Net::IPacket &packet);
 
     /**
      * @brief Dispatches the packet to the appropriate handler based on its type.

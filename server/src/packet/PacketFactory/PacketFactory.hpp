@@ -17,7 +17,7 @@
 #include "EntityCreatePacket.hpp"
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
-#include "IServerPacket.hpp"
+#include "IPacket.hpp"
 
 /**
  * @namespace Net
@@ -76,9 +76,9 @@ namespace Net::Factory
       public:
         /**
          * @brief Constructs a new PacketFactory object.
-         * @param packet A shared pointer to an IServerPacket used as a template for creating packets.
+         * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit PacketFactory(const std::shared_ptr<Net::IServerPacket> &packet);
+        explicit PacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
          * @brief Destructor for PacketFactory.
@@ -89,9 +89,9 @@ namespace Net::Factory
          * @brief Creates a default packet with the specified flag.
          * @param flag The flag to set in the default packet.
          * @param addr The address to which the packet will be sent.
-         * @return A shared pointer to the created IServerPacket.
+         * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IServerPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
+        std::shared_ptr<IPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
 
         /**
          * @brief Creates an EntityCreatePacket with the specified parameters.
@@ -100,27 +100,27 @@ namespace Net::Factory
          * @param x The x-coordinate of the entity.
          * @param y The y-coordinate of the entity.
          * @param sprite The sprite ID of the entity.
-         * @return A shared pointer to the created IServerPacket.
+         * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IServerPacket> makeEntityCreate(
+        std::shared_ptr<IPacket> makeEntityCreate(
             const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept;
 
         /**
          * @brief Creates an EntityDestroyPacket for the specified entity ID.
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity to destroy.
-         * @return A shared pointer to the created IServerPacket.
+         * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IServerPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
+        std::shared_ptr<IPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
 
         /**
          * @brief Creates a DamagePacket for the specified entity ID and damage amount.
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity receiving damage.
          * @param amount The amount of damage to apply.
-         * @return A shared pointer to the created IServerPacket.
+         * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IServerPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
+        std::shared_ptr<IPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
 
       private:
         /**
@@ -137,13 +137,13 @@ namespace Net::Factory
          * @tparam Type The type of the packet data. (struct representing the packet)
          * @param addr The address to which the packet will be sent.
          * @param packetData The data to be included in the packet.
-         * @return A shared pointer to the created IServerPacket.
+         * @return A shared pointer to the created IPacket.
          */
         template <typename Type>
-        std::shared_ptr<IServerPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
+        std::shared_ptr<IPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
 
-        std::shared_ptr<IServerPacket> _packet =
-            nullptr; ///> Pointer to the template IServerPacket used for creating packets.
+        std::shared_ptr<IPacket> _packet =
+            nullptr; ///> Pointer to the template IPacket used for creating packets.
 
         static constexpr uint8_t VERSION = 1; ///> The version of the packet factory.
     };

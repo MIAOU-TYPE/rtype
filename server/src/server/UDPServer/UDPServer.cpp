@@ -81,14 +81,14 @@ void UDPServer::readPackets()
     }
 }
 
-bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt)
 {
     return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
                sizeof(sockaddr_in))
         != -1;
 }
 
-bool UDPServer::popPacket(std::shared_ptr<Net::IServerPacket> &pkt)
+bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
 {
     std::lock_guard<std::mutex> lock(_rxMutex);
 

@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include "IServerPacket.hpp"
+#include "IPacket.hpp"
 
 /**
  * @namespace Net
@@ -24,7 +24,7 @@ namespace Net
      * @details This class encapsulates the data and metadata of a received packet,
      * including the buffer, size, and source address.
      */
-    class UDPPacket : public IServerPacket {
+    class UDPPacket : public IPacket {
       public:
         /**
          * @brief Maximum size of the packet buffer.
@@ -82,9 +82,9 @@ namespace Net
 
         /**
          * @brief Creates a clone of the current packet.
-         * @return A shared pointer to the cloned IServerPacket.
+         * @return A shared pointer to the cloned IPacket.
          */
-        std::shared_ptr<IServerPacket> clone() const override;
+        std::shared_ptr<IPacket> clone() const override;
 
         /**
          * @brief Retrieves the capacity of the packet buffer.
@@ -105,7 +105,7 @@ namespace Net
  * @param pkt The UDPPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
+inline std::ostream &operator<<(std::ostream &os, const Net::IPacket &pkt)
 {
     std::ostream &out = os;
 
@@ -122,12 +122,12 @@ inline std::ostream &operator<<(std::ostream &os, const Net::IServerPacket &pkt)
 }
 
 /**
- * @brief Overloads the output stream operator for shared pointers to IServerPacket.
+ * @brief Overloads the output stream operator for shared pointers to IPacket.
  * @param os The output stream.
- * @param pkt The shared pointer to the IServerPacket to be printed.
+ * @param pkt The shared pointer to the IPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Net::IServerPacket> &pkt)
+inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Net::IPacket> &pkt)
 {
     return os << *pkt;
 }

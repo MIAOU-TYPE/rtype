@@ -12,7 +12,7 @@ PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, cons
 {
 }
 
-bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const
+bool PacketRouter::validateHeader(const Net::IPacket &pkt, const HeaderPacket &header) const
 {
     if (pkt.size() < sizeof(HeaderPacket)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
@@ -35,7 +35,7 @@ bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPac
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept
+bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) const noexcept
 {
     if (!packet)
         return false;
@@ -47,7 +47,7 @@ bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IServerPacket> &pack
     return true;
 }
 
-bool PacketRouter::extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept
+bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderPacket &outHeader) const noexcept
 {
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderPacket));
 
@@ -56,7 +56,7 @@ bool PacketRouter::extractHeader(const Net::IServerPacket &packet, HeaderPacket 
     return true;
 }
 
-int PacketRouter::resolveSession(const Net::IServerPacket &packet)
+int PacketRouter::resolveSession(const Net::IPacket &packet)
 {
     const sockaddr_in *addr = packet.address();
     if (!addr) {
@@ -78,7 +78,7 @@ void PacketRouter::dispatchPacket(
     }
 }
 
-void PacketRouter::handlePacket(const std::shared_ptr<Net::IServerPacket> &packet)
+void PacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet)
 {
     if (!isPacketValid(packet))
         return;

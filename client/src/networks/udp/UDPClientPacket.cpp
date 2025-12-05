@@ -38,4 +38,14 @@ namespace Network
     {
         _size = (s > MAX_SIZE) ? MAX_SIZE : s;
     }
+
+    size_t UDPClientPacket::capacity() const
+    {
+        return MAX_SIZE;
+    }
+
+    std::shared_ptr<IClientPacket> UDPClientPacket::clone() const
+    {
+        return std::make_shared<UDPClientPacket>();
+    }
 } // namespace Network

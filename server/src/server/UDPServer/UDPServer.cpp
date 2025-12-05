@@ -11,6 +11,7 @@ using namespace Server;
 
 UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
 {
+    setRunning(false);
 #ifdef _WIN32
     WSADATA wsa;
     const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -21,9 +22,7 @@ UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
 
 UDPServer::~UDPServer()
 {
-    if (_isRunning) {
-        stop();
-    }
+    stop();
 #ifdef _WIN32
     WSACleanup();
 #endif
@@ -31,7 +30,7 @@ UDPServer::~UDPServer()
 
 void UDPServer::start()
 {
-    if (_isRunning || _socketFd != kInvalidSocket)
+    if (isRunning() || _socketFd != kInvalidSocket)
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
@@ -46,21 +45,25 @@ void UDPServer::start()
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
-    _isRunning = true;
+    setRunning(true);
     std::cout << "{UDPServer::start} UDP Server started on " << _ip << ":" << _port << std::endl;
 }
 
 void UDPServer::stop()
 {
-    _isRunning = false;
-    Net::NetWrapper::closeSocket(_socketFd);
-    _socketFd = kInvalidSocket;
-    std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
+    setRunning(false);
+    if (_socketFd != kInvalidSocket) {
+        Net::NetWrapper::closeSocket(_socketFd);
+        _socketFd = kInvalidSocket;
+        std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
+    }
 }
 
 void UDPServer::readPackets()
 {
-    std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
+    if (!isRunning() || _socketFd == kInvalidSocket)
+        return;
+    auto pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
     recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
@@ -69,9 +72,13 @@ void UDPServer::readPackets()
         return;
     pkt->setSize(static_cast<size_t>(received));
 
-    if (!_rxBuffer.push(pkt))
-        std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
-    std::cout << pkt << std::endl;
+    {
+        std::lock_guard<std::mutex> lock(_rxMutex);
+        if (!_rxBuffer.push(pkt)) {
+            std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
+            return;
+        }
+    }
 }
 
 bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
@@ -79,6 +86,13 @@ bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
     return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
                reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
         != -1;
+}
+
+bool UDPServer::popPacket(std::shared_ptr<Net::IServerPacket> &pkt)
+{
+    std::lock_guard<std::mutex> lock(_rxMutex);
+
+    return _rxBuffer.pop(pkt);
 }
 
 void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)

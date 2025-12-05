@@ -1,9 +1,10 @@
 /*
 ** EPITECH PROJECT, 2025
-** RType
+** rtype
 ** File description:
 ** Endian
 */
+
 #pragma once
 
 #include <cstring>
@@ -26,30 +27,21 @@ inline uint64_t be64toh(uint64_t x)
     #include <arpa/inet.h>
     #include <endian.h>
 
-static inline std::uint64_t ntohll(std::uint64_t x)
-{
-    return be64toh(x);
-}
-
 #elif defined(_WIN32)
-    #define WIN32_LEAN_AND_MEAN
     #include <intrin.h>
     #include <windows.h>
     #include <winsock2.h>
 
-inline uint64_t htobe64(uint64_t x)
+static inline uint64_t htobe64(uint64_t x)
 {
     return _byteswap_uint64(x);
 }
 
-inline uint64_t be64toh(uint64_t x)
+static inline uint64_t be64toh(uint64_t x)
 {
     return _byteswap_uint64(x);
 }
-
 #endif
-
-#ifndef _WIN32
 
 inline uint32_t htonf(float f)
 {
@@ -66,5 +58,3 @@ inline float ntohf(uint32_t u)
     std::memcpy(&f, &u, sizeof(uint32_t));
     return f;
 }
-
-#endif

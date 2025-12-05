@@ -121,5 +121,12 @@ namespace Server
          * @return True if the stored port number is valid, false otherwise.
          */
         virtual bool isStoredPortCorrect() const noexcept = 0;
+
+        /**
+         * @brief Pops a received packet from the server's packet queue.
+         * @param pkt Reference to a Net::IServerPacket where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the queue was empty.
+         */
+        virtual bool popPacket(std::shared_ptr<Net::IServerPacket> &pkt) = 0;
     };
 } // namespace Server

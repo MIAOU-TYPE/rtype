@@ -17,7 +17,56 @@ It inherits from `AServer` (which implements the generic server interface `IServ
 
 This page explains the **public interface**, the **lifecycle**, and the **internal behavior** of `UDPServer`.
 
----
+
+# Diagram: UDP Flow
+
+```text
+┌───────────────────────────────────────────────────────────┐
+│                     APPLICATION SERVER                    │
+│                                                           │
+│   ┌───────────────┐     ┌──────────────────────────────┐  │
+│   │  GameServer   │     │          IGameWorld          │  │
+│   │ (IMessageSink)│<--->│     (ECS / game engine)      │  │
+│   └──────▲────────┘     └──────────────────────────────┘  │
+│          │                            ▲                   │
+│          │ network→game events        │ game API          │
+│   ┌──────┴────────┐                   │                   │
+│   │ IMessageSink  │ interface         │                   │
+│   └──────▲────────┘                   │                   │
+└──────────│────────────────────────────│───────────────────┘
+           │                            │
+           │                            │
+┌──────────┴────────────────────────────┴───────────────────┐
+│                       NETWORK SERVER                      │
+│                                                           │
+│   ┌─────────────────────────────────────────────────────┐ │
+│   │                 ServerRuntime                       │ │
+│   │  - starts IServer/UdpServer                         │ │
+│   │  - thread 1: runReceiver → readPackets()            │ │
+│   │  - thread 2: runProcessor → popPacket()             │ │
+│   │                        │                            │ │
+│   └───────────────▲────────┴────────────────────────────┘ │
+│                   │                                       │
+│            IServerPacket*                                 │
+│                   │                                       │
+│   ┌───────────────┴─────────────┐     ┌─────────────────┐ │
+│   │        PacketRouter         │     │ SessionManager  │ │
+│   │ - reads PacketHeader        │     │ - sockaddr → id │ │
+│   │ - validates (size/version)  │     │ - id → sockaddr │ │
+│   │ - getOrCreateSession(addr)  │     └─────────────────┘ │
+│   │ - parses payload (CONNECT,  │                         │
+│   │   INPUT, PING, DISCONNECT)  │                         │
+│   │ - calls IMessageSink        │                         │
+│   └─────────────────────────────┘                         │
+│                                                           │
+│   ┌─────────────────────────────────────────────────────┐ │
+│   │                     UdpServer (IServer)             │ │
+│   │  - socket UDP                                       │ │
+│   │  - recvfrom() → IServerPacket + push RX queue       │ │
+│   │  - pop TX queue → sendto()                          │ │
+│   └─────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────┘
+```
 
 ## 1. Class overview
 

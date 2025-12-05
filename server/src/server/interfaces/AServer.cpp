@@ -52,12 +52,12 @@ void AServer::setNonBlocking(bool nonBlocking)
 
 bool AServer::isRunning() const noexcept
 {
-    return _isRunning;
+    return _isRunning.load();
 }
 
 void AServer::setRunning(bool running) noexcept
 {
-    _isRunning = running;
+    _isRunning.store(running);
 }
 
 bool AServer::isStoredIpCorrect() const noexcept

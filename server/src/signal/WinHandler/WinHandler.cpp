@@ -58,8 +58,9 @@ void WinHandler::start() noexcept
 void WinHandler::stop() noexcept
 {
     try {
+        if (!running.load())
+            return;
         running = false;
-
         std::signal(SIGINT, SIG_DFL);
         std::signal(SIGTERM, SIG_DFL);
     } catch (...) {

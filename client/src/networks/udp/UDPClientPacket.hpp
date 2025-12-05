@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstring>
+#include <memory>
 #include <vector>
 #include "IClientPacket.hpp"
 
@@ -80,6 +81,18 @@ namespace Network
          * @param s The size to set for the packet.
          */
         void setSize(size_t s) override;
+
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The maximum capacity of the packet buffer in bytes.
+         */
+        size_t capacity() const override;
+
+        /**
+         * @brief Creates a clone of the packet.
+         * @return A shared pointer to a new UDPClientPacket instance with the same buffer capacity.
+         */
+        std::shared_ptr<IClientPacket> clone() const override;
 
         /**
          * @brief Maximum size of the packet buffer.

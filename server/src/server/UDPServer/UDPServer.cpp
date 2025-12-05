@@ -9,15 +9,15 @@
 
 using namespace Server;
 
-UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("shared/NetWrapper/build/libNetPluginLib.so")
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("shared/NetWrapper/build/libNetPluginLib")
 {
     setRunning(false);
-    #ifdef _WIN32
-        WSADATA wsa;
-        const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
-        if (r != 0)
-            throw ServerError("{UDPServer::UDPServer} WSAStartup failed");
-    #endif
+#ifdef _WIN32
+    WSADATA wsa;
+    const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
+    if (r != 0)
+        throw ServerError("{UDPServer::UDPServer} WSAStartup failed");
+#endif
 }
 
 UDPServer::~UDPServer()
@@ -83,8 +83,8 @@ void UDPServer::readPackets()
 
 bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
 {
-    return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
-               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
+    return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
+               sizeof(sockaddr_in))
         != -1;
 }
 

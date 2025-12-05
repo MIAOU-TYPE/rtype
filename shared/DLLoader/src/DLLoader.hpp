@@ -91,6 +91,12 @@ namespace Library
          */
         const std::string &path() const noexcept;
 
+        /**
+         * @brief Get the platform-specific library extension
+         * @return const std::string & The platform-specific library extension
+         */
+        static const std::string &getPlatformLibraryExtension() noexcept;
+
       private:
         void *_handle = nullptr; ///> Handle to the loaded library
         std::string _path = "";  ///> Path to the loaded library

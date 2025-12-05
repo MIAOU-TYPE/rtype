@@ -31,7 +31,7 @@ namespace Ecs
         explicit Entity(size_t id = 0);
 
         /**
-         * @brief Implicit conversion to size_t.
+         * @brief Explicit conversion to size_t.
          * @return The entity ID.
          */
         explicit operator size_t() const noexcept;

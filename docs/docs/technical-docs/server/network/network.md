@@ -49,11 +49,11 @@ At a high level, the network layer is composed of:
   - `SocketConfig` / `SocketOptions`: how the socket is configured
 
 - **Packet abstraction**
-  - `IServerPacket`: generic interface for “a packet received or sent by the server”
+  - `IPacket`: generic interface for “a packet received or sent by the server”
   - `UDPPacket`: concrete implementation for UDP datagrams
 
 - **Buffering**
-  - `RingBuffer<std::shared_ptr<IServerPacket>>`: queue of received packets
+  - `RingBuffer<std::shared_ptr<IPacket>>`: queue of received packets
 
 - **Endianness helpers**
   - `Endian.hpp`: functions to convert integers / floats to a consistent network format
@@ -78,15 +78,15 @@ The path of an **incoming UDP datagram** looks like this:
 2. The operating system receives it on the **UDP socket**.
 3. `NetWrapper::recvFrom()` reads the datagram from the socket.
 4. The server wraps the raw bytes into a **`UDPPacket`** object.
-5. The `UDPPacket` is pushed into a **`RingBuffer<IServerPacket>`**.
+5. The `UDPPacket` is pushed into a **`RingBuffer<IPacket>`**.
 6. The game logic (ECS, systems, etc.) later consumes packets from this buffer.
 
 In diagram form:
 
 ```text
 Client (UDP)  -->  OS Socket  -->  NetWrapper::recvFrom()
-   -->  UDPPacket (implements IServerPacket)
-   -->  RingBuffer<IServerPacket>
+   -->  UDPPacket (implements IPacket)
+   -->  RingBuffer<IPacket>
    -->  Game logic / ECS
 ````
 
@@ -95,7 +95,7 @@ Client (UDP)  -->  OS Socket  -->  NetWrapper::recvFrom()
 For **outgoing** data, the flow is reversed:
 
 1. The game logic decides to send something to a client (for example “spawn entity”, “update position”…).
-2. It builds a packet object (usually implementing `IServerPacket`, e.g. `UDPPacket` or a derived type).
+2. It builds a packet object (usually implementing `IPacket`, e.g. `UDPPacket` or a derived type).
 3. It sets the destination address (client IP + port) inside the packet.
 4. It calls `UDPServer::sendPacket(packet)`.
 5. `UDPServer` calls `NetWrapper::sendTo()` with the packet buffer.
@@ -103,7 +103,7 @@ For **outgoing** data, the flow is reversed:
 
 ```text
 Game logic / ECS
-   -->  Packet object (IServerPacket / UDPPacket)
+   -->  Packet object (IPacket / UDPPacket)
    -->  UDPServer::sendPacket()
    -->  NetWrapper::sendTo()
    -->  OS Socket  -->  Client (UDP)
@@ -126,7 +126,7 @@ Typical responsibilities:
     * `start()`
     * `stop()`
     * `readPackets()` (to poll the network)
-    * `sendPacket(const IServerPacket&)`
+    * `sendPacket(const IPacket&)`
     * `isRunning()`
 
 `IServer` is usually a pure interface, and `AServer` is a **base implementation** that:
@@ -198,9 +198,9 @@ This makes `UDPServer` code more readable and avoids repeating magic constants.
 
 ---
 
-### 4.4. `IServerPacket` and `UDPPacket`
+### 4.4. `IPacket` and `UDPPacket`
 
-`IServerPacket` is an **abstract representation of a packet** inside the server.
+`IPacket` is an **abstract representation of a packet** inside the server.
 It provides methods like:
 
 * `uint8_t* buffer()` / `const uint8_t* buffer() const`
@@ -222,12 +222,12 @@ It provides methods like:
     * stores the source address,
     * pushes it into the ring buffer.
 
-From the rest of the application, you only deal with `IServerPacket` pointers or references,
+From the rest of the application, you only deal with `IPacket` pointers or references,
 not with raw `uint8_t*` buffers.
 
 ---
 
-### 4.5. `RingBuffer<std::shared_ptr<IServerPacket>>`
+### 4.5. `RingBuffer<std::shared_ptr<IPacket>>`
 
 The ring buffer is a **fixed-size queue** of packets.
 
@@ -283,8 +283,8 @@ The network layer does **not** know anything about:
 Instead, it only knows how to:
 
 * read bytes from the socket,
-* package them into `IServerPacket` objects,
-* send `IServerPacket` objects to clients.
+* package them into `IPacket` objects,
+* send `IPacket` objects to clients.
 
 The **glue** between networking and game logic is typically:
 
@@ -298,7 +298,7 @@ The **glue** between networking and game logic is typically:
 
     * reads the ECS state,
     * decides what packets to send (e.g. position updates),
-    * builds `IServerPacket` objects,
+    * builds `IPacket` objects,
     * calls `server.sendPacket()`.
 
 This separation keeps the codebase maintainable:
@@ -312,6 +312,6 @@ packet format and high-level interface stay consistent.
 * The **network layer** is a clean abstraction around UDP networking.
 * `UDPServer` is the main entry point: it uses `NetWrapper` and `UDPPacket` internally.
 * `NetWrapper` hides OS details and exposes simple static functions.
-* `IServerPacket` / `UDPPacket` wrap raw bytes into C++ objects with an address.
+* `IPacket` / `UDPPacket` wrap raw bytes into C++ objects with an address.
 * `RingBuffer` decouples the speed of the network from the speed of the game logic.
 * `Endian.hpp` guarantees that values are encoded in a consistent format on the wire.

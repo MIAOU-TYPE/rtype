@@ -34,9 +34,9 @@ target_compile_features(NetPluginLib PUBLIC cxx_std_20)
 # Optional: set output directory
 # ------------------------------
 set_target_properties(NetPluginLib PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../build"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 # ------------------------------

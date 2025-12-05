@@ -7,7 +7,8 @@
 
 #include "NetPlugin.hpp"
 
-extern "C" {
+extern "C"
+{
     socketHandle net_socket(int domain, int type, int protocol)
     {
         return ::socket(domain, type, protocol);

@@ -17,8 +17,10 @@ NetWrapper::NetWrapper(const std::string &pluginPath)
         _socketFn = _loader->getSymbol<socketHandle (*)(int, int, int)>("net_socket");
         _closeFn = _loader->getSymbol<void (*)(socketHandle)>("net_close");
         _setOptFn = _loader->getSymbol<int (*)(socketHandle, int, int, const void *, int)>("net_setOpt");
-        _recvFn = _loader->getSymbol<recvfrom_return_t (*)(
-            socketHandle, void *, size_t, int, struct sockaddr *, socklen_t *)>("net_recvFrom");
+        _recvFn =
+            _loader
+                ->getSymbol<recvfrom_return_t (*)(socketHandle, void *, size_t, int, struct sockaddr *, socklen_t *)>(
+                    "net_recvFrom");
         _sendFn = _loader->getSymbol<sendto_return_t (*)(
             socketHandle, const void *, size_t, int, const struct sockaddr *, socklen_t)>("net_sendTo");
     } catch (const std::exception &e) {
@@ -53,15 +55,15 @@ int NetWrapper::setSocketOpt(socketHandle s, int level, int optName, const void 
 }
 
 recvfrom_return_t NetWrapper::recvFrom(
-            socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
+    socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
 {
     if (!_recvFn)
         throw NetWrapperError("RecvFrom function not loaded");
     return _recvFn(sockFd, buf, len, flags, srcAddr, addrLen);
 }
 
-sendto_return_t NetWrapper::sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
-            const struct sockaddr *destAddr, socklen_t addrLen)
+sendto_return_t NetWrapper::sendTo(
+    socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
 {
     if (!_sendFn)
         throw NetWrapperError("SendTo function not loaded");

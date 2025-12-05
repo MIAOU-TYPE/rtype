@@ -7,10 +7,11 @@
 
 #pragma once
 #include <SFML/Graphics/Rect.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
-namespace Ecs {
+namespace Ecs
+{
     /**
      * @struct Animation
      * @brief Component for handling sprite animations.
@@ -18,12 +19,12 @@ namespace Ecs {
      * including frame duration, looping, and playback state.
      */
     struct Animation {
-        std::vector<sf::IntRect> frames;   // List of texture rectangles
-        size_t currentFrame = 0;           // Current frame index
-        float frameDuration = 0.1f;        // Duration of a frame (seconds)
-        float elapsedTime = 0.f;           // Elapsed time in the current frame
-        bool loop = true;                  // Infinite loop?
-        bool playing = true;               // Is playing?
-        std::string currentAnim = "idle";  // Current animation name
+        std::vector<sf::IntRect> frames;  // List of texture rectangles
+        size_t currentFrame = 0;          // Current frame index
+        float frameDuration = 0.1f;       // Duration of a frame (seconds)
+        float elapsedTime = 0.f;          // Elapsed time in the current frame
+        bool loop = true;                 // Infinite loop?
+        bool playing = true;              // Is playing?
+        std::string currentAnim = "idle"; // Current animation name
     };
-}
+} // namespace Ecs

@@ -7,12 +7,13 @@
 
 #pragma once
 
-#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <memory>
 #include <string>
 
-namespace Ecs {
+namespace Ecs
+{
     /**
      * @struct Sprite
      * @brief Stocks SFML sprite information for an entity.
@@ -20,9 +21,9 @@ namespace Ecs {
      * along with texture reference and rendering layer.
      */
     struct Sprite {
-        std::shared_ptr<sf::Sprite> sprite = nullptr;  // The actual SFML sprite object
-        std::string textureKey = "";                   // Reference to the texture
-        sf::IntRect textureRect = {};                  // Texture area (spritesheet)
-        float layer = 0.f;                             // Z-order (0=background, 100=foreground)
+        std::shared_ptr<sf::Sprite> sprite = nullptr; // The actual SFML sprite object
+        std::string textureKey = "";                  // Reference to the texture
+        sf::IntRect textureRect = {};                 // Texture area (spritesheet)
+        float layer = 0.f;                            // Z-order (0=background, 100=foreground)
     };
-}
+} // namespace Ecs

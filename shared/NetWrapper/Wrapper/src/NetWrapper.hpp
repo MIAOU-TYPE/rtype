@@ -1,6 +1,8 @@
 /*
 ** EPITECH PROJECT, 2025
-** NetWrapperDL
+** R-Type
+** File description:
+** NetWrapper
 */
 
 #pragma once

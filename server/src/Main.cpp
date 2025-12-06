@@ -23,11 +23,11 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(ServerRuntime &
 
 int main(void)
 {
-    std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
-    ServerRuntime runtime(server);
-    std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(runtime);
-
     try {
+        std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
+        ServerRuntime runtime(server);
+        std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(runtime);
+
         server->configure("127.0.0.1", 8080);
         runtime.start();
         runtime.wait();

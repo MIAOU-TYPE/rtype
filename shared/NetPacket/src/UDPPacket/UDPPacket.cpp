@@ -32,7 +32,7 @@ size_t UDPPacket::size() const
 
 void UDPPacket::setSize(size_t s)
 {
-    _size = s;
+    _size = (s > MAX_SIZE) ? MAX_SIZE : s;
 }
 
 const sockaddr_in *UDPPacket::address() const

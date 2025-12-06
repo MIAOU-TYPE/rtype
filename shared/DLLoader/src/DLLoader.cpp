@@ -50,13 +50,13 @@ const std::string &DLLoader::path() const noexcept
     return _path;
 }
 
-std::string DLLoader::getLibraryPath(const std::string& name) noexcept
+std::string DLLoader::getLibraryPath(const std::string &name) noexcept
 {
 #ifdef _WIN32
     if (std::filesystem::exists(name + ".dll"))
         return name + ".dll";
 
-    const char* configs[] = { "Debug", "Release" };
+    const char *configs[] = {"Debug", "Release"};
 
     for (auto c : configs) {
         std::string p = "../build/" + std::string(c) + "/" + name + ".dll";

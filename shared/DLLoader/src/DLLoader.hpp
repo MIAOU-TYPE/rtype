@@ -11,9 +11,9 @@
 #include <string>
 
 #if defined(_WIN32)
-#ifndef WIN32_LEAN_AND_MEAN
-  #define WIN32_LEAN_AND_MEAN
-#endif
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
     #include <windows.h>
 #else
     #include <dlfcn.h>
@@ -98,7 +98,7 @@ namespace Library
          * @brief Get the platform-specific library extension
          * @return const std::string & The platform-specific library extension
          */
-        static std::string getLibraryPath(const std::string& name) noexcept;
+        static std::string getLibraryPath(const std::string &name) noexcept;
 
       private:
         void *_handle;     ///> Handle to the loaded library

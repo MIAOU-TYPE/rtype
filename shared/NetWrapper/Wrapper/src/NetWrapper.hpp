@@ -142,14 +142,15 @@ namespace Net
             const struct sockaddr *destAddr, socklen_t addrLen);
 
       private:
-        std::unique_ptr<Library::DLLoader> _loader; ///> Dynamic library loader.
+        std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.
 
-        socketHandle (*_socketFn)(int, int, int);                    ///> Function pointer for creating a socket.
-        void (*_closeFn)(socketHandle);                              ///> Function pointer for closing a socket.
-        int (*_setOptFn)(socketHandle, int, int, const void *, int); ///> Function pointer for setting socket options.
+        socketHandle (*_socketFn)(int, int, int) = nullptr; ///> Function pointer for creating a socket.
+        void (*_closeFn)(socketHandle) = nullptr;           ///> Function pointer for closing a socket.
+        int (*_setOptFn)(
+            socketHandle, int, int, const void *, int) = nullptr; ///> Function pointer for setting socket options.
         recvfrom_return_t (*_recvFn)(socketHandle, void *, size_t, int, struct sockaddr *,
-            socklen_t *); ///> Function pointer for receiving data from a socket.
+            socklen_t *) = nullptr; ///> Function pointer for receiving data from a socket.
         sendto_return_t (*_sendFn)(socketHandle, const void *, size_t, int, const struct sockaddr *,
-            socklen_t); ///> Function pointer for sending data to a socket.
+            socklen_t) = nullptr; ///> Function pointer for sending data to a socket.
     };
 } // namespace Net

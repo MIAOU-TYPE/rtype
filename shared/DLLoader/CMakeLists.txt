@@ -8,7 +8,7 @@ project(DLLoader LANGUAGES CXX)
 # ------------------------------
 # Build as shared library
 # ------------------------------
-add_library(DLLoaderLib SHARED
+add_library(DLLoaderLib STATIC
         src/DLLoader.cpp
         src/DLLoader.hpp
         src/DLLoader.tpp
@@ -45,3 +45,13 @@ set_target_properties(DLLoaderLib PROPERTIES
 # Create an alias for clean linking
 # ------------------------------
 add_library(Library::DLLoader ALIAS DLLoaderLib)
+
+# ------------------------------
+# Output directories
+# ------------------------------
+set_target_properties(NetWrapperLib PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        POSITION_INDEPENDENT_CODE ON
+)

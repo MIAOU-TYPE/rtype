@@ -15,7 +15,7 @@ set(SOURCES
 # ------------------------------
 # Build as shared library
 # ------------------------------
-add_library(NetWrapperLib SHARED ${SOURCES})
+add_library(NetWrapperLib STATIC ${SOURCES})
 
 # ------------------------------
 # Include directories
@@ -42,8 +42,8 @@ endif()
 # -------------------------------------------------------
 if (NOT TARGET DLLoaderLib)
     add_subdirectory(
-            ${CMAKE_SOURCE_DIR}/shared/DLLoader
-            ${CMAKE_BINARY_DIR}/DLLoader_build
+        ${CMAKE_SOURCE_DIR}/shared/DLLoader
+        ${CMAKE_CURRENT_BINARY_DIR}/DLLoader_build
     )
 endif()
 

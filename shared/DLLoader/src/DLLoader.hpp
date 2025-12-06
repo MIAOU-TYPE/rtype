@@ -98,7 +98,7 @@ namespace Library
          * @brief Get the platform-specific library extension
          * @return const std::string & The platform-specific library extension
          */
-        static const std::string &getPlatformLibraryExtension() noexcept;
+        static std::string getLibraryPath(const std::string& name) noexcept;
 
       private:
         void *_handle;     ///> Handle to the loaded library

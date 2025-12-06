@@ -9,7 +9,7 @@
 
 using namespace Server;
 
-UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("shared/NetWrapper/build/libNetPluginLib")
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("build/libNetPluginLib")
 {
     setRunning(false);
 #ifdef _WIN32

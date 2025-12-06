@@ -98,8 +98,8 @@ namespace Library
         static const std::string &getPlatformLibraryExtension() noexcept;
 
       private:
-        void *_handle;          ///> Handle to the loaded library
-        std::string _path = ""; ///> Path to the loaded library
+        void *_handle;     ///> Handle to the loaded library
+        std::string _path; ///> Path to the loaded library
     };
 
 } // namespace Library

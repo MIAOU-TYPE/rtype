@@ -12,12 +12,8 @@ using namespace Net::Server;
 UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 {
     setRunning(false);
-#ifdef _WIN32
-    WSADATA wsa;
-    const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
-    if (r != 0)
-        throw ServerError("{UDPServer::UDPServer} WSAStartup failed");
-#endif
+    if (_netWrapper.initNetwork() != 0)
+        throw ServerError("{UDPServer::UDPServer} Failed to initialize network");
 }
 
 UDPServer::~UDPServer()

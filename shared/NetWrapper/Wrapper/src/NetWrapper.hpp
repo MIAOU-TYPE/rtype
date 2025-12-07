@@ -82,7 +82,7 @@ namespace Net
          * @param pluginPath The path to the shared library containing the network functions.
          * @throws NetWrapperError if loading the library or functions fails.
          */
-        explicit NetWrapper(const std::string &pluginPath);
+        explicit NetWrapper(const std::string &pluginPath, const std::string &baseDir = "build/");
 
         /**
          * @brief Destructor for NetWrapper.

@@ -9,10 +9,10 @@
 
 using namespace Net;
 
-NetWrapper::NetWrapper(const std::string &pluginPath)
+NetWrapper::NetWrapper(const std::string &pluginPath, const std::string &baseDir)
 {
     try {
-        _loader = std::make_unique<Library::DLLoader>(pluginPath);
+        _loader = std::make_unique<Library::DLLoader>(pluginPath, baseDir);
 
         _socketFn = _loader->getSymbol<socketHandle (*)(int, int, int)>("net_socket");
         _closeFn = _loader->getSymbol<void (*)(socketHandle)>("net_close");

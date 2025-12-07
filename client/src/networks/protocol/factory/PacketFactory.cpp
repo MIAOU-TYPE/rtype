@@ -42,7 +42,7 @@ namespace Network
         uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept
     {
         PacketInput inputPacket;
-        inputPacket.header = makeHeader(INPUT, sizeof(PacketInput));
+        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(PacketInput));
         inputPacket.entity = htonl(entity);
         inputPacket.dx = htonf(dx);
         inputPacket.dy = htonf(dy);

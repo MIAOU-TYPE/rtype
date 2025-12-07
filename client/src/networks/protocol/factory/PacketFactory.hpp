@@ -103,7 +103,7 @@ namespace Network
         std::shared_ptr<Net::IPacket> makePacket(const Type &packetData) const;
 
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Template packet for cloning
-        static constexpr uint8_t VERSION = 1;             ///> Protocol version
+        static constexpr uint8_t VERSION = 1;            ///> Protocol version
     };
 
 } // namespace Network

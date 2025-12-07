@@ -18,7 +18,7 @@
 #include "EntityDestroyPacket.hpp"
 #include "HeaderPacket.hpp"
 #include "IPacket.hpp"
-
+#include "PacketTypes.hpp"
 /**
  * @namespace Net
  * @brief Namespace for networking-related classes and functions.
@@ -29,20 +29,6 @@
  */
 namespace Net::Factory
 {
-    constexpr uint8_t CONNECT = 0x01;    ///> Packet type for connect packets.
-    constexpr uint8_t INPUT = 0x02;      ///> Packet type for input packets.
-    constexpr uint8_t PING = 0x03;       ///> Packet type for ping packets.
-    constexpr uint8_t DISCONNECT = 0x04; ///> Packet type for disconnect packets.
-
-    constexpr uint8_t ACCEPT = 0x10;         ///> Packet type for accept packets.
-    constexpr uint8_t REJECT = 0x11;         ///> Packet type for reject packets.
-    constexpr uint8_t SNAPSHOT = 0x12;       ///> Packet type for snapshot packets.
-    constexpr uint8_t ENTITY_CREATE = 0x13;  ///> Packet type for entity creation packets.
-    constexpr uint8_t ENTITY_DESTROY = 0x14; ///> Packet type for entity destruction packets.
-    constexpr uint8_t PONG = 0x15;           ///> Packet type for pong packets.
-    constexpr uint8_t DAMAGE_EVENT = 0x16;   ///> Packet type for damage event packets.
-    constexpr uint8_t GAME_OVER = 0x17;      ///> Packet type for game over packets.
-
     class FactoryError : public std::exception {
       public:
         /**

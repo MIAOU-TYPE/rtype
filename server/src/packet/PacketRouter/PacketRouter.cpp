@@ -70,10 +70,10 @@ void PacketRouter::dispatchPacket(
     int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize)
 {
     switch (header.type) {
-        case Net::Factory::CONNECT: handleConnect(sessionId); break;
-        case Net::Factory::INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case Net::Factory::PING: handlePing(sessionId, payload, payloadSize); break;
-        case Net::Factory::DISCONNECT: handleDisconnect(sessionId); break;
+        case Net::Protocol::CONNECT: handleConnect(sessionId); break;
+        case Net::Protocol::INPUT: handleInput(sessionId, payload, payloadSize); break;
+        case Net::Protocol::PING: handlePing(sessionId, payload, payloadSize); break;
+        case Net::Protocol::DISCONNECT: handleDisconnect(sessionId); break;
         default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }

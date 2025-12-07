@@ -8,11 +8,11 @@
 #pragma once
 
 #include <iostream>
-#include "ecs/components/Health.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "game/interfaces/IGameWorld.hpp"
+#include "Health.hpp"
+#include "IGameWorld.hpp"
+#include "InputComponent.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
 
 namespace Game
 {
@@ -41,10 +41,7 @@ namespace Game
          *
          * @return Reference to the registry containing all components/entities.
          */
-        Ecs::Registry &registry() override
-        {
-            return _registry;
-        }
+        Ecs::Registry &registry() override;
 
         /**
          * @brief Create a new player entity with default components.
@@ -67,6 +64,6 @@ namespace Game
         void destroyEntity(Ecs::Entity ent) override;
 
       private:
-        Ecs::Registry _registry; ///< The ECS registry (component storage).
+        Ecs::Registry _registry; ///> The ECS registry (component storage).
     };
 } // namespace Game

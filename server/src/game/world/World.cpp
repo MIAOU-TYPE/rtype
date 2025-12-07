@@ -32,4 +32,9 @@ namespace Game
     {
         _registry.destroyEntity(ent);
     }
+
+    Ecs::Registry &World::registry()
+    {
+        return _registry;
+    }
 } // namespace Game

@@ -10,7 +10,7 @@
 #include "HeaderPacket.hpp"
 #pragma pack(push, 1)
 
-struct EntityCreatePacket {
+struct EntityCreateData {
     HeaderPacket header;
     uint64_t id = 0;
     uint32_t x = 0;

@@ -44,15 +44,15 @@ namespace Net::Factory
     std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
         const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept
     {
-        EntityCreatePacket entityCreatePacket;
-        entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreatePacket));
+        EntityCreateData entityCreatePacket;
+        entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreateData));
         entityCreatePacket.id = htobe64(id);
         entityCreatePacket.x = htonf(x);
         entityCreatePacket.y = htonf(y);
         entityCreatePacket.sprite = htons(sprite);
 
         try {
-            auto packet = makePacket<EntityCreatePacket>(addr, entityCreatePacket);
+            auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeEntityCreate} " << e.what() << std::endl;

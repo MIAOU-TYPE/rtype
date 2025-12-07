@@ -14,7 +14,7 @@
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "EntityCreatePacket.hpp"
+#include "EntityCreateData.hpp"
 #include "EntityDestroyPacket.hpp"
 #include "IPacket.hpp"
 #include "InputPacket.hpp"
@@ -81,7 +81,7 @@ namespace Net::Factory
         std::shared_ptr<IPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
 
         /**
-         * @brief Creates an EntityCreatePacket with the specified parameters.
+         * @brief Creates an EntityCreateData with the specified parameters.
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity to create.
          * @param x The x-coordinate of the entity.

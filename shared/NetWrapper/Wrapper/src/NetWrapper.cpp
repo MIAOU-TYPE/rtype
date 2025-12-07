@@ -23,6 +23,7 @@ NetWrapper::NetWrapper(const std::string &pluginPath, const std::string &baseDir
                     "net_recvFrom");
         _sendFn = _loader->getSymbol<sendto_return_t (*)(
             socketHandle, const void *, size_t, int, const struct sockaddr *, socklen_t)>("net_sendTo");
+        _initNetworkFn = _loader->getSymbol<int (*)()>("net_initNetwork");
     } catch (const std::exception &e) {
         throw NetWrapperError(std::string("{NetWrapper::NetWrapper} ") + e.what());
     }
@@ -68,4 +69,11 @@ sendto_return_t NetWrapper::sendTo(
     if (!_sendFn)
         throw NetWrapperError("SendTo function not loaded");
     return _sendFn(sockFd, buf, len, flags, destAddr, addrLen);
+}
+
+int NetWrapper::initNetwork()
+{
+    if (!_initNetworkFn)
+        throw NetWrapperError("InitNetwork function not loaded");
+    return _initNetworkFn();
 }

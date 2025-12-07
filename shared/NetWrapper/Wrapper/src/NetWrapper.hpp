@@ -141,6 +141,11 @@ namespace Net
         sendto_return_t sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
             const struct sockaddr *destAddr, socklen_t addrLen);
 
+        /**
+         * @brief Initializes the network (e.g., WSAStartup on Windows).
+         * @return 0 on success, or an error code on failure.
+         */
+        int initNetwork();
       private:
         std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.
 
@@ -152,5 +157,7 @@ namespace Net
             socklen_t *) = nullptr; ///> Function pointer for receiving data from a socket.
         sendto_return_t (*_sendFn)(socketHandle, const void *, size_t, int, const struct sockaddr *,
             socklen_t) = nullptr; ///> Function pointer for sending data to a socket.
+
+        int (*_initNetworkFn)() = nullptr; ///> Function pointer for initializing the network.
     };
 } // namespace Net

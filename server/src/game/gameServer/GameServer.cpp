@@ -10,7 +10,8 @@
 
 namespace Game
 {
-    GameServer::GameServer(std::shared_ptr<SessionManager> sessions, std::shared_ptr<Server::IServer> server)
+    GameServer::GameServer(
+        std::shared_ptr<Net::Server::SessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
         : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _factory(std::make_shared<Net::UDPPacket>())
     {
@@ -49,7 +50,7 @@ namespace Game
         if (!addr)
             return;
 
-        if (const auto pkt = _factory.makeDefault(*addr, Net::Factory::PONG))
+        if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
             _server->sendPacket(*pkt);
     }
 

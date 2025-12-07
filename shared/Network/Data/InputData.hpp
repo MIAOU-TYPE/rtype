@@ -21,10 +21,10 @@ namespace Network
 
     struct InputData {
         HeaderData header; ///> Common packet header
-        uint32_t entity;     ///> Entity ID to control (network byte order)
-        uint32_t dx;         ///> Horizontal movement axis (-1.0 to 1.0)
-        uint32_t dy;         ///> Vertical movement axis (-1.0 to 1.0)
-        uint8_t shooting;    ///> Shooting action flag (0 = not shooting, 1 = shooting)
+        uint32_t entity;   ///> Entity ID to control (network byte order)
+        uint32_t dx;       ///> Horizontal movement axis (-1.0 to 1.0)
+        uint32_t dy;       ///> Vertical movement axis (-1.0 to 1.0)
+        uint8_t shooting;  ///> Shooting action flag (0 = not shooting, 1 = shooting)
     };
 
 #pragma pack(pop)

@@ -19,6 +19,7 @@
 #include "HeaderPacket.hpp"
 #include "IPacket.hpp"
 #include "PacketTypes.hpp"
+
 /**
  * @namespace Net
  * @brief Namespace for networking-related classes and functions.

@@ -46,4 +46,4 @@ namespace Net::Protocol
     constexpr uint8_t DAMAGE_EVENT = 0x16;   ///> Server notifies client of a damage event
     constexpr uint8_t GAME_OVER = 0x17;      ///> Server notifies client of game over event
 
-} // namespace Net
+} // namespace Net::Protocol

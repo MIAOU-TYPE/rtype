@@ -10,7 +10,7 @@
 namespace Network
 {
     template <typename Type>
-    std::shared_ptr<IClientPacket> PacketFactory::makePacket(const Type &packetData) const
+    std::shared_ptr<Net::IPacket> PacketFactory::makePacket(const Type &packetData) const
     {
         if (!_packet)
             throw FactoryError("Template packet is null");

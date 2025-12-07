@@ -6,7 +6,7 @@
 */
 
 template<typename Type>
-std::shared_ptr<Net::IServerPacket> Net::Factory::PacketFactory::makePacket(const sockaddr_in &addr, const Type &packetData) const
+std::shared_ptr<Net::IPacket> Net::Factory::PacketFactory::makePacket(const sockaddr_in &addr, const Type &packetData) const
 {
     auto buffer = _packet->clone();
     if (sizeof(Type) > buffer->capacity())

@@ -7,11 +7,11 @@
 
 #pragma once
 #include <cstdint>
-#include "HeaderPacket.hpp"
+#include "HeaderData.hpp"
 #pragma pack(push, 1)
 
-struct EntityCreatePacket {
-    HeaderPacket header;
+struct EntityCreateData {
+    HeaderData header;
     uint64_t id = 0;
     uint32_t x = 0;
     uint32_t y = 0;

@@ -9,47 +9,47 @@
 
 namespace Network
 {
-    PacketFactory::PacketFactory(const std::shared_ptr<IClientPacket> &packet)
+    PacketFactory::PacketFactory(const std::shared_ptr<Net::IPacket> &packet)
     {
         if (!packet)
-            throw FactoryError("Invalid IClientPacket pointer");
+            throw FactoryError("Invalid IPacket pointer");
         _packet = packet;
     }
 
-    PacketHeader PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
     {
-        PacketHeader header;
+        HeaderData header;
         header.type = type;
         header.version = VERSION;
         header.size = htons(size);
         return header;
     }
 
-    std::shared_ptr<IClientPacket> PacketFactory::makeBase(uint8_t flag) const noexcept
+    std::shared_ptr<Net::IPacket> PacketFactory::makeBase(uint8_t flag) const noexcept
     {
-        PacketBase basePacket;
-        basePacket.header = makeHeader(flag, sizeof(PacketBase));
+        DefaultData basePacket;
+        basePacket.header = makeHeader(flag, sizeof(DefaultData));
 
         try {
-            return makePacket<PacketBase>(basePacket);
+            return makePacket<DefaultData>(basePacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makePing} " << e.what() << std::endl;
             return nullptr;
         }
     }
 
-    std::shared_ptr<IClientPacket> PacketFactory::makeInput(
+    std::shared_ptr<Net::IPacket> PacketFactory::makeInput(
         uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept
     {
-        PacketInput inputPacket;
-        inputPacket.header = makeHeader(INPUT, sizeof(PacketInput));
+        InputData inputPacket;
+        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputData));
         inputPacket.entity = htonl(entity);
         inputPacket.dx = htonf(dx);
         inputPacket.dy = htonf(dy);
         inputPacket.shooting = shooting;
 
         try {
-            return makePacket<PacketInput>(inputPacket);
+            return makePacket<InputData>(inputPacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeInput} " << e.what() << std::endl;
             return nullptr;

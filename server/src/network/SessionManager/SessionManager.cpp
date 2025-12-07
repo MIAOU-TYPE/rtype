@@ -6,6 +6,7 @@
 */
 
 #include "SessionManager.hpp"
+using namespace Net::Server;
 
 bool AddressKey::operator==(const AddressKey &other) const noexcept
 {

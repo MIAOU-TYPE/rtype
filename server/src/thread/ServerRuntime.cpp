@@ -7,6 +7,8 @@
 
 #include "ServerRuntime.hpp"
 
+using namespace Net::Thread;
+
 ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server(server)
 {
     // TODO: Une fois le GameServer (implémentation réelle de IMessageSink) en place,
@@ -19,9 +21,9 @@ ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server
     //
     //       Pour l’instant, tempMessageSink ne fait rien,
     //       donc cette étape sera activée quand l’ECS sera finalisé.
-    _sink = std::make_shared<tempMessageSink>();
-    _sessionManager = std::make_shared<SessionManager>();
-    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _sink);
+    _sink = std::make_shared<Net::tempMessageSink>();
+    _sessionManager = std::make_shared<Net::Server::SessionManager>();
+    _packetRouter = std::make_shared<Net::PacketRouter>(_sessionManager, _sink);
 }
 
 ServerRuntime::~ServerRuntime()
@@ -73,7 +75,7 @@ void ServerRuntime::runReceiver()
 void ServerRuntime::runProcessor()
 {
     while (_server->isRunning()) {
-        std::shared_ptr<Net::IServerPacket> packet = nullptr;
+        std::shared_ptr<Net::IPacket> packet = nullptr;
         if (_server->popPacket(packet)) {
             _packetRouter->handlePacket(packet);
             // TODO:

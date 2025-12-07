@@ -2,17 +2,18 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** EntityDestroyPacket
+** HeaderData
 */
 
 #pragma once
 #include <cstdint>
-#include "HeaderPacket.hpp"
+
 #pragma pack(push, 1)
 
-struct EntityDestroyPacket {
-    HeaderPacket header;
-    uint64_t id = 0;
+struct HeaderData {
+    uint8_t type = 0;
+    uint8_t version = 0;
+    uint16_t size = 0;
 };
 
 #pragma pack(pop)

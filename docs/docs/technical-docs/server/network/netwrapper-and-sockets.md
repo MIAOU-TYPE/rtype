@@ -250,7 +250,7 @@ recvfrom_return_t NetWrapper::recvFrom(socketHandle sockFd,
 Usage in `UDPServer::readPackets()`:
 
 ```cpp
-std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
+std::shared_ptr<Net::IPacket> pkt = std::make_shared<Net::UDPPacket>();
 socklen_t addrLen = sizeof(sockaddr_in);
 
 recvfrom_return_t received = Net::NetWrapper::recvFrom(
@@ -304,7 +304,7 @@ sendto_return_t NetWrapper::sendTo(socketHandle sockFd,
 Usage in `UDPServer::sendPacket()`:
 
 ```cpp
-bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt)
 {
     return Net::NetWrapper::sendTo(
                _socketFd,

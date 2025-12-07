@@ -63,9 +63,10 @@ namespace Library
         /**
          * @brief Construct a new DLLoader object and load the library
          * @param libPath The path to the dynamic library
+         * @param baseDir The base directory to search for the library (default: "build/")
          * @throws DLLoaderError if the library fails to load
          */
-        explicit DLLoader(const std::string &libPath);
+        explicit DLLoader(const std::string &libPath, const std::string &baseDir = "build/");
 
         /**
          * @brief Destroy the DLLoader object and unload the library
@@ -98,7 +99,7 @@ namespace Library
          * @brief Get the platform-specific library extension
          * @return const std::string & The platform-specific library extension
          */
-        static std::string getLibraryPath(const std::string &name) noexcept;
+        static std::string getLibraryPath(const std::string &name, const std::string &baseDir) noexcept;
 
       private:
         void *_handle = nullptr; ///> Handle to the loaded library

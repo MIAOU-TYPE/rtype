@@ -17,7 +17,7 @@ using namespace Library;
     #define FREE_LIBRARY(handle) dlclose(handle)
 #endif
 
-DLLoader::DLLoader(const std::string &libName) : _path(getLibraryPath(libName))
+DLLoader::DLLoader(const std::string &libName, const std::string &baseDir) : _path(getLibraryPath(libName, baseDir))
 {
 #ifdef __linux__
     dlerror();
@@ -50,7 +50,7 @@ const std::string &DLLoader::path() const noexcept
     return _path;
 }
 
-std::string DLLoader::getLibraryPath(const std::string &name) noexcept
+std::string DLLoader::getLibraryPath(const std::string &name, const std::string &baseDir) noexcept
 {
 #ifdef _WIN32
     if (std::filesystem::exists(name + ".dll"))
@@ -59,14 +59,14 @@ std::string DLLoader::getLibraryPath(const std::string &name) noexcept
     const char *configs[] = {"Debug", "Release"};
 
     for (auto c : configs) {
-        std::string p = "../build/" + std::string(c) + "/" + name + ".dll";
+        std::string p = "../" + baseDir + std::string(c) + "/" + name + ".dll";
         if (std::filesystem::exists(p))
             return p;
     }
     return name + ".dll";
 #elif __APPLE__
-    return "build/lib" + name + ".dylib";
+    return baseDir + "lib" + name + ".dylib";
 #else
-    return "build/lib" + name + ".so";
+    return baseDir + "lib" + name + ".so";
 #endif
 }

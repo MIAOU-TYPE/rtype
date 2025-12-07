@@ -17,9 +17,9 @@ namespace Net::Factory
         _packet = packet;
     }
 
-    HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
     {
-        HeaderPacket header;
+        HeaderData header;
 
         header.type = type;
         header.version = version;
@@ -62,12 +62,12 @@ namespace Net::Factory
 
     std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
     {
-        EntityDestroyPacket entityDestroyPacket;
-        entityDestroyPacket.header = makeHeader(Protocol::ENTITY_DESTROY, VERSION, sizeof(EntityDestroyPacket));
+        EntityDestroyData entityDestroyPacket;
+        entityDestroyPacket.header = makeHeader(Protocol::ENTITY_DESTROY, VERSION, sizeof(EntityDestroyData));
         entityDestroyPacket.id = htobe64(id);
 
         try {
-            auto packet = makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
+            auto packet = makePacket<EntityDestroyData>(addr, entityDestroyPacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeEntityDestroy} " << e.what() << std::endl;

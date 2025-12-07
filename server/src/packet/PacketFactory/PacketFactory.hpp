@@ -15,7 +15,7 @@
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "EntityCreateData.hpp"
-#include "EntityDestroyPacket.hpp"
+#include "EntityDestroyData.hpp"
 #include "IPacket.hpp"
 #include "InputPacket.hpp"
 #include "TypesPacket.hpp"
@@ -93,7 +93,7 @@ namespace Net::Factory
             const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept;
 
         /**
-         * @brief Creates an EntityDestroyPacket for the specified entity ID.
+         * @brief Creates an EntityDestroyData for the specified entity ID.
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity to destroy.
          * @return A shared pointer to the created IPacket.
@@ -111,13 +111,13 @@ namespace Net::Factory
 
       private:
         /**
-         * @brief Creates a HeaderPacket with the specified parameters.
+         * @brief Creates a HeaderData with the specified parameters.
          * @param type The type of the packet.
          * @param version The version of the packet.
          * @param size The size of the packet.
-         * @return The constructed HeaderPacket.
+         * @return The constructed HeaderData.
          */
-        static HeaderPacket makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
+        static HeaderData makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given address and packet data.

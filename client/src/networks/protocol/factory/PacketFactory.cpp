@@ -16,9 +16,9 @@ namespace Network
         _packet = packet;
     }
 
-    HeaderPacket PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
     {
-        HeaderPacket header;
+        HeaderData header;
         header.type = type;
         header.version = VERSION;
         header.size = htons(size);

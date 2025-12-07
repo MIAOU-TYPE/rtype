@@ -6,12 +6,12 @@
 */
 
 #pragma once
-#include "HeaderPacket.hpp"
+#include "HeaderData.hpp"
 
 #pragma pack(push, 1)
 
 struct DamageData {
-    HeaderPacket header;
+    HeaderData header;
     uint32_t id = 0;
     uint16_t amount = 0;
 };

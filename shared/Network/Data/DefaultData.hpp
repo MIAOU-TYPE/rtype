@@ -6,12 +6,12 @@
 */
 
 #pragma once
-#include "HeaderPacket.hpp"
+#include "HeaderData.hpp"
 
 #pragma pack(push, 1)
 
 struct DefaultData {
-    HeaderPacket header;
+    HeaderData header;
 };
 
 #pragma pack(pop)

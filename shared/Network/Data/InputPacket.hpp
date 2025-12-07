@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "HeaderPacket.hpp"
+#include "HeaderData.hpp"
 
 namespace Network
 {
@@ -20,7 +20,7 @@ namespace Network
 #pragma pack(push, 1)
 
     struct InputPacket {
-        HeaderPacket header; ///> Common packet header
+        HeaderData header; ///> Common packet header
         uint32_t entity;     ///> Entity ID to control (network byte order)
         uint32_t dx;         ///> Horizontal movement axis (-1.0 to 1.0)
         uint32_t dy;         ///> Vertical movement axis (-1.0 to 1.0)

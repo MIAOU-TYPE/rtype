@@ -14,7 +14,7 @@
 #include <string>
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "HeaderPacket.hpp"
+#include "HeaderData.hpp"
 #include "IPacket.hpp"
 #include "InputPacket.hpp"
 #include "TypesPacket.hpp"
@@ -91,7 +91,7 @@ namespace Network
          * @param size The size of the packet
          * @return The constructed PacketHeader
          */
-        static HeaderPacket makeHeader(uint8_t type, uint16_t size) noexcept;
+        static HeaderData makeHeader(uint8_t type, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given packet data

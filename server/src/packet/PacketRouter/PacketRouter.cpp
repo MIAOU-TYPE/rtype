@@ -12,9 +12,9 @@ PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, cons
 {
 }
 
-bool PacketRouter::validateHeader(const Net::IPacket &pkt, const HeaderPacket &header) const
+bool PacketRouter::validateHeader(const Net::IPacket &pkt, const HeaderData &header) const
 {
-    if (pkt.size() < sizeof(HeaderPacket)) {
+    if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
         return false;
     }
@@ -40,16 +40,16 @@ bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) co
     if (!packet)
         return false;
 
-    if (packet->size() < sizeof(HeaderPacket)) {
+    if (packet->size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter} Dropped: packet too small\n";
         return false;
     }
     return true;
 }
 
-bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderPacket &outHeader) const noexcept
+bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) const noexcept
 {
-    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderPacket));
+    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 
     if (!validateHeader(packet, outHeader))
         return false;
@@ -67,7 +67,7 @@ int PacketRouter::resolveSession(const Net::IPacket &packet)
 }
 
 void PacketRouter::dispatchPacket(
-    int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize)
+    int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize)
 {
     switch (header.type) {
         case Net::Protocol::CONNECT: handleConnect(sessionId); break;
@@ -83,7 +83,7 @@ void PacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet)
     if (!isPacketValid(packet))
         return;
 
-    HeaderPacket header{};
+    HeaderData header{};
     if (!extractHeader(*packet, header))
         return;
 
@@ -93,8 +93,8 @@ void PacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet)
 
     const std::uint8_t *raw = packet->buffer();
     const std::size_t total = packet->size();
-    const std::size_t payloadSize = total - sizeof(HeaderPacket);
-    const std::uint8_t *payload = raw + sizeof(HeaderPacket);
+    const std::size_t payloadSize = total - sizeof(HeaderData);
+    const std::uint8_t *payload = raw + sizeof(HeaderData);
 
     dispatchPacket(sessionId, header, payload, payloadSize);
 }

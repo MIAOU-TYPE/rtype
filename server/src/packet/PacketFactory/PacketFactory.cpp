@@ -78,13 +78,13 @@ namespace Net::Factory
     std::shared_ptr<IPacket> PacketFactory::makeDamage(
         const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {
-        DamagePacket damagePacket;
-        damagePacket.header = makeHeader(Protocol::DAMAGE_EVENT, VERSION, sizeof(DamagePacket));
-        damagePacket.id = htonl(id);
-        damagePacket.amount = htons(amount);
+        DamageData damageData;
+        damageData.header = makeHeader(Protocol::DAMAGE_EVENT, VERSION, sizeof(DamageData));
+        damageData.id = htonl(id);
+        damageData.amount = htons(amount);
 
         try {
-            auto packet = makePacket<DamagePacket>(addr, damagePacket);
+            auto packet = makePacket<DamageData>(addr, damageData);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeDamage} " << e.what() << std::endl;

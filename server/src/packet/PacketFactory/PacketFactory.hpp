@@ -11,7 +11,7 @@
 #include <map>
 #include <memory>
 #include <utility>
-#include "DamagePacket.hpp"
+#include "DamageData.hpp"
 #include "DefaultPacket.hpp"
 #include "Endian.hpp"
 #include "EntityCreatePacket.hpp"
@@ -101,7 +101,7 @@ namespace Net::Factory
         std::shared_ptr<IPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
 
         /**
-         * @brief Creates a DamagePacket for the specified entity ID and damage amount.
+         * @brief Creates a DamageData for the specified entity ID and damage amount.
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity receiving damage.
          * @param amount The amount of damage to apply.

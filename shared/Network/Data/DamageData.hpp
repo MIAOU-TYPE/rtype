@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** DamagePacket
+** DamageData
 */
 
 #pragma once
@@ -10,7 +10,7 @@
 
 #pragma pack(push, 1)
 
-struct DamagePacket {
+struct DamageData {
     HeaderPacket header;
     uint32_t id = 0;
     uint16_t amount = 0;

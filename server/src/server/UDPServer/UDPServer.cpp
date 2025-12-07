@@ -7,7 +7,7 @@
 
 #include "UDPServer.hpp"
 
-using namespace Server;
+using namespace Net::Server;
 
 UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 {

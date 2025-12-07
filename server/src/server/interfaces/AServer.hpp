@@ -23,7 +23,7 @@
  * @namespace Server
  * @brief Contains all server-related classes and interfaces.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class AServer
@@ -111,4 +111,4 @@ namespace Server
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor
     };
-} // namespace Server
+} // namespace Net::Server

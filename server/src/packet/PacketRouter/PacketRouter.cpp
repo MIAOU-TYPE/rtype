@@ -6,13 +6,15 @@
 */
 
 #include "PacketRouter.hpp"
+using namespace Net;
 
-PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
+PacketRouter::PacketRouter(
+    const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {
 }
 
-bool PacketRouter::validateHeader(const Net::IPacket &pkt, const HeaderData &header) const
+bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header) const
 {
     if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
@@ -35,7 +37,7 @@ bool PacketRouter::validateHeader(const Net::IPacket &pkt, const HeaderData &hea
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) const noexcept
+bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) const noexcept
 {
     if (!packet)
         return false;
@@ -47,7 +49,7 @@ bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) co
     return true;
 }
 
-bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) const noexcept
+bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) const noexcept
 {
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 
@@ -56,7 +58,7 @@ bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHead
     return true;
 }
 
-int PacketRouter::resolveSession(const Net::IPacket &packet)
+int PacketRouter::resolveSession(const IPacket &packet)
 {
     const sockaddr_in *addr = packet.address();
     if (!addr) {
@@ -70,15 +72,15 @@ void PacketRouter::dispatchPacket(
     int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize)
 {
     switch (header.type) {
-        case Net::Protocol::CONNECT: handleConnect(sessionId); break;
-        case Net::Protocol::INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case Net::Protocol::PING: handlePing(sessionId, payload, payloadSize); break;
-        case Net::Protocol::DISCONNECT: handleDisconnect(sessionId); break;
+        case Protocol::CONNECT: handleConnect(sessionId); break;
+        case Protocol::INPUT: handleInput(sessionId, payload, payloadSize); break;
+        case Protocol::PING: handlePing(sessionId, payload, payloadSize); break;
+        case Protocol::DISCONNECT: handleDisconnect(sessionId); break;
         default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }
 
-void PacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet)
+void PacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet)
 {
     if (!isPacketValid(packet))
         return;

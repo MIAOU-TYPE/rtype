@@ -7,7 +7,7 @@
 
 #include "AServer.hpp"
 
-using namespace Server;
+using namespace Net::Server;
 
 void AServer::configure(const std::string &ip, uint16_t port)
 {

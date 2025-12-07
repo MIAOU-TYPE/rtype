@@ -20,7 +20,7 @@
  * @brief Contains all server-related classes and interfaces.
  * @note This namespace is used to group all server-related functionality.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class UDPServer
@@ -81,4 +81,4 @@ namespace Server
         Net::NetWrapper _netWrapper; ///> Network wrapper for socket operations
         std::mutex _rxMutex;         ///> Mutex for synchronizing access to the receive buffer
     };
-} // namespace Server
+} // namespace Net::Server

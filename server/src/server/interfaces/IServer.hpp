@@ -15,7 +15,7 @@
  * @namespace Server
  * @brief Contains all server-related classes and interfaces.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class ServerError
@@ -129,4 +129,4 @@ namespace Server
          */
         virtual bool popPacket(std::shared_ptr<Net::IPacket> &pkt) = 0;
     };
-} // namespace Server
+} // namespace Net::Server

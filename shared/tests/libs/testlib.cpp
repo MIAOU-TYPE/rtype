@@ -4,10 +4,14 @@
 ** File description:
 ** testlib
 */
-
+#ifdef _WIN32
+    #define EXPORT __declspec(dllexport)
+#else
+    #define EXPORT __attribute__((visibility("default")))
+#endif
 extern "C"
 {
-    int get_number()
+    EXPORT int get_number()
     {
         return 42;
     }

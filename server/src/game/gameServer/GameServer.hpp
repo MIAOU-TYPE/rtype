@@ -80,13 +80,13 @@ namespace Game
         void update(float dt) const;
 
       private:
-        std::unique_ptr<IGameWorld> _world; ///< The game world (ECS state).
+        std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
-        std::shared_ptr<Net::Server::SessionManager> _sessions; ///< Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;          ///< Sends packets to clients.
-        Net::Factory::PacketFactory _factory;                   ///< Builds outgoing packets.
+        std::shared_ptr<Net::Server::SessionManager> _sessions; ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;          ///> Sends packets to clients.
+        Net::Factory::PacketFactory _factory;                   ///> Builds outgoing packets.
 
-        std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///< Maps sessions to entities.
+        std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
     };
 
 } // namespace Game

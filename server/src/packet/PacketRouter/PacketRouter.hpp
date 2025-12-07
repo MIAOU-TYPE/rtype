@@ -76,13 +76,11 @@ namespace Net
          */
         void handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
 
-        /**
-         * @brief Handler for player ping packets.
-         * @param sessionId The ID of the player.
-         * @param payload Pointer to the payload data of the ping packet.
-         * @param payloadSize Size of the payload data.
-         */
-        void handlePing(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
+    /**
+     * @brief Handler for player ping packets.
+     * @param sessionId The ID of the player.
+     */
+    void handlePing(int sessionId) const;
 
         /**
          * @brief Handler for player disconnection packets.

@@ -82,7 +82,7 @@ add_subdirectory(
 # NetProtocol Library
 #------------------------------
 add_subdirectory(
-        ${CMAKE_SOURCE_DIR}/shared/Network
+        ${CMAKE_SOURCE_DIR}/shared/Network/Protocol
         ${CMAKE_BINARY_DIR}/NetProtocolLib_build
 )
 

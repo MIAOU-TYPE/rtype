@@ -16,9 +16,9 @@
 #include "Endian.hpp"
 #include "EntityCreatePacket.hpp"
 #include "EntityDestroyPacket.hpp"
-#include "HeaderPacket.hpp"
 #include "IPacket.hpp"
-#include "PacketTypes.hpp"
+#include "InputPacket.hpp"
+#include "TypesPacket.hpp"
 
 /**
  * @namespace Net

@@ -12,7 +12,6 @@
 #include <memory>
 
 #include <iostream>
-#include "HeaderPacket.hpp"
 #include "IMessageSink.hpp"
 #include "IPacket.hpp"
 #include "NetMessages.hpp"

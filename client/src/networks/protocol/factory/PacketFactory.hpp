@@ -12,12 +12,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "DefaultPacket.hpp"
 #include "Endian.hpp"
 #include "IPacket.hpp"
-#include "PacketBase.hpp"
-#include "PacketHeader.hpp"
-#include "PacketInput.hpp"
-#include "PacketTypes.hpp"
+#include "HeaderPacket.hpp"
+#include "TypesPacket.hpp"
+#include "InputPacket.hpp"
 
 namespace Network
 {
@@ -91,7 +91,7 @@ namespace Network
          * @param size The size of the packet
          * @return The constructed PacketHeader
          */
-        static PacketHeader makeHeader(uint8_t type, uint16_t size) noexcept;
+        static HeaderPacket makeHeader(uint8_t type, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given packet data

@@ -16,9 +16,9 @@ namespace Network
         _packet = packet;
     }
 
-    PacketHeader PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
+    HeaderPacket PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
     {
-        PacketHeader header;
+        HeaderPacket header;
         header.type = type;
         header.version = VERSION;
         header.size = htons(size);
@@ -27,11 +27,11 @@ namespace Network
 
     std::shared_ptr<Net::IPacket> PacketFactory::makeBase(uint8_t flag) const noexcept
     {
-        PacketBase basePacket;
-        basePacket.header = makeHeader(flag, sizeof(PacketBase));
+        DefaultPacket basePacket;
+        basePacket.header = makeHeader(flag, sizeof(DefaultPacket));
 
         try {
-            return makePacket<PacketBase>(basePacket);
+            return makePacket<DefaultPacket>(basePacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makePing} " << e.what() << std::endl;
             return nullptr;
@@ -41,15 +41,15 @@ namespace Network
     std::shared_ptr<Net::IPacket> PacketFactory::makeInput(
         uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept
     {
-        PacketInput inputPacket;
-        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(PacketInput));
+        InputPacket inputPacket;
+        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputPacket));
         inputPacket.entity = htonl(entity);
         inputPacket.dx = htonf(dx);
         inputPacket.dy = htonf(dy);
         inputPacket.shooting = shooting;
 
         try {
-            return makePacket<PacketInput>(inputPacket);
+            return makePacket<InputPacket>(inputPacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeInput} " << e.what() << std::endl;
             return nullptr;

@@ -14,10 +14,10 @@
 #include <string>
 #include "DefaultPacket.hpp"
 #include "Endian.hpp"
-#include "IPacket.hpp"
 #include "HeaderPacket.hpp"
-#include "TypesPacket.hpp"
+#include "IPacket.hpp"
 #include "InputPacket.hpp"
+#include "TypesPacket.hpp"
 
 namespace Network
 {

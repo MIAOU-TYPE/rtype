@@ -142,8 +142,7 @@ namespace Net::Factory
         template <typename Type>
         std::shared_ptr<IPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
 
-        std::shared_ptr<IPacket> _packet =
-            nullptr; ///> Pointer to the template IPacket used for creating packets.
+        std::shared_ptr<IPacket> _packet = nullptr; ///> Pointer to the template IPacket used for creating packets.
 
         static constexpr uint8_t VERSION = 1; ///> The version of the packet factory.
     };

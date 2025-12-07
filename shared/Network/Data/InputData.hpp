@@ -9,7 +9,7 @@
 
 #include "HeaderData.hpp"
 
-namespace Network
+namespace Net
 {
 
 /**
@@ -28,4 +28,4 @@ namespace Network
     };
 
 #pragma pack(pop)
-} // namespace Network
+} // namespace Net

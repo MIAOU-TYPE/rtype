@@ -101,8 +101,8 @@ namespace Library
         static std::string getLibraryPath(const std::string &name) noexcept;
 
       private:
-        void *_handle;     ///> Handle to the loaded library
-        std::string _path; ///> Path to the loaded library
+        void *_handle = nullptr; ///> Handle to the loaded library
+        std::string _path;       ///> Path to the loaded library
     };
 
 } // namespace Library

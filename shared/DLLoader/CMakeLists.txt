@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.20)
 project(DLLoader LANGUAGES CXX)
 
 # ------------------------------
-# Build as shared library
+# Build as static library
 # ------------------------------
 add_library(DLLoaderLib STATIC
         src/DLLoader.cpp

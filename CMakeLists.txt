@@ -44,20 +44,36 @@ endif()
 # =============================================
 # SUBMODULES
 # =============================================
-
+#------------------------------
+# Buffer Library
+#------------------------------
 add_subdirectory(
-        ${CMAKE_SOURCE_DIR}/shared/NetPacket
-        ${CMAKE_BINARY_DIR}/NetPacketLib_build
+        ${CMAKE_SOURCE_DIR}/shared/Buffer
+        ${CMAKE_BINARY_DIR}/buffer_build
 )
 
+#------------------------------
+# NetWrapper Library
+#------------------------------
 add_subdirectory(
         ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Library
         ${CMAKE_BINARY_DIR}/NetPluginLib_build
 )
 
+#------------------------------
+# NetWrapper Wrapper
+#------------------------------
 add_subdirectory(
         ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
         ${CMAKE_BINARY_DIR}/NetWrapper_build
+)
+
+#------------------------------
+# DLLoader Library
+#------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/NetPacket
+        ${CMAKE_BINARY_DIR}/NetPacketLib_build
 )
 
 add_subdirectory(server)

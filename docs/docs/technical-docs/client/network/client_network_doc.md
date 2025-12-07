@@ -13,7 +13,7 @@ The R-Type client network module manages all UDP communication between the clien
 ```
 client/src/networks/
 ├── interfaces/          # Abstract interfaces
-│   └── IClientPacket.hpp
+│   └── IPacket.hpp
 ├── protocol/            # Protocol definition
 │   ├── PacketBase.hpp
 │   ├── PacketHeader.hpp
@@ -38,9 +38,9 @@ client/src/networks/
 
 ## Main Components
 
-### 1. **IClientPacket Interface**
+### 1. **IPacket Interface**
 
-📄 *File:* `interfaces/IClientPacket.hpp`
+📄 *File:* `interfaces/IPacket.hpp`
 
 Abstract interface defining the contract for all client packets.
 
@@ -65,7 +65,7 @@ Used to report packet-related errors.
 
 📄 *Files:* `udp/UDPClientPacket.hpp`, `udp/UDPClientPacket.cpp`
 
-Concrete implementation of `IClientPacket` for UDP communication.
+Concrete implementation of `IPacket` for UDP communication.
 
 #### Features
 

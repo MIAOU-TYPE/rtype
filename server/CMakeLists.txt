@@ -78,17 +78,12 @@ endif()
 # ------------------------------
 # Buffer
 # ------------------------------
-add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/shared/Buffer
-    ${CMAKE_BINARY_DIR}/buffer_build
-)
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
 # NetPluginLib
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetPluginLib)
-
 
 # ------------------------------
 # NetWrapperLib

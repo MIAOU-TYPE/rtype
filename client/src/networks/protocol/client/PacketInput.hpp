@@ -22,8 +22,8 @@ namespace Network
     struct PacketInput {
         PacketHeader header; ///> Common packet header
         uint32_t entity;     ///> Entity ID to control (network byte order)
-        float dx;            ///> Horizontal movement axis (-1.0 to 1.0)
-        float dy;            ///> Vertical movement axis (-1.0 to 1.0)
+        uint32_t dx;         ///> Horizontal movement axis (-1.0 to 1.0)
+        uint32_t dy;         ///> Vertical movement axis (-1.0 to 1.0)
         uint8_t shooting;    ///> Shooting action flag (0 = not shooting, 1 = shooting)
     };
 

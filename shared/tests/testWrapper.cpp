@@ -11,11 +11,18 @@
 
 using namespace Net;
 
+const std::string defaultPath = "../../"
+#ifdef _WIN32
+"Debug/"
+#else
+""
+#endif
+;
 
 TEST(NetWrapperTests, LoadValidPlugin)
 {
     ASSERT_NO_THROW({
-        NetWrapper wrapperNetPluginLib("NetPluginLib", "../../");
+        NetWrapper wrapperNetPluginLib("NetPluginLib", defaultPath);
     });
 }
 
@@ -29,7 +36,8 @@ TEST(NetWrapperTests, LoadInvalidPluginThrows)
 
 TEST(NetWrapperTests, SocketCreationThroughWrapper)
 {
-    NetWrapper wrapper("NetPluginLib", "../../");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
+    wrapper.initNetwork();
 
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     ASSERT_NE(s, kInvalidSocket);
@@ -39,7 +47,8 @@ TEST(NetWrapperTests, SocketCreationThroughWrapper)
 
 TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 {
-    NetWrapper wrapper("NetPluginLib", "../../");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
+    wrapper.initNetwork();
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     ASSERT_NE(s, kInvalidSocket);
 
@@ -52,7 +61,8 @@ TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 
 TEST(NetWrapperTests, SendAndReceiveLocalUDP)
 {
-    NetWrapper wrapper("NetPluginLib", "../../");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
+    wrapper.initNetwork();
 
     socketHandle s1 = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     socketHandle s2 = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
@@ -73,7 +83,7 @@ TEST(NetWrapperTests, SendAndReceiveLocalUDP)
     sockaddr_in addrSend = addrRecv;
 
     const char* msg = "HelloPlugin";
-    ssize_t sent = wrapper.sendTo(
+    auto sent = wrapper.sendTo(
         s1, msg, strlen(msg), 0, (sockaddr*)&addrSend, sizeof(addrSend));
     ASSERT_GT(sent, 0);
 
@@ -81,7 +91,7 @@ TEST(NetWrapperTests, SendAndReceiveLocalUDP)
     sockaddr_in src {};
     socklen_t srcLen = sizeof(src);
 
-    ssize_t rec = wrapper.recvFrom(
+    auto rec = wrapper.recvFrom(
         s2, buffer, sizeof(buffer), 0, (sockaddr*)&src, &srcLen);
 
     ASSERT_GT(rec, 0);

@@ -14,7 +14,7 @@ PacketRouter::PacketRouter(
 {
 }
 
-bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
+bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header) const
 {
     if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
@@ -36,7 +36,7 @@ bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept
+bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) const noexcept
 {
     if (!packet)
         return false;
@@ -48,7 +48,7 @@ bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noexcep
     return true;
 }
 
-bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept
+bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) const noexcept
 {
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 

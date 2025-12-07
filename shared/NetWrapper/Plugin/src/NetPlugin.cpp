@@ -15,6 +15,16 @@
 
 extern "C"
 {
+    EXPORT int net_initNetwork()
+    {
+        #ifdef _WIN32
+            WSADATA wsaData;
+            return WSAStartup(MAKEWORD(2, 2), &wsaData);
+        #else
+            return 0;
+        #endif
+    }
+
     EXPORT socketHandle net_socket(int domain, int type, int protocol)
     {
         return ::socket(domain, type, protocol);

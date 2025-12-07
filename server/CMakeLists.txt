@@ -81,11 +81,6 @@ endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
-# NetPluginLib
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetPluginLib)
-
-# ------------------------------
 # NetWrapperLib
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
@@ -100,6 +95,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
+
+# ------------------------------
+# NetProtocol
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
 # ------------------------------
 # OUTPUT LOCATION
@@ -118,5 +118,6 @@ set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 # TESTS
 # ------------------------------
-enable_testing()
-add_subdirectory(tests)
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

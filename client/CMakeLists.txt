@@ -9,7 +9,6 @@ file(GLOB_RECURSE CLIENT_SOURCES CONFIGURE_DEPENDS
         "${CLIENT_SRC_DIR}/*.cpp"
 )
 
-# Collect all include folders inside src/
 file(GLOB_RECURSE CLIENT_HEADERS CONFIGURE_DEPENDS
         "${CLIENT_SRC_DIR}/*.hpp"
         "${CLIENT_SRC_DIR}/*.tpp"
@@ -34,11 +33,11 @@ add_executable(${PROJECT_NAME}
         ${CLIENT_SOURCES}
 )
 
-# -------------------------------------
+# -----------------------------
 # fix for macOS + Homebrew LLVM bug
 # (__hash_memory missing symbol)
 # Force linking against Homebrew libc++ instead of Apple SDK libc++
-# -------------------------------------
+# -----------------------------
 if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
     target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
 endif()
@@ -49,21 +48,29 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 # ------------------------------
-# PLATFORM-SPECIFIC LIBRARIES
+# PLATFORM-SPECIFIC LIBS
 # ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        SFML::Graphics
+        SFML::Window
+        SFML::System
+        SFML::Audio
+        SFML::Network
+)
+
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE
-            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
             ws2_32
     )
 elseif(APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE
-            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
-            "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo"
+            "-framework OpenGL"
+            "-framework Cocoa"
+            "-framework IOKit"
+            "-framework CoreVideo"
     )
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE
-            SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network
             pthread
     )
 endif()
@@ -88,10 +95,9 @@ endif()
 # ------------------------------
 
 # ------------------------------
-# NetPluginLib
+# Buffer
 # ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetPluginLib)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
 # NetWrapperLib
@@ -110,6 +116,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 # ------------------------------
+# NetProtocol
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
+
+# ------------------------------
 # OUTPUT LOCATION
 # ------------------------------
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -124,8 +135,8 @@ set(CLIENT_SRC_DIR ${CLIENT_SRC_DIR} PARENT_SCOPE)
 set(CLIENT_INCLUDE_DIRS ${CLIENT_INCLUDE_DIRS} PARENT_SCOPE)
 
 # ------------------------------
-# TESTS (optional)
+# TESTS
 # ------------------------------
-if (BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()

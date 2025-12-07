@@ -25,7 +25,9 @@ project(R-Type LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-enable_testing()
+if (BUILD_TESTING)
+    enable_testing()
+endif()
 
 # =============================================
 # fix for macOS + Homebrew LLVM bug
@@ -53,10 +55,10 @@ add_subdirectory(
 )
 
 #------------------------------
-# NetWrapper Library
+# NetWrapper Library (shared)
 #------------------------------
 add_subdirectory(
-        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Library
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Plugin
         ${CMAKE_BINARY_DIR}/NetPluginLib_build
 )
 
@@ -69,11 +71,19 @@ add_subdirectory(
 )
 
 #------------------------------
-# DLLoader Library
+# NetPacket Library
 #------------------------------
 add_subdirectory(
         ${CMAKE_SOURCE_DIR}/shared/NetPacket
         ${CMAKE_BINARY_DIR}/NetPacketLib_build
+)
+
+#------------------------------
+# NetProtocol Library
+#------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/Network
+        ${CMAKE_BINARY_DIR}/NetProtocolLib_build
 )
 
 add_subdirectory(server)

@@ -67,5 +67,5 @@ add_library(testlib SHARED libs/testlib.cpp)
 
 # Pour que DLLoader la trouve facilement
 set_target_properties(testlib PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/testlibs
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )

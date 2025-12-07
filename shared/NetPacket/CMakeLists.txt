@@ -1,22 +1,42 @@
 cmake_minimum_required(VERSION 3.20)
+
 project(NetPacketLib LANGUAGES CXX)
 
+# ------------------------------
+# Sources
+# ------------------------------
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_library(NetPacketLib SHARED ${SOURCES})
+add_library(NetPacketLib STATIC ${SOURCES})
 
+# ------------------------------
+# Include directories
+# Make public the src/ folder
+# ------------------------------
 target_include_directories(NetPacketLib
-    PUBLIC
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/interfaces
         ${CMAKE_CURRENT_SOURCE_DIR}/src/UDPPacket
-
 )
 
-target_compile_features(NetPacketLib PUBLIC cxx_std_17)
+# ------------------------------
+# C++20
+# ------------------------------
+target_compile_features(NetPacketLib PUBLIC cxx_std_20)
 
+# ------------------------------
+# Platform-specific networking
+# ------------------------------
+if(WIN32)
+    target_link_libraries(NetPacketLib PRIVATE ws2_32)
+endif()
+
+# ------------------------------
+# Output directories
+# ------------------------------
 set_target_properties(NetPacketLib PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    POSITION_INDEPENDENT_CODE ON
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+        POSITION_INDEPENDENT_CODE ON
 )

@@ -1,50 +1,60 @@
 cmake_minimum_required(VERSION 3.20)
+
+# ------------------------------
+# Project definition
+# ------------------------------
 project(NetWrapperLib LANGUAGES CXX)
 
 # ------------------------------
 # Sources
 # ------------------------------
 set(SOURCES
-    src/NetWrapper.cpp
+        src/NetWrapper.cpp
 )
 
 # ------------------------------
 # Build as shared library
 # ------------------------------
-add_library(NetWrapperLib SHARED ${SOURCES})
+add_library(NetWrapperLib STATIC ${SOURCES})
 
 # ------------------------------
 # Include directories
 # ------------------------------
 target_include_directories(NetWrapperLib
-    PUBLIC
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/shared/DLLoader/src
 )
 
 # ------------------------------
-# Compile options
+# C++ standard
 # ------------------------------
-target_compile_features(NetWrapperLib PUBLIC cxx_std_17)
+target_compile_features(NetWrapperLib PUBLIC cxx_std_20)
 
 # ------------------------------
-# Platform-specific libraries
+# Platform-specific libs
 # ------------------------------
-if(WIN32)
+if (WIN32)
     target_link_libraries(NetWrapperLib PRIVATE ws2_32)
 endif()
 
-# ------------------------------
-# Linker dependencies
-# ------------------------------
-# DLLoader est une librairie séparée que NetWrapper utilise
-add_subdirectory(${CMAKE_SOURCE_DIR}/shared/DLLoader
-                 ${CMAKE_BINARY_DIR}/DLLoader_build)
-target_link_libraries(NetWrapperLib PRIVATE DLLoaderLib)
+# -------------------------------------------------------
+# Dependency: DLLoader
+# -------------------------------------------------------
+if (NOT TARGET DLLoaderLib)
+    add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/DLLoader
+        ${CMAKE_CURRENT_BINARY_DIR}/DLLoader_build
+    )
+endif()
 
+target_link_libraries(NetWrapperLib PUBLIC DLLoaderLib)
+
+# ------------------------------
+# Output directories
+# ------------------------------
 set_target_properties(NetWrapperLib PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build"
-    POSITION_INDEPENDENT_CODE ON
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        POSITION_INDEPENDENT_CODE ON
 )

@@ -1,20 +1,57 @@
 cmake_minimum_required(VERSION 3.20)
+
+# ------------------------------
+# Project definition
+# ------------------------------
 project(DLLoader LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-add_library(DLLoaderLib SHARED
-    src/DLLoader.cpp
-    src/DLLoader.hpp
-    src/DLLoader.tpp
+# ------------------------------
+# Build as shared library
+# ------------------------------
+add_library(DLLoaderLib STATIC
+        src/DLLoader.cpp
+        src/DLLoader.hpp
+        src/DLLoader.tpp
 )
 
+# ------------------------------
+# Public include dirs
+# ------------------------------
 target_include_directories(DLLoaderLib
-    PUBLIC
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+# ------------------------------
+# C++20 standard
+# ------------------------------
+target_compile_features(DLLoaderLib PUBLIC cxx_std_20)
+
+# ------------------------------
+# Platform-specific dependencies
+# ------------------------------
+if(WIN32)
+    target_link_libraries(DLLoaderLib PRIVATE kernel32)
+endif()
+
+# ------------------------------
+# Ensure PIC for shared lib
+# ------------------------------
+set_target_properties(DLLoaderLib PROPERTIES
+        POSITION_INDEPENDENT_CODE ON
+)
+
+# ------------------------------
+# Create an alias for clean linking
+# ------------------------------
 add_library(Library::DLLoader ALIAS DLLoaderLib)
 
-set_target_properties(DLLoaderLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# ------------------------------
+# Output directories
+# ------------------------------
+set_target_properties(NetWrapperLib PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        POSITION_INDEPENDENT_CODE ON
+)

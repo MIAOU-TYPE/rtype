@@ -9,7 +9,6 @@
 #include "DLLoader.hpp"
 
 #ifdef _WIN32
-    #include <windows.h>
     #define GET_SYMBOL(handle, symbol) GetProcAddress(static_cast<HMODULE>(handle), symbol.c_str())
 #else
     #include <dlfcn.h>

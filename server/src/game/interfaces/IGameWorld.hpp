@@ -28,6 +28,9 @@ namespace Game
 {
     class IGameWorld {
       public:
+        /**
+         * @brief Virtual destructor.
+         */
         virtual ~IGameWorld() = default;
 
         /**

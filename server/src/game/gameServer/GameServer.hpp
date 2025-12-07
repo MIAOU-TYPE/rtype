@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "game/systems/input/InputSystem.hpp"
-#include "game/systems/movement/MovementSystem.hpp"
-#include "network/SessionManager/SessionManager.hpp"
-#include "packet/PacketFactory/PacketFactory.hpp"
-#include "packet/PacketRouter/IMessageSink.hpp"
-#include "server/interfaces/IServer.hpp"
+#include "IMessageSink.hpp"
+#include "IServer.hpp"
+#include "InputSystem.hpp"
+#include "MovementSystem.hpp"
+#include "PacketFactory.hpp"
+#include "SessionManager.hpp"
 
 namespace Game
 {

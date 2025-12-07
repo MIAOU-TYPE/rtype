@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "ecs/core/Entity.hpp"
-#include "ecs/core/Registry.hpp"
+#include "Entity.hpp"
+#include "Registry.hpp"
 
 /**
  * @brief Interface representing an abstract game world.

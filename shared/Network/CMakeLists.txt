@@ -15,6 +15,6 @@ add_library(NetProtocol INTERFACE)
 # ------------------------------
 target_include_directories(NetProtocol
         INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/Utils
-        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol/Packet
+        ${CMAKE_CURRENT_SOURCE_DIR}/Utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/Packet
 )

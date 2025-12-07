@@ -8,7 +8,7 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
-#include "NetMessages.hpp"
+#include "InputComponent.hpp"
 
 namespace Net
 {
@@ -39,44 +39,12 @@ namespace Net
          * @param sessionId The ID of the player.
          * @param msg The player input message.
          */
-        virtual void onPlayerInput(int sessionId, const PlayerInputMessage &msg) = 0;
+        virtual void onPlayerInput(int sessionId, const Game::InputComponent &msg) = 0;
 
         /**
          * @brief Called when a ping message is received.
          * @param sessionId The ID of the player.
-         * @param timestamp The timestamp of the ping.
          */
-        virtual void onPing(int sessionId, std::uint64_t timestamp) = 0;
-    };
-
-    class tempMessageSink : public IMessageSink {
-      public:
-        virtual ~tempMessageSink() = default;
-
-        void onPlayerConnect(int sessionId) override
-        {
-            (void) sessionId;
-            std::cout << "Player connected: " << sessionId << std::endl;
-        }
-
-        void onPlayerDisconnect(int sessionId) override
-        {
-            (void) sessionId;
-            std::cout << "Player disconnected: " << sessionId << std::endl;
-        }
-
-        void onPlayerInput(int sessionId, const PlayerInputMessage &msg) override
-        {
-            (void) sessionId;
-            (void) msg;
-            std::cout << "Player input: " << sessionId << std::endl;
-        }
-
-        void onPing(int sessionId, std::uint64_t timestamp) override
-        {
-            (void) sessionId;
-            (void) timestamp;
-            std::cout << "Ping received from: " << sessionId << " at " << timestamp << std::endl;
-        }
+        virtual void onPing(int sessionId) = 0;
     };
 } // namespace Net

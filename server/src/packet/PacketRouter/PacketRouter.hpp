@@ -45,13 +45,13 @@ namespace Net
          * @param sink Shared pointer to the IMessageSink for handling routed messages.
          */
         PacketRouter(
-            const std::shared_ptr<Net::Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
+            const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
 
         /**
          * @brief Handles an incoming packet by routing it to the appropriate handler.
          * @param packet Shared pointer to the incoming IPacket to be processed.
          */
-        void handlePacket(const std::shared_ptr<Net::IPacket> &packet);
+        void handlePacket(const std::shared_ptr<IPacket> &packet) const;
 
       private:
         /**
@@ -60,13 +60,13 @@ namespace Net
          * @param header The HeaderData extracted from the incoming packet.
          * @return True if the header is valid, false otherwise.
          */
-        bool validateHeader(const Net::IPacket &pkt, const HeaderData &header) const;
+        bool validateHeader(const IPacket &pkt, const HeaderData &header) const;
 
         /**
          * @brief Handler for player connection packets.
          * @param sessionId The ID of the connected player.
          */
-        void handleConnect(int sessionId);
+        void handleConnect(int sessionId) const;
 
         /**
          * @brief Handler for player input packets.
@@ -74,21 +74,19 @@ namespace Net
          * @param payload Pointer to the payload data of the input packet.
          * @param payloadSize Size of the payload data.
          */
-        void handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
+        void handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize) const;
 
         /**
          * @brief Handler for player ping packets.
          * @param sessionId The ID of the player.
-         * @param payload Pointer to the payload data of the ping packet.
-         * @param payloadSize Size of the payload data.
          */
-        void handlePing(int sessionId, const std::uint8_t *payload, std::size_t payloadSize);
+        void handlePing(int sessionId) const;
 
         /**
          * @brief Handler for player disconnection packets.
          * @param sessionId The ID of the disconnected player.
          */
-        void handleDisconnect(int sessionId);
+        void handleDisconnect(int sessionId) const;
 
       private:
         /**
@@ -96,7 +94,7 @@ namespace Net
          * @param packet Shared pointer to the incoming IPacket to validate.
          * @return True if the packet is valid, false otherwise.
          */
-        bool isPacketValid(const std::shared_ptr<Net::IPacket> &packet) const noexcept;
+        bool isPacketValid(const std::shared_ptr<IPacket> &packet) const noexcept;
 
         /**
          * @brief Extracts the header from the incoming packet.
@@ -104,14 +102,14 @@ namespace Net
          * @param outHeader Reference to the HeaderData to populate with extracted data.
          * @return True if the header was successfully extracted and validated, false otherwise.
          */
-        bool extractHeader(const Net::IPacket &packet, HeaderData &outHeader) const noexcept;
+        bool extractHeader(const IPacket &packet, HeaderData &outHeader) const noexcept;
 
         /**
          * @brief Resolves the session ID for the incoming packet.
          * @param packet The incoming IPacket to resolve the session for.
          * @return The session ID associated with the packet, or -1 if resolution fails.
          */
-        int resolveSession(const Net::IPacket &packet);
+        int resolveSession(const IPacket &packet) const;
 
         /**
          * @brief Dispatches the packet to the appropriate handler based on its type.
@@ -120,9 +118,10 @@ namespace Net
          * @param payload Pointer to the payload data of the packet.
          * @param payloadSize Size of the payload data.
          */
-        void dispatchPacket(int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize);
+        void dispatchPacket(
+            int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
 
-        std::shared_ptr<Net::Server::SessionManager>
+        std::shared_ptr<Server::SessionManager>
             _sessions;                       ///> Pointer to the SessionManager for managing player sessions.
         std::shared_ptr<IMessageSink> _sink; ///> Pointer to the IMessageSink for handling routed messages.
 

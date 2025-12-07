@@ -10,6 +10,14 @@
 #include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <errno.h>
+    #include <fcntl.h>
+    #include <unistd.h>
+#endif
 
 /**
  * @namespace Server

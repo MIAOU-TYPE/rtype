@@ -41,15 +41,15 @@ namespace Network
     std::shared_ptr<Net::IPacket> PacketFactory::makeInput(
         uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept
     {
-        InputPacket inputPacket;
-        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputPacket));
+        InputData inputPacket;
+        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputData));
         inputPacket.entity = htonl(entity);
         inputPacket.dx = htonf(dx);
         inputPacket.dy = htonf(dy);
         inputPacket.shooting = shooting;
 
         try {
-            return makePacket<InputPacket>(inputPacket);
+            return makePacket<InputData>(inputPacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeInput} " << e.what() << std::endl;
             return nullptr;

@@ -17,8 +17,8 @@
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "IPacket.hpp"
-#include "InputPacket.hpp"
-#include "TypesPacket.hpp"
+#include "InputData.hpp"
+#include "TypesData.hpp"
 
 /**
  * @namespace Net

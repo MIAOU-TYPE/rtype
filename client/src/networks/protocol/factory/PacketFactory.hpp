@@ -16,8 +16,8 @@
 #include "Endian.hpp"
 #include "HeaderData.hpp"
 #include "IPacket.hpp"
-#include "InputPacket.hpp"
-#include "TypesPacket.hpp"
+#include "InputData.hpp"
+#include "TypesData.hpp"
 
 namespace Network
 {

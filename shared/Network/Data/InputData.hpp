@@ -19,7 +19,7 @@ namespace Network
  */
 #pragma pack(push, 1)
 
-    struct InputPacket {
+    struct InputData {
         HeaderData header; ///> Common packet header
         uint32_t entity;     ///> Entity ID to control (network byte order)
         uint32_t dx;         ///> Horizontal movement axis (-1.0 to 1.0)

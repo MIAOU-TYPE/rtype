@@ -28,7 +28,7 @@ namespace Game
      * - expose ECS registry for systems to operate on
      */
     class World : public IGameWorld {
-    public:
+      public:
         /**
          * @brief Construct a new World.
          *
@@ -41,7 +41,10 @@ namespace Game
          *
          * @return Reference to the registry containing all components/entities.
          */
-        Ecs::Registry &registry() override { return _registry; }
+        Ecs::Registry &registry() override
+        {
+            return _registry;
+        }
 
         /**
          * @brief Create a new player entity with default components.
@@ -63,7 +66,7 @@ namespace Game
          */
         void destroyEntity(Ecs::Entity ent) override;
 
-    private:
+      private:
         Ecs::Registry _registry; ///< The ECS registry (component storage).
     };
 } // namespace Game

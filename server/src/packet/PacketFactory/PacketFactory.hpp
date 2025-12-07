@@ -12,7 +12,7 @@
 #include <memory>
 #include <utility>
 #include "DamageData.hpp"
-#include "DefaultPacket.hpp"
+#include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "EntityCreatePacket.hpp"
 #include "EntityDestroyPacket.hpp"

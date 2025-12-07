@@ -29,11 +29,11 @@ namespace Net::Factory
 
     std::shared_ptr<IPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
     {
-        DefaultPacket defaultPacket;
-        defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultPacket));
+        DefaultData defaultPacket;
+        defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultData));
 
         try {
-            auto packet = makePacket<DefaultPacket>(addr, defaultPacket);
+            auto packet = makePacket<DefaultData>(addr, defaultPacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeDefault} " << e.what() << std::endl;

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** DefaultPacket
+** DefaultData
 */
 
 #pragma once
@@ -10,7 +10,7 @@
 
 #pragma pack(push, 1)
 
-struct DefaultPacket {
+struct DefaultData {
     HeaderPacket header;
 };
 

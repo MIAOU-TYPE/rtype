@@ -27,11 +27,11 @@ namespace Network
 
     std::shared_ptr<Net::IPacket> PacketFactory::makeBase(uint8_t flag) const noexcept
     {
-        DefaultPacket basePacket;
-        basePacket.header = makeHeader(flag, sizeof(DefaultPacket));
+        DefaultData basePacket;
+        basePacket.header = makeHeader(flag, sizeof(DefaultData));
 
         try {
-            return makePacket<DefaultPacket>(basePacket);
+            return makePacket<DefaultData>(basePacket);
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makePing} " << e.what() << std::endl;
             return nullptr;

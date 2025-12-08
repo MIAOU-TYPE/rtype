@@ -10,10 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <thread>
-#include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "PacketRouter.hpp"
 #include "SessionManager.hpp"
+#include "game/gameServer/GameServer.hpp"
 #include <condition_variable>
 
 namespace Net::Thread
@@ -28,7 +28,7 @@ namespace Net::Thread
          * @brief Construct a new Server Runtime object
          * @param server A shared pointer to the server instance
          */
-        explicit ServerRuntime(std::shared_ptr<Server::IServer> &server);
+        explicit ServerRuntime(const std::shared_ptr<Server::IServer> &server);
 
         /**
          * @brief Destroy the Server Runtime object
@@ -56,17 +56,16 @@ namespace Net::Thread
         /**
          * @brief Thread function to handle receiving packets
          */
-        void runReceiver();
+        void runReceiver() const;
 
         /**
          * @brief Thread function to handle processing packets
          */
-        void runProcessor();
+        void runProcessor() const;
 
-        std::shared_ptr<Net::Server::IServer> _server; ///> The server instance
-
+        std::shared_ptr<Net::Server::IServer> _server;           ///> The server instance
         std::shared_ptr<Server::SessionManager> _sessionManager; ///> Manages client sessions
-        std::shared_ptr<IMessageSink> _sink;                     ///> Message sink for handling incoming messages
+        std::shared_ptr<Game::GameServer> _gameServer;           ///> The game server logic
         std::shared_ptr<PacketRouter> _packetRouter;             ///> Routes incoming packets to appropriate handlers
 
         std::thread _receiverThread;  ///> Thread for receiving packets

@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
 # -----------------------------
 if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
     target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
-endif()
+endif ()
 
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${SERVER_INCLUDE_DIRS}
@@ -46,14 +46,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
-endif()
+endif ()
 
 # ------------------------------
 # WARNINGS
 # ------------------------------
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-else()
+else ()
     target_compile_options(${PROJECT_NAME} PRIVATE
             -Wall
             -Wextra
@@ -69,7 +69,7 @@ else()
             -Wdouble-promotion
             -Wformat=2
     )
-endif()
+endif ()
 
 # ------------------------------
 # DEPENDENCIES
@@ -85,7 +85,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
 # ------------------------------
@@ -93,7 +93,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
+        ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
 
 # ------------------------------
@@ -120,4 +120,4 @@ set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND BUILD_TESTING)
     add_subdirectory(tests)
-endif()
+endif ()

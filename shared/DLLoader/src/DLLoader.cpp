@@ -76,10 +76,10 @@ std::string DLLoader::getLibraryPath(const std::string &name, const std::string 
     return dllName.string();
 #else
     return baseDir + "lib" + name +
-#if defined(__APPLE__)
-           ".dylib";
-#else
-           ".so";
-#endif
+    #if defined(__APPLE__)
+        ".dylib";
+    #else
+        ".so";
+    #endif
 #endif
 }

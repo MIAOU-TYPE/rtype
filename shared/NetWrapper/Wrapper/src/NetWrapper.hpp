@@ -146,6 +146,7 @@ namespace Net
          * @return 0 on success, or an error code on failure.
          */
         int initNetwork();
+
       private:
         std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.
 

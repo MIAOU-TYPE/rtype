@@ -135,4 +135,3 @@ inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<T> &pkt)
     }
     return os;
 }
-

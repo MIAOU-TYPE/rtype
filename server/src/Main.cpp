@@ -5,34 +5,36 @@
 ** Main
 */
 
-#include <iostream>
 #include <string>
+#include "ServerRuntime.hpp"
 #include "SignalHandler.hpp"
 #include "UDPServer.hpp"
 
+static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Net::Thread::ServerRuntime &runtime)
+{
+    std::shared_ptr<Signal::SignalHandler> signalHandler = std::make_shared<Signal::SignalHandler>();
+
+    signalHandler->start();
+    signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
+        runtime.stop();
+    });
+    return signalHandler;
+}
+
 int main(void)
 {
-    std::string ip = "127.0.0.1";
-    uint16_t port = 8080;
-
-    std::shared_ptr<Server::IServer> server = std::make_shared<Server::UDPServer>();
-    Signal::SignalHandler signalHandler;
-    signalHandler.start();
-    signalHandler.registerCallback(Signal::SignalType::Interrupt, [&server]() {
-        if (server->isRunning())
-            server->setRunning(false);
-    });
     try {
-        server->configure(ip, port);
-        server->start();
-        while (server->isRunning())
-            server->readPackets();
-        server->stop();
-    } catch (const Server::ServerError &e) {
-        std::cerr << "{Main}" << e.what() << std::endl;
-        signalHandler.stop();
-        return 1;
+        std::shared_ptr<Net::Server::IServer> server = std::make_shared<Net::Server::UDPServer>();
+        Net::Thread::ServerRuntime runtime(server);
+        std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(runtime);
+
+        server->configure("127.0.0.1", 8080);
+        runtime.start();
+        runtime.wait();
+        signalHandler->stop();
+    } catch (const std::exception &e) {
+        std::cerr << "{main}: " << e.what() << std::endl;
+        return 84;
     }
-    signalHandler.stop();
     return 0;
 }

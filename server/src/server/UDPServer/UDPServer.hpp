@@ -7,12 +7,12 @@
 
 #pragma once
 #include <iostream>
+#include <mutex>
 #include <string>
-
 #include "AServer.hpp"
 #include "NetWrapper.hpp"
-#include "RingBuffer.hpp"
-#include "UDPPacket.hpp"
+#include "RingBuffer/RingBuffer.hpp"
+#include "UDPPacket/UDPPacket.hpp"
 #include "socketParams.hpp"
 
 /**
@@ -20,7 +20,7 @@
  * @brief Contains all server-related classes and interfaces.
  * @note This namespace is used to group all server-related functionality.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class UDPServer
@@ -62,13 +62,23 @@ namespace Server
          * @brief Sends a packet via the UDP server.
          * @return true if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const Net::IServerPacket &pkt) override;
+        bool sendPacket(const Net::IPacket &pkt) override;
+
+        /**
+         * @brief Pops a received packet from the server's packet queue.
+         * @param pkt Shared pointer to a Net::IPacket where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the queue was empty.
+         */
+        bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
 
       private:
         void setupSocket(const Net::SocketConfig &params,
             const Net::SocketOptions &optParams);        ///> Sets up the UDP socket with specified parameters
         void bindSocket(Net::family_t family = AF_INET); ///> Binds the UDP socket to an address
 
-        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer; ///> Ring buffer to store received packets
+        Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _rxBuffer; ///> Ring buffer to store received packets
+
+        Net::NetWrapper _netWrapper; ///> Network wrapper for socket operations
+        std::mutex _rxMutex;         ///> Mutex for synchronizing access to the receive buffer
     };
-} // namespace Server
+} // namespace Net::Server

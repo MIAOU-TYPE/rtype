@@ -7,16 +7,7 @@
 
 #include "AServer.hpp"
 
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-#else
-    #include <errno.h>
-    #include <fcntl.h>
-    #include <unistd.h>
-#endif
-
-using namespace Server;
+using namespace Net::Server;
 
 void AServer::configure(const std::string &ip, uint16_t port)
 {
@@ -52,12 +43,12 @@ void AServer::setNonBlocking(bool nonBlocking)
 
 bool AServer::isRunning() const noexcept
 {
-    return _isRunning;
+    return _isRunning.load();
 }
 
 void AServer::setRunning(bool running) noexcept
 {
-    _isRunning = running;
+    _isRunning.store(running);
 }
 
 bool AServer::isStoredIpCorrect() const noexcept

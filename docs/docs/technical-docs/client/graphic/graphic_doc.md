@@ -1,39 +1,38 @@
-# Documentation technique SFML - Client R-Type
+# Overview
 
-## Vue d'ensemble
+## **Architecture**
 
-SFML (Simple and Fast Multimedia Library) est utilisé dans le client R-Type pour gérer les aspects graphiques et d'entrées utilisateur. Cette documentation détaille l'implémentation et l'architecture des modules SFML dans le projet.
-
-## Architecture
-
-L'intégration SFML suit un pattern d'abstraction avec des interfaces permettant la flexibilité et la testabilité :
+The SFML integration follows an abstraction pattern using interfaces to ensure flexibility, testability, and decoupling.
 
 ```
 Graphics/
 ├── interfaces/
-│   ├── IRenderer.hpp         # Interface de rendu
-│   ├── ISprite.hpp          # Interface sprite
-│   └── ITextureManager.hpp  # Interface gestion textures
+│   ├── IRenderer.hpp         # Rendering interface
+│   ├── ISprite.hpp           # Sprite interface
+│   └── ITextureManager.hpp   # Texture management interface
 └── SFML/
-    ├── SFMLRenderer.hpp/.cpp        # Implémentation rendu SFML
-    ├── SFMLSpriteManagement.hpp/.cpp # Gestion sprites SFML
-    └── SFMLTextureManager.hpp/.cpp   # Gestion textures SFML
+    ├── SFMLRenderer.hpp/.cpp         # SFML rendering implementation
+    ├── SFMLSpriteManagement.hpp/.cpp # Sprite wrappers using SFML
+    └── SFMLTextureManager.hpp/.cpp   # SFML texture loader & cache
 
 Input/
 ├── interfaces/
-│   └── IInputHandler.hpp    # Interface gestion entrées
-└── SFMLInputHandler.hpp/.cpp # Implémentation entrées SFML
+│   └── IInputHandler.hpp     # Input handling interface
+└── SFMLInputHandler.hpp/.cpp # SFML input implementation
 ```
 
-## Module de Rendu (SFMLRenderer)
+---
 
-### Responsabilités
-- Création et gestion de la fenêtre de jeu
-- Rendu des sprites et éléments graphiques
-- Gestion des événements de fenêtre
-- Contrôle du cycle de rendu (clear/display)
+## **Rendering Module (SFMLRenderer)**
 
-### Interface publique
+### **Responsibilities**
+
+* Creation and management of the game window
+* Rendering sprites and graphical elements
+* Processing window events
+* Managing the render cycle (clear/draw/display)
+
+### **Public Interface**
 
 ```cpp
 class SFMLRenderer : public IRenderer {
@@ -52,30 +51,36 @@ public:
 };
 ```
 
-### Fonctionnalités clés
+### **Key Features**
 
-#### Gestion de la fenêtre
-- **Création** : `createWindow()` initialise une `sf::RenderWindow` avec les dimensions et titre spécifiés
-- **État** : `isOpen()` vérifie si la fenêtre est active
-- **Fermeture** : `close()` ferme proprement la fenêtre
+#### **Window Management**
 
-#### Cycle de rendu
-- **Effacement** : `clear()` nettoie le buffer de rendu
-- **Affichage** : `display()` présente le frame rendu à l'écran
-- **Dessin** : `drawSprite()` et `renderSprite()` pour afficher les éléments graphiques
+* **Creation** → `createWindow()` initializes an `sf::RenderWindow`
+* **State** → `isOpen()` checks if the window is still active
+* **Close** → `close()` cleanly closes the window
 
-#### Gestion des événements
-- **Polling** : `pollEvent()` récupère les événements système
-- **Détection fermeture** : `isWindowCloseEvent()` identifie les événements de fermeture
+#### **Rendering Cycle**
 
-## Module de Gestion des Sprites (SFMLSprite)
+* `clear()` clears the render buffer
+* `display()` shows the rendered frame
+* `drawSprite()` / `renderSprite()` draw graphical objects
 
-### Responsabilités
-- Encapsulation des sprites SFML
-- Gestion des transformations (position, échelle)
-- Configuration des rectangles de texture (pour les animations/atlas)
+#### **Event Handling**
 
-### Interface publique
+* `pollEvent()` retrieves OS window events
+* `isWindowCloseEvent()` detects quit requests
+
+---
+
+## **Sprite Management Module (SFMLSprite)**
+
+### **Responsibilities**
+
+* Provide a wrapper around SFML sprites
+* Manage transformations (position, scale, etc.)
+* Handle texture rectangle setup (for animation / atlases)
+
+### **Public Interface**
 
 ```cpp
 class SFMLSprite : public ISprite {
@@ -90,25 +95,30 @@ public:
 };
 ```
 
-### Fonctionnalités clés
+### **Key Features**
 
-#### Transformations
-- **Position** : `setPosition()` définit les coordonnées x,y du sprite
-- **Échelle** : `setScale()` applique un facteur de zoom
-- **Dimensions** : `getWidth()` et `getHeight()` retournent les dimensions
+#### **Transformations**
 
-#### Gestion des textures
-- **Rectangle de texture** : `setTextureRect()` définit la région de texture à afficher
-- **Accès SFML** : `getSFMLSprite()` retourne le sprite SFML natif
+* Move sprite → `setPosition()`
+* Scale sprite → `setScale()`
+* Query dimensions → `getWidth()`, `getHeight()`
 
-## Module de Gestion des Textures (SFMLTextureManager)
+#### **Texture Handling**
 
-### Responsabilités
-- Chargement et mise en cache des textures
-- Création de sprites à partir des textures
-- Optimisation mémoire par réutilisation des textures
+* `setTextureRect()` selects a portion of a texture
+* `getSFMLSprite()` exposes the underlying SFML sprite
 
-### Interface publique
+---
+
+## **Texture Management Module (SFMLTextureManager)**
+
+### **Responsibilities**
+
+* Load and cache textures
+* Create sprites based on cached textures
+* Reduce memory usage through texture reuse
+
+### **Public Interface**
 
 ```cpp
 class SFMLTextureManager : public ITextureManager {
@@ -120,25 +130,30 @@ private:
 };
 ```
 
-### Fonctionnalités clés
+### **Key Features**
 
-#### Gestion des textures
-- **Chargement** : `loadTexture()` charge une texture depuis un fichier
-- **Cache** : Les textures sont stockées dans une `std::unordered_map` pour éviter les rechargements
-- **Création sprites** : `createSprite()` génère des sprites à partir des textures chargées
+#### **Texture Handling**
 
-#### Optimisation
-- **Réutilisation** : Une texture chargée peut servir à créer plusieurs sprites
-- **Gestion mémoire** : Les textures sont automatiquement détruites avec le manager
+* `loadTexture()` loads textures from disk
+* Textures are stored in `unordered_map` for reuse
+* `createSprite()` returns a sprite bound to an existing texture
 
-## Module de Gestion des Entrées (SFMLInputHandler)
+#### **Optimizations**
 
-### Responsabilités
-- Traitement des événements clavier/souris
-- Abstraction des codes de touches SFML
-- Interface unifiée pour la gestion des entrées
+* Avoid duplicate file loads
+* Automatic cleanup when manager is destroyed
 
-### Interface publique
+---
+
+## **Input Handling Module (SFMLInputHandler)**
+
+### **Responsibilities**
+
+* Process keyboard/mouse events
+* Map internal key enums to SFML key codes
+* Provide a unified interface for game input
+
+### **Public Interface**
 
 ```cpp
 class SFMLInputHandler : public IInputHandler {
@@ -148,25 +163,25 @@ public:
 };
 ```
 
-### Fonctionnalités clés
+### **Key Features**
 
-#### Gestion des événements
-- **Traitement** : `handleEvent()` process les événements SFML
-- **État clavier** : `isKeyPressed()` vérifie l'état d'une touche
+#### **Event Processing**
 
-#### Mapping des touches
-Le système mappe les énumérations internes vers les codes SFML :
+* `handleEvent()` processes SFML input events
+* `isKeyPressed()` checks current key state
+
+#### **Key Mapping Example**
 
 ```cpp
-// Exemple de mapping
 case Key::A: sfmlKey = sf::Keyboard::A; break;
 case Key::SPACE: sfmlKey = sf::Keyboard::Space; break;
-// ... autres mappings
 ```
 
-## Intégration dans la Boucle de Jeu
+---
 
-### Cycle principal (GameClient::run())
+## **Game Loop Integration**
+
+### **Main Loop (GameClient::run)**
 
 ```cpp
 void GameClient::run()
@@ -175,7 +190,7 @@ void GameClient::run()
     const float UPDATE_INTERVAL_MS = 16.67f; // ~60 FPS
     
     while (_renderer->isOpen()) {
-        // 1. Gestion des événements
+        // 1. Event handling
         sf::Event event;
         while (_renderer->pollEvent(event)) {
             if (_renderer->isWindowCloseEvent(event)) {
@@ -184,10 +199,10 @@ void GameClient::run()
             _inputHandler->handleEvent(event);
         }
         
-        // 2. Mise à jour logique du jeu
+        // 2. Game logic update
         // ...
         
-        // 3. Rendu
+        // 3. Rendering
         _renderer->clear();
         _gameScene->render(*_renderer);
         _renderer->display();
@@ -195,87 +210,105 @@ void GameClient::run()
 }
 ```
 
-### Synchronisation
-- **Clock SFML** : `sf::Clock` pour mesurer le temps écoulé
-- **Fréquence fixe** : Boucle ciblent ~60 FPS (16.67ms par frame)
+### **Timing**
 
-## Gestion des Ressources
+* `sf::Clock` used to measure elapsed time
+* Loop targets ~60 FPS (16.67ms)
 
-### Structure des Assets
+---
+
+## **Resource Management**
+
+### **Asset Structure**
 
 ```
 client/assets/
-├── sprites/          # Textures et images
+├── sprites/
 │   ├── player.png
 │   ├── enemies/
 │   └── ui/
-├── sounds/           # Fichiers audio
-└── fonts/           # Polices de caractères
+├── sounds/
+└── fonts/
 ```
 
-### Chargement des textures
+### **Texture Loading Example**
 
 ```cpp
-// Initialisation du gestionnaire
 auto textureManager = std::make_unique<SFMLTextureManager>();
 
-// Chargement des textures
 textureManager->loadTexture("assets/sprites/player.png");
 textureManager->loadTexture("assets/sprites/enemy.png");
 
-// Création de sprites
 auto playerSprite = textureManager->createSprite("assets/sprites/player.png");
 auto enemySprite = textureManager->createSprite("assets/sprites/enemy.png");
 ```
 
-## Gestion des Erreurs
+---
 
-### Types d'erreurs courantes
-- **Fichiers manquants** : Textures introuvables
-- **Format invalide** : Fichiers corrompus ou format non supporté
-- **Mémoire insuffisante** : Textures trop volumineuses
-- **Fenêtre invalide** : Problèmes de contexte graphique
+## **Error Handling**
 
-### Stratégies de récupération
-- **Validation** : Vérification systématique des retours de fonction SFML
-- **Fallback** : Textures par défaut en cas d'échec de chargement
-- **Logging** : Enregistrement détaillé des erreurs pour le débogage
+### **Common Issues**
 
-## Performance et Optimisations
+* Missing texture files
+* Unsupported/invalid formats
+* Insufficient VRAM for large textures
+* Invalid graphics context
 
-### Recommandations
-- **Batch rendering** : Grouper les appels de rendu similaires
-- **Texture atlasing** : Combiner plusieurs petites textures en une grande
-- **Culling** : Ne pas rendre les éléments hors écran
-- **Pool d'objets** : Réutiliser les sprites plutôt que les recréer
+### **Recovery Strategies**
 
-### Profilage
-- **Compteurs FPS** : Surveillance des performances en temps réel
-- **Temps de rendu** : Mesure du temps passé dans chaque phase
-- **Utilisation mémoire** : Monitoring de l'usage des textures
+* Validate all SFML API calls
+* Use fallback textures
+* Log errors for debugging
 
-## Configuration et Paramètres
+---
 
-### Paramètres de fenêtre
-- **Résolution** : Configurable via les paramètres du client
-- **Mode plein écran** : Support du basculement windowed/fullscreen
-- **VSync** : Synchronisation verticale optionnelle
+## **Performance & Optimization**
 
-### Paramètres de rendu
-- **Anti-aliasing** : Configuration du lissage
-- **Filtrage des textures** : Linear/Nearest selon les besoins
-- **Format de couleur** : Support RGBA 32-bits
+### **Recommendations**
 
-## Debugging et Outils de Développement
+* **Batch rendering** to minimize draw calls
+* **Texture atlases** to reduce texture switching
+* **Culling** to skip off-screen objects
+* **Object pooling** to avoid constant allocation
 
-### Informations de debug
-- **Compteurs de rendu** : Nombre de sprites dessinés par frame
-- **État des textures** : Liste des textures chargées en mémoire
-- **Événements d'entrée** : Log des actions utilisateur
+### **Profiling Tools**
 
-### Outils utiles
-- **SFML Inspector** : Visualisation des ressources chargées
-- **Performance overlay** : Affichage temps réel des métriques
-- **Texture viewer** : Prévisualisation des assets chargés
+* FPS counters
+* Render time metrics
+* Texture memory usage reports
 
-Cette architecture SFML modulaire permet une séparation claire des responsabilités tout en conservant les performances et la flexibilité nécessaires pour un jeu comme R-Type.
+---
+
+## **Configuration & Settings**
+
+### **Window Options**
+
+* Resolution (configurable)
+* Fullscreen toggle
+* VSync option
+
+### **Rendering Options**
+
+* Anti-aliasing
+* Texture filtering: Linear / Nearest
+* RGBA 32-bit support
+
+---
+
+## **Debugging & Development Tools**
+
+### **Debug Info**
+
+* Render counters
+* List of loaded textures
+* Input event logging
+
+### **Helpful Tools**
+
+* SFML Inspector
+* Performance overlay
+* Texture viewer
+
+---
+
+This modular SFML architecture ensures a clean separation of responsibilities while delivering the flexibility and performance required for a fast-paced game like R-Type.

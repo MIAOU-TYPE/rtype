@@ -6,7 +6,6 @@
 */
 
 #include "InputEvents.hpp"
-#include <algorithm>
 
 using namespace Events;
 

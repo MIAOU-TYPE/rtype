@@ -28,6 +28,15 @@ add_executable(${PROJECT_NAME}
         ${SERVER_SOURCES}
 )
 
+# -----------------------------
+# fix for macOS + Homebrew LLVM bug
+# (__hash_memory missing symbol)
+# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# -----------------------------
+if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
+    target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
+endif ()
+
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${SERVER_INCLUDE_DIRS}
 )
@@ -37,14 +46,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
-endif()
+endif ()
 
 # ------------------------------
 # WARNINGS
 # ------------------------------
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-else()
+else ()
     target_compile_options(${PROJECT_NAME} PRIVATE
             -Wall
             -Wextra
@@ -60,7 +69,37 @@ else()
             -Wdouble-promotion
             -Wformat=2
     )
-endif()
+endif ()
+
+# ------------------------------
+# DEPENDENCIES
+# ------------------------------
+
+# ------------------------------
+# Buffer
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
+
+# ------------------------------
+# NetWrapperLib
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+)
+
+# ------------------------------
+# NetPacketLib
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
+)
+
+# ------------------------------
+# NetProtocol
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
 # ------------------------------
 # OUTPUT LOCATION
@@ -79,5 +118,6 @@ set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIRS} PARENT_SCOPE)
 # ------------------------------
 # TESTS
 # ------------------------------
-enable_testing()
-add_subdirectory(tests)
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND BUILD_TESTING)
+    add_subdirectory(tests)
+endif ()

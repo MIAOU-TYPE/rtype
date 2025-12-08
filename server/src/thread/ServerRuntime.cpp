@@ -18,7 +18,7 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
 
 ServerRuntime::~ServerRuntime()
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;
@@ -26,7 +26,7 @@ ServerRuntime::~ServerRuntime()
 
 void ServerRuntime::wait()
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::unique_lock lock(_mutex);
     _cv.wait(lock, [this]() {
         return _stopRequested;
     });
@@ -42,7 +42,7 @@ void ServerRuntime::start()
 void ServerRuntime::stop()
 {
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard lock(_mutex);
         _stopRequested = true;
     }
     _cv.notify_all();

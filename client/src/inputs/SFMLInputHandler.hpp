@@ -117,8 +117,8 @@ namespace Input
          */
         void handleKeyboardEvent(const sf::Event &event);
 
-        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;
-        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {};
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;           ///> Input event manager
+        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {}; ///> Key to action mappings
         std::unordered_set<sf::Keyboard::Key> _pressedKeys = {}; ///> Track currently pressed keys to filter repeats
     };
 

@@ -7,12 +7,12 @@
 
 #pragma once
 
+#include "../../network/SessionManager/Manager/SessionManager.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
 #include "MovementSystem.hpp"
 #include "PacketFactory.hpp"
-#include "SessionManager.hpp"
 
 namespace Game
 {

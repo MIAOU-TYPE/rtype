@@ -46,11 +46,12 @@ namespace Game
 
     void GameServer::onPing(const int sessionId)
     {
-        const sockaddr_in *addr = _sessions->getAddress(sessionId);
-        if (!addr)
+        const Net::Server::AddressIn *addrIn = _sessions->getAddress(sessionId);
+        if (!addrIn)
             return;
+        sockaddr_in addr = *addrIn;
 
-        if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
+        if (const auto pkt = _factory.makeDefault(addr, Net::Protocol::PONG))
             _server->sendPacket(*pkt);
     }
 

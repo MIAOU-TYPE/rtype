@@ -37,18 +37,18 @@ void SFMLRenderer::display()
     _window.display();
 }
 
-bool SFMLRenderer::pollEvent(sf::Event &event)
+bool SFMLRenderer::pollEvent(std::shared_ptr<IEvent> &event)
 {
     if (auto opt = _window.pollEvent()) {
-        event = *opt;
+        event = std::make_shared<SFMLEvent>(*opt);
         return true;
     }
     return false;
 }
 
-bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const
+bool SFMLRenderer::isWindowCloseEvent(const IEvent &event) const
 {
-    return event.is<sf::Event::Closed>();
+    return event.isType(EventType::Closed);
 }
 
 void SFMLRenderer::drawSprite(const sf::Sprite &sprite)

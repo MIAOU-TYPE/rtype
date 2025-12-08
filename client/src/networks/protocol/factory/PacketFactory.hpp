@@ -12,12 +12,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "IClientPacket.hpp"
-#include "PacketBase.hpp"
-#include "PacketHeader.hpp"
-#include "PacketInput.hpp"
-#include "PacketTypes.hpp"
+#include "HeaderData.hpp"
+#include "IPacket.hpp"
+#include "InputData.hpp"
+#include "TypesData.hpp"
 
 namespace Network
 {
@@ -58,9 +58,9 @@ namespace Network
       public:
         /**
          * @brief Construct a new PacketFactory object
-         * @param packet A shared pointer to an IClientPacket used as a template for creating packets.
+         * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit PacketFactory(const std::shared_ptr<IClientPacket> &packet);
+        explicit PacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
          * @brief Destroy the PacketFactory object
@@ -72,7 +72,7 @@ namespace Network
          * @param flag The flag indicating the type of base packet
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<IClientPacket> makeBase(uint8_t flag) const noexcept;
+        std::shared_ptr<Net::IPacket> makeBase(uint8_t flag) const noexcept;
 
         /**
          * @brief Creates an input packet
@@ -82,7 +82,7 @@ namespace Network
          * @param shooting Shooting action flag
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<IClientPacket> makeInput(uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept;
+        std::shared_ptr<Net::IPacket> makeInput(uint32_t entity, float dx, float dy, uint8_t shooting) const noexcept;
 
       private:
         /**
@@ -91,19 +91,19 @@ namespace Network
          * @param size The size of the packet
          * @return The constructed PacketHeader
          */
-        static PacketHeader makeHeader(uint8_t type, uint16_t size) noexcept;
+        static HeaderData makeHeader(uint8_t type, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given packet data
          * @tparam Type The type of the packet data (struct representing the packet)
          * @param packetData The data to be included in the packet
-         * @return A shared pointer to the created IClientPacket
+         * @return A shared pointer to the created IPacket
          */
         template <typename Type>
-        std::shared_ptr<IClientPacket> makePacket(const Type &packetData) const;
+        std::shared_ptr<Net::IPacket> makePacket(const Type &packetData) const;
 
-        std::shared_ptr<IClientPacket> _packet = nullptr; ///> Template packet for cloning
-        static constexpr uint8_t VERSION = 1;             ///> Protocol version
+        std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Template packet for cloning
+        static constexpr uint8_t VERSION = 1;            ///> Protocol version
     };
 
 } // namespace Network

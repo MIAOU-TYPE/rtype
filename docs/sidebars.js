@@ -23,6 +23,10 @@ module.exports = {
             'technical-docs/server/engine/audio',
             'technical-docs/server/engine/physics',
             'technical-docs/server/engine/ai',
+            'technical-docs/server/engine/game-server',
+            'technical-docs/server/engine/systems',
+            'technical-docs/server/engine/world',
+            'technical-docs/server/engine/runtime-integration',
           ],
         },
         {

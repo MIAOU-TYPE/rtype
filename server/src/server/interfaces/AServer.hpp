@@ -10,12 +10,20 @@
 #include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <errno.h>
+    #include <fcntl.h>
+    #include <unistd.h>
+#endif
 
 /**
  * @namespace Server
  * @brief Contains all server-related classes and interfaces.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class AServer
@@ -75,7 +83,7 @@ namespace Server
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const Net::IServerPacket &pkt) override = 0;
+        virtual bool sendPacket(const Net::IPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -91,10 +99,10 @@ namespace Server
 
         /**
          * @brief Pops a received packet from the server's packet queue.
-         * @param pkt Reference to a Net::IServerPacket where the popped packet will be stored.
+         * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        virtual bool popPacket(std::shared_ptr<Net::IServerPacket> &pkt) override = 0;
+        virtual bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override = 0;
 
       protected:
         std::string _ip = "";                ///> IP address the server is bound to
@@ -103,4 +111,4 @@ namespace Server
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor
     };
-} // namespace Server
+} // namespace Net::Server

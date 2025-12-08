@@ -47,7 +47,7 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │   │                        │                            │ │
 │   └───────────────▲────────┴────────────────────────────┘ │
 │                   │                                       │
-│            IServerPacket*                                 │
+│               IPacket                                     │
 │                   │                                       │
 │   ┌───────────────┴─────────────┐     ┌─────────────────┐ │
 │   │        PacketRouter         │     │ SessionManager  │ │
@@ -62,7 +62,7 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │   ┌─────────────────────────────────────────────────────┐ │
 │   │                     UdpServer (IServer)             │ │
 │   │  - socket UDP                                       │ │
-│   │  - recvfrom() → IServerPacket + push RX queue       │ │
+│   │  - recvfrom() → IPacket + push RX queue             │ │
 │   │  - pop TX queue → sendto()                          │ │
 │   └─────────────────────────────────────────────────────┘ │
 └───────────────────────────────────────────────────────────┘
@@ -86,7 +86,7 @@ namespace Server {
 
         /// Send one packet to its destination address.
         /// Returns true on success, false on error.
-        bool sendPacket(const Net::IServerPacket &pkt) override;
+        bool sendPacket(const Net::IPacket &pkt) override;
 
       private:
         /// Create and configure the UDP socket.
@@ -97,7 +97,7 @@ namespace Server {
         void bindSocket(Net::family_t family = AF_INET);
 
         /// Ring buffer used to store received packets.
-        Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer;
+        Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _rxBuffer;
     };
 
 } // namespace Server
@@ -126,11 +126,11 @@ Key points:
 In addition, `UDPServer` defines:
 
 ```cpp
-Buffer::RingBuffer<std::shared_ptr<Net::IServerPacket>> _rxBuffer;
+Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _rxBuffer;
 ```
 
 * It is created with a **fixed capacity** of 1024 packets in the constructor.
-* It stores **shared pointers to `IServerPacket`** (typically `UDPPacket` instances).
+* It stores **shared pointers to `IPacket`** (typically `UDPPacket` instances).
 * When the buffer is full, new packets are **dropped** and a warning is printed.
 
 Invariants:
@@ -300,7 +300,7 @@ After `stop()`:
 ```cpp
 void UDPServer::readPackets()
 {
-    std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
+    std::shared_ptr<Net::IPacket> pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
     recvfrom_return_t received = Net::NetWrapper::recvFrom(
@@ -326,7 +326,7 @@ void UDPServer::readPackets()
 Step-by-step:
 
 1. **Allocate a packet**
-   Create a `std::shared_ptr<Net::IServerPacket>` pointing to a new `UDPPacket`.
+   Create a `std::shared_ptr<Net::IPacket>` pointing to a new `UDPPacket`.
 
 2. **Prepare address length**
    `addrLen` is initialized to `sizeof(sockaddr_in)`.
@@ -360,7 +360,7 @@ Step-by-step:
 
 7. **Debug print**
    `std::cout << pkt << std::endl;`
-   This relies on an overload of `operator<<` for `IServerPacket` or `UDPPacket`, and is useful for debugging.
+   This relies on an overload of `operator<<` for `IPacket` or `UDPPacket`, and is useful for debugging.
 
 Important notes:
 
@@ -379,7 +379,7 @@ while (server.isRunning()) {
 ## 6. Sending packets: `sendPacket()`
 
 ```cpp
-bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt)
 {
     return Net::NetWrapper::sendTo(
                _socketFd,

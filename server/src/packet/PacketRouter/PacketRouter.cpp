@@ -6,15 +6,17 @@
 */
 
 #include "PacketRouter.hpp"
+using namespace Net;
 
-PacketRouter::PacketRouter(const std::shared_ptr<SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
+PacketRouter::PacketRouter(
+    const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {
 }
 
-bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPacket &header) const
+bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header) const
 {
-    if (pkt.size() < sizeof(HeaderPacket)) {
+    if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
         return false;
     }
@@ -25,8 +27,7 @@ bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPac
         return false;
     }
 
-    std::uint16_t declaredSize = ntohs(header.size);
-    if (declaredSize != pkt.size()) {
+    if (const std::uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
         std::cerr << "{PacketRouter} Dropped: size mismatch "
                   << "(header=" << declaredSize << ", actual=" << pkt.size() << ")" << std::endl;
         return false;
@@ -35,28 +36,28 @@ bool PacketRouter::validateHeader(const Net::IServerPacket &pkt, const HeaderPac
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IServerPacket> &packet) const noexcept
+bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) const noexcept
 {
     if (!packet)
         return false;
 
-    if (packet->size() < sizeof(HeaderPacket)) {
+    if (packet->size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter} Dropped: packet too small\n";
         return false;
     }
     return true;
 }
 
-bool PacketRouter::extractHeader(const Net::IServerPacket &packet, HeaderPacket &outHeader) const noexcept
+bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) const noexcept
 {
-    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderPacket));
+    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 
     if (!validateHeader(packet, outHeader))
         return false;
     return true;
 }
 
-int PacketRouter::resolveSession(const Net::IServerPacket &packet)
+int PacketRouter::resolveSession(const IPacket &packet) const
 {
     const sockaddr_in *addr = packet.address();
     if (!addr) {
@@ -67,51 +68,51 @@ int PacketRouter::resolveSession(const Net::IServerPacket &packet)
 }
 
 void PacketRouter::dispatchPacket(
-    int sessionId, const HeaderPacket &header, const uint8_t *payload, std::size_t payloadSize)
+    const int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const
 {
     switch (header.type) {
-        case Net::Factory::CONNECT: handleConnect(sessionId); break;
-        case Net::Factory::INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case Net::Factory::PING: handlePing(sessionId, payload, payloadSize); break;
-        case Net::Factory::DISCONNECT: handleDisconnect(sessionId); break;
+        case Protocol::CONNECT: handleConnect(sessionId); break;
+        case Protocol::INPUT: handleInput(sessionId, payload, payloadSize); break;
+        case Protocol::PING: handlePing(sessionId); break;
+        case Protocol::DISCONNECT: handleDisconnect(sessionId); break;
         default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }
 
-void PacketRouter::handlePacket(const std::shared_ptr<Net::IServerPacket> &packet)
+void PacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 {
     if (!isPacketValid(packet))
         return;
 
-    HeaderPacket header{};
+    HeaderData header{};
     if (!extractHeader(*packet, header))
         return;
 
-    int sessionId = resolveSession(*packet);
+    const int sessionId = resolveSession(*packet);
     if (sessionId < 0)
         return;
 
     const std::uint8_t *raw = packet->buffer();
     const std::size_t total = packet->size();
-    const std::size_t payloadSize = total - sizeof(HeaderPacket);
-    const std::uint8_t *payload = raw + sizeof(HeaderPacket);
+    const std::size_t payloadSize = total - sizeof(HeaderData);
+    const std::uint8_t *payload = raw + sizeof(HeaderData);
 
     dispatchPacket(sessionId, header, payload, payloadSize);
 }
 
-void PacketRouter::handleConnect(int sessionId)
+void PacketRouter::handleConnect(const int sessionId) const
 {
     _sink->onPlayerConnect(sessionId);
 }
 
-void PacketRouter::handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize)
+void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
 {
     if (!payload || payloadSize < 1) {
         std::cerr << "{PacketRouter::handleInput} Dropped INPUT: missing payload" << std::endl;
         return;
     }
 
-    std::uint8_t flags = payload[0];
+    const std::uint8_t flags = payload[0];
 
     PlayerInputMessage msg{};
     msg.up = (flags & 0x01u) != 0;
@@ -120,24 +121,15 @@ void PacketRouter::handleInput(int sessionId, const std::uint8_t *payload, std::
     msg.right = (flags & 0x08u) != 0;
     msg.shoot = (flags & 0x10u) != 0;
 
-    _sink->onPlayerInput(sessionId, msg);
+    _sink->onPlayerInput(sessionId, Game::InputComponent{msg.up, msg.down, msg.left, msg.right, msg.shoot});
 }
 
-void PacketRouter::handlePing(int sessionId, const std::uint8_t *payload, std::size_t payloadSize)
+void PacketRouter::handlePing(const int sessionId) const
 {
-    if (!payload || payloadSize < sizeof(std::uint64_t)) {
-        std::cerr << "{PacketRouter::handlePing} Dropped PING: payload too small" << std::endl;
-        return;
-    }
-
-    std::uint64_t timestampNet = 0;
-    std::memcpy(&timestampNet, payload, sizeof(std::uint64_t));
-    std::uint64_t timestamp = ntohll(timestampNet);
-
-    _sink->onPing(sessionId, timestamp);
+    _sink->onPing(sessionId);
 }
 
-void PacketRouter::handleDisconnect(int sessionId)
+void PacketRouter::handleDisconnect(const int sessionId) const
 {
     _sink->onPlayerDisconnect(sessionId);
     _sessions->removeSession(sessionId);

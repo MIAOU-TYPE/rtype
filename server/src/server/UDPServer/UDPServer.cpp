@@ -7,9 +7,9 @@
 
 #include "UDPServer.hpp"
 
-using namespace Server;
+using namespace Net::Server;
 
-UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 {
     setRunning(false);
 #ifdef _WIN32
@@ -41,7 +41,7 @@ void UDPServer::start()
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            Net::NetWrapper::closeSocket(_socketFd);
+            _netWrapper.closeSocket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
@@ -53,7 +53,7 @@ void UDPServer::stop()
 {
     setRunning(false);
     if (_socketFd != kInvalidSocket) {
-        Net::NetWrapper::closeSocket(_socketFd);
+        _netWrapper.closeSocket(_socketFd);
         _socketFd = kInvalidSocket;
         std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
     }
@@ -66,7 +66,7 @@ void UDPServer::readPackets()
     auto pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
+    recvfrom_return_t received = _netWrapper.recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
@@ -81,14 +81,14 @@ void UDPServer::readPackets()
     }
 }
 
-bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt)
 {
-    return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
-               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
+    return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
+               sizeof(sockaddr_in))
         != -1;
 }
 
-bool UDPServer::popPacket(std::shared_ptr<Net::IServerPacket> &pkt)
+bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
 {
     std::lock_guard<std::mutex> lock(_rxMutex);
 
@@ -100,15 +100,15 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socketHandle sockFd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
+    socketHandle sockFd = _netWrapper.socket(static_cast<int>(params.family), params.type, params.proto);
     if (sockFd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optVal;
-    if (Net::NetWrapper::setSocketOpt(
+    if (_netWrapper.setSocketOpt(
             sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
-        Net::NetWrapper::closeSocket(sockFd);
+        _netWrapper.closeSocket(sockFd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
 

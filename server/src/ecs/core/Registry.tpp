@@ -5,6 +5,8 @@
 ** Registry
 */
 
+#pragma once
+
 namespace Ecs
 {
     template <typename T>

@@ -7,21 +7,13 @@
 
 #include "ServerRuntime.hpp"
 
-ServerRuntime::ServerRuntime(std::shared_ptr<Server::IServer> &server) : _server(server)
+using namespace Net::Thread;
+
+ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
 {
-    // TODO: Une fois le GameServer (implémentation réelle de IMessageSink) en place,
-    //       appeler gameServer->update(dt) ici pour exécuter la logique ECS :
-    //         - appliquer les inputs reçus (InputSystem)
-    //         - déplacer les entités (MovementSystem)
-    //         - gérer collisions & dégâts (CollisionSystem)
-    //         - mettre à jour IA / projectiles
-    //         - générer et envoyer les snapshots aux clients
-    //
-    //       Pour l’instant, tempMessageSink ne fait rien,
-    //       donc cette étape sera activée quand l’ECS sera finalisé.
-    _sink = std::make_shared<tempMessageSink>();
-    _sessionManager = std::make_shared<SessionManager>();
-    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _sink);
+    _sessionManager = std::make_shared<Server::SessionManager>();
+    _gameServer = std::make_shared<Game::GameServer>(_sessionManager, _server);
+    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _gameServer);
 }
 
 ServerRuntime::~ServerRuntime()
@@ -63,29 +55,24 @@ void ServerRuntime::stop()
     _server->stop();
 }
 
-void ServerRuntime::runReceiver()
+void ServerRuntime::runReceiver() const
 {
     while (_server->isRunning()) {
         _server->readPackets();
     }
 }
 
-void ServerRuntime::runProcessor()
+void ServerRuntime::runProcessor() const
 {
+    auto last = std::chrono::steady_clock::now();
     while (_server->isRunning()) {
-        std::shared_ptr<Net::IServerPacket> packet = nullptr;
-        if (_server->popPacket(packet)) {
-            _packetRouter->handlePacket(packet);
-            // TODO:
-            //  When the real GameServer is implemented (instead of tempMessageSink),
-            //  call gameServer->update(dt) here.
-            //  This will:
-            //  - process inputs stored in ECS components
-            //  - tick movement / physics / collision / AI systems
-            //  - compute world state changes
-            //  - generate a snapshot for clients using PacketFactory
-            //
-            //  This is the place where the game simulation runs every frame.
+        if (std::shared_ptr<IPacket> pkt = nullptr; _server->popPacket(pkt)) {
+            _packetRouter->handlePacket(pkt);
+
+            auto now = std::chrono::steady_clock::now();
+            const float dt = std::chrono::duration<float>(now - last).count();
+            last = now;
+            _gameServer->update(dt);
         }
     }
 }

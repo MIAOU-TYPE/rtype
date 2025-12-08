@@ -38,7 +38,8 @@ namespace Game
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
          */
-        GameServer(std::shared_ptr<Net::Server::SessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
+        GameServer(
+            std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
 
         /**
          * @brief Called when a new player connects.
@@ -82,9 +83,9 @@ namespace Game
       private:
         std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
-        std::shared_ptr<Net::Server::SessionManager> _sessions; ///> Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;          ///> Sends packets to clients.
-        Net::Factory::PacketFactory _factory;                   ///> Builds outgoing packets.
+        std::shared_ptr<Net::Server::ISessionManager> _sessions; ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;           ///> Sends packets to clients.
+        Net::Factory::PacketFactory _factory;                    ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
     };

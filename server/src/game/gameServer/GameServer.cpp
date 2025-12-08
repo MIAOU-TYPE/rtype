@@ -11,7 +11,7 @@
 namespace Game
 {
     GameServer::GameServer(
-        std::shared_ptr<Net::Server::SessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
+        std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
         : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _factory(std::make_shared<Net::UDPPacket>())
     {

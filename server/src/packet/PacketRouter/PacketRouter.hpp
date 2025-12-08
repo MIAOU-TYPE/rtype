@@ -12,11 +12,11 @@
 #include <memory>
 
 #include <iostream>
-#include "SessionManager.hpp"
 #include "IMessageSink.hpp"
 #include "IPacket.hpp"
 #include "NetMessages.hpp"
 #include "PacketFactory.hpp"
+#include "SessionManager.hpp"
 
 #ifndef _WIN32
     #include <arpa/inet.h>

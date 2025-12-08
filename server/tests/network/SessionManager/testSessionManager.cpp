@@ -90,11 +90,12 @@ TEST(SessionManagerTests, GetAddressReturnsCorrectPointer)
     sockaddr_in addr = makeAddr(0x10203040, 9999);
     int id = sm.getOrCreateSession(addr);
 
-    const sockaddr_in *stored = sm.getAddress(id);
+    const Net::Server::AddressIn *stored = sm.getAddress(id);
     ASSERT_NE(stored, nullptr);
+    sockaddr_in sin = *stored;
 
-    EXPECT_EQ(stored->sin_addr.s_addr, addr.sin_addr.s_addr);
-    EXPECT_EQ(stored->sin_port, addr.sin_port);
+    EXPECT_EQ(sin.sin_addr.s_addr, addr.sin_addr.s_addr);
+    EXPECT_EQ(sin.sin_port, addr.sin_port);
 }
 
 TEST(SessionManagerTests, UnknownAddressReturnsMinusOne)

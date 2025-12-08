@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
+#include "MovementSystem.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
-#include "MovementSystem.hpp"
 #include "World.hpp"
 
 TEST(MovementSystem, moves_entities_correctly)

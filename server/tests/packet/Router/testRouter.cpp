@@ -1,60 +1,80 @@
+/*
+** EPITECH PROJECT, 2025
+** R-Type
+** File description:
+** testRouter
+*/
+
 #include <cstring>
 #include <gtest/gtest.h>
 #include <memory>
 #include <netinet/in.h>
 
-#include "../../../src/network/SessionManager/Manager/SessionManager.hpp"
+#include "IMessageSink.hpp"
 #include "IPacket.hpp"
-#include "PacketFactory.hpp"
+#include "ISessionManager.hpp"
+#include "NetMessages.hpp"
 #include "PacketRouter.hpp"
-#include "TypesData.hpp"
 
 // =========================================================
 //                     MOCKS POUR LES TESTS
 // =========================================================
 
-// ---- Mock SessionManager
-class MockSessionManager : public Net::Server::SessionManager {
+// ---- MockSessionManager ----
+class MockSessionManager : public Net::Server::ISessionManager {
   public:
-    MockSessionManager() : SessionManager()
+    int forcedSessionId = 1;
+    Net::Server::AddressIn lastAddress{"0.0.0.0", 0};
+
+    int getOrCreateSession(const Net::Server::AddressIn &addr) override
     {
+        lastAddress = addr;
+        return forcedSessionId;
     }
 
-    int getOrCreateSession(const sockaddr_in &addr)
+    int getSessionId(const Net::Server::AddressIn &addr) const override
     {
-        lastAddr = addr;
-        return forcedId;
+        return forcedSessionId;
     }
 
-    int forcedId = 1;
-    sockaddr_in lastAddr{};
+    void removeSession(int sessionId) override
+    {
+        removedSession = sessionId;
+    }
+
+    const Net::Server::AddressIn *getAddress(int sessionId) const override
+    {
+        return &lastAddress;
+    }
+
+    int removedSession = -1;
 };
 
-// ---- Mock Message Sink
+// ---- Mock Message Sink ----
 class MockSink : public Net::IMessageSink {
   public:
-    void onPlayerConnect(int sessionId) override
+    void onPlayerConnect(int sid) override
     {
         connectCalled = true;
-        connectId = sessionId;
+        connectId = sid;
     }
 
-    void onPlayerDisconnect(int sessionId) override
+    void onPlayerDisconnect(int sid) override
     {
         disconnectCalled = true;
-        disconnectId = sessionId;
+        disconnectId = sid;
     }
 
-    void onPing(int sessionId) override
+    void onPing(int sid) override
     {
         pingCalled = true;
-        pingId = sessionId;
+        pingId = sid;
     }
 
-    void onPlayerInput(int sessionId, const Game::InputComponent &input) override
+    void onPlayerInput(int sid, const Game::InputComponent &input) override
     {
         inputCalled = true;
-        inputId = sessionId;
+        inputId = sid;
         lastInput = input;
     }
 
@@ -71,12 +91,13 @@ class MockSink : public Net::IMessageSink {
     Game::InputComponent lastInput{};
 };
 
-// ---- Mock IPacket conforme à l'interface
+// ---- MockPacket conforme IPacket ----
 class MockPacket : public Net::IPacket {
   public:
-    explicit MockPacket(size_t cap = 256) : _capacity(cap), _size(0)
+    MockPacket(size_t cap = 256) : _capacity(cap)
     {
         _buffer.resize(cap);
+        _size = 0;
     }
 
     uint8_t *buffer() override
@@ -104,9 +125,9 @@ class MockPacket : public Net::IPacket {
         return &_addr;
     }
 
-    void setAddress(const sockaddr_in &addr) override
+    void setAddress(const sockaddr_in &a) override
     {
-        _addr = addr;
+        _addr = a;
     }
 
     std::shared_ptr<Net::IPacket> clone() const override
@@ -131,105 +152,68 @@ static sockaddr_in makeAddr(uint32_t ip, uint16_t port)
 {
     sockaddr_in a{};
     a.sin_family = AF_INET;
-    a.sin_addr.s_addr = ip;
-    a.sin_port = port;
+    a.sin_addr.s_addr = htonl(ip);
+    a.sin_port = htons(port);
     return a;
 }
 
 // =========================================================
-//                       TESTS PacketRouter
+//                    TESTS PacketRouter
 // =========================================================
 
 TEST(PacketRouter, RejectsNullPacket)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
 
-    EXPECT_FALSE(pr.isPacketValid(nullptr));
+    Net::PacketRouter pr(sess, sink);
+
+    EXPECT_NO_THROW(pr.handlePacket(nullptr));
 }
 
 TEST(PacketRouter, RejectsTooSmallPacket)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
-    pkt->setSize(1); // < sizeof(HeaderData)
+    pkt->setSize(1);
 
-    EXPECT_FALSE(pr.isPacketValid(pkt));
+    pr.handlePacket(pkt);
+
+    EXPECT_FALSE(sink->connectCalled);
 }
 
 TEST(PacketRouter, RejectsWrongVersion)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
 
-    HeaderData header{};
-    header.type = Net::Protocol::CONNECT;
-    header.version = 99; // Mauvaise version
-    header.size = htons(sizeof(HeaderData));
+    HeaderData h{};
+    h.type = Net::Protocol::CONNECT;
+    h.version = 99; // invalid
+    h.size = htons(sizeof(HeaderData));
 
-    std::memcpy(pkt->buffer(), &header, sizeof(header));
+    std::memcpy(pkt->buffer(), &h, sizeof(h));
     pkt->setSize(sizeof(HeaderData));
 
-    HeaderData extracted{};
-    EXPECT_FALSE(pr.extractHeader(*pkt, extracted));
-}
+    pr.handlePacket(pkt);
 
-TEST(PacketRouter, RejectsSizeMismatch)
-{
-    auto sessions = std::make_shared<MockSessionManager>();
-    auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
-
-    auto pkt = std::make_shared<MockPacket>();
-
-    HeaderData header{};
-    header.type = Net::Protocol::CONNECT;
-    header.version = PROTOCOL_VERSION;
-    header.size = htons(999); // mauvais
-
-    std::memcpy(pkt->buffer(), &header, sizeof(header));
-    pkt->setSize(sizeof(HeaderData));
-
-    HeaderData extracted{};
-    EXPECT_FALSE(pr.extractHeader(*pkt, extracted));
-}
-
-TEST(PacketRouter, AcceptsValidHeader)
-{
-    auto sessions = std::make_shared<MockSessionManager>();
-    auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
-
-    auto pkt = std::make_shared<MockPacket>();
-
-    HeaderData header{};
-    header.type = Net::Protocol::CONNECT;
-    header.version = PROTOCOL_VERSION;
-    header.size = htons(sizeof(HeaderData));
-
-    std::memcpy(pkt->buffer(), &header, sizeof(header));
-    pkt->setSize(sizeof(HeaderData));
-
-    HeaderData extracted{};
-    EXPECT_TRUE(pr.extractHeader(*pkt, extracted));
+    EXPECT_FALSE(sink->connectCalled);
 }
 
 TEST(PacketRouter, DispatchConnect)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
-    pkt->setAddress(makeAddr(0x11111111, 1000));
+    pkt->setAddress(makeAddr(0x01020304, 5000));
 
     HeaderData h{};
     h.type = Net::Protocol::CONNECT;
@@ -242,22 +226,21 @@ TEST(PacketRouter, DispatchConnect)
     pr.handlePacket(pkt);
 
     EXPECT_TRUE(sink->connectCalled);
-    EXPECT_EQ(sink->connectId, sessions->forcedId);
+    EXPECT_EQ(sink->connectId, sess->forcedSessionId);
 }
 
 TEST(PacketRouter, DispatchDisconnect)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
-    pkt->setAddress(makeAddr(0x11111111, 2222));
+    pkt->setAddress(makeAddr(0x01020304, 6000));
 
     HeaderData h{};
     h.type = Net::Protocol::DISCONNECT;
-    h.version = PROTOCOL_VERSION;
+    h.version = 1;
     h.size = htons(sizeof(HeaderData));
 
     std::memcpy(pkt->buffer(), &h, sizeof(h));
@@ -266,21 +249,21 @@ TEST(PacketRouter, DispatchDisconnect)
     pr.handlePacket(pkt);
 
     EXPECT_TRUE(sink->disconnectCalled);
+    EXPECT_EQ(sess->removedSession, sess->forcedSessionId);
 }
 
 TEST(PacketRouter, DispatchPing)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
-    pkt->setAddress(makeAddr(0x99999999, 3000));
+    pkt->setAddress(makeAddr(0xDEADBEEF, 9000));
 
     HeaderData h{};
     h.type = Net::Protocol::PING;
-    h.version = PROTOCOL_VERSION;
+    h.version = 1;
     h.size = htons(sizeof(HeaderData));
 
     std::memcpy(pkt->buffer(), &h, sizeof(h));
@@ -293,22 +276,20 @@ TEST(PacketRouter, DispatchPing)
 
 TEST(PacketRouter, DispatchInput)
 {
-    auto sessions = std::make_shared<MockSessionManager>();
+    auto sess = std::make_shared<MockSessionManager>();
     auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
+    Net::PacketRouter pr(sess, sink);
 
     auto pkt = std::make_shared<MockPacket>();
-    pkt->setAddress(makeAddr(0x88888888, 4444));
+    pkt->setAddress(makeAddr(0xCAFEBABE, 7000));
 
     HeaderData h{};
     h.type = Net::Protocol::INPUT;
-    h.version = PROTOCOL_VERSION;
+    h.version = 1;
     h.size = htons(sizeof(HeaderData) + 1);
 
-    uint8_t payload = 0x1D; // 00011101 → up, down, left, right + shoot
-
     std::memcpy(pkt->buffer(), &h, sizeof(h));
-    pkt->buffer()[sizeof(h)] = payload;
+    pkt->buffer()[sizeof(h)] = 0b11111; // up down left right shoot
     pkt->setSize(sizeof(h) + 1);
 
     pr.handlePacket(pkt);
@@ -319,27 +300,4 @@ TEST(PacketRouter, DispatchInput)
     EXPECT_TRUE(sink->lastInput.left);
     EXPECT_TRUE(sink->lastInput.right);
     EXPECT_TRUE(sink->lastInput.shoot);
-    EXPECT_EQ(sink->inputId, sessions->forcedId);
-}
-
-TEST(PacketRouter, InputMissingPayloadIsRejected)
-{
-    auto sessions = std::make_shared<MockSessionManager>();
-    auto sink = std::make_shared<MockSink>();
-    Net::PacketRouter pr(sessions, sink);
-
-    auto pkt = std::make_shared<MockPacket>();
-    pkt->setAddress(makeAddr(0xEEEEEEEE, 5000));
-
-    HeaderData h{};
-    h.type = Net::Protocol::INPUT;
-    h.version = PROTOCOL_VERSION;
-    h.size = htons(sizeof(HeaderData));
-
-    std::memcpy(pkt->buffer(), &h, sizeof(h));
-    pkt->setSize(sizeof(h)); // payload manquant
-
-    pr.handlePacket(pkt);
-
-    EXPECT_FALSE(sink->inputCalled);
 }

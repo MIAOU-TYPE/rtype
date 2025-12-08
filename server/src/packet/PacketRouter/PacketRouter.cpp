@@ -9,7 +9,7 @@
 using namespace Net;
 
 PacketRouter::PacketRouter(
-    const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
+    const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {
 }

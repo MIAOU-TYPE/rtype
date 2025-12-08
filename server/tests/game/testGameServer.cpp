@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/gameServer/GameServer.hpp"
 #include "MockServer.hpp"
 #include "MockSessionManager.hpp"
+#include "GameServer.hpp"
 
 TEST(GameServer, creates_player_on_connect)
 {

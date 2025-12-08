@@ -6,7 +6,6 @@
 */
 
 #include "SFMLInputHandler.hpp"
-#include <utility>
 
 using namespace Input;
 using namespace Events;

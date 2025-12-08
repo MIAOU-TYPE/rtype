@@ -12,6 +12,7 @@
 #include <exception>
 #include <memory>
 #include <string>
+#include <utility>
 #include "InputEvents.hpp"
 #include <unordered_map>
 #include <unordered_set>
@@ -117,8 +118,8 @@ namespace Input
          */
         void handleKeyboardEvent(const sf::Event &event);
 
-        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;
-        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {};
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;           ///> The input event manager
+        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {}; ///> Key to action mappings
         std::unordered_set<sf::Keyboard::Key> _pressedKeys = {}; ///> Track currently pressed keys to filter repeats
     };
 

@@ -6,6 +6,8 @@
 */
 
 #include "SessionManager.hpp"
+
+#include <netinet/in.h>
 using namespace Net::Server;
 
 bool AddressKey::operator==(const AddressKey &other) const noexcept
@@ -18,9 +20,11 @@ std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
     return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
 }
 
-int SessionManager::getOrCreateSession(const sockaddr_in &addr)
+int SessionManager::getOrCreateSession(const AddressIn &address)
 {
     std::lock_guard<std::mutex> lock(_mutex);
+
+    sockaddr_in addr = address;
 
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
@@ -34,8 +38,9 @@ int SessionManager::getOrCreateSession(const sockaddr_in &addr)
     return newId;
 }
 
-int SessionManager::getSessionId(const sockaddr_in &addr) const
+int SessionManager::getSessionId(const AddressIn &address) const
 {
+    sockaddr_in addr = address;
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     auto it = _addressToId.find(key);
@@ -53,13 +58,14 @@ void SessionManager::removeSession(int sessionId)
     if (it == _idToAddress.end())
         return;
 
-    AddressKey key{it->second.sin_addr.s_addr, it->second.sin_port};
+    sockaddr_in addr = it->second;
+    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     _idToAddress.erase(sessionId);
     _addressToId.erase(key);
 }
 
-const sockaddr_in *SessionManager::getAddress(int sessionId) const
+const AddressIn *SessionManager::getAddress(int sessionId) const
 {
     auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())

@@ -9,11 +9,8 @@
 
 #include <cstdint>
 #include <mutex>
-#ifndef _WIN32
-    #include <netinet/in.h>
-#else
-    #include <winsock2.h>
-#endif
+#include "ISessionManager.hpp"
+
 #include <unordered_map>
 
 /**
@@ -47,40 +44,40 @@ namespace Net::Server
      * @brief Manages network sessions by mapping addresses to session IDs.
      * Provides thread-safe operations to create, retrieve, and remove sessions.
      */
-    class SessionManager {
+    class SessionManager : public ISessionManager {
       public:
         /**
          * @brief Get an existing session ID for the given address or create a new one.
          * @param addr The network address.
          * @return The session ID associated with the address.
          */
-        int getOrCreateSession(const sockaddr_in &addr);
+        int getOrCreateSession(const AddressIn &addr) override;
 
         /**
          * @brief Get the session ID for the given address.
          * @param addr The network address.
          * @return The session ID if it exists, otherwise -1.
          */
-        int getSessionId(const sockaddr_in &addr) const;
+        int getSessionId(const AddressIn &addr) const override;
 
         /**
          * @brief Remove the session associated with the given session ID.
          * @param sessionId The session ID to remove.
          */
-        void removeSession(int sessionId);
+        void removeSession(int sessionId) override;
 
         /**
          * @brief Get the address associated with the given session ID.
          * @param sessionId The session ID.
-         * @return A pointer to the sockaddr_in if found, otherwise nullptr.
+         * @return A pointer to the AddressIn if found, otherwise nullptr.
          */
-        const sockaddr_in *getAddress(int sessionId) const;
+        const AddressIn *getAddress(int sessionId) const override;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _addressToId = {}; ///> Map from AddressKey to session ID.
-        std::unordered_map<int, sockaddr_in> _idToAddress = {};                ///> Map from session ID to sockaddr_in.
+        std::unordered_map<int, AddressIn> _idToAddress = {};                  ///> Map from session ID to AddressIn.
 
         int _nextId = 1; ///> Next available session ID.
     };

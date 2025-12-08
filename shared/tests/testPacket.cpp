@@ -40,7 +40,7 @@ TEST(UDPPacketTests, BufferWriteAndRead)
     UDPPacket pkt;
 
     pkt.setSize(5);
-    uint8_t* buf = pkt.buffer();
+    uint8_t *buf = pkt.buffer();
 
     buf[0] = 'H';
     buf[1] = 'e';
@@ -56,14 +56,14 @@ TEST(UDPPacketTests, AddressSetAndGet)
 {
     UDPPacket pkt;
 
-    sockaddr_in addr {};
+    sockaddr_in addr{};
     addr.sin_port = htons(8080);
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(0x7F000001); // 127.0.0.1
 
     pkt.setAddress(addr);
 
-    const sockaddr_in* retrieved = pkt.address();
+    const sockaddr_in *retrieved = pkt.address();
 
     ASSERT_NE(retrieved, nullptr);
     EXPECT_EQ(retrieved->sin_port, htons(8080));
@@ -81,7 +81,7 @@ TEST(UDPPacketTests, CloneCreatesDeepCopy)
     pkt.buffer()[2] = 3;
     pkt.buffer()[3] = 4;
 
-    sockaddr_in addr {};
+    sockaddr_in addr{};
     addr.sin_port = htons(5000);
     pkt.setAddress(addr);
 

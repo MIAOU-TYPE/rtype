@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 #include "Endian.hpp"
+#include <limits>
+#include <cmath>
 
 TEST(EndianTests, BigEndian64RoundTrip)
 {

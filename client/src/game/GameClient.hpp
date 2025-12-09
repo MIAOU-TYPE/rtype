@@ -75,7 +75,6 @@ namespace Game
          */
         void run();
 
-
         /**
          * @brief Updates the game state with the ECS systems.
          * @param deltaTime Time elapsed since last update.

@@ -33,9 +33,9 @@ namespace Ecs
      */
     struct VisualEffect {
         EffectType type = EffectType::None; ///> Type of effect
-        float duration = 1.0f;   ///> Total duration (seconds)
-        float elapsed = 0.f;     ///> Elapsed time
-        bool autoDestroy = true; ///> Destroy entity at the end
-        float intensity = 1.0f;  ///> Effect intensity (0-1)
+        float duration = 1.0f;              ///> Total duration (seconds)
+        float elapsed = 0.f;                ///> Elapsed time
+        bool autoDestroy = true;            ///> Destroy entity at the end
+        float intensity = 1.0f;             ///> Effect intensity (0-1)
     };
 } // namespace Ecs

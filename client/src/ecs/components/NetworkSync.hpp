@@ -19,8 +19,8 @@ namespace Ecs
     struct NetworkSync {
         uint32_t networkId = 0; ///> Unique network ID of the entity
 
-        float prevX = 0.f; ///> Position at snapshot N-1
-        float prevY = 0.f; ///> Position at snapshot N-1
+        float prevX = 0.f;   ///> Position at snapshot N-1
+        float prevY = 0.f;   ///> Position at snapshot N-1
         float targetX = 0.f; ///> Position at snapshot N
         float targetY = 0.f; ///> Position at snapshot N
 

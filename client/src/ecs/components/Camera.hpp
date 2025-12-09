@@ -16,8 +16,8 @@ namespace Ecs
      * zoom level, smoothness of movement, and world boundaries.
      */
     struct Camera {
-        float offsetX = 0.f; ///> Offset from center
-        float offsetY = 0.f; ///> Offset from center
+        float offsetX = 0.f;     ///> Offset from center
+        float offsetY = 0.f;     ///> Offset from center
         float zoom = 1.0f;       ///> Zoom factor (1.0 = normal)
         float smoothness = 5.0f; ///> Follow speed (0 = instant, higher = smoother)
         bool active = true;      ///> Main camera or not

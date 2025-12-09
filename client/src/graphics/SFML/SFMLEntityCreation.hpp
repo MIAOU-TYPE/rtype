@@ -66,9 +66,10 @@ namespace Graphics
          * @param spriteName The name of the sprite (without path).
          * @param textureManager Shared pointer to the texture manager.
          * @param entityDrawing Reference to the entity drawing manager for sprite info.
+         * @param id Unique identifier for the entity.
          */
         GraphicalEntity(float x, float y, const std::string &spriteName,
-            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing);
+            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing, size_t id = 0);
 
         /**
          * @brief Destructor for GraphicalEntity.
@@ -149,6 +150,18 @@ namespace Graphics
          */
         std::string getCurrentAnimationName() const;
 
+        /**
+         * @brief Gets the unique ID of the entity.
+         * @return The unique ID.
+         */
+        size_t getId() const;
+
+        /**
+         * @brief Sets the unique ID of the entity.
+         * @param id The new unique ID.
+         */
+        void setId(size_t id);
+
       private:
         float _x = 0.0f;                                            ///> X position
         float _y = 0.0f;                                            ///> Y position
@@ -157,6 +170,7 @@ namespace Graphics
         std::unique_ptr<ISprite> _sprite = nullptr;                 ///> The sprite instance
         const SFMLEntityDrawing &_entityDrawing;                    ///> Reference to entity drawing for sprite info
         std::shared_ptr<SFMLAnimationManager> _animationManager = nullptr; ///> Animation manager
+        size_t _id = 0;                                                    ///> Unique identifier
     };
 
 } // namespace Graphics

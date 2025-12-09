@@ -6,15 +6,24 @@
 */
 
 #pragma once
+#include <atomic>
 #include <cstdint>
 #include "IServer.hpp"
 #include "NetWrapper.hpp"
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <errno.h>
+    #include <fcntl.h>
+    #include <unistd.h>
+#endif
 
 /**
  * @namespace Server
  * @brief Contains all server-related classes and interfaces.
  */
-namespace Server
+namespace Net::Server
 {
     /**
      * @class AServer
@@ -74,7 +83,7 @@ namespace Server
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const Net::IServerPacket &pkt) override = 0;
+        virtual bool sendPacket(const Net::IPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -88,11 +97,18 @@ namespace Server
          */
         bool isStoredPortCorrect() const noexcept override;
 
+        /**
+         * @brief Pops a received packet from the server's packet queue.
+         * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the queue was empty.
+         */
+        virtual bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override = 0;
+
       protected:
-        std::string _ip = "";    ///> IP address the server is bound to
-        uint16_t _port = 0;      ///> Port number the server is listening on
-        bool _isRunning = false; ///> Flag indicating if the server is running
+        std::string _ip = "";                ///> IP address the server is bound to
+        uint16_t _port = 0;                  ///> Port number the server is listening on
+        std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the server is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor
     };
-} // namespace Server
+} // namespace Net::Server

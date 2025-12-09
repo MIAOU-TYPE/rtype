@@ -9,13 +9,8 @@
 
 #include <functional>
 #include <memory>
+#include "GameScene.hpp"
 #include "InputEvents.hpp"
-
-// Forward declaration
-namespace Game
-{
-    class GameScene;
-}
 
 /**
  * @namespace Input

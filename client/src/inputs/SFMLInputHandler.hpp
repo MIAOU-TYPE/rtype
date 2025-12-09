@@ -7,12 +7,14 @@
 
 #pragma once
 
-#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <exception>
 #include <memory>
 #include <string>
+#include <utility>
+#include "IEvent.hpp"
 #include "InputEvents.hpp"
+#include "SFMLEvent.hpp"
 #include <unordered_map>
 #include <unordered_set>
 
@@ -67,9 +69,9 @@ namespace Input
 
         /**
          * @brief Handles SFML input events.
-         * @param event The SFML event to handle.
+         * @param event The input event to handle.
          */
-        void handleEvent(const sf::Event &event);
+        void handleEvent(const std::shared_ptr<Graphics::IEvent> &event);
 
         /**
          * @brief Updates the input handler (processes held keys).
@@ -113,12 +115,12 @@ namespace Input
       private:
         /**
          * @brief Handles keyboard events (internal processing).
-         * @param event The SFML keyboard event.
+         * @param event The input event with keyboard data.
          */
-        void handleKeyboardEvent(const sf::Event &event);
+        void handleKeyboardEvent(const std::shared_ptr<Graphics::IEvent> &event);
 
-        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;
-        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {};
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;           ///> The input event manager
+        std::unordered_map<sf::Keyboard::Key, Events::InputAction> _keyMappings = {}; ///> Key to action mappings
         std::unordered_set<sf::Keyboard::Key> _pressedKeys = {}; ///> Track currently pressed keys to filter repeats
     };
 

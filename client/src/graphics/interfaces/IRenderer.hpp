@@ -8,8 +8,9 @@
 #pragma once
 
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Window/Event.hpp>
+#include <memory>
 #include <string>
+#include "IEvent.hpp"
 
 /**
  * @namespace Graphics
@@ -17,7 +18,6 @@
  */
 namespace Graphics
 {
-    // Forward declaration
     class ISprite;
 
     /**
@@ -68,14 +68,14 @@ namespace Graphics
          * @param event The event to fill if available.
          * @return True if an event was polled, false otherwise.
          */
-        virtual bool pollEvent(sf::Event &event) = 0;
+        virtual bool pollEvent(std::shared_ptr<IEvent> &event) = 0;
 
         /**
          * @brief Checks if the event is a window close event.
          * @param event The event to check.
          * @return True if the event is a window close event, false otherwise.
          */
-        virtual bool isWindowCloseEvent(const sf::Event &event) const = 0;
+        virtual bool isWindowCloseEvent(const IEvent &event) const = 0;
 
         /**
          * @brief Draws a sprite to the render target.

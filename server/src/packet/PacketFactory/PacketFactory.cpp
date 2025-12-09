@@ -10,16 +10,16 @@
 namespace Net::Factory
 {
 
-    PacketFactory::PacketFactory(const std::shared_ptr<IServerPacket> &packet)
+    PacketFactory::PacketFactory(const std::shared_ptr<IPacket> &packet)
     {
         if (!packet)
-            throw FactoryError("{PacketFactory::PacketFactory} Invalid IServerPacket pointer");
+            throw FactoryError("{PacketFactory::PacketFactory} Invalid IPacket pointer");
         _packet = packet;
     }
 
-    HeaderPacket PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
     {
-        HeaderPacket header;
+        HeaderData header;
 
         header.type = type;
         header.version = version;
@@ -27,13 +27,13 @@ namespace Net::Factory
         return header;
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
     {
-        DefaultPacket defaultPacket;
-        defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultPacket));
+        DefaultData defaultPacket;
+        defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultData));
 
         try {
-            auto packet = makePacket<DefaultPacket>(addr, defaultPacket);
+            auto packet = makePacket<DefaultData>(addr, defaultPacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeDefault} " << e.what() << std::endl;
@@ -41,18 +41,18 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeEntityCreate(
+    std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
         const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept
     {
-        EntityCreatePacket entityCreatePacket;
-        entityCreatePacket.header = makeHeader(ENTITY_CREATE, VERSION, sizeof(EntityCreatePacket));
+        EntityCreateData entityCreatePacket;
+        entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreateData));
         entityCreatePacket.id = htobe64(id);
         entityCreatePacket.x = htonf(x);
         entityCreatePacket.y = htonf(y);
         entityCreatePacket.sprite = htons(sprite);
 
         try {
-            auto packet = makePacket<EntityCreatePacket>(addr, entityCreatePacket);
+            auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeEntityCreate} " << e.what() << std::endl;
@@ -60,14 +60,14 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
     {
-        EntityDestroyPacket entityDestroyPacket;
-        entityDestroyPacket.header = makeHeader(ENTITY_DESTROY, VERSION, sizeof(EntityDestroyPacket));
+        EntityDestroyData entityDestroyPacket;
+        entityDestroyPacket.header = makeHeader(Protocol::ENTITY_DESTROY, VERSION, sizeof(EntityDestroyData));
         entityDestroyPacket.id = htobe64(id);
 
         try {
-            auto packet = makePacket<EntityDestroyPacket>(addr, entityDestroyPacket);
+            auto packet = makePacket<EntityDestroyData>(addr, entityDestroyPacket);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeEntityDestroy} " << e.what() << std::endl;
@@ -75,16 +75,16 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IServerPacket> PacketFactory::makeDamage(
+    std::shared_ptr<IPacket> PacketFactory::makeDamage(
         const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {
-        DamagePacket damagePacket;
-        damagePacket.header = makeHeader(DAMAGE_EVENT, VERSION, sizeof(DamagePacket));
-        damagePacket.id = htonl(id);
-        damagePacket.amount = htons(amount);
+        DamageData damageData;
+        damageData.header = makeHeader(Protocol::DAMAGE_EVENT, VERSION, sizeof(DamageData));
+        damageData.id = htonl(id);
+        damageData.amount = htons(amount);
 
         try {
-            auto packet = makePacket<DamagePacket>(addr, damagePacket);
+            auto packet = makePacket<DamageData>(addr, damageData);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{PacketFactory::makeDamage} " << e.what() << std::endl;

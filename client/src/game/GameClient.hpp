@@ -14,6 +14,7 @@
 #include "IInputHandler.hpp"
 #include "IRenderer.hpp"
 #include "SFMLTextureManager.hpp"
+#include "NetClient.hpp"
 
 /**
  * @namespace Game
@@ -77,6 +78,7 @@ namespace Game
         std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr;        ///> The input handler interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
     };
 
 } // namespace Game

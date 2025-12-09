@@ -34,6 +34,12 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
 
         _gameScene = std::make_unique<GameScene>(_renderer, _textureManager);
+
+        _netClient = std::make_shared<NetClient>();
+        if (!_netClient) {
+            throw GameClientError("Failed to create network client instance");
+        }
+        _netClient->sendConnectPacket();
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected initialization error: " + std::string(e.what()));
     }
@@ -52,6 +58,8 @@ void GameClient::run()
         while (_renderer->isOpen()) {
             float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
 
+            _netClient->receivePackets();
+
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
                 clock.restart();
@@ -65,7 +73,7 @@ void GameClient::run()
                 }
                 _inputHandler->handleEvent(event);
             }
-
+            
             _renderer->clear();
             _gameScene->render();
             _renderer->display();

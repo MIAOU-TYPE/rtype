@@ -41,19 +41,19 @@ SFMLEntityDrawing::SFMLEntityDrawing(
 
     auto missileFlyAnim = std::make_shared<SFMLAnimation>("fly", missileFlyFrames, false);
 
-    std::vector<AnimationFrame> entityExploseFrames = {AnimationFrame(0, 0, 33, 32, 0.1f),
-        AnimationFrame(33, 0, 33, 32, 0.1f), AnimationFrame(66, 0, 33, 32, 0.1f), AnimationFrame(99, 0, 33, 32, 0.1f),
-        AnimationFrame(132, 0, 33, 32, 0.1f), AnimationFrame(165, 0, 33, 32, 0.1f),
-        AnimationFrame(198, 0, 33, 32, 0.1f)};
+    std::vector<AnimationFrame> entityExploseFrames = {AnimationFrame{0, 0, 33, 32, 0.1f},
+        AnimationFrame{33, 0, 33, 32, 0.1f}, AnimationFrame{66, 0, 33, 32, 0.1f}, AnimationFrame{99, 0, 33, 32, 0.1f},
+        AnimationFrame{132, 0, 33, 32, 0.1f}, AnimationFrame{165, 0, 33, 32, 0.1f},
+        AnimationFrame{198, 0, 33, 32, 0.1f}};
 
     auto entityExploseAnim = std::make_shared<SFMLAnimation>("explose", entityExploseFrames, false);
 
     _spriteInfo = {
-        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo(playerIdleAnim, true)}, "idle"}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo(enemyIdleAnim, true)}, "idle"}},
-        {"missile", {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo(missileFlyAnim, false)}, "fly"}},
+        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
+        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo{enemyIdleAnim}}, "idle"}},
+        {"missile", {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim}}, "fly"}},
         {"explose",
-            {"client/assets/sprites/explose.png", 33.0f, 32.0f, {AnimationInfo(entityExploseAnim, false)}, "explose"}}};
+            {"client/assets/sprites/explose.png", 33.0f, 32.0f, {AnimationInfo{entityExploseAnim}}, "explose"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(

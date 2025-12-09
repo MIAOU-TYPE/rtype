@@ -33,7 +33,7 @@ namespace Net::Server
             port = ntohs(addr.sin_port);
         }
 
-        operator sockaddr_in() const
+        explicit operator sockaddr_in() const
         {
             sockaddr_in addr{};
             addr.sin_family = AF_INET;
@@ -41,6 +41,11 @@ namespace Net::Server
             inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
             return addr;
         }
+
+        sockaddr_in toSockaddr() const {
+            return static_cast<sockaddr_in>(*this);
+        }
+
     };
 
     class ISessionManager {

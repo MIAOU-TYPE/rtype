@@ -46,13 +46,10 @@ namespace Game
 
     void GameServer::onPing(const int sessionId)
     {
-        const Net::Server::AddressIn *addrIn = _sessions->getAddress(sessionId);
-        if (!addrIn)
-            return;
-        sockaddr_in addr = *addrIn;
-
-        if (const auto pkt = _factory.makeDefault(addr, Net::Protocol::PONG))
-            _server->sendPacket(*pkt);
+        if (const auto* ai = _sessions->getAddress(sessionId)) {
+            if (const auto pkt = _factory.makeDefault(ai->toSockaddr(), Net::Protocol::PONG))
+                _server->sendPacket(*pkt);
+        }
     }
 
     void GameServer::update(const float dt) const

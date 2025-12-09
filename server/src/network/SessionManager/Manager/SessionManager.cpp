@@ -24,7 +24,7 @@ int SessionManager::getOrCreateSession(const AddressIn &address)
 {
     std::lock_guard<std::mutex> lock(_mutex);
 
-    sockaddr_in addr = address;
+    const sockaddr_in addr = address.toSockaddr();
 
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
@@ -40,7 +40,7 @@ int SessionManager::getOrCreateSession(const AddressIn &address)
 
 int SessionManager::getSessionId(const AddressIn &address) const
 {
-    sockaddr_in addr = address;
+    const sockaddr_in addr = address.toSockaddr();
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     auto it = _addressToId.find(key);
@@ -58,8 +58,8 @@ void SessionManager::removeSession(int sessionId)
     if (it == _idToAddress.end())
         return;
 
-    sockaddr_in addr = it->second;
-    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const sockaddr_in addr = it->second.toSockaddr();
+    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     _idToAddress.erase(sessionId);
     _addressToId.erase(key);

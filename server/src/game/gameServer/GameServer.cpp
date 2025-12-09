@@ -58,5 +58,12 @@ namespace Game
     {
         InputSystem::update(*_world);
         MovementSystem::update(*_world, dt);
+        ShootingSystem::update(*_world);
+        AISystem::update(*_world, dt);
+        EnemySpawnSystem::update(*_world, dt);
+        CollisionSystem::update(*_world);
+        DamageSystem::update(*_world);
+        HealthSystem::update(*_world);
+        LifetimeSystem::update(*_world, dt);
     }
 } // namespace Game

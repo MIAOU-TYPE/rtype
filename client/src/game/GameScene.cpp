@@ -50,6 +50,10 @@ void GameScene::update(float deltaTime)
             _starfield->update(deltaTime);
         }
 
+        // if (_entityDrawing) {
+        //     _entityDrawing->updateAllEntities(deltaTime);
+        // }
+
         // TODO: Update other game entities here
 
     } catch (const std::exception &e) {

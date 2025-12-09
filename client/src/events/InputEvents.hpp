@@ -100,9 +100,10 @@ namespace Events
         void setHeldEventInterval(float interval);
 
       private:
-        std::unordered_map<InputAction, std::vector<std::shared_ptr<InputEventHandler>>> _handlers = {};
-        std::unordered_map<InputAction, bool> _heldActions = {};
-        std::unordered_map<InputAction, float> _heldTimes = {};
+        std::unordered_map<InputAction, std::vector<std::shared_ptr<InputEventHandler>>> _handlers =
+            {};                                                          ///> Action to handlers mapping
+        std::unordered_map<InputAction, bool> _heldActions = {};         ///> Currently held actions
+        std::unordered_map<InputAction, float> _heldTimes = {};          ///> Time each action has been held
         std::unordered_map<InputAction, float> _lastHeldEventTimes = {}; ///> Time since last Held event dispatch
         std::unordered_map<InputAction, int> _actionRefCounts = {};      ///> Reference count for multi-key actions
         float _heldEventInterval = 0.0f; ///> Minimum interval between Held events (0 = every frame)

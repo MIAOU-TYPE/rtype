@@ -21,23 +21,23 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         throw SFMLEntityDrawingError("Texture manager cannot be null");
     }
 
-    std::vector<AnimationFrame> playerIdleFrames = {AnimationFrame(0, 0, 33, 18, 0.15f),
-        AnimationFrame(33, 0, 33, 18, 0.15f), AnimationFrame(66, 0, 33, 18, 0.15f),
-        AnimationFrame(99, 0, 33, 18, 0.15f), AnimationFrame(132, 0, 33, 18, 0.15f),
-        AnimationFrame(165, 0, 33, 18, 0.15f), AnimationFrame(198, 0, 33, 18, 0.15f),
-        AnimationFrame(231, 0, 33, 18, 0.15f)};
+    std::vector<AnimationFrame> playerIdleFrames = {AnimationFrame{0, 0, 33, 18, 0.15f},
+        AnimationFrame{33, 0, 33, 18, 0.15f}, AnimationFrame{66, 0, 33, 18, 0.15f},
+        AnimationFrame{99, 0, 33, 18, 0.15f}, AnimationFrame{132, 0, 33, 18, 0.15f},
+        AnimationFrame{165, 0, 33, 18, 0.15f}, AnimationFrame{198, 0, 33, 18, 0.15f},
+        AnimationFrame{231, 0, 33, 18, 0.15f}};
 
     auto playerIdleAnim = std::make_shared<SFMLAnimation>("idle", playerIdleFrames, true);
 
-    std::vector<AnimationFrame> enemyIdleFrames = {AnimationFrame(0, 0, 65, 66, 1.f),
-        AnimationFrame(65, 0, 65, 66, 0.3f), AnimationFrame(130, 0, 65, 66, 0.3f), AnimationFrame(195, 0, 65, 66, 0.3f),
-        AnimationFrame(260, 0, 65, 66, 0.3f), AnimationFrame(325, 0, 65, 66, 0.3f),
-        AnimationFrame(390, 0, 65, 66, 0.3f), AnimationFrame(455, 0, 65, 66, 0.3f)};
+    std::vector<AnimationFrame> enemyIdleFrames = {AnimationFrame{0, 0, 65, 66, 1.f},
+        AnimationFrame{65, 0, 65, 66, 0.3f}, AnimationFrame{130, 0, 65, 66, 0.3f}, AnimationFrame{195, 0, 65, 66, 0.3f},
+        AnimationFrame{260, 0, 65, 66, 0.3f}, AnimationFrame{325, 0, 65, 66, 0.3f},
+        AnimationFrame{390, 0, 65, 66, 0.3f}, AnimationFrame{455, 0, 65, 66, 0.3f}};
 
     auto enemyIdleAnim = std::make_shared<SFMLAnimation>("idle", enemyIdleFrames, true);
 
     std::vector<AnimationFrame> missileFlyFrames = {
-        AnimationFrame(0, 0, 16, 12, 0.1f), AnimationFrame(16, 0, 16, 12, 0.3f)};
+        AnimationFrame{0, 0, 16, 12, 0.1f}, AnimationFrame{16, 0, 16, 12, 0.3f}};
 
     auto missileFlyAnim = std::make_shared<SFMLAnimation>("fly", missileFlyFrames, false);
 
@@ -144,7 +144,7 @@ bool SFMLEntityDrawing::shouldAnimationLoop(const std::string &spriteName, const
 
     for (const auto &animInfo : spriteInfo.animations) {
         if (animInfo.animation && animInfo.animation->getName() == animationName) {
-            return animInfo.shouldLoop;
+            return animInfo.animation->getLoop();
         }
     }
 

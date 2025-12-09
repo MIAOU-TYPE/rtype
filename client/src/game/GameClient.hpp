@@ -14,6 +14,7 @@
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
 #include "InputEvents.hpp"
+#include "NetClient.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
 
@@ -74,13 +75,20 @@ namespace Game
          */
         void run();
 
+        /**
+         * @brief Updates the game state with the ECS systems.
+         * @param deltaTime Time elapsed since last update.
+         */
+        void updateSystem(float deltaTime);
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
+        std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
 
         std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
-        std::unique_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
+        std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
         std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
     };
 

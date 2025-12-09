@@ -75,6 +75,11 @@ const std::string &SFMLAnimation::getName() const
     return _name;
 }
 
+bool SFMLAnimation::getLoop() const
+{
+    return _loop;
+}
+
 void SFMLAnimation::setLoop(bool loop)
 {
     _loop = loop;

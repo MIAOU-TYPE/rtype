@@ -28,10 +28,15 @@ void GameClient::init(unsigned int width, unsigned int height)
 
         _textureManager = std::make_shared<SFMLTextureManager>();
 
+        _netClient = std::make_shared<NetClient>();
+        if (!_netClient) {
+            throw GameClientError("Failed to create network client instance");
+        }
+
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
 
         _eventManager = std::make_shared<InputEventManager>();
-        _inputHandler = std::make_unique<SFMLInputHandler>(_eventManager);
+        _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
 
@@ -71,9 +76,9 @@ void GameClient::run()
                 _gameScene->update(deltaTime);
             }
 
-            sf::Event event{sf::Event::Closed{}};
+            std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
-                if (_renderer->isWindowCloseEvent(event))
+                if (_renderer->isWindowCloseEvent(*event))
                     _renderer->close();
                 _inputHandler->handleEvent(event);
             }
@@ -85,4 +90,9 @@ void GameClient::run()
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
+}
+
+void GameClient::updateSystem(float deltaTime)
+{
+    // Placeholder for ECS system updates
 }

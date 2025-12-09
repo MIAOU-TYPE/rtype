@@ -57,9 +57,9 @@ namespace Game
     void GameServer::update(const float dt) const
     {
         InputSystem::update(*_world);
-        MovementSystem::update(*_world, dt);
         ShootingSystem::update(*_world);
         AISystem::update(*_world, dt);
+        MovementSystem::update(*_world, dt);
         EnemySpawnSystem::update(*_world, dt);
         CollisionSystem::update(*_world);
         DamageSystem::update(*_world);

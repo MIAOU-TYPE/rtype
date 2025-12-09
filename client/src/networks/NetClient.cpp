@@ -12,7 +12,7 @@ namespace Game
 
     NetClient::NetClient()
     {
-        _netWrapper = std::make_unique<Net::NetWrapper>("./path/to/libnetplugin.so");
+        _netWrapper = std::make_unique<Net::NetWrapper>("NetPluginLib");
         _socket = _netWrapper->socket(AF_INET, SOCK_DGRAM, 0);
         if (_socket == kInvalidSocket) {
             throw NetClientError("Failed to create UDP socket");

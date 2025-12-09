@@ -6,7 +6,6 @@
 */
 
 #include "SFMLInputHandler.hpp"
-#include <utility>
 
 using namespace Input;
 using namespace Events;
@@ -20,8 +19,10 @@ SFMLInputHandler::SFMLInputHandler(std::shared_ptr<Events::InputEventManager> ev
     loadDefaultMappings();
 }
 
-void SFMLInputHandler::handleEvent(const sf::Event &event)
+void SFMLInputHandler::handleEvent(const std::shared_ptr<Graphics::IEvent> &event)
 {
+    if (!event)
+        return;
     handleKeyboardEvent(event);
 }
 
@@ -73,10 +74,24 @@ void SFMLInputHandler::loadDefaultMappings()
     _keyMappings[sf::Keyboard::Key::Backspace] = InputAction::Cancel;
 }
 
-void SFMLInputHandler::handleKeyboardEvent(const sf::Event &event)
+void SFMLInputHandler::handleKeyboardEvent(const std::shared_ptr<Graphics::IEvent> &event)
 {
-    const sf::Event::KeyPressed *keyPressed = event.getIf<sf::Event::KeyPressed>();
-    const sf::Event::KeyReleased *keyReleased = event.getIf<sf::Event::KeyReleased>();
+    if (!event)
+        return;
+
+    if (!event->isType(Graphics::EventType::KeyPressed) && !event->isType(Graphics::EventType::KeyReleased)) {
+        return;
+    }
+
+    auto sfmlEventPtr = std::dynamic_pointer_cast<Graphics::SFMLEvent>(event);
+    if (!sfmlEventPtr) {
+        return;
+    }
+
+    const auto &sfEvent = sfmlEventPtr->getSFMLEvent();
+
+    const sf::Event::KeyPressed *keyPressed = sfEvent.getIf<sf::Event::KeyPressed>();
+    const sf::Event::KeyReleased *keyReleased = sfEvent.getIf<sf::Event::KeyReleased>();
 
     if (!keyPressed && !keyReleased) {
         return;

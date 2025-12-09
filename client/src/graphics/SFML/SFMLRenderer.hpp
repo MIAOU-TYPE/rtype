@@ -8,7 +8,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 #include "IRenderer.hpp"
+#include "SFMLEvent.hpp"
 
 /**
  * @namespace Graphics
@@ -59,14 +61,14 @@ namespace Graphics
          * @param event The event to fill if available.
          * @return True if an event was polled, false otherwise.
          */
-        bool pollEvent(sf::Event &event) override;
+        bool pollEvent(std::shared_ptr<IEvent> &event) override;
 
         /**
          * @brief Checks if the event is a window close event.
          * @param event The event to check.
          * @return True if the event is a window close event, false otherwise.
          */
-        bool isWindowCloseEvent(const sf::Event &event) const override;
+        bool isWindowCloseEvent(const IEvent &event) const override;
 
         /**
          * @brief Draws a sprite to the render target.

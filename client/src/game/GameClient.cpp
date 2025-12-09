@@ -31,7 +31,7 @@ void GameClient::init(unsigned int width, unsigned int height)
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
 
         _eventManager = std::make_shared<InputEventManager>();
-        _inputHandler = std::make_unique<SFMLInputHandler>(_eventManager);
+        _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
 
@@ -71,9 +71,9 @@ void GameClient::run()
                 _gameScene->update(deltaTime);
             }
 
-            sf::Event event{sf::Event::Closed{}};
+            std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
-                if (_renderer->isWindowCloseEvent(event))
+                if (_renderer->isWindowCloseEvent(*event))
                     _renderer->close();
                 _inputHandler->handleEvent(event);
             }

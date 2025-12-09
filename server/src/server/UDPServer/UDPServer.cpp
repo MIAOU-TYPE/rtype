@@ -7,10 +7,11 @@
 
 #include "UDPServer.hpp"
 
-using namespace Server;
+using namespace Net::Server;
 
-UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
+UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 {
+    setRunning(false);
 #ifdef _WIN32
     WSADATA wsa;
     const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -21,9 +22,7 @@ UDPServer::UDPServer() : AServer(), _rxBuffer(1024)
 
 UDPServer::~UDPServer()
 {
-    if (_isRunning) {
-        stop();
-    }
+    stop();
 #ifdef _WIN32
     WSACleanup();
 #endif
@@ -31,7 +30,7 @@ UDPServer::~UDPServer()
 
 void UDPServer::start()
 {
-    if (_isRunning || _socketFd != kInvalidSocket)
+    if (isRunning() || _socketFd != kInvalidSocket)
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
@@ -42,43 +41,58 @@ void UDPServer::start()
         setNonBlocking(true);
     } catch (const ServerError &e) {
         if (_socketFd != kInvalidSocket)
-            Net::NetWrapper::closeSocket(_socketFd);
+            _netWrapper.closeSocket(_socketFd);
         _socketFd = kInvalidSocket;
         throw ServerError(std::string("{UDPServer::start}") + e.what());
     }
-    _isRunning = true;
+    setRunning(true);
     std::cout << "{UDPServer::start} UDP Server started on " << _ip << ":" << _port << std::endl;
 }
 
 void UDPServer::stop()
 {
-    _isRunning = false;
-    Net::NetWrapper::closeSocket(_socketFd);
-    _socketFd = kInvalidSocket;
-    std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
+    setRunning(false);
+    if (_socketFd != kInvalidSocket) {
+        _netWrapper.closeSocket(_socketFd);
+        _socketFd = kInvalidSocket;
+        std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
+    }
 }
 
 void UDPServer::readPackets()
 {
-    std::shared_ptr<Net::IServerPacket> pkt = std::make_shared<Net::UDPPacket>();
+    if (!isRunning() || _socketFd == kInvalidSocket)
+        return;
+    auto pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = Net::NetWrapper::recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
+    recvfrom_return_t received = _netWrapper.recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
     pkt->setSize(static_cast<size_t>(received));
 
-    if (!_rxBuffer.push(pkt))
-        std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
-    std::cout << pkt << std::endl;
+    {
+        std::lock_guard<std::mutex> lock(_rxMutex);
+        if (!_rxBuffer.push(pkt)) {
+            std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
+            return;
+        }
+    }
 }
 
-bool UDPServer::sendPacket(const Net::IServerPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt)
 {
-    return Net::NetWrapper::sendTo(_socketFd, pkt.buffer(), pkt.size(), 0,
-               reinterpret_cast<const sockaddr *>(pkt.address()), sizeof(sockaddr_in))
+    return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
+               sizeof(sockaddr_in))
         != -1;
+}
+
+bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
+{
+    std::lock_guard<std::mutex> lock(_rxMutex);
+
+    return _rxBuffer.pop(pkt);
 }
 
 void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOptions &optParams)
@@ -86,15 +100,15 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socketHandle sockFd = Net::NetWrapper::socket(static_cast<int>(params.family), params.type, params.proto);
+    socketHandle sockFd = _netWrapper.socket(static_cast<int>(params.family), params.type, params.proto);
     if (sockFd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
     int opt = optParams.optVal;
-    if (Net::NetWrapper::setSocketOpt(
+    if (_netWrapper.setSocketOpt(
             sockFd, optParams.level, optParams.optName, reinterpret_cast<const char *>(&opt), sizeof(opt))
         < 0) {
-        Net::NetWrapper::closeSocket(sockFd);
+        _netWrapper.closeSocket(sockFd);
         throw ServerError("{UDPServer::setupSocket} Failed to set socket options");
     }
 

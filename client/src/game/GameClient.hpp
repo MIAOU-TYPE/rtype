@@ -80,7 +80,7 @@ namespace Game
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
 
         std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
-        std::unique_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
+        std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
         std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
     };
 

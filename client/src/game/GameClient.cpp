@@ -31,7 +31,7 @@ void GameClient::init(unsigned int width, unsigned int height)
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
 
         _eventManager = std::make_shared<InputEventManager>();
-        _inputHandler = std::make_unique<SFMLInputHandler>(_eventManager);
+        _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
 

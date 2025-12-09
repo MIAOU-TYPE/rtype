@@ -23,8 +23,23 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         throw SFMLEntityDrawingError("Texture manager cannot be null");
     }
 
-    _spriteInfo = {{"player", {"client/assets/sprites/player.png", 33.1f, 18.0f}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f}}};
+    std::vector<AnimationFrame> playerIdleFrames = {AnimationFrame{0, 0, 33, 18, 0.15f},
+        AnimationFrame{33, 0, 33, 18, 0.15f}, AnimationFrame{66, 0, 33, 18, 0.15f},
+        AnimationFrame{99, 0, 33, 18, 0.15f}, AnimationFrame{132, 0, 33, 18, 0.15f},
+        AnimationFrame{165, 0, 33, 18, 0.15f}, AnimationFrame{198, 0, 33, 18, 0.15f},
+        AnimationFrame{231, 0, 33, 18, 0.15f}};
+
+    auto playerIdleAnim = std::make_shared<SFMLAnimation>("idle", playerIdleFrames, true);
+
+    std::vector<AnimationFrame> enemyIdleFrames = {AnimationFrame{0, 0, 65, 66, 1.f},
+        AnimationFrame{65, 0, 65, 66, 0.3f}, AnimationFrame{130, 0, 65, 66, 0.3f}, AnimationFrame{195, 0, 65, 66, 0.3f},
+        AnimationFrame{260, 0, 65, 66, 0.3f}, AnimationFrame{325, 0, 65, 66, 0.3f},
+        AnimationFrame{390, 0, 65, 66, 0.3f}, AnimationFrame{455, 0, 65, 66, 0.3f}};
+
+    auto enemyIdleAnim = std::make_shared<SFMLAnimation>("idle", enemyIdleFrames, true);
+
+    _spriteInfo = {{"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {playerIdleAnim}, "idle"}},
+        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {enemyIdleAnim}, "idle"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float y, const std::string &spriteName)
@@ -35,6 +50,15 @@ std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float 
         return entity;
     } catch (const std::exception &e) {
         throw SFMLEntityDrawingError("Failed to create entity '" + spriteName + "': " + std::string(e.what()));
+    }
+}
+
+void SFMLEntityDrawing::updateAllEntities(float deltaTime)
+{
+    for (auto &entity : _entities) {
+        if (entity) {
+            entity->update(deltaTime);
+        }
     }
 }
 
@@ -61,4 +85,25 @@ SpriteInfo SFMLEntityDrawing::getSpriteInfoFromName(const std::string &spriteNam
 std::string SFMLEntityDrawing::getSpritePathFromName(const std::string &spriteName) const
 {
     return getSpriteInfoFromName(spriteName).path;
+}
+
+std::shared_ptr<SFMLAnimationManager> SFMLEntityDrawing::createAnimationManager(const std::string &spriteName) const
+{
+    const SpriteInfo &spriteInfo = getSpriteInfoFromName(spriteName);
+
+    auto animationManager = std::make_shared<SFMLAnimationManager>();
+
+    for (const auto &animation : spriteInfo.animations) {
+        animationManager->addAnimation(animation);
+    }
+
+    if (!spriteInfo.defaultAnimation.empty() && animationManager->hasAnimation(spriteInfo.defaultAnimation)) {
+        animationManager->setCurrentAnimation(spriteInfo.defaultAnimation);
+    } else if (!spriteInfo.animations.empty()) {
+        animationManager->setCurrentAnimation(spriteInfo.animations[0]->getName());
+    } else {
+        throw SFMLEntityDrawingError("No animations available for sprite '" + spriteName + "'");
+    }
+
+    return animationManager;
 }

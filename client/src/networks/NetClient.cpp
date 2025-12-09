@@ -14,7 +14,9 @@ namespace Game
     {
         _netWrapper = std::make_unique<Net::NetWrapper>("./path/to/libnetplugin.so");
         _socket = _netWrapper->socket(AF_INET, SOCK_DGRAM, 0);
-        if (_socket == kInvalidSocket) {}
+        if (_socket == kInvalidSocket) {
+            throw NetClientError("Failed to create UDP socket");
+        }
         _serverAddr.sin_family = AF_INET;
         _serverAddr.sin_port = htons(4242);
         inet_pton(AF_INET, "127.0.0.1", &_serverAddr.sin_addr);
@@ -46,8 +48,8 @@ namespace Game
         inputData.header.version = 1;
         inputData.header.size = sizeof(InputData);
         inputData.entity = _playerEntityId;
-        inputData.dx = static_cast<uint32_t>(dx * 1000);
-        inputData.dy = static_cast<uint32_t>(dy * 1000);
+        inputData.dx = static_cast<int32_t>(dx * 1000);
+        inputData.dy = static_cast<int32_t>(dy * 1000);
         inputData.shooting = shooting ? 1 : 0;
         _netWrapper->sendTo(_socket, &inputData, sizeof(inputData), 0,
             reinterpret_cast<struct sockaddr *>(&_serverAddr), sizeof(_serverAddr));

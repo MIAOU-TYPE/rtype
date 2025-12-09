@@ -172,7 +172,7 @@ namespace Graphics
          * @param entity Shared pointer to the entity to remove.
          * @return True if entity was found and removed, false otherwise.
          */
-        bool removeEntity(std::shared_ptr<GraphicalEntity> entity);
+        bool removeEntity(const std::shared_ptr<GraphicalEntity> &entity);
 
         /**
          * @brief Clears all entities.

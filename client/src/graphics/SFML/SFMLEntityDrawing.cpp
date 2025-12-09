@@ -174,7 +174,7 @@ bool SFMLEntityDrawing::removeEntityById(size_t id)
     return false;
 }
 
-bool SFMLEntityDrawing::removeEntity(std::shared_ptr<GraphicalEntity> entity)
+bool SFMLEntityDrawing::removeEntity(const std::shared_ptr<GraphicalEntity> &entity)
 {
     auto it = std::find(_entities.begin(), _entities.end(), entity);
     if (it != _entities.end()) {

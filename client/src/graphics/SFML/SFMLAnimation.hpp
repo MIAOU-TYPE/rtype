@@ -100,6 +100,12 @@ namespace Graphics
         const std::string &getName() const;
 
         /**
+         * @brief Gets whether the animation should loop.
+         * @return True if the animation loops, false otherwise.
+         */
+        bool getLoop() const;
+
+        /**
          * @brief Sets whether the animation should loop.
          * @param loop True to enable looping, false otherwise.
          */

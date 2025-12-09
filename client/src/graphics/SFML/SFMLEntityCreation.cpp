@@ -121,3 +121,26 @@ std::shared_ptr<SFMLAnimationManager> GraphicalEntity::getAnimationManager() con
 {
     return _animationManager;
 }
+
+bool GraphicalEntity::isCurrentAnimationFinished() const
+{
+    if (!_animationManager) {
+        return false;
+    }
+
+    try {
+        auto currentAnim = _animationManager->getCurrentAnimation();
+        return currentAnim && currentAnim->isFinished();
+    } catch (const std::exception &) {
+        return false;
+    }
+}
+
+std::string GraphicalEntity::getCurrentAnimationName() const
+{
+    if (!_animationManager) {
+        return "";
+    }
+
+    return _animationManager->getCurrentAnimationName();
+}

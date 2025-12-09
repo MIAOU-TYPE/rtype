@@ -51,14 +51,14 @@ namespace Net::Server
          * @param addr The network address.
          * @return The session ID associated with the address.
          */
-        int getOrCreateSession(const AddressIn &addr) override;
+        int getOrCreateSession(const sockaddr_in &addr) override;
 
         /**
          * @brief Get the session ID for the given address.
          * @param addr The network address.
          * @return The session ID if it exists, otherwise -1.
          */
-        int getSessionId(const AddressIn &addr) const override;
+        int getSessionId(const sockaddr_in &addr) const override;
 
         /**
          * @brief Remove the session associated with the given session ID.
@@ -69,15 +69,15 @@ namespace Net::Server
         /**
          * @brief Get the address associated with the given session ID.
          * @param sessionId The session ID.
-         * @return A pointer to the AddressIn if found, otherwise nullptr.
+         * @return A pointer to the sockaddr_in if found, otherwise nullptr.
          */
-        const AddressIn *getAddress(int sessionId) const override;
+        const sockaddr_in *getAddress(int sessionId) const override;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _addressToId = {}; ///> Map from AddressKey to session ID.
-        std::unordered_map<int, AddressIn> _idToAddress = {};                  ///> Map from session ID to AddressIn.
+        std::unordered_map<int, sockaddr_in> _idToAddress = {};                ///> Map from session ID to sockaddr_in.
 
         int _nextId = 1; ///> Next available session ID.
     };

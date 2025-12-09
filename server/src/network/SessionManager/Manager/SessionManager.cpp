@@ -20,11 +20,11 @@ std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
     return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
 }
 
-int SessionManager::getOrCreateSession(const AddressIn &address)
+int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::scoped_lock<std::mutex> lock(_mutex);
 
-    const sockaddr_in addr = address.toSockaddr();
+    const sockaddr_in addr = address;
 
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
@@ -38,9 +38,9 @@ int SessionManager::getOrCreateSession(const AddressIn &address)
     return newId;
 }
 
-int SessionManager::getSessionId(const AddressIn &address) const
+int SessionManager::getSessionId(const sockaddr_in &address) const
 {
-    const sockaddr_in addr = address.toSockaddr();
+    const sockaddr_in addr = address;
     AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     auto it = _addressToId.find(key);
@@ -58,14 +58,14 @@ void SessionManager::removeSession(int sessionId)
     if (it == _idToAddress.end())
         return;
 
-    const sockaddr_in addr = it->second.toSockaddr();
+    const sockaddr_in addr = it->second;
     const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     _idToAddress.erase(sessionId);
     _addressToId.erase(key);
 }
 
-const AddressIn *SessionManager::getAddress(int sessionId) const
+const sockaddr_in *SessionManager::getAddress(int sessionId) const
 {
     auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())

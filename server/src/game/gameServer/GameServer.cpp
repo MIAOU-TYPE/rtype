@@ -46,8 +46,8 @@ namespace Game
 
     void GameServer::onPing(const int sessionId)
     {
-        if (const auto* ai = _sessions->getAddress(sessionId)) {
-            if (const auto pkt = _factory.makeDefault(ai->toSockaddr(), Net::Protocol::PONG))
+        if (const auto *ai = _sessions->getAddress(sessionId)) {
+            if (const auto pkt = _factory.makeDefault(*ai, Net::Protocol::PONG))
                 _server->sendPacket(*pkt);
         }
     }

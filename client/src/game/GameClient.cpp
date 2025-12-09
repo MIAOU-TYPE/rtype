@@ -70,8 +70,6 @@ void GameClient::run()
         while (_renderer->isOpen()) {
             float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
 
-            _netClient->receivePackets();
-
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
                 clock.restart();
@@ -93,4 +91,9 @@ void GameClient::run()
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
+}
+
+void GameClient::updateSystem(float deltaTime)
+{
+    // Placeholder for ECS system updates
 }

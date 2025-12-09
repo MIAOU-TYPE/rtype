@@ -75,6 +75,13 @@ namespace Game
          */
         void run();
 
+
+        /**
+         * @brief Updates the game state with the ECS systems.
+         * @param deltaTime Time elapsed since last update.
+         */
+        void updateSystem(float deltaTime);
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface

@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <netinet/in.h>
 #include <thread>
-#include "../../../src/network/SessionManager/Manager/SessionManager.hpp"
+#include "SessionManager.hpp"
 
 using namespace Net::Server;
 
@@ -90,12 +90,11 @@ TEST(SessionManagerTests, GetAddressReturnsCorrectPointer)
     sockaddr_in addr = makeAddr(0x10203040, 9999);
     int id = sm.getOrCreateSession(addr);
 
-    const Net::Server::AddressIn *stored = sm.getAddress(id);
-    ASSERT_NE(stored, nullptr);
-    sockaddr_in sin = stored->toSockaddr();
+    const sockaddr_in *sin = sm.getAddress(id);
+    ASSERT_NE(sin, nullptr);
 
-    EXPECT_EQ(sin.sin_addr.s_addr, addr.sin_addr.s_addr);
-    EXPECT_EQ(sin.sin_port, addr.sin_port);
+    EXPECT_EQ(sin->sin_addr.s_addr, addr.sin_addr.s_addr);
+    EXPECT_EQ(sin->sin_port, addr.sin_port);
 }
 
 TEST(SessionManagerTests, UnknownAddressReturnsMinusOne)

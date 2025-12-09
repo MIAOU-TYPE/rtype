@@ -9,35 +9,21 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include "ISessionManager.hpp"
+#include "SessionManager.hpp"
 
-class MockSessionManager : public Net::Server::ISessionManager {
+class MockSessionManager : public Net::Server::SessionManager {
   public:
-    Net::Server::AddressIn fakeAddr{};
+    sockaddr_in fakeAddr{};
 
     MockSessionManager()
     {
-        fakeAddr.port = htons(1234);
-        inet_pton(AF_INET, "127.0.0.1", &fakeAddr.address);
+        fakeAddr.sin_family = AF_INET;
+        fakeAddr.sin_port = htons(1234);
+        inet_pton(AF_INET, "127.0.0.1", &fakeAddr.sin_addr);
     }
 
-    const Net::Server::AddressIn *getAddress(int id) const override
+    const sockaddr_in *getAddress(int) const
     {
         return &fakeAddr;
     }
-
-    int getOrCreateSession(const Net::Server::AddressIn &addr) override
-    {
-        return 1;
-    };
-
-    int getSessionId(const Net::Server::AddressIn &addr) const override
-    {
-        return 1;
-    };
-
-    void removeSession(int sessionId) override
-    {
-        return;
-    };
 };

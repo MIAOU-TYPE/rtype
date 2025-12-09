@@ -32,7 +32,6 @@ void GameClient::init(unsigned int width, unsigned int height)
         if (!_netClient) {
             throw GameClientError("Failed to create network client instance");
         }
-        _netClient->sendConnectPacket();
 
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
 

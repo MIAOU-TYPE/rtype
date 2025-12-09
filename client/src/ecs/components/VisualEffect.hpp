@@ -15,12 +15,12 @@ namespace Ecs
      */
     enum class EffectType {
         None,
-        Explosion, // Animated explosion
-        Hit,       // Impact flash
-        Shield,    // Shield effect
-        Trail,     // Motion trail
-        Spawn,     // Entity spawn
-        Death      // Entity death
+        Explosion, ///> Animated explosion
+        Hit,       ///> Impact flash
+        Shield,    ///> Shield effect
+        Trail,     ///> Motion trail
+        Spawn,     ///> Entity spawn
+        Death      ///> Entity death
         // TEMPORAIRE IL Y AURA SUREMENT MOINS D'EFFETS
     };
 
@@ -32,10 +32,10 @@ namespace Ecs
      * after the duration expires.
      */
     struct VisualEffect {
-        EffectType type = EffectType::None;
-        float duration = 1.0f;   // Total duration (seconds)
-        float elapsed = 0.f;     // Elapsed time
-        bool autoDestroy = true; // Destroy entity at the end
-        float intensity = 1.0f;  // Effect intensity (0-1)
+        EffectType type = EffectType::None; ///> Type of effect
+        float duration = 1.0f;   ///> Total duration (seconds)
+        float elapsed = 0.f;     ///> Elapsed time
+        bool autoDestroy = true; ///> Destroy entity at the end
+        float intensity = 1.0f;  ///> Effect intensity (0-1)
     };
 } // namespace Ecs

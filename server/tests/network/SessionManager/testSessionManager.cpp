@@ -92,7 +92,7 @@ TEST(SessionManagerTests, GetAddressReturnsCorrectPointer)
 
     const Net::Server::AddressIn *stored = sm.getAddress(id);
     ASSERT_NE(stored, nullptr);
-    sockaddr_in sin = *stored;
+    sockaddr_in sin = stored->toSockaddr();
 
     EXPECT_EQ(sin.sin_addr.s_addr, addr.sin_addr.s_addr);
     EXPECT_EQ(sin.sin_port, addr.sin_port);

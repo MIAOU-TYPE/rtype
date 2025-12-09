@@ -15,7 +15,7 @@
 #include "ISessionManager.hpp"
 #include "NetMessages.hpp"
 #include "PacketRouter.hpp"
-
+#include "mockPacket.hpp"
 // =========================================================
 //                     MOCKS POUR LES TESTS
 // =========================================================
@@ -91,63 +91,6 @@ class MockSink : public Net::IMessageSink {
     Game::InputComponent lastInput{};
 };
 
-// ---- MockPacket conforme IPacket ----
-class MockPacket : public Net::IPacket {
-  public:
-    MockPacket(size_t cap = 256) : _capacity(cap)
-    {
-        _buffer.resize(cap);
-        _size = 0;
-    }
-
-    uint8_t *buffer() override
-    {
-        return _buffer.data();
-    }
-
-    const uint8_t *buffer() const override
-    {
-        return _buffer.data();
-    }
-
-    size_t size() const override
-    {
-        return _size;
-    }
-
-    void setSize(size_t s) override
-    {
-        _size = s;
-    }
-
-    const sockaddr_in *address() const override
-    {
-        return &_addr;
-    }
-
-    void setAddress(const sockaddr_in &a) override
-    {
-        _addr = a;
-    }
-
-    std::shared_ptr<Net::IPacket> clone() const override
-    {
-        return std::make_shared<MockPacket>(_capacity);
-    }
-
-    size_t capacity() const noexcept override
-    {
-        return _capacity;
-    }
-
-  private:
-    std::vector<uint8_t> _buffer;
-    sockaddr_in _addr{};
-    size_t _size;
-    size_t _capacity;
-};
-
-// Helper
 static sockaddr_in makeAddr(uint32_t ip, uint16_t port)
 {
     sockaddr_in a{};
@@ -156,10 +99,6 @@ static sockaddr_in makeAddr(uint32_t ip, uint16_t port)
     a.sin_port = htons(port);
     return a;
 }
-
-// =========================================================
-//                    TESTS PacketRouter
-// =========================================================
 
 TEST(PacketRouter, RejectsNullPacket)
 {
@@ -289,7 +228,7 @@ TEST(PacketRouter, DispatchInput)
     h.size = htons(sizeof(HeaderData) + 1);
 
     std::memcpy(pkt->buffer(), &h, sizeof(h));
-    pkt->buffer()[sizeof(h)] = 0b11111; // up down left right shoot
+    pkt->buffer()[sizeof(h)] = 0b11111;
     pkt->setSize(sizeof(h) + 1);
 
     pr.handlePacket(pkt);

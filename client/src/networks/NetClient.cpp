@@ -107,7 +107,6 @@ namespace Game
         }
     }
 
-
     void NetClient::sendDisconnectPacket()
     {
         if (!_isConnected)

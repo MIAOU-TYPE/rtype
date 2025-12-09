@@ -14,9 +14,9 @@
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
 #include "InputEvents.hpp"
+#include "NetClient.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
-#include "NetClient.hpp"
 
 /**
  * @namespace Game

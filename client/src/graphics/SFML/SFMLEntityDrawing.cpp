@@ -60,7 +60,8 @@ std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(
     float x, float y, const std::string &spriteName, size_t id)
 {
     try {
-        auto entity = std::make_shared<GraphicalEntity>(x, y, spriteName, _textureManager, *this, id);
+        size_t actualId = (id == 0) ? _nextEntityId++ : id;
+        auto entity = std::make_shared<GraphicalEntity>(x, y, spriteName, _textureManager, *this, actualId);
         _entities.push_back(entity);
         return entity;
     } catch (const std::exception &e) {

@@ -43,11 +43,19 @@ SFMLEntityDrawing::SFMLEntityDrawing(
 
     auto missileFlyAnim = std::make_shared<SFMLAnimation>("fly", missileFlyFrames, false);
 
-    _spriteInfo = {
-        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim, true}}, "idle"}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo{enemyIdleAnim, true}}, "idle"}},
-        {"missile",
-            {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim, false}}, "fly"}}};
+    _spriteInfo = {{"player",
+                       {"client/assets/sprites/player.png", 33.1f, 18.0f,
+                           {AnimationInfo{
+                               playerIdleAnim,
+                           }},
+                           "idle"}},
+        {"enemy",
+            {"client/assets/sprites/enemy.png", 65.1f, 66.0f,
+                {AnimationInfo{
+                    enemyIdleAnim,
+                }},
+                "idle"}},
+        {"missile", {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim}}, "fly"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float y, const std::string &spriteName)
@@ -137,7 +145,7 @@ bool SFMLEntityDrawing::shouldAnimationLoop(const std::string &spriteName, const
 
     for (const auto &animInfo : spriteInfo.animations) {
         if (animInfo.animation && animInfo.animation->getName() == animationName) {
-            return animInfo.shouldLoop;
+            return animInfo.animation->getLoop();
         }
     }
 

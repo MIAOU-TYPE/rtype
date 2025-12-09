@@ -29,7 +29,6 @@ namespace Graphics
      */
     struct AnimationInfo {
         std::shared_ptr<SFMLAnimation> animation; ///> The animation
-        bool shouldLoop;                          ///> Whether this animation should loop
     };
 
     /**

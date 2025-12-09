@@ -10,9 +10,11 @@
 #include <SFML/Window/Event.hpp>
 #include <exception>
 #include <memory>
+#include "GameEventHandler.hpp"
 #include "GameScene.hpp"
-#include "IInputHandler.hpp"
 #include "IRenderer.hpp"
+#include "InputEvents.hpp"
+#include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
 
 /**
@@ -74,9 +76,12 @@ namespace Game
 
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
-        std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr;        ///> The input handler interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
-        std::unique_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
+        std::unique_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
+        std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
     };
 
 } // namespace Game

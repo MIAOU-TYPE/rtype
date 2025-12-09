@@ -39,15 +39,15 @@ SFMLEntityDrawing::SFMLEntityDrawing(
     auto enemyIdleAnim = std::make_shared<SFMLAnimation>("idle", enemyIdleFrames, true);
 
     std::vector<AnimationFrame> missileFlyFrames = {
-        AnimationFrame(0, 0, 16, 12, 0.1f), AnimationFrame(16, 0, 16, 12, 0.3f)};
+        AnimationFrame{0, 0, 16, 12, 0.1f}, AnimationFrame{16, 0, 16, 12, 0.3f}};
 
     auto missileFlyAnim = std::make_shared<SFMLAnimation>("fly", missileFlyFrames, false);
 
     _spriteInfo = {
-        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo(playerIdleAnim, true)}, "idle"}},
-        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo(enemyIdleAnim, true)}, "idle"}},
+        {"player", {"client/assets/sprites/player.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim, true}}, "idle"}},
+        {"enemy", {"client/assets/sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo{enemyIdleAnim, true}}, "idle"}},
         {"missile",
-            {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo(missileFlyAnim, false)}, "fly"}}};
+            {"client/assets/sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim, false}}, "fly"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(float x, float y, const std::string &spriteName)

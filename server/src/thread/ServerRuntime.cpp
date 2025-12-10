@@ -8,6 +8,7 @@
 #include "ServerRuntime.hpp"
 
 using namespace Net::Thread;
+using namespace std::chrono;
 
 ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
 {
@@ -78,8 +79,6 @@ void ServerRuntime::runProcessor() const
 
 void ServerRuntime::runUpdate() const
 {
-    using namespace std::chrono;
-
     auto last = steady_clock::now();
     constexpr double targetDelta = 1.0 / 60.0;
     while (_running) {

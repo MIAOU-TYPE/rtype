@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
+#include "ecs/components/Lifetime.hpp"
 #include "game/systems/lifetime/LifetimeSystem.hpp"
 #include "game/world/World.hpp"
-#include "ecs/components/Lifetime.hpp"
 
 TEST(LifetimeSystem, destroys_entity_after_time_expires)
 {

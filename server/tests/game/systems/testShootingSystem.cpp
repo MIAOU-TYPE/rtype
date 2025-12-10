@@ -6,13 +6,13 @@
 */
 
 #include <gtest/gtest.h>
+#include "ecs/components/Collision.hpp"
+#include "ecs/components/Damage.hpp"
+#include "ecs/components/InputComponent.hpp"
+#include "ecs/components/Position.hpp"
+#include "ecs/components/Velocity.hpp"
 #include "game/systems/shooting/ShootingSystem.hpp"
 #include "game/world/World.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "ecs/components/Damage.hpp"
-#include "ecs/components/Collision.hpp"
 
 TEST(ShootingSystem, creates_projectile_when_shooting)
 {
@@ -21,7 +21,7 @@ TEST(ShootingSystem, creates_projectile_when_shooting)
 
     auto &reg = world.registry();
     auto &input = reg.getComponents<Game::InputComponent>()[static_cast<size_t>(player)];
-    auto &pos   = reg.getComponents<Ecs::Position>()[static_cast<size_t>(player)];
+    auto &pos = reg.getComponents<Ecs::Position>()[static_cast<size_t>(player)];
 
     ASSERT_TRUE(input.has_value());
     ASSERT_TRUE(pos.has_value());

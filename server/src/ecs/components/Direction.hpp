@@ -18,7 +18,7 @@ namespace Ecs
      * @brief Defines a direction vector.
      */
     struct Direction {
-        float dx = 0.f; ///> Direction on X axis
-        float dy = 0.f; ///> Direction on Y axis
+        int dx = 0; ///> Direction on X axis
+        int dy = 0; ///> Direction on Y axis
     };
 } // namespace Ecs

@@ -31,13 +31,13 @@ int SessionManager::getOrCreateSession(const sockaddr_in &address)
 
     const int newId = _nextId++;
     _addressToId[key] = newId;
-    _idToAddress[newId] = addr;
+    _idToAddress[newId] = address;
     return newId;
 }
 
 int SessionManager::getSessionId(const sockaddr_in &address) const
 {
-    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
     if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
@@ -45,9 +45,9 @@ int SessionManager::getSessionId(const sockaddr_in &address) const
     return -1;
 }
 
-void SessionManager::removeSession(int sessionId)
+void SessionManager::removeSession(const int sessionId)
 {
-    std::lock_guard lock(_mutex);
+    std::scoped_lock lock(_mutex);
 
     const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
@@ -69,7 +69,7 @@ const sockaddr_in *SessionManager::getAddress(int sessionId) const
 
 std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
 {
-    std::lock_guard lock(_mutex);
+    std::scoped_lock lock(_mutex);
     std::vector<std::pair<int, sockaddr_in>> list;
     list.reserve(_idToAddress.size());
 

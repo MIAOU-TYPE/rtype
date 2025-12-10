@@ -45,6 +45,7 @@ namespace Game
 
         /**
          * @brief Destroy an entity and all its components.
+         * @param ent The entity to destroy.
          */
         virtual void destroyEntity(Ecs::Entity ent) = 0;
     };

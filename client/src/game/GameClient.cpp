@@ -6,11 +6,15 @@
 */
 
 #include "GameClient.hpp"
-#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <optional>
 #include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
+
+#include "InputComponent.hpp"
+#include "Position.hpp"
+#include "ShootingComponent.hpp"
+#include "Velocity.hpp"
 
 using namespace Graphics;
 using namespace Input;
@@ -34,11 +38,35 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
 
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
+        _menuScene = std::make_shared<MenuScene>(_renderer, _textureManager);
+
+        _menuScene->setOnPlayCallback([this]() {
+            _currentScene = SceneState::Gameplay;
+            _isMousePressed = false;
+        });
+
+        _menuScene->setOnQuitCallback([this]() {
+            _renderer->close();
+        });
+
+        auto &registry = _gameScene->getRegistry();
+
+        registry.registerComponent<Ecs::InputComponent>();
+        registry.registerComponent<Ecs::Velocity>();
+        registry.registerComponent<Ecs::Position>();
+        registry.registerComponent<Ecs::ShootingComponent>();
+
+        _playerEntity = registry.createEntity();
+        registry.emplaceComponent<Ecs::InputComponent>(_playerEntity);
+        registry.emplaceComponent<Ecs::Velocity>(_playerEntity, 0.f, 0.f);
+        registry.emplaceComponent<Ecs::Position>(_playerEntity, 100.f, 300.f);
+        registry.emplaceComponent<Ecs::ShootingComponent>(_playerEntity);
 
         _eventManager = std::make_shared<InputEventManager>();
         _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
+        _gameInputHandler->setPlayerEntity(_playerEntity);
 
         _gameInputHandler->setQuitCallback([this]() {
             _renderer->close();
@@ -62,37 +90,54 @@ void GameClient::run()
         throw GameClientError("Game components not properly initialized");
     }
 
-    sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
 
     try {
         while (_renderer->isOpen()) {
-            float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
+            float frameTime = _renderer->getElapsedTime() * 1000.0f;
 
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
-                clock.restart();
-                _inputHandler->update(deltaTime);
-                _gameScene->update(deltaTime);
+                _renderer->restartClock();
+
+                if (_currentScene == SceneState::Menu) {
+                    float mouseX = 0.0f;
+                    float mouseY = 0.0f;
+                    _renderer->getMousePosition(mouseX, mouseY);
+                    _menuScene->update(mouseX, mouseY, _isMousePressed);
+                } else {
+                    _inputHandler->update(deltaTime);
+                    _gameScene->update(deltaTime);
+                }
             }
 
             std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(*event))
                     _renderer->close();
-                _inputHandler->handleEvent(event);
+
+                if (_currentScene == SceneState::Menu) {
+                    if (event->isMouseButtonPressed()) {
+                        _isMousePressed = true;
+                    } else if (event->isMouseButtonReleased()) {
+                        _isMousePressed = false;
+                    }
+                } else {
+                    _inputHandler->handleEvent(event);
+                }
             }
 
             _renderer->clear();
-            _gameScene->render();
+
+            if (_currentScene == SceneState::Menu) {
+                _menuScene->render();
+            } else {
+                _gameScene->render();
+            }
+
             _renderer->display();
         }
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
-}
-
-void GameClient::updateSystem(float deltaTime)
-{
-    // Placeholder for ECS system updates
 }

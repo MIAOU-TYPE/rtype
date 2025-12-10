@@ -9,8 +9,10 @@
 
 #include <functional>
 #include <memory>
+#include "Entity.hpp"
 #include "GameScene.hpp"
 #include "InputEvents.hpp"
+#include "Registry.hpp"
 
 /**
  * @namespace Input
@@ -45,14 +47,19 @@ namespace Input
          */
         void setQuitCallback(std::function<void()> callback);
 
+        /**
+         * @brief Sets the player entity to control.
+         * @param entity The entity representing the player.
+         */
+        void setPlayerEntity(Ecs::Entity entity);
+
       private:
         /**
          * @brief Handles movement actions.
          * @param action The movement action.
          * @param state The input state.
-         * @param deltaTime Time for held actions.
          */
-        void handleMovement(Events::InputAction action, Events::InputState state, float deltaTime);
+        void handleMovement(Events::InputAction action, Events::InputState state);
 
         /**
          * @brief Handles shooting actions.
@@ -69,6 +76,7 @@ namespace Input
 
         std::shared_ptr<Game::GameScene> _gameScene = nullptr; ///> Shared pointer to the game scene
         std::function<void()> _quitCallback = nullptr;         ///> Callback for quit action
+        Ecs::Entity _playerEntity{0};                          ///> The entity representing the player
     };
 
 } // namespace Input

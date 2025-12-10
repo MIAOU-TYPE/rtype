@@ -165,7 +165,7 @@ namespace Net
         sendto_return_t (*_sendFn)(socketHandle, const void *, size_t, int, const struct sockaddr *,
             socklen_t) = nullptr; ///> Function pointer for sending data to a socket.
 
-        int (*_initNetworkFn)() = nullptr; ///> Function pointer for initializing the network.
+        int (*_initNetworkFn)() = nullptr;    ///> Function pointer for initializing the network.
         int (*_cleanupNetworkFn)() = nullptr; ///> Function pointer for cleaning up the network.
     };
 } // namespace Net

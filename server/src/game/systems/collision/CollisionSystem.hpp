@@ -24,5 +24,8 @@ namespace Game
          * @param world The game world containing entities to check for collisions.
          */
         static void update(IGameWorld &world);
+
+      private:
+        static std::vector<Ecs::Entity> _toDestroy;
     };
 } // namespace Game

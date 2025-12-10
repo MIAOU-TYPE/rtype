@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** NetworkSystem
+** NetworkSendSystem
 */
 
 #include "NetworkSendSystem.hpp"

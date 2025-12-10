@@ -17,20 +17,20 @@ namespace Rand
     /**
      * @brief Mersenne Twister random number generator.
      */
-    extern std::mt19937 rng;
+    const extern std::mt19937 rng;
 
     /**
      * @brief Uniform distribution for patrol velocity in the X direction.
      */
-    extern std::uniform_real_distribution<float> patrolVelX;
+    const extern std::uniform_real_distribution<float> patrolVelX;
 
     /**
      * @brief Uniform distribution for patrol velocity in the Y direction.
      */
-    extern std::uniform_real_distribution<float> patrolVelY;
+    const extern std::uniform_real_distribution<float> patrolVelY;
 
     /**
      * @brief Uniform distribution for enemy Y position.
      */
-    extern std::uniform_real_distribution<float> enemyY;
+    const extern std::uniform_real_distribution<float> enemyY;
 } // namespace Rand

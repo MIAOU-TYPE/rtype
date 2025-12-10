@@ -11,12 +11,6 @@
 #include <mutex>
 #include "ISessionManager.hpp"
 
-#include <vector>
-#ifndef _WIN32
-    #include <netinet/in.h>
-#else
-    #include <winsock2.h>
-#endif
 #include <unordered_map>
 
 /**
@@ -83,7 +77,7 @@ namespace Net::Server
          * @brief Get all active sessions.
          * @return A vector of pairs containing session IDs and their corresponding addresses.
          */
-        std::vector<std::pair<int, sockaddr_in>> getAllSessions() const;
+        std::vector<std::pair<int, sockaddr_in>> getAllSessions() const override;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.

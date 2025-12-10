@@ -7,6 +7,7 @@
 
 #pragma once
 #include <string>
+#include <vector>
 
 #ifndef _WIN32
     #include <arpa/inet.h>
@@ -58,5 +59,11 @@ namespace Net::Server
          * @return Pointer to the sockaddr_in structure, or nullptr if not found.
          */
         virtual const sockaddr_in *getAddress(int sessionId) const = 0;
+
+        /**
+         * @brief Get all active sessions.
+         * @return A vector of pairs containing session IDs and their corresponding addresses.
+         */
+        virtual std::vector<std::pair<int, sockaddr_in>> getAllSessions() const = 0;
     };
 } // namespace Net::Server

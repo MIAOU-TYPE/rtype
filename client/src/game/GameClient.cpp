@@ -6,7 +6,6 @@
 */
 
 #include "GameClient.hpp"
-#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <optional>
 #include "SFMLInputHandler.hpp"
@@ -72,16 +71,15 @@ void GameClient::run()
         throw GameClientError("Game components not properly initialized");
     }
 
-    sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
 
     try {
         while (_renderer->isOpen()) {
-            float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
+            float frameTime = _renderer->getElapsedTime() * 1000.0f;
 
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
-                clock.restart();
+                _renderer->restartClock();
 
                 if (_currentScene == SceneState::Menu) {
                     float mouseX = 0.0f;

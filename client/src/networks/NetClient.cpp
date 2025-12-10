@@ -154,6 +154,18 @@ namespace Game
             sizeof(_serverAddr));
     }
 
+    void NetClient::updatePing(float deltaTime)
+    {
+        if (!_isConnected)
+            return;
+
+        _pingTimer += deltaTime;
+        if (_pingTimer >= PING_INTERVAL) {
+            sendPingPacket();
+            _pingTimer -= PING_INTERVAL;
+        }
+    }
+
     void NetClient::close()
     {
         if (_isConnected) {

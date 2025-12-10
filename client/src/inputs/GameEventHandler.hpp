@@ -58,7 +58,6 @@ namespace Input
          * @brief Handles movement actions.
          * @param action The movement action.
          * @param state The input state.
-         * @param deltaTime Time for held actions.
          */
         void handleMovement(Events::InputAction action, Events::InputState state);
 

@@ -8,9 +8,9 @@
 #pragma once
 
 #include "ISystem.hpp"
+#include "InputComponent.hpp"
 #include "NetClient.hpp"
 #include "Registry.hpp"
-#include "InputComponent.hpp"
 
 namespace Ecs
 {
@@ -23,7 +23,7 @@ namespace Ecs
      */
     class NetworkSendSystem : public ISystem {
       public:
-        /** 
+        /**
          * @brief Constructor.
          * @param registry Shared pointer to the ECS registry.
          * @param netClient Shared pointer to the network client.
@@ -33,14 +33,14 @@ namespace Ecs
         /** @brief Destructor. */
         ~NetworkSendSystem() = default;
 
-        /** 
+        /**
          * @brief Updates the network system.
          * @param deltaTime Time elapsed since last update (in seconds).
          */
-        void update(float deltaTime) override;    
+        void update(float deltaTime) override;
 
       private:
-        std::shared_ptr<Registry> _registry; ///> Shared pointer to the ECS registry.
+        std::shared_ptr<Registry> _registry;         ///> Shared pointer to the ECS registry.
         std::shared_ptr<Game::NetClient> _netClient; ///> Shared pointer to the network client.
     };
 } // namespace Ecs

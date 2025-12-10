@@ -18,10 +18,10 @@ namespace Ecs
      * @brief Stores the current input state for a controllable entity.
      */
     struct InputComponent {
-        bool up = false;
-        bool down = false;
-        bool left = false;
-        bool right = false;
-        bool shoot = false;
+        bool up = false;       ///True when moving up is active
+        bool down = false;     ///True when moving down is active
+        bool left = false;     ///True when moving left is active
+        bool right = false;    ///True when moving right is active
+        bool shoot = false;    ///True when shooting is active
     };
 } // namespace Ecs

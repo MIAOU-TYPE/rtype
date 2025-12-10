@@ -14,8 +14,8 @@
 struct InputData {
     HeaderData header;
     uint32_t entity;
-    uint32_t dx;
-    uint32_t dy;
+    int8_t dx;
+    int8_t dy;
     uint8_t shooting;
 };
 

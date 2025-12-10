@@ -21,7 +21,6 @@ namespace Game
       public:
         /**
          * @brief Update velocities based on current inputs.
-         *
          * @param world The game world containing components.
          */
         static void update(IGameWorld &world);

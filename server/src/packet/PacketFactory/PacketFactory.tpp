@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "PacketFactory.hpp"
 
 template<typename Type>
 std::shared_ptr<Net::IPacket> Net::Factory::PacketFactory::makePacket(const sockaddr_in &addr, const Type &packetData) const

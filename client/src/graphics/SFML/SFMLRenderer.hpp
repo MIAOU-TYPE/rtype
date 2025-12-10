@@ -83,6 +83,12 @@ namespace Graphics
         void renderSprite(const ISprite &sprite) override;
 
         /**
+         * @brief Renders text to the screen.
+         * @param text The text to render.
+         */
+        void renderText(const IText &text) override;
+
+        /**
          * @brief Gets the window width.
          * @return The width of the window.
          */
@@ -93,6 +99,13 @@ namespace Graphics
          * @return The height of the window.
          */
         unsigned int getWindowHeight() const override;
+
+        /**
+         * @brief Gets the current mouse position relative to the window.
+         * @param x Reference to store the X coordinate.
+         * @param y Reference to store the Y coordinate.
+         */
+        void getMousePosition(float &x, float &y) const override;
 
       private:
         sf::RenderWindow _window; ///> The SFML render window

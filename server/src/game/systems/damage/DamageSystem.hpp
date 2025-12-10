@@ -18,7 +18,6 @@ namespace Game
       public:
         /**
          * @brief Update the damage system for the given game world.
-         *
          * @param world The game world containing entities to process for damage.
          */
         static void update(IGameWorld &world);

@@ -147,6 +147,12 @@ namespace Net
          */
         int initNetwork();
 
+        /**
+         * @brief Cleans up the network (e.g., WSACleanup on Windows).
+         * @return 0 on success, or an error code on failure.
+         */
+        int cleanupNetwork();
+
       private:
         std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.
 
@@ -160,5 +166,6 @@ namespace Net
             socklen_t) = nullptr; ///> Function pointer for sending data to a socket.
 
         int (*_initNetworkFn)() = nullptr; ///> Function pointer for initializing the network.
+        int (*_cleanupNetworkFn)() = nullptr; ///> Function pointer for cleaning up the network.
     };
 } // namespace Net

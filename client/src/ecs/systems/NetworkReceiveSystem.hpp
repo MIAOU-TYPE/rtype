@@ -34,6 +34,6 @@ namespace Ecs
         void update(float deltaTime) override;
 
       private:
-        Game::NetClient &_netClient;  ///> Reference to the network client
+        Game::NetClient &_netClient; ///> Reference to the network client
     };
 } // namespace Ecs

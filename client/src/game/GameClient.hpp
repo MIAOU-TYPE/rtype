@@ -98,6 +98,7 @@ namespace Game
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
         std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
+        bool _isMousePressed = false; ///> Mouse button state for menu interaction
 
         std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
         std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler

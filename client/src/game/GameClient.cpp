@@ -38,6 +38,7 @@ void GameClient::init(unsigned int width, unsigned int height)
 
         _menuScene->setOnPlayCallback([this]() {
             _currentScene = SceneState::Gameplay;
+            _isMousePressed = false;
         });
 
         _menuScene->setOnQuitCallback([this]() {
@@ -73,7 +74,6 @@ void GameClient::run()
 
     sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
-    bool isMousePressed = false;
 
     try {
         while (_renderer->isOpen()) {
@@ -87,7 +87,7 @@ void GameClient::run()
                     float mouseX = 0.0f;
                     float mouseY = 0.0f;
                     _renderer->getMousePosition(mouseX, mouseY);
-                    _menuScene->update(mouseX, mouseY, isMousePressed);
+                    _menuScene->update(mouseX, mouseY, _isMousePressed);
                 } else {
                     _inputHandler->update(deltaTime);
                     _gameScene->update(deltaTime);
@@ -101,9 +101,9 @@ void GameClient::run()
 
                 if (_currentScene == SceneState::Menu) {
                     if (event->isMouseButtonPressed()) {
-                        isMousePressed = true;
+                        _isMousePressed = true;
                     } else if (event->isMouseButtonReleased()) {
-                        isMousePressed = false;
+                        _isMousePressed = false;
                     }
                 } else {
                     _inputHandler->handleEvent(event);

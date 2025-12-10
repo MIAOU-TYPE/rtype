@@ -6,6 +6,7 @@
 */
 
 #include "GameScene.hpp"
+#include "InputSystem.hpp"
 
 #include <utility>
 
@@ -27,6 +28,10 @@ GameScene::GameScene(
         _starfield = std::make_unique<Background::Starfield>(_renderer, _textureManager);
         if (!_starfield) {
             throw GameSceneError("Failed to create starfield instance");
+        }
+        _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
+        if (!_inputSystem) {
+            throw GameSceneError("Failed to create input system instance");
         }
 
         // _entityDrawing = std::make_unique<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
@@ -51,6 +56,8 @@ void GameScene::update(float deltaTime)
         if (_starfield) {
             _starfield->update(deltaTime);
         }
+
+        _inputSystem->update(deltaTime);
 
         // if (_entityDrawing) {
         //     _entityDrawing->updateAllEntities(deltaTime);
@@ -77,4 +84,9 @@ void GameScene::render()
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));
     }
+}
+
+Ecs::Registry &GameScene::getRegistry()
+{
+    return _registry;
 }

@@ -11,6 +11,11 @@
 #include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
+#include "InputComponent.hpp"
+#include "Position.hpp"
+#include "ShootingComponent.hpp"
+#include "Velocity.hpp"
+
 using namespace Graphics;
 using namespace Input;
 using namespace Game;
@@ -44,10 +49,24 @@ void GameClient::init(unsigned int width, unsigned int height)
             _renderer->close();
         });
 
+        auto &registry = _gameScene->getRegistry();
+
+        registry.registerComponent<Ecs::InputComponent>();
+        registry.registerComponent<Ecs::Velocity>();
+        registry.registerComponent<Ecs::Position>();
+        registry.registerComponent<Ecs::ShootingComponent>();
+
+        _playerEntity = registry.createEntity();
+        registry.emplaceComponent<Ecs::InputComponent>(_playerEntity);
+        registry.emplaceComponent<Ecs::Velocity>(_playerEntity, 0.f, 0.f);
+        registry.emplaceComponent<Ecs::Position>(_playerEntity, 100.f, 300.f);
+        registry.emplaceComponent<Ecs::ShootingComponent>(_playerEntity);
+
         _eventManager = std::make_shared<InputEventManager>();
         _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
 
         _gameInputHandler = std::make_shared<Input::GameEventHandler>(_gameScene);
+        _gameInputHandler->setPlayerEntity(_playerEntity);
 
         _gameInputHandler->setQuitCallback([this]() {
             _renderer->close();
@@ -121,9 +140,4 @@ void GameClient::run()
     } catch (const std::exception &e) {
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
-}
-
-void GameClient::updateSystem(float deltaTime)
-{
-    // Placeholder for ECS system updates
 }

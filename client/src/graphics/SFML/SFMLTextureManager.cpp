@@ -8,6 +8,7 @@
 #include "SFMLTextureManager.hpp"
 #include "SFMLText.hpp"
 #include "resources/ResourceError.hpp"
+#include <iostream>
 
 using namespace Graphics;
 
@@ -33,6 +34,7 @@ bool SFMLTextureManager::loadTexture(const std::string &filePath)
             _textures.emplace(filePath, std::move(texture));
             return true;
         } catch (const Resources::ResourceError &e) {
+            std::cout << e.what() << std::endl;
         }
     }
 
@@ -72,6 +74,7 @@ bool SFMLTextureManager::loadFont(const std::string &fontPath)
             _fonts.emplace(fontPath, font);
             return true;
         } catch (const Resources::ResourceError &e) {
+            std::cout << e.what() << std::endl;
         }
     }
 

@@ -29,6 +29,10 @@ GameScene::GameScene(
         if (!_starfield) {
             throw GameSceneError("Failed to create starfield instance");
         }
+        _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
+        if (!_inputSystem) {
+            throw GameSceneError("Failed to create input system instance");
+        }
 
         // _entityDrawing = std::make_unique<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
         // if (!_entityDrawing) {
@@ -53,7 +57,7 @@ void GameScene::update(float deltaTime)
             _starfield->update(deltaTime);
         }
 
-        Ecs::InputSystem::update(_registry, deltaTime);
+        _inputSystem->update(deltaTime);
 
         // if (_entityDrawing) {
         //     _entityDrawing->updateAllEntities(deltaTime);

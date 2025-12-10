@@ -12,6 +12,7 @@
 #include <string>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "InputSystem.hpp"
 #include "Registry.hpp"
 #include "SFMLEntityDrawing.hpp"
 #include "Starfield.hpp"
@@ -94,6 +95,7 @@ namespace Game
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
         Ecs::Registry _registry;                                              ///> The ECS registry
+        std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
         // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
     };
 

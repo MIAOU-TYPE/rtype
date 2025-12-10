@@ -44,6 +44,26 @@ namespace Graphics
         bool isType(EventType type) const override;
 
         /**
+         * @brief Checks if this event is a mouse button press event.
+         * @return True if the event is a mouse button press, false otherwise.
+         */
+        bool isMouseButtonPressed() const override;
+
+        /**
+         * @brief Checks if this event is a mouse button release event.
+         * @return True if the event is a mouse button release, false otherwise.
+         */
+        bool isMouseButtonReleased() const override;
+
+        /**
+         * @brief Gets mouse position from a mouse moved event.
+         * @param x Reference to store the X coordinate.
+         * @param y Reference to store the Y coordinate.
+         * @return True if the event contains mouse position data, false otherwise.
+         */
+        bool getMousePosition(float &x, float &y) const override;
+
+        /**
          * @brief Gets the underlying SFML event.
          * @return Reference to the SFML event.
          */

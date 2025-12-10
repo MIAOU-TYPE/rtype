@@ -83,6 +83,12 @@ namespace Graphics
         void renderSprite(const ISprite &sprite) override;
 
         /**
+         * @brief Renders text to the screen.
+         * @param text The text to render.
+         */
+        void renderText(const IText &text) override;
+
+        /**
          * @brief Gets the window width.
          * @return The width of the window.
          */
@@ -94,8 +100,27 @@ namespace Graphics
          */
         unsigned int getWindowHeight() const override;
 
+        /**
+         * @brief Gets the current mouse position relative to the window.
+         * @param x Reference to store the X coordinate.
+         * @param y Reference to store the Y coordinate.
+         */
+        void getMousePosition(float &x, float &y) const override;
+
+        /**
+         * @brief Gets the elapsed time since last restart in seconds.
+         * @return The elapsed time in seconds.
+         */
+        float getElapsedTime() const override;
+
+        /**
+         * @brief Restarts the internal clock.
+         */
+        void restartClock() override;
+
       private:
         sf::RenderWindow _window; ///> The SFML render window
+        mutable sf::Clock _clock; ///> Internal clock for timing
     };
 
 } // namespace Graphics

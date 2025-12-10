@@ -41,8 +41,26 @@ namespace Graphics
          */
         std::unique_ptr<ISprite> createSprite(const std::string &texturePath) override;
 
+        /**
+         * @brief Loads a font from a file.
+         * @param fontPath The path to the font file.
+         * @return True if the font was loaded successfully, false otherwise.
+         */
+        bool loadFont(const std::string &fontPath) override;
+
+        /**
+         * @brief Creates a text object using a loaded font.
+         * @param fontPath The path to the font to use.
+         * @param text The initial text string.
+         * @param characterSize The character size in pixels.
+         * @return A unique pointer to the created text object.
+         */
+        std::unique_ptr<IText> createText(
+            const std::string &fontPath, const std::string &text = "", unsigned int characterSize = 30) override;
+
       private:
-        std::unordered_map<std::string, sf::Texture> _textures = {}; ///> Map of loaded textures
+        std::unordered_map<std::string, sf::Texture> _textures = {};            ///> Map of loaded textures
+        std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts = {}; ///> Map of loaded fonts
     };
 
 } // namespace Graphics

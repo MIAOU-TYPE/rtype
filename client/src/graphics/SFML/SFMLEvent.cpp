@@ -72,3 +72,23 @@ EventType SFMLEvent::convertEventType() const
         return EventType::SensorChanged;
     return EventType::Unknown;
 }
+
+bool SFMLEvent::isMouseButtonPressed() const
+{
+    return _sfmlEvent.getIf<sf::Event::MouseButtonPressed>() != nullptr;
+}
+
+bool SFMLEvent::isMouseButtonReleased() const
+{
+    return _sfmlEvent.getIf<sf::Event::MouseButtonReleased>() != nullptr;
+}
+
+bool SFMLEvent::getMousePosition(float &x, float &y) const
+{
+    if (const auto *mouseMoved = _sfmlEvent.getIf<sf::Event::MouseMoved>()) {
+        x = static_cast<float>(mouseMoved->position.x);
+        y = static_cast<float>(mouseMoved->position.y);
+        return true;
+    }
+    return false;
+}

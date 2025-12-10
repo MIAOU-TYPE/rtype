@@ -17,7 +17,7 @@ namespace Rand
     /**
      * @brief Mersenne Twister random number generator.
      */
-    const extern std::mt19937 rng;
+    extern std::mt19937 rng;
 
     /**
      * @brief Uniform distribution for patrol velocity in the X direction.

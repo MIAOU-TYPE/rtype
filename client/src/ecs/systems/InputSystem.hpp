@@ -19,7 +19,7 @@ namespace Ecs
      * allowing MovementSystem to apply physics independently.
      */
     class InputSystem {
-        public:
+      public:
         /**
          * @brief Update velocities based on input state.
          * @param registry The ECS registry containing components.

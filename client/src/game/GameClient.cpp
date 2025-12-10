@@ -13,9 +13,9 @@
 #include "SFMLRenderer.hpp"
 
 #include "InputComponent.hpp"
-#include "Velocity.hpp"
 #include "Position.hpp"
 #include "ShootingComponent.hpp"
+#include "Velocity.hpp"
 
 using namespace Graphics;
 using namespace Input;

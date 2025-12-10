@@ -6,9 +6,9 @@
 */
 
 #include "GameEventHandler.hpp"
-#include "InputComponent.hpp"
 #include <iostream>
 #include <utility>
+#include "InputComponent.hpp"
 
 using namespace Input;
 using namespace Events;
@@ -33,20 +33,14 @@ void GameEventHandler::onInputEvent(const InputEvent &event)
         case InputAction::MoveUp:
         case InputAction::MoveDown:
         case InputAction::MoveLeft:
-        case InputAction::MoveRight:
-        handleMovement(event.action, event.state);
-        break;
+        case InputAction::MoveRight: handleMovement(event.action, event.state); break;
 
-        case InputAction::Shoot:
-            handleShooting(event.state);
-            break;
+        case InputAction::Shoot: handleShooting(event.state); break;
 
         case InputAction::Pause:
         case InputAction::Quit:
         case InputAction::Confirm:
-        case InputAction::Cancel:
-        handleSystemActions(event.action, event.state);
-        break;
+        case InputAction::Cancel: handleSystemActions(event.action, event.state); break;
     }
 }
 
@@ -65,20 +59,11 @@ void GameEventHandler::handleMovement(InputAction action, InputState state)
     bool isPressed = (state == InputState::Pressed || state == InputState::Held);
 
     switch (action) {
-        case InputAction::MoveUp:
-            input->up = isPressed;
-            break;
-        case InputAction::MoveDown:
-            input->down = isPressed;
-            break;
-        case InputAction::MoveLeft:
-            input->left = isPressed;
-            break;
-        case InputAction::MoveRight:
-            input->right = isPressed;
-            break;
-        default:
-            break;
+        case InputAction::MoveUp: input->up = isPressed; break;
+        case InputAction::MoveDown: input->down = isPressed; break;
+        case InputAction::MoveLeft: input->left = isPressed; break;
+        case InputAction::MoveRight: input->right = isPressed; break;
+        default: break;
     }
 }
 
@@ -106,21 +91,15 @@ void GameEventHandler::handleSystemActions(InputAction action, InputState state)
     }
 
     switch (action) {
-        case InputAction::Pause:
-            std::cout << "Game paused/unpaused" << std::endl;
-            break;
+        case InputAction::Pause: std::cout << "Game paused/unpaused" << std::endl; break;
         case InputAction::Quit:
             std::cout << "Quit game requested" << std::endl;
             if (_quitCallback) {
                 _quitCallback();
             }
             break;
-        case InputAction::Confirm:
-            std::cout << "Confirm action" << std::endl;
-            break;
-        case InputAction::Cancel:
-            std::cout << "Cancel action" << std::endl;
-            break;
+        case InputAction::Confirm: std::cout << "Confirm action" << std::endl; break;
+        case InputAction::Cancel: std::cout << "Cancel action" << std::endl; break;
         default: break;
     }
 }

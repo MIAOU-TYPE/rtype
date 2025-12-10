@@ -9,9 +9,9 @@
 
 #include <functional>
 #include <memory>
+#include "Entity.hpp"
 #include "GameScene.hpp"
 #include "InputEvents.hpp"
-#include "Entity.hpp"
 #include "Registry.hpp"
 
 /**
@@ -77,7 +77,7 @@ namespace Input
 
         std::shared_ptr<Game::GameScene> _gameScene = nullptr; ///> Shared pointer to the game scene
         std::function<void()> _quitCallback = nullptr;         ///> Callback for quit action
-        Ecs::Entity _playerEntity{0};                             ///> The entity representing the player
+        Ecs::Entity _playerEntity{0};                          ///> The entity representing the player
     };
 
 } // namespace Input

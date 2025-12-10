@@ -23,7 +23,8 @@ namespace Game
         auto &colArr = reg.getComponents<Ecs::Collision>();
         auto &dmgArr = reg.getComponents<Ecs::Damage>();
         auto &hpArr = reg.getComponents<Ecs::Health>();
-        _toDestroy.clear();
+
+        std::vector<Ecs::Entity> toDestroy;
 
         for (size_t i = 0; i < posArr.size(); i++) {
             if (!posArr[i].has_value() || !colArr[i].has_value())
@@ -36,14 +37,15 @@ namespace Game
                     continue;
                 if (dmgArr[i].has_value() && hpArr[j].has_value()) {
                     hpArr[j]->hp -= dmgArr[i]->amount;
-                    _toDestroy.push_back(Ecs::Entity(i));
+                    toDestroy.emplace_back(Ecs::Entity(i));
                 } else if (dmgArr[j].has_value() && hpArr[i].has_value()) {
                     hpArr[i]->hp -= dmgArr[j]->amount;
-                    _toDestroy.push_back(Ecs::Entity(j));
+                    toDestroy.emplace_back(Ecs::Entity(j));
                 }
             }
         }
-        for (const auto ent : _toDestroy)
+
+        for (auto ent : toDestroy)
             reg.destroyEntity(ent);
     }
 } // namespace Game

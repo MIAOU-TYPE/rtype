@@ -22,15 +22,15 @@ namespace Rand
     /**
      * @brief Uniform distribution for patrol velocity in the X direction.
      */
-    const extern std::uniform_real_distribution<float> patrolVelX;
+    extern std::uniform_real_distribution<float> patrolVelX;
 
     /**
      * @brief Uniform distribution for patrol velocity in the Y direction.
      */
-    const extern std::uniform_real_distribution<float> patrolVelY;
+    extern std::uniform_real_distribution<float> patrolVelY;
 
     /**
      * @brief Uniform distribution for enemy Y position.
      */
-    const extern std::uniform_real_distribution<float> enemyY;
+    extern std::uniform_real_distribution<float> enemyY;
 } // namespace Rand

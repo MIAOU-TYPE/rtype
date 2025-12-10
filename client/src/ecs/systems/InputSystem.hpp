@@ -23,6 +23,7 @@ namespace Ecs
         /**
          * @brief Update velocities based on input state.
          * @param registry The ECS registry containing components.
+         * @param deltaTime Time elapsed since last update (in seconds).
          */
         static void update(Registry &registry, float deltaTime);
     };

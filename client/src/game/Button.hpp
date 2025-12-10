@@ -101,7 +101,6 @@ namespace Game
         float _width = 0.0f;                                                  ///> Width of button
         float _height = 0.0f;                                                 ///> Height of button
         ButtonState _state = ButtonState::Normal;                             ///> Current button state
-        ButtonState _previousState = ButtonState::Normal;                     ///> Previous button state
         std::unique_ptr<Graphics::ISprite> _normalSprite = nullptr;           ///> Normal state sprite
         std::unique_ptr<Graphics::ISprite> _hoverSprite = nullptr;            ///> Hover state sprite
         std::unique_ptr<Graphics::ISprite> _pressedSprite = nullptr;          ///> Pressed state sprite

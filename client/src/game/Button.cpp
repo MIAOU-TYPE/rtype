@@ -63,7 +63,6 @@ Button::Button(float x, float y, const std::string &normalTexture, const std::st
 
 bool Button::update(float mouseX, float mouseY, bool isClicked)
 {
-    _previousState = _state;
     bool isHovering = contains(mouseX, mouseY);
 
     if (isHovering) {

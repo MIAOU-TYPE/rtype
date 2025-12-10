@@ -6,7 +6,6 @@
 */
 
 #include "AISystem.hpp"
-#include <cstdlib>
 
 namespace Game
 {

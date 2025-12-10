@@ -9,6 +9,7 @@
 
 #include "AIBrain.hpp"
 #include "World.hpp"
+#include <cstdlib>
 
 namespace Game
 {

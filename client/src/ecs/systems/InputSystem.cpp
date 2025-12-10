@@ -9,7 +9,7 @@
 #include <cmath>
 #include "InputComponent.hpp"
 #include "ShootingComponent.hpp"
-#include "Velocity.hpp"
+#include "Direction.hpp"
 
 namespace Ecs
 {
@@ -19,20 +19,15 @@ namespace Ecs
 
     void InputSystem::update(float deltaTime)
     {
-        constexpr float MOVE_SPEED = 200.f;
-
-        _registry.view<InputComponent, Velocity>([](Entity, const InputComponent &input, Velocity &vel) {
-            vel.vx = 0.f;
-            vel.vy = 0.f;
-
+        _registry.view<InputComponent, Direction>([](Entity, const InputComponent &input, Direction &dir) {
             if (input.left)
-                vel.vx -= MOVE_SPEED;
+                dir.dx = -1.f;
             if (input.right)
-                vel.vx += MOVE_SPEED;
+                dir.dx = 1.f;
             if (input.up)
-                vel.vy -= MOVE_SPEED;
+                dir.dy = -1.f;
             if (input.down)
-                vel.vy += MOVE_SPEED;
+                dir.dy = 1.f;
         });
 
         _registry.view<InputComponent, ShootingComponent>(

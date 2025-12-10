@@ -17,10 +17,10 @@ namespace Ecs
 
     void NetworkSendSystem::update(float deltaTime)
     {
-         _registry->view<Game::InputComponent>([this](Entity entity, const Game::InputComponent &input) {
+        _registry->view<Game::InputComponent>([this](Entity entity, const Game::InputComponent &input) {
             float dx = 0.0f;
             float dy = 0.0f;
-            
+
             if (input.left)
                 dx -= 1.0f;
             if (input.right)
@@ -29,7 +29,7 @@ namespace Ecs
                 dy -= 1.0f;
             if (input.down)
                 dy += 1.0f;
-            
+
             _netClient->sendInputPacket(dx, dy, input.shoot);
         });
     }

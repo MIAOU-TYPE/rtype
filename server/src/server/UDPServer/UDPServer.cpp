@@ -30,8 +30,8 @@ void UDPServer::start()
         throw ServerError("{UDPServer::start} Server is already running");
 
     try {
-        Net::SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
-        Net::SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
+        constexpr SocketConfig socketParams = {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
+        constexpr SocketOptions socketOptions = {SOL_SOCKET, SO_REUSEADDR, 1};
         setupSocket(socketParams, socketOptions);
         bindSocket(socketParams.family);
         setNonBlocking(true);
@@ -69,11 +69,9 @@ void UDPServer::readPackets()
     pkt->setSize(static_cast<size_t>(received));
 
     {
-        std::lock_guard<std::mutex> lock(_rxMutex);
-        if (!_rxBuffer.push(pkt)) {
+        std::scoped_lock lock(_rxMutex);
+        if (!_rxBuffer.push(pkt))
             std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
-            return;
-        }
     }
 }
 
@@ -86,7 +84,7 @@ bool UDPServer::sendPacket(const Net::IPacket &pkt)
 
 bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
 {
-    std::lock_guard<std::mutex> lock(_rxMutex);
+    std::scoped_lock lock(_rxMutex);
 
     return _rxBuffer.pop(pkt);
 }
@@ -111,7 +109,7 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     _socketFd = sockFd;
 }
 
-void UDPServer::bindSocket(Net::family_t family)
+void UDPServer::bindSocket(family_t family)
 {
     if (_socketFd == kInvalidSocket)
         throw ServerError("{UDPServer::bindSocket} Socket not initialized");

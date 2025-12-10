@@ -34,6 +34,15 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
 
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
+        _menuScene = std::make_shared<MenuScene>(_renderer, _textureManager);
+
+        _menuScene->setOnPlayCallback([this]() {
+            _currentScene = SceneState::Gameplay;
+        });
+
+        _menuScene->setOnQuitCallback([this]() {
+            _renderer->close();
+        });
 
         _eventManager = std::make_shared<InputEventManager>();
         _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
@@ -64,6 +73,7 @@ void GameClient::run()
 
     sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
+    bool isMousePressed = false;
 
     try {
         while (_renderer->isOpen()) {
@@ -72,19 +82,42 @@ void GameClient::run()
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
                 clock.restart();
-                _inputHandler->update(deltaTime);
-                _gameScene->update(deltaTime);
+
+                if (_currentScene == SceneState::Menu) {
+                    float mouseX = 0.0f;
+                    float mouseY = 0.0f;
+                    _renderer->getMousePosition(mouseX, mouseY);
+                    _menuScene->update(deltaTime, mouseX, mouseY, isMousePressed);
+                } else {
+                    _inputHandler->update(deltaTime);
+                    _gameScene->update(deltaTime);
+                }
             }
 
             std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(*event))
                     _renderer->close();
-                _inputHandler->handleEvent(event);
+
+                if (_currentScene == SceneState::Menu) {
+                    if (event->isMouseButtonPressed()) {
+                        isMousePressed = true;
+                    } else if (event->isMouseButtonReleased()) {
+                        isMousePressed = false;
+                    }
+                } else {
+                    _inputHandler->handleEvent(event);
+                }
             }
 
             _renderer->clear();
-            _gameScene->render();
+
+            if (_currentScene == SceneState::Menu) {
+                _menuScene->render();
+            } else {
+                _gameScene->render();
+            }
+
             _renderer->display();
         }
     } catch (const std::exception &e) {

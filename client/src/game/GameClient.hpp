@@ -14,6 +14,7 @@
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
 #include "InputEvents.hpp"
+#include "MenuScene.hpp"
 #include "NetClient.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
@@ -24,6 +25,15 @@
  */
 namespace Game
 {
+    /**
+     * @enum SceneState
+     * @brief Represents the current scene state.
+     */
+    enum class SceneState {
+        Menu,    ///> Main menu scene
+        Gameplay ///> Gameplay scene
+    };
+
     /**
      * @class GameClientError
      * @brief Exception class for client-related errors.
@@ -86,6 +96,8 @@ namespace Game
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene
+        SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
 
         std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
         std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler

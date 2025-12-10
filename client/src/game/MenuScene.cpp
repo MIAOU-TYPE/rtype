@@ -64,7 +64,7 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
     }
 }
 
-void MenuScene::update(float deltaTime, float mouseX, float mouseY, bool isMouseClicked)
+void MenuScene::update(float mouseX, float mouseY, bool isMouseClicked)
 {
     try {
         if (_playButton) {
@@ -74,8 +74,6 @@ void MenuScene::update(float deltaTime, float mouseX, float mouseY, bool isMouse
         if (_quitButton) {
             _quitButton->update(mouseX, mouseY, isMouseClicked);
         }
-
-        (void) deltaTime;
 
     } catch (const std::exception &e) {
         throw MenuSceneError("Failed to update menu scene: " + std::string(e.what()));

@@ -87,7 +87,7 @@ void GameClient::run()
                     float mouseX = 0.0f;
                     float mouseY = 0.0f;
                     _renderer->getMousePosition(mouseX, mouseY);
-                    _menuScene->update(deltaTime, mouseX, mouseY, isMousePressed);
+                    _menuScene->update(mouseX, mouseY, isMousePressed);
                 } else {
                     _inputHandler->update(deltaTime);
                     _gameScene->update(deltaTime);

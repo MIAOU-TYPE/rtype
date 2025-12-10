@@ -65,12 +65,11 @@ namespace Game
 
         /**
          * @brief Updates the menu scene.
-         * @param deltaTime Time elapsed since last update in seconds.
          * @param mouseX The X position of the mouse.
          * @param mouseY The Y position of the mouse.
          * @param isMouseClicked Whether the mouse button is clicked.
          */
-        void update(float deltaTime, float mouseX, float mouseY, bool isMouseClicked);
+        void update(float mouseX, float mouseY, bool isMouseClicked);
 
         /**
          * @brief Renders the menu scene.

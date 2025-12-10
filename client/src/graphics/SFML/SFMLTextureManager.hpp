@@ -11,6 +11,7 @@
 #include <memory>
 #include "ITextureManager.hpp"
 #include "SFMLSpriteManagement.hpp"
+#include "resources/IResourceManager.hpp"
 #include <unordered_map>
 
 /**
@@ -27,6 +28,12 @@ namespace Graphics
      */
     class SFMLTextureManager : public ITextureManager {
       public:
+        /**
+         * @brief Constructor that accepts a resource manager for embedded assets.
+         * @param resourceManager Shared pointer to the resource manager (optional).
+         */
+        explicit SFMLTextureManager(std::shared_ptr<Resources::IResourceManager> resourceManager = nullptr);
+
         /**
          * @brief Loads a texture from file.
          * @param filePath The path to the texture file.
@@ -61,6 +68,7 @@ namespace Graphics
       private:
         std::unordered_map<std::string, sf::Texture> _textures = {};            ///> Map of loaded textures
         std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts = {}; ///> Map of loaded fonts
+        std::shared_ptr<Resources::IResourceManager> _resourceManager; ///> Resource manager for embedded assets
     };
 
 } // namespace Graphics

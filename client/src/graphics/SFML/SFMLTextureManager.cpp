@@ -7,8 +7,14 @@
 
 #include "SFMLTextureManager.hpp"
 #include "SFMLText.hpp"
+#include "resources/ResourceError.hpp"
 
 using namespace Graphics;
+
+SFMLTextureManager::SFMLTextureManager(std::shared_ptr<Resources::IResourceManager> resourceManager)
+    : _resourceManager(std::move(resourceManager))
+{
+}
 
 bool SFMLTextureManager::loadTexture(const std::string &filePath)
 {
@@ -17,6 +23,19 @@ bool SFMLTextureManager::loadTexture(const std::string &filePath)
     }
 
     sf::Texture texture;
+
+    if (_resourceManager && _resourceManager->hasResource(filePath)) {
+        try {
+            auto resourceData = _resourceManager->loadResource(filePath);
+            if (!texture.loadFromMemory(resourceData.data, resourceData.size)) {
+                throw Resources::ResourceError("Failed to load texture from embedded resource: " + filePath);
+            }
+            _textures.emplace(filePath, std::move(texture));
+            return true;
+        } catch (const Resources::ResourceError &e) {
+        }
+    }
+
     if (!texture.loadFromFile(filePath)) {
         return false;
     }
@@ -43,6 +62,19 @@ bool SFMLTextureManager::loadFont(const std::string &fontPath)
     }
 
     auto font = std::make_shared<sf::Font>();
+
+    if (_resourceManager && _resourceManager->hasResource(fontPath)) {
+        try {
+            auto resourceData = _resourceManager->loadResource(fontPath);
+            if (!font->openFromMemory(resourceData.data, resourceData.size)) {
+                throw Resources::ResourceError("Failed to load font from embedded resource: " + fontPath);
+            }
+            _fonts.emplace(fontPath, font);
+            return true;
+        } catch (const Resources::ResourceError &e) {
+        }
+    }
+
     if (!font->openFromFile(fontPath)) {
         return false;
     }

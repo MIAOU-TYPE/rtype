@@ -35,6 +35,7 @@ void ServerRuntime::wait()
 void ServerRuntime::start()
 {
     _server->start();
+    _running = true;
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
     _updateThread = std::thread(&ServerRuntime::runUpdate, this);

@@ -21,13 +21,13 @@ namespace Ecs
     {
         _registry.view<InputComponent, Direction>([](Entity, const InputComponent &input, Direction &dir) {
             if (input.left)
-                dir.dx = -1.f;
+                dir.dx = -1;
             if (input.right)
-                dir.dx = 1.f;
+                dir.dx = 1;
             if (input.up)
-                dir.dy = -1.f;
+                dir.dy = -1;
             if (input.down)
-                dir.dy = 1.f;
+                dir.dy = 1;
         });
 
         _registry.view<InputComponent, ShootingComponent>(

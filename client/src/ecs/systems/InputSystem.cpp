@@ -21,7 +21,7 @@ namespace Ecs
     {
         constexpr float MOVE_SPEED = 200.f;
 
-        _registry.view<Game::InputComponent, Velocity>([](Entity, const Game::InputComponent &input, Velocity &vel) {
+        _registry.view<InputComponent, Velocity>([](Entity, const InputComponent &input, Velocity &vel) {
             vel.vx = 0.f;
             vel.vy = 0.f;
 
@@ -35,8 +35,8 @@ namespace Ecs
                 vel.vy += MOVE_SPEED;
         });
 
-        _registry.view<Game::InputComponent, ShootingComponent>(
-            [deltaTime](Entity, const Game::InputComponent &input, ShootingComponent &shooting) {
+        _registry.view<InputComponent, ShootingComponent>(
+            [deltaTime](Entity, const InputComponent &input, ShootingComponent &shooting) {
                 if (shooting.cooldown > 0.f)
                     shooting.cooldown = std::max(0.f, shooting.cooldown - deltaTime);
                 shooting.wantsToShoot = input.shoot && (shooting.cooldown <= 0.f);

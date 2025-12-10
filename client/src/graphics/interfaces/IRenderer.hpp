@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include "IEvent.hpp"
+#include "ITextureManager.hpp"
 
 /**
  * @namespace Graphics
@@ -90,6 +91,12 @@ namespace Graphics
         virtual void renderSprite(const ISprite &sprite) = 0;
 
         /**
+         * @brief Renders text to the screen.
+         * @param text The text to render.
+         */
+        virtual void renderText(const IText &text) = 0;
+
+        /**
          * @brief Gets the window width.
          * @return The width of the window.
          */
@@ -100,6 +107,13 @@ namespace Graphics
          * @return The height of the window.
          */
         virtual unsigned int getWindowHeight() const = 0;
+
+        /**
+         * @brief Gets the current mouse position relative to the window.
+         * @param x Reference to store the X coordinate.
+         * @param y Reference to store the Y coordinate.
+         */
+        virtual void getMousePosition(float &x, float &y) const = 0;
     };
 
 } // namespace Graphics

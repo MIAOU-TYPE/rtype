@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "ISystem.hpp"
 #include "Registry.hpp"
 
 namespace Ecs
@@ -18,7 +19,7 @@ namespace Ecs
      * This system reads input state and writes velocity,
      * allowing MovementSystem to apply physics independently.
      */
-    class InputSystem {
+    class InputSystem : public ISystem {
       public:
         /**
          * @brief Constructor.
@@ -29,9 +30,9 @@ namespace Ecs
          * @brief Update velocities based on input state.
          * @param deltaTime Time elapsed since last update (in seconds).
          */
-        void update(float deltaTime);
+        void update(float deltaTime) override;
 
       private:
-        Registry &_registry;
+        Registry &_registry; ///> Reference to the ECS registry.
     };
 } // namespace Ecs

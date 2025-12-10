@@ -6,7 +6,6 @@
 */
 
 #include "GameClient.hpp"
-#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <optional>
 #include "SFMLInputHandler.hpp"
@@ -39,6 +38,16 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
 
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
+        _menuScene = std::make_shared<MenuScene>(_renderer, _textureManager);
+
+        _menuScene->setOnPlayCallback([this]() {
+            _currentScene = SceneState::Gameplay;
+            _isMousePressed = false;
+        });
+
+        _menuScene->setOnQuitCallback([this]() {
+            _renderer->close();
+        });
 
         auto &registry = _gameScene->getRegistry();
 
@@ -81,29 +90,51 @@ void GameClient::run()
         throw GameClientError("Game components not properly initialized");
     }
 
-    sf::Clock clock;
     const float UPDATE_INTERVAL_MS = 16.67f;
 
     try {
         while (_renderer->isOpen()) {
-            float frameTime = clock.getElapsedTime().asSeconds() * 1000.0f;
+            float frameTime = _renderer->getElapsedTime() * 1000.0f;
 
             if (frameTime >= UPDATE_INTERVAL_MS) {
                 float deltaTime = frameTime / 1000.0f;
-                clock.restart();
-                _inputHandler->update(deltaTime);
-                _gameScene->update(deltaTime);
+                _renderer->restartClock();
+
+                if (_currentScene == SceneState::Menu) {
+                    float mouseX = 0.0f;
+                    float mouseY = 0.0f;
+                    _renderer->getMousePosition(mouseX, mouseY);
+                    _menuScene->update(mouseX, mouseY, _isMousePressed);
+                } else {
+                    _inputHandler->update(deltaTime);
+                    _gameScene->update(deltaTime);
+                }
             }
 
             std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
                 if (_renderer->isWindowCloseEvent(*event))
                     _renderer->close();
-                _inputHandler->handleEvent(event);
+
+                if (_currentScene == SceneState::Menu) {
+                    if (event->isMouseButtonPressed()) {
+                        _isMousePressed = true;
+                    } else if (event->isMouseButtonReleased()) {
+                        _isMousePressed = false;
+                    }
+                } else {
+                    _inputHandler->handleEvent(event);
+                }
             }
 
             _renderer->clear();
-            _gameScene->render();
+
+            if (_currentScene == SceneState::Menu) {
+                _menuScene->render();
+            } else {
+                _gameScene->render();
+            }
+
             _renderer->display();
         }
     } catch (const std::exception &e) {

@@ -10,9 +10,13 @@
 #include <SFML/Window/Event.hpp>
 #include <exception>
 #include <memory>
+#include "GameEventHandler.hpp"
 #include "GameScene.hpp"
-#include "IInputHandler.hpp"
 #include "IRenderer.hpp"
+#include "InputEvents.hpp"
+#include "MenuScene.hpp"
+#include "NetClient.hpp"
+#include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
 
 /**
@@ -21,6 +25,15 @@
  */
 namespace Game
 {
+    /**
+     * @enum SceneState
+     * @brief Represents the current scene state.
+     */
+    enum class SceneState {
+        Menu,    ///> Main menu scene
+        Gameplay ///> Gameplay scene
+    };
+
     /**
      * @class GameClientError
      * @brief Exception class for client-related errors.
@@ -74,9 +87,17 @@ namespace Game
 
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
-        std::unique_ptr<Input::IInputHandler> _inputHandler = nullptr;        ///> The input handler interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
-        std::unique_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
+        std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
+        std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene
+        SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
+        bool _isMousePressed = false; ///> Mouse button state for menu interaction
+
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
+        std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
+        std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
+        Ecs::Entity _playerEntity{0};                                         ///> The player entity
     };
 
 } // namespace Game

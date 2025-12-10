@@ -8,6 +8,7 @@
 #include "ServerRuntime.hpp"
 
 using namespace Net::Thread;
+using namespace std::chrono;
 
 ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
 {
@@ -18,7 +19,7 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
 
 ServerRuntime::~ServerRuntime()
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;
@@ -26,7 +27,7 @@ ServerRuntime::~ServerRuntime()
 
 void ServerRuntime::wait()
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::unique_lock lock(_mutex);
     _cv.wait(lock, [this]() {
         return _stopRequested;
     });
@@ -35,15 +36,18 @@ void ServerRuntime::wait()
 void ServerRuntime::start()
 {
     _server->start();
+    _running = true;
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
+    _updateThread = std::thread(&ServerRuntime::runUpdate, this);
 }
 
 void ServerRuntime::stop()
 {
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard lock(_mutex);
         _stopRequested = true;
+        _running = false;
     }
     _cv.notify_all();
 
@@ -52,6 +56,8 @@ void ServerRuntime::stop()
         _receiverThread.join();
     if (_processorThread.joinable())
         _processorThread.join();
+    if (_updateThread.joinable())
+        _updateThread.join();
     _server->stop();
 }
 
@@ -64,15 +70,22 @@ void ServerRuntime::runReceiver() const
 
 void ServerRuntime::runProcessor() const
 {
-    auto last = std::chrono::steady_clock::now();
     while (_server->isRunning()) {
         if (std::shared_ptr<IPacket> pkt = nullptr; _server->popPacket(pkt)) {
             _packetRouter->handlePacket(pkt);
+        }
+    }
+}
 
-            auto now = std::chrono::steady_clock::now();
-            const float dt = std::chrono::duration<float>(now - last).count();
+void ServerRuntime::runUpdate() const
+{
+    auto last = steady_clock::now();
+    constexpr double targetDelta = 1.0 / 60.0;
+    while (_running) {
+        auto now = steady_clock::now();
+        if (const double dt = duration<double>(now - last).count(); dt >= targetDelta) {
             last = now;
-            _gameServer->update(dt);
+            _gameServer->update(static_cast<float>(dt));
         }
     }
 }

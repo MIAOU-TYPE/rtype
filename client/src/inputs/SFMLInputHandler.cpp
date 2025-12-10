@@ -8,54 +8,128 @@
 #include "SFMLInputHandler.hpp"
 
 using namespace Input;
+using namespace Events;
 
-void SFMLInputHandler::handleEvent(const sf::Event &)
+SFMLInputHandler::SFMLInputHandler(std::shared_ptr<Events::InputEventManager> eventManager)
+    : _eventManager(std::move(eventManager))
 {
-    std::cout << "Handling SFML event\n";
-    // TODO: Implement event handling logic if needed
+    if (!_eventManager) {
+        throw SFMLInputHandlerError("InputEventManager cannot be null");
+    }
+    loadDefaultMappings();
 }
 
-bool SFMLInputHandler::isKeyPressed(Key key) const
+void SFMLInputHandler::handleEvent(const std::shared_ptr<Graphics::IEvent> &event)
 {
-    sf::Keyboard::Key sfmlKey;
-    switch (key) {
-        case Key::A: sfmlKey = sf::Keyboard::Key::A; break;
-        case Key::B: sfmlKey = sf::Keyboard::Key::B; break;
-        case Key::C: sfmlKey = sf::Keyboard::Key::C; break;
-        case Key::D: sfmlKey = sf::Keyboard::Key::D; break;
-        case Key::E: sfmlKey = sf::Keyboard::Key::E; break;
-        case Key::F: sfmlKey = sf::Keyboard::Key::F; break;
-        case Key::G: sfmlKey = sf::Keyboard::Key::G; break;
-        case Key::H: sfmlKey = sf::Keyboard::Key::H; break;
-        case Key::I: sfmlKey = sf::Keyboard::Key::I; break;
-        case Key::J: sfmlKey = sf::Keyboard::Key::J; break;
-        case Key::K: sfmlKey = sf::Keyboard::Key::K; break;
-        case Key::L: sfmlKey = sf::Keyboard::Key::L; break;
-        case Key::M: sfmlKey = sf::Keyboard::Key::M; break;
-        case Key::N: sfmlKey = sf::Keyboard::Key::N; break;
-        case Key::O: sfmlKey = sf::Keyboard::Key::O; break;
-        case Key::P: sfmlKey = sf::Keyboard::Key::P; break;
-        case Key::Q: sfmlKey = sf::Keyboard::Key::Q; break;
-        case Key::R: sfmlKey = sf::Keyboard::Key::R; break;
-        case Key::S: sfmlKey = sf::Keyboard::Key::S; break;
-        case Key::T: sfmlKey = sf::Keyboard::Key::T; break;
-        case Key::U: sfmlKey = sf::Keyboard::Key::U; break;
-        case Key::V: sfmlKey = sf::Keyboard::Key::V; break;
-        case Key::W: sfmlKey = sf::Keyboard::Key::W; break;
-        case Key::X: sfmlKey = sf::Keyboard::Key::X; break;
-        case Key::Y: sfmlKey = sf::Keyboard::Key::Y; break;
-        case Key::Z: sfmlKey = sf::Keyboard::Key::Z; break;
+    if (!event)
+        return;
+    handleKeyboardEvent(event);
+}
 
-        case Key::Escape: sfmlKey = sf::Keyboard::Key::Escape; break;
-        case Key::Space: sfmlKey = sf::Keyboard::Key::Space; break;
-        case Key::Enter: sfmlKey = sf::Keyboard::Key::Enter; break;
+void SFMLInputHandler::update(float deltaTime)
+{
+    _eventManager->updateHeldActions(deltaTime);
+}
 
-        case Key::Left: sfmlKey = sf::Keyboard::Key::Left; break;
-        case Key::Right: sfmlKey = sf::Keyboard::Key::Right; break;
-        case Key::Up: sfmlKey = sf::Keyboard::Key::Up; break;
-        case Key::Down: sfmlKey = sf::Keyboard::Key::Down; break;
+void SFMLInputHandler::mapKey(sf::Keyboard::Key key, Events::InputAction action)
+{
+    _keyMappings[key] = action;
+}
 
-        default: return false;
+void SFMLInputHandler::unmapKey(sf::Keyboard::Key key)
+{
+    _keyMappings.erase(key);
+}
+
+bool SFMLInputHandler::isMapped(sf::Keyboard::Key key) const
+{
+    return _keyMappings.find(key) != _keyMappings.end();
+}
+
+bool SFMLInputHandler::isKeyPressed(sf::Keyboard::Key key) const
+{
+    return sf::Keyboard::isKeyPressed(key);
+}
+
+void SFMLInputHandler::loadDefaultMappings()
+{
+    _keyMappings[sf::Keyboard::Key::Z] = InputAction::MoveUp;
+    _keyMappings[sf::Keyboard::Key::Up] = InputAction::MoveUp;
+
+    _keyMappings[sf::Keyboard::Key::S] = InputAction::MoveDown;
+    _keyMappings[sf::Keyboard::Key::Down] = InputAction::MoveDown;
+
+    _keyMappings[sf::Keyboard::Key::Q] = InputAction::MoveLeft;
+    _keyMappings[sf::Keyboard::Key::Left] = InputAction::MoveLeft;
+
+    _keyMappings[sf::Keyboard::Key::D] = InputAction::MoveRight;
+    _keyMappings[sf::Keyboard::Key::Right] = InputAction::MoveRight;
+
+    _keyMappings[sf::Keyboard::Key::Space] = InputAction::Shoot;
+    _keyMappings[sf::Keyboard::Key::LControl] = InputAction::Shoot;
+
+    _keyMappings[sf::Keyboard::Key::Escape] = InputAction::Quit;
+    _keyMappings[sf::Keyboard::Key::P] = InputAction::Pause;
+    _keyMappings[sf::Keyboard::Key::Enter] = InputAction::Confirm;
+    _keyMappings[sf::Keyboard::Key::Backspace] = InputAction::Cancel;
+}
+
+void SFMLInputHandler::handleKeyboardEvent(const std::shared_ptr<Graphics::IEvent> &event)
+{
+    if (!event)
+        return;
+
+    if (!event->isType(Graphics::EventType::KeyPressed) && !event->isType(Graphics::EventType::KeyReleased)) {
+        return;
     }
-    return sf::Keyboard::isKeyPressed(sfmlKey);
+
+    auto sfmlEventPtr = std::dynamic_pointer_cast<Graphics::SFMLEvent>(event);
+    if (!sfmlEventPtr) {
+        return;
+    }
+
+    const auto &sfEvent = sfmlEventPtr->getSFMLEvent();
+
+    const sf::Event::KeyPressed *keyPressed = sfEvent.getIf<sf::Event::KeyPressed>();
+    const sf::Event::KeyReleased *keyReleased = sfEvent.getIf<sf::Event::KeyReleased>();
+
+    if (!keyPressed && !keyReleased) {
+        return;
+    }
+
+    sf::Keyboard::Key keyCode;
+    bool isPressed;
+
+    if (keyPressed) {
+        keyCode = keyPressed->code;
+        isPressed = true;
+    } else {
+        keyCode = keyReleased->code;
+        isPressed = false;
+    }
+
+    auto it = _keyMappings.find(keyCode);
+    if (it == _keyMappings.end()) {
+        return;
+    }
+
+    if (isPressed) {
+        if (_pressedKeys.find(keyCode) != _pressedKeys.end()) {
+            return;
+        }
+        _pressedKeys.insert(keyCode);
+    } else {
+        _pressedKeys.erase(keyCode);
+    }
+
+    InputEvent inputEvent;
+    inputEvent.action = it->second;
+
+    if (isPressed) {
+        inputEvent.state = InputState::Pressed;
+    } else {
+        inputEvent.state = InputState::Released;
+    }
+
+    _eventManager->dispatchEvent(inputEvent);
 }

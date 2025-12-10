@@ -6,6 +6,7 @@
 */
 
 #include "GameScene.hpp"
+#include "InputSystem.hpp"
 
 #include <utility>
 
@@ -28,15 +29,21 @@ GameScene::GameScene(
         if (!_starfield) {
             throw GameSceneError("Failed to create starfield instance");
         }
+        _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
+        if (!_inputSystem) {
+            throw GameSceneError("Failed to create input system instance");
+        }
 
         // _entityDrawing = std::make_unique<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
         // if (!_entityDrawing) {
         //     throw GameSceneError("Failed to create entity drawing instance");
         // }
 
-        // _entityDrawing->createEntity(100.0f, 300.0f, "player");
-        // _entityDrawing->createEntity(400.0f, 200.0f, "enemy");
-        // _entityDrawing->createEntity(500.0f, 400.0f, "enemy");
+        // _entityDrawing->createEntity(100.0f, 300.0f, "player", 0);
+        // _entityDrawing->createEntity(400.0f, 200.0f, "enemy", 1);
+        // _entityDrawing->createEntity(500.0f, 400.0f, "enemy", 2);
+        // _entityDrawing->createEntity(600.0f, 300.0f, "missile", 3);
+        // _entityDrawing->createEntity(700.0f, 350.0f, "explose", 4);
 
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to initialize game scene: " + std::string(e.what()));
@@ -49,6 +56,12 @@ void GameScene::update(float deltaTime)
         if (_starfield) {
             _starfield->update(deltaTime);
         }
+
+        _inputSystem->update(deltaTime);
+
+        // if (_entityDrawing) {
+        //     _entityDrawing->updateAllEntities(deltaTime);
+        // }
 
         // TODO: Update other game entities here
 
@@ -71,4 +84,9 @@ void GameScene::render()
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));
     }
+}
+
+Ecs::Registry &GameScene::getRegistry()
+{
+    return _registry;
 }

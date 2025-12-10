@@ -63,16 +63,23 @@ namespace Net::Thread
          */
         void runProcessor() const;
 
-        std::shared_ptr<Net::Server::IServer> _server;           ///> The server instance
+        /**
+         * @brief Thread function to handle updating game state
+         */
+        void runUpdate() const;
+
+        std::shared_ptr<Server::IServer> _server;                ///> The server instance
         std::shared_ptr<Server::SessionManager> _sessionManager; ///> Manages client sessions
         std::shared_ptr<Game::GameServer> _gameServer;           ///> The game server logic
         std::shared_ptr<PacketRouter> _packetRouter;             ///> Routes incoming packets to appropriate handlers
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets
+        std::thread _updateThread;    ///> Thread for updating game state
 
-        std::mutex _mutex;           ///> Mutex for synchronizing access
-        std::condition_variable _cv; ///> Condition variable for signaling
-        bool _stopRequested = false; ///> Flag to indicate if a stop has been requested
+        std::mutex _mutex;                 ///> Mutex for synchronizing access
+        std::condition_variable _cv;       ///> Condition variable for signaling
+        bool _stopRequested = false;       ///> Flag to indicate if a stop has been requested
+        std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the server is running
     };
 }

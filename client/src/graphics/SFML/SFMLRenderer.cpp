@@ -9,6 +9,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include "SFMLSpriteManagement.hpp"
+#include "SFMLText.hpp"
 
 using namespace Graphics;
 
@@ -37,18 +38,18 @@ void SFMLRenderer::display()
     _window.display();
 }
 
-bool SFMLRenderer::pollEvent(sf::Event &event)
+bool SFMLRenderer::pollEvent(std::shared_ptr<IEvent> &event)
 {
     if (auto opt = _window.pollEvent()) {
-        event = *opt;
+        event = std::make_shared<SFMLEvent>(*opt);
         return true;
     }
     return false;
 }
 
-bool SFMLRenderer::isWindowCloseEvent(const sf::Event &event) const
+bool SFMLRenderer::isWindowCloseEvent(const IEvent &event) const
 {
-    return event.is<sf::Event::Closed>();
+    return event.isType(EventType::Closed);
 }
 
 void SFMLRenderer::drawSprite(const sf::Sprite &sprite)
@@ -64,6 +65,14 @@ void SFMLRenderer::renderSprite(const ISprite &sprite)
     }
 }
 
+void SFMLRenderer::renderText(const IText &text)
+{
+    const auto *sfmlText = dynamic_cast<const SFMLText *>(&text);
+    if (sfmlText) {
+        _window.draw(sfmlText->getSFMLText());
+    }
+}
+
 unsigned int SFMLRenderer::getWindowWidth() const
 {
     return _window.getSize().x;
@@ -72,4 +81,21 @@ unsigned int SFMLRenderer::getWindowWidth() const
 unsigned int SFMLRenderer::getWindowHeight() const
 {
     return _window.getSize().y;
+}
+
+void SFMLRenderer::getMousePosition(float &x, float &y) const
+{
+    auto mousePos = sf::Mouse::getPosition(_window);
+    x = static_cast<float>(mousePos.x);
+    y = static_cast<float>(mousePos.y);
+}
+
+float SFMLRenderer::getElapsedTime() const
+{
+    return _clock.getElapsedTime().asSeconds();
+}
+
+void SFMLRenderer::restartClock()
+{
+    _clock.restart();
 }

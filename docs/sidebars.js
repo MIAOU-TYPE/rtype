@@ -1,6 +1,7 @@
 module.exports = {
   technicalSidebar: [
     'technical-docs/server/overview',
+    'technical-docs/server/network-protocol',
     {
       type: 'category',
       label: 'Client',

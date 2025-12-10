@@ -7,12 +7,20 @@
 
 #pragma once
 
-#include "../../network/SessionManager/Manager/SessionManager.hpp"
+#include "AISystem.hpp"
+#include "Collision.hpp"
+#include "CollisionSystem.hpp"
+#include "Damage.hpp"
+#include "DamageSystem.hpp"
+#include "EnemySpawnSystem.hpp"
+#include "HealthSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
+#include "LifetimeSystem.hpp"
 #include "MovementSystem.hpp"
 #include "PacketFactory.hpp"
+#include "SessionManager.hpp"
 
 namespace Game
 {

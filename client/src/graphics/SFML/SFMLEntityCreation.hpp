@@ -12,6 +12,7 @@
 #include <string>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "SFMLAnimationManager.hpp"
 
 /**
  * @namespace Graphics
@@ -65,9 +66,10 @@ namespace Graphics
          * @param spriteName The name of the sprite (without path).
          * @param textureManager Shared pointer to the texture manager.
          * @param entityDrawing Reference to the entity drawing manager for sprite info.
+         * @param id Unique identifier for the entity.
          */
         GraphicalEntity(float x, float y, const std::string &spriteName,
-            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing);
+            std::shared_ptr<ITextureManager> textureManager, const SFMLEntityDrawing &entityDrawing, size_t id = 0);
 
         /**
          * @brief Destructor for GraphicalEntity.
@@ -117,6 +119,49 @@ namespace Graphics
          */
         void render(const std::shared_ptr<IRenderer> &renderer);
 
+        /**
+         * @brief Updates the entity (including animations).
+         * @param deltaTime Time elapsed since last update in seconds.
+         */
+        void update(float deltaTime);
+
+        /**
+         * @brief Sets the current animation.
+         * @param animationName Name of the animation to set.
+         * @throws GraphicalEntityError if animation doesn't exist.
+         */
+        void setAnimation(const std::string &animationName);
+
+        /**
+         * @brief Gets the animation manager.
+         * @return Shared pointer to the animation manager.
+         */
+        std::shared_ptr<SFMLAnimationManager> getAnimationManager() const;
+
+        /**
+         * @brief Checks if the current animation is finished (for non-looping animations).
+         * @return True if the current animation is finished, false otherwise.
+         */
+        bool isCurrentAnimationFinished() const;
+
+        /**
+         * @brief Gets the name of the current animation.
+         * @return The name of the current animation, empty if no animation manager.
+         */
+        std::string getCurrentAnimationName() const;
+
+        /**
+         * @brief Gets the unique ID of the entity.
+         * @return The unique ID.
+         */
+        size_t getId() const;
+
+        /**
+         * @brief Sets the unique ID of the entity.
+         * @param id The new unique ID.
+         */
+        void setId(size_t id);
+
       private:
         float _x = 0.0f;                                            ///> X position
         float _y = 0.0f;                                            ///> Y position
@@ -124,6 +169,8 @@ namespace Graphics
         std::shared_ptr<ITextureManager> _textureManager = nullptr; ///> Texture manager
         std::unique_ptr<ISprite> _sprite = nullptr;                 ///> The sprite instance
         const SFMLEntityDrawing &_entityDrawing;                    ///> Reference to entity drawing for sprite info
+        std::shared_ptr<SFMLAnimationManager> _animationManager = nullptr; ///> Animation manager
+        size_t _id = 0;                                                    ///> Unique identifier
     };
 
 } // namespace Graphics

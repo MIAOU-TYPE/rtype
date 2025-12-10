@@ -11,6 +11,12 @@
 #include <mutex>
 #include "ISessionManager.hpp"
 
+#include <vector>
+#ifndef _WIN32
+    #include <netinet/in.h>
+#else
+    #include <winsock2.h>
+#endif
 #include <unordered_map>
 
 /**
@@ -72,6 +78,12 @@ namespace Net::Server
          * @return A pointer to the sockaddr_in if found, otherwise nullptr.
          */
         const sockaddr_in *getAddress(int sessionId) const override;
+
+        /**
+         * @brief Get all active sessions.
+         * @return A vector of pairs containing session IDs and their corresponding addresses.
+         */
+        std::vector<std::pair<int, sockaddr_in>> getAllSessions() const;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.

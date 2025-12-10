@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <string>
+#include "IText.hpp"
 
 /**
  * @namespace Graphics
@@ -90,10 +91,27 @@ namespace Graphics
 
         /**
          * @brief Creates a sprite from a loaded texture.
-         * @param texturePath The path to the texture file.
+         * @param texturePath The path to the texture.
          * @return A unique pointer to the created sprite.
          */
         virtual std::unique_ptr<ISprite> createSprite(const std::string &texturePath) = 0;
+
+        /**
+         * @brief Loads a font from a file.
+         * @param fontPath The path to the font file.
+         * @return True if the font was loaded successfully, false otherwise.
+         */
+        virtual bool loadFont(const std::string &fontPath) = 0;
+
+        /**
+         * @brief Creates a text object using a loaded font.
+         * @param fontPath The path to the font to use.
+         * @param text The initial text string.
+         * @param characterSize The character size in pixels.
+         * @return A unique pointer to the created text object.
+         */
+        virtual std::unique_ptr<IText> createText(
+            const std::string &fontPath, const std::string &text = "", unsigned int characterSize = 30) = 0;
     };
 
 } // namespace Graphics

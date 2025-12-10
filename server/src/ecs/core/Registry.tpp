@@ -26,8 +26,7 @@ namespace Ecs
     template <typename T>
     SparseArray<T> &Registry::getComponents()
     {
-        return std::any_cast<SparseArray<T> &>(
-            _entityToIndex.at(std::type_index(typeid(T))));
+        return registerComponent<T>();
     }
 
     template <typename T, typename... Args>

@@ -4,6 +4,8 @@ project(r-type_client LANGUAGES CXX)
 # SOURCE & INCLUDE PATHS
 # ------------------------------
 set(CLIENT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CLIENT_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+set(EMBEDDED_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/embedded_resources")
 
 file(GLOB_RECURSE CLIENT_SOURCES CONFIGURE_DEPENDS
         "${CLIENT_SRC_DIR}/*.cpp"
@@ -13,6 +15,33 @@ file(GLOB_RECURSE CLIENT_HEADERS CONFIGURE_DEPENDS
         "${CLIENT_SRC_DIR}/*.hpp"
         "${CLIENT_SRC_DIR}/*.tpp"
 )
+
+# ------------------------------
+# EMBEDDED ASSETS GENERATION
+# ------------------------------
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+# Generate embedded assets at configure time
+message(STATUS "Generating embedded assets...")
+execute_process(
+    COMMAND "${CMAKE_COMMAND}" 
+            -DCLIENT_ASSETS_DIR="${CLIENT_ASSETS_DIR}"
+            -DEMBEDDED_RESOURCES_DIR="${EMBEDDED_RESOURCES_DIR}"
+            -DPYTHON_SCRIPT="${CMAKE_SOURCE_DIR}/scripts/bin2header.py"
+            -P "${CMAKE_SOURCE_DIR}/scripts/generate_embedded_assets.cmake"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RESULT_VARIABLE generation_result
+)
+
+if(NOT generation_result EQUAL 0)
+    message(FATAL_ERROR "Failed to generate embedded assets")
+endif()
+
+# List generated files
+file(GLOB EMBEDDED_SOURCES "${EMBEDDED_RESOURCES_DIR}/*.cpp")
+
+# Add embedded sources to client sources
+list(APPEND CLIENT_SOURCES ${EMBEDDED_SOURCES})
 
 set(CLIENT_INCLUDE_DIRS "${CLIENT_SRC_DIR}")
 foreach(header ${CLIENT_HEADERS})

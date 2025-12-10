@@ -114,6 +114,17 @@ namespace Graphics
          * @param y Reference to store the Y coordinate.
          */
         virtual void getMousePosition(float &x, float &y) const = 0;
+
+        /**
+         * @brief Gets the elapsed time since last restart in seconds.
+         * @return The elapsed time in seconds.
+         */
+        virtual float getElapsedTime() const = 0;
+
+        /**
+         * @brief Restarts the internal clock.
+         */
+        virtual void restartClock() = 0;
     };
 
 } // namespace Graphics

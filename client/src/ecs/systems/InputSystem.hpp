@@ -21,10 +21,17 @@ namespace Ecs
     class InputSystem {
       public:
         /**
+         * @brief Constructor.
+         * @param registry Reference to the ECS registry.
+         */
+        explicit InputSystem(Registry &registry);
+        /**
          * @brief Update velocities based on input state.
-         * @param registry The ECS registry containing components.
          * @param deltaTime Time elapsed since last update (in seconds).
          */
-        static void update(Registry &registry, float deltaTime);
+        void update(float deltaTime);
+
+      private:
+        Registry &_registry;
     };
 } // namespace Ecs

@@ -7,10 +7,10 @@
 
 #include "EnemySpawnSystem.hpp"
 
-float Game::EnemySpawnSystem::_timer = 0.f;
-
 namespace Game
 {
+    float EnemySpawnSystem::_timer = 0.f;
+
     void EnemySpawnSystem::update(IGameWorld &world, float dt)
     {
         _timer += dt;
@@ -20,8 +20,7 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity mob = reg.createEntity();
 
-        float y = 50 + (rand() % 400);
-        std::cout << "Spawned enemy: " << static_cast<size_t>(mob) << "\n";
+        float y = Rand::enemyY(Rand::rng);
 
         reg.emplaceComponent<Ecs::Position>(mob, 900.f, y);
         reg.emplaceComponent<Ecs::Velocity>(mob, -80.f, 0.f);

@@ -9,6 +9,7 @@
 #include <random>
 #include "Collision.hpp"
 #include "Damageable.hpp"
+#include "Rand.hpp"
 #include "World.hpp"
 
 namespace Game

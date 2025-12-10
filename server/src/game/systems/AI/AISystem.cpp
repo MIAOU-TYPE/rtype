@@ -26,8 +26,8 @@ namespace Game
                     break;
 
                 case Ecs::AIState::Patrol:
-                    vel.vx = -40.f + (rand() % 20 - 10);
-                    vel.vy = (rand() % 50 - 25);
+                    vel.vx = -40.f + Rand::patrolVelX(Rand::rng);
+                    vel.vy = Rand::patrolVelY(Rand::rng);
 
                     if (brain.timer > 2.f) {
                         brain.timer = 0.f;

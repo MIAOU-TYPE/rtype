@@ -19,9 +19,6 @@ UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 UDPServer::~UDPServer()
 {
     stop();
-#ifdef _WIN32
-    WSACleanup();
-#endif
 }
 
 void UDPServer::start()
@@ -53,6 +50,7 @@ void UDPServer::stop()
         _socketFd = kInvalidSocket;
         std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
     }
+    _netWrapper.cleanupNetwork();
 }
 
 void UDPServer::readPackets()

@@ -162,7 +162,7 @@ namespace Game
         _pingTimer += deltaTime;
         if (_pingTimer >= PING_INTERVAL) {
             sendPingPacket();
-            _pingTimer = 0.0f;
+            _pingTimer -= PING_INTERVAL;
         }
     }
 

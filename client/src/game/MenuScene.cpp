@@ -45,11 +45,11 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
 
         const std::string fontPath = "client/assets/fonts/r-type.otf";
 
-        _playButton = std::make_unique<Button>(centerX - 100.0f, static_cast<float>(windowHeight) / 2.0f - 100.0f,
+        Button tempButton(centerX - 100.0f, static_cast<float>(windowHeight) / 2.0f - 100.0f,
             "client/assets/sprites/play_bt.png", "client/assets/sprites/play_bt_hold.png",
             "client/assets/sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
 
-        float playButtonCenterX = centerX - (_playButton->getWidth() / 2.0f);
+        float playButtonCenterX = centerX - (tempButton.getWidth() / 2.0f);
         _playButton = std::make_unique<Button>(playButtonCenterX, static_cast<float>(windowHeight) / 2.0f - 100.0f,
             "client/assets/sprites/play_bt.png", "client/assets/sprites/play_bt_hold.png",
             "client/assets/sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);

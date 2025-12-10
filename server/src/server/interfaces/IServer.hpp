@@ -108,7 +108,7 @@ namespace Net::Server
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const Net::IPacket &pkt) = 0;
+        virtual bool sendPacket(const IPacket &pkt) = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -127,6 +127,6 @@ namespace Net::Server
          * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        virtual bool popPacket(std::shared_ptr<Net::IPacket> &pkt) = 0;
+        virtual bool popPacket(std::shared_ptr<IPacket> &pkt) = 0;
     };
 } // namespace Net::Server

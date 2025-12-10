@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <mutex>
+#include <vector>
 #ifndef _WIN32
     #include <netinet/in.h>
 #else
@@ -75,6 +76,12 @@ namespace Net::Server
          * @return A pointer to the sockaddr_in if found, otherwise nullptr.
          */
         const sockaddr_in *getAddress(int sessionId) const;
+
+        /**
+         * @brief Get all active sessions.
+         * @return A vector of pairs containing session IDs and their corresponding addresses.
+         */
+        std::vector<std::pair<int, sockaddr_in>> getAllSessions() const;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.

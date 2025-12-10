@@ -20,15 +20,14 @@ std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
 
 int SessionManager::getOrCreateSession(const sockaddr_in &addr)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard lock(_mutex);
 
-    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
-    auto it = _addressToId.find(key);
-    if (it != _addressToId.end())
+    if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
 
-    int newId = _nextId++;
+    const int newId = _nextId++;
     _addressToId[key] = newId;
     _idToAddress[newId] = addr;
     return newId;
@@ -36,10 +35,9 @@ int SessionManager::getOrCreateSession(const sockaddr_in &addr)
 
 int SessionManager::getSessionId(const sockaddr_in &addr) const
 {
-    AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
-    auto it = _addressToId.find(key);
-    if (it != _addressToId.end())
+    if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
 
     return -1;
@@ -47,13 +45,13 @@ int SessionManager::getSessionId(const sockaddr_in &addr) const
 
 void SessionManager::removeSession(int sessionId)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard lock(_mutex);
 
-    auto it = _idToAddress.find(sessionId);
+    const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
         return;
 
-    AddressKey key{it->second.sin_addr.s_addr, it->second.sin_port};
+    const AddressKey key{it->second.sin_addr.s_addr, it->second.sin_port};
 
     _idToAddress.erase(sessionId);
     _addressToId.erase(key);
@@ -61,8 +59,19 @@ void SessionManager::removeSession(int sessionId)
 
 const sockaddr_in *SessionManager::getAddress(int sessionId) const
 {
-    auto it = _idToAddress.find(sessionId);
+    const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
         return nullptr;
     return &it->second;
+}
+
+std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
+{
+    std::lock_guard lock(_mutex);
+    std::vector<std::pair<int, sockaddr_in>> list;
+    list.reserve(_idToAddress.size());
+
+    for (const auto &[fst, snd] : _idToAddress)
+        list.emplace_back(fst, snd);
+    return list;
 }

@@ -14,6 +14,7 @@
 #include "ITextureManager.hpp"
 #include "SFMLEntityDrawing.hpp"
 #include "Starfield.hpp"
+#include "Registry.hpp"
 
 /**
  * @namespace Game
@@ -82,10 +83,17 @@ namespace Game
          */
         void render();
 
+        /**
+         * @brief Gets the ECS registry.
+         * @return Reference to the ECS registry.
+         */
+        Ecs::Registry &getRegistry();
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
+        Ecs::Registry _registry;                                             ///> The ECS registry
         // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
     };
 

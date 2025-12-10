@@ -6,6 +6,7 @@
 */
 
 #include "GameScene.hpp"
+#include "InputSystem.hpp"
 
 #include <utility>
 
@@ -52,6 +53,8 @@ void GameScene::update(float deltaTime)
             _starfield->update(deltaTime);
         }
 
+        Ecs::InputSystem::update(_registry, deltaTime);
+
         // if (_entityDrawing) {
         //     _entityDrawing->updateAllEntities(deltaTime);
         // }
@@ -77,4 +80,9 @@ void GameScene::render()
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));
     }
+}
+
+Ecs::Registry &GameScene::getRegistry()
+{
+    return _registry;
 }

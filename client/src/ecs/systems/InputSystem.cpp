@@ -29,12 +29,6 @@ namespace Ecs
                 vel.vy -= MOVE_SPEED;
             if (input.down)
                 vel.vy += MOVE_SPEED;
-
-            if (vel.vx != 0.f && vel.vy != 0.f) {
-                float magnitude = std::sqrt(vel.vx * vel.vx + vel.vy * vel.vy);
-                vel.vx = (vel.vx / magnitude) * MOVE_SPEED;
-                vel.vy = (vel.vy / magnitude) * MOVE_SPEED;
-            }
         });
 
         registry.view<InputComponent, ShootingComponent>(

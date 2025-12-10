@@ -11,7 +11,7 @@ namespace Ecs
 {
     class ISystem {
       public:
-        ~ISystem() = default;
+        virtual ~ISystem() = default;
 
         virtual void update(float deltaTime) = 0;
     };

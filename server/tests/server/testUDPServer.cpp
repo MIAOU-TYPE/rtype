@@ -5,7 +5,11 @@
 ** testUDPServer
 */
 
-#include <arpa/inet.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <netinet/in.h>
+#endif
 #include <cstring>
 #include <gtest/gtest.h>
 

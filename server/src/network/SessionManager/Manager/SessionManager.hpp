@@ -12,7 +12,11 @@
 #include "ISessionManager.hpp"
 
 #include <unordered_map>
-
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <netinet/in.h>
+#endif
 /**
  * @brief A key representing a network address (IP and port).
  */

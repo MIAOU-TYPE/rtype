@@ -7,8 +7,11 @@
 #include <cstring>
 #include <gtest/gtest.h>
 #include <memory>
-#include <netinet/in.h>
-
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <netinet/in.h>
+#endif
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"

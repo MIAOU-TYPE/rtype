@@ -25,6 +25,16 @@ extern "C"
 #endif
     }
 
+    EXPORT int net_cleanupNetwork()
+
+    {
+#ifdef _WIN32
+        return WSACleanup();
+#else
+        return 0;
+#endif
+    }
+
     EXPORT socketHandle net_socket(int domain, int type, int protocol)
     {
         return ::socket(domain, type, protocol);

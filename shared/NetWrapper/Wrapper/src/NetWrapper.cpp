@@ -24,6 +24,7 @@ NetWrapper::NetWrapper(const std::string &pluginPath, const std::string &baseDir
         _sendFn = _loader->getSymbol<sendto_return_t (*)(
             socketHandle, const void *, size_t, int, const struct sockaddr *, socklen_t)>("net_sendTo");
         _initNetworkFn = _loader->getSymbol<int (*)()>("net_initNetwork");
+        _cleanupNetworkFn = _loader->getSymbol<int (*)()>("net_cleanupNetwork");
     } catch (const std::exception &e) {
         throw NetWrapperError(std::string("{NetWrapper::NetWrapper} ") + e.what());
     }
@@ -76,4 +77,11 @@ int NetWrapper::initNetwork()
     if (!_initNetworkFn)
         throw NetWrapperError("InitNetwork function not loaded");
     return _initNetworkFn();
+}
+
+int NetWrapper::cleanupNetwork()
+{
+    if (!_cleanupNetworkFn)
+        throw NetWrapperError("CleanupNetwork function not loaded");
+    return _cleanupNetworkFn();
 }

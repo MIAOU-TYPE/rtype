@@ -7,8 +7,12 @@
 
 #pragma once
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
+#endif
 #include "SessionManager.hpp"
 
 class MockSessionManager : public Net::Server::SessionManager {

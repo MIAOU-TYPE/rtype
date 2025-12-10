@@ -5,9 +5,9 @@
 ** testUDPServer
 */
 
-#include <gtest/gtest.h>
-#include <cstring>
 #include <arpa/inet.h>
+#include <cstring>
+#include <gtest/gtest.h>
 
 #include "UDPPacket.hpp"
 
@@ -17,7 +17,8 @@ using namespace Net;
 // Construction
 // ------------------------------------------------------------
 
-TEST(UDPPacket, DefaultConstructorInitializesEmpty) {
+TEST(UDPPacket, DefaultConstructorInitializesEmpty)
+{
     UDPPacket pkt;
 
     EXPECT_EQ(pkt.size(), 0);
@@ -33,7 +34,8 @@ TEST(UDPPacket, DefaultConstructorInitializesEmpty) {
 // Buffer + Size
 // ------------------------------------------------------------
 
-TEST(UDPPacket, WriteAndReadBuffer) {
+TEST(UDPPacket, WriteAndReadBuffer)
+{
     UDPPacket pkt;
 
     const char *str = "HelloWorld";
@@ -45,11 +47,12 @@ TEST(UDPPacket, WriteAndReadBuffer) {
 
     EXPECT_EQ(pkt.size(), len);
 
-    std::string out(reinterpret_cast<char*>(pkt.buffer()), pkt.size());
+    std::string out(reinterpret_cast<char *>(pkt.buffer()), pkt.size());
     EXPECT_EQ(out, "HelloWorld");
 }
 
-TEST(UDPPacket, SetSizeDoesNotChangeData) {
+TEST(UDPPacket, SetSizeDoesNotChangeData)
+{
     UDPPacket pkt;
 
     const char *msg = "DATA";
@@ -69,7 +72,8 @@ TEST(UDPPacket, SetSizeDoesNotChangeData) {
 // Address handling
 // ------------------------------------------------------------
 
-TEST(UDPPacket, SetAndGetAddress) {
+TEST(UDPPacket, SetAndGetAddress)
+{
     UDPPacket pkt;
 
     sockaddr_in addr{};
@@ -95,7 +99,8 @@ TEST(UDPPacket, SetAndGetAddress) {
 // Printing operator
 // ------------------------------------------------------------
 
-TEST(UDPPacket, StreamOperatorPrintsPrintableCharacters) {
+TEST(UDPPacket, StreamOperatorPrintsPrintableCharacters)
+{
     UDPPacket pkt;
 
     const char *msg = "abcDEF123";
@@ -111,10 +116,11 @@ TEST(UDPPacket, StreamOperatorPrintsPrintableCharacters) {
     EXPECT_EQ(out, "abcDEF123\n");
 }
 
-TEST(UDPPacket, StreamOperatorReplacesNonPrintableCharacters) {
+TEST(UDPPacket, StreamOperatorReplacesNonPrintableCharacters)
+{
     UDPPacket pkt;
 
-    uint8_t data[5] = { 'A', 0x01, 'B', 0xFF, 'C' };
+    uint8_t data[5] = {'A', 0x01, 'B', 0xFF, 'C'};
     std::memcpy(pkt.buffer(), data, 5);
     pkt.setSize(5);
 

@@ -14,7 +14,7 @@ PacketRouter::PacketRouter(
 {
 }
 
-static bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
+bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
 {
     if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;

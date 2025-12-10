@@ -17,7 +17,7 @@ namespace Ecs
 
     void NetworkSendSystem::update(float deltaTime)
     {
-        _registry->view<Game::InputComponent>([this](Entity entity, const Game::InputComponent &input) {
+        _registry->view<InputComponent>([this](Entity entity, const InputComponent &input) {
             float dx = 0.0f;
             float dy = 0.0f;
 

@@ -7,9 +7,9 @@
 
 #include "InputSystem.hpp"
 #include <cmath>
+#include "Direction.hpp"
 #include "InputComponent.hpp"
 #include "ShootingComponent.hpp"
-#include "Direction.hpp"
 
 namespace Ecs
 {

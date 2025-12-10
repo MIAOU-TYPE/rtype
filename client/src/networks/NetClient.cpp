@@ -49,7 +49,7 @@ namespace Game
             sizeof(_serverAddr));
     }
 
-    void NetClient::sendInputPacket(float dx, float dy, bool shooting)
+    void NetClient::sendInputPacket(const int8_t dx, const int8_t dy, const bool shooting)
     {
         if (!_isConnected)
             return;
@@ -58,8 +58,8 @@ namespace Game
         inputData.header.version = 1;
         inputData.header.size = sizeof(InputData);
         inputData.entity = _playerEntityId;
-        inputData.dx = static_cast<int32_t>(dx * 1000);
-        inputData.dy = static_cast<int32_t>(dy * 1000);
+        inputData.dx = dx;
+        inputData.dy = dy;
         inputData.shooting = shooting ? 1 : 0;
         _netWrapper->sendTo(_socket, &inputData, sizeof(inputData), 0,
             reinterpret_cast<struct sockaddr *>(&_serverAddr), sizeof(_serverAddr));

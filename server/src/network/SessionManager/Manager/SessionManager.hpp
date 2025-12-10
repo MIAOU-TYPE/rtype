@@ -48,17 +48,17 @@ namespace Net::Server
       public:
         /**
          * @brief Get an existing session ID for the given address or create a new one.
-         * @param addr The network address.
+         * @param address The network address.
          * @return The session ID associated with the address.
          */
-        int getOrCreateSession(const sockaddr_in &addr) override;
+        int getOrCreateSession(const sockaddr_in &address) override;
 
         /**
          * @brief Get the session ID for the given address.
-         * @param addr The network address.
+         * @param address The network address.
          * @return The session ID if it exists, otherwise -1.
          */
-        int getSessionId(const sockaddr_in &addr) const override;
+        int getSessionId(const sockaddr_in &address) const override;
 
         /**
          * @brief Remove the session associated with the given session ID.

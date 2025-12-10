@@ -12,9 +12,19 @@ namespace Game
 
     NetClient::NetClient()
     {
+#ifdef _WIN32
+        WSADATA wsa;
+        const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
+        if (r != 0) {
+            throw NetClientError("WSAStartup failed with error: " + std::to_string(r));
+        }
+#endif
         _netWrapper = std::make_unique<Net::NetWrapper>("NetPluginLib");
         _socket = _netWrapper->socket(AF_INET, SOCK_DGRAM, 0);
         if (_socket == kInvalidSocket) {
+#ifdef _WIN32
+            WSACleanup();
+#endif
             throw NetClientError("Failed to create UDP socket");
         }
         _serverAddr.sin_family = AF_INET;
@@ -105,6 +115,14 @@ namespace Game
                 break;
             }
 
+            case Net::Protocol::DAMAGE_EVENT: {
+                break;
+            }
+
+            case Net::Protocol::GAME_OVER: {
+                break;
+            }
+
             default: break;
         }
     }
@@ -145,6 +163,9 @@ namespace Game
             _netWrapper->closeSocket(_socket);
             _socket = kInvalidSocket;
         }
+#ifdef _WIN32
+        WSACleanup();
+#endif
     }
 
 } // namespace Game

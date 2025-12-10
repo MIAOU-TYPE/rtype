@@ -24,9 +24,9 @@ namespace Game
      * @brief Enumeration of button visual states.
      */
     enum class ButtonState {
-        Normal, ///< Normal state
-        Hover,  ///< Mouse hovering over button
-        Pressed ///< Button being pressed
+        Normal, ///> Normal state
+        Hover,  ///> Mouse hovering over button
+        Pressed ///> Button being pressed
     };
 
     /**
@@ -96,19 +96,19 @@ namespace Game
         float getHeight() const;
 
       private:
-        float _x = 0.0f;                                                      ///< X position
-        float _y = 0.0f;                                                      ///< Y position
-        float _width = 0.0f;                                                  ///< Width of button
-        float _height = 0.0f;                                                 ///< Height of button
-        ButtonState _state = ButtonState::Normal;                             ///< Current button state
-        ButtonState _previousState = ButtonState::Normal;                     ///< Previous button state
-        std::unique_ptr<Graphics::ISprite> _normalSprite = nullptr;           ///< Normal state sprite
-        std::unique_ptr<Graphics::ISprite> _hoverSprite = nullptr;            ///< Hover state sprite
-        std::unique_ptr<Graphics::ISprite> _pressedSprite = nullptr;          ///< Pressed state sprite
-        std::unique_ptr<Graphics::IText> _label = nullptr;                    ///< Text label
-        std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///< Texture manager
-        std::function<void()> _onClick = nullptr;                             ///< Click callback
-        bool _wasPressed = false; ///< Track if button was pressed last frame
+        float _x = 0.0f;                                                      ///> X position
+        float _y = 0.0f;                                                      ///> Y position
+        float _width = 0.0f;                                                  ///> Width of button
+        float _height = 0.0f;                                                 ///> Height of button
+        ButtonState _state = ButtonState::Normal;                             ///> Current button state
+        ButtonState _previousState = ButtonState::Normal;                     ///> Previous button state
+        std::unique_ptr<Graphics::ISprite> _normalSprite = nullptr;           ///> Normal state sprite
+        std::unique_ptr<Graphics::ISprite> _hoverSprite = nullptr;            ///> Hover state sprite
+        std::unique_ptr<Graphics::ISprite> _pressedSprite = nullptr;          ///> Pressed state sprite
+        std::unique_ptr<Graphics::IText> _label = nullptr;                    ///> Text label
+        std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> Texture manager
+        std::function<void()> _onClick = nullptr;                             ///> Click callback
+        bool _wasPressed = false; ///> Track if button was pressed last frame
 
         /**
          * @brief Checks if a point is inside the button bounds.

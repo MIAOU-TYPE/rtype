@@ -89,3 +89,13 @@ void SFMLRenderer::getMousePosition(float &x, float &y) const
     x = static_cast<float>(mousePos.x);
     y = static_cast<float>(mousePos.y);
 }
+
+float SFMLRenderer::getElapsedTime() const
+{
+    return _clock.getElapsedTime().asSeconds();
+}
+
+void SFMLRenderer::restartClock()
+{
+    _clock.restart();
+}

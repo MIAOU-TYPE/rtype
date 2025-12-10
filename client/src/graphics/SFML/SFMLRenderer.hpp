@@ -107,8 +107,20 @@ namespace Graphics
          */
         void getMousePosition(float &x, float &y) const override;
 
+        /**
+         * @brief Gets the elapsed time since last restart in seconds.
+         * @return The elapsed time in seconds.
+         */
+        float getElapsedTime() const override;
+
+        /**
+         * @brief Restarts the internal clock.
+         */
+        void restartClock() override;
+
       private:
         sf::RenderWindow _window; ///> The SFML render window
+        mutable sf::Clock _clock; ///> Internal clock for timing
     };
 
 } // namespace Graphics

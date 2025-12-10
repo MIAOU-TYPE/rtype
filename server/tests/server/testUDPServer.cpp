@@ -8,7 +8,7 @@
 #ifdef _WIN32
     #include <winsock2.h>
 #else
-    #include <netinet/in.h>
+    #include <arpa/inet.h>
 #endif
 #include <cstring>
 #include <gtest/gtest.h>

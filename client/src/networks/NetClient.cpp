@@ -115,6 +115,14 @@ namespace Game
                 break;
             }
 
+            case Net::Protocol::DAMAGE_EVENT: {
+                break;
+            }
+
+            case Net::Protocol::GAME_OVER: {
+                break;
+            }
+
             default: break;
         }
     }

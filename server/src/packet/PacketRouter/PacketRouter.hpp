@@ -60,7 +60,7 @@ namespace Net
          * @param header The HeaderData extracted from the incoming packet.
          * @return True if the header is valid, false otherwise.
          */
-        bool validateHeader(const IPacket &pkt, const HeaderData &header) const;
+        static bool validateHeader(const IPacket &pkt, const HeaderData &header);
 
         /**
          * @brief Handler for player connection packets.

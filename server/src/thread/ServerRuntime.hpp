@@ -68,14 +68,20 @@ namespace Net::Thread
          */
         void runUpdate() const;
 
-        std::shared_ptr<Server::IServer> _server;                ///> The server instance
-        std::shared_ptr<Server::SessionManager> _sessionManager; ///> Manages client sessions
-        std::shared_ptr<Game::GameServer> _gameServer;           ///> The game server logic
-        std::shared_ptr<PacketRouter> _packetRouter;             ///> Routes incoming packets to appropriate handlers
+        /**
+         * @brief Thread function to handle taking snapshots of the game state
+         */
+        void runSnapshot() const;
+
+        std::shared_ptr<Server::IServer> _server;                 ///> The server instance
+        std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
+        std::shared_ptr<Game::GameServer> _gameServer;            ///> The game server logic
+        std::shared_ptr<PacketRouter> _packetRouter;              ///> Routes incoming packets to appropriate handlers
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets
         std::thread _updateThread;    ///> Thread for updating game state
+        std::thread _snapshotThread;  ///> Thread for handling snapshots
 
         std::mutex _mutex;                 ///> Mutex for synchronizing access
         std::condition_variable _cv;       ///> Condition variable for signaling

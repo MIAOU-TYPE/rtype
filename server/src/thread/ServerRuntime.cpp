@@ -39,6 +39,7 @@ void ServerRuntime::start()
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
     _updateThread = std::thread(&ServerRuntime::runUpdate, this);
+    _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
 }
 
 void ServerRuntime::stop()
@@ -51,6 +52,8 @@ void ServerRuntime::stop()
     _cv.notify_all();
 
     _server->setRunning(false);
+    if (_snapshotThread.joinable())
+        _snapshotThread.join();
     if (_receiverThread.joinable())
         _receiverThread.join();
     if (_processorThread.joinable())
@@ -81,5 +84,12 @@ void ServerRuntime::runUpdate() const
     while (_running) {
         _gameServer->tick();
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
+    }
+}
+
+void ServerRuntime::runSnapshot() const
+{
+    while (_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }

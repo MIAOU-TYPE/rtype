@@ -48,7 +48,17 @@ namespace Game
      */
     class NetClient {
       public:
+        /**
+         * @brief Constructor for NetClient.
+         * Initializes the network wrapper, creates a UDP socket, and sets up the server address.
+         * @throws NetClientError if socket creation fails.
+         */
         NetClient();
+
+        /**
+         * @brief Destructor for NetClient.
+         * Closes the network connection and cleans up resources.
+         */
         ~NetClient();
 
         /**
@@ -62,7 +72,7 @@ namespace Game
          * @param dy The change in y position.
          * @param shooting Whether the player is shooting.
          */
-        void sendInputPacket(float dx, float dy, bool shooting);
+        void sendInputPacket(int8_t dx, int8_t dy, bool shooting);
 
         /**
          * @brief Receives packets from the server.
@@ -86,6 +96,12 @@ namespace Game
         void sendPingPacket();
 
         /**
+         * @brief Updates the ping timer and sends ping packets as needed.
+         * @param deltaTime The time elapsed since the last update.
+         */
+        void updatePing(float deltaTime);
+
+        /**
          * @brief Closes the network client connection.
          */
         void close();
@@ -96,6 +112,8 @@ namespace Game
         sockaddr_in _serverAddr = {};                           ///> Server address
         bool _isConnected = false;                              ///> Connection status
         uint32_t _playerEntityId = 0;                           ///> Player entity ID
+        float _pingTimer = 0.0f;                                ///> Ping timer
+        static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
     };
 
 } // namespace Game

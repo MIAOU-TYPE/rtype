@@ -46,6 +46,8 @@ void GameClient::init(unsigned int width, unsigned int height)
         });
 
         _menuScene->setOnQuitCallback([this]() {
+            if (_netClient)
+                _netClient->close();
             _renderer->close();
         });
 
@@ -100,6 +102,9 @@ void GameClient::run()
                 float deltaTime = frameTime / 1000.0f;
                 _renderer->restartClock();
 
+                if (_netClient)
+                    _netClient->updatePing(deltaTime);
+
                 if (_currentScene == SceneState::Menu) {
                     float mouseX = 0.0f;
                     float mouseY = 0.0f;
@@ -113,8 +118,11 @@ void GameClient::run()
 
             std::shared_ptr<Graphics::IEvent> event;
             while (_renderer->pollEvent(event)) {
-                if (_renderer->isWindowCloseEvent(*event))
+                if (_renderer->isWindowCloseEvent(*event)) {
+                    if (_netClient)
+                        _netClient->close();
                     _renderer->close();
+                }
 
                 if (_currentScene == SceneState::Menu) {
                     if (event->isMouseButtonPressed()) {
@@ -138,6 +146,8 @@ void GameClient::run()
             _renderer->display();
         }
     } catch (const std::exception &e) {
+        if (_netClient)
+            _netClient->close();
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
     }
 }

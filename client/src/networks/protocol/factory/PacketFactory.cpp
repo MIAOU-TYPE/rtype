@@ -16,7 +16,7 @@ namespace Network
         _packet = packet;
     }
 
-    HeaderData PacketFactory::makeHeader(uint8_t type, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(const uint8_t type, const uint16_t size) noexcept
     {
         HeaderData header;
         header.type = type;
@@ -25,7 +25,7 @@ namespace Network
         return header;
     }
 
-    std::shared_ptr<Net::IPacket> PacketFactory::makeBase(uint8_t flag) const noexcept
+    std::shared_ptr<Net::IPacket> PacketFactory::makeBase(const uint8_t flag) const noexcept
     {
         DefaultData basePacket;
         basePacket.header = makeHeader(flag, sizeof(DefaultData));
@@ -39,7 +39,7 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> PacketFactory::makeInput(
-        uint32_t entity, const int8_t dx, const int8_t dy, uint8_t shooting) const noexcept
+        const uint32_t entity, const int8_t dx, const int8_t dy, const uint8_t shooting) const noexcept
     {
         InputData inputPacket;
         inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputData));

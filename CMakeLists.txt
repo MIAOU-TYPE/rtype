@@ -55,6 +55,14 @@ add_subdirectory(
 )
 
 #------------------------------
+# CommandBuffer Library
+#------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/CommandBuffer
+        ${CMAKE_BINARY_DIR}/command_buffer_build
+)
+
+#------------------------------
 # NetWrapper Library (shared)
 #------------------------------
 add_subdirectory(

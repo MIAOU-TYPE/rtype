@@ -59,7 +59,7 @@ TEST(UDPPacketTests, AddressSetAndGet)
     sockaddr_in addr{};
     addr.sin_port = htons(8080);
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(0x7F000001); // 127.0.0.1
+    addr.sin_addr.s_addr = htonl(0x7F000001);
 
     pkt.setAddress(addr);
 
@@ -102,7 +102,7 @@ TEST(UDPPacketTests, StreamOperatorPrintsAsAsciiOrDot)
 
     pkt.buffer()[0] = 'A';
     pkt.buffer()[1] = 'B';
-    pkt.buffer()[2] = 0x01; // non printable
+    pkt.buffer()[2] = 0x01;
     pkt.buffer()[3] = '!';
 
     std::stringstream ss;

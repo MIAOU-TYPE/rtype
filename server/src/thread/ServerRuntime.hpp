@@ -10,10 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include "GameServer.hpp"
 #include "IServer.hpp"
 #include "PacketRouter.hpp"
 #include "SessionManager.hpp"
-#include "game/gameServer/GameServer.hpp"
 #include <condition_variable>
 
 namespace Net::Thread

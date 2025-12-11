@@ -25,7 +25,6 @@ TEST(UDPPacket, DefaultConstructorInitializesEmpty)
     EXPECT_NE(pkt.buffer(), nullptr);
     EXPECT_EQ(pkt.capacity(), UDPPacket::MAX_SIZE);
 
-    // Vérifier que le buffer est bien 0-initialisé
     for (size_t i = 0; i < pkt.capacity(); i++)
         EXPECT_EQ(pkt.buffer()[i], 0);
 }
@@ -37,7 +36,6 @@ TEST(UDPPacket, WriteAndReadBuffer)
     const char *str = "HelloWorld";
     size_t len = strlen(str);
 
-    // Copie manuelle dans le buffer
     std::memcpy(pkt.buffer(), str, len);
     pkt.setSize(len);
 
@@ -57,7 +55,6 @@ TEST(UDPPacket, SetSizeDoesNotChangeData)
 
     EXPECT_EQ(pkt.size(), 4);
 
-    // Resize to smaller
     pkt.setSize(2);
     EXPECT_EQ(pkt.size(), 2);
     EXPECT_EQ(pkt.buffer()[0], 'D');
@@ -100,7 +97,6 @@ TEST(UDPPacket, StreamOperatorPrintsPrintableCharacters)
 
     std::string out = ss.str();
 
-    // operator<< ajoute un '\n' en fin
     EXPECT_EQ(out, "abcDEF123\n");
 }
 
@@ -117,6 +113,5 @@ TEST(UDPPacket, StreamOperatorReplacesNonPrintableCharacters)
 
     std::string out = ss.str();
 
-    // caractères non imprimables → '.'
     EXPECT_EQ(out, "A.B.C\n");
 }

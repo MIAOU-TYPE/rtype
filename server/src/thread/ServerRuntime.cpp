@@ -8,7 +8,6 @@
 #include "ServerRuntime.hpp"
 
 using namespace Net::Thread;
-using namespace std::chrono;
 
 ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
 {
@@ -79,13 +78,8 @@ void ServerRuntime::runProcessor() const
 
 void ServerRuntime::runUpdate() const
 {
-    auto last = steady_clock::now();
-    constexpr double targetDelta = 1.0 / 60.0;
     while (_running) {
-        auto now = steady_clock::now();
-        if (const double dt = duration<double>(now - last).count(); dt >= targetDelta) {
-            last = now;
-            _gameServer->update(static_cast<float>(dt));
-        }
+        _gameServer->tick();
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 }

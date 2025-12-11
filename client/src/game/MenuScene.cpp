@@ -24,7 +24,7 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
     }
 
     try {
-        const std::string bgPath = "client/assets/sprites/bg-preview.png";
+        const std::string bgPath = "sprites/bg-preview.png";
         if (!_textureManager->loadTexture(bgPath)) {
             throw MenuSceneError("Failed to load background texture: " + bgPath);
         }
@@ -43,21 +43,19 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
         float centerX = static_cast<float>(windowWidth) / 2.0f;
         float buttonSpacing = 100.0f;
 
-        const std::string fontPath = "client/assets/fonts/r-type.otf";
+        const std::string fontPath = "fonts/r-type.otf";
 
-        Button tempButton(centerX - 100.0f, static_cast<float>(windowHeight) / 2.0f - 100.0f,
-            "client/assets/sprites/play_bt.png", "client/assets/sprites/play_bt_hold.png",
-            "client/assets/sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
+        Button tempButton(centerX - 100.0f, static_cast<float>(windowHeight) / 2.0f - 100.0f, "sprites/play_bt.png",
+            "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
 
         float playButtonCenterX = centerX - (tempButton.getWidth() / 2.0f);
         _playButton = std::make_unique<Button>(playButtonCenterX, static_cast<float>(windowHeight) / 2.0f - 100.0f,
-            "client/assets/sprites/play_bt.png", "client/assets/sprites/play_bt_hold.png",
-            "client/assets/sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
+            "sprites/play_bt.png", "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "PLAY",
+            fontPath);
 
         float quitButtonY = static_cast<float>(windowHeight) / 2.0f - 100.0f + _playButton->getHeight() + buttonSpacing;
-        _quitButton = std::make_unique<Button>(playButtonCenterX, quitButtonY, "client/assets/sprites/play_bt.png",
-            "client/assets/sprites/play_bt_hold.png", "client/assets/sprites/play_bt_press.png", _textureManager,
-            "QUIT", fontPath);
+        _quitButton = std::make_unique<Button>(playButtonCenterX, quitButtonY, "sprites/play_bt.png",
+            "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "QUIT", fontPath);
 
     } catch (const std::exception &e) {
         throw MenuSceneError("Failed to initialize menu scene: " + std::string(e.what()));

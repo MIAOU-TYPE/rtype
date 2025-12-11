@@ -154,10 +154,10 @@ namespace Game
                 }
             }
             
-            if (_pingTimer >= PING_INTERVAL) {
+            // Send ping at regular intervals (absolute timer approach)
+            if (_pingTimer - _lastPingTime >= PING_INTERVAL) {
                 _lastPingTime = _pingTimer;
                 _waitingForPong = true;
-                _pingTimer -= PING_INTERVAL;
             }
         }
 

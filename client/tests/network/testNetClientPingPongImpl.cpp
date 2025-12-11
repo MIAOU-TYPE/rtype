@@ -148,13 +148,14 @@ TEST_F(NetClientPingPongTest, PingSentAfterInterval)
 {
     client->setConnected(true);
     client->setPingTimer(0.0f);
+    client->setLastPingTime(0.0f);
     
     // Update with enough time to trigger ping
     client->simulateUpdatePing(5.0f);
     
     EXPECT_TRUE(client->isWaitingForPong());
     EXPECT_FLOAT_EQ(client->getLastPingTime(), 5.0f); // Ping was sent when timer was at 5.0
-    EXPECT_FLOAT_EQ(client->getPingTimer(), 0.0f); // Timer was reset to 0.0
+    EXPECT_FLOAT_EQ(client->getPingTimer(), 5.0f); // Timer continues accumulating (absolute timer, no reset)
 }
 
 /**
@@ -271,21 +272,28 @@ TEST_F(NetClientPingPongTest, MultiplePingPongCycles)
 {
     client->setConnected(true);
     client->setPingTimer(0.0f);
+    client->setLastPingTime(0.0f);
     
-    // First cycle: send ping at t=5.0
-    client->simulateUpdatePing(5.0f); // Timer reaches 5.0, lastPingTime=5.0, then timer resets to 0
+    // First cycle: send ping when timer reaches 5.0
+    client->simulateUpdatePing(5.0f); // Add 5.0 to timer (timer = 5.0)
     EXPECT_TRUE(client->isWaitingForPong());
-    EXPECT_FLOAT_EQ(client->getLastPingTime(), 5.0f);
-    EXPECT_FLOAT_EQ(client->getPingTimer(), 0.0f);
+    EXPECT_NEAR(client->getLastPingTime(), 5.0f, 0.001f);
+    EXPECT_NEAR(client->getPingTimer(), 5.0f, 0.001f);
     
-    // Receive pong at timer=0.05
-    client->simulateUpdatePing(0.05f); // Timer is now 0.05
+    // Receive pong shortly after (timer = 5.05)
+    client->simulateUpdatePing(0.05f); // Add 0.05 to timer
     auto pongPacket = createPongPacket();
     client->simulateHandlePacket(pongPacket);
-    // Latency = 0.05 - 5.0 + 5.0 = 0.05 (we need to add back the interval)
-    // Actually no, latency = current_timer - lastPingTime is wrong after reset
-    // The design has a flaw. Let's just check it's not waiting
+    // Latency = current_timer - lastPingTime = 5.05 - 5.0 = 0.05s
+    EXPECT_NEAR(client->getLatency(), 0.05f, 0.001f);
     EXPECT_FALSE(client->isWaitingForPong());
+    EXPECT_EQ(client->getMissedPongCount(), 0);
+    
+    // Second cycle: next ping when timer reaches 10.0 (5.0 seconds after last ping at 5.0)
+    client->simulateUpdatePing(4.95f); // Add 4.95 to timer (timer = 5.05 + 4.95 = 10.0)
+    EXPECT_TRUE(client->isWaitingForPong());
+    EXPECT_NEAR(client->getLastPingTime(), 10.0f, 0.001f);
+    EXPECT_NEAR(client->getPingTimer(), 10.0f, 0.001f);
 }
 
 /**

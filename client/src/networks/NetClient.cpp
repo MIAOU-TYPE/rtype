@@ -112,6 +112,11 @@ namespace Game
             }
 
             case Net::Protocol::PONG: {
+                if (_waitingForPong) {
+                    _latency = _pingTimer - _lastPingTime;
+                    _waitingForPong = false;
+                    _missedPongCount = 0;
+                }
                 break;
             }
 
@@ -152,6 +157,9 @@ namespace Game
 
         _netWrapper->sendTo(_socket, &header, sizeof(header), 0, reinterpret_cast<struct sockaddr *>(&_serverAddr),
             sizeof(_serverAddr));
+
+        _lastPingTime = _pingTimer;
+        _waitingForPong = true;
     }
 
     void NetClient::updatePing(float deltaTime)
@@ -160,6 +168,17 @@ namespace Game
             return;
 
         _pingTimer += deltaTime;
+
+        if (_waitingForPong && (_pingTimer - _lastPingTime) >= PONG_TIMEOUT) {
+            _missedPongCount++;
+            _waitingForPong = false;
+
+            if (_missedPongCount >= MAX_MISSED_PONGS) {
+                _isConnected = false;
+                return;
+            }
+        }
+
         if (_pingTimer >= PING_INTERVAL) {
             sendPingPacket();
             _pingTimer -= PING_INTERVAL;

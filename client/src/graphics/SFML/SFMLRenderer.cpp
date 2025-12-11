@@ -15,7 +15,8 @@ using namespace Graphics;
 
 void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
-    _window.create(sf::VideoMode({width, height}), title);
+    _window.create(sf::VideoMode({width, height}), title, sf::Style::Close | sf::Style::Titlebar);
+    _window.setPosition(sf::Vector2i(0, 0));
 }
 
 bool SFMLRenderer::isOpen() const

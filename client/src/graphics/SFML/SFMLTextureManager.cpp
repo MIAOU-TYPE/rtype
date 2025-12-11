@@ -34,7 +34,8 @@ bool SFMLTextureManager::loadTexture(const std::string &filePath)
             _textures.emplace(filePath, std::move(texture));
             return true;
         } catch (const Resources::ResourceError &e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
+            return false;
         }
     }
 
@@ -74,7 +75,8 @@ bool SFMLTextureManager::loadFont(const std::string &fontPath)
             _fonts.emplace(fontPath, font);
             return true;
         } catch (const Resources::ResourceError &e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
+            return false;
         }
     }
 

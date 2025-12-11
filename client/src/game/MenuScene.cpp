@@ -112,7 +112,7 @@ void MenuScene::setOnPlayCallback(std::function<void()> callback)
 void MenuScene::setOnQuitCallback(std::function<void()> callback)
 {
     if (_quitButton) {
-        _quitButton->setOnClickCallback(std::move(callback));
+        _quitButton->setOnClick(std::move(callback));
     }
 }
 
@@ -121,7 +121,7 @@ void MenuScene::setErrorMessage(const std::string &message)
     _errorMessage = message;
     if (!message.empty()) {
         const std::string fontPath = "fonts/r-type.otf";
-        _errorText = _renderer->createText(message, fontPath, 24);
+        _errorText = _textureManager->createText(message, fontPath, 24);
         if (_errorText) {
             _errorText->setColor(255, 0, 0, 255);
             unsigned int windowWidth = _renderer->getWindowWidth();

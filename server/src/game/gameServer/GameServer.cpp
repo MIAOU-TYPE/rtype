@@ -19,37 +19,35 @@ namespace Game
 
     void GameServer::onPlayerConnect(const int sessionId)
     {
-        const Ecs::Entity ent = _world->createPlayer();
-        _sessionToEntity[sessionId] = ent;
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerConnect;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
     {
-        if (!_sessionToEntity.contains(sessionId))
-            return;
-
-        const Ecs::Entity ent = _sessionToEntity[sessionId];
-        _world->destroyEntity(ent);
-        _sessionToEntity.erase(sessionId);
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerDisconnect;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg)
     {
-        if (!_sessionToEntity.contains(sessionId))
-            return;
-
-        const Ecs::Entity ent = _sessionToEntity[sessionId];
-        if (auto &input = _world->registry().getComponents<InputComponent>()[static_cast<size_t>(ent)]) {
-            *input = msg;
-        }
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerInput;
+        cmd.sessionId = sessionId;
+        cmd.input = msg;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPing(const int sessionId)
     {
-        if (const auto *ai = _sessions->getAddress(sessionId)) {
-            if (const auto pkt = _factory.makeDefault(*ai, Net::Protocol::PONG))
-                _server->sendPacket(*pkt);
-        }
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::Ping;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::update(const float dt) const
@@ -67,11 +65,50 @@ namespace Game
 
     void GameServer::tick()
     {
+        GameCommand cmd;
+        while (_commandBuffer.pop(cmd))
+            applyCommand(cmd);
         const double frameTime = _clock.restart();
         _accumulator += frameTime;
         while (_accumulator >= FIXED_DT) {
             update(static_cast<float>(FIXED_DT));
             _accumulator -= FIXED_DT;
+        }
+    }
+
+    void GameServer::applyCommand(const GameCommand &cmd)
+    {
+        switch (cmd.type) {
+            case GameCommand::Type::PlayerConnect: {
+                const Ecs::Entity ent = _world->createPlayer();
+                _sessionToEntity[cmd.sessionId] = ent;
+                break;
+            }
+            case GameCommand::Type::PlayerDisconnect: {
+                if (!_sessionToEntity.contains(cmd.sessionId))
+                    break;
+                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                _world->destroyEntity(ent);
+                _sessionToEntity.erase(cmd.sessionId);
+                break;
+            }
+            case GameCommand::Type::PlayerInput: {
+                if (!_sessionToEntity.contains(cmd.sessionId))
+                    break;
+                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                auto &inputArr = _world->registry().getComponents<InputComponent>();
+                auto &inputOpt = inputArr[static_cast<size_t>(ent)];
+                if (inputOpt.has_value())
+                    *inputOpt = cmd.input;
+                break;
+            }
+            case GameCommand::Type::Ping: {
+                if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
+                    if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
+                        _server->sendPacket(*pkt);
+                }
+                break;
+            }
         }
     }
 } // namespace Game

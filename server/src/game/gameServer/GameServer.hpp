@@ -10,6 +10,7 @@
 #include "AISystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
+#include "CommandBuffer.hpp"
 #include "Damage.hpp"
 #include "DamageSystem.hpp"
 #include "EnemySpawnSystem.hpp"
@@ -42,6 +43,19 @@ namespace Game
      */
     class GameServer final : public Net::IMessageSink {
       public:
+        struct GameCommand {
+            enum class Type {
+                PlayerConnect,
+                PlayerDisconnect,
+                PlayerInput,
+                Ping,
+            };
+
+            Type type = Type::PlayerConnect;
+            InputComponent input{};
+            int sessionId = 0;
+        };
+
         /**
          * @brief Construct a new GameServer.
          *
@@ -97,6 +111,13 @@ namespace Game
          */
         void tick();
 
+        /**
+         * @brief Applies a single GameCommand to the game world.
+         *
+         * @param cmd The command to apply.
+         */
+        void applyCommand(const GameCommand &cmd);
+
       private:
         std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
@@ -105,6 +126,8 @@ namespace Game
         Net::Factory::PacketFactory _factory;                    ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
+
+        Command::CommandBuffer<GameCommand> _commandBuffer; ///> Buffers incoming game commands.
 
         GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.

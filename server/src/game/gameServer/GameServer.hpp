@@ -22,6 +22,7 @@
 #include "MovementSystem.hpp"
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
+#include "ShootingSystem.hpp"
 
 namespace Game
 {

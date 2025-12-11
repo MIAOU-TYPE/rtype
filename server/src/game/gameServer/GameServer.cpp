@@ -109,6 +109,7 @@ namespace Game
                 }
                 break;
             }
+            default:;
         }
     }
 } // namespace Game

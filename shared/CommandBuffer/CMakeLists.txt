@@ -13,7 +13,9 @@ add_library(CommandBuffer INTERFACE)
 # -----------------------------------
 # Include directories
 # -----------------------------------
+
 target_include_directories(CommandBuffer
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:include>
 )

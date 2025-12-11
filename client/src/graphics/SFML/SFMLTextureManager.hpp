@@ -9,9 +9,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include "IResourceManager.hpp"
 #include "ITextureManager.hpp"
+#include "ResourceError.hpp"
 #include "SFMLSpriteManagement.hpp"
-#include "resources/IResourceManager.hpp"
 #include <unordered_map>
 
 /**

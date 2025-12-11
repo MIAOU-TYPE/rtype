@@ -45,13 +45,14 @@ namespace Game
       public:
         struct GameCommand {
             enum class Type {
+                None,
                 PlayerConnect,
                 PlayerDisconnect,
                 PlayerInput,
                 Ping,
             };
 
-            Type type = Type::PlayerConnect;
+            Type type = Type::None;
             InputComponent input{};
             int sessionId = 0;
         };

@@ -66,4 +66,14 @@ namespace Game
         HealthSystem::update(*_world);
         LifetimeSystem::update(*_world, dt);
     }
+
+    void GameServer::tick()
+    {
+        const double frameTime = _clock.restart();
+        _accumulator += frameTime;
+        while (_accumulator >= FIXED_DT) {
+            update(static_cast<float>(FIXED_DT));
+            _accumulator -= FIXED_DT;
+        }
+    }
 } // namespace Game

@@ -13,6 +13,7 @@
 #include "Damage.hpp"
 #include "DamageSystem.hpp"
 #include "EnemySpawnSystem.hpp"
+#include "GameClock.hpp"
 #include "HealthSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
@@ -88,6 +89,13 @@ namespace Game
          */
         void update(float dt) const;
 
+        /**
+         * @brief Advances the game simulation based on elapsed time.
+         *
+         * Uses a fixed timestep approach to ensure consistent updates.
+         */
+        void tick();
+
       private:
         std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
@@ -96,6 +104,10 @@ namespace Game
         Net::Factory::PacketFactory _factory;                   ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
+
+        GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
+        double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
+        static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
     };
 
 } // namespace Game

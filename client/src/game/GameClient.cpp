@@ -8,13 +8,13 @@
 #include "GameClient.hpp"
 #include <SFML/Window/Event.hpp>
 #include <optional>
+#include "EmbeddedResourceManager.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 #include "ShootingComponent.hpp"
 #include "Velocity.hpp"
-#include "resources/EmbeddedResourceManager.hpp"
 
 using namespace Graphics;
 using namespace Input;

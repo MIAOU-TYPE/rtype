@@ -8,7 +8,6 @@
 #include "SFMLTextureManager.hpp"
 #include <iostream>
 #include "SFMLText.hpp"
-#include "resources/ResourceError.hpp"
 
 using namespace Graphics;
 

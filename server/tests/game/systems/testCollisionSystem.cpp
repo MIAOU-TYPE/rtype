@@ -6,12 +6,12 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/systems/collision/CollisionSystem.hpp"
-#include "game/world/World.hpp"
-#include "ecs/components/Position.hpp"
 #include "ecs/components/Collision.hpp"
 #include "ecs/components/Damage.hpp"
 #include "ecs/components/Health.hpp"
+#include "ecs/components/Position.hpp"
+#include "game/systems/collision/CollisionSystem.hpp"
+#include "game/world/World.hpp"
 
 TEST(CollisionSystem, projectile_hits_enemy_and_deals_damage)
 {

@@ -45,7 +45,7 @@ namespace Net
          * @param sink Shared pointer to the IMessageSink for handling routed messages.
          */
         PacketRouter(
-            const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
+            const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
 
         /**
          * @brief Handles an incoming packet by routing it to the appropriate handler.
@@ -60,7 +60,7 @@ namespace Net
          * @param header The HeaderData extracted from the incoming packet.
          * @return True if the header is valid, false otherwise.
          */
-        bool validateHeader(const IPacket &pkt, const HeaderData &header) const;
+        static bool validateHeader(const IPacket &pkt, const HeaderData &header);
 
         /**
          * @brief Handler for player connection packets.
@@ -121,7 +121,7 @@ namespace Net
         void dispatchPacket(
             int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
 
-        std::shared_ptr<Server::SessionManager>
+        std::shared_ptr<Server::ISessionManager>
             _sessions;                       ///> Pointer to the SessionManager for managing player sessions.
         std::shared_ptr<IMessageSink> _sink; ///> Pointer to the IMessageSink for handling routed messages.
 

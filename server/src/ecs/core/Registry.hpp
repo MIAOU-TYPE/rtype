@@ -72,21 +72,21 @@ namespace Ecs
          *
          * @tparam T Component type
          * @tparam Args Constructor parameter pack
-         * @param e Target entity
+         * @param entity Target entity
          * @param args Arguments forwarded to the component constructor
          */
         template <typename T, typename... Args>
-        void emplaceComponent(Entity e, Args &&...args);
+        void emplaceComponent(Entity entity, Args &&...args);
 
         /**
          * @brief Checks if an entity owns a specific component.
          *
          * @tparam T Component type
-         * @param e Target entity
+         * @param entity Target entity
          * @return true if the entity has the component, false otherwise
          */
         template <typename T>
-        bool hasComponent(Entity e);
+        bool hasComponent(Entity entity);
 
         /**
          * @brief Iterates over entities owning a set of components.

@@ -17,7 +17,7 @@ using namespace Library;
     #define FREE_LIBRARY(handle) dlclose(handle)
 #endif
 
-DLLoader::DLLoader(const std::string &libName) : _path(getLibraryPath(libName))
+DLLoader::DLLoader(const std::string &libName, const std::string &baseDir) : _path(getLibraryPath(libName, baseDir))
 {
 #ifdef __linux__
     dlerror();
@@ -50,23 +50,36 @@ const std::string &DLLoader::path() const noexcept
     return _path;
 }
 
-std::string DLLoader::getLibraryPath(const std::string &name) noexcept
+std::string DLLoader::getLibraryPath(const std::string &name, const std::string &baseDir) noexcept
 {
-#ifdef _WIN32
-    if (std::filesystem::exists(name + ".dll"))
-        return name + ".dll";
+#if defined(_WIN32)
+    namespace fs = std::filesystem;
+    fs::path dllName = name + ".dll";
 
-    const char *configs[] = {"Debug", "Release"};
+    std::vector<fs::path> searchPaths = {
+        fs::current_path(),
+        fs::current_path() / "Debug",
+        fs::current_path() / "Release",
+        fs::current_path() / baseDir,
+        fs::current_path().parent_path() / "build/Debug",
+        fs::current_path().parent_path() / "build/Release",
+        fs::current_path().parent_path() / "build",
+    };
 
-    for (auto c : configs) {
-        std::string p = "../build/" + std::string(c) + "/" + name + ".dll";
-        if (std::filesystem::exists(p))
-            return p;
+    for (auto &folder : searchPaths) {
+        fs::path candidate = folder / dllName;
+        if (fs::exists(candidate)) {
+            return candidate.string();
+        }
     }
-    return name + ".dll";
-#elif __APPLE__
-    return "build/lib" + name + ".dylib";
+
+    return dllName.string();
 #else
-    return "build/lib" + name + ".so";
+    return baseDir + "lib" + name +
+    #if defined(__APPLE__)
+        ".dylib";
+    #else
+        ".so";
+    #endif
 #endif
 }

@@ -9,10 +9,10 @@
 
 using namespace Net;
 
-NetWrapper::NetWrapper(const std::string &pluginPath)
+NetWrapper::NetWrapper(const std::string &pluginPath, const std::string &baseDir)
 {
     try {
-        _loader = std::make_unique<Library::DLLoader>(pluginPath);
+        _loader = std::make_unique<Library::DLLoader>(pluginPath, baseDir);
 
         _socketFn = _loader->getSymbol<socketHandle (*)(int, int, int)>("net_socket");
         _closeFn = _loader->getSymbol<void (*)(socketHandle)>("net_close");
@@ -23,6 +23,8 @@ NetWrapper::NetWrapper(const std::string &pluginPath)
                     "net_recvFrom");
         _sendFn = _loader->getSymbol<sendto_return_t (*)(
             socketHandle, const void *, size_t, int, const struct sockaddr *, socklen_t)>("net_sendTo");
+        _initNetworkFn = _loader->getSymbol<int (*)()>("net_initNetwork");
+        _cleanupNetworkFn = _loader->getSymbol<int (*)()>("net_cleanupNetwork");
     } catch (const std::exception &e) {
         throw NetWrapperError(std::string("{NetWrapper::NetWrapper} ") + e.what());
     }
@@ -68,4 +70,18 @@ sendto_return_t NetWrapper::sendTo(
     if (!_sendFn)
         throw NetWrapperError("SendTo function not loaded");
     return _sendFn(sockFd, buf, len, flags, destAddr, addrLen);
+}
+
+int NetWrapper::initNetwork()
+{
+    if (!_initNetworkFn)
+        throw NetWrapperError("InitNetwork function not loaded");
+    return _initNetworkFn();
+}
+
+int NetWrapper::cleanupNetwork()
+{
+    if (!_cleanupNetworkFn)
+        throw NetWrapperError("CleanupNetwork function not loaded");
+    return _cleanupNetworkFn();
 }

@@ -16,9 +16,13 @@ namespace Ecs
         return entity;
     }
 
-    void Registry::destroyEntity(Entity entity) noexcept
+    void Registry::destroyEntity(const Entity entity) noexcept
     {
-        for (auto &func : _destroyers)
-            func(*this, entity);
+        try {
+            for (auto &func : _destroyers)
+                func(*this, entity);
+        } catch (...) {
+            return;
+        }
     }
 } // namespace Ecs

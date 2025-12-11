@@ -24,9 +24,9 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Net::Thread::Se
 int main(void)
 {
     try {
-        std::shared_ptr<Net::Server::IServer> server = std::make_shared<Net::Server::UDPServer>();
+        const auto server = std::make_shared<Net::Server::UDPServer>();
         Net::Thread::ServerRuntime runtime(server);
-        std::shared_ptr<Signal::SignalHandler> signalHandler = startSignalHandler(runtime);
+        const auto signalHandler = startSignalHandler(runtime);
 
         server->configure("127.0.0.1", 8080);
         runtime.start();

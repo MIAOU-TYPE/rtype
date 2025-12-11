@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "SparseArray.hpp"
 
 namespace Ecs
 {

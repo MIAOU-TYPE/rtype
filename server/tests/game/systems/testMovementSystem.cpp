@@ -6,10 +6,10 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/systems/movement/MovementSystem.hpp"
-#include "game/world/World.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/Velocity.hpp"
+#include "MovementSystem.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
+#include "World.hpp"
 
 TEST(MovementSystem, moves_entities_correctly)
 {

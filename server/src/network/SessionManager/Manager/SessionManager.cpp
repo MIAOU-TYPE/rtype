@@ -6,6 +6,7 @@
 */
 
 #include "SessionManager.hpp"
+
 using namespace Net::Server;
 
 bool AddressKey::operator==(const AddressKey &other) const noexcept
@@ -18,24 +19,24 @@ std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
     return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
 }
 
-int SessionManager::getOrCreateSession(const sockaddr_in &addr)
+int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
-    std::lock_guard lock(_mutex);
+    std::scoped_lock lock(_mutex);
 
-    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
     if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
 
     const int newId = _nextId++;
     _addressToId[key] = newId;
-    _idToAddress[newId] = addr;
+    _idToAddress[newId] = address;
     return newId;
 }
 
-int SessionManager::getSessionId(const sockaddr_in &addr) const
+int SessionManager::getSessionId(const sockaddr_in &address) const
 {
-    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+    const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
     if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
@@ -43,9 +44,9 @@ int SessionManager::getSessionId(const sockaddr_in &addr) const
     return -1;
 }
 
-void SessionManager::removeSession(int sessionId)
+void SessionManager::removeSession(const int sessionId)
 {
-    std::lock_guard lock(_mutex);
+    std::scoped_lock lock(_mutex);
 
     const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
@@ -67,7 +68,7 @@ const sockaddr_in *SessionManager::getAddress(int sessionId) const
 
 std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
 {
-    std::lock_guard lock(_mutex);
+    std::scoped_lock lock(_mutex);
     std::vector<std::pair<int, sockaddr_in>> list;
     list.reserve(_idToAddress.size());
 

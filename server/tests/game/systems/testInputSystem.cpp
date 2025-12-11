@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/systems/input/InputSystem.hpp"
-#include "game/world/World.hpp"
+#include "InputSystem.hpp"
+#include "World.hpp"
 
 TEST(InputSystem, input_sets_velocity)
 {
@@ -18,7 +18,7 @@ TEST(InputSystem, input_sets_velocity)
 
     auto &input = reg.getComponents<Game::InputComponent>()[static_cast<size_t>(e)];
     input->right = true;
-    input->down  = true;
+    input->down = true;
 
     Game::InputSystem::update(world);
 

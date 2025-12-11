@@ -127,7 +127,11 @@ inline std::ostream &operator<<(std::ostream &os, const Net::IPacket &pkt)
  * @param pkt The shared pointer to the IPacket to be printed.
  * @return The output stream.
  */
-inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Net::IPacket> &pkt)
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const std::shared_ptr<T> &pkt)
 {
-    return os << *pkt;
+    if constexpr (std::is_base_of_v<Net::IPacket, T>) {
+        return os << *pkt;
+    }
+    return os;
 }

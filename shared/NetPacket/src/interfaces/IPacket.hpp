@@ -51,8 +51,8 @@ namespace Net
         virtual const uint8_t *buffer() const = 0;
 
         /**
-         * @brief Retrieves the source address of the packet.
-         * @return A pointer to the sockaddr_in structure representing the source address.
+         * @brief Retrieves the size of the packet.
+         * @return The size of the packet.
          */
         virtual size_t size() const = 0;
 

@@ -9,12 +9,12 @@
 using namespace Net;
 
 PacketRouter::PacketRouter(
-    const std::shared_ptr<Server::SessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
+    const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
     : _sessions(sessions), _sink(sink)
 {
 }
 
-bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header) const
+bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
 {
     if (pkt.size() < sizeof(HeaderData)) {
         std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;

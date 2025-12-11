@@ -9,44 +9,48 @@ import os
 
 
 def bin_to_header(input_file: str, output_file: str, var_name: str) -> None:
-    """
-    Convert a binary file to a C header file with byte array.
-    
-    Args:
-        input_file: Path to input binary file
-        output_file: Path to output .cpp file
-        var_name: Variable name for the array
-    """
-    with open(input_file, 'rb') as f:
-        data = f.read()
+    try:
+        with open(input_file, 'rb') as f:
+            data = f.read()
+    except IOError as e:
+        print(f"Error: Failed to read input file '{input_file}': {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: Unexpected error reading '{input_file}': {e}")
+        sys.exit(1)
     
     size = len(data)
     
-    with open(output_file, 'w') as f:
-        f.write(f"// Auto-generated from {os.path.basename(input_file)}\n")
-        f.write(f"// Size: {size} bytes\n\n")
-        f.write(f"namespace EmbeddedResources {{\n\n")
-        f.write(f"extern const unsigned char {var_name}[] = {{\n")
-        
-        # Write bytes in rows of 12
-        for i in range(0, size, 12):
-            chunk = data[i:i+12]
-            hex_values = ', '.join(f'0x{b:02x}' for b in chunk)
-            f.write(f"    {hex_values},\n")
-        
-        f.write(f"}};\n\n")
-        f.write(f"extern const unsigned int {var_name}_size = {size};\n\n")
-        f.write(f"}} // namespace EmbeddedResources\n")
+    try:
+        with open(output_file, 'w') as f:
+            f.write(f"// Auto-generated from {os.path.basename(input_file)}\n")
+            f.write(f"// Size: {size} bytes\n\n")
+            f.write(f"namespace EmbeddedResources {{\n\n")
+            f.write(f"extern const unsigned char {var_name}[] = {{\n")
+            
+            for i in range(0, size, 12):
+                chunk = data[i:i+12]
+                hex_values = ', '.join(f'0x{b:02x}' for b in chunk)
+                f.write(f"    {hex_values},\n")
+            
+            f.write(f"}};\n\n")
+            f.write(f"extern const unsigned int {var_name}_size = {size};\n\n")
+            f.write(f"}} // namespace EmbeddedResources\n")
+    except IOError as e:
+        print(f"Error: Failed to write output file '{output_file}': {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: Unexpected error writing '{output_file}': {e}")
+        sys.exit(1)
 
 
 def sanitize_var_name(filename: str) -> str:
-    """Convert filename to valid C variable name."""
-    # Remove extension and replace special chars with underscores
     name = os.path.splitext(os.path.basename(filename))[0]
     name = name.replace('-', '_').replace('.', '_').replace(' ', '_')
-    # Append extension without dot
-    ext = os.path.splitext(filename)[1][1:]  # Remove leading dot
-    return f"{name}_{ext}"
+    ext = os.path.splitext(filename)[1][1:]
+    if ext:
+        return f"{name}_{ext}"
+    return name
 
 
 if __name__ == "__main__":

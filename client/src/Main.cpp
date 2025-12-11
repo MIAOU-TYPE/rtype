@@ -16,7 +16,7 @@ int main()
     try {
         GameClient client;
 
-        client.init(800, 600);
+        client.init(1920, 1080);
         client.run();
 
         return 0;

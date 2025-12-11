@@ -157,9 +157,6 @@ namespace Game
 
         _netWrapper->sendTo(_socket, &header, sizeof(header), 0, reinterpret_cast<struct sockaddr *>(&_serverAddr),
             sizeof(_serverAddr));
-
-        _lastPingTime = _pingTimer;
-        _waitingForPong = true;
     }
 
     void NetClient::updatePing(float deltaTime)
@@ -180,6 +177,8 @@ namespace Game
         }
 
         if (_pingTimer >= PING_INTERVAL) {
+            _lastPingTime = _pingTimer;
+            _waitingForPong = true;
             sendPingPacket();
             _pingTimer -= PING_INTERVAL;
         }

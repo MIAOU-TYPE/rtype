@@ -34,8 +34,8 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
             throw MenuSceneError("Failed to create background sprite");
         }
 
-        _backgroundSprite->setPosition(-140.0f, 0.0f);
-        _backgroundSprite->setScale(1.3f, 1.3f);
+        _backgroundSprite->setPosition(-33.0f, 0.0f);
+        _backgroundSprite->setScale(2.4f, 2.4f);
 
         unsigned int windowWidth = _renderer->getWindowWidth();
         unsigned int windowHeight = _renderer->getWindowHeight();

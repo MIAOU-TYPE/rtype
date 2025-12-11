@@ -98,6 +98,7 @@ namespace Game
         std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
         std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
         Ecs::Entity _playerEntity{0};                                         ///> The player entity
+        bool _connectionLost = false;                                         ///> Flag to track connection loss
     };
 
 } // namespace Game

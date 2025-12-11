@@ -125,7 +125,8 @@ void MenuScene::setErrorMessage(const std::string &message)
         if (_errorText) {
             _errorText->setColor(255, 0, 0, 255);
             unsigned int windowWidth = _renderer->getWindowWidth();
-            float textX = static_cast<float>(windowWidth) / 2.0f - 200.0f;
+            float textWidth = _errorText->getWidth();
+            float textX = (static_cast<float>(windowWidth) - textWidth) / 2.0f;
             _errorText->setPosition(textX, 50.0f);
         }
     } else {

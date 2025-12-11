@@ -17,10 +17,6 @@
 
 using namespace Net;
 
-// ------------------------------------------------------------
-// Construction
-// ------------------------------------------------------------
-
 TEST(UDPPacket, DefaultConstructorInitializesEmpty)
 {
     UDPPacket pkt;
@@ -33,10 +29,6 @@ TEST(UDPPacket, DefaultConstructorInitializesEmpty)
     for (size_t i = 0; i < pkt.capacity(); i++)
         EXPECT_EQ(pkt.buffer()[i], 0);
 }
-
-// ------------------------------------------------------------
-// Buffer + Size
-// ------------------------------------------------------------
 
 TEST(UDPPacket, WriteAndReadBuffer)
 {
@@ -72,10 +64,6 @@ TEST(UDPPacket, SetSizeDoesNotChangeData)
     EXPECT_EQ(pkt.buffer()[1], 'A');
 }
 
-// ------------------------------------------------------------
-// Address handling
-// ------------------------------------------------------------
-
 TEST(UDPPacket, SetAndGetAddress)
 {
     UDPPacket pkt;
@@ -98,10 +86,6 @@ TEST(UDPPacket, SetAndGetAddress)
 
     EXPECT_STREQ(buf, "127.0.0.1");
 }
-
-// ------------------------------------------------------------
-// Printing operator
-// ------------------------------------------------------------
 
 TEST(UDPPacket, StreamOperatorPrintsPrintableCharacters)
 {

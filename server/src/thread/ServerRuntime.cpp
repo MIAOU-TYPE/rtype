@@ -18,7 +18,7 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
 
 ServerRuntime::~ServerRuntime()
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::scoped_lock lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;
@@ -26,7 +26,7 @@ ServerRuntime::~ServerRuntime()
 
 void ServerRuntime::wait()
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::unique_lock lock(_mutex);
     _cv.wait(lock, [this]() {
         return _stopRequested;
     });
@@ -35,15 +35,18 @@ void ServerRuntime::wait()
 void ServerRuntime::start()
 {
     _server->start();
+    _running = true;
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
+    _updateThread = std::thread(&ServerRuntime::runUpdate, this);
 }
 
 void ServerRuntime::stop()
 {
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::scoped_lock lock(_mutex);
         _stopRequested = true;
+        _running = false;
     }
     _cv.notify_all();
 
@@ -52,6 +55,8 @@ void ServerRuntime::stop()
         _receiverThread.join();
     if (_processorThread.joinable())
         _processorThread.join();
+    if (_updateThread.joinable())
+        _updateThread.join();
     _server->stop();
 }
 
@@ -64,15 +69,17 @@ void ServerRuntime::runReceiver() const
 
 void ServerRuntime::runProcessor() const
 {
-    auto last = std::chrono::steady_clock::now();
     while (_server->isRunning()) {
         if (std::shared_ptr<IPacket> pkt = nullptr; _server->popPacket(pkt)) {
             _packetRouter->handlePacket(pkt);
-
-            auto now = std::chrono::steady_clock::now();
-            const float dt = std::chrono::duration<float>(now - last).count();
-            last = now;
-            _gameServer->update(dt);
         }
+    }
+}
+
+void ServerRuntime::runUpdate() const
+{
+    while (_running) {
+        _gameServer->tick();
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 }

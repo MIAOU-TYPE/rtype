@@ -7,12 +7,22 @@
 
 #pragma once
 
+#include "AISystem.hpp"
+#include "Collision.hpp"
+#include "CollisionSystem.hpp"
+#include "Damage.hpp"
+#include "DamageSystem.hpp"
+#include "EnemySpawnSystem.hpp"
+#include "GameClock.hpp"
+#include "HealthSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
+#include "LifetimeSystem.hpp"
 #include "MovementSystem.hpp"
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
+#include "ShootingSystem.hpp"
 
 namespace Game
 {
@@ -38,7 +48,8 @@ namespace Game
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
          */
-        GameServer(std::shared_ptr<Net::Server::SessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
+        GameServer(
+            std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
 
         /**
          * @brief Called when a new player connects.
@@ -79,14 +90,25 @@ namespace Game
          */
         void update(float dt) const;
 
+        /**
+         * @brief Advances the game simulation based on elapsed time.
+         *
+         * Uses a fixed timestep approach to ensure consistent updates.
+         */
+        void tick();
+
       private:
         std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
-        std::shared_ptr<Net::Server::SessionManager> _sessions; ///> Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;          ///> Sends packets to clients.
-        Net::Factory::PacketFactory _factory;                   ///> Builds outgoing packets.
+        std::shared_ptr<Net::Server::ISessionManager> _sessions; ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;           ///> Sends packets to clients.
+        Net::Factory::PacketFactory _factory;                    ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
+
+        GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
+        double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
+        static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
     };
 
 } // namespace Game

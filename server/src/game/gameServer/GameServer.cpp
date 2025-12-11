@@ -11,7 +11,7 @@
 namespace Game
 {
     GameServer::GameServer(
-        std::shared_ptr<Net::Server::SessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
+        std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
         : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _factory(std::make_shared<Net::UDPPacket>())
     {
@@ -46,17 +46,32 @@ namespace Game
 
     void GameServer::onPing(const int sessionId)
     {
-        const sockaddr_in *addr = _sessions->getAddress(sessionId);
-        if (!addr)
-            return;
-
-        if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
-            _server->sendPacket(*pkt);
+        if (const auto *ai = _sessions->getAddress(sessionId)) {
+            if (const auto pkt = _factory.makeDefault(*ai, Net::Protocol::PONG))
+                _server->sendPacket(*pkt);
+        }
     }
 
     void GameServer::update(const float dt) const
     {
         InputSystem::update(*_world);
+        ShootingSystem::update(*_world);
+        AISystem::update(*_world, dt);
         MovementSystem::update(*_world, dt);
+        EnemySpawnSystem::update(*_world, dt);
+        CollisionSystem::update(*_world);
+        DamageSystem::update(*_world);
+        HealthSystem::update(*_world);
+        LifetimeSystem::update(*_world, dt);
+    }
+
+    void GameServer::tick()
+    {
+        const double frameTime = _clock.restart();
+        _accumulator += frameTime;
+        while (_accumulator >= FIXED_DT) {
+            update(static_cast<float>(FIXED_DT));
+            _accumulator -= FIXED_DT;
+        }
     }
 } // namespace Game

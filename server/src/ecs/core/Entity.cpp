@@ -9,7 +9,7 @@
 
 namespace Ecs
 {
-    Entity::Entity(size_t id) : _id(id)
+    Entity::Entity(const size_t id) : _id(id)
     {
     }
 

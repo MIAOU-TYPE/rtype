@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/gameServer/GameServer.hpp"
+#include "GameServer.hpp"
 #include "MockServer.hpp"
 #include "MockSessionManager.hpp"
 

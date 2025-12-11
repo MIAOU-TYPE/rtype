@@ -71,7 +71,7 @@ void PosixHandler::registerCallback(SignalType type, std::function<void()> callb
     try {
         if (!callback)
             return;
-        std::lock_guard<std::mutex> lock(mutex);
+        std::scoped_lock lock(mutex);
         if (!running.load())
             return;
         if (type != SignalType::Interrupt && type != SignalType::Terminate && type != SignalType::Hangup)
@@ -91,12 +91,13 @@ void PosixHandler::handleSignal(int sig)
         case SIGINT: instance->dispatch(SignalType::Interrupt); break;
         case SIGTERM: instance->dispatch(SignalType::Terminate); break;
         case SIGHUP: instance->dispatch(SignalType::Hangup); break;
+        default: break;
     }
 }
 
 void PosixHandler::dispatch(SignalType type)
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::scoped_lock lock(mutex);
 
     auto &handlers = _handlers[type];
     for (auto &fn : handlers)

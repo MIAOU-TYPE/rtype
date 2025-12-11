@@ -6,11 +6,11 @@
 */
 
 #include <gtest/gtest.h>
-#include "game/world/World.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "ecs/components/Health.hpp"
-#include "ecs/components/InputComponent.hpp"
+#include "Health.hpp"
+#include "InputComponent.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
+#include "World.hpp"
 
 TEST(World, create_player_adds_all_components)
 {
@@ -26,8 +26,8 @@ TEST(World, create_player_adds_all_components)
     ASSERT_TRUE(reg.hasComponent<Game::InputComponent>(e));
 
     auto &pos = reg.getComponents<Ecs::Position>();
-    ASSERT_EQ(pos[(size_t)e]->x, 100.f);
-    ASSERT_EQ(pos[(size_t)e]->y, 100.f);
+    ASSERT_EQ(pos[(size_t) e]->x, 100.f);
+    ASSERT_EQ(pos[(size_t) e]->y, 100.f);
 }
 
 TEST(World, destroy_player_removes_components)

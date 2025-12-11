@@ -20,7 +20,7 @@ void AServer::configure(const std::string &ip, uint16_t port)
     }
 }
 
-void AServer::setNonBlocking(bool nonBlocking)
+void AServer::setNonBlocking(const bool nonBlocking)
 {
     if (_socketFd == kInvalidSocket)
         return;

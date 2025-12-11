@@ -20,17 +20,17 @@ namespace Ecs
         (void) deltaTime;
         _registry->view<InputComponent>([this](Entity entity, const InputComponent &input) {
             (void) entity;
-            float dx = 0.0f;
-            float dy = 0.0f;
+            int8_t dx = 0;
+            int8_t dy = 0;
 
             if (input.left)
-                dx -= 1.0f;
+                dx -= 1;
             if (input.right)
-                dx += 1.0f;
+                dx += 1;
             if (input.up)
-                dy -= 1.0f;
+                dy -= 1;
             if (input.down)
-                dy += 1.0f;
+                dy += 1;
 
             _netClient->sendInputPacket(dx, dy, input.shoot);
         });

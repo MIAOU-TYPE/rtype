@@ -14,7 +14,7 @@ namespace Ecs
     {
         std::type_index typeIdx(typeid(T));
 
-        if (_entityToIndex.find(typeIdx) == _entityToIndex.end()) {
+        if (_entityToIndex.contains(typeIdx) == false) {
             _entityToIndex[typeIdx] = SparseArray<T>();
             _destroyers.push_back([](Registry &reg, Entity ent) {
                 reg.getComponents<T>().remove(static_cast<size_t>(ent));
@@ -26,12 +26,11 @@ namespace Ecs
     template <typename T>
     SparseArray<T> &Registry::getComponents()
     {
-        return std::any_cast<SparseArray<T> &>(
-            _entityToIndex.at(std::type_index(typeid(T))));
+        return registerComponent<T>();
     }
 
     template <typename T, typename... Args>
-    void Registry::emplaceComponent(Entity entity, Args &&...args)
+    void Registry::emplaceComponent(const Entity entity, Args &&...args)
     {
         registerComponent<T>();
         getComponents<T>().insert(
@@ -40,7 +39,7 @@ namespace Ecs
     }
 
     template <typename T>
-    bool Registry::hasComponent(Entity entity)
+    bool Registry::hasComponent(const Entity entity)
     {
         auto typeIdx = std::type_index(typeid(T));
         if (!_entityToIndex.contains(typeIdx))
@@ -59,14 +58,12 @@ namespace Ecs
             return;
         auto arrays = std::forward_as_tuple(getComponents<Components>()...);
         auto &first = std::get<0>(arrays);
-        size_t maxSize = first.size();
+        const size_t maxSize = first.size();
 
         for (size_t i = 0; i < maxSize; ++i) {
-
-            bool ok = (
+            const bool ok = (
                 (i < std::get<SparseArray<Components>&>(arrays).size() &&
                  std::get<SparseArray<Components>&>(arrays)[i].has_value()) && ...);
-
             if (!ok)
                 continue;
 

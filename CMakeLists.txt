@@ -88,3 +88,7 @@ add_subdirectory(
 
 add_subdirectory(server)
 add_subdirectory(client)
+
+if (BUILD_TESTING)
+    add_subdirectory(shared/tests)
+endif ()

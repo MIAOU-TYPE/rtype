@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "InputComponent.hpp"

@@ -7,7 +7,8 @@
 
 #include "GameClock.hpp"
 
-namespace Game {
+namespace Game
+{
     GameClock::GameClock() : _last(std::chrono::steady_clock::now())
     {
     }
@@ -25,4 +26,4 @@ namespace Game {
         const auto now = std::chrono::steady_clock::now();
         return std::chrono::duration<double>(now - _last).count();
     }
-}
+} // namespace Game

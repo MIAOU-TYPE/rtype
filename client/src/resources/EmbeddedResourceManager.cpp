@@ -1,0 +1,71 @@
+/*
+** EPITECH PROJECT, 2025
+** real_r_type
+** File description:
+** EmbeddedResourceManager
+*/
+
+#include "EmbeddedResourceManager.hpp"
+#include "ResourceError.hpp"
+
+namespace EmbeddedResources
+{
+    extern const unsigned char bg_preview_png[];
+    extern const unsigned int bg_preview_png_size;
+    extern const unsigned char background_space_png[];
+    extern const unsigned int background_space_png_size;
+    extern const unsigned char play_bt_png[];
+    extern const unsigned int play_bt_png_size;
+    extern const unsigned char play_bt_hold_png[];
+    extern const unsigned int play_bt_hold_png_size;
+    extern const unsigned char play_bt_press_png[];
+    extern const unsigned int play_bt_press_png_size;
+
+    extern const unsigned char r_type_otf[];
+    extern const unsigned int r_type_otf_size;
+} // namespace EmbeddedResources
+
+using namespace Resources;
+
+EmbeddedResourceManager::EmbeddedResourceManager()
+{
+    registerResources();
+}
+
+void EmbeddedResourceManager::registerResources()
+{
+    _resources["sprites/bg-preview.png"] = {EmbeddedResources::bg_preview_png, EmbeddedResources::bg_preview_png_size};
+    _resources["sprites/background_space.png"] = {
+        EmbeddedResources::background_space_png, EmbeddedResources::background_space_png_size};
+    _resources["sprites/play_bt.png"] = {EmbeddedResources::play_bt_png, EmbeddedResources::play_bt_png_size};
+    _resources["sprites/play_bt_hold.png"] = {
+        EmbeddedResources::play_bt_hold_png, EmbeddedResources::play_bt_hold_png_size};
+    _resources["sprites/play_bt_press.png"] = {
+        EmbeddedResources::play_bt_press_png, EmbeddedResources::play_bt_press_png_size};
+
+    _resources["fonts/r-type.otf"] = {EmbeddedResources::r_type_otf, EmbeddedResources::r_type_otf_size};
+}
+
+ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const
+{
+    auto it = _resources.find(resourcePath);
+    if (it != _resources.end()) {
+        return it->second;
+    }
+    return {nullptr, 0};
+}
+
+bool EmbeddedResourceManager::hasResource(const std::string &resourcePath) const
+{
+    return _resources.find(resourcePath) != _resources.end();
+}
+
+std::vector<std::string> EmbeddedResourceManager::listResources() const
+{
+    std::vector<std::string> resourceList;
+    resourceList.reserve(_resources.size());
+    for (const auto &pair : _resources) {
+        resourceList.push_back(pair.first);
+    }
+    return resourceList;
+}

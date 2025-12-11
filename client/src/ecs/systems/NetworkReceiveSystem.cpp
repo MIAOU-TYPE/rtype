@@ -15,6 +15,7 @@ namespace Ecs
 
     void NetworkReceiveSystem::update(float deltaTime)
     {
+        (void) deltaTime;
         _netClient.receivePackets();
     }
 } // namespace Ecs

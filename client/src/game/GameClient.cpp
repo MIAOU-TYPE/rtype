@@ -8,11 +8,11 @@
 #include "GameClient.hpp"
 #include <SFML/Window/Event.hpp>
 #include <optional>
-#include "SFMLInputHandler.hpp"
-#include "SFMLRenderer.hpp"
-
+#include "EmbeddedResourceManager.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
+#include "SFMLInputHandler.hpp"
+#include "SFMLRenderer.hpp"
 #include "ShootingComponent.hpp"
 #include "Velocity.hpp"
 
@@ -30,7 +30,8 @@ void GameClient::init(unsigned int width, unsigned int height)
         }
         _renderer->createWindow(width, height, "R-Type");
 
-        _textureManager = std::make_shared<SFMLTextureManager>();
+        auto resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
+        _textureManager = std::make_shared<SFMLTextureManager>(resourceManager);
 
         _netClient = std::make_shared<NetClient>();
         if (!_netClient) {

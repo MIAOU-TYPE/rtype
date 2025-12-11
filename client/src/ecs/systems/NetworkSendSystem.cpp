@@ -17,7 +17,9 @@ namespace Ecs
 
     void NetworkSendSystem::update(float deltaTime)
     {
+        (void) deltaTime;
         _registry->view<InputComponent>([this](Entity entity, const InputComponent &input) {
+            (void) entity;
             int8_t dx = 0;
             int8_t dy = 0;
 

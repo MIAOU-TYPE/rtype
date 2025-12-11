@@ -154,8 +154,11 @@ jobs:
       - name: Build server
         run: cmake --build build --target r-type_server -j$(nproc)
 
-      - name: Build tests
+      - name: Build server tests
         run: cmake --build build --target unit_tests -j$(nproc)
+
+      - name: Run server tests
+        run: ./build/tests/unit_tests
 
       - name: Upload Server Artifact (if exists)
         if: success()
@@ -210,10 +213,16 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_TESTING=OFF
+            -DBUILD_TESTING=ON
 
       - name: Build client
         run: cmake --build build --target r-type_client -j$(nproc)
+
+      - name: Build client tests
+        run: cmake --build build --target client_unit_tests -j$(nproc)
+
+      - name: Run client tests
+        run: ./build/tests/client_unit_tests
 
       - name: Upload Client Artifact (if exists)
         if: success()

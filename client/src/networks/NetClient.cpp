@@ -176,11 +176,10 @@ namespace Game
             }
         }
 
-        if (_pingTimer >= PING_INTERVAL) {
+        if (_pingTimer - _lastPingTime >= PING_INTERVAL) {
             _lastPingTime = _pingTimer;
             _waitingForPong = true;
             sendPingPacket();
-            _pingTimer -= PING_INTERVAL;
         }
     }
 

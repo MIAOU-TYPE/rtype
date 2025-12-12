@@ -183,6 +183,16 @@ namespace Game
         }
     }
 
+    float NetClient::getLatency() const
+    {
+        return _latency;
+    }
+
+    bool NetClient::isConnected() const
+    {
+        return _isConnected;
+    }
+
     void NetClient::close()
     {
         if (_isConnected) {

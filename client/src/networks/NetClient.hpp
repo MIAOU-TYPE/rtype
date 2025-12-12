@@ -105,19 +105,13 @@ namespace Game
          * @brief Gets the current measured latency.
          * @return The latency in seconds.
          */
-        float getLatency() const
-        {
-            return _latency;
-        }
+        float getLatency() const;
 
         /**
          * @brief Checks if the client is connected to the server.
          * @return True if connected, false otherwise.
          */
-        bool isConnected() const
-        {
-            return _isConnected;
-        }
+        bool isConnected() const;
 
         /**
          * @brief Closes the network client connection.

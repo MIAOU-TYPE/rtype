@@ -29,6 +29,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
+target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetPacket/src

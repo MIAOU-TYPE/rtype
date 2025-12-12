@@ -110,7 +110,7 @@ namespace Game
             }
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
-                    if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
+                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::PONG))
                         _server->sendPacket(*pkt);
                 }
                 break;

@@ -129,6 +129,11 @@ endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
+# CommandBuffer
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
+
+# ------------------------------
 # NetWrapperLib
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)

@@ -10,7 +10,7 @@
 namespace Game
 {
 
-    NetClient::NetClient()
+    NetClient::NetClient(std::shared_ptr<Ecs::IEntitiesFactory> entitiesFactory) : _entitiesFactory(entitiesFactory)
     {
 #ifdef _WIN32
         WSADATA wsa;
@@ -110,9 +110,7 @@ namespace Game
                 float x = ntohf(data->x);
                 float y = ntohf(data->y);
                 uint16_t sprite = ntohs(data->sprite);
-
-                // Handle entity creation (e.g., add to ECS)
-
+                _entitiesFactory->createEntityFromServer(id, x, y, sprite);
                 break;
             }
 
@@ -120,9 +118,7 @@ namespace Game
                 EntityDestroyData const *data = reinterpret_cast<EntityDestroyData const *>(packet.buffer());
 
                 u_int64_t id = be64toh(data->id);
-
-                // Handle entity destruction (e.g., remove from ECS)
-
+                _entitiesFactory->destroyEntityFromServer(id);
                 break;
             }
 
@@ -135,9 +131,7 @@ namespace Game
 
                 uint32_t id = ntohl(data->id);
                 uint16_t amount = ntohs(data->amount);
-
-                // Handle damage event (e.g., update entity health)
-                
+                _entitiesFactory->updateEntityDamage(id, amount);
                 break;
             }
 

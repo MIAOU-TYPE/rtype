@@ -10,6 +10,7 @@
 #include <SFML/Window/Event.hpp>
 #include <exception>
 #include <memory>
+#include "CommandBuffer.hpp"
 #include "GameEventHandler.hpp"
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
@@ -88,6 +89,8 @@ namespace Game
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
+        std::shared_ptr<Command::CommandBuffer<NetworkCommand>> _networkCommandBuffer =
+            nullptr;                                                          ///> Network command buffer
         std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
         std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene

@@ -43,18 +43,27 @@ namespace Game
      */
     class GameServer final : public Net::IMessageSink {
       public:
+        /**
+         * @brief Represents a high-level game command.
+         *
+         * GameCommands are generated from network events
+         * and processed during the game update loop.
+         */
         struct GameCommand {
+            /**
+             * @brief The type of game command.
+             */
             enum class Type {
-                None,
-                PlayerConnect,
-                PlayerDisconnect,
-                PlayerInput,
-                Ping,
+                None,             ///>  No operation
+                PlayerConnect,    ///>  A player has connected
+                PlayerDisconnect, ///>  A player has disconnected
+                PlayerInput,      ///>  Player input update
+                Ping,             ///>  Ping message received
             };
 
-            Type type = Type::None;
-            InputComponent input{};
-            int sessionId = 0;
+            Type type = Type::None; ///> Command type
+            InputComponent input{}; ///> Player input data
+            int sessionId = 0;      ///> Associated session ID
         };
 
         /**

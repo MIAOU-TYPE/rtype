@@ -23,6 +23,7 @@
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
+#include "SnapshotSystem.hpp"
 
 namespace Game
 {
@@ -47,9 +48,10 @@ namespace Game
          *
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
+         * @param packetFactory Factory to build outgoing packets.
          */
-        GameServer(
-            std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
+        GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server,
+            std::shared_ptr<Net::Factory::PacketFactory> packetFactory);
 
         /**
          * @brief Called when a new player connects.
@@ -97,12 +99,20 @@ namespace Game
          */
         void tick();
 
+        /**
+         * @brief Builds and sends a snapshot of the current game state to all connected clients.
+         * This includes positions and states of all relevant entities.
+         * The snapshot is constructed using the SnapshotSystem
+         * and sent via the PacketFactory.
+         */
+        void buildSnapshot(std::vector<SnapshotEntity> &out) const;
+
       private:
         std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
 
-        std::shared_ptr<Net::Server::ISessionManager> _sessions; ///> Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;           ///> Sends packets to clients.
-        Net::Factory::PacketFactory _factory;                    ///> Builds outgoing packets.
+        std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;               ///> Sends packets to clients.
+        std::shared_ptr<Net::Factory::PacketFactory> _packetFactory; ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
 

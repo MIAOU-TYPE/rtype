@@ -20,18 +20,22 @@ struct SnapshotEntity {
     std::string sprite;
 };
 
-/**
- * @brief Network-ready, packed structure.
- * This structure should be serialized directly.
- */
+#pragma pack(push, 1)
+
+struct SnapshotBatchHeader {
+    HeaderData header;
+    uint16_t count;
+};
+
+#pragma pack(pop)
+
 #pragma pack(push, 1)
 
 struct SnapshotEntityData {
-    HeaderData header;
     uint64_t entity;
     uint32_t x;
     uint32_t y;
-    char sprite[32];
+    uint8_t spriteId;
 };
 
 #pragma pack(pop)

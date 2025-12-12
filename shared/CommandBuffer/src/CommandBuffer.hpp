@@ -35,6 +35,26 @@ namespace Command
         ~CommandBuffer() = default;
 
         /**
+         * @brief Construct a new Command Buffer object
+         */
+        CommandBuffer(const CommandBuffer &) = delete;
+
+        /**
+         * @brief Copy assignment operator
+         */
+        CommandBuffer &operator=(const CommandBuffer &) = delete;
+
+        /**
+         * @brief Move constructor
+         */
+        CommandBuffer(CommandBuffer &&) = default;
+
+        /**
+         * @brief Move assignment operator
+         */
+        CommandBuffer &operator=(CommandBuffer &&) = default;
+
+        /**
          * @brief Push a command into the buffer
          *
          * @param cmd The command to be pushed

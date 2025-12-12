@@ -86,6 +86,12 @@ namespace Game
         void run();
 
       private:
+        /**
+         * @brief Updates the HUD with current player stats.
+         *
+         * Retrieves player health and score from ECS components and updates the HUD display.
+         */
+        void updateHUD();
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client

@@ -9,10 +9,12 @@
 #include <SFML/Window/Event.hpp>
 #include <optional>
 #include "EmbeddedResourceManager.hpp"
+#include "Health.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
+#include "Score.hpp"
 #include "ShootingComponent.hpp"
 #include "Velocity.hpp"
 
@@ -58,12 +60,16 @@ void GameClient::init(unsigned int width, unsigned int height)
         registry.registerComponent<Ecs::Velocity>();
         registry.registerComponent<Ecs::Position>();
         registry.registerComponent<Ecs::ShootingComponent>();
+        registry.registerComponent<Ecs::Health>();
+        registry.registerComponent<Ecs::Score>();
 
         _playerEntity = registry.createEntity();
         registry.emplaceComponent<Ecs::InputComponent>(_playerEntity);
         registry.emplaceComponent<Ecs::Velocity>(_playerEntity, 0.f, 0.f);
         registry.emplaceComponent<Ecs::Position>(_playerEntity, 100.f, 300.f);
         registry.emplaceComponent<Ecs::ShootingComponent>(_playerEntity);
+        registry.emplaceComponent<Ecs::Health>(_playerEntity, 100, 100);
+        registry.emplaceComponent<Ecs::Score>(_playerEntity, 0, 0);
 
         _eventManager = std::make_shared<InputEventManager>();
         _inputHandler = std::make_shared<SFMLInputHandler>(_eventManager);
@@ -114,6 +120,7 @@ void GameClient::run()
                 } else {
                     _inputHandler->update(deltaTime);
                     _gameScene->update(deltaTime);
+                    updateHUD();
                 }
             }
 
@@ -150,5 +157,35 @@ void GameClient::run()
         if (_netClient)
             _netClient->close();
         throw GameClientError("Unexpected error during game loop execution: " + std::string(e.what()));
+    }
+}
+
+void GameClient::updateHUD()
+{
+    if (!_gameScene) {
+        return;
+    }
+
+    auto *hud = _gameScene->getHUD();
+    if (!hud) {
+        return;
+    }
+
+    auto &registry = _gameScene->getRegistry();
+    size_t entityId = static_cast<size_t>(_playerEntity);
+
+    // Trouver un moyen d'afficher la vie du player uniquement et pas de n'importe quelle entité
+    auto &healthComponents = registry.getComponents<Ecs::Health>();
+    if (entityId < healthComponents.size() && healthComponents[entityId].has_value()) {
+        const auto &health = healthComponents[entityId].value();
+        unsigned int healthPercent = static_cast<unsigned int>((health.hp * 100) / health.maxHp);
+        hud->setHealth(healthPercent);
+    }
+
+    auto &scoreComponents = registry.getComponents<Ecs::Score>();
+    if (entityId < scoreComponents.size() && scoreComponents[entityId].has_value()) {
+        const auto &score = scoreComponents[entityId].value();
+        hud->setScore(static_cast<unsigned int>(score.score));
+        hud->setHighScore(static_cast<unsigned int>(score.highScore));
     }
 }

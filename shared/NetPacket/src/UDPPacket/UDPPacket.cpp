@@ -47,6 +47,15 @@ void UDPPacket::setAddress(const sockaddr_in &addr)
 
 std::shared_ptr<IPacket> UDPPacket::clone() const
 {
+    auto packet = std::make_shared<UDPPacket>();
+    packet->setAddress(_addr);
+    packet->setSize(_size);
+    std::memcpy(packet->buffer(), _buffer, _size);
+    return packet;
+}
+
+std::shared_ptr<IPacket> UDPPacket::New() const
+{
     return std::make_shared<UDPPacket>();
 }
 

@@ -96,25 +96,24 @@ void ServerRuntime::runUpdate() const
 
 void ServerRuntime::runSnapshot() const
 {
-    while (_running) {}
-    // std::vector<SnapshotEntity> entities;
-    //
-    // while (_running) {
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    //
-    //     _gameServer->buildSnapshot(entities);
-    //
-    //     if (entities.empty())
-    //         continue;
-    //
-    //     auto basePacket = _packetFactory->createSnapshotPacket(entities);
-    //     if (!basePacket)
-    //         continue;
-    //
-    //     _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
-    //         auto packet = basePacket->clone();
-    //         packet->setAddress(addr);
-    //         _server->sendPacket(*packet);
-    //     });
-    // }
+    std::vector<SnapshotEntity> entities;
+
+    while (_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        _gameServer->buildSnapshot(entities);
+
+        if (entities.empty())
+            continue;
+
+        auto basePacket = _packetFactory->createSnapshotPacket(entities);
+        if (!basePacket)
+            continue;
+
+        _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
+            auto packet = basePacket->clone();
+            packet->setAddress(addr);
+            _server->sendPacket(*packet);
+        });
+    }
 }

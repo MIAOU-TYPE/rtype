@@ -45,6 +45,7 @@ find_package(GTest CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE
         GTest::gtest
         GTest::gtest_main
+        GTest::gmock
 )
 
 if (WIN32)

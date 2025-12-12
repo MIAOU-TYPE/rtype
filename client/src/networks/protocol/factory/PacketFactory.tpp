@@ -16,7 +16,7 @@ namespace Network
             throw FactoryError("Template packet is null");
         if (sizeof(Type) > _packet->capacity())
             throw FactoryError("Packet type is too large to be serialized");
-        auto buffer = _packet->clone();
+        auto buffer = _packet->New();
         if (!buffer)
             throw FactoryError("Failed to clone packet");
         std::memcpy(buffer->buffer(), &packetData, sizeof(Type));

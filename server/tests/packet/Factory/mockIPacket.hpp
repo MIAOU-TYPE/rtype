@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstring>
+#include <memory>
 #include <vector>
 #include "IPacket.hpp"
 
@@ -17,9 +18,18 @@ class MockPacket : public Net::IPacket {
         _buffer.resize(cap);
     }
 
-    std::shared_ptr<Net::IPacket> clone() const override
+    std::shared_ptr<Net::IPacket> New() const override
     {
         return std::make_shared<MockPacket>(_capacity);
+    }
+
+    std::shared_ptr<Net::IPacket> clone() const override
+    {
+        auto pkt = std::make_shared<MockPacket>(_capacity);
+        pkt->setSize(_size);
+        std::memcpy(pkt->buffer(), _buffer.data(), _size);
+        pkt->setAddress(_addr);
+        return pkt;
     }
 
     uint8_t *buffer() override

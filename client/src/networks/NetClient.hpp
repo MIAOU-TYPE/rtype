@@ -16,7 +16,7 @@
 #include "NetWrapper.hpp"
 #include "TypesData.hpp"
 #include "UDPPacket.hpp"
-
+#include "IEntitiesFactory.hpp"
 namespace Game
 {
     /**
@@ -58,7 +58,7 @@ namespace Game
          * Initializes the network wrapper, creates a UDP socket, and sets up the server address.
          * @throws NetClientError if socket creation fails.
          */
-        NetClient();
+        NetClient(std::shared_ptr<Ecs::IEntitiesFactory> entitiesFactory);
 
         /**
          * @brief Destructor for NetClient.
@@ -119,6 +119,7 @@ namespace Game
         uint32_t _playerEntityId = 0;                           ///> Player entity ID
         float _pingTimer = 0.0f;                                ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
+        std::shared_ptr<Ecs::IEntitiesFactory> _entitiesFactory; ///> Entities factory
     };
 
 } // namespace Game

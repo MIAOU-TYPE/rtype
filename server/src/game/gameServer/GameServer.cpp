@@ -10,10 +10,10 @@
 
 namespace Game
 {
-    GameServer::GameServer(
-        std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
+    GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
         : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _factory(std::make_shared<Net::UDPPacket>())
+          _packetFactory(std::move(packetFactory))
     {
     }
 
@@ -47,7 +47,7 @@ namespace Game
     void GameServer::onPing(const int sessionId)
     {
         if (const auto *ai = _sessions->getAddress(sessionId)) {
-            if (const auto pkt = _factory.makeDefault(*ai, Net::Protocol::PONG))
+            if (const auto pkt = _packetFactory->makeDefault(*ai, Net::Protocol::PONG))
                 _server->sendPacket(*pkt);
         }
     }
@@ -73,5 +73,11 @@ namespace Game
             update(static_cast<float>(FIXED_DT));
             _accumulator -= FIXED_DT;
         }
+    }
+
+    void GameServer::buildSnapshot(std::vector<SnapshotEntity> &out) const
+    {
+        out.clear();
+        SnapshotSystem::update(*_world, out);
     }
 } // namespace Game

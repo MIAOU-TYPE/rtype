@@ -7,6 +7,11 @@
 
 #pragma once
 
+#include "DamageData.hpp"
+#include "DefaultData.hpp"
+#include "Endian.hpp"
+#include "EntityCreateData.hpp"
+#include "EntityDestroyData.hpp"
 #include "InputData.hpp"
 #include "NetWrapper.hpp"
 #include "TypesData.hpp"

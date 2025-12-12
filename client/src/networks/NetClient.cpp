@@ -104,10 +104,25 @@ namespace Game
             }
 
             case Net::Protocol::ENTITY_CREATE: {
+                EntityCreateData const *data = reinterpret_cast<EntityCreateData const *>(packet.buffer());
+
+                u_int64_t id = be64toh(data->id);
+                float x = ntohf(data->x);
+                float y = ntohf(data->y);
+                uint16_t sprite = ntohs(data->sprite);
+
+                // Handle entity creation (e.g., add to ECS)
+
                 break;
             }
 
             case Net::Protocol::ENTITY_DESTROY: {
+                EntityDestroyData const *data = reinterpret_cast<EntityDestroyData const *>(packet.buffer());
+
+                u_int64_t id = be64toh(data->id);
+
+                // Handle entity destruction (e.g., remove from ECS)
+
                 break;
             }
 

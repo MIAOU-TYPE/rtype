@@ -9,14 +9,8 @@
 
 #include "Drawable.hpp"
 #include "Position.hpp"
+#include "SnapEntityData.hpp"
 #include "World.hpp"
-
-struct SnapshotEntity {
-    size_t entity;
-    float x;
-    float y;
-    std::string sprite;
-};
 
 namespace Game
 {

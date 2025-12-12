@@ -160,6 +160,12 @@ jobs:
       - name: Run server tests
         run: ./build/tests/unit_tests
 
+      - name: Build shared tests
+        run: cmake --build build --target unit_tests_shared -j$(nproc)
+
+      - name: Run shared tests
+        run: ./build/tests/unit_tests_shared
+
       - name: Upload Server Artifact (if exists)
         if: success()
         uses: actions/upload-artifact@v4

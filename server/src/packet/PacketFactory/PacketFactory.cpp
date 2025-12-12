@@ -91,4 +91,42 @@ namespace Net::Factory
             return nullptr;
         }
     }
+
+    std::shared_ptr<IPacket> PacketFactory::createSnapshotPacket(
+        const std::vector<SnapshotEntity> &entities) const noexcept
+    {
+        try {
+            SnapshotBatchHeader header{};
+            const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
+            header.header = makeHeader(Protocol::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
+            header.count = htons(entities.size());
+
+            auto packet = _packet->clone();
+            uint8_t *buf = packet->buffer();
+
+            if (totalSize > packet->capacity())
+                throw FactoryError("{PacketFactory::createSnapshotPacket} Snapshot too large");
+
+            std::memcpy(buf, &header, sizeof(header));
+            size_t offset = sizeof(header);
+
+            for (const auto &e : entities) {
+                SnapshotEntityData packed{};
+                packed.entity = htonll(e.entity);
+                packed.x = htonf(e.x);
+                packed.y = htonf(e.y);
+                // TODO
+                // packed.spriteId = spriteNameToId(e.sprite);
+
+                std::memcpy(buf + offset, &packed, sizeof(packed));
+                offset += sizeof(packed);
+            }
+
+            packet->setSize(totalSize);
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::createSnapshotPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Net::Factory

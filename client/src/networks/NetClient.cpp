@@ -131,6 +131,13 @@ namespace Game
             }
 
             case Net::Protocol::DAMAGE_EVENT: {
+                DamageData const *data = reinterpret_cast<DamageData const *>(packet.buffer());
+
+                uint32_t id = ntohl(data->id);
+                uint16_t amount = ntohs(data->amount);
+
+                // Handle damage event (e.g., update entity health)
+                
                 break;
             }
 

@@ -33,8 +33,8 @@ namespace Command
     void CommandBuffer<T>::clear() noexcept
     {
         std::scoped_lock lock(_mutex);
-        while (!_queue.empty())
-            _queue.pop();
+        std::queue<T> empty;
+        _queue.swap(empty);
     }
 
     template <typename T>

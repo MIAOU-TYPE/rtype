@@ -8,6 +8,7 @@
 #pragma once
 
 #include "IEntitiesFactory.hpp"
+#include "Health.hpp"
 namespace Ecs
 {
     /**

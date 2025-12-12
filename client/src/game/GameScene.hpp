@@ -10,6 +10,8 @@
 #include <exception>
 #include <memory>
 #include <string>
+#include "GameHUD.hpp"
+#include "IHUD.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include "InputSystem.hpp"
@@ -90,10 +92,17 @@ namespace Game
          */
         Ecs::Registry &getRegistry();
 
+        /**
+         * @brief Gets the HUD interface.
+         * @return Pointer to the HUD interface.
+         */
+        Graphics::IHUD *getHUD();
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
+        std::unique_ptr<Graphics::GameHUD> _hud = nullptr;                    ///> The game HUD
         Ecs::Registry _registry;                                              ///> The ECS registry
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
         // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager

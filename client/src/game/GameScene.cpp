@@ -29,6 +29,18 @@ GameScene::GameScene(
         if (!_starfield) {
             throw GameSceneError("Failed to create starfield instance");
         }
+
+        _hud = std::make_unique<Graphics::GameHUD>(_renderer, _textureManager, "fonts/r-type.otf");
+        if (!_hud) {
+            throw GameSceneError("Failed to create HUD instance");
+        }
+
+        _hud->setScore(0);
+        _hud->setHighScore(0);
+        _hud->setLevel(1);
+        _hud->setHealth(100);
+        _hud->setWeapon("Basic");
+
         _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
         if (!_inputSystem) {
             throw GameSceneError("Failed to create input system instance");
@@ -81,6 +93,11 @@ void GameScene::render()
         //     _entityDrawing->renderAllEntities();
         // }
 
+        // Render HUD last (on top of everything)
+        if (_hud && _renderer) {
+            _hud->render(*_renderer);
+        }
+
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to render game scene: " + std::string(e.what()));
     }
@@ -89,4 +106,9 @@ void GameScene::render()
 Ecs::Registry &GameScene::getRegistry()
 {
     return _registry;
+}
+
+Graphics::IHUD *GameScene::getHUD()
+{
+    return _hud.get();
 }

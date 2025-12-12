@@ -7,6 +7,12 @@
 
 #pragma once
 
+#include <atomic>
+#include <memory>
+#include <thread>
+#include <vector>
+
+#include "CommandBuffer.hpp"
 #include "InputData.hpp"
 #include "NetWrapper.hpp"
 #include "TypesData.hpp"
@@ -14,6 +20,31 @@
 
 namespace Game
 {
+    /**
+     * @struct NetworkCommand
+     * @brief Represents a received network packet encapsulated as a command.
+     */
+    struct NetworkCommand {
+        std::vector<uint8_t> data; ///> Packet data buffer
+        sockaddr_in senderAddr;    ///> Sender address
+
+        /**
+         * @brief Default constructor.
+         */
+        NetworkCommand() : senderAddr{}
+        {
+        }
+
+        /**
+         * @brief Constructs a NetworkCommand from a UDPPacket.
+         * @param packet The received UDP packet.
+         */
+        explicit NetworkCommand(const Net::UDPPacket &packet)
+            : data(packet.buffer(), packet.buffer() + packet.size()), senderAddr(*packet.address())
+        {
+        }
+    };
+
     /**
      * @class NetClientError
      * @brief Exception class for network client-related errors.
@@ -50,16 +81,38 @@ namespace Game
       public:
         /**
          * @brief Constructor for NetClient.
-         * Initializes the network wrapper, creates a UDP socket, and sets up the server address.
+         * Initializes the network wrapper, creates a UDP socket, sets up the server address,
+         * and starts the reception thread.
+         * @param commandBuffer Shared pointer to the command buffer for received packets.
          * @throws NetClientError if socket creation fails.
          */
-        NetClient();
+        explicit NetClient(std::shared_ptr<Command::CommandBuffer<NetworkCommand>> commandBuffer);
 
         /**
          * @brief Destructor for NetClient.
-         * Closes the network connection and cleans up resources.
+         * Stops the reception thread, closes the network connection and cleans up resources.
          */
         ~NetClient();
+
+        /**
+         * @brief Construct a new Net Client object (non-copyable)
+         */
+        NetClient(const NetClient &) = delete;
+
+        /**
+         * @brief Copy assignment operator (non-copyable)
+         */
+        NetClient &operator=(const NetClient &) = delete;
+
+        /**
+         * @brief Construct a new Net Client object (Movable)
+         */
+        NetClient(NetClient &&) = delete;
+
+        /**
+         * @brief Move assignment operator (Movable)
+         */
+        NetClient &operator=(NetClient &&) = delete;
 
         /**
          * @brief Sends a connect packet to the server.
@@ -73,17 +126,6 @@ namespace Game
          * @param shooting Whether the player is shooting.
          */
         void sendInputPacket(int8_t dx, int8_t dy, bool shooting);
-
-        /**
-         * @brief Receives packets from the server.
-         */
-        void receivePackets();
-
-        /**
-         * @brief Handles a received UDP packet.
-         * @param packet The received UDP packet.
-         */
-        void handlePacket(const Net::UDPPacket &packet);
 
         /**
          * @brief Sends a disconnect packet to the server.
@@ -102,11 +144,63 @@ namespace Game
         void updatePing(float deltaTime);
 
         /**
-         * @brief Closes the network client connection.
+         * @brief Closes the network client connection and stops the reception thread.
          */
         void close();
 
+        /**
+         * @brief Starts the network reception thread.
+         */
+        void startReceptionThread();
+
+        /**
+         * @brief Stops the network reception thread.
+         */
+        void stopReceptionThread();
+
+        /**
+         * @brief Checks if the client is connected to the server.
+         * @return true if connected, false otherwise.
+         */
+        bool isConnected() const noexcept
+        {
+            return _isConnected;
+        }
+
+        /**
+         * @brief Gets the player entity ID assigned by the server.
+         * @return The player entity ID.
+         */
+        uint32_t getPlayerEntityId() const noexcept
+        {
+            return _playerEntityId;
+        }
+
+        /**
+         * @brief Sets the connection status.
+         * @param connected The new connection status.
+         */
+        void setConnected(bool connected) noexcept
+        {
+            _isConnected = connected;
+        }
+
+        /**
+         * @brief Sets the player entity ID.
+         * @param entityId The player entity ID assigned by the server.
+         */
+        void setPlayerEntityId(uint32_t entityId) noexcept
+        {
+            _playerEntityId = entityId;
+        }
+
       private:
+        /**
+         * @brief Reception thread main loop.
+         * Blocks on recvfrom() and pushes received packets into the CommandBuffer.
+         */
+        void receptionLoop();
+
         std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr; ///> Network wrapper
         socketHandle _socket = kInvalidSocket;                  ///> UDP socket
         sockaddr_in _serverAddr = {};                           ///> Server address
@@ -114,6 +208,11 @@ namespace Game
         uint32_t _playerEntityId = 0;                           ///> Player entity ID
         float _pingTimer = 0.0f;                                ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
+
+        // Reception thread members
+        std::shared_ptr<Command::CommandBuffer<NetworkCommand>> _commandBuffer; ///> Shared command buffer
+        std::thread _rxThread;                                                   ///> Reception thread
+        std::atomic<bool> _running{false};                                       ///> Thread running flag
     };
 
 } // namespace Game

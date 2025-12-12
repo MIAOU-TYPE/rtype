@@ -10,8 +10,12 @@
 namespace Game
 {
 
-    NetClient::NetClient()
+    NetClient::NetClient(std::shared_ptr<Command::CommandBuffer<NetworkCommand>> commandBuffer)
+        : _commandBuffer(std::move(commandBuffer))
     {
+        if (!_commandBuffer) {
+            throw NetClientError("CommandBuffer cannot be null");
+        }
 #ifdef _WIN32
         WSADATA wsa;
         const int r = WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -31,6 +35,7 @@ namespace Game
         _serverAddr.sin_port = htons(4242);
         inet_pton(AF_INET, "127.0.0.1", &_serverAddr.sin_addr);
         sendConnectPacket();
+        startReceptionThread();
     }
 
     NetClient::~NetClient()
@@ -65,65 +70,66 @@ namespace Game
             reinterpret_cast<struct sockaddr *>(&_serverAddr), sizeof(_serverAddr));
     }
 
-    void NetClient::receivePackets()
+    void NetClient::startReceptionThread()
     {
-        Net::UDPPacket packet;
-        sockaddr_in from;
-        socklen_t fromLen = sizeof(from);
+        if (_running.load()) {
+            return; // Already running
+        }
+        _running.store(true);
+        _rxThread = std::thread(&NetClient::receptionLoop, this);
+    }
 
-        while (true) {
-            auto bytesReceived = _netWrapper->recvFrom(
-                _socket, packet.buffer(), packet.capacity(), 0, reinterpret_cast<struct sockaddr *>(&from), &fromLen);
-            if (bytesReceived <= 0) {
-                break;
-            }
-            packet.setSize(static_cast<size_t>(bytesReceived));
-            packet.setAddress(from);
-            handlePacket(packet);
+    void NetClient::stopReceptionThread()
+    {
+        _running.store(false);
+
+        // Close the socket to unblock recvfrom()
+        if (_socket != kInvalidSocket && _netWrapper) {
+            _netWrapper->closeSocket(_socket);
+            _socket = kInvalidSocket;
+        }
+
+        // Join the thread if joinable
+        if (_rxThread.joinable()) {
+            _rxThread.join();
         }
     }
 
-    void NetClient::handlePacket(const Net::UDPPacket &packet)
+    void NetClient::receptionLoop()
     {
-        const HeaderData *header = reinterpret_cast<const HeaderData *>(packet.buffer());
-        switch (header->type) {
-            case Net::Protocol::ACCEPT: {
-                _isConnected = true;
-                const uint32_t *entityId = reinterpret_cast<const uint32_t *>(packet.buffer() + sizeof(HeaderData));
-                _playerEntityId = *entityId;
-                break;
+        Net::UDPPacket packet;
+        sockaddr_in from{};
+        socklen_t fromLen = sizeof(from);
+
+        while (_running.load()) {
+            // Blocking recvfrom() - will be unblocked when socket is closed
+            auto bytesReceived = _netWrapper->recvFrom(
+                _socket, packet.buffer(), packet.capacity(), 0, reinterpret_cast<struct sockaddr *>(&from), &fromLen);
+
+            // Check if we should stop (socket closed or error)
+            if (bytesReceived <= 0) {
+                // If we're not running anymore, this is expected (clean shutdown)
+                if (!_running.load()) {
+                    break;
+                }
+                // Otherwise, it's an error or timeout - continue waiting
+                continue;
             }
 
-            case Net::Protocol::REJECT: {
-                _isConnected = false;
-                break;
+            // Set packet metadata
+            packet.setSize(static_cast<size_t>(bytesReceived));
+            packet.setAddress(from);
+
+            // Minimal validation: check if we have at least a header
+            if (packet.size() < sizeof(HeaderData)) {
+                continue; // Drop malformed packet (UDP rules)
             }
 
-            case Net::Protocol::SNAPSHOT: {
-                break;
-            }
+            // Encapsulate packet into NetworkCommand and push to CommandBuffer
+            NetworkCommand cmd(packet);
 
-            case Net::Protocol::ENTITY_CREATE: {
-                break;
-            }
-
-            case Net::Protocol::ENTITY_DESTROY: {
-                break;
-            }
-
-            case Net::Protocol::PONG: {
-                break;
-            }
-
-            case Net::Protocol::DAMAGE_EVENT: {
-                break;
-            }
-
-            case Net::Protocol::GAME_OVER: {
-                break;
-            }
-
-            default: break;
+            // Push to CommandBuffer (non-blocking, drop if fails per UDP rules)
+            _commandBuffer->push(cmd);
         }
     }
 
@@ -168,13 +174,14 @@ namespace Game
 
     void NetClient::close()
     {
+        // Send disconnect packet before stopping the thread
         if (_isConnected) {
             sendDisconnectPacket();
         }
-        if (_socket != kInvalidSocket) {
-            _netWrapper->closeSocket(_socket);
-            _socket = kInvalidSocket;
-        }
+
+        // Stop the reception thread (this will also close the socket)
+        stopReceptionThread();
+
 #ifdef _WIN32
         WSACleanup();
 #endif

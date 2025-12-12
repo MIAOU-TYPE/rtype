@@ -24,7 +24,7 @@ namespace Command
         std::scoped_lock lock(_mutex);
         if (_queue.empty())
             return false;
-        out = _queue.front();
+        out = std::move(_queue.front());
         _queue.pop();
         return true;
     }

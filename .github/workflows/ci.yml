@@ -210,7 +210,7 @@ jobs:
           cmake -S . -B build \
             -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
 
-      - name: Build client and server
+      - name: Build client and tests
         run: cmake --build build -j$(nproc)
 
       - name: Run client tests

@@ -15,6 +15,7 @@ namespace Game
         _registry.registerComponent<Ecs::Velocity>();
         _registry.registerComponent<Ecs::Health>();
         _registry.registerComponent<InputComponent>();
+        _registry.registerComponent<Ecs::Drawable>();
     }
 
     Ecs::Entity World::createPlayer()

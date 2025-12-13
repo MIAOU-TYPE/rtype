@@ -6,7 +6,6 @@
 */
 
 #include "ServerRuntime.hpp"
-#include "UDPPacket.hpp"
 using namespace Net::Thread;
 
 ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)

@@ -16,6 +16,7 @@
 #include "PacketRouter.hpp"
 #include "SessionManager.hpp"
 #include "SnapshotSystem.hpp"
+#include "UDPPacket.hpp"
 #include <condition_variable>
 
 namespace Net::Thread

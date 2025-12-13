@@ -18,7 +18,7 @@ class MockPacket : public Net::IPacket {
         _buffer.resize(cap);
     }
 
-    std::shared_ptr<Net::IPacket> New() const override
+    std::shared_ptr<Net::IPacket> newPacket() const override
     {
         return std::make_shared<MockPacket>(_capacity);
     }

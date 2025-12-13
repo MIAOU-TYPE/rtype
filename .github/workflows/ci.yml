@@ -160,7 +160,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r-type_server-${{ runner.os }}c
+          name: r-type_server-${{ runner.os }}
           path: r-type_server
           if-no-files-found: ignore
 

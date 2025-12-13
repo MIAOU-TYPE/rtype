@@ -24,8 +24,8 @@ inline uint64_t be64toh(uint64_t x)
 
 #elif defined(__linux__)
     #include <arpa/inet.h>
+    #include <cstdint>
     #include <endian.h>
-        #include <cstdint>
 
 static inline std::uint64_t ntohll(std::uint64_t x)
 {

@@ -8,9 +8,11 @@
 #pragma once
 #include <cstring>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
@@ -20,8 +22,6 @@
 #include "InputData.hpp"
 #include "SnapEntityData.hpp"
 #include "TypesData.hpp"
-#include <vector>
-#include <limits>
 
 /**
  * @namespace Net

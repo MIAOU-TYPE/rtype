@@ -54,7 +54,7 @@ std::shared_ptr<IPacket> UDPPacket::clone() const
     return packet;
 }
 
-std::shared_ptr<IPacket> UDPPacket::New() const
+std::shared_ptr<IPacket> UDPPacket::newPacket() const
 {
     return std::make_shared<UDPPacket>();
 }

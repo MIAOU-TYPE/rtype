@@ -90,7 +90,7 @@ namespace Net
          * @brief Creates a new instance of UDPPacket.
          * @return A shared pointer to the new IPacket instance.
          */
-        std::shared_ptr<IPacket> New() const override;
+        std::shared_ptr<IPacket> newPacket() const override;
 
         /**
          * @brief Retrieves the capacity of the packet buffer.

@@ -147,30 +147,20 @@ jobs:
 
       - name: Configure CMake (server)
         run: |
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_TESTING=ON
+          cmake -S . -B build \
+            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
 
-      - name: Build server
-        run: cmake --build build --target r-type_server -j$(nproc)
-
-      - name: Build server tests
-        run: cmake --build build --target unit_tests -j$(nproc)
+      - name: Build server and tests
+        run: cmake --build build -j$(nproc)
 
       - name: Run server tests
-        run: ./build/tests/unit_tests
-
-      - name: Build shared tests
-        run: cmake --build build --target unit_tests_shared -j$(nproc)
-
-      - name: Run shared tests
-        run: ./build/tests/unit_tests_shared
+        run: ctest --test-dir build -C Debug -V
 
       - name: Upload Server Artifact (if exists)
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r-type_server-${{ runner.os }}
+          name: r-type_server-${{ runner.os }}c
           path: r-type_server
           if-no-files-found: ignore
 
@@ -215,20 +205,16 @@ jobs:
             ./vcpkg/bootstrap-vcpkg.sh
           fi
 
-      - name: Configure CMake (client only)
+      - name: Configure CMake (client)
         run: |
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_TESTING=ON
+          cmake -S . -B build \
+            -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
 
-      - name: Build client
-        run: cmake --build build --target r-type_client -j$(nproc)
-
-      - name: Build client tests
-        run: cmake --build build --target client_unit_tests -j$(nproc)
+      - name: Build client and server
+        run: cmake --build build -j$(nproc)
 
       - name: Run client tests
-        run: ./build/tests/client_unit_tests
+        run: ctest --test-dir build -C Debug -V
 
       - name: Upload Client Artifact (if exists)
         if: success()

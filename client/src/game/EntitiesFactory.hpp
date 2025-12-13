@@ -7,8 +7,16 @@
 
 #pragma once
 
-#include "IEntitiesFactory.hpp"
 #include "Health.hpp"
+#include "Velocity.hpp"
+#include "Damage.hpp"
+#include "Controllable.hpp"
+#include "Damageable.hpp"
+#include "Direction.hpp"
+#include "Position.hpp"
+#include "Renderable.hpp"
+#include "IEntitiesFactory.hpp"
+
 namespace Ecs
 {
     /**
@@ -17,7 +25,6 @@ namespace Ecs
      */
     class EntitiesFactory : public IEntitiesFactory {
       public:
-
         /**
          * @brief Constructor for EntitiesFactory.
          * @param registry Reference to the ECS registry.
@@ -65,9 +72,9 @@ namespace Ecs
         std::optional<Entity> getEntityById(u_int64_t id) const override;
 
       private:
-        Registry &_registry;    ///> Reference to the ECS registry
+        Registry &_registry;                                        ///> Reference to the ECS registry
         std::shared_ptr<Graphics::ITextureManager> _textureManager; ///> Shared pointer to the texture manager
-        std::unordered_map<u_int64_t, Entity> _entityMap;  ///> Map of unique IDs to entities
+        std::unordered_map<u_int64_t, Entity> _entityMap;           ///> Map of unique IDs to entities
 
         /** Helper methods to create specific entity types */
         void createPlayer(Entity entity, float x, float y, uint16_t sprite);

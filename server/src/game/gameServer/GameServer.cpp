@@ -6,14 +6,14 @@
 */
 
 #include "GameServer.hpp"
-#include "UDPPacket.hpp"
 
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
         std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
-        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()), _sessions(std::move(sessions)),
-          _server(std::move(server)), _packetFactory(std::move(packetFactory))
+        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
+          _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
+          _packetFactory(std::move(packetFactory))
     {
     }
 
@@ -72,9 +72,10 @@ namespace Game
         _accumulator += frameTime;
         while (_accumulator >= FIXED_DT) {
             update(static_cast<float>(FIXED_DT));
+            _worldTemp->copyFrom(*_worldWrite);
             {
                 std::scoped_lock lock(_snapshotMutex);
-                _worldRead->copyFrom(*_worldWrite);
+                std::swap(_worldTemp, _worldRead);
             }
             _accumulator -= FIXED_DT;
         }

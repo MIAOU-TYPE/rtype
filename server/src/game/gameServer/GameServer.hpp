@@ -136,7 +136,9 @@ namespace Game
         void buildSnapshot(std::vector<SnapshotEntity> &out) const;
 
       private:
-        std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
+        mutable std::mutex _snapshotMutex;
+        std::unique_ptr<IGameWorld> _worldWrite; ///> The game world (ECS state).
+        std::unique_ptr<IGameWorld> _worldRead;  ///>  The game world for snapshotting.
 
         std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Manages player sessions.
         std::shared_ptr<Net::Server::IServer> _server;               ///> Sends packets to clients.

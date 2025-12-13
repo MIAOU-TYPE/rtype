@@ -15,9 +15,8 @@ TEST(SnapshotSystemTests, EmptyWorldProducesEmptySnapshot)
     std::vector<SnapshotEntity> snapshot;
 
     sys.update(world, snapshot);
-    f
 
-        EXPECT_TRUE(snapshot.empty());
+    EXPECT_TRUE(snapshot.empty());
 }
 
 TEST(SnapshotSystemTests, SingleEntitySnapshotIsCorrect)

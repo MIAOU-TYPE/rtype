@@ -147,7 +147,7 @@ jobs:
 
       - name: Configure CMake (server)
         run: |
-          cmake -S . -B build \
+          cmake -S . -B build -G Ninja \
             -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
 
       - name: Build server and tests
@@ -207,7 +207,7 @@ jobs:
 
       - name: Configure CMake (client)
         run: |
-          cmake -S . -B build \
+          cmake -S . -B build -G Ninja \
             -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
 
       - name: Build client and tests

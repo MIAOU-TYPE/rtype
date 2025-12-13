@@ -14,28 +14,34 @@
  * @brief High-level ECS snapshot representation.
  */
 struct SnapshotEntity {
-    size_t entity;
-    float x;
-    float y;
-    std::string sprite;
+    size_t entity;      ///> Entity ID
+    float x;            ///> X position
+    float y;            ///> Y position
+    std::string sprite; ///> Sprite identifier
 };
 
 #pragma pack(push, 1)
 
+/**
+ * @brief Header for a batch of snapshot entities.
+ */
 struct SnapshotBatchHeader {
-    HeaderData header;
-    uint16_t count;
+    HeaderData header; ///> Common header data
+    uint16_t count;    ///> Number of entities in the batch
 };
 
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 
+/**
+ * @brief Serialized snapshot entity data.
+ */
 struct SnapshotEntityData {
-    uint64_t entity;
-    uint32_t x;
-    uint32_t y;
-    uint8_t spriteId;
+    uint64_t entity;  ///> Entity ID
+    uint32_t x;       ///> X position
+    uint32_t y;       ///> Y position
+    uint8_t spriteId; ///> Sprite identifier
 };
 
 #pragma pack(pop)

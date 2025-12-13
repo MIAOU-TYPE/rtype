@@ -5,6 +5,9 @@
 ** RingBuffer
 */
 
+#pragma once
+#include "RingBuffer.hpp"
+
 namespace Buffer
 {
     template <typename Tdata>

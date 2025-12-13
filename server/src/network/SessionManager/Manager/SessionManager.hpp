@@ -17,6 +17,7 @@
 #else
     #include <netinet/in.h>
 #endif
+
 /**
  * @brief A key representing a network address (IP and port).
  */
@@ -82,6 +83,12 @@ namespace Net::Server
          * @return A vector of pairs containing session IDs and their corresponding addresses.
          */
         std::vector<std::pair<int, sockaddr_in>> getAllSessions() const override;
+
+        /**
+         * @brief Apply a function to each session.
+         * @param func The function to apply, taking session ID and address as parameters.
+         */
+        void forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const override;
 
       private:
         mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.

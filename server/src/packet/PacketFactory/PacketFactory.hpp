@@ -8,9 +8,11 @@
 #pragma once
 #include <cstring>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
@@ -18,6 +20,7 @@
 #include "EntityDestroyData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "SnapEntityData.hpp"
 #include "TypesData.hpp"
 
 /**
@@ -78,7 +81,7 @@ namespace Net::Factory
          * @param addr The address to which the packet will be sent.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
 
         /**
          * @brief Creates an EntityCreateData with the specified parameters.
@@ -89,7 +92,7 @@ namespace Net::Factory
          * @param sprite The sprite ID of the entity.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeEntityCreate(
+        [[nodiscard]] std::shared_ptr<IPacket> makeEntityCreate(
             const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept;
 
         /**
@@ -98,7 +101,7 @@ namespace Net::Factory
          * @param id The ID of the entity to destroy.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
 
         /**
          * @brief Creates a DamageData for the specified entity ID and damage amount.
@@ -107,7 +110,16 @@ namespace Net::Factory
          * @param amount The amount of damage to apply.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeDamage(const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> makeDamage(
+            const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
+
+        /**
+         * @brief Creates a snapshot packet from the given SnapshotEntity.
+         * @param entities The SnapshotEntity containing the snapshot data.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createSnapshotPacket(
+            const std::vector<SnapshotEntity> &entities) const noexcept;
 
       private:
         /**
@@ -117,7 +129,7 @@ namespace Net::Factory
          * @param size The size of the packet.
          * @return The constructed HeaderData.
          */
-        static HeaderData makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
+        [[nodiscard]] static HeaderData makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given address and packet data.
@@ -127,7 +139,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         template <typename Type>
-        std::shared_ptr<IPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makePacket(const sockaddr_in &addr, const Type &packetData) const;
 
         std::shared_ptr<IPacket> _packet = nullptr; ///> Pointer to the template IPacket used for creating packets.
 

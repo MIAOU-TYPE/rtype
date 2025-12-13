@@ -25,4 +25,11 @@ namespace Ecs
             return;
         }
     }
+
+    void Registry::clear() noexcept
+    {
+        _entityCounter = 0;
+        _entityToIndex.clear();
+        _destroyers.clear();
+    }
 } // namespace Ecs

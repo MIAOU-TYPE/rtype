@@ -10,8 +10,12 @@
 
 #pragma pack(push, 1)
 
+/**
+ * @brief Structure representing a default data packet.
+ * @details This structure contains only the header information.
+ */
 struct DefaultData {
-    HeaderData header;
+    HeaderData header; ///> The packet header containing type, version, and size.
 };
 
 #pragma pack(pop)

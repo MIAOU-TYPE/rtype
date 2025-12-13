@@ -131,3 +131,38 @@ TEST(SessionManagerTests, ThreadSafetyBasic)
 
     EXPECT_EQ(id1, id2);
 }
+
+TEST(SessionManagerTests, TestApplyFunctionToEmptySessions)
+{
+    SessionManager sm;
+
+    bool called = false;
+    sm.forEachSession([&](int sessionId, const sockaddr_in &addr) {
+        called = true;
+    });
+
+    EXPECT_FALSE(called);
+}
+
+TEST(SessionManagerTests, TestApplyFunctionToMultipleSessions)
+{
+    SessionManager sm;
+
+    sockaddr_in addr1 = makeAddr(0xAAAAAAAA, 2000);
+    sockaddr_in addr2 = makeAddr(0xBBBBBBBB, 2001);
+    sockaddr_in addr3 = makeAddr(0xCCCCCCCC, 2002);
+
+    int id1 = sm.getOrCreateSession(addr1);
+    int id2 = sm.getOrCreateSession(addr2);
+    int id3 = sm.getOrCreateSession(addr3);
+
+    std::vector<int> collectedIds;
+    sm.forEachSession([&](int sessionId, const sockaddr_in &addr) {
+        collectedIds.push_back(sessionId);
+    });
+
+    EXPECT_EQ(collectedIds.size(), 3);
+    EXPECT_NE(std::find(collectedIds.begin(), collectedIds.end(), id1), collectedIds.end());
+    EXPECT_NE(std::find(collectedIds.begin(), collectedIds.end(), id2), collectedIds.end());
+    EXPECT_NE(std::find(collectedIds.begin(), collectedIds.end(), id3), collectedIds.end());
+}

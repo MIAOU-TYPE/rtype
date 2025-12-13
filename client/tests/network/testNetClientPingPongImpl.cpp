@@ -38,10 +38,10 @@ class NetClientPingPongTest : public ::testing::Test {
         header.type = Net::Protocol::PONG;
         header.version = 1;
         header.size = sizeof(HeaderData);
-        
+
         std::memcpy(packet.buffer(), &header, sizeof(header));
         packet.setSize(sizeof(header));
-        
+
         return packet;
     }
 
@@ -55,11 +55,11 @@ class NetClientPingPongTest : public ::testing::Test {
         header.type = Net::Protocol::ACCEPT;
         header.version = 1;
         header.size = sizeof(HeaderData) + sizeof(uint32_t);
-        
+
         std::memcpy(packet.buffer(), &header, sizeof(header));
         std::memcpy(packet.buffer() + sizeof(header), &entityId, sizeof(entityId));
         packet.setSize(sizeof(header) + sizeof(entityId));
-        
+
         return packet;
     }
 
@@ -73,10 +73,10 @@ class NetClientPingPongTest : public ::testing::Test {
         header.type = Net::Protocol::REJECT;
         header.version = 1;
         header.size = sizeof(HeaderData);
-        
+
         std::memcpy(packet.buffer(), &header, sizeof(header));
         packet.setSize(sizeof(header));
-        
+
         return packet;
     }
 
@@ -103,9 +103,9 @@ TEST_F(NetClientPingPongTest, AcceptPacketSetsConnectionState)
 {
     uint32_t expectedEntityId = 42;
     auto acceptPacket = createAcceptPacket(expectedEntityId);
-    
+
     client->simulateHandlePacket(acceptPacket);
-    
+
     EXPECT_TRUE(client->isConnected());
     EXPECT_EQ(client->getPlayerEntityId(), expectedEntityId);
 }
@@ -118,11 +118,11 @@ TEST_F(NetClientPingPongTest, RejectPacketClearsConnectionState)
     // First connect
     client->setConnected(true);
     EXPECT_TRUE(client->isConnected());
-    
+
     // Then reject
     auto rejectPacket = createRejectPacket();
     client->simulateHandlePacket(rejectPacket);
-    
+
     EXPECT_FALSE(client->isConnected());
 }
 
@@ -132,12 +132,12 @@ TEST_F(NetClientPingPongTest, RejectPacketClearsConnectionState)
 TEST_F(NetClientPingPongTest, PingTimerIncrements)
 {
     client->setConnected(true);
-    
+
     float initialTimer = client->getPingTimer();
     float deltaTime = 0.016f; // ~60 FPS
-    
+
     client->simulateUpdatePing(deltaTime);
-    
+
     EXPECT_FLOAT_EQ(client->getPingTimer(), initialTimer + deltaTime);
 }
 
@@ -149,13 +149,13 @@ TEST_F(NetClientPingPongTest, PingSentAfterInterval)
     client->setConnected(true);
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
-    
+
     // Update with enough time to trigger ping
     client->simulateUpdatePing(5.0f);
-    
+
     EXPECT_TRUE(client->isWaitingForPong());
     EXPECT_FLOAT_EQ(client->getLastPingTime(), 5.0f); // Ping was sent when timer was at 5.0
-    EXPECT_FLOAT_EQ(client->getPingTimer(), 5.0f); // Timer continues accumulating (absolute timer, no reset)
+    EXPECT_FLOAT_EQ(client->getPingTimer(), 5.0f);    // Timer continues accumulating (absolute timer, no reset)
 }
 
 /**
@@ -167,10 +167,10 @@ TEST_F(NetClientPingPongTest, PongPacketUpdatesLatency)
     client->setPingTimer(5.05f);
     client->setLastPingTime(5.0f);
     client->setWaitingForPong(true);
-    
+
     auto pongPacket = createPongPacket();
     client->simulateHandlePacket(pongPacket);
-    
+
     EXPECT_NEAR(client->getLatency(), 0.05f, 0.001f);
     EXPECT_FALSE(client->isWaitingForPong());
     EXPECT_EQ(client->getMissedPongCount(), 0);
@@ -186,10 +186,10 @@ TEST_F(NetClientPingPongTest, PongResetsMissedCounter)
     client->setLastPingTime(5.0f);
     client->setWaitingForPong(true);
     client->setMissedPongCount(2);
-    
+
     auto pongPacket = createPongPacket();
     client->simulateHandlePacket(pongPacket);
-    
+
     EXPECT_EQ(client->getMissedPongCount(), 0);
 }
 
@@ -202,12 +202,12 @@ TEST_F(NetClientPingPongTest, PongIgnoredWhenNotWaiting)
     client->setPingTimer(5.05f);
     client->setLastPingTime(5.0f);
     client->setWaitingForPong(false); // Not waiting for pong
-    
+
     float latencyBefore = client->getLatency();
-    
+
     auto pongPacket = createPongPacket();
     client->simulateHandlePacket(pongPacket);
-    
+
     // Latency should not change
     EXPECT_FLOAT_EQ(client->getLatency(), latencyBefore);
 }
@@ -221,10 +221,10 @@ TEST_F(NetClientPingPongTest, MissedPongCounterIncrementsOnTimeout)
     client->setPingTimer(0.0f);
     client->setWaitingForPong(true);
     client->setLastPingTime(0.0f);
-    
+
     // Wait for timeout (10+ seconds) - but this will also send a ping at t=5 and t=10
     client->simulateUpdatePing(10.1f);
-    
+
     // After 10.1s: ping sent at 5s, timeout at 10s, ping sent at 10s
     // So we're waiting for pong again
     EXPECT_EQ(client->getMissedPongCount(), 1);
@@ -239,14 +239,14 @@ TEST_F(NetClientPingPongTest, DisconnectAfterMaxMissedPongs)
     client->setConnected(true);
     client->setPingTimer(0.0f);
     client->setMissedPongCount(2); // Already missed 2
-    
+
     // Send ping
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    
+
     // Wait for timeout (this will be the 3rd miss)
     client->simulateUpdatePing(10.0f);
-    
+
     EXPECT_FALSE(client->isConnected());
     EXPECT_EQ(client->getMissedPongCount(), 3);
 }
@@ -258,9 +258,9 @@ TEST_F(NetClientPingPongTest, PingNotSentWhenDisconnected)
 {
     client->setConnected(false);
     client->setPingTimer(0.0f);
-    
+
     client->simulateUpdatePing(5.0f);
-    
+
     // Should not be waiting for pong since ping wasn't sent
     EXPECT_FALSE(client->isWaitingForPong());
 }
@@ -273,13 +273,13 @@ TEST_F(NetClientPingPongTest, MultiplePingPongCycles)
     client->setConnected(true);
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
-    
+
     // First cycle: send ping when timer reaches 5.0
     client->simulateUpdatePing(5.0f); // Add 5.0 to timer (timer = 5.0)
     EXPECT_TRUE(client->isWaitingForPong());
     EXPECT_NEAR(client->getLastPingTime(), 5.0f, 0.001f);
     EXPECT_NEAR(client->getPingTimer(), 5.0f, 0.001f);
-    
+
     // Receive pong shortly after (timer = 5.05)
     client->simulateUpdatePing(0.05f); // Add 0.05 to timer
     auto pongPacket = createPongPacket();
@@ -288,7 +288,7 @@ TEST_F(NetClientPingPongTest, MultiplePingPongCycles)
     EXPECT_NEAR(client->getLatency(), 0.05f, 0.001f);
     EXPECT_FALSE(client->isWaitingForPong());
     EXPECT_EQ(client->getMissedPongCount(), 0);
-    
+
     // Second cycle: next ping when timer reaches 10.0 (5.0 seconds after last ping at 5.0)
     client->simulateUpdatePing(4.95f); // Add 4.95 to timer (timer = 5.05 + 4.95 = 10.0)
     EXPECT_TRUE(client->isWaitingForPong());
@@ -305,10 +305,10 @@ TEST_F(NetClientPingPongTest, TimeoutAtExactBoundary)
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    
+
     // Update to exactly PONG_TIMEOUT
     client->simulateUpdatePing(TestableNetClient::PONG_TIMEOUT);
-    
+
     EXPECT_EQ(client->getMissedPongCount(), 1);
 }
 
@@ -321,10 +321,10 @@ TEST_F(NetClientPingPongTest, NoTimeoutJustBeforeBoundary)
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    
+
     // Update to just before PONG_TIMEOUT
     client->simulateUpdatePing(TestableNetClient::PONG_TIMEOUT - 0.001f);
-    
+
     EXPECT_EQ(client->getMissedPongCount(), 0);
     EXPECT_TRUE(client->isWaitingForPong());
 }
@@ -336,16 +336,16 @@ TEST_F(NetClientPingPongTest, RapidPingUpdates)
 {
     client->setConnected(true);
     client->setPingTimer(0.0f);
-    
+
     float totalTime = 0.0f;
     float deltaTime = 0.016f; // ~60 FPS
-    
+
     // Simulate 100 frames
     for (int i = 0; i < 100; i++) {
         client->simulateUpdatePing(deltaTime);
         totalTime += deltaTime;
     }
-    
+
     EXPECT_NEAR(client->getPingTimer(), totalTime, 0.01f);
 }
 
@@ -358,10 +358,10 @@ TEST_F(NetClientPingPongTest, VeryLargeDeltaTime)
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    
+
     // Update with very large deltaTime (should trigger timeout and increment missed count)
     client->simulateUpdatePing(100.0f);
-    
+
     // Should have triggered timeout
     EXPECT_GE(client->getMissedPongCount(), 1);
 }
@@ -385,23 +385,23 @@ TEST_F(NetClientPingPongTest, IntegrationFullCycleWithTimeout)
     auto acceptPacket = createAcceptPacket(123);
     client->simulateHandlePacket(acceptPacket);
     EXPECT_TRUE(client->isConnected());
-    
+
     // Manually simulate pings and timeouts without automatic ping sending
     // First timeout
     client->setPingTimer(0.0f);
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    client->setPingTimer(10.1f); // Just set timer forward
+    client->setPingTimer(10.1f);      // Just set timer forward
     client->simulateUpdatePing(0.0f); // Check timeout
     EXPECT_EQ(client->getMissedPongCount(), 1);
-    
+
     // Second timeout
     client->setLastPingTime(10.1f);
     client->setWaitingForPong(true);
     client->setPingTimer(20.2f);
     client->simulateUpdatePing(0.0f);
     EXPECT_EQ(client->getMissedPongCount(), 2);
-    
+
     // Third timeout - disconnect
     client->setLastPingTime(20.2f);
     client->setWaitingForPong(true);
@@ -417,15 +417,15 @@ TEST_F(NetClientPingPongTest, IntegrationFullCycleWithTimeout)
 TEST_F(NetClientPingPongTest, LatencyCalculationWithVariousTimes)
 {
     client->setConnected(true);
-    
+
     // Test simple case without timer wrap-around
     client->setPingTimer(0.05f);
     client->setLastPingTime(0.0f);
     client->setWaitingForPong(true);
-    
+
     auto pongPacket = createPongPacket();
     client->simulateHandlePacket(pongPacket);
-    
+
     EXPECT_NEAR(client->getLatency(), 0.05f, 0.001f);
 }
 

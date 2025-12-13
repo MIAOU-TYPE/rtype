@@ -103,6 +103,11 @@ namespace Ecs
         template <typename... Components, typename Function>
         void view(Function fn);
 
+        /**
+         * @brief Clears the registry, removing all entities and components.
+         */
+        void clear() noexcept;
+
       private:
         /** @brief Counter used to assign unique IDs to entities */
         size_t _entityCounter = 0;

@@ -76,3 +76,17 @@ std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
         list.emplace_back(fst, snd);
     return list;
 }
+
+void SessionManager::forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const
+{
+    std::vector<std::pair<int, sockaddr_in>> sessions;
+
+    {
+        std::scoped_lock lock(_mutex);
+        sessions.reserve(_idToAddress.size());
+        for (const auto &[id, address] : _idToAddress)
+            sessions.emplace_back(id, address);
+    }
+    for (const auto &[id, address] : sessions)
+        func(id, address);
+}

@@ -88,8 +88,10 @@ TEST(UDPPacketTests, CloneCreatesDeepCopy)
     auto clone = pkt.clone();
     ASSERT_NE(clone, nullptr);
 
-    EXPECT_EQ(clone->size(), 0);
-    EXPECT_EQ(clone->buffer()[0], 0);
+    EXPECT_EQ(clone->size(), pkt.size());
+    EXPECT_EQ(clone->address()->sin_port, pkt.address()->sin_port);
+    EXPECT_EQ(clone->address()->sin_family, pkt.address()->sin_family);
+    EXPECT_EQ(clone->address()->sin_addr.s_addr, pkt.address()->sin_addr.s_addr);
 
     clone->buffer()[0] = 99;
     EXPECT_NE(clone->buffer()[0], pkt.buffer()[0]);

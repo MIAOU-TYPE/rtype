@@ -8,8 +8,8 @@
 #pragma once
 
 #include <cstdint>
-#include <shared_mutex>
 #include "ISessionManager.hpp"
+#include <shared_mutex>
 
 #include <unordered_map>
 #ifdef _WIN32

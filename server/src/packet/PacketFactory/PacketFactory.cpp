@@ -120,6 +120,7 @@ namespace Net::Factory
                 packed.entity = htonll(e.entity);
                 packed.x = htonf(e.x);
                 packed.y = htonf(e.y);
+                packed.spriteId = 0;
                 // TODO
                 // packed.spriteId = spriteNameToId(e.sprite);
 

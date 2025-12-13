@@ -111,6 +111,8 @@ void ServerRuntime::runSnapshot() const
 
         _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
             auto packet = basePacket->clone();
+            if (!packet)
+                return;
             packet->setAddress(addr);
             _server->sendPacket(*packet);
         });

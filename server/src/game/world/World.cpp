@@ -42,15 +42,15 @@ namespace Game
 
     void World::copyFrom(IGameWorld &other)
     {
-        using namespace Ecs;
         auto &src = other.registry();
         auto &dst = this->registry();
 
         dst.clear();
-        src.view<Position, Velocity, Drawable>([&](Entity e, const Position &p, const Velocity &v, const Drawable &d) {
-            dst.emplaceComponent<Position>(e, p);
-            dst.emplaceComponent<Velocity>(e, v);
-            dst.emplaceComponent<Drawable>(e, d);
-        });
+        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
+            [&](Ecs::Entity e, const Ecs::Position &p, const Ecs::Velocity &v, const Ecs::Drawable &d) {
+                dst.emplaceComponent<Ecs::Position>(e, p);
+                dst.emplaceComponent<Ecs::Velocity>(e, v);
+                dst.emplaceComponent<Ecs::Drawable>(e, d);
+            });
     }
 } // namespace Game

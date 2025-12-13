@@ -39,7 +39,6 @@ namespace Game
 
         /**
          * @brief Access the underlying ECS registry.
-         *
          * @return Reference to the registry containing all components/entities.
          */
         Ecs::Registry &registry() override;

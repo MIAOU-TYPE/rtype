@@ -62,5 +62,4 @@ namespace Game
                 dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
             });
     }
-
 } // namespace Game

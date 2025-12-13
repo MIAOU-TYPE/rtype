@@ -21,9 +21,15 @@ std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
 
 int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
-    std::scoped_lock lock(_mutex);
-
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};
+
+    {
+        std::shared_lock rLock(_mutex);
+        if (const auto it = _addressToId.find(key); it != _addressToId.end())
+            return it->second;
+    }
+
+    std::unique_lock wLock(_mutex);
 
     if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
@@ -38,6 +44,7 @@ int SessionManager::getSessionId(const sockaddr_in &address) const
 {
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
+    std::shared_lock lock(_mutex);
     if (const auto it = _addressToId.find(key); it != _addressToId.end())
         return it->second;
 
@@ -46,7 +53,7 @@ int SessionManager::getSessionId(const sockaddr_in &address) const
 
 void SessionManager::removeSession(const int sessionId)
 {
-    std::scoped_lock lock(_mutex);
+    std::unique_lock lock(_mutex);
 
     const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
@@ -60,6 +67,8 @@ void SessionManager::removeSession(const int sessionId)
 
 const sockaddr_in *SessionManager::getAddress(int sessionId) const
 {
+    std::shared_lock lock(_mutex);
+
     const auto it = _idToAddress.find(sessionId);
     if (it == _idToAddress.end())
         return nullptr;
@@ -68,7 +77,7 @@ const sockaddr_in *SessionManager::getAddress(int sessionId) const
 
 std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
 {
-    std::scoped_lock lock(_mutex);
+    std::shared_lock lock(_mutex);
     std::vector<std::pair<int, sockaddr_in>> list;
     list.reserve(_idToAddress.size());
 
@@ -79,14 +88,16 @@ std::vector<std::pair<int, sockaddr_in>> SessionManager::getAllSessions() const
 
 void SessionManager::forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const
 {
-    std::vector<std::pair<int, sockaddr_in>> sessions;
+    std::vector<std::pair<int, sockaddr_in>> snapshot;
 
     {
-        std::scoped_lock lock(_mutex);
-        sessions.reserve(_idToAddress.size());
-        for (const auto &[id, address] : _idToAddress)
-            sessions.emplace_back(id, address);
+        std::shared_lock lock(_mutex);
+        snapshot.reserve(_idToAddress.size());
+
+        for (auto &[id, addr] : _idToAddress)
+            snapshot.emplace_back(id, addr);
     }
-    for (const auto &[id, address] : sessions)
-        func(id, address);
+
+    for (auto &[id, addr] : snapshot)
+        func(id, addr);
 }

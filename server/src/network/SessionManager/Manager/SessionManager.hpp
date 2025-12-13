@@ -8,7 +8,7 @@
 #pragma once
 
 #include <cstdint>
-#include <mutex>
+#include <shared_mutex>
 #include "ISessionManager.hpp"
 
 #include <unordered_map>
@@ -91,7 +91,7 @@ namespace Net::Server
         void forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const override;
 
       private:
-        mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.
+        mutable std::shared_mutex _mutex = {}; ///> Mutex for thread-safe access.
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _addressToId = {}; ///> Map from AddressKey to session ID.
         std::unordered_map<int, sockaddr_in> _idToAddress = {};                ///> Map from session ID to sockaddr_in.

@@ -18,6 +18,11 @@ namespace Game
         _registry.registerComponent<Ecs::Drawable>();
     }
 
+    Ecs::Registry &World::registry()
+    {
+        return _registry;
+    }
+
     Ecs::Entity World::createPlayer()
     {
         const Ecs::Entity ent = _registry.createEntity();
@@ -35,8 +40,17 @@ namespace Game
         _registry.destroyEntity(ent);
     }
 
-    Ecs::Registry &World::registry()
+    void World::copyFrom(IGameWorld &other)
     {
-        return _registry;
+        using namespace Ecs;
+        auto &src = other.registry();
+        auto &dst = this->registry();
+
+        dst.clear();
+        src.view<Position, Velocity, Drawable>([&](Entity e, const Position &p, const Velocity &v, const Drawable &d) {
+            dst.emplaceComponent<Position>(e, p);
+            dst.emplaceComponent<Velocity>(e, v);
+            dst.emplaceComponent<Drawable>(e, d);
+        });
     }
 } // namespace Game

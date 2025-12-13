@@ -64,6 +64,12 @@ namespace Game
          */
         void destroyEntity(Ecs::Entity ent) override;
 
+        /**
+         * @brief Copy the state from another IGameWorld instance.
+         * @param other The other IGameWorld to copy from.
+         */
+        void copyFrom(IGameWorld &other) override;
+
       private:
         Ecs::Registry _registry; ///> The ECS registry (component storage).
     };

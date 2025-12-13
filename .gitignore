@@ -25,6 +25,7 @@ Debug/
 # Executables
 r-type_server*
 r-type_client*
+*.exe
 
 # IDEs and editors
 .vscode/

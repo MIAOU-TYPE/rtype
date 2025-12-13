@@ -5,16 +5,29 @@
 ** udp_client
 */
 
-#include <arpa/inet.h>
+#ifndef _WIN32
+    #include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include     <unistd.h>
+#else
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <windows.h>
+    #define ssize_t SSIZE_T
+    #define close closesocket
+    #define sleep(x) Sleep((x) * 1000)
+
+#endif
 #include <cstring>
 #include <iostream>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <array>
 
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "SnapEntityData.hpp"
 #include "TypesData.hpp"
+
+
 
 // ------------------------------------------------------------
 // Configuration
@@ -28,6 +41,14 @@ static constexpr uint8_t PACKET_TYPE_CONNECT = 1;
 
 int main()
 {
+    #ifdef _WIN32
+WSADATA wsa;
+if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+    std::cerr << "WSAStartup failed\n";
+    return 1;
+}
+#endif
+
     // --------------------------------------------------------
     // Create UDP socket
     // --------------------------------------------------------
@@ -61,9 +82,14 @@ int main()
     // --------------------------------------------------------
     // Send packet
     // --------------------------------------------------------
-    ssize_t sent =
-        sendto(sock, &packet, sizeof(packet), 0, reinterpret_cast<sockaddr *>(&serverAddr), sizeof(serverAddr));
-
+    #ifndef _WIN32
+        ssize_t sent =
+            sendto(sock, &packet, sizeof(packet), 0, reinterpret_cast<sockaddr *>(&serverAddr), sizeof(serverAddr));
+    #else
+        ssize_t sent =
+            sendto(sock, reinterpret_cast<const char *>(&packet), sizeof(packet), 0,
+                   reinterpret_cast<sockaddr *>(&serverAddr), sizeof(serverAddr));
+    #endif
     if (sent < 0) {
         perror("sendto");
         close(sock);
@@ -76,8 +102,14 @@ int main()
     while (1) {
         sockaddr_in fromAddr{};
         socklen_t fromAddrLen = sizeof(fromAddr);
+        #ifndef _WIN32
         ssize_t received =
             recvfrom(sock, buffer.data(), buffer.size(), 0, reinterpret_cast<sockaddr *>(&fromAddr), &fromAddrLen);
+        #else
+        ssize_t received =
+            recvfrom(sock, reinterpret_cast<char *>(buffer.data()), buffer.size(), 0,
+                        reinterpret_cast<sockaddr *>(&fromAddr), &fromAddrLen);
+        #endif
         if (received < 0) {
             perror("recvfrom");
             close(sock);

@@ -46,11 +46,21 @@ namespace Game
         auto &dst = this->registry();
 
         dst.clear();
+
+        std::unordered_map<size_t, Ecs::Entity> remap;
         src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](Ecs::Entity e, const Ecs::Position &p, const Ecs::Velocity &v, const Ecs::Drawable &d) {
-                dst.emplaceComponent<Ecs::Position>(e, p);
-                dst.emplaceComponent<Ecs::Velocity>(e, v);
-                dst.emplaceComponent<Ecs::Drawable>(e, d);
+            [&](Ecs::Entity e, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
+                const Ecs::Entity newEnt = dst.createEntity();
+                remap[static_cast<size_t>(e)] = newEnt;
+            });
+
+        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
+            [&](const Ecs::Entity e, const Ecs::Position &p, const Ecs::Velocity &v, const Ecs::Drawable &d) {
+                const Ecs::Entity newEnt = remap[static_cast<size_t>(e)];
+                dst.emplaceComponent<Ecs::Position>(newEnt, p);
+                dst.emplaceComponent<Ecs::Velocity>(newEnt, v);
+                dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
             });
     }
+
 } // namespace Game

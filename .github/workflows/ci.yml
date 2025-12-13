@@ -216,6 +216,11 @@ jobs:
         run: |
           cmake --build build --parallel
 
+      - name: Run server tests
+        shell: pwsh
+        run: |
+            ctest --test-dir build -C Debug -V
+
       - name: List build directory (for debugging)
         shell: pwsh
         run: |

@@ -12,11 +12,11 @@
 using namespace Net;
 
 const std::string defaultPath = "../../"
-#ifdef _WIN32
-                                "Debug/"
-#else
-                                ""
-#endif
+// #ifdef _WIN32
+//                                 // "Debug/"
+// #else
+//                                 ""
+// #endif
     ;
 
 TEST(NetWrapperTests, LoadValidPlugin)

@@ -40,6 +40,7 @@ static inline std::uint64_t htonll(std::uint64_t x)
 #elif defined(_WIN32)
     #define WIN32_LEAN_AND_MEAN
     #include <intrin.h>
+    #define NOMINMAX
     #include <windows.h>
     #include <winsock2.h>
 

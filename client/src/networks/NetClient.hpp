@@ -12,11 +12,12 @@
 #include "Endian.hpp"
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
+#include "IEntitiesFactory.hpp"
 #include "InputData.hpp"
 #include "NetWrapper.hpp"
 #include "TypesData.hpp"
 #include "UDPPacket.hpp"
-#include "IEntitiesFactory.hpp"
+
 namespace Game
 {
     /**
@@ -112,13 +113,13 @@ namespace Game
         void close();
 
       private:
-        std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr; ///> Network wrapper
-        socketHandle _socket = kInvalidSocket;                  ///> UDP socket
-        sockaddr_in _serverAddr = {};                           ///> Server address
-        bool _isConnected = false;                              ///> Connection status
-        uint32_t _playerEntityId = 0;                           ///> Player entity ID
-        float _pingTimer = 0.0f;                                ///> Ping timer
-        static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
+        std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr;  ///> Network wrapper
+        socketHandle _socket = kInvalidSocket;                   ///> UDP socket
+        sockaddr_in _serverAddr = {};                            ///> Server address
+        bool _isConnected = false;                               ///> Connection status
+        uint32_t _playerEntityId = 0;                            ///> Player entity ID
+        float _pingTimer = 0.0f;                                 ///> Ping timer
+        static constexpr float PING_INTERVAL = 5.0f;             ///> Ping interval in seconds
         std::shared_ptr<Ecs::IEntitiesFactory> _entitiesFactory; ///> Entities factory
     };
 

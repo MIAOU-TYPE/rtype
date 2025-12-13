@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <mutex>
 #include "ISessionManager.hpp"
+#include <shared_mutex>
 
 #include <unordered_map>
 #ifdef _WIN32
@@ -17,6 +18,7 @@
 #else
     #include <netinet/in.h>
 #endif
+
 /**
  * @brief A key representing a network address (IP and port).
  */
@@ -83,8 +85,14 @@ namespace Net::Server
          */
         std::vector<std::pair<int, sockaddr_in>> getAllSessions() const override;
 
+        /**
+         * @brief Apply a function to each session.
+         * @param func The function to apply, taking session ID and address as parameters.
+         */
+        void forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const override;
+
       private:
-        mutable std::mutex _mutex = {}; ///> Mutex for thread-safe access.
+        mutable std::shared_mutex _mutex = {}; ///> Mutex for thread-safe access.
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _addressToId = {}; ///> Map from AddressKey to session ID.
         std::unordered_map<int, sockaddr_in> _idToAddress = {};                ///> Map from session ID to sockaddr_in.

@@ -97,16 +97,27 @@ namespace Net::Factory
     {
         try {
             SnapshotBatchHeader header{};
-            const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
-            header.header = makeHeader(Protocol::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
-            if (entities.size() > std::numeric_limits<uint16_t>::max()) {
+            if (entities.size()
+                > (std::numeric_limits<size_t>::max() - sizeof(SnapshotBatchHeader)) / sizeof(SnapshotEntityData)) {
                 std::cerr << "{PacketFactory::createSnapshotPacket} Too many entities in snapshot" << std::endl;
                 return nullptr;
             }
 
+            const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
+            if (totalSize > std::numeric_limits<uint16_t>::max()) {
+                std::cerr << "{PacketFactory::createSnapshotPacket} Snapshot packet size exceeds limit" << std::endl;
+                return nullptr;
+            }
+
+            header.header = makeHeader(Protocol::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             header.count = htons(static_cast<uint16_t>(entities.size()));
 
             auto packet = _packet->newPacket();
+            if (!packet) {
+                std::cerr << "{PacketFactory::createSnapshotPacket} Failed to create new packet" << std::endl;
+                return nullptr;
+            }
+
             uint8_t *buf = packet->buffer();
 
             if (totalSize > packet->capacity())

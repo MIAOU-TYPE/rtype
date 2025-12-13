@@ -202,7 +202,7 @@ jobs:
         shell: pwsh
         run: |
           cmake -S . -B build -G Ninja `
-            -DCMAKE_TOOLCHAIN_FILE=$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake `
+            -DCMAKE_TOOLCHAIN_FILE=$env:GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake `
             -DBUILD_TESTING=ON `
             -DBUILD_SERVER_ONLY=ON
 

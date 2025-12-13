@@ -148,7 +148,9 @@ jobs:
       - name: Configure CMake (server)
         run: |
           cmake -S . -B build -G Ninja \
-            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
+            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DBUILD_TESTING=ON \ 
+            -DBUILD_SERVER_ONLY=ON
 
       - name: Build server and tests
         run: cmake --build build -j$(nproc)
@@ -208,7 +210,9 @@ jobs:
       - name: Configure CMake (client)
         run: |
           cmake -S . -B build -G Ninja \
-            -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
+            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DBUILD_TESTING=ON \
+            -DBUILD_CLIENT_ONLY=ON
 
       - name: Build client and tests
         run: cmake --build build -j$(nproc)

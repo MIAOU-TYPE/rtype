@@ -106,7 +106,7 @@ namespace Net::Factory
 
             header.count = htons(static_cast<uint16_t>(entities.size()));
 
-            auto packet = _packet->New();
+            auto packet = _packet->newPacket();
             uint8_t *buf = packet->buffer();
 
             if (totalSize > packet->capacity())

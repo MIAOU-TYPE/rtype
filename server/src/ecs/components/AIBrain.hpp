@@ -7,8 +7,6 @@
 
 #pragma once
 
-
-
 /**
  * @namespace Ecs
  * @brief Entity Component System namespace

@@ -306,6 +306,7 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push' &&
       needs.check-repository.outputs.same_repository == 'false' &&
+      needs.linter.result == 'success' &&
       (
         needs.build-server-windows.result == 'success' ||
         needs.build-client-linux.result == 'success'
@@ -336,9 +337,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    needs: [
-#      build-server-linux,
-      build-server-windows, build-client-linux]
+    needs: [build-server-linux, build-server-windows, build-client-linux]
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -389,6 +388,7 @@ jobs:
     if: |
       always() &&
       needs.check-repository.outputs.same_repository == 'false' &&
+      needs.linter.result == 'success' &&
       (
         needs.semantic-release.result == 'success' ||
         needs.semantic-release.result == 'skipped'

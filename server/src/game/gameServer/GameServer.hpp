@@ -130,10 +130,8 @@ namespace Game
         void applyCommand(const GameCommand &cmd);
 
         /**
-         * @brief Builds and sends a snapshot of the current game state to all connected clients.
-         * This includes positions and states of all relevant entities.
-         * The snapshot is constructed using the SnapshotSystem
-         * and sent via the PacketFactory.
+         * @brief Builds a snapshot of the current game state.
+         * @param out Vector to populate with snapshot entities.
          */
         void buildSnapshot(std::vector<SnapshotEntity> &out) const;
 

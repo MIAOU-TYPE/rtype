@@ -16,20 +16,15 @@ namespace Game
     /**
      * @class TestableNetClient
      * @brief Testable version of NetClient that exposes internal state for testing
-     * 
+     *
      * This class provides access to private members of NetClient for testing purposes
      * without requiring a real network connection.
      */
     class TestableNetClient {
       public:
         TestableNetClient()
-            : _isConnected(false),
-              _playerEntityId(0),
-              _pingTimer(0.0f),
-              _lastPingTime(0.0f),
-              _latency(0.0f),
-              _waitingForPong(false),
-              _missedPongCount(0)
+            : _isConnected(false), _playerEntityId(0), _pingTimer(0.0f), _lastPingTime(0.0f), _latency(0.0f),
+              _waitingForPong(false), _missedPongCount(0)
         {
         }
 
@@ -38,32 +33,32 @@ namespace Game
         {
             return _isConnected;
         }
-        
+
         uint32_t getPlayerEntityId() const
         {
             return _playerEntityId;
         }
-        
+
         float getPingTimer() const
         {
             return _pingTimer;
         }
-        
+
         float getLastPingTime() const
         {
             return _lastPingTime;
         }
-        
+
         float getLatency() const
         {
             return _latency;
         }
-        
+
         bool isWaitingForPong() const
         {
             return _waitingForPong;
         }
-        
+
         uint8_t getMissedPongCount() const
         {
             return _missedPongCount;
@@ -74,22 +69,22 @@ namespace Game
         {
             _isConnected = connected;
         }
-        
+
         void setPingTimer(float timer)
         {
             _pingTimer = timer;
         }
-        
+
         void setLastPingTime(float time)
         {
             _lastPingTime = time;
         }
-        
+
         void setWaitingForPong(bool waiting)
         {
             _waitingForPong = waiting;
         }
-        
+
         void setMissedPongCount(uint8_t count)
         {
             _missedPongCount = count;
@@ -141,19 +136,19 @@ namespace Game
                 return;
 
             _pingTimer += deltaTime;
-            
+
             // Check if we're waiting for a pong and it's taking too long
             if (_waitingForPong && (_pingTimer - _lastPingTime) >= PONG_TIMEOUT) {
                 _missedPongCount++;
                 _waitingForPong = false;
-                
+
                 // If we've missed too many pongs, disconnect
                 if (_missedPongCount >= MAX_MISSED_PONGS) {
                     _isConnected = false;
                     return;
                 }
             }
-            
+
             // Send ping at regular intervals (absolute timer approach)
             if (_pingTimer - _lastPingTime >= PING_INTERVAL) {
                 _lastPingTime = _pingTimer;

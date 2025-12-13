@@ -99,7 +99,12 @@ namespace Net::Factory
             SnapshotBatchHeader header{};
             const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
             header.header = makeHeader(Protocol::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
-            header.count = htons(entities.size());
+            if (entities.size() > std::numeric_limits<uint16_t>::max()) {
+                std::cerr << "{PacketFactory::createSnapshotPacket} Too many entities in snapshot" << std::endl;
+                return nullptr;
+            }
+
+            header.count = htons(static_cast<uint16_t>(entities.size()));
 
             auto packet = _packet->clone();
             uint8_t *buf = packet->buffer();

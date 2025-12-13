@@ -10,6 +10,7 @@
 #include <cstdint>
 #include "ISessionManager.hpp"
 #include <shared_mutex>
+#include <mutex>
 
 #include <unordered_map>
 #ifdef _WIN32

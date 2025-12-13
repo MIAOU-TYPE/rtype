@@ -13,7 +13,7 @@ std::shared_ptr<Net::IPacket> Net::Factory::PacketFactory::makePacket(const sock
 {
     auto buffer = _packet->New();
     if (!buffer)
-        throw FactoryError("{Net::Factory::PacketFactory::makePacket} Failed to clone IPacket");
+        throw FactoryError("{Net::Factory::PacketFactory::makePacket} Failed to create new packet buffer");
 
     if (sizeof(Type) > buffer->capacity())
         throw FactoryError("{Net::Factory::PacketFactory::makePacket} Packet type is too large to be serialized");

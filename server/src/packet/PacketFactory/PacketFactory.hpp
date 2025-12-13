@@ -20,6 +20,8 @@
 #include "InputData.hpp"
 #include "SnapEntityData.hpp"
 #include "TypesData.hpp"
+#include <vector>
+#include <limits>
 
 /**
  * @namespace Net

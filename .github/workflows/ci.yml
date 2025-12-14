@@ -252,8 +252,8 @@ jobs:
           if-no-files-found: ignore
 
   # -----------------------------
-  # Build and Test (client)
-  # Produces artifacts: client/r-type_client
+  # Build and Test (client - Linux)
+  # Produces artifacts: client/r-type_client-Linux
   # -----------------------------
   build-client-linux:
     name: Build & Test client
@@ -307,7 +307,7 @@ jobs:
       - name: Prepare client artifact
         run: |
           echo "Searching for r-type_client in build..."
-          BIN="$(find build -type f -name 'r-type_client' -executable | head -n 1)"
+          BIN="$(find . -type f -name 'r-type_client' -executable | head -n 1)"
           if [ -z "$BIN" ]; then
             echo "ERROR: r-type_client not found. Listing executables in build:"
             find build -type f -executable -maxdepth 6 -print
@@ -323,6 +323,11 @@ jobs:
           name: r-type_client-Linux
           path: dist/r-type_client-linux
           if-no-files-found: ignore
+
+  # -----------------------------
+  # Build and Test (client)
+  # Produces artifacts: client/r-type_client
+  # -----------------------------
 
   # -----------------------------
   # Semantic Release

@@ -120,50 +120,50 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-#
-#      - name: Install deps
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y \
-#            build-essential ninja-build curl zip unzip tar \
-#            libx11-dev libxi-dev libxrandr-dev libxcursor-dev \
-#            libudev-dev libgl1-mesa-dev libglu1-mesa-dev git
-#
-#      - name: Restore vcpkg cache
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            vcpkg
-#            vcpkg_installed
-#            build/_deps/vcpkg-*
-#          key: vcpkg-${{ runner.os }}-sfml3-gtest
-#
-#      - name: Setup vcpkg
-#        run: |
-#          if [ ! -d vcpkg ]; then
-#            git clone https://github.com/microsoft/vcpkg.git
-#            ./vcpkg/bootstrap-vcpkg.sh
-#          fi
-#
-#      - name: Configure CMake (server)
-#        run: |
-#          cmake -S . -B build -G Ninja \
-#            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-#            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
-#
-#      - name: Build server and tests
-#        run: cmake --build build -j$(nproc)
-#
-#      - name: Run server tests
-#        run: ctest --test-dir build -V
-#
-#      - name: Upload Server Artifact (if exists)
-#        if: success()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: r-type_server-Linux
-#          path: build/r-type_server
-#          if-no-files-found: ignore
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential ninja-build curl zip unzip tar \
+            libx11-dev libxi-dev libxrandr-dev libxcursor-dev \
+            libudev-dev libgl1-mesa-dev libglu1-mesa-dev git
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/_deps/vcpkg-*
+          key: vcpkg-${{ runner.os }}-sfml3-gtest
+
+      - name: Setup vcpkg
+        run: |
+          if [ ! -d vcpkg ]; then
+            git clone https://github.com/microsoft/vcpkg.git
+            ./vcpkg/bootstrap-vcpkg.sh
+          fi
+
+      - name: Configure CMake (server)
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
+
+      - name: Build server and tests
+        run: cmake --build build -j$(nproc)
+
+      - name: Run server tests
+        run: ctest --test-dir build -V
+
+      - name: Upload Server Artifact (if exists)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-type_server-Linux
+          path: build/r-type_server
+          if-no-files-found: ignore
 
   # -----------------------------
   # Build and Test (server - Windows)

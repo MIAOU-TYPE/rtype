@@ -12,6 +12,7 @@ namespace Thread
 
     ClientRuntime::ClientRuntime(const std::shared_ptr<Network::NetClient> &client) : _client(client)
     {
+        _entitiesFactory = std::make_shared<Ecs::EntitiesFactory>();
     }
 
     ClientRuntime::~ClientRuntime()
@@ -34,6 +35,7 @@ namespace Thread
     {
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
+        _updateThread = std::thread(&ClientRuntime::runUpdater, this);
     }
 
     void ClientRuntime::stop()
@@ -54,6 +56,12 @@ namespace Thread
         while (_running) {
             _client->receivePackets();
         }
+    }
+
+    void ClientRuntime::runUpdater() const
+    {
+        std::vector<Network::PacketData> data = _client->getAndClearPacketData();
+        // wait for ECSManager class
     }
 
 } // namespace Thread

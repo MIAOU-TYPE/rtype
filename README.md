@@ -1,56 +1,106 @@
-# R-Type (Networked Shoot'em Up)
+# R-Type — Networked Shoot’em Up (C++20)
 
-R-Type is a C++20 multiplayer shoot’em up inspired by the classic R-Type, built as an EPITECH Advanced C++ project.
+R-Type is a **networked multiplayer shoot’em up** inspired by the classic R-Type, developed in **C++20** as part of an EPITECH Advanced C++ project.
 
-It ships:
-- **`r-type_server`**: a **multi-threaded authoritative** UDP server (game rules run on the server).
-- **`r-type_client`**: a **graphical SFML** client (rendering + input).
+The project is composed of:
+- **`r-type_server`** — a **multi-threaded authoritative UDP server** (game logic and rules)
+- **`r-type_client`** — a **graphical SFML client** (rendering, input, UI)
+
+The server is the single source of truth: all gameplay decisions are validated server-side.
+
+---
+
+## Quick start (Linux)
+
+```bash
+git clone <repository_url>
+cd r-type
+cmake -S . -B build
+cmake --build build -j
+./r-type_server --port 8080
+./r-type_client
+````
+
+> Binaries are generated inside the `build/` directory.
+
+---
 
 ## Features
 
-- Authoritative server architecture (server decides the “truth”).
-- UDP binary protocol (versioned header + typed packets).
-- Server runtime split into dedicated threads (I/O, processing, tick/update, snapshots).
-- ECS-based game logic (server-side) and modular shared libraries.
-- Client with SFML rendering, menu scene, and a scrolling starfield.
+* Authoritative server architecture (server owns the game state)
+* Custom **binary UDP protocol** (versioned headers + typed packets)
+* Multi-threaded server runtime:
+
+    * Network I/O
+    * Game logic processing
+    * Fixed tick/update loop
+    * Snapshot broadcasting
+* ECS-based server-side game logic
+* Modular shared libraries (protocol, packets, buffers, networking)
+* SFML client with rendering, input handling, menu scene and scrolling starfield
+* Cross-platform build (Linux / Windows)
+
+---
+
+## Architecture overview
+
+### Client / Server model
+
+* Clients send **inputs only**
+* The server processes inputs, updates the game world and sends snapshots
+* Clients render the received snapshots
+
+This ensures consistency and prevents client-side authority.
+
+### Server threading model
+
+The server runtime is split into dedicated threads:
+
+* UDP receive/send thread
+* Game logic thread (ECS systems)
+* Fixed-rate tick/update thread
+* Snapshot generation and broadcast thread
+
+This prevents network I/O from blocking gameplay updates.
+
+---
 
 ## Requirements
 
 ### Build tools
-- **CMake ≥ 3.20**
-- A **C++20** compiler (GCC / Clang / MSVC)
-- **Git**
-- **Python 3** (used at configure time to embed client assets)
+
+* **CMake ≥ 3.20**
+* **C++20 compiler** (GCC / Clang / MSVC)
+* **Git**
+* **Python 3** (used at configure time to embed client assets)
 
 ### Linux system packages (recommended)
-On Debian/Ubuntu-like systems:
+
+On Debian / Ubuntu-based systems:
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y \
   build-essential cmake git ninja-build python3 \
-  zip unzip curl \
-  libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
-````
+  zip unzip curl pkg-config \
+  libx11-dev libxrandr-dev libxcursor-dev \
+  libxi-dev libudev-dev libgl1-mesa-dev
+```
 
-> Dependencies are handled through **vcpkg** (auto-fetched by CMake).
+> All third-party dependencies are handled through **vcpkg**, automatically fetched by CMake.
+
+---
 
 ## Build
 
 From the repository root:
 
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build
 cmake --build build -j
 ```
 
-Binaries are generated in the repository root:
-
-* `./r-type_server`
-* `./r-type_client`
-
-> Important: the networking plugin library is loaded from `build/` by default (dynamic loading expects `build/libNetPluginLib.so` on Linux).
-
-### Build only client or server
+### Build only server or client
 
 ```bash
 cmake -S . -B build -DBUILD_SERVER_ONLY=ON
@@ -58,39 +108,24 @@ cmake -S . -B build -DBUILD_SERVER_ONLY=ON
 cmake -S . -B build -DBUILD_CLIENT_ONLY=ON
 ```
 
+---
+
 ## Run
 
-### 1) Start the server
+### Start the server
 
-```bash
-./r-type_server
-```
+Linux:
 
-### 2) Start one or more clients (in other terminals)
-
-```bash
-./r-type_client
-```
-
-## Controls (client)
-
-Default mappings:
-
-* Move: **Arrow keys** or **Z Q S D**
-* Shoot: **Space** or **Left Ctrl**
-* Quit: **Escape**
-* Pause: **P**
-
-## Current network configuration
-
-The server port is configurable through command-line arguments.
-
-- **Server**: binds to `127.0.0.1:<port>` where `<port>` comes from the argument parser  
-
-Example:
 ```bash
 ./r-type_server --port 8080
-````
+```
+
+Windows:
+
+```powershell
+cd bin
+./r-type_server.exe --port 8080
+```
 
 To display all available options:
 
@@ -98,43 +133,86 @@ To display all available options:
 ./r-type_server --help
 ```
 
-> Make sure the **client targets the same IP/port** as the server.
+### Start one or more clients
+
+Linux:
+
+```bash
+./r-type_client
+```
+
+Windows:
+
+```powershell
+cd bin
+r-type_client.exe
+```
+
+> Make sure the **client targets the same IP and port** as the server.
+
+---
+
+## Controls (client)
+
+Default mappings:
+
+* Move: **Arrow keys** or **Z Q S D**
+* Shoot: **Space** or **Left Ctrl**
+* Pause: **P**
+* Quit: **Escape**
+
+---
+
+## Network protocol
+
+The game uses a **custom binary UDP protocol**:
+
+* Versioned packet headers
+* Typed payloads (inputs, entity state, events)
+* Fixed-rate server snapshots
+
+The protocol is designed to be compact and resilient to malformed packets.
+
+> See `docs/protocol.md` for the full specification.
+
+---
 
 ## Tests
 
-Configure with tests enabled:
+Enable tests at configure time:
 
 ```bash
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build -j
-ctest --test-dir build
+ctest --test-dir build -C Debug -V
 ```
+
+---
 
 ## Project layout
 
-* `server/` — authoritative server, networking, runtime threads, ECS + systems
-* `client/` — SFML client (rendering, input, scenes, embedded assets)
-* `shared/` — reusable libraries (packets, protocol, buffers, dynamic loading, net wrapper)
-
-## Linting
-
-Utility scripts are available:
-
-* `scripts/lint-check.sh`
-* `scripts/lint-fix.sh`
-
-## Docker (Linux testing)
-
-A `Dockerfile` is provided for quick Linux builds:
-
-```bash
-docker build -t rtype .
-docker run -it --rm rtype
+```
+server/   — authoritative server, ECS, runtime threads, networking
+client/   — SFML client (rendering, input, scenes, embedded assets)
+shared/   — reusable libraries (protocol, packets, buffers, net wrapper)
+docs/     — technical documentation
 ```
 
-## License
+---
 
-Educational project (no license file provided).
+## Troubleshooting
+
+### Client cannot connect
+
+* Ensure server and client use the same IP and port
+* Check that no firewall blocks UDP traffic
+
+### Dependency issues
+
+* Dependencies are managed by vcpkg
+* Delete `build/` and reconfigure if necessary
+
+---
 
 ## Project members
 - [Anna POGHOSYAN](https://github.com/ann7415)
@@ -143,3 +221,8 @@ Educational project (no license file provided).
 - [Santiago PIDCOVA](https://github.com/santiagopidji)
 - [Robin SCHUFFENECKER](https://github.com/rosh7887epitech)
 - [Romain BERARD](https://github.com/romain1717)
+---
+
+## License
+
+Educational project — no license file provided.

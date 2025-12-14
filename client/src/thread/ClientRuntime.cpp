@@ -12,6 +12,7 @@ namespace Thread
 
     ClientRuntime::ClientRuntime(const std::shared_ptr<Network::NetClient> &client) : _client(client)
     {
+        _entitiesFactory = std::make_shared<Ecs::EntitiesFactory>();
         _renderer = std::make_shared<Graphics::SFMLRenderer>();
         _display = std::make_shared<Display::DisplayInit>(_renderer);
         _event = std::make_shared<Events::EventInit>(_renderer);
@@ -19,7 +20,6 @@ namespace Thread
 
     ClientRuntime::~ClientRuntime()
     {
-        std::scoped_lock lock(_mutex);
         if (!_stopRequested)
             stop();
         _client = nullptr;
@@ -37,6 +37,7 @@ namespace Thread
     {
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
+        _updateThread = std::thread(&ClientRuntime::runUpdater, this);
         _displayThread = std::thread(&ClientRuntime::runDisplay, this);
         _eventThread = std::thread(&ClientRuntime::runEvent, this);
     }
@@ -52,6 +53,8 @@ namespace Thread
 
         if (_receiverThread.joinable())
             _receiverThread.join();
+        if (_updateThread.joinable())
+            _updateThread.join();
         if (_displayThread.joinable())
             _displayThread.join();
         if (_eventThread.joinable())
@@ -62,6 +65,14 @@ namespace Thread
     {
         while (_running) {
             _client->receivePackets();
+        }
+    }
+
+    void ClientRuntime::runUpdater() const
+    {
+        while (_running) {
+            std::vector<Network::PacketData> data = _client->getAndClearPacketData();
+            _entitiesFactory->parseData(data);
         }
     }
 

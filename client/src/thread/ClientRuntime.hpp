@@ -12,6 +12,7 @@
 #include <thread>
 #include <condition_variable>
 
+#include "EntitiesFactory.hpp"
 #include "../events/EventInit.hpp"
 #include "DisplayInit.hpp"
 #include "NetClient.hpp"
@@ -49,21 +50,23 @@ namespace Thread
       private:
         std::shared_ptr<Graphics::SFMLRenderer> _renderer; ///> Shared renderer
 
-        std::shared_ptr<Network::NetClient> _client;    ///> Network client
+        std::shared_ptr<Network::NetClient> _client;               ///> Network client
+        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory; ///> Entities factory
         std::shared_ptr<Display::DisplayInit> _display; ///> Display manager
         std::shared_ptr<Events::EventInit> _event;      ///> Event manager
 
         std::thread _receiverThread; ///> Thread for receiving packets
-        // std::thread _updateThread;    ///> Thread for updating game state
+        std::thread _updateThread;   ///> Thread for updating game state
         std::thread _displayThread; ///> Thread for displaying graphics
         std::thread _eventThread;   ///> Thread for handling events
 
         std::mutex _mutex;                 ///> Mutex for synchronizing access
         std::condition_variable _cv;       ///> Condition variable for signaling
         bool _stopRequested = false;       ///> Flag to indicate if a stop has been requested
-        std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the server is running
+        std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the client is running
 
         void runReceiver() const; ///> Method for running the receiver thread
+        void runUpdater() const;  ///> Method for running the updater thread
         void runDisplay();        ///> Method for running the display thread
         void runEvent();          ///> Method for running the event thread
     };

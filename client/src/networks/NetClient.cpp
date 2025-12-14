@@ -93,7 +93,10 @@ namespace Network
                 _playerEntityId = *entityId;
                 DefaultData acceptData;
                 acceptData.header = *header;
-                _packetDataList.push_back(acceptData);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(acceptData);
+                }
                 break;
             }
 
@@ -101,7 +104,10 @@ namespace Network
                 _isConnected = false;
                 DefaultData rejectData;
                 rejectData.header = *header;
-                _packetDataList.push_back(rejectData);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(rejectData);
+                }
                 break;
             }
 
@@ -109,28 +115,40 @@ namespace Network
                 SnapshotBatchHeader const *batchHeader = reinterpret_cast<SnapshotBatchHeader const *>(packet.buffer());
                 SnapshotEntityData const *data =
                     reinterpret_cast<SnapshotEntityData const *>(packet.buffer() + sizeof(SnapshotBatchHeader));
-                for (size_t i = 0; i < batchHeader->count; ++i) {
-                    _packetDataList.push_back(data[i]);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    for (size_t i = 0; i < batchHeader->count; ++i) {
+                        _packetDataList.push_back(data[i]);
+                    }
                 }
                 break;
             }
 
             case Net::Protocol::ENTITY_CREATE: {
                 EntityCreateData const *data = reinterpret_cast<EntityCreateData const *>(packet.buffer());
-                _packetDataList.push_back(*data);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(*data);
+                }
                 break;
             }
 
             case Net::Protocol::ENTITY_DESTROY: {
                 EntityDestroyData const *data = reinterpret_cast<EntityDestroyData const *>(packet.buffer());
-                _packetDataList.push_back(*data);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(*data);
+                }
                 break;
             }
 
             case Net::Protocol::PONG: {
                 DefaultData pongData;
                 pongData.header = *header;
-                _packetDataList.push_back(pongData);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(pongData);
+                }
                 if (_waitingForPong) {
                     _latency = _pingTimer - _lastPingTime;
                     _waitingForPong = false;
@@ -141,14 +159,20 @@ namespace Network
 
             case Net::Protocol::DAMAGE_EVENT: {
                 DamageData const *data = reinterpret_cast<DamageData const *>(packet.buffer());
-                _packetDataList.push_back(*data);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(*data);
+                }
                 break;
             }
 
             case Net::Protocol::GAME_OVER: {
                 DefaultData gameOverData;
                 gameOverData.header = *header;
-                _packetDataList.push_back(gameOverData);
+                {
+                    std::lock_guard<std::mutex> lock(_packetDataMutex);
+                    _packetDataList.push_back(gameOverData);
+                }
                 break;
             }
 
@@ -233,6 +257,7 @@ namespace Network
 
     std::vector<PacketData> NetClient::getAndClearPacketData()
     {
+        std::lock_guard<std::mutex> lock(_packetDataMutex);
         std::vector<PacketData> data = std::move(_packetDataList);
         _packetDataList.clear();
         return data;

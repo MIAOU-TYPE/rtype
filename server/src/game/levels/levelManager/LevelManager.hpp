@@ -26,10 +26,8 @@ namespace Game
          */
         bool loadFromFile(const std::string &path);
 
-        bool loadFromMemory(const std::string &content);
-
         /**
-         * @brief Reset the level progression.
+         * @brief Reset the level progression timer.
          */
         void reset();
 
@@ -57,12 +55,12 @@ namespace Game
         /**
          * @brief Determine if a wave should be spawned based on the current time.
          *
-         * @param waveTime for The time of the wave to check.
+         * @param waveTime Time of the wave to check.
          * @return true if the wave should be spawned, false otherwise.
          */
         bool shouldSpawn(float waveTime) const;
 
-      private:
+    private:
         Level _level;      ///> The current level data.
         float _time = 0.f; ///> The current time in the level.
     };

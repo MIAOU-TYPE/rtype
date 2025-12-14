@@ -157,12 +157,17 @@ jobs:
       - name: Run server tests
         run: ctest --test-dir build -V
 
+      - name: Prepare server artifact
+        run: |
+          mkdir -p dist
+          cp build/r-type_server dist/r-type_server-linux
+
       - name: Upload Server Artifact (if exists)
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: r-type_server-Linux
-          path: build/r-type_server
+          path: dist/r-type_server-linux
           if-no-files-found: ignore
 
   # -----------------------------
@@ -229,14 +234,15 @@ jobs:
             exit 1
           }
 
-          Write-Host "Found server executable: $($exe.FullName)"
-          echo "SERVER_EXE=$($exe.FullName)" >> $env:GITHUB_ENV
+          New-Item -ItemType Directory -Force -Path "dist" | Out-Null
+          Copy-Item $exe.FullName "dist\r-type_server-windows.exe" -Force
 
       - name: Upload Server Artifact (if exists)
         uses: actions/upload-artifact@v4
         with:
           name: r-type_server-Windows
-          path: ${{ env.SERVER_EXE }}
+          path: dist/r-type_server-windows.exe
+          if-no-files-found: ignore
 
   # -----------------------------
   # Build and Test (client)
@@ -291,12 +297,17 @@ jobs:
       - name: Run client tests
         run: ctest --test-dir build -V
 
+      - name: Prepare client artifact
+        run: |
+          mkdir -p dist
+          cp build/r-type_client dist/r-type_client-linux
+
       - name: Upload Client Artifact (if exists)
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: r-type_client-Linux
-          path: build/r-type_client
+          path: dist/r-type_client-linux
           if-no-files-found: ignore
 
   # -----------------------------
@@ -317,7 +328,8 @@ jobs:
       needs.check-repository.outputs.same_repository == 'false' &&
       needs.linter.result == 'success' &&
       (
-        needs.build-server-linux.result == 'success' || needs.build-server-windows.result == 'success' ||
+        needs.build-server-linux.result == 'success' ||
+        needs.build-server-windows.result == 'success' ||
         needs.build-client-linux.result == 'success'
       )
 
@@ -355,21 +367,18 @@ jobs:
     steps:
       - name: Download Server Artifact (Linux)
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
           name: r-type_server-Linux
           path: ./artifacts/
 
       - name: Download Server Artifact (Windows)
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
           name: r-type_server-Windows
           path: ./artifacts/
 
       - name: Download Client Artifact (Linux)
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
           name: r-type_client-Linux
           path: ./artifacts/
@@ -378,14 +387,17 @@ jobs:
         run: |
           echo "Checking downloaded artifacts..."
           find ./artifacts/ -type f
+          test -f ./artifacts/dist/r-type_server-linux
+          test -f ./artifacts/dist/r-type_server-windows.exe
+          test -f ./artifacts/dist/r-type_client-linux
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./artifacts/build/r-type_server
-            ./artifacts/build/r-type_server.exe
-            ./artifacts/build/r-type_client
+            ./artifacts/dist/r-type_server-linux
+            ./artifacts/dist/r-type_server-windows.exe
+            ./artifacts/dist/r-type_client-linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -398,6 +410,7 @@ jobs:
     needs: [check-repository, linter, build-server-linux, build-server-windows, build-client-linux, semantic-release, upload-release-assets]
     if: |
       always() &&
+      github.event_name == 'push' &&
       needs.check-repository.outputs.same_repository == 'false' &&
       needs.linter.result == 'success' &&
       (
@@ -405,16 +418,20 @@ jobs:
         needs.semantic-release.result == 'skipped'
       ) &&
       (
-        needs.build-server.result == 'success' ||
-        needs.build-server.result == 'skipped'
+        needs.upload-release-assets.result == 'success' ||
+        needs.upload-release-assets.result == 'skipped'
+      ) &&
+      (
+        needs.build-server-linux.result == 'success' ||
+        needs.build-server-linux.result == 'skipped'
+      ) &&
+      (
+        needs.build-server-windows.result == 'success' ||
+        needs.build-server-windows.result == 'skipped'
       ) &&
       (
         needs.build-client-linux.result == 'success' ||
         needs.build-client-linux.result == 'skipped'
-      ) &&
-      (
-        needs.upload-release-assets.result == 'success' ||
-        needs.upload-release-assets.result == 'skipped'
       )
 
     steps:

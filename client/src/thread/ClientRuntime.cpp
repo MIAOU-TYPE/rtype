@@ -7,10 +7,11 @@
 
 #include "ClientRuntime.hpp"
 
-namespace Thread {
+using namespace Thread;
 
 ClientRuntime::ClientRuntime(const std::shared_ptr<Network::NetClient> &client) : _client(client)
 {
+    _display = std::make_shared<Display::DisplayInit>(800, 600);
 }
 
 ClientRuntime::~ClientRuntime()
@@ -33,6 +34,7 @@ void ClientRuntime::start()
 {
     _running = true;
     _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
+    _displayThread = std::thread(&ClientRuntime::runDisplay, this);
 }
 
 void ClientRuntime::stop()
@@ -55,4 +57,9 @@ void ClientRuntime::runReceiver() const
     }
 }
 
+void ClientRuntime::runDisplay() const
+{
+    while (_running) {
+        _display->run();
+    }
 } // namespace Thread

@@ -55,6 +55,14 @@ add_subdirectory(
 )
 
 #------------------------------
+# CommandBuffer Library
+#------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/CommandBuffer
+        ${CMAKE_BINARY_DIR}/command_buffer_build
+)
+
+#------------------------------
 # NetWrapper Library (shared)
 #------------------------------
 add_subdirectory(
@@ -86,8 +94,12 @@ add_subdirectory(
         ${CMAKE_BINARY_DIR}/NetProtocolLib_build
 )
 
-add_subdirectory(server)
-add_subdirectory(client)
+if (NOT BUILD_CLIENT_ONLY)
+    add_subdirectory(server)
+endif()
+if (NOT BUILD_SERVER_ONLY)
+    add_subdirectory(client)
+endif()
 
 if (BUILD_TESTING)
     add_subdirectory(shared/tests)

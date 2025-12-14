@@ -81,6 +81,11 @@ namespace Net
         virtual std::shared_ptr<IPacket> clone() const = 0;
 
         /**
+         * @brief Creates a new instance of the packet.
+         * @return A shared pointer to the newly created IPacket instance.
+         */
+        virtual std::shared_ptr<IPacket> newPacket() const = 0;
+        /**
          * @brief Retrieves the capacity of the packet buffer.
          * @return The capacity of the packet buffer.
          */

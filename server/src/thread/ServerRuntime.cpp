@@ -6,13 +6,15 @@
 */
 
 #include "ServerRuntime.hpp"
-
 using namespace Net::Thread;
 
 ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
 {
+    if (!_server)
+        throw ThreadError("{ServerRuntime::ServerRuntime} Invalid server pointer");
+    _packetFactory = std::make_shared<Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
-    _gameServer = std::make_shared<Game::GameServer>(_sessionManager, _server);
+    _gameServer = std::make_shared<Game::GameServer>(_sessionManager, _server, _packetFactory);
     _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _gameServer);
 }
 
@@ -34,11 +36,16 @@ void ServerRuntime::wait()
 
 void ServerRuntime::start()
 {
-    _server->start();
+    try {
+        _server->start();
+    } catch (std::exception &e) {
+        throw ThreadError(std::string("{ServerRuntime::start} Failed to start server: ") + e.what());
+    }
     _running = true;
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
     _updateThread = std::thread(&ServerRuntime::runUpdate, this);
+    _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
 }
 
 void ServerRuntime::stop()
@@ -51,6 +58,8 @@ void ServerRuntime::stop()
     _cv.notify_all();
 
     _server->setRunning(false);
+    if (_snapshotThread.joinable())
+        _snapshotThread.join();
     if (_receiverThread.joinable())
         _receiverThread.join();
     if (_processorThread.joinable())
@@ -81,5 +90,31 @@ void ServerRuntime::runUpdate() const
     while (_running) {
         _gameServer->tick();
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
+    }
+}
+
+void ServerRuntime::runSnapshot() const
+{
+    std::vector<SnapshotEntity> entities;
+
+    while (_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        _gameServer->buildSnapshot(entities);
+
+        if (entities.empty())
+            continue;
+
+        auto basePacket = _packetFactory->createSnapshotPacket(entities);
+        if (!basePacket)
+            continue;
+
+        _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
+            auto packet = basePacket->clone();
+            if (!packet)
+                return;
+            packet->setAddress(addr);
+            _server->sendPacket(*packet);
+        });
     }
 }

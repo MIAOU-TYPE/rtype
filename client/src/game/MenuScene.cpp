@@ -85,6 +85,10 @@ void MenuScene::render()
             _renderer->renderSprite(*_backgroundSprite);
         }
 
+        if (_errorText) {
+            _renderer->renderText(*_errorText);
+        }
+
         if (_playButton) {
             _playButton->render(_renderer);
         }
@@ -109,5 +113,23 @@ void MenuScene::setOnQuitCallback(std::function<void()> callback)
 {
     if (_quitButton) {
         _quitButton->setOnClick(std::move(callback));
+    }
+}
+
+void MenuScene::setErrorMessage(const std::string &message)
+{
+    _errorMessage = message;
+    if (!message.empty()) {
+        const std::string fontPath = "fonts/r-type.otf";
+        _errorText = _textureManager->createText(message, fontPath, 24);
+        if (_errorText) {
+            _errorText->setColor(255, 0, 0, 255);
+            unsigned int windowWidth = _renderer->getWindowWidth();
+            float textWidth = _errorText->getWidth();
+            float textX = (static_cast<float>(windowWidth) - textWidth) / 2.0f;
+            _errorText->setPosition(textX, 50.0f);
+        }
+    } else {
+        _errorText.reset();
     }
 }

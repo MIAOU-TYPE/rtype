@@ -6,72 +6,122 @@
 */
 
 #include "GameServer.hpp"
-#include "UDPPacket.hpp"
 
 namespace Game
 {
-    GameServer::GameServer(
-        std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
-        : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _factory(std::make_shared<Net::UDPPacket>())
+    GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
+        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
+          _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
+          _packetFactory(std::move(packetFactory))
     {
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
     {
-        const Ecs::Entity ent = _world->createPlayer();
-        _sessionToEntity[sessionId] = ent;
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerConnect;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
     {
-        if (!_sessionToEntity.contains(sessionId))
-            return;
-
-        const Ecs::Entity ent = _sessionToEntity[sessionId];
-        _world->destroyEntity(ent);
-        _sessionToEntity.erase(sessionId);
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerDisconnect;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg)
     {
-        if (!_sessionToEntity.contains(sessionId))
-            return;
-
-        const Ecs::Entity ent = _sessionToEntity[sessionId];
-        if (auto &input = _world->registry().getComponents<InputComponent>()[static_cast<size_t>(ent)]) {
-            *input = msg;
-        }
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::PlayerInput;
+        cmd.sessionId = sessionId;
+        cmd.input = msg;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::onPing(const int sessionId)
     {
-        if (const auto *ai = _sessions->getAddress(sessionId)) {
-            if (const auto pkt = _factory.makeDefault(*ai, Net::Protocol::PONG))
-                _server->sendPacket(*pkt);
-        }
+        GameCommand cmd;
+        cmd.type = GameCommand::Type::Ping;
+        cmd.sessionId = sessionId;
+        _commandBuffer.push(cmd);
     }
 
     void GameServer::update(const float dt) const
     {
-        InputSystem::update(*_world);
-        ShootingSystem::update(*_world);
-        AISystem::update(*_world, dt);
-        MovementSystem::update(*_world, dt);
-        EnemySpawnSystem::update(*_world, dt);
-        CollisionSystem::update(*_world);
-        DamageSystem::update(*_world);
-        HealthSystem::update(*_world);
-        LifetimeSystem::update(*_world, dt);
+        InputSystem::update(*_worldWrite);
+        ShootingSystem::update(*_worldWrite);
+        AISystem::update(*_worldWrite, dt);
+        MovementSystem::update(*_worldWrite, dt);
+        EnemySpawnSystem::update(*_worldWrite, dt);
+        CollisionSystem::update(*_worldWrite);
+        DamageSystem::update(*_worldWrite);
+        HealthSystem::update(*_worldWrite);
+        LifetimeSystem::update(*_worldWrite, dt);
     }
 
     void GameServer::tick()
     {
+        GameCommand cmd;
+        while (_commandBuffer.pop(cmd))
+            applyCommand(cmd);
         const double frameTime = _clock.restart();
         _accumulator += frameTime;
         while (_accumulator >= FIXED_DT) {
             update(static_cast<float>(FIXED_DT));
+            _worldTemp->copyFrom(*_worldWrite);
+            {
+                std::scoped_lock lock(_snapshotMutex);
+                std::swap(_worldTemp, _worldRead);
+            }
             _accumulator -= FIXED_DT;
+        }
+    }
+
+    void GameServer::buildSnapshot(std::vector<SnapshotEntity> &out) const
+    {
+        out.clear();
+        std::scoped_lock lock(_snapshotMutex);
+        SnapshotSystem::update(*_worldRead, out);
+    }
+
+    void GameServer::applyCommand(const GameCommand &cmd)
+    {
+        switch (cmd.type) {
+            case GameCommand::Type::PlayerConnect: {
+                const Ecs::Entity ent = _worldWrite->createPlayer();
+                _sessionToEntity[cmd.sessionId] = ent;
+                break;
+            }
+            case GameCommand::Type::PlayerDisconnect: {
+                if (!_sessionToEntity.contains(cmd.sessionId))
+                    break;
+                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                _worldWrite->destroyEntity(ent);
+                _sessionToEntity.erase(cmd.sessionId);
+                break;
+            }
+            case GameCommand::Type::PlayerInput: {
+                if (!_sessionToEntity.contains(cmd.sessionId))
+                    break;
+                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
+                auto &inputOpt = inputArr[static_cast<size_t>(ent)];
+                if (inputOpt.has_value())
+                    *inputOpt = cmd.input;
+                break;
+            }
+            case GameCommand::Type::Ping: {
+                if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
+                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::PONG))
+                        _server->sendPacket(*pkt);
+                }
+                break;
+            }
+            default: break;
         }
     }
 } // namespace Game

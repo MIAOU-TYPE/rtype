@@ -87,6 +87,12 @@ namespace Net
         std::shared_ptr<IPacket> clone() const override;
 
         /**
+         * @brief Creates a new instance of UDPPacket.
+         * @return A shared pointer to the new IPacket instance.
+         */
+        std::shared_ptr<IPacket> newPacket() const override;
+
+        /**
          * @brief Retrieves the capacity of the packet buffer.
          * @return The maximum capacity of the packet buffer in bytes.
          */

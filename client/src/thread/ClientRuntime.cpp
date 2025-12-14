@@ -36,9 +36,12 @@ namespace Thread
     void ClientRuntime::start()
     {
         _running = true;
+        _displayThread = std::thread(&ClientRuntime::runDisplay, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updateThread = std::thread(&ClientRuntime::runUpdater, this);
-        _displayThread = std::thread(&ClientRuntime::runDisplay, this);
+        while (_running && !_event->isWindowOpen()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
         _eventThread = std::thread(&ClientRuntime::runEvent, this);
     }
 
@@ -91,10 +94,6 @@ namespace Thread
 
     void ClientRuntime::runEvent()
     {
-        while (_running && !_event->isWindowOpen()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-
         while (_running && _event->isWindowOpen()) {
             _event->run();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));

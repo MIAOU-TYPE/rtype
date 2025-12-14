@@ -29,10 +29,25 @@ namespace Thread
          * @param client Shared pointer to the network client.
          */
         explicit ClientRuntime(const std::shared_ptr<Network::NetClient> &client);
+
+        /**
+         * @brief Destructor for ClientRuntime.
+         */
         ~ClientRuntime();
 
+        /**
+         * @brief Starts the client runtime operations.
+         */
         void start();
+
+        /**
+         * @brief Stops the client runtime operations.
+         */
         void stop();
+
+        /**
+         * @brief Waits for the client runtime threads to finish.
+         */
         void wait();
 
       private:

@@ -18,7 +18,16 @@ namespace Ecs
 
     void NetworkReceiveSystem::update(float deltaTime)
     {
-        (void) deltaTime;
+        _totalTime += deltaTime;
+
+        if (_waitingForPong && (_totalTime - _lastPingTime) >= PONG_TIMEOUT) {
+            _missedPongCount++;
+            _waitingForPong = false;
+
+            if (_missedPongCount >= MAX_MISSED_PONGS) {
+                _netClient.setConnected(false);
+            }
+        }
 
         Game::NetworkCommand cmd;
         while (_commandBuffer->pop(cmd)) {
@@ -65,7 +74,12 @@ namespace Ecs
             }
 
             case Net::Protocol::PONG: {
-                // Ping response received - no action needed
+                if (_waitingForPong) {
+                    float latency = _totalTime - _lastPingTime;
+                    _netClient.setLatency(latency);
+                    _waitingForPong = false;
+                    _missedPongCount = 0;
+                }
                 break;
             }
 

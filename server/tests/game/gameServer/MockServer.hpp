@@ -12,7 +12,7 @@ class MockServer : public Net::Server::IServer {
   public:
     bool sent = false;
 
-    void configure(const std::string &, uint16_t) override
+    void configure(const std::string &, int32_t) override
     {
     }
 

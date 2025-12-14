@@ -16,6 +16,8 @@
     #include <winsock2.h>
 #endif
 
+#include <functional>
+
 /**
  * @namespace Net::Server
  * @brief Namespace for server-side networking components.
@@ -65,5 +67,11 @@ namespace Net::Server
          * @return A vector of pairs containing session IDs and their corresponding addresses.
          */
         virtual std::vector<std::pair<int, sockaddr_in>> getAllSessions() const = 0;
+
+        /**
+         * @brief Apply a function to each session.
+         * @param func The function to apply, taking session ID and address as parameters.
+         */
+        virtual void forEachSession(const std::function<void(int, const sockaddr_in &)> &func) const = 0;
     };
 } // namespace Net::Server

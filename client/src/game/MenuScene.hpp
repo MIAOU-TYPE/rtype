@@ -88,12 +88,20 @@ namespace Game
          */
         void setOnQuitCallback(std::function<void()> callback);
 
+        /**
+         * @brief Sets an error message to display in the menu.
+         * @param message The error message to display.
+         */
+        void setErrorMessage(const std::string &message);
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager
         std::unique_ptr<Graphics::ISprite> _backgroundSprite = nullptr;       ///> Background sprite
         std::unique_ptr<Button> _playButton = nullptr;                        ///> Play button
         std::unique_ptr<Button> _quitButton = nullptr;                        ///> Quit button
+        std::unique_ptr<Graphics::IText> _errorText = nullptr;                ///> Error message text
+        std::string _errorMessage = "";                                       ///> Error message string
     };
 
 } // namespace Game

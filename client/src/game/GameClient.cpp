@@ -45,6 +45,8 @@ void GameClient::init(unsigned int width, unsigned int height)
         _menuScene->setOnPlayCallback([this]() {
             _currentScene = SceneState::Gameplay;
             _isMousePressed = false;
+            _connectionLost = false;
+            _menuScene->setErrorMessage("");
         });
 
         _menuScene->setOnQuitCallback([this]() {
@@ -106,6 +108,13 @@ void GameClient::run()
 
                 if (_netClient)
                     _netClient->updatePing(deltaTime);
+
+                if (_currentScene == SceneState::Gameplay && _netClient && !_netClient->isConnected()
+                    && !_connectionLost) {
+                    _connectionLost = true;
+                    _currentScene = SceneState::Menu;
+                    _menuScene->setErrorMessage("Connection lost: Server not responding");
+                }
 
                 if (_currentScene == SceneState::Menu) {
                     float mouseX = 0.0f;

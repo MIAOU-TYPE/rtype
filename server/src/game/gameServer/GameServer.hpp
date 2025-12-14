@@ -24,6 +24,7 @@
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
+#include "SnapshotSystem.hpp"
 
 namespace Game
 {
@@ -71,9 +72,10 @@ namespace Game
          *
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
+         * @param packetFactory Factory to build outgoing packets.
          */
-        GameServer(
-            std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server);
+        GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server,
+            std::shared_ptr<Net::Factory::PacketFactory> packetFactory);
 
         /**
          * @brief Called when a new player connects.
@@ -123,17 +125,25 @@ namespace Game
 
         /**
          * @brief Applies a single GameCommand to the game world.
-         *
          * @param cmd The command to apply.
          */
         void applyCommand(const GameCommand &cmd);
 
-      private:
-        std::unique_ptr<IGameWorld> _world; ///> The game world (ECS state).
+        /**
+         * @brief Builds a snapshot of the current game state.
+         * @param out Vector to populate with snapshot entities.
+         */
+        void buildSnapshot(std::vector<SnapshotEntity> &out) const;
 
-        std::shared_ptr<Net::Server::ISessionManager> _sessions; ///> Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;           ///> Sends packets to clients.
-        Net::Factory::PacketFactory _factory;                    ///> Builds outgoing packets.
+      private:
+        mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.
+        std::unique_ptr<IGameWorld> _worldWrite; ///> The authoritative game world
+        std::unique_ptr<IGameWorld> _worldRead;  ///> Read-only snapshot of the game world for serialization.
+        std::unique_ptr<IGameWorld> _worldTemp;  ///> Temporary world for snapshot generation.
+
+        std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;               ///> Sends packets to clients.
+        std::shared_ptr<Net::Factory::PacketFactory> _packetFactory; ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
 

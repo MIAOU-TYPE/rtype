@@ -149,13 +149,13 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_TESTING=ON
+            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
 
-      - name: Build server
-        run: cmake --build build --target r-type_server -j$(nproc)
+      - name: Build server and tests
+        run: cmake --build build -j$(nproc)
 
-      - name: Build tests
-        run: cmake --build build --target unit_tests -j$(nproc)
+      - name: Run server tests
+        run: ctest --test-dir build -C Debug -V
 
       - name: Upload Server Artifact (if exists)
         if: success()
@@ -206,14 +206,17 @@ jobs:
             ./vcpkg/bootstrap-vcpkg.sh
           fi
 
-      - name: Configure CMake (client only)
+      - name: Configure CMake (client)
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_TESTING=OFF
+            -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
 
-      - name: Build client
-        run: cmake --build build --target r-type_client -j$(nproc)
+      - name: Build client and tests
+        run: cmake --build build -j$(nproc)
+
+      - name: Run client tests
+        run: ctest --test-dir build -C Debug -V
 
       - name: Upload Client Artifact (if exists)
         if: success()

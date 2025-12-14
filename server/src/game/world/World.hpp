@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "InputComponent.hpp"
@@ -38,7 +39,6 @@ namespace Game
 
         /**
          * @brief Access the underlying ECS registry.
-         *
          * @return Reference to the registry containing all components/entities.
          */
         Ecs::Registry &registry() override;
@@ -62,6 +62,12 @@ namespace Game
          * @param ent The entity to remove from the ECS.
          */
         void destroyEntity(Ecs::Entity ent) override;
+
+        /**
+         * @brief Copy the state from another IGameWorld instance.
+         * @param other The other IGameWorld to copy from.
+         */
+        void copyFrom(IGameWorld &other) override;
 
       private:
         Ecs::Registry _registry; ///> The ECS registry (component storage).

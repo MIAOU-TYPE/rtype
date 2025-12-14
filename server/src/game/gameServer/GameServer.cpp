@@ -6,14 +6,14 @@
 */
 
 #include "GameServer.hpp"
-#include "UDPPacket.hpp"
 
 namespace Game
 {
-    GameServer::GameServer(
-        std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server)
-        : _world(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _factory(std::make_shared<Net::UDPPacket>())
+    GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
+        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
+          _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
+          _packetFactory(std::move(packetFactory))
     {
     }
 
@@ -52,15 +52,15 @@ namespace Game
 
     void GameServer::update(const float dt) const
     {
-        InputSystem::update(*_world);
-        ShootingSystem::update(*_world);
-        AISystem::update(*_world, dt);
-        MovementSystem::update(*_world, dt);
-        EnemySpawnSystem::update(*_world, dt);
-        CollisionSystem::update(*_world);
-        DamageSystem::update(*_world);
-        HealthSystem::update(*_world);
-        LifetimeSystem::update(*_world, dt);
+        InputSystem::update(*_worldWrite);
+        ShootingSystem::update(*_worldWrite);
+        AISystem::update(*_worldWrite, dt);
+        MovementSystem::update(*_worldWrite, dt);
+        EnemySpawnSystem::update(*_worldWrite, dt);
+        CollisionSystem::update(*_worldWrite);
+        DamageSystem::update(*_worldWrite);
+        HealthSystem::update(*_worldWrite);
+        LifetimeSystem::update(*_worldWrite, dt);
     }
 
     void GameServer::tick()
@@ -72,15 +72,27 @@ namespace Game
         _accumulator += frameTime;
         while (_accumulator >= FIXED_DT) {
             update(static_cast<float>(FIXED_DT));
+            _worldTemp->copyFrom(*_worldWrite);
+            {
+                std::scoped_lock lock(_snapshotMutex);
+                std::swap(_worldTemp, _worldRead);
+            }
             _accumulator -= FIXED_DT;
         }
+    }
+
+    void GameServer::buildSnapshot(std::vector<SnapshotEntity> &out) const
+    {
+        out.clear();
+        std::scoped_lock lock(_snapshotMutex);
+        SnapshotSystem::update(*_worldRead, out);
     }
 
     void GameServer::applyCommand(const GameCommand &cmd)
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                const Ecs::Entity ent = _world->createPlayer();
+                const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
                 break;
             }
@@ -88,7 +100,7 @@ namespace Game
                 if (!_sessionToEntity.contains(cmd.sessionId))
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
-                _world->destroyEntity(ent);
+                _worldWrite->destroyEntity(ent);
                 _sessionToEntity.erase(cmd.sessionId);
                 break;
             }
@@ -96,7 +108,7 @@ namespace Game
                 if (!_sessionToEntity.contains(cmd.sessionId))
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
-                auto &inputArr = _world->registry().getComponents<InputComponent>();
+                auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
                 auto &inputOpt = inputArr[static_cast<size_t>(ent)];
                 if (inputOpt.has_value())
                     *inputOpt = cmd.input;
@@ -104,12 +116,12 @@ namespace Game
             }
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
-                    if (const auto pkt = _factory.makeDefault(*addr, Net::Protocol::PONG))
+                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::PONG))
                         _server->sendPacket(*pkt);
                 }
                 break;
             }
-            default:;
+            default: break;
         }
     }
 } // namespace Game

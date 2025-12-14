@@ -65,8 +65,3 @@ add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 # SHARED LIBRARY FOR TESTING DLLOADER
 # ------------------------------
 add_library(testlib SHARED libs/testlib.cpp)
-
-# Pour que DLLoader la trouve facilement
-set_target_properties(testlib PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-)

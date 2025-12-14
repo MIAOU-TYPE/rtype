@@ -63,6 +63,7 @@ test-results/
 *.xml
 *.tar.gz
 *.zip
+*unit_tests*
 
 # Dependencies (uncomment as needed)
 # conan/

@@ -22,25 +22,43 @@ set(CMAKE_TOOLCHAIN_FILE
 # =============================================
 project(R-Type LANGUAGES C CXX)
 
+# =============================================
+# GLOBAL OUTPUT DIRECTORIES
+# =============================================
+set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
+# Multi-config generators (Visual Studio)
+foreach (CONFIG Debug Release RelWithDebInfo MinSizeRel)
+    string(TOUPPER ${CONFIG} CONFIG_UPPER)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${OUTPUT_DIR})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${OUTPUT_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${OUTPUT_DIR})
+endforeach ()
+
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (BUILD_TESTING)
     enable_testing()
-endif()
+endif ()
 
 # =============================================
 # fix for macOS + Homebrew LLVM bug
 # (__hash_memory missing symbol)
 # Force linking against Homebrew libc++ instead of Apple SDK libc++
 # =============================================
-if(APPLE)
+if (APPLE)
     find_package(LLVM QUIET CONFIG)
-    if(LLVM_FOUND)
+    if (LLVM_FOUND)
         link_directories("${LLVM_LIBRARY_DIR}/c++")
         set(LLVM_LIBCXX_DIR "${LLVM_LIBRARY_DIR}/c++" CACHE STRING "" FORCE)
-    endif()
-endif()
+    endif ()
+endif ()
 
 
 # =============================================
@@ -96,10 +114,10 @@ add_subdirectory(
 
 if (NOT BUILD_CLIENT_ONLY)
     add_subdirectory(server)
-endif()
+endif ()
 if (NOT BUILD_SERVER_ONLY)
     add_subdirectory(client)
-endif()
+endif ()
 
 if (BUILD_TESTING)
     add_subdirectory(shared/tests)

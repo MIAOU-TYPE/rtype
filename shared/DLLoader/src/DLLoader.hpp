@@ -66,7 +66,7 @@ namespace Library
          * @param baseDir The base directory to search for the library (default: "build/")
          * @throws DLLoaderError if the library fails to load
          */
-        explicit DLLoader(const std::string &libPath, const std::string &baseDir = "build/");
+        explicit DLLoader(const std::string &libPath, const std::string &baseDir = "./");
 
         /**
          * @brief Destroy the DLLoader object and unload the library

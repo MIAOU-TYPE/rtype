@@ -97,9 +97,3 @@ enable_testing()
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
-# ------------------------------
-# OUTPUT LOCATION
-# ------------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-)

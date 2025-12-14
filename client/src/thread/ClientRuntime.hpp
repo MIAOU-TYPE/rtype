@@ -12,6 +12,7 @@
 #include <thread>
 #include <condition_variable>
 
+#include "ClientPacketFactory.hpp"
 #include "EntitiesFactory.hpp"
 #include "NetClient.hpp"
 
@@ -28,7 +29,7 @@ namespace Thread
          * @brief Constructor for ClientRuntime.
          * @param client Shared pointer to the network client.
          */
-        explicit ClientRuntime(const std::shared_ptr<Network::NetClient> &client);
+        explicit ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
 
         /**
          * @brief Destructor for ClientRuntime.
@@ -51,8 +52,9 @@ namespace Thread
         void wait();
 
       private:
-        std::shared_ptr<Network::NetClient> _client;            ///> Network client
-        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory; ///> Entities factory
+        std::shared_ptr<Network::INetClient> _client;                 ///> Network client
+        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory;       ///> Entities factory
+        std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updateThread;   ///> Thread for updating game state

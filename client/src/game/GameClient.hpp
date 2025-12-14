@@ -88,7 +88,7 @@ namespace Game
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
-        std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
+        std::shared_ptr<Network::NetClient> _netClient = nullptr;                      ///> The network client
         std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
         std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene

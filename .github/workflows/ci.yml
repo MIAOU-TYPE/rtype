@@ -15,10 +15,10 @@ on:
 env:
   MIRROR_REPO_URL: "git@github.com:EpitechPGE3-2025/G-CPP-500-NAN-5-2-rtype-8.git"
 
-# =============================
-# Detect Changes
-# =============================
 jobs:
+  # =============================
+  # Detect Changes
+  # =============================
   check-changes:
     runs-on: ubuntu-latest
     permissions:
@@ -29,8 +29,10 @@ jobs:
       client: ${{ steps.filter.outputs.client }}
       ci: ${{ steps.filter.outputs.ci }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Filter paths
+        uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
@@ -41,6 +43,7 @@ jobs:
             ci:
               - '.github/workflows/**'
               - 'scripts/**'
+              - 'Dockerfile'
               - '.clang-format'
               - '.clang-tidy'
 
@@ -79,6 +82,27 @@ jobs:
           fi
 
   # =============================
+  # Quick Check Repository
+  # =============================
+  check-repository:
+    runs-on: ubuntu-latest
+    outputs:
+      same_repository: ${{ steps.check_repo.outputs.same_repository }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Is this the mirror repository?
+        id: check_repo
+        run: |
+          if [ "${{ github.event.repository.ssh_url }}" = "${{ env.MIRROR_REPO_URL }}" ]; then
+            echo "::warning::Repository is the same as the mirror repository."
+            echo "same_repository=true" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::Repository is different from the mirror repository."
+            echo "same_repository=false" >> $GITHUB_OUTPUT
+          fi
+
+  # =============================
   # Server Linux
   # =============================
   build-server-linux:
@@ -86,26 +110,36 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.server == 'true'
     steps:
-      - uses: actions/checkout@v4
-      - run: |
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install deps
+        run: |
           sudo apt-get update
           sudo apt-get install -y build-essential ninja-build git
-      - uses: actions/cache@v3
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
         with:
           path: |
             vcpkg
             vcpkg_installed
             build/_deps
           key: vcpkg-linux
-      - run: |
+      - name:  Setup vcpkg
+        run: |
           [ -d vcpkg ] || git clone https://github.com/microsoft/vcpkg.git
           ./vcpkg/bootstrap-vcpkg.sh
+      - name: Build Server
+        run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -DBUILD_SERVER_ONLY=ON -DBUILD_TESTING=ON
-          cmake --build build
-          ctest --test-dir build --output-on-failure
-      - uses: actions/upload-artifact@v4
+          cmake --build build --parallel
+      - name: Run Tests
+        run: |
+          ctest --test-dir build -V
+      - name: Upload Server Artifact (if exists)
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: r-type_server-linux
           path: build/**/r-type_server

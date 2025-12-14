@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <variant>
+#include <vector>
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
@@ -14,10 +16,9 @@
 #include "EntityDestroyData.hpp"
 #include "InputData.hpp"
 #include "NetWrapper.hpp"
+#include "SnapEntityData.hpp"
 #include "TypesData.hpp"
 #include "UDPPacket.hpp"
-#include <vector>
-#include <variant>
 
 namespace Network
 {
@@ -25,12 +26,7 @@ namespace Network
      * @using PacketData
      * @brief Variant type representing all possible packet data structures.
      */
-    using PacketData = std::variant<
-        DefaultData,
-        EntityCreateData,
-        EntityDestroyData,
-        DamageData
-    >;
+    using PacketData = std::variant<DefaultData, EntityCreateData, EntityDestroyData, DamageData, SnapshotEntityData>;
 
     /**
      * @class NetClientError
@@ -143,14 +139,14 @@ namespace Network
         std::vector<PacketData> getAndClearPacketData();
 
       private:
-        std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr;  ///> Network wrapper
-        socketHandle _socket = kInvalidSocket;                   ///> UDP socket
-        sockaddr_in _serverAddr = {};                            ///> Server address
-        bool _isConnected = false;                               ///> Connection status
-        uint32_t _playerEntityId = 0;                            ///> Player entity ID
-        float _pingTimer = 0.0f;                                 ///> Ping timer
-        static constexpr float PING_INTERVAL = 5.0f;             ///> Ping interval in seconds
-        std::vector<PacketData> _packetDataList;                 ///> List of pending packet data
+        std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr; ///> Network wrapper
+        socketHandle _socket = kInvalidSocket;                  ///> UDP socket
+        sockaddr_in _serverAddr = {};                           ///> Server address
+        bool _isConnected = false;                              ///> Connection status
+        uint32_t _playerEntityId = 0;                           ///> Player entity ID
+        float _pingTimer = 0.0f;                                ///> Ping timer
+        static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
+        std::vector<PacketData> _packetDataList;                ///> List of pending packet data
         float _lastPingTime = 0.0f;                             ///> Timestamp when last ping was sent
         float _latency = 0.0f;                                  ///> Current latency in seconds
         bool _waitingForPong = false;                           ///> Flag to track if waiting for pong response
@@ -160,4 +156,4 @@ namespace Network
         static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
     };
 
-} // namespace Game
+} // namespace Network

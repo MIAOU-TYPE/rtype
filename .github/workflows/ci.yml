@@ -48,6 +48,26 @@ jobs:
               - 'Dockerfile'
               - '.clang-format'
               - '.clang-tidy'
+  # -----------------------------
+  # Quick Check Repository
+  # -----------------------------
+  check-repository:
+    runs-on: ubuntu-latest
+    outputs:
+      same_repository: ${{ steps.check_repo.outputs.same_repository }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Is this the mirror repository?
+        id: check_repo
+        run: |
+          if [ "${{ github.event.repository.ssh_url }}" = "${{ env.MIRROR_REPO_URL }}" ]; then
+            echo "::warning::Repository is the same as the mirror repository."
+            echo "same_repository=true" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::Repository is different from the mirror repository."
+            echo "same_repository=false" >> $GITHUB_OUTPUT
+          fi
 
   # -----------------------------
   # Linter
@@ -81,27 +101,6 @@ jobs:
           else
             echo "ERROR: No linter script found."
             exit 1
-          fi
-
-  # -----------------------------
-  # Quick Check Repository
-  # -----------------------------
-  check-repository:
-    runs-on: ubuntu-latest
-    outputs:
-      same_repository: ${{ steps.check_repo.outputs.same_repository }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Is this the mirror repository?
-        id: check_repo
-        run: |
-          if [ "${{ github.event.repository.ssh_url }}" = "${{ env.MIRROR_REPO_URL }}" ]; then
-            echo "::warning::Repository is the same as the mirror repository."
-            echo "same_repository=true" >> $GITHUB_OUTPUT
-          else
-            echo "::notice::Repository is different from the mirror repository."
-            echo "same_repository=false" >> $GITHUB_OUTPUT
           fi
 
   # -----------------------------

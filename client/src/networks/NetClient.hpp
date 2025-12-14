@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <variant>
 #include <vector>
 #include "DamageData.hpp"
@@ -147,6 +148,7 @@ namespace Network
         float _pingTimer = 0.0f;                                ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
         std::vector<PacketData> _packetDataList;                ///> List of pending packet data
+        std::mutex _packetDataMutex;                            ///> Mutex to protect _packetDataList access
         float _lastPingTime = 0.0f;                             ///> Timestamp when last ping was sent
         float _latency = 0.0f;                                  ///> Current latency in seconds
         bool _waitingForPong = false;                           ///> Flag to track if waiting for pong response

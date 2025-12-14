@@ -1,159 +1,145 @@
-# R-Type
+# R-Type (Networked Shoot'em Up)
 
-A multiplayer shoot ’em up game implemented in modern **C++20**, inspired by the classic R-Type arcade game.
+R-Type is a C++20 multiplayer shoot’em up inspired by the classic R-Type, built as an EPITECH Advanced C++ project.
 
-## Overview
+It ships:
+- **`r-type_server`**: a **multi-threaded authoritative** UDP server (game rules run on the server).
+- **`r-type_client`**: a **graphical SFML** client (rendering + input).
 
-The game is split into two main binaries:
+## Features
 
-- **Server** (`r-type_server`)
-- **Client** (`r-type_client`)
+- Authoritative server architecture (server decides the “truth”).
+- UDP binary protocol (versioned header + typed packets).
+- Server runtime split into dedicated threads (I/O, processing, tick/update, snapshots).
+- ECS-based game logic (server-side) and modular shared libraries.
+- Client with SFML rendering, menu scene, and a scrolling starfield.
 
-Both are built using **CMake**, and all external dependencies (SFML, GTest, etc.) are managed using **vcpkg**, making the project fully self-contained and easy to build on any platform.
+## Requirements
 
----
-
-## Project Structure
-
-```
-client/      # Game client (SFML renderer, input, networking)
-server/      # Headless game server (UDP networking, ECS engine)
-docs/        # Documentation (technical docs, guides…)
-scripts/     # Tools (lint, formatting, CI helpers)
-vcpkg.json   # Dependency manifest (SFML, GTest, etc.)
-CMakeLists.txt
-````
-
-See the detailed description here:  
-📄 **[Directory Structure](docs/DIRECTORY_STRUCTURE.md)**
-
----
-
-## 🔧 Prerequisites
-
-### **All platforms**
-
+### Build tools
 - **CMake ≥ 3.20**
-- **C++20 compiler**
-  - Linux: GCC or Clang  
-  - macOS: AppleClang  
-  - Windows: MSVC (VS 2022 recommended)
+- A **C++20** compiler (GCC / Clang / MSVC)
 - **Git**
-- **vcpkg** (automatically handled by CMake — no manual install required)
+- **Python 3** (used at configure time to embed client assets)
 
-Optional:
-
-- `clang-format` if you want to run formatting scripts
-
----
-
-### ⚠️ **Linux prerequisites (Epitech Docker images)**
-
-On the *Epitech Docker (Epitest)* environment, some base packages are missing.  
-You **must** install the following system dependencies:
-
+### Linux system packages (recommended)
+On Debian/Ubuntu-like systems:
 ```bash
-apt-get update && apt-get install -y \
-    zip unzip tar curl git pkg-config build-essential
+sudo apt-get update
+sudo apt-get install -y \
+  build-essential cmake git ninja-build python3 \
+  zip unzip curl \
+  libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 ````
 
-These are required for:
+> Dependencies are handled through **vcpkg** (auto-fetched by CMake).
 
-* bootstrapping `vcpkg`
-* building SFML and its sub-dependencies
-* compiling CMake projects
+## Build
 
-This step is only required on minimal environments (like Epitest Docker images).
-
----
-
-## 🔄 Dependencies through vcpkg
-
-The project uses a **vcpkg manifest (`vcpkg.json`)**, which automatically installs:
-
-* `sfml` (graphics, windowing, audio)
-* `gtest` (unit testing)
-* other required transitive dependencies
-
-CMake automatically:
-
-1. Downloads vcpkg if missing
-2. Bootstraps it
-3. Installs all dependencies locally under `build/`
-
-No system-wide installation of SFML or GTest is needed.
-
----
-
-## 🛠️ Building the Project
-
-### **Linux / macOS**
+From the repository root:
 
 ```bash
-git clone <repository-url>
-cd rtype
-
-# Configure
-cmake -S . -B build
-
-# Build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 
-### **Windows (MSVC)**
+Binaries are generated in the repository root:
 
-```powershell
-git clone <repository-url>
-cd rtype
+* `./r-type_server`
+* `./r-type_client`
 
-cmake -S . -B build
+> Important: the networking plugin library is loaded from `build/` by default (dynamic loading expects `build/libNetPluginLib.so` on Linux).
 
-cmake --build build
+### Build only client or server
+
+```bash
+cmake -S . -B build -DBUILD_SERVER_ONLY=ON
+# or
+cmake -S . -B build -DBUILD_CLIENT_ONLY=ON
 ```
 
----
+## Run
 
-## ▶️ Running the Game
-
-### **Start the server**
+### 1) Start the server
 
 ```bash
 ./r-type_server
 ```
 
-Windows:
-
-```powershell
-./Debug/r-type_server
-```
-
----
-
-### **Start the client**
+### 2) Start one or more clients (in other terminals)
 
 ```bash
 ./r-type_client
 ```
 
-Windows:
+## Controls (client)
 
-```powershell
-./Debug/r-type_client
+Default mappings:
+
+* Move: **Arrow keys** or **Z Q S D**
+* Shoot: **Space** or **Left Ctrl**
+* Quit: **Escape**
+* Pause: **P**
+
+## Current network configuration
+
+The server port is configurable through command-line arguments.
+
+- **Server**: binds to `127.0.0.1:<port>` where `<port>` comes from the argument parser  
+
+Example:
+```bash
+./r-type_server --port 8080
+````
+
+To display all available options:
+
+```bash
+./r-type_server --help
 ```
 
-The client connects to the server using **UDP** for low-latency interactions.
+> Make sure the **client targets the same IP/port** as the server.
 
----
+## Tests
 
-## 📚 Documentation
+Configure with tests enabled:
 
-* 📁 [Directory Structure](docs/DIRECTORY_STRUCTURE.md)
-* ✏️ [Contributing Guidelines](docs/CONTRIBUTING.md)
-* 🧩 [UX & Accessibility Guidelines](docs/ux_accessibility_guidelines.md)
+```bash
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build -j
+ctest --test-dir build
+```
 
----
+## Project layout
 
-## 🤝 Contributing
+* `server/` — authoritative server, networking, runtime threads, ECS + systems
+* `client/` — SFML client (rendering, input, scenes, embedded assets)
+* `shared/` — reusable libraries (packets, protocol, buffers, dynamic loading, net wrapper)
 
-Contributions are welcome!
-Please follow the coding style enforced by `clang-format` and refer to the contributing guide before submitting a pull request.
+## Linting
+
+Utility scripts are available:
+
+* `scripts/lint-check.sh`
+* `scripts/lint-fix.sh`
+
+## Docker (Linux testing)
+
+A `Dockerfile` is provided for quick Linux builds:
+
+```bash
+docker build -t rtype .
+docker run -it --rm rtype
+```
+
+## License
+
+Educational project (no license file provided).
+
+## Project members
+- [Anna POGHOSYAN](https://github.com/ann7415)
+- [Evann BLOUTIN](https://github.com/EvannBloutin)
+- [Jules FAYET](https://github.com/julesfayet)
+- [Santiago PIDCOVA](https://github.com/santiagopidji)
+- [Robin SCHUFFENECKER](https://github.com/rosh7887epitech)
+- [Romain BERARD](https://github.com/romain1717)

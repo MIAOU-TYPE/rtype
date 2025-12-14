@@ -317,7 +317,7 @@ jobs:
       needs.check-repository.outputs.same_repository == 'false' &&
       needs.linter.result == 'success' &&
       (
-        needs.build-server-linux.result == 'success' || build-server-windows.result == 'success' ||
+        needs.build-server-linux.result == 'success' || needs.build-server-windows.result == 'success' ||
         needs.build-client.result == 'success'
       )
 

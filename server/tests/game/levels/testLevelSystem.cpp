@@ -1,0 +1,101 @@
+/*
+** EPITECH PROJECT, 2025
+** R-Type
+** File description:
+** testLevelSystem
+*/
+
+#include <gtest/gtest.h>
+#include "MockWorld.hpp"
+#include "LevelSystem.hpp"
+#include "LevelManager.hpp"
+
+TEST(LevelSystem, SpawnOneWave)
+{
+    MockWorld world;
+    Game::LevelManager mgr;
+
+    const std::string json = R"(
+    {
+      "name": "L1",
+      "duration": 20,
+      "ennemies": {
+        "small": {
+            "hp": 10, "speed": -100,
+            "size": { "w": 8, "h": 8 },
+            "sprite": "enemy.png"
+        }
+      },
+      "waves": [
+        { "time": 0.5, "enemies": { "small": 2 } }
+      ]
+    })";
+
+    ASSERT_TRUE(mgr.loadFromMemory(json));
+
+    EXPECT_EQ(world.registry().getComponents<Ecs::Position>().size(), 0);
+
+    Game::LevelSystem::update(world, mgr, 0.3f);
+    Game::LevelSystem::update(world, mgr, 0.3f);
+
+    auto &posArr = world.registry().getComponents<Ecs::Position>();
+    auto &healthArr = world.registry().getComponents<Ecs::Health>();
+
+    int spawnedCount = 0;
+    for (size_t i = 0; i < posArr.size(); ++i)
+    {
+        if (posArr[i].has_value())
+            spawnedCount++;
+    }
+
+    EXPECT_EQ(spawnedCount, 2);
+
+    for (size_t i = 0; i < posArr.size(); ++i)
+    {
+        if (!posArr[i].has_value())
+            continue;
+
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Velocity>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Collision>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Health>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::AIBrain>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Damageable>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Attack>(Ecs::Entity(i)));
+        EXPECT_TRUE(world.registry().hasComponent<Ecs::Drawable>(Ecs::Entity(i)));
+    }
+}
+
+TEST(LevelSystem, WaveTriggersOnlyOnce)
+{
+    MockWorld world;
+    Game::LevelManager mgr;
+
+    const std::string json = R"(
+    {
+      "name": "L1",
+      "duration": 20,
+      "ennemies": {
+        "small": { "hp": 5, "speed": -100, "size": { "w": 5, "h": 5 }, "sprite": "" }
+      },
+      "waves": [
+        { "time": 1, "enemies": { "small": 1 } }
+      ]
+    })";
+
+    ASSERT_TRUE(mgr.loadFromMemory(json));
+
+    Game::LevelSystem::update(world, mgr, 1.2f);
+
+    int firstSpawnCount = 0;
+    auto &pos = world.registry().getComponents<Ecs::Position>();
+    for (size_t i = 0; i < pos.size(); ++i)
+        if (pos[i].has_value()) firstSpawnCount++;
+
+    Game::LevelSystem::update(world, mgr, 5.f);
+
+    int secondSpawnCount = 0;
+    for (size_t i = 0; i < pos.size(); ++i)
+        if (pos[i].has_value()) secondSpawnCount++;
+
+    EXPECT_EQ(firstSpawnCount, secondSpawnCount);
+}

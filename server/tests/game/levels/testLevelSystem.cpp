@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "MockWorld.hpp"
-#include "LevelSystem.hpp"
 #include "LevelManager.hpp"
+#include "LevelSystem.hpp"
+#include "MockWorld.hpp"
 
 TEST(LevelSystem, SpawnOneWave)
 {
@@ -42,16 +42,14 @@ TEST(LevelSystem, SpawnOneWave)
     auto &healthArr = world.registry().getComponents<Ecs::Health>();
 
     int spawnedCount = 0;
-    for (size_t i = 0; i < posArr.size(); ++i)
-    {
+    for (size_t i = 0; i < posArr.size(); ++i) {
         if (posArr[i].has_value())
             spawnedCount++;
     }
 
     EXPECT_EQ(spawnedCount, 2);
 
-    for (size_t i = 0; i < posArr.size(); ++i)
-    {
+    for (size_t i = 0; i < posArr.size(); ++i) {
         if (!posArr[i].has_value())
             continue;
 
@@ -89,13 +87,15 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
     int firstSpawnCount = 0;
     auto &pos = world.registry().getComponents<Ecs::Position>();
     for (size_t i = 0; i < pos.size(); ++i)
-        if (pos[i].has_value()) firstSpawnCount++;
+        if (pos[i].has_value())
+            firstSpawnCount++;
 
     Game::LevelSystem::update(world, mgr, 5.f);
 
     int secondSpawnCount = 0;
     for (size_t i = 0; i < pos.size(); ++i)
-        if (pos[i].has_value()) secondSpawnCount++;
+        if (pos[i].has_value())
+            secondSpawnCount++;
 
     EXPECT_EQ(firstSpawnCount, secondSpawnCount);
 }

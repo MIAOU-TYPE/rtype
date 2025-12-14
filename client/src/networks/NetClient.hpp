@@ -10,24 +10,13 @@
 #include <mutex>
 #include <variant>
 #include <vector>
-#include "DamageData.hpp"
-#include "DefaultData.hpp"
-#include "Endian.hpp"
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
-#include "InputData.hpp"
+#include "ANetClient.hpp"
 #include "NetWrapper.hpp"
-#include "SnapEntityData.hpp"
-#include "TypesData.hpp"
+#include "RingBuffer.hpp"
 #include "UDPPacket.hpp"
 
 namespace Network
 {
-    /**
-     * @using PacketData
-     * @brief Variant type representing all possible packet data structures.
-     */
-    using PacketData = std::variant<DefaultData, EntityCreateData, EntityDestroyData, DamageData, SnapshotEntityData>;
 
     /**
      * @class NetClientError
@@ -61,7 +50,7 @@ namespace Network
      * @class NetClient
      * @brief Network client for handling UDP communication with the server.
      */
-    class NetClient {
+    class NetClient : public ANetClient {
       public:
         /**
          * @brief Constructor for NetClient.
@@ -74,87 +63,28 @@ namespace Network
          * @brief Destructor for NetClient.
          * Closes the network connection and cleans up resources.
          */
-        ~NetClient();
-
-        /**
-         * @brief Sends a connect packet to the server.
-         */
-        void sendConnectPacket();
-
-        /**
-         * @brief Sends an input packet to the server.
-         * @param dx The change in x position.
-         * @param dy The change in y position.
-         * @param shooting Whether the player is shooting.
-         */
-        void sendInputPacket(int8_t dx, int8_t dy, bool shooting);
+        ~NetClient() override;
 
         /**
          * @brief Receives packets from the server.
          */
-        void receivePackets();
-
-        /**
-         * @brief Handles a received UDP packet.
-         * @param packet The received UDP packet.
-         */
-        void handlePacket(const Net::UDPPacket &packet);
-
-        /**
-         * @brief Sends a disconnect packet to the server.
-         */
-        void sendDisconnectPacket();
-
-        /**
-         * @brief Sends a ping packet to the server.
-         */
-        void sendPingPacket();
-
-        /**
-         * @brief Updates the ping timer and sends ping packets as needed.
-         * @param deltaTime The time elapsed since the last update.
-         */
-        void updatePing(float deltaTime);
-
-        /**
-         * @brief Gets the current measured latency.
-         * @return The latency in seconds.
-         */
-        float getLatency() const;
-
-        /**
-         * @brief Checks if the client is connected to the server.
-         * @return True if connected, false otherwise.
-         */
-        bool isConnected() const;
+        void receivePackets() override;
 
         /**
          * @brief Closes the network client connection.
          */
-        void close();
+        void close() override;
 
-        /**
-         * @brief Gets the list of pending packet data and clears the internal list.
-         * @return A vector of packet data received since the last call.
-         */
-        std::vector<PacketData> getAndClearPacketData();
+        void start() override;
+
+        bool sendPacket(const Net::IPacket &pkt) override;
+
+        bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
 
       private:
-        std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr; ///> Network wrapper
-        socketHandle _socket = kInvalidSocket;                  ///> UDP socket
-        sockaddr_in _serverAddr = {};                           ///> Server address
-        bool _isConnected = false;                              ///> Connection status
-        uint32_t _playerEntityId = 0;                           ///> Player entity ID
-        float _pingTimer = 0.0f;                                ///> Ping timer
-        static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
-        std::vector<PacketData> _packetDataList;                ///> List of pending packet data
-        std::mutex _packetDataMutex;                            ///> Mutex to protect _packetDataList access
-        float _lastPingTime = 0.0f;                             ///> Timestamp when last ping was sent
-        float _latency = 0.0f;                                  ///> Current latency in seconds
-        bool _waitingForPong = false;                           ///> Flag to track if waiting for pong response
-        uint8_t _missedPongCount = 0;                           ///> Counter for consecutive missed pongs
-        static constexpr float PONG_TIMEOUT = 10.0f;   ///> Timeout to consider a pong as missed (2x ping interval)
-        static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
+        Net::NetWrapper _netWrapper; ///> Network wrapper
+        std::mutex _packetDataMutex; ///> Mutex for synchronizing access to packet data
+        Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _ringBuffer; ///> Ring buffer to store received packets
     };
 
 } // namespace Network

@@ -29,8 +29,8 @@ namespace Ecs
     void EntitiesFactory::dispatchPacket(
         const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
     {
-        (void)payload;
-        (void)payloadSize;
+        (void) payload;
+        (void) payloadSize;
 
         switch (header.type) {
             case Net::Protocol::ACCEPT: handleAccept(); break;
@@ -41,13 +41,13 @@ namespace Ecs
             case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(payload, payloadSize); break;
             case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             default:
-                std::cerr << "{EntitiesFactory::dispatchPacket} Unknown packet type: "
-                          << static_cast<int>(header.type) << '\n';
+                std::cerr << "{EntitiesFactory::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
+                          << '\n';
                 break;
         }
     }
 
-    bool isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
+    bool EntitiesFactory::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
         if (packet.size() < sizeof(HeaderData)) {
             std::cerr << "{EntitiesFactory::isHeaderValid} Dropped: packet too small\n";
@@ -56,13 +56,15 @@ namespace Ecs
 
         if (header.version != 1) {
             std::cerr << "{EntitiesFactory::isHeaderValid} Dropped: wrong protocol version "
-                      << static_cast<int>(header.version) << " (expected "
-                      << static_cast<int>(1) << ")" << std::endl;
+                      << static_cast<int>(header.version) << " (expected " << static_cast<int>(1) << ")" << std::endl;
             return false;
         }
 
-        if (const std::uint16_t declaredSize = ntohs(header.size); declaredSize != static_cast<std::uint16_t>(packet.size())) {
-            std::cerr << "{EntitiesFactory::isHeaderValid} Dropped: size mismatch (header=" + std::to_string(declaredSize) + ", actual=" + std::to_string(static_cast<std::uint16_t>(packet.size())) + ")\n";
+        if (const std::uint16_t declaredSize = ntohs(header.size);
+            declaredSize != static_cast<std::uint16_t>(packet.size())) {
+            std::cerr << "{EntitiesFactory::isHeaderValid} Dropped: size mismatch (header="
+                    + std::to_string(declaredSize)
+                    + ", actual=" + std::to_string(static_cast<std::uint16_t>(packet.size())) + ")\n";
             return false;
         }
 

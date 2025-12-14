@@ -7,10 +7,9 @@
 
 #pragma once
 
-#include <memory>
 #include <cstring>
 #include <iostream>
-
+#include <memory>
 
 #include "DefaultData.hpp"
 #include "EntityCreateData.hpp"

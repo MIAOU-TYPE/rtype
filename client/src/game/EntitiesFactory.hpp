@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include "Health.hpp"
-#include "Velocity.hpp"
-#include "Damage.hpp"
 #include "Controllable.hpp"
+#include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Direction.hpp"
+#include "Health.hpp"
+#include "IEntitiesFactory.hpp"
 #include "Position.hpp"
 #include "Renderable.hpp"
-#include "IEntitiesFactory.hpp"
+#include "Velocity.hpp"
 
 namespace Ecs
 {

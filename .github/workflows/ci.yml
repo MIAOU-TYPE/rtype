@@ -214,13 +214,21 @@ jobs:
       - name: Run server tests
         run: ctest --test-dir build -C Release -V
 
+      - name: Locate server binary
+        id: find_server
+        run: |
+          $exe = Get-ChildItem -Path build -Recurse -Filter r-type_server.exe | Select-Object -First 1
+          if (-not $exe) {
+            Write-Error "r-type_server.exe not found"
+            exit 1
+          }
+          echo "SERVER_EXE=$($exe.FullName)" >> $env:GITHUB_ENV
+
       - name: Upload Server Artifact (if exists)
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: r-type_server-Windows
-          path: build/r-type_server.exe
-          if-no-files-found: ignore
+          path: ${{ env.SERVER_EXE }}
 
   # -----------------------------
   # Build and Test (client)

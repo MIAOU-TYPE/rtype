@@ -216,12 +216,20 @@ jobs:
 
       - name: Locate server binary
         id: find_server
+        shell: pwsh
         run: |
-          $exe = Get-ChildItem -Path build -Recurse -Filter r-type_server.exe | Select-Object -First 1
+          Write-Host "Searching for r-type_server executable in workspace..."
+
+          $exe = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter *.exe |
+                 Where-Object { $_.Name -match "^r-type_server.*\.exe$" } |
+                 Select-Object -First 1
+
           if (-not $exe) {
-            Write-Error "r-type_server.exe not found"
+            Write-Error "r-type_server executable not found in workspace"
             exit 1
           }
+
+          Write-Host "Found server executable: $($exe.FullName)"
           echo "SERVER_EXE=$($exe.FullName)" >> $env:GITHUB_ENV
 
       - name: Upload Server Artifact (if exists)

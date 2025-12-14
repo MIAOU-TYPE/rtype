@@ -25,7 +25,7 @@ project(R-Type LANGUAGES C CXX)
 # =============================================
 # GLOBAL OUTPUT DIRECTORIES
 # =============================================
-set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/)
+set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})

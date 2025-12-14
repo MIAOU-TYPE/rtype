@@ -8,10 +8,7 @@
 #include <exception>
 #include <iostream>
 #include "ClientRuntime.hpp"
-#include "GameClient.hpp"
 #include "NetClient.hpp"
-
-using namespace Game;
 
 int main()
 {

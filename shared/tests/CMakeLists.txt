@@ -70,3 +70,12 @@ add_library(testlib SHARED libs/testlib.cpp)
 set_target_properties(testlib PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
+add_dependencies(${PROJECT_NAME} NetPluginLib)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:NetPluginLib>
+        $<TARGET_FILE:testlib>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)

@@ -12,14 +12,26 @@
 #include "Endian.hpp"
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
-#include "IEntitiesFactory.hpp"
 #include "InputData.hpp"
 #include "NetWrapper.hpp"
 #include "TypesData.hpp"
 #include "UDPPacket.hpp"
+#include <vector>
+#include <variant>
 
-namespace Game
+namespace Network
 {
+    /**
+     * @using PacketData
+     * @brief Variant type representing all possible packet data structures.
+     */
+    using PacketData = std::variant<
+        DefaultData,
+        EntityCreateData,
+        EntityDestroyData,
+        DamageData
+    >;
+
     /**
      * @class NetClientError
      * @brief Exception class for network client-related errors.
@@ -59,7 +71,7 @@ namespace Game
          * Initializes the network wrapper, creates a UDP socket, and sets up the server address.
          * @throws NetClientError if socket creation fails.
          */
-        NetClient(std::shared_ptr<Ecs::IEntitiesFactory> entitiesFactory);
+        NetClient();
 
         /**
          * @brief Destructor for NetClient.
@@ -112,6 +124,12 @@ namespace Game
          */
         void close();
 
+        /**
+         * @brief Gets the list of pending packet data and clears the internal list.
+         * @return A vector of packet data received since the last call.
+         */
+        std::vector<PacketData> getAndClearPacketData();
+
       private:
         std::unique_ptr<Net::NetWrapper> _netWrapper = nullptr;  ///> Network wrapper
         socketHandle _socket = kInvalidSocket;                   ///> UDP socket
@@ -120,7 +138,7 @@ namespace Game
         uint32_t _playerEntityId = 0;                            ///> Player entity ID
         float _pingTimer = 0.0f;                                 ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;             ///> Ping interval in seconds
-        std::shared_ptr<Ecs::IEntitiesFactory> _entitiesFactory; ///> Entities factory
+        std::vector<PacketData> _packetDataList;                 ///> List of pending packet data
     };
 
 } // namespace Game

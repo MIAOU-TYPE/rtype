@@ -7,10 +7,10 @@
 
 #include "NetClient.hpp"
 
-namespace Game
+namespace Network
 {
 
-    NetClient::NetClient(std::shared_ptr<Ecs::IEntitiesFactory> entitiesFactory) : _entitiesFactory(entitiesFactory)
+    NetClient::NetClient() 
     {
 #ifdef _WIN32
         WSADATA wsa;
@@ -28,7 +28,7 @@ namespace Game
             throw NetClientError("Failed to create UDP socket");
         }
         _serverAddr.sin_family = AF_INET;
-        _serverAddr.sin_port = htons(4242);
+        _serverAddr.sin_port = htons(8080);
         inet_pton(AF_INET, "127.0.0.1", &_serverAddr.sin_addr);
         sendConnectPacket();
     }
@@ -91,11 +91,17 @@ namespace Game
                 _isConnected = true;
                 const uint32_t *entityId = reinterpret_cast<const uint32_t *>(packet.buffer() + sizeof(HeaderData));
                 _playerEntityId = *entityId;
+                DefaultData acceptData;
+                acceptData.header = *header;
+                _packetDataList.push_back(acceptData);
                 break;
             }
 
             case Net::Protocol::REJECT: {
                 _isConnected = false;
+                DefaultData rejectData;
+                rejectData.header = *header;
+                _packetDataList.push_back(rejectData);
                 break;
             }
 
@@ -105,37 +111,33 @@ namespace Game
 
             case Net::Protocol::ENTITY_CREATE: {
                 EntityCreateData const *data = reinterpret_cast<EntityCreateData const *>(packet.buffer());
-
-                u_int64_t id = be64toh(data->id);
-                float x = ntohf(data->x);
-                float y = ntohf(data->y);
-                uint16_t sprite = ntohs(data->sprite);
-                _entitiesFactory->createEntityFromServer(id, x, y, sprite);
+                _packetDataList.push_back(*data);
                 break;
             }
 
             case Net::Protocol::ENTITY_DESTROY: {
                 EntityDestroyData const *data = reinterpret_cast<EntityDestroyData const *>(packet.buffer());
-
-                u_int64_t id = be64toh(data->id);
-                _entitiesFactory->destroyEntityFromServer(id);
+                _packetDataList.push_back(*data);
                 break;
             }
 
             case Net::Protocol::PONG: {
+                DefaultData pongData;
+                pongData.header = *header;
+                _packetDataList.push_back(pongData);
                 break;
             }
 
             case Net::Protocol::DAMAGE_EVENT: {
                 DamageData const *data = reinterpret_cast<DamageData const *>(packet.buffer());
-
-                uint32_t id = ntohl(data->id);
-                uint16_t amount = ntohs(data->amount);
-                _entitiesFactory->updateEntityDamage(id, amount);
+                _packetDataList.push_back(*data);
                 break;
             }
 
             case Net::Protocol::GAME_OVER: {
+                DefaultData gameOverData;
+                gameOverData.header = *header;
+                _packetDataList.push_back(gameOverData);
                 break;
             }
 
@@ -194,6 +196,13 @@ namespace Game
 #ifdef _WIN32
         WSACleanup();
 #endif
+    }
+
+    std::vector<PacketData> NetClient::getAndClearPacketData()
+    {
+        std::vector<PacketData> data = std::move(_packetDataList);
+        _packetDataList.clear();
+        return data;
     }
 
 } // namespace Game

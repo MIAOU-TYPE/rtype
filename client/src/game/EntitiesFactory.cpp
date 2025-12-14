@@ -9,7 +9,12 @@
 
 namespace Ecs
 {
-    EntitiesFactory::EntitiesFactory(std::vector<Network::PacketData> &data, Registry &registry) : _registry(registry)
+    EntitiesFactory::EntitiesFactory()
     {
+    }
+
+    void EntitiesFactory::parseData(const std::vector<Network::PacketData> &data)
+    {
+        // Implementation for parsing data and creating entities goes here
     }
 } // namespace Ecs

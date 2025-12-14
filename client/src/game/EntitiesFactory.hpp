@@ -25,9 +25,11 @@ namespace Ecs
      */
     class EntitiesFactory {
       public:
-        EntitiesFactory(std::vector<Network::PacketData> &data);
+        EntitiesFactory();
 
         ~EntitiesFactory() = default;
+
+        void parseData(const std::vector<Network::PacketData> &data);
 
       private:
     };

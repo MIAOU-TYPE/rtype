@@ -159,13 +159,19 @@ jobs:
 
       - name: Prepare server artifact
         run: |
-          echo "Searching for r-type_server in build..."
-          BIN="$(find . -type f -name 'r-type_server' -executable | head -n 1)"
+          echo "Searching for r-type_server..."
+          BIN=""
+          if [ -x ./r-type_server ]; then
+            BIN="./r-type_server"
+          else
+            BIN="$(find build -maxdepth 6 -type f -name 'r-type_server' -executable | head -n 1)"
+          fi
+
           if [ -z "$BIN" ]; then
-            echo "ERROR: r-type_server not found. Listing executables in build:"
-            find build -type f -executable -maxdepth 6 -print
+            echo "ERROR: r-type_server not found."
             exit 1
           fi
+
           mkdir -p dist
           cp "$BIN" dist/r-type_server-linux
 
@@ -306,13 +312,19 @@ jobs:
 
       - name: Prepare client artifact
         run: |
-          echo "Searching for r-type_client in build..."
-          BIN="$(find . -type f -name 'r-type_client' -executable | head -n 1)"
+          echo "Searching for r-type_client..."
+          BIN=""
+          if [ -x ./r-type_client ]; then
+            BIN="./r-type_client"
+          else
+            BIN="$(find build -maxdepth 6 -type f -name 'r-type_client' -executable | head -n 1)"
+          fi
+
           if [ -z "$BIN" ]; then
-            echo "ERROR: r-type_client not found. Listing executables in build:"
-            find build -type f -executable -maxdepth 6 -print
+            echo "ERROR: r-type_client not found."
             exit 1
           fi
+
           mkdir -p dist
           cp "$BIN" dist/r-type_client-linux
 
@@ -396,7 +408,6 @@ jobs:
           path: dist/r-type_client-windows.exe
           if-no-files-found: ignore
 
-
   # -----------------------------
   # Semantic Release
   # -----------------------------
@@ -417,7 +428,7 @@ jobs:
       (
         needs.build-server-linux.result == 'success' ||
         needs.build-server-windows.result == 'success' ||
-        needs.build-client-linux.result == 'success' || 
+        needs.build-client-linux.result == 'success' ||
         needs.build-client-windows.result == 'success'
       )
 

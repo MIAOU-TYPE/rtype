@@ -61,7 +61,7 @@ namespace Display
 
     class DisplayInit {
       public:
-      /** @brief Default constructor for DisplayInit. */
+        /** @brief Default constructor for DisplayInit. */
         DisplayInit();
 
         /**
@@ -69,7 +69,7 @@ namespace Display
          * @param renderer Shared pointer to the renderer interface.
          */
         explicit DisplayInit(std::shared_ptr<Graphics::IRenderer> renderer);
-        
+
         /** @brief Destructor for DisplayInit. */
         ~DisplayInit();
 

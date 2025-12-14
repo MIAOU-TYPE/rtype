@@ -39,7 +39,6 @@ void EventInit::run()
                 _renderer->close();
                 break;
             }
-
         }
     } catch (const std::exception &e) {
         throw EventInitError("Unexpected error during event processing: " + std::string(e.what()));

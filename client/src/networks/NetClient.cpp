@@ -125,6 +125,11 @@ namespace Network
                 DefaultData pongData;
                 pongData.header = *header;
                 _packetDataList.push_back(pongData);
+                if (_waitingForPong) {
+                    _latency = _pingTimer - _lastPingTime;
+                    _waitingForPong = false;
+                    _missedPongCount = 0;
+                }
                 break;
             }
 
@@ -178,10 +183,32 @@ namespace Network
             return;
 
         _pingTimer += deltaTime;
-        if (_pingTimer >= PING_INTERVAL) {
-            sendPingPacket();
-            _pingTimer -= PING_INTERVAL;
+
+        if (_waitingForPong && (_pingTimer - _lastPingTime) >= PONG_TIMEOUT) {
+            _missedPongCount++;
+            _waitingForPong = false;
+
+            if (_missedPongCount >= MAX_MISSED_PONGS) {
+                _isConnected = false;
+                return;
+            }
         }
+
+        if (_pingTimer - _lastPingTime >= PING_INTERVAL) {
+            _lastPingTime = _pingTimer;
+            _waitingForPong = true;
+            sendPingPacket();
+        }
+    }
+
+    float NetClient::getLatency() const
+    {
+        return _latency;
+    }
+
+    bool NetClient::isConnected() const
+    {
+        return _isConnected;
     }
 
     void NetClient::close()

@@ -120,6 +120,18 @@ namespace Network
         void updatePing(float deltaTime);
 
         /**
+         * @brief Gets the current measured latency.
+         * @return The latency in seconds.
+         */
+        float getLatency() const;
+
+        /**
+         * @brief Checks if the client is connected to the server.
+         * @return True if connected, false otherwise.
+         */
+        bool isConnected() const;
+
+        /**
          * @brief Closes the network client connection.
          */
         void close();
@@ -139,6 +151,8 @@ namespace Network
         float _pingTimer = 0.0f;                                 ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;             ///> Ping interval in seconds
         std::vector<PacketData> _packetDataList;                 ///> List of pending packet data
+        static constexpr float PONG_TIMEOUT = 10.0f;   ///> Timeout to consider a pong as missed (2x ping interval)
+        static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
     };
 
 } // namespace Game

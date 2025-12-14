@@ -48,5 +48,11 @@ namespace Game
          * @param ent The entity to destroy.
          */
         virtual void destroyEntity(Ecs::Entity ent) = 0;
+
+        /**
+         * @brief Copy the state from another IGameWorld instance.
+         * @param other The other IGameWorld to copy from.
+         */
+        virtual void copyFrom(IGameWorld &other) = 0;
     };
 } // namespace Game

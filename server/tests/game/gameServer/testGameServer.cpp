@@ -9,13 +9,15 @@
 #include "GameServer.hpp"
 #include "MockServer.hpp"
 #include "MockSessionManager.hpp"
+#include "UDPPacket.hpp"
 
 TEST(GameServer, creates_player_on_connect)
 {
     auto sessions = std::make_shared<MockSessionManager>();
     auto server = std::make_shared<MockServer>();
+    auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
 
-    Game::GameServer gs(sessions, server);
+    Game::GameServer gs(sessions, server, factory);
 
     gs.onPlayerConnect(42);
 
@@ -31,8 +33,8 @@ TEST(GameServer, destroys_player_on_disconnect)
 {
     auto sessions = std::make_shared<MockSessionManager>();
     auto server = std::make_shared<MockServer>();
-
-    Game::GameServer gs(sessions, server);
+    auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
+    Game::GameServer gs(sessions, server, factory);
 
     gs.onPlayerConnect(1);
     gs.onPlayerDisconnect(1);

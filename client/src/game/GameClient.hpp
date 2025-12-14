@@ -17,6 +17,7 @@
 #include "InputEvents.hpp"
 #include "MenuScene.hpp"
 #include "NetClient.hpp"
+#include "NetworkReceiveSystem.hpp"
 #include "SFMLInputHandler.hpp"
 #include "SFMLTextureManager.hpp"
 
@@ -100,6 +101,7 @@ namespace Game
         std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
         std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
         std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
+        std::unique_ptr<Ecs::NetworkReceiveSystem> _networkReceiveSystem = nullptr; ///> Network receive system
         Ecs::Entity _playerEntity{0};                                         ///> The player entity
         bool _connectionLost = false;                                         ///> Flag to track connection loss
     };

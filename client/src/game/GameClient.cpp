@@ -39,6 +39,8 @@ void GameClient::init(unsigned int width, unsigned int height)
             throw GameClientError("Failed to create network client instance");
         }
 
+        _networkReceiveSystem = std::make_unique<Ecs::NetworkReceiveSystem>(*_netClient, _networkCommandBuffer);
+
         _gameScene = std::make_shared<GameScene>(_renderer, _textureManager);
         _menuScene = std::make_shared<MenuScene>(_renderer, _textureManager);
 
@@ -108,6 +110,9 @@ void GameClient::run()
 
                 if (_netClient)
                     _netClient->updatePing(deltaTime);
+
+                if (_networkReceiveSystem)
+                    _networkReceiveSystem->update(deltaTime);
 
                 if (_currentScene == SceneState::Gameplay && _netClient && !_netClient->isConnected()
                     && !_connectionLost) {

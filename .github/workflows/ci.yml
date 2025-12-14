@@ -48,6 +48,7 @@ jobs:
               - 'Dockerfile'
               - '.clang-format'
               - '.clang-tidy'
+
   # -----------------------------
   # Quick Check Repository
   # -----------------------------
@@ -104,163 +105,249 @@ jobs:
           fi
 
   # -----------------------------
-  # Server Linux
+  # Build and Test (server)
+  # Produces artifacts: r-type_server-Linux
   # -----------------------------
   build-server-linux:
+    name: Build Server & Tests
     runs-on: ubuntu-latest
     needs: check-changes
-    if: needs.check-changes.outputs.server == 'true'
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      github.event_name == 'workflow_dispatch' ||
+      (needs.check-changes.result != 'failure' && needs.check-changes.outputs.server == 'true')
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ninja-build git
+          sudo apt-get install -y \
+            build-essential ninja-build curl zip unzip tar \
+            libx11-dev libxi-dev libxrandr-dev libxcursor-dev \
+            libudev-dev libgl1-mesa-dev libglu1-mesa-dev git
+
       - name: Restore vcpkg cache
         uses: actions/cache@v3
         with:
           path: |
             vcpkg
             vcpkg_installed
-            build/_deps
-          key: vcpkg-linux
-      - name:  Setup vcpkg
+            build/_deps/vcpkg-*
+          key: vcpkg-${{ runner.os }}-sfml3-gtest
+
+      - name: Setup vcpkg
         run: |
-          [ -d vcpkg ] || git clone https://github.com/microsoft/vcpkg.git
-          ./vcpkg/bootstrap-vcpkg.sh
-      - name: Build Server
+          if [ ! -d vcpkg ]; then
+            git clone https://github.com/microsoft/vcpkg.git
+            ./vcpkg/bootstrap-vcpkg.sh
+          fi
+
+      - name: Configure CMake (server)
         run: |
           cmake -S . -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_SERVER_ONLY=ON -DBUILD_TESTING=ON
-          cmake --build build --parallel
-      - name: Run Tests
-        run: |
-          ctest --test-dir build -V
+            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
+
+      - name: Build server and tests
+        run: cmake --build build -j$(nproc)
+
+      - name: Run server tests
+        run: ctest --test-dir build -C Debug -V
+
       - name: Upload Server Artifact (if exists)
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r-type_server-linux
-          path: build/**/r-type_server
+          name: r-type_server-${{ runner.os }}
+          path: r-type_server
+          if-no-files-found: ignore
 
   # -----------------------------
-  # Server Windows
-  # -----------------------------
-  build-server-windows:
-    runs-on: windows-latest
-    needs: check-changes
-    if: needs.check-changes.outputs.server == 'true'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
-      - run: choco install ninja -y
-      - uses: actions/cache@v3
-        with:
-          path: |
-            vcpkg
-            vcpkg_installed
-            build/_deps
-          key: vcpkg-windows
-      - shell: pwsh
-        run: |
-          if (!(Test-Path vcpkg)) { git clone https://github.com/microsoft/vcpkg.git }
-          .\vcpkg\bootstrap-vcpkg.bat
-          $toolchain="$env:GITHUB_WORKSPACE\vcpkg\scripts\buildsystems\vcpkg.cmake"
-          cmake -S . -B build -G Ninja `
-            -DCMAKE_TOOLCHAIN_FILE="$toolchain" `
-            -DBUILD_SERVER_ONLY=ON -DBUILD_TESTING=ON
-          cmake --build build
-          ctest --test-dir build --output-on-failure
-      - uses: actions/upload-artifact@v4
-        with:
-          name: r-type_server-windows
-          path: build/**/r-type_server.exe
-
-  # -----------------------------
-  # Client Linux
+  # Build and Test (client)
+  # Produces artifacts: client/r-type_client
   # -----------------------------
   build-client-linux:
+    name: Build & Test client
     runs-on: ubuntu-latest
     needs: check-changes
-    if: needs.check-changes.outputs.client == 'true'
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential ninja-build git
-      - uses: actions/cache@v3
-        with:
-          path: |
-            vcpkg
-            vcpkg_installed
-            build/_deps
-          key: vcpkg-linux
-      - run: |
-          [ -d vcpkg ] || git clone https://github.com/microsoft/vcpkg.git
-          ./vcpkg/bootstrap-vcpkg.sh
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DBUILD_CLIENT_ONLY=ON -DBUILD_TESTING=ON
-          cmake --build build
-          ctest --test-dir build --output-on-failure
-      - uses: actions/upload-artifact@v4
-        with:
-          name: r-type_client-linux
-          path: build/**/r-type_client
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      github.event_name == 'workflow_dispatch' ||
+      (needs.check-changes.result != 'failure' && needs.check-changes.outputs.client == 'true')
 
-  # -----------------------------
-  # Client Windows
-  # -----------------------------
-  build-client-windows:
-    runs-on: windows-latest
-    needs: check-changes
-    if: needs.check-changes.outputs.client == 'true'
     steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
-      - run: choco install ninja -y
-      - uses: actions/cache@v3
-        with:
-          path: |
-            vcpkg
-            vcpkg_installed
-            build/_deps
-          key: vcpkg-windows
-      - shell: pwsh
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install deps
         run: |
-          if (!(Test-Path vcpkg)) { git clone https://github.com/microsoft/vcpkg.git }
-          .\vcpkg\bootstrap-vcpkg.bat
-          $toolchain="$env:GITHUB_WORKSPACE\vcpkg\scripts\buildsystems\vcpkg.cmake"
-          cmake -S . -B build -G Ninja `
-            -DCMAKE_TOOLCHAIN_FILE="$toolchain" `
-            -DBUILD_CLIENT_ONLY=ON -DBUILD_TESTING=ON
-          cmake --build build
-          ctest --test-dir build --output-on-failure
-      - uses: actions/upload-artifact@v4
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential ninja-build curl zip unzip tar \
+            libx11-dev libxi-dev libxrandr-dev libxcursor-dev \
+            libudev-dev libgl1-mesa-dev libglu1-mesa-dev git
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
         with:
-          name: r-type_client-windows
-          path: build/**/r-type_client.exe
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/_deps/vcpkg-*
+          key: vcpkg-${{ runner.os }}-sfml3-gtest
+
+      - name: Setup vcpkg
+        run: |
+          if [ ! -d vcpkg ]; then
+            git clone https://github.com/microsoft/vcpkg.git
+            ./vcpkg/bootstrap-vcpkg.sh
+          fi
+
+      - name: Configure CMake (client)
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
+
+      - name: Build client and tests
+        run: cmake --build build -j$(nproc)
+
+      - name: Run client tests
+        run: ctest --test-dir build -C Debug -V
+
+      - name: Upload Client Artifact (if exists)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-type_client-${{ runner.os }}
+          path: r-type_client
+          if-no-files-found: ignore
 
   # -----------------------------
-  # Upload Release Assets
+  # Semantic Release
+  # -----------------------------
+  semantic-release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    needs: [check-repository, linter, build-server-linux, build-client-linux]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      needs.check-repository.outputs.same_repository == 'false' &&
+      needs.linter.result == 'success' &&
+      (
+        needs.build-server-linux.result == 'success' ||
+        needs.build-client-linux.result == 'success'
+      )
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install semantic-release
+        run: npm install -g semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github
+      - name: Run semantic-release
+        run: semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+
+  # -----------------------------
+  # Upload Binaries to Release
   # -----------------------------
   upload-release-assets:
+    name: Upload Release Assets
     runs-on: ubuntu-latest
-    needs:
-      - build-server-linux
-      - build-server-windows
-      - build-client-linux
-      - build-client-windows
+    permissions:
+      contents: write
+    needs: [build-server-linux, build-client-linux]
     if: startsWith(github.ref, 'refs/tags/v')
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download Server Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
-          path: artifacts
-      - run: |
-          echo "Artifacts:"
-          find artifacts -type f
-      - uses: softprops/action-gh-release@v1
+          name: r-type_server-${{ runner.os }}
+          path: ./artifacts/
+
+      - name: Download Client Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
-          files: artifacts/**
+          name: r-type_client-${{ runner.os }}
+          path: ./artifacts/
+
+      - name: Check downloaded artifacts
+        run: |
+          echo "Checking downloaded artifacts..."
+          ls -la ./artifacts/
+          find ./artifacts/ -type f
+          if [ ! -f ./artifacts/r-type_server ]; then
+            echo "Error: r-type_server artifact not found!";
+            exit 1
+          fi
+          if [ ! -f ./artifacts/r-type_client ]; then
+            echo "Error: r-type_client artifact not found!";
+            exit 1
+          fi
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./artifacts/r-type_server
+            ./artifacts/r-type_client
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # -----------------------------
+  # Push to Mirror Repository
+  # -----------------------------
+  push-to-mirror:
+    name: Push to Mirror Repository
+    runs-on: ubuntu-latest
+    needs: [check-repository, linter, build-server-linux, build-client-linux, semantic-release, upload-release-assets]
+    if: |
+      always() &&
+      needs.check-repository.outputs.same_repository == 'false' &&
+      needs.linter.result == 'success' &&
+      (
+        needs.semantic-release.result == 'success' ||
+        needs.semantic-release.result == 'skipped'
+      ) &&
+      (
+        needs.build-server-linux.result == 'success' ||
+        needs.build-server-linux.result == 'skipped'
+      ) &&
+      (
+        needs.build-client-linux.result == 'success' ||
+        needs.build-client-linux.result == 'skipped'
+      ) &&
+      (
+        needs.upload-release-assets.result == 'success' ||
+        needs.upload-release-assets.result == 'skipped'
+      )
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ env.MIRROR_REPO_URL }}
+          ssh_private_key: ${{ secrets.R_TYPE_SSH_KEY }}

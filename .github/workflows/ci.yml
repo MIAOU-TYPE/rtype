@@ -472,6 +472,12 @@ jobs:
           name: r-type_client-Linux
           path: ./artifacts/
 
+      - name: Download Client Artifact (Windows)
+        uses: actions/download-artifact@v4
+        with:
+          name: r-type_client-Windows
+          path: ./artifacts/
+
       - name: Check downloaded artifacts
         run: |
           echo "Checking downloaded artifacts..."
@@ -479,6 +485,7 @@ jobs:
           test -f ./artifacts/dist/r-type_server-linux
           test -f ./artifacts/dist/r-type_server-windows.exe
           test -f ./artifacts/dist/r-type_client-linux
+          test -f ./artifacts/dist/r-type_client-windows.exe
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
@@ -487,6 +494,7 @@ jobs:
             ./artifacts/dist/r-type_server-linux
             ./artifacts/dist/r-type_server-windows.exe
             ./artifacts/dist/r-type_client-linux
+            ./artifacts/dist/r-type_client-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

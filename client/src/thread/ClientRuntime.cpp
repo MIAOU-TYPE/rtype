@@ -12,8 +12,10 @@ namespace Thread
 
     ClientRuntime::ClientRuntime(const std::shared_ptr<Network::NetClient> &client) : _client(client)
     {
-        _display = std::make_shared<Display::DisplayInit>(800, 600);
-}
+        _renderer = std::make_shared<Graphics::SFMLRenderer>();
+        _display = std::make_shared<Display::DisplayInit>(_renderer);
+        _event = std::make_shared<Events::EventInit>(_renderer);
+    }
 
     ClientRuntime::~ClientRuntime()
     {
@@ -36,7 +38,8 @@ namespace Thread
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _displayThread = std::thread(&ClientRuntime::runDisplay, this);
-}
+        _eventThread = std::thread(&ClientRuntime::runEvent, this);
+    }
 
     void ClientRuntime::stop()
     {
@@ -49,6 +52,10 @@ namespace Thread
 
         if (_receiverThread.joinable())
             _receiverThread.join();
+        if (_displayThread.joinable())
+            _displayThread.join();
+        if (_eventThread.joinable())
+            _eventThread.join();
     }
 
     void ClientRuntime::runReceiver() const
@@ -58,9 +65,29 @@ namespace Thread
         }
     }
 
-void ClientRuntime::runDisplay() const
-{
-    while (_running) {
-        _display->run();
+    void ClientRuntime::runDisplay()
+    {
+        _display->init(800, 600);
+
+        _renderer->setActive(false);
+
+        while (_running && _display->isWindowOpen()) {
+            _renderer->setActive(true);
+            _display->run();
+            _renderer->setActive(false);
+        }
     }
+
+    void ClientRuntime::runEvent()
+    {
+        while (_running && !_event->isWindowOpen()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        while (_running && _event->isWindowOpen()) {
+            _event->run();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    }
+
 } // namespace Thread

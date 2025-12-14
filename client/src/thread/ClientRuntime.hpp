@@ -12,9 +12,15 @@
 #include <thread>
 #include <condition_variable>
 
+#include "../events/EventInit.hpp"
 #include "DisplayInit.hpp"
 #include "NetClient.hpp"
+#include "SFMLRenderer.hpp"
 
+/**
+ * @namespace Thread
+ * @brief Contains all threading-related classes for the client.
+ */
 namespace Thread
 {
 
@@ -29,20 +35,28 @@ namespace Thread
          * @param client Shared pointer to the network client.
          */
         explicit ClientRuntime(const std::shared_ptr<Network::NetClient> &client);
+
+        /**
+         * @brief Destructor for ClientRuntime.
+         * Cleans up resources and stops all threads.
+         */
         ~ClientRuntime();
 
         void start();
         void stop();
         void wait();
 
-            private:
+      private:
+        std::shared_ptr<Graphics::SFMLRenderer> _renderer; ///> Shared renderer
+
         std::shared_ptr<Network::NetClient> _client;    ///> Network client
         std::shared_ptr<Display::DisplayInit> _display; ///> Display manager
+        std::shared_ptr<Events::EventInit> _event;      ///> Event manager
 
         std::thread _receiverThread; ///> Thread for receiving packets
         // std::thread _updateThread;    ///> Thread for updating game state
         std::thread _displayThread; ///> Thread for displaying graphics
-        // std::thread _inputThread;     ///> Thread for handling user input
+        std::thread _eventThread;   ///> Thread for handling events
 
         std::mutex _mutex;                 ///> Mutex for synchronizing access
         std::condition_variable _cv;       ///> Condition variable for signaling
@@ -50,7 +64,8 @@ namespace Thread
         std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the server is running
 
         void runReceiver() const; ///> Method for running the receiver thread
-        void runDisplay() const;  ///> Method for running the display thread
+        void runDisplay();        ///> Method for running the display thread
+        void runEvent();          ///> Method for running the event thread
     };
 
 } // namespace Thread

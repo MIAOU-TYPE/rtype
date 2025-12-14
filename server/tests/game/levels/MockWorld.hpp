@@ -10,8 +10,11 @@
 #include "Registry.hpp"
 
 class MockWorld : public Game::IGameWorld {
-public:
+  public:
     Ecs::Registry reg;
 
-    Ecs::Registry &registry() override { return reg; }
+    Ecs::Registry &registry() override
+    {
+        return reg;
+    }
 };

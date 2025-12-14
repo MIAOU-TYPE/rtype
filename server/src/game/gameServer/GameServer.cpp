@@ -118,8 +118,7 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
                 auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                auto &inputOpt = inputArr[static_cast<size_t>(ent)];
-                if (inputOpt.has_value())
+                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
                     *inputOpt = cmd.input;
                 break;
             }

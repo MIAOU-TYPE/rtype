@@ -12,6 +12,7 @@
 #include <thread>
 #include <condition_variable>
 
+#include "EntitiesFactory.hpp"
 #include "NetClient.hpp"
 
 namespace Thread
@@ -35,10 +36,11 @@ namespace Thread
         void wait();
 
       private:
-        std::shared_ptr<Network::NetClient> _client; ///> Network client
+        std::shared_ptr<Network::NetClient> _client;             ///> Network client
+        std::shared_ptr<Ecs::IEntitiesFactory> _entitiesFactory; ///> Entities factory
 
         std::thread _receiverThread; ///> Thread for receiving packets
-        // std::thread _updateThread;    ///> Thread for updating game state
+        std::thread _updateThread;   ///> Thread for updating game state
         // std::thread _renderThread;    ///> Thread for rendering graphics
         // std::thread _inputThread;     ///> Thread for handling user input
 
@@ -48,6 +50,7 @@ namespace Thread
         std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the server is running
 
         void runReceiver() const; ///> Method for running the receiver thread
+        void runUpdater() const;  ///> Method for running the updater thread
     };
 
 } // namespace Thread

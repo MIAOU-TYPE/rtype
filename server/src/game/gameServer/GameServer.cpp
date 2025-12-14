@@ -15,6 +15,10 @@ namespace Game
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _packetFactory(std::move(packetFactory))
     {
+        if (!_levelManager.loadFromFile("levels/level1.json"))
+            std::cerr << "[GameServer] FAILED to load level file\n";
+        std::cout << "[GameServer] Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+        _levelManager.reset();
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -50,13 +54,18 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::update(const float dt) const
+    void GameServer::update(const float dt)
     {
+        LevelSystem::update(*_worldWrite, _levelManager, dt);
+
+        TargetingSystem::update(*_worldWrite);
+        AISystem::update(*_worldWrite, dt);
+        AttackSystem::update(*_worldWrite, dt);
+
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
-        AISystem::update(*_worldWrite, dt);
+
         MovementSystem::update(*_worldWrite, dt);
-        EnemySpawnSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         DamageSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);

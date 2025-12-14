@@ -8,6 +8,7 @@
 #pragma once
 
 #include "AISystem.hpp"
+#include "AttackSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
@@ -19,12 +20,15 @@
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
+#include "LevelManager.hpp"
+#include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"
 #include "MovementSystem.hpp"
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
+#include "TargetingSystem.hpp"
 
 namespace Game
 {
@@ -114,7 +118,7 @@ namespace Game
          *
          * @param dt Delta-time in seconds.
          */
-        void update(float dt) const;
+        void update(float dt);
 
         /**
          * @brief Advances the game simulation based on elapsed time.
@@ -140,6 +144,8 @@ namespace Game
         std::unique_ptr<IGameWorld> _worldWrite; ///> The authoritative game world
         std::unique_ptr<IGameWorld> _worldRead;  ///> Read-only snapshot of the game world for serialization.
         std::unique_ptr<IGameWorld> _worldTemp;  ///> Temporary world for snapshot generation.
+
+        LevelManager _levelManager; ///> Manages level progression.
 
         std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Manages player sessions.
         std::shared_ptr<Net::Server::IServer> _server;               ///> Sends packets to clients.

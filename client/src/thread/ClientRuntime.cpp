@@ -71,8 +71,7 @@ namespace Thread
     {
         while (_client->isRunning()) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
-                // Process the packet (parsing, updating entities, etc.)
-                // This is a placeholder for actual packet processing logic
+                _entitiesFactory->handlePacket(pkt);
             }
         }
     }

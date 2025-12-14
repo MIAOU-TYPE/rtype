@@ -150,12 +150,6 @@ namespace Game
         float getLatency() const;
 
         /**
-         * @brief Checks if the client is connected to the server.
-         * @return True if connected, false otherwise.
-         */
-        bool isConnected() const;
-
-        /**
          * @brief Closes the network client connection and stops the reception thread.
          */
         void close();
@@ -174,37 +168,49 @@ namespace Game
          * @brief Checks if the client is connected to the server.
          * @return true if connected, false otherwise.
          */
-        bool isConnected() const noexcept
-        {
-            return _isConnected;
-        }
+        bool isConnected() const noexcept;
 
         /**
          * @brief Gets the player entity ID assigned by the server.
          * @return The player entity ID.
          */
-        uint32_t getPlayerEntityId() const noexcept
-        {
-            return _playerEntityId;
-        }
+        uint32_t getPlayerEntityId() const noexcept;
 
         /**
          * @brief Sets the connection status.
          * @param connected The new connection status.
          */
-        void setConnected(bool connected) noexcept
-        {
-            _isConnected = connected;
-        }
+        void setConnected(bool connected) noexcept;
 
         /**
          * @brief Sets the player entity ID.
          * @param entityId The player entity ID assigned by the server.
          */
-        void setPlayerEntityId(uint32_t entityId) noexcept
-        {
-            _playerEntityId = entityId;
-        }
+        void setPlayerEntityId(uint32_t entityId) noexcept;
+
+        /**
+         * @brief Sets the measured latency.
+         * @param latency The latency in seconds.
+         */
+        void setLatency(float latency) noexcept;
+
+        /**
+         * @brief Notifies that we're waiting for a PONG response.
+         * @param waiting True if waiting for pong.
+         */
+        void setWaitingForPong(bool waiting) noexcept;
+
+        /**
+         * @brief Gets the timestamp when last ping was sent.
+         * @return The timestamp in seconds.
+         */
+        float getLastPingTime() const noexcept;
+
+        /**
+         * @brief Sets the timestamp when last ping was sent.
+         * @param time The timestamp in seconds.
+         */
+        void setLastPingTime(float time) noexcept;
 
       private:
         /**
@@ -222,10 +228,7 @@ namespace Game
         float _lastPingTime = 0.0f;                             ///> Timestamp when last ping was sent
         float _latency = 0.0f;                                  ///> Current latency in seconds
         bool _waitingForPong = false;                           ///> Flag to track if waiting for pong response
-        uint8_t _missedPongCount = 0;                           ///> Counter for consecutive missed pongs
         static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
-        static constexpr float PONG_TIMEOUT = 10.0f;   ///> Timeout to consider a pong as missed (2x ping interval)
-        static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
 
         // Reception thread members
         std::shared_ptr<Command::CommandBuffer<NetworkCommand>> _commandBuffer; ///> Shared command buffer

@@ -167,20 +167,11 @@ namespace Game
 
         _pingTimer += deltaTime;
 
-        if (_waitingForPong && (_pingTimer - _lastPingTime) >= PONG_TIMEOUT) {
-            _missedPongCount++;
-            _waitingForPong = false;
-
-            if (_missedPongCount >= MAX_MISSED_PONGS) {
-                _isConnected = false;
-                return;
-            }
-        }
-
-        if (_pingTimer - _lastPingTime >= PING_INTERVAL) {
+        if (_pingTimer >= PING_INTERVAL) {
             _lastPingTime = _pingTimer;
             _waitingForPong = true;
             sendPingPacket();
+            _pingTimer = 0.0f;
         }
     }
 
@@ -189,9 +180,44 @@ namespace Game
         return _latency;
     }
 
-    bool NetClient::isConnected() const
+    bool NetClient::isConnected() const noexcept
     {
         return _isConnected;
+    }
+
+    uint32_t NetClient::getPlayerEntityId() const noexcept
+    {
+        return _playerEntityId;
+    }
+
+    void NetClient::setConnected(bool connected) noexcept
+    {
+        _isConnected = connected;
+    }
+
+    void NetClient::setPlayerEntityId(uint32_t entityId) noexcept
+    {
+        _playerEntityId = entityId;
+    }
+
+    void NetClient::setLatency(float latency) noexcept
+    {
+        _latency = latency;
+    }
+
+    void NetClient::setWaitingForPong(bool waiting) noexcept
+    {
+        _waitingForPong = waiting;
+    }
+
+    float NetClient::getLastPingTime() const noexcept
+    {
+        return _lastPingTime;
+    }
+
+    void NetClient::setLastPingTime(float time) noexcept
+    {
+        _lastPingTime = time;
     }
 
     void NetClient::close()

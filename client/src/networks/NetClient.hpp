@@ -151,6 +151,11 @@ namespace Network
         float _pingTimer = 0.0f;                                 ///> Ping timer
         static constexpr float PING_INTERVAL = 5.0f;             ///> Ping interval in seconds
         std::vector<PacketData> _packetDataList;                 ///> List of pending packet data
+        float _lastPingTime = 0.0f;                             ///> Timestamp when last ping was sent
+        float _latency = 0.0f;                                  ///> Current latency in seconds
+        bool _waitingForPong = false;                           ///> Flag to track if waiting for pong response
+        uint8_t _missedPongCount = 0;                           ///> Counter for consecutive missed pongs
+        static constexpr float PING_INTERVAL = 5.0f;            ///> Ping interval in seconds
         static constexpr float PONG_TIMEOUT = 10.0f;   ///> Timeout to consider a pong as missed (2x ping interval)
         static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
     };

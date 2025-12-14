@@ -13,7 +13,6 @@
  */
 namespace Ecs
 {
-
     /**
      * @enum AIState
      * @brief Represents different states of AI behavior.

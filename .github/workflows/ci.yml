@@ -136,7 +136,7 @@ jobs:
             vcpkg
             vcpkg_installed
             build/_deps/vcpkg-*
-          key: vcpkg-${{ runner.os }}-sfml3-gtest
+          key: vcpkg-linux-sfml3-gtest
 
       - name: Setup vcpkg
         run: |
@@ -283,7 +283,7 @@ jobs:
             vcpkg
             vcpkg_installed
             build/_deps/vcpkg-*
-          key: vcpkg-${{ runner.os }}-sfml3-gtest
+          key: vcpkg-linux-sfml3-gtest
 
       - name: Setup vcpkg
         run: |
@@ -325,9 +325,77 @@ jobs:
           if-no-files-found: ignore
 
   # -----------------------------
-  # Build and Test (client)
-  # Produces artifacts: client/r-type_client
+  # Build and Test (client - Windows)
+  # Produces artifacts: client/r-type_client-Windows
   # -----------------------------
+  build-client-windows:
+    name: Build & Test client (Windows)
+    runs-on: windows-latest
+    needs: check-changes
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      github.event_name == 'workflow_dispatch' ||
+      (needs.check-changes.result != 'failure' && needs.check-changes.outputs.client == 'true')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/_deps/vcpkg-*
+          key: vcpkg-windows-sfml3-gtest
+
+      - name: Setup vcpkg
+        run: |
+          if (!(Test-Path vcpkg)) {
+            git clone https://github.com/microsoft/vcpkg.git
+            .\vcpkg\bootstrap-vcpkg.bat
+          }
+
+      - name: Configure CMake (client)
+        run: |
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake `
+            -DBUILD_TESTING=ON -DBUILD_CLIENT_ONLY=ON
+
+      - name: Build client and tests
+        run: cmake --build build --config Release
+
+      - name: Run client tests
+        run: ctest --test-dir build -C Release -V
+
+      - name: Prepare client artifact
+        shell: pwsh
+        run: |
+          Write-Host "Searching for r-type_client in workspace..."
+          $exe = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter *.exe |
+                 Where-Object { $_.Name -match "^r-type_client.*\.exe$" } |
+                 Select-Object -First 1
+
+          if (-not $exe) {
+            Write-Error "ERROR: r-type_client not found."
+            exit 1
+          }
+
+          New-Item -ItemType Directory -Force -Path "dist" | Out-Null
+          Copy-Item $exe.FullName "dist\r-type_client-windows.exe" -Force
+
+      - name: Upload Client Artifact (if exists)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-type_client-Windows
+          path: dist/r-type_client-windows.exe
+          if-no-files-found: ignore
+
 
   # -----------------------------
   # Semantic Release
@@ -339,7 +407,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    needs: [check-repository, linter, build-server-linux, build-server-windows, build-client-linux]
+    needs: [check-repository, linter, build-server-linux, build-server-windows, build-client-linux, build-client-windows]
     if: |
       always() &&
       github.ref == 'refs/heads/main' &&
@@ -349,7 +417,8 @@ jobs:
       (
         needs.build-server-linux.result == 'success' ||
         needs.build-server-windows.result == 'success' ||
-        needs.build-client-linux.result == 'success'
+        needs.build-client-linux.result == 'success' || 
+        needs.build-client-windows.result == 'success'
       )
 
     steps:
@@ -381,6 +450,7 @@ jobs:
       - build-server-linux
       - build-server-windows
       - build-client-linux
+      - build-client-windows
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -426,7 +496,7 @@ jobs:
   push-to-mirror:
     name: Push to Mirror Repository
     runs-on: ubuntu-latest
-    needs: [check-repository, linter, build-server-linux, build-server-windows, build-client-linux, semantic-release, upload-release-assets]
+    needs: [check-repository, linter, build-server-linux, build-server-windows, build-client-linux, build-client-windows, semantic-release, upload-release-assets]
     if: |
       always() &&
       github.event_name == 'push' &&
@@ -451,6 +521,10 @@ jobs:
       (
         needs.build-client-linux.result == 'success' ||
         needs.build-client-linux.result == 'skipped'
+      ) &&
+      (
+        needs.build-client-windows.result == 'success' ||
+        needs.build-client-windows.result == 'skipped'
       )
 
     steps:

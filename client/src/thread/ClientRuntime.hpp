@@ -35,7 +35,7 @@ namespace Thread
         void stop();
         void wait();
 
-      private:
+            private:
         std::shared_ptr<Network::NetClient> _client;    ///> Network client
         std::shared_ptr<Display::DisplayInit> _display; ///> Display manager
 

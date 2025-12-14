@@ -10,7 +10,7 @@
 namespace Network
 {
 
-    NetClient::NetClient() 
+    NetClient::NetClient()
     {
 #ifdef _WIN32
         WSADATA wsa;
@@ -106,6 +106,12 @@ namespace Network
             }
 
             case Net::Protocol::SNAPSHOT: {
+                SnapshotBatchHeader const *batchHeader = reinterpret_cast<SnapshotBatchHeader const *>(packet.buffer());
+                SnapshotEntityData const *data =
+                    reinterpret_cast<SnapshotEntityData const *>(packet.buffer() + sizeof(SnapshotBatchHeader));
+                for (size_t i = 0; i < batchHeader->count; ++i) {
+                    _packetDataList.push_back(data[i]);
+                }
                 break;
             }
 
@@ -232,4 +238,4 @@ namespace Network
         return data;
     }
 
-} // namespace Game
+} // namespace Network

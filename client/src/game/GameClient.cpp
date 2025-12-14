@@ -33,7 +33,7 @@ void GameClient::init(unsigned int width, unsigned int height)
         auto resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
         _textureManager = std::make_shared<SFMLTextureManager>(resourceManager);
 
-        _netClient = std::make_shared<NetClient>();
+        _netClient = std::make_shared<Network::NetClient>();
         if (!_netClient) {
             throw GameClientError("Failed to create network client instance");
         }

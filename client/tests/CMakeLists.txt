@@ -26,6 +26,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # LINK LIBRARIES
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
+target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)

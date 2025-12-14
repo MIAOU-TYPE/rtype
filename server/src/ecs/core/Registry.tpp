@@ -12,11 +12,11 @@ namespace Ecs
     template <typename T>
     SparseArray<T> &Registry::registerComponent()
     {
-        std::type_index typeIdx(typeid(T));
+        const std::type_index typeIdx(typeid(T));
 
         if (_entityToIndex.contains(typeIdx) == false) {
             _entityToIndex[typeIdx] = SparseArray<T>();
-            _destroyers.push_back([](Registry &reg, Entity ent) {
+            _destroyers.push_back([](Registry &reg, const Entity ent) {
                 reg.getComponents<T>().remove(static_cast<size_t>(ent));
             });
         }
@@ -41,7 +41,7 @@ namespace Ecs
     template <typename T>
     bool Registry::hasComponent(const Entity entity)
     {
-        auto typeIdx = std::type_index(typeid(T));
+        const auto typeIdx = std::type_index(typeid(T));
         if (!_entityToIndex.contains(typeIdx))
             return false;
         auto &arr = std::any_cast<SparseArray<T>&>(_entityToIndex[typeIdx]);

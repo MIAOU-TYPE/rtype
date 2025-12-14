@@ -281,3 +281,54 @@ jobs:
           name: r-type_client-Linux
           path: build/r-type_client
           if-no-files-found: ignore
+
+  # -----------------------------
+  # Upload Binaries to Release
+  # -----------------------------
+  upload-release-assets:
+    name: Upload Release Assets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - build-server-linux
+      - build-server-windows
+      - build-client-linux
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download Server Artifact (Linux)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: r-type_server-Linux
+          path: ./artifacts/
+
+      - name: Download Server Artifact (Windows)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: r-type_server-Windows
+          path: ./artifacts/
+
+      - name: Download Client Artifact (Linux)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: r-type_client-Linux
+          path: ./artifacts/
+
+      - name: Check downloaded artifacts
+        run: |
+          echo "Checking downloaded artifacts..."
+          find ./artifacts/ -type f
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./artifacts/build/r-type_server
+            ./artifacts/build/r-type_server.exe
+            ./artifacts/build/r-type_client
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

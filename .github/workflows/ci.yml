@@ -160,7 +160,7 @@ jobs:
       - name: Prepare server artifact
         run: |
           echo "Searching for r-type_server in build..."
-          BIN="$(find build -type f -name 'r-type_server' -executable | head -n 1)"
+          BIN="$(find . -type f -name 'r-type_server' -executable | head -n 1)"
           if [ -z "$BIN" ]; then
             echo "ERROR: r-type_server not found. Listing executables in build:"
             find build -type f -executable -maxdepth 6 -print

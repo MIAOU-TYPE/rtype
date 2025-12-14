@@ -12,9 +12,9 @@
 #include <thread>
 #include <condition_variable>
 
-#include "EventInit.hpp"
 #include "DisplayInit.hpp"
 #include "EntitiesFactory.hpp"
+#include "EventInit.hpp"
 #include "NetClient.hpp"
 #include "SFMLRenderer.hpp"
 

@@ -159,8 +159,15 @@ jobs:
 
       - name: Prepare server artifact
         run: |
+          echo "Searching for r-type_server in build..."
+          BIN="$(find build -type f -name 'r-type_server' -executable | head -n 1)"
+          if [ -z "$BIN" ]; then
+            echo "ERROR: r-type_server not found. Listing executables in build:"
+            find build -type f -executable -maxdepth 6 -print
+            exit 1
+          fi
           mkdir -p dist
-          cp build/r-type_server dist/r-type_server-linux
+          cp "$BIN" dist/r-type_server-linux
 
       - name: Upload Server Artifact (if exists)
         if: success()
@@ -299,8 +306,15 @@ jobs:
 
       - name: Prepare client artifact
         run: |
+          echo "Searching for r-type_client in build..."
+          BIN="$(find build -type f -name 'r-type_client' -executable | head -n 1)"
+          if [ -z "$BIN" ]; then
+            echo "ERROR: r-type_client not found. Listing executables in build:"
+            find build -type f -executable -maxdepth 6 -print
+            exit 1
+          fi
           mkdir -p dist
-          cp build/r-type_client dist/r-type_client-linux
+          cp "$BIN" dist/r-type_client-linux
 
       - name: Upload Client Artifact (if exists)
         if: success()

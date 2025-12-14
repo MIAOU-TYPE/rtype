@@ -212,7 +212,7 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Run server tests
-        run: ctest --test-dir build -V
+        run: ctest --test-dir build -C Release -V
 
       - name: Upload Server Artifact (if exists)
         if: success()

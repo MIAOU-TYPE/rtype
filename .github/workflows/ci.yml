@@ -262,7 +262,7 @@ jobs:
   # Produces artifacts: client/r-type_client-Linux
   # -----------------------------
   build-client-linux:
-    name: Build & Test client
+    name: Build & Test client (Linux)
     runs-on: ubuntu-latest
     needs: check-changes
     if: >

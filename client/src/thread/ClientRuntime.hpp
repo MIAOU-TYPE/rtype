@@ -36,7 +36,7 @@ namespace Thread
         void wait();
 
       private:
-        std::shared_ptr<Network::NetClient> _client;             ///> Network client
+        std::shared_ptr<Network::NetClient> _client;            ///> Network client
         std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory; ///> Entities factory
 
         std::thread _receiverThread; ///> Thread for receiving packets

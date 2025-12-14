@@ -23,7 +23,7 @@ namespace Ecs
      * @class EntitiesFactory
      * @brief Concrete implementation of IEntitiesFactory for creating and managing game entities.
      */
-    class EntitiesFactory{
+    class EntitiesFactory {
       public:
         EntitiesFactory(std::vector<Network::PacketData> &data);
 

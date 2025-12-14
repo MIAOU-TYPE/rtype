@@ -1,0 +1,40 @@
+{
+  "name": "Level 1 - Introduction",
+  "ennemies": {
+    "smallEnemy": {
+      "hp": 15,
+      "speed": -80,
+      "size": { "w": 12, "h": 12 },
+      "sprite": "enemy_small.png"
+    },
+    "mediumEnemy": {
+      "hp": 40,
+      "speed": -60,
+      "size": { "w": 20, "h": 20 },
+      "sprite": "enemy_medium.png"
+    }
+  },
+  "duration": 35,
+  "waves": [
+    {
+      "time": 2,
+      "count": 4,
+      "enemies": { "smallEnemy": 4 }
+    },
+    {
+      "time": 8,
+      "count": 3,
+      "enemies": { "smallEnemy": 3 }
+    },
+    {
+      "time": 15,
+      "count": 2,
+      "enemies": { "mediumEnemy": 2 }
+    },
+    {
+      "time": 25,
+      "count": 5,
+      "enemies": { "smallEnemy": 5 }
+    }
+  ]
+}

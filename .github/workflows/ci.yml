@@ -318,7 +318,7 @@ jobs:
       needs.linter.result == 'success' &&
       (
         needs.build-server-linux.result == 'success' || needs.build-server-windows.result == 'success' ||
-        needs.build-client.result == 'success'
+        needs.build-client-linux.result == 'success'
       )
 
     steps:
@@ -409,8 +409,8 @@ jobs:
         needs.build-server.result == 'skipped'
       ) &&
       (
-        needs.build-client.result == 'success' ||
-        needs.build-client.result == 'skipped'
+        needs.build-client-linux.result == 'success' ||
+        needs.build-client-linux.result == 'skipped'
       ) &&
       (
         needs.upload-release-assets.result == 'success' ||

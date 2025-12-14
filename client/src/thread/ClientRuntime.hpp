@@ -37,7 +37,7 @@ namespace Thread
 
       private:
         std::shared_ptr<Network::NetClient> _client;             ///> Network client
-        std::shared_ptr<Ecs::IEntitiesFactory> _entitiesFactory; ///> Entities factory
+        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory; ///> Entities factory
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updateThread;   ///> Thread for updating game state

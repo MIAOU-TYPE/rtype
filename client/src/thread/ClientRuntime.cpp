@@ -61,7 +61,7 @@ namespace Thread
     void ClientRuntime::runUpdater() const
     {
         std::vector<Network::PacketData> data = _client->getAndClearPacketData();
-        // wait for ECSManager class
+        _entitiesFactory->parseData(data);
     }
 
 } // namespace Thread

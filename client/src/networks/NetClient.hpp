@@ -12,40 +12,11 @@
 #include <vector>
 #include "ANetClient.hpp"
 #include "NetWrapper.hpp"
-#include "RingBuffer.hpp"
+#include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket.hpp"
 
 namespace Network
 {
-
-    /**
-     * @class NetClientError
-     * @brief Exception class for network client-related errors.
-     * Inherits from std::exception to provide error handling capabilities.
-     */
-    class NetClientError : public std::exception {
-      public:
-        /**
-         * @brief Constructor for NetClientError.
-         * @param message The error message to be associated with the exception.
-         */
-        explicit NetClientError(const std::string &message) : _message("\n\t" + message)
-        {
-        }
-
-        /**
-         * @brief Retrieves the error message.
-         * @return A C-style string representing the error message.
-         */
-        const char *what() const noexcept override
-        {
-            return (_message).c_str();
-        }
-
-      private:
-        std::string _message; ///> Error message
-    };
-
     /**
      * @class NetClient
      * @brief Network client for handling UDP communication with the server.

@@ -105,7 +105,7 @@ jobs:
           fi
 
   # -----------------------------
-  # Build and Test (server)
+  # Build and Test (server - Linux)
   # Produces artifacts: r-type_server-Linux
   # -----------------------------
   build-server-linux:
@@ -161,8 +161,64 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r-type_server-${{ runner.os }}
+          name: r-type_server-Linux
           path: build/r-type_server
+          if-no-files-found: ignore
+
+  # -----------------------------
+  # Build and Test (server - Windows)
+  # Produces artifacts: r-type_server-Windows
+  # -----------------------------
+  build-server-windows:
+    name: Build Server & Tests (Windows)
+    runs-on: windows-latest
+    needs: check-changes
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      github.event_name == 'workflow_dispatch' ||
+      (needs.check-changes.result != 'failure' && needs.check-changes.outputs.server == 'true')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: actions/setup-msbuild@v2
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vcpkg
+            vcpkg_installed
+            build/_deps/vcpkg-*
+          key: vcpkg-windows-sfml3-gtest
+
+      - name: Setup vcpkg
+        run: |
+          if (!(Test-Path vcpkg)) {
+            git clone https://github.com/microsoft/vcpkg.git
+            .\vcpkg\bootstrap-vcpkg.bat
+          }
+
+      - name: Configure CMake (server)
+        run: |
+          cmake -S . -B build -G Ninja `
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake `
+            -DBUILD_TESTING=ON -DBUILD_SERVER_ONLY=ON
+
+      - name: Build server and tests
+        run: cmake --build build --config Release
+
+      - name: Run server tests
+        run: ctest --test-dir build -V
+
+      - name: Upload Server Artifact (if exists)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-type_server-Windows
+          path: build/r-type_server.exe
           if-no-files-found: ignore
 
   # -----------------------------
@@ -222,131 +278,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r-type_client-${{ runner.os }}
+          name: r-type_client-Linux
           path: build/r-type_client
           if-no-files-found: ignore
-
-  # -----------------------------
-  # Semantic Release
-  # -----------------------------
-  semantic-release:
-    name: Semantic Release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-    needs: [check-repository, linter, build-server-linux, build-client-linux]
-    if: |
-      github.ref == 'refs/heads/main' &&
-      github.event_name == 'push' &&
-      needs.check-repository.outputs.same_repository == 'false' &&
-      needs.linter.result == 'success' &&
-      (
-        needs.build-server-linux.result == 'success' ||
-        needs.build-client-linux.result == 'success' ||
-        needs.check-changes.outputs.ci == 'true'
-      )
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install semantic-release
-        run: npm install -g semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github
-      - name: Run semantic-release
-        run: semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
-
-  # -----------------------------
-  # Upload Binaries to Release
-  # -----------------------------
-  upload-release-assets:
-    name: Upload Release Assets
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    needs: [build-server-linux, build-client-linux]
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    steps:
-      - name: Download Server Artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: r-type_server-${{ runner.os }}
-          path: ./artifacts/
-
-      - name: Download Client Artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: r-type_client-${{ runner.os }}
-          path: ./artifacts/
-
-      - name: Check downloaded artifacts
-        run: |
-          echo "Checking downloaded artifacts..."
-          ls -la ./artifacts/
-          find ./artifacts/ -type f
-          if [ ! -f ./artifacts/build/r-type_server ]; then
-            echo "Error: r-type_server artifact not found!";
-            exit 1
-          fi
-          if [ ! -f ./artifacts/build/r-type_client ]; then
-            echo "Error: r-type_client artifact not found!";
-            exit 1
-          fi
-
-      - name: Upload binaries to release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ./artifacts/build/r-type_server
-            ./artifacts/build/r-type_client
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # -----------------------------
-  # Push to Mirror Repository
-  # -----------------------------
-  push-to-mirror:
-    name: Push to Mirror Repository
-    runs-on: ubuntu-latest
-    needs: [check-repository, linter, build-server-linux, build-client-linux, semantic-release, upload-release-assets]
-    if: |
-      needs.check-repository.outputs.same_repository == 'false' &&
-      needs.linter.result == 'success' &&
-      (
-        needs.semantic-release.result == 'success' ||
-        needs.semantic-release.result == 'skipped'
-      ) &&
-      (
-        needs.build-server-linux.result == 'success' ||
-        needs.build-server-linux.result == 'skipped'
-      ) &&
-      (
-        needs.build-client-linux.result == 'success' ||
-        needs.build-client-linux.result == 'skipped'
-      ) &&
-      (
-        needs.upload-release-assets.result == 'success' ||
-        needs.upload-release-assets.result == 'skipped'
-      )
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url: ${{ env.MIRROR_REPO_URL }}
-          ssh_private_key: ${{ secrets.R_TYPE_SSH_KEY }}

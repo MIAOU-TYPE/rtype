@@ -25,7 +25,7 @@ namespace Ecs
      */
     class EntitiesFactory {
       public:
-        EntitiesFactory();
+        EntitiesFactory() = default;
 
         ~EntitiesFactory() = default;
 

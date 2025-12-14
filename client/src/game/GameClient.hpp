@@ -91,19 +91,19 @@ namespace Game
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::shared_ptr<Command::CommandBuffer<NetworkCommand>> _networkCommandBuffer =
-            nullptr;                                                          ///> Network command buffer
-        std::shared_ptr<NetClient> _netClient = nullptr;                      ///> The network client
-        std::shared_ptr<GameScene> _gameScene = nullptr;                      ///> The main game scene
-        std::shared_ptr<MenuScene> _menuScene = nullptr;                      ///> The menu scene
-        SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
-        bool _isMousePressed = false; ///> Mouse button state for menu interaction
+            nullptr;                                     ///> Network command buffer
+        std::shared_ptr<NetClient> _netClient = nullptr; ///> The network client
+        std::shared_ptr<GameScene> _gameScene = nullptr; ///> The main game scene
+        std::shared_ptr<MenuScene> _menuScene = nullptr; ///> The menu scene
+        SceneState _currentScene = SceneState::Menu;     ///> Current active scene
+        bool _isMousePressed = false;                    ///> Mouse button state for menu interaction
 
-        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;   ///> Event manager for input events
-        std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;     ///> Modern SFML input handler
-        std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr; ///> Game-specific input handler
+        std::shared_ptr<Events::InputEventManager> _eventManager = nullptr;         ///> Event manager for input events
+        std::shared_ptr<Input::SFMLInputHandler> _inputHandler = nullptr;           ///> Modern SFML input handler
+        std::shared_ptr<Input::GameEventHandler> _gameInputHandler = nullptr;       ///> Game-specific input handler
         std::unique_ptr<Ecs::NetworkReceiveSystem> _networkReceiveSystem = nullptr; ///> Network receive system
-        Ecs::Entity _playerEntity{0};                                         ///> The player entity
-        bool _connectionLost = false;                                         ///> Flag to track connection loss
+        Ecs::Entity _playerEntity{0};                                               ///> The player entity
+        bool _connectionLost = false;                                               ///> Flag to track connection loss
     };
 
 } // namespace Game

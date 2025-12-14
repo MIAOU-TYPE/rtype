@@ -52,12 +52,12 @@ namespace Ecs
 
         Game::NetClient &_netClient; ///> Reference to the network client
         std::shared_ptr<Command::CommandBuffer<Game::NetworkCommand>> _commandBuffer; ///> Command buffer for packets
-        
-        float _lastPingTime = 0.0f;      ///> Timestamp when last ping was sent
-        float _totalTime = 0.0f;         ///> Total accumulated time
-        bool _waitingForPong = false;    ///> Flag to track if waiting for pong response
-        uint8_t _missedPongCount = 0;    ///> Counter for consecutive missed pongs
-        
+
+        float _lastPingTime = 0.0f;   ///> Timestamp when last ping was sent
+        float _totalTime = 0.0f;      ///> Total accumulated time
+        bool _waitingForPong = false; ///> Flag to track if waiting for pong response
+        uint8_t _missedPongCount = 0; ///> Counter for consecutive missed pongs
+
         static constexpr float PONG_TIMEOUT = 10.0f;   ///> Timeout to consider a pong as missed
         static constexpr uint8_t MAX_MISSED_PONGS = 3; ///> Maximum consecutive missed pongs before disconnect
     };

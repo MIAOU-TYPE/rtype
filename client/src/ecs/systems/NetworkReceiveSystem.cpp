@@ -46,8 +46,7 @@ namespace Ecs
             case Net::Protocol::ACCEPT: {
                 _netClient.setConnected(true);
                 if (cmd.data.size() >= sizeof(HeaderData) + sizeof(uint32_t)) {
-                    const auto *entityId =
-                        reinterpret_cast<const uint32_t *>(cmd.data.data() + sizeof(HeaderData));
+                    const auto *entityId = reinterpret_cast<const uint32_t *>(cmd.data.data() + sizeof(HeaderData));
                     _netClient.setPlayerEntityId(*entityId);
                 }
                 break;

@@ -232,8 +232,8 @@ namespace Game
 
         // Reception thread members
         std::shared_ptr<Command::CommandBuffer<NetworkCommand>> _commandBuffer; ///> Shared command buffer
-        std::thread _rxThread;                                                   ///> Reception thread
-        std::atomic<bool> _running{false};                                       ///> Thread running flag
+        std::thread _rxThread;                                                  ///> Reception thread
+        std::atomic<bool> _running{false};                                      ///> Thread running flag
     };
 
 } // namespace Game

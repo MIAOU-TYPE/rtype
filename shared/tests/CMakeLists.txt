@@ -60,8 +60,14 @@ endif()
 # ------------------------------
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
-
 # ------------------------------
 # SHARED LIBRARY FOR TESTING DLLOADER
 # ------------------------------
 add_library(testlib SHARED libs/testlib.cpp)
+
+# ------------------------------
+# OUTPUT DIRECTORY
+# ------------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+)

@@ -11,13 +11,7 @@
 
 using namespace Net;
 
-const std::string defaultPath = "../../"
-#ifdef _WIN32
-                                "Debug/"
-#else
-                                ""
-#endif
-    ;
+const std::string defaultPath = "../../../libraries/";
 
 TEST(NetWrapperTests, LoadValidPlugin)
 {

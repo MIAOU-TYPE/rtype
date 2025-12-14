@@ -17,7 +17,6 @@ namespace Thread
 
     ClientRuntime::~ClientRuntime()
     {
-        std::scoped_lock lock(_mutex);
         if (!_stopRequested)
             stop();
         _client = nullptr;
@@ -49,6 +48,8 @@ namespace Thread
 
         if (_receiverThread.joinable())
             _receiverThread.join();
+        if (_updateThread.joinable())
+            _updateThread.join();
     }
 
     void ClientRuntime::runReceiver() const
@@ -60,8 +61,10 @@ namespace Thread
 
     void ClientRuntime::runUpdater() const
     {
-        std::vector<Network::PacketData> data = _client->getAndClearPacketData();
-        _entitiesFactory->parseData(data);
+        while (_running) {
+            std::vector<Network::PacketData> data = _client->getAndClearPacketData();
+            _entitiesFactory->parseData(data);
+        }
     }
 
 } // namespace Thread

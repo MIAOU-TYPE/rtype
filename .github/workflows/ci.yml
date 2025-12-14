@@ -259,7 +259,7 @@ jobs:
 
   # -----------------------------
   # Build and Test (client - Linux)
-  # Produces artifacts: client/r-type_client-Linux
+  # Produces artifacts: r-type_client-Linux
   # -----------------------------
   build-client-linux:
     name: Build & Test client (Linux)
@@ -338,7 +338,7 @@ jobs:
 
   # -----------------------------
   # Build and Test (client - Windows)
-  # Produces artifacts: client/r-type_client-Windows
+  # Produces artifacts: r-type_client-Windows
   # -----------------------------
   build-client-windows:
     name: Build & Test client (Windows)
@@ -493,19 +493,19 @@ jobs:
         run: |
           echo "Checking downloaded artifacts..."
           find ./artifacts/ -type f
-          test -f ./artifacts/dist/r-type_server-linux
-          test -f ./artifacts/dist/r-type_server-windows.exe
-          test -f ./artifacts/dist/r-type_client-linux
-          test -f ./artifacts/dist/r-type_client-windows.exe
+          test -f ./artifacts/r-type_server-linux
+          test -f ./artifacts/r-type_server-windows.exe
+          test -f ./artifacts/r-type_client-linux
+          test -f ./artifacts/r-type_client-windows.exe
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./artifacts/dist/r-type_server-linux
-            ./artifacts/dist/r-type_server-windows.exe
-            ./artifacts/dist/r-type_client-linux
-            ./artifacts/dist/r-type_client-windows.exe
+            ./artifacts/r-type_server-linux
+            ./artifacts/r-type_server-windows.exe
+            ./artifacts/r-type_client-linux
+            ./artifacts/r-type_client-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

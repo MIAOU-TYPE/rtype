@@ -54,7 +54,7 @@ namespace Ecs
          * @param id Unique identifier for the entity.
          * @param amount Amount of damage to apply to the entity.
          */
-        void updateEntityDamage(u_int32_t id, uint16_t amount) override;
+        // void updateEntityDamage(u_int32_t id, uint16_t amount) override;
 
         /**
          * @brief Updates an entity's position based on data received from the server.
@@ -69,7 +69,7 @@ namespace Ecs
          * @param id Unique identifier for the entity.
          * @return An optional containing the entity if found, or std::nullopt if not found.
          */
-        std::optional<Entity> getEntityById(u_int64_t id) const override;
+        // std::optional<Entity> getEntityById(u_int64_t id) const override;
 
       private:
         Registry &_registry;                                        ///> Reference to the ECS registry

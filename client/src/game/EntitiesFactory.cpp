@@ -38,6 +38,7 @@ namespace Ecs
 
     void EntitiesFactory::createPlayer(Entity entity, float x, float y, uint16_t sprite)
     {
+        (void)sprite;
         _registry.emplaceComponent<Health>(entity, Health{100, 100});
         _registry.emplaceComponent<Controllable>(entity);
         _registry.emplaceComponent<Damageable>(entity);
@@ -49,6 +50,7 @@ namespace Ecs
 
     void EntitiesFactory::createEnemy(Entity entity, float x, float y, uint16_t sprite)
     {
+        (void)sprite;
         _registry.emplaceComponent<Health>(entity, Health{50, 50});
         _registry.emplaceComponent<Damageable>(entity);
         _registry.emplaceComponent<Position>(entity, Position{x, y});
@@ -59,10 +61,13 @@ namespace Ecs
 
     void EntitiesFactory::createProjectile(Entity entity, float x, float y, uint16_t sprite)
     {
+        (void)sprite;
         _registry.emplaceComponent<Damage>(entity, Damage{10});
         _registry.emplaceComponent<Position>(entity, Position{x, y});
         _registry.emplaceComponent<Renderable>(entity, Renderable{true, 1.0f, 1.0f, 1.0f});
         _registry.emplaceComponent<Direction>(entity, Direction{0, -1});
         _registry.emplaceComponent<Velocity>(entity, Velocity{0.0f, -300.0f});
     }
+
+    IEntitiesFactory::~IEntitiesFactory() = default;
 } // namespace Ecs

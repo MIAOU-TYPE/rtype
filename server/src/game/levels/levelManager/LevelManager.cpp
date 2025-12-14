@@ -6,54 +6,80 @@
 */
 
 #include "LevelManager.hpp"
-#include <fstream>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
 namespace Game
 {
-    bool LevelManager::loadFromMemory(const std::string &content)
+    bool parseEnemies(const json &j, Level &level)
     {
-        json j;
-        try {
-            j = json::parse(content);
-        } catch (...) {
+        level.enemyTypes.clear();
+        if (!j.contains("ennemies") || !j["ennemies"].is_object())
             return false;
+        if (j["ennemies"].empty())
+            return false;
+
+        for (auto &[name, defNode] : j["ennemies"].items()) {
+            if (!defNode.is_object())
+                return false;
+
+            EnemyDefinition def;
+            def.hp = defNode.value("hp", 1);
+            def.speed = defNode.value("speed", -80.f);
+
+            if (!defNode.contains("size") || !defNode["size"].is_object())
+                return false;
+
+            def.colW = defNode["size"].value("w", 20.f);
+            def.colH = defNode["size"].value("h", 20.f);
+            def.sprite = defNode.value("sprite", "");
+            level.enemyTypes[name] = def;
         }
+        return !level.enemyTypes.empty();
+    }
 
-        _level.name = j.value("name", "Unknown");
-        _level.duration = j.value("duration", 0.0f);
+    bool parseWaves(const json &j, Level &level)
+    {
+        level.waves.clear();
 
-        _level.enemyTypes.clear();
-        if (j.contains("ennemies")) {
-            for (auto &[name, defNode] : j["ennemies"].items()) {
-                EnemyDefinition def;
-                def.hp = defNode.value("hp", 1);
-                def.speed = defNode.value("speed", -80.f);
-                def.colW = defNode["size"].value("w", 20.f);
-                def.colH = defNode["size"].value("h", 20.f);
-                def.sprite = defNode.value("sprite", "");
-                _level.enemyTypes[name] = def;
+        if (!j.contains("waves") || !j["waves"].is_array())
+            return false;
+        if (j["waves"].empty())
+            return false;
+        for (const auto &w : j["waves"]) {
+            if (!w.is_object())
+                return false;
+            Wave wave;
+            wave.time = w.value("time", -1.f);
+            if (wave.time < 0.f)
+                return false;
+            if (!w.contains("enemies") || !w["enemies"].is_object())
+                return false;
+            for (auto &[type, countValue] : w["enemies"].items()) {
+                const int count = countValue.get<int>();
+                if (count <= 0)
+                    return false;
+                wave.groups.push_back({type, count});
             }
+            if (wave.groups.empty())
+                return false;
+            level.waves.push_back(wave);
         }
+        return true;
+    }
 
-        _level.waves.clear();
-        if (j.contains("waves")) {
-            for (auto &w : j["waves"]) {
-                Wave wave;
-                wave.time = w.value("time", 0.f);
-                for (auto &[type, count] : w["enemies"].items()) {
-                    WaveEnemyGroup g;
-                    g.type = type;
-                    g.count = count;
-                    wave.groups.push_back(g);
-                }
-                _level.waves.push_back(wave);
-            }
-        }
+    bool parseLevelJson(const json &j, Level &level)
+    {
+        if (!j.contains("name") || !j["name"].is_string())
+            return false;
 
-        _time = 0;
+        level.name = j["name"].get<std::string>();
+        level.duration = j.value("duration", 0.f);
+
+        if (!parseEnemies(j, level))
+            return false;
+        if (!parseWaves(j, level))
+            return false;
         return true;
     }
 
@@ -63,41 +89,13 @@ namespace Game
         if (!file.is_open())
             return false;
         json j;
-        file >> j;
-
-        _level.name = j.value("name", "Unknown");
-        _level.duration = j.value("duration", 0.0f);
-        _level.enemyTypes.clear();
-        if (j.contains("ennemies") && j["ennemies"].is_object()) {
-            for (auto &[name, defNode] : j["ennemies"].items()) {
-                EnemyDefinition def;
-                def.hp = defNode.value("hp", 1);
-                def.speed = defNode.value("speed", -80.f);
-
-                auto sizeNode = defNode["size"];
-                def.colW = sizeNode.value("w", 20.f);
-                def.colH = sizeNode.value("h", 20.f);
-                def.sprite = defNode.value("sprite", "");
-                _level.enemyTypes[name] = def;
-            }
+        try {
+            file >> j;
+        } catch (...) {
+            return false;
         }
-
-        _level.waves.clear();
-        if (j.contains("waves") && j["waves"].is_array()) {
-            for (auto &w : j["waves"]) {
-                Wave wave;
-                wave.time = w.value("time", 0.f);
-                if (w.contains("enemies")) {
-                    for (auto &[type, countValue] : w["enemies"].items()) {
-                        WaveEnemyGroup group;
-                        group.type = type;
-                        group.count = countValue.get<int>();
-                        wave.groups.push_back(group);
-                    }
-                }
-                _level.waves.push_back(wave);
-            }
-        }
+        if (!parseLevelJson(j, _level))
+            return false;
         _time = 0.f;
         return true;
     }

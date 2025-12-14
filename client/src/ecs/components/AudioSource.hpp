@@ -16,6 +16,7 @@ namespace Ecs
      *
      * Works with an AudioSystem that manages playback via SFML.
      */
+
     struct AudioSource {
         std::string soundKey = ""; ///> Sound identifier
         bool loop = false;         ///> Play in loop

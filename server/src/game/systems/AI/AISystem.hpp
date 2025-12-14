@@ -7,9 +7,11 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstdlib>
 #include "AIBrain.hpp"
 #include "Rand.hpp"
+#include "Target.hpp"
 #include "World.hpp"
 
 namespace Game

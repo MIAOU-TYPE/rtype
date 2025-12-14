@@ -12,7 +12,7 @@
 #include <thread>
 #include <condition_variable>
 
-#include "../events/EventInit.hpp"
+#include "EventInit.hpp"
 #include "DisplayInit.hpp"
 #include "EntitiesFactory.hpp"
 #include "NetClient.hpp"

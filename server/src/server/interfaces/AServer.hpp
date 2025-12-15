@@ -39,7 +39,7 @@ namespace Net::Server
          * @param ip The IP address to bind the server to.
          * @param port The port number to listen on.
          */
-        void configure(const std::string &ip, uint16_t port) override;
+        void configure(const std::string &ip, int32_t port) override;
 
         /**
          * @brief Starts the server.
@@ -106,7 +106,7 @@ namespace Net::Server
 
       protected:
         std::string _ip = "";                ///> IP address the server is bound to
-        uint16_t _port = 0;                  ///> Port number the server is listening on
+        int32_t _port = 0;                   ///> Port number the server is listening on
         std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the server is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor

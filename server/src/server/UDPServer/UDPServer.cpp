@@ -116,7 +116,7 @@ void UDPServer::bindSocket(family_t family)
 
     sockaddr_in addr = {};
     addr.sin_family = family;
-    addr.sin_port = htons(_port);
+    addr.sin_port = htons(static_cast<uint16_t>(_port));
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 

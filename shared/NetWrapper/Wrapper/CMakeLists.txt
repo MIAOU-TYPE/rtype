@@ -48,13 +48,3 @@ if (NOT TARGET DLLoaderLib)
 endif()
 
 target_link_libraries(NetWrapperLib PUBLIC DLLoaderLib)
-
-# ------------------------------
-# Output directories
-# ------------------------------
-set_target_properties(NetWrapperLib PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        POSITION_INDEPENDENT_CODE ON
-)

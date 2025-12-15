@@ -10,11 +10,19 @@
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+        const std::string &levelPath)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _packetFactory(std::move(packetFactory))
     {
+        if (!levelPath.empty()) {
+            if (!_levelManager.loadFromFile(levelPath))
+                std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
+            else
+                std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+            _levelManager.reset();
+        }
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -50,13 +58,18 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::update(const float dt) const
+    void GameServer::update(const float dt)
     {
+        LevelSystem::update(*_worldWrite, _levelManager, dt);
+
+        TargetingSystem::update(*_worldWrite);
+        AISystem::update(*_worldWrite, dt);
+        AttackSystem::update(*_worldWrite, dt);
+
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
-        AISystem::update(*_worldWrite, dt);
+
         MovementSystem::update(*_worldWrite, dt);
-        EnemySpawnSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         DamageSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
@@ -109,8 +122,7 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
                 auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                auto &inputOpt = inputArr[static_cast<size_t>(ent)];
-                if (inputOpt.has_value())
+                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
                     *inputOpt = cmd.input;
                 break;
             }

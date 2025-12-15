@@ -11,7 +11,7 @@ namespace Ecs
 {
     Entity Registry::createEntity() noexcept
     {
-        Entity entity(_entityCounter);
+        const Entity entity(_entityCounter);
         _entityCounter++;
         return entity;
     }

@@ -19,7 +19,7 @@ TEST(LevelSystem, SpawnOneWave)
     {
       "name": "L1",
       "duration": 20,
-      "ennemies": {
+      "enemies": {
         "small": {
           "hp": 10,
           "speed": -100,
@@ -73,7 +73,7 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
     {
       "name": "L1",
       "duration": 20,
-      "ennemies": {
+      "enemies": {
         "small": {
           "hp": 5,
           "speed": -100,

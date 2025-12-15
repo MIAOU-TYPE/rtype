@@ -6,7 +6,6 @@
 */
 
 #include "EventInit.hpp"
-#include <iostream>
 
 using namespace Events;
 

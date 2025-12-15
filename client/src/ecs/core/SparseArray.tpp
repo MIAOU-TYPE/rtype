@@ -5,6 +5,8 @@
 ** sparseArray
 */
 
+#pragma once
+
 namespace Ecs
 {
     template <typename Component>

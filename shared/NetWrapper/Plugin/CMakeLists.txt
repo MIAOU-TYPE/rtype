@@ -26,16 +26,6 @@ target_include_directories(NetPluginLib
 target_compile_features(NetPluginLib PUBLIC cxx_std_20)
 
 # ------------------------------
-# Output directories
-# ------------------------------
-set_target_properties(NetPluginLib PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        POSITION_INDEPENDENT_CODE ON
-)
-
-# ------------------------------
 # Platform-specific libraries
 # ------------------------------
 if(WIN32)

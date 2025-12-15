@@ -106,12 +106,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
-# ------------------------------
-# OUTPUT LOCATION
-# ------------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
-)
 
 # ------------------------------
 # EXPORT VARIABLES FOR TESTS

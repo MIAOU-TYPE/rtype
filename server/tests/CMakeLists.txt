@@ -57,3 +57,10 @@ endif()
 # REGISTER TESTS
 # ------------------------------
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+# ------------------------------
+# OUTPUT DIRECTORY
+# ------------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+)

@@ -1,135 +1,141 @@
-# R-Type
+# R-Type — Networked Shoot’em Up (C++20)
 
-A multiplayer shoot ’em up game implemented in modern **C++20**, inspired by the classic R-Type arcade game.
+R-Type is a **networked multiplayer shoot’em up** inspired by the classic R-Type, developed in **C++20** as part of an EPITECH Advanced C++ project.
 
-## Overview
+The project is composed of:
+- **`r-type_server`** — a **multi-threaded authoritative UDP server** (game logic and rules)
+- **`r-type_client`** — a **graphical SFML client** (rendering, input, UI)
 
-The game is split into two main binaries:
-
-- **Server** (`r-type_server`)
-- **Client** (`r-type_client`)
-
-Both are built using **CMake**, and all external dependencies (SFML, GTest, etc.) are managed using **vcpkg**, making the project fully self-contained and easy to build on any platform.
+The server is the single source of truth: all gameplay decisions are validated server-side.
 
 ---
 
-## Project Structure
-
-```
-client/      # Game client (SFML renderer, input, networking)
-server/      # Headless game server (UDP networking, ECS engine)
-docs/        # Documentation (technical docs, guides…)
-scripts/     # Tools (lint, formatting, CI helpers)
-vcpkg.json   # Dependency manifest (SFML, GTest, etc.)
-CMakeLists.txt
-````
-
-See the detailed description here:  
-📄 **[Directory Structure](docs/DIRECTORY_STRUCTURE.md)**
-
----
-
-## 🔧 Prerequisites
-
-### **All platforms**
-
-- **CMake ≥ 3.20**
-- **C++20 compiler**
-  - Linux: GCC or Clang  
-  - macOS: AppleClang  
-  - Windows: MSVC (VS 2022 recommended)
-- **Git**
-- **vcpkg** (automatically handled by CMake — no manual install required)
-
-Optional:
-
-- `clang-format` if you want to run formatting scripts
-
----
-
-### ⚠️ **Linux prerequisites (Epitech Docker images)**
-
-On the *Epitech Docker (Epitest)* environment, some base packages are missing.  
-You **must** install the following system dependencies:
+## Quick start (Linux)
 
 ```bash
-apt-get update && apt-get install -y \
-    zip unzip tar curl git pkg-config build-essential
-````
-
-These are required for:
-
-* bootstrapping `vcpkg`
-* building SFML and its sub-dependencies
-* compiling CMake projects
-
-This step is only required on minimal environments (like Epitest Docker images).
-
----
-
-## 🔄 Dependencies through vcpkg
-
-The project uses a **vcpkg manifest (`vcpkg.json`)**, which automatically installs:
-
-* `sfml` (graphics, windowing, audio)
-* `gtest` (unit testing)
-* other required transitive dependencies
-
-CMake automatically:
-
-1. Downloads vcpkg if missing
-2. Bootstraps it
-3. Installs all dependencies locally under `build/`
-
-No system-wide installation of SFML or GTest is needed.
-
----
-
-## 🛠️ Building the Project
-
-### **Linux / macOS**
-
-```bash
-git clone <repository-url>
-cd rtype
-
-# Configure
+git clone <repository_url>
+cd r-type
 cmake -S . -B build
+cmake --build build -j
+./r-type_server --port 8080
+./r-type_client
+````
 
-# Build
+> Binaries are generated inside the `build/` directory.
+
+---
+
+## Features
+
+* Authoritative server architecture (server owns the game state)
+* Custom **binary UDP protocol** (versioned headers + typed packets)
+* Multi-threaded server runtime:
+
+    * Network I/O
+    * Game logic processing
+    * Fixed tick/update loop
+    * Snapshot broadcasting
+* ECS-based server-side game logic
+* Modular shared libraries (protocol, packets, buffers, networking)
+* SFML client with rendering, input handling, menu scene and scrolling starfield
+* Cross-platform build (Linux / Windows)
+
+---
+
+## Architecture overview
+
+### Client / Server model
+
+* Clients send **inputs only**
+* The server processes inputs, updates the game world and sends snapshots
+* Clients render the received snapshots
+
+This ensures consistency and prevents client-side authority.
+
+### Server threading model
+
+The server runtime is split into dedicated threads:
+
+* UDP receive/send thread
+* Game logic thread (ECS systems)
+* Fixed-rate tick/update thread
+* Snapshot generation and broadcast thread
+
+This prevents network I/O from blocking gameplay updates.
+
+---
+
+## Requirements
+
+### Build tools
+
+* **CMake ≥ 3.20**
+* **C++20 compiler** (GCC / Clang / MSVC)
+* **Git**
+* **Python 3** (used at configure time to embed client assets)
+
+### Linux system packages (recommended)
+
+On Debian / Ubuntu-based systems:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  build-essential cmake git ninja-build python3 \
+  zip unzip curl pkg-config \
+  libx11-dev libxrandr-dev libxcursor-dev \
+  libxi-dev libudev-dev libgl1-mesa-dev
+```
+
+> All third-party dependencies are handled through **vcpkg**, automatically fetched by CMake.
+
+---
+
+## Build
+
+From the repository root:
+
+```bash
+cmake -S . -B build
 cmake --build build -j
 ```
 
-### **Windows (MSVC)**
+### Build only server or client
 
-```powershell
-git clone <repository-url>
-cd rtype
-
-cmake -S . -B build
-
-cmake --build build
+```bash
+cmake -S . -B build -DBUILD_SERVER_ONLY=ON
+# or
+cmake -S . -B build -DBUILD_CLIENT_ONLY=ON
 ```
 
 ---
 
-## ▶️ Running the Game
+## Run
 
-### **Start the server**
+### Start the server
+
+Linux:
 
 ```bash
-./r-type_server
+./r-type_server --port 8080
 ```
 
 Windows:
 
 ```powershell
-./Debug/r-type_server
+cd bin
+./r-type_server.exe --port 8080
 ```
 
----
+To display all available options:
 
-### **Start the client**
+```bash
+./r-type_server --help
+```
+
+### Start one or more clients
+
+Linux:
 
 ```bash
 ./r-type_client
@@ -138,22 +144,85 @@ Windows:
 Windows:
 
 ```powershell
-./Debug/r-type_client
+cd bin
+r-type_client.exe
 ```
 
-The client connects to the server using **UDP** for low-latency interactions.
+> Make sure the **client targets the same IP and port** as the server.
 
 ---
 
-## 📚 Documentation
+## Controls (client)
 
-* 📁 [Directory Structure](docs/DIRECTORY_STRUCTURE.md)
-* ✏️ [Contributing Guidelines](docs/CONTRIBUTING.md)
-* 🧩 [UX & Accessibility Guidelines](docs/ux_accessibility_guidelines.md)
+Default mappings:
+
+* Move: **Arrow keys** or **Z Q S D**
+* Shoot: **Space** or **Left Ctrl**
+* Pause: **P**
+* Quit: **Escape**
 
 ---
 
-## 🤝 Contributing
+## Network protocol
 
-Contributions are welcome!
-Please follow the coding style enforced by `clang-format` and refer to the contributing guide before submitting a pull request.
+The game uses a **custom binary UDP protocol**:
+
+* Versioned packet headers
+* Typed payloads (inputs, entity state, events)
+* Fixed-rate server snapshots
+
+The protocol is designed to be compact and resilient to malformed packets.
+
+> See `docs/protocol.md` for the full specification.
+
+---
+
+## Tests
+
+Enable tests at configure time:
+
+```bash
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build -j
+ctest --test-dir build -C Debug -V
+```
+
+---
+
+## Project layout
+
+```
+server/   — authoritative server, ECS, runtime threads, networking
+client/   — SFML client (rendering, input, scenes, embedded assets)
+shared/   — reusable libraries (protocol, packets, buffers, net wrapper)
+docs/     — technical documentation
+```
+
+---
+
+## Troubleshooting
+
+### Client cannot connect
+
+* Ensure server and client use the same IP and port
+* Check that no firewall blocks UDP traffic
+
+### Dependency issues
+
+* Dependencies are managed by vcpkg
+* Delete `build/` and reconfigure if necessary
+
+---
+
+## Project members
+- [Anna POGHOSYAN](https://github.com/ann7415)
+- [Evann BLOUTIN](https://github.com/EvannBloutin)
+- [Jules FAYET](https://github.com/julesfayet)
+- [Santiago PIDCOVA](https://github.com/santiagopidji)
+- [Robin SCHUFFENECKER](https://github.com/rosh7887epitech)
+- [Romain BERARD](https://github.com/romain1717)
+---
+
+## License
+
+Educational project — no license file provided.

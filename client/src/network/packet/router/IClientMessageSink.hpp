@@ -9,6 +9,7 @@
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
+#include <iostream>
 
 namespace Ecs
 {
@@ -56,7 +57,7 @@ namespace Ecs
         // /**
         //  * @brief Called when a SNAPSHOT message is received.
         //  */
-        virtual void onSnapshot(/**PARAM INCONNU**/) = 0;
+        // virtual void onSnapshot(/**PARAM INCONNU**/) = 0;
     };
 
     class testSink : public IClientMessageSink {
@@ -93,9 +94,9 @@ namespace Ecs
             std::cout << "Entity destroyed!" << std::endl;
         }
 
-        void onSnapshot(/**PARAM INCONNU**/) override
-        {
-            // std::cout << "Snapshot received!" << std::endl;
-        }
+        // void onSnapshot(/**PARAM INCONNU**/) override
+        // {
+        //     // std::cout << "Snapshot received!" << std::endl;
+        // }
     };
 } // namespace Ecs

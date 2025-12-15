@@ -1,6 +1,6 @@
 {
   "name": "Level 3 - Final Assault",
-  "ennemies": {
+  "enemies": {
     "smallEnemy": {
       "hp": 25,
       "speed": -100,

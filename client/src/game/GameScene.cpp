@@ -56,6 +56,11 @@ GameScene::GameScene(
         // _entityDrawing->createEntity(500.0f, 400.0f, "enemy", 2);
         // _entityDrawing->createEntity(600.0f, 300.0f, "missile", 3);
         // _entityDrawing->createEntity(700.0f, 350.0f, "explose", 4);
+        // _entityDrawing->createEntity(200.0f, 250.0f, "player2", 5);
+        // _entityDrawing->createEntity(300.0f, 150.0f, "player3", 6);
+        // _entityDrawing->createEntity(350.0f, 450.0f, "player4", 7);
+        // _entityDrawing->createEntity(450.0f, 100.0f, "enemy2", 8);
+        // _entityDrawing->createEntity(550.0f, 500.0f, "enemy3", 9);
 
     } catch (const std::exception &e) {
         throw GameSceneError("Failed to initialize game scene: " + std::string(e.what()));

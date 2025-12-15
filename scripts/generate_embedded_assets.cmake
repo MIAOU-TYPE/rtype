@@ -7,22 +7,12 @@ set(PYTHON_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/bin2header.py")
 
 file(MAKE_DIRECTORY "${EMBEDDED_RESOURCES_DIR}")
 
-set(ASSET_FILES
-    "${CLIENT_ASSETS_DIR}/sprites/bg-preview.png"
-    "${CLIENT_ASSETS_DIR}/sprites/background_space.png"
-    "${CLIENT_ASSETS_DIR}/sprites/play_bt.png"
-    "${CLIENT_ASSETS_DIR}/sprites/play_bt_hold.png"
-    "${CLIENT_ASSETS_DIR}/sprites/play_bt_press.png"
-    "${CLIENT_ASSETS_DIR}/fonts/r-type.otf"
-    "${CLIENT_ASSETS_DIR}/sprites/player.png"
-    "${CLIENT_ASSETS_DIR}/sprites/player2.png"
-    "${CLIENT_ASSETS_DIR}/sprites/player3.png"
-    "${CLIENT_ASSETS_DIR}/sprites/player4.png"
-    "${CLIENT_ASSETS_DIR}/sprites/enemy.png"
-    "${CLIENT_ASSETS_DIR}/sprites/enemy2.png"
-    "${CLIENT_ASSETS_DIR}/sprites/enemy3.png"
-    "${CLIENT_ASSETS_DIR}/sprites/missile.png"
-    "${CLIENT_ASSETS_DIR}/sprites/explose.png"
+# Automatically find all assets
+file(GLOB_RECURSE ASSET_FILES
+    "${CLIENT_ASSETS_DIR}/sprites/*.png"
+    "${CLIENT_ASSETS_DIR}/fonts/*.otf"
+    "${CLIENT_ASSETS_DIR}/sounds/*.wav"
+    "${CLIENT_ASSETS_DIR}/sounds/*.flac"
 )
 
 foreach(asset_file ${ASSET_FILES})

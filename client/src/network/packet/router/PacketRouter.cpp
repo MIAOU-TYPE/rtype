@@ -134,9 +134,27 @@ namespace Ecs
         _sink->onEntityDestroy(data);
     }
 
-    void PacketRouter::handleSnapEntity() const
+    void PacketRouter::handleSnapEntity(const uint8_t *payload, size_t size) const
     {
-        // Implementation for handling SNAPSHOT packet
-        // _sink->onSnapshot();
+        if (size < sizeof(SnapshotBatchHeader)) {
+            std::cerr << "Snapshot batch too small\n";
+            return;
+        }
+
+        SnapshotBatchHeader batch{};
+        std::memcpy(&batch, payload, sizeof(batch));
+
+        const uint16_t count = ntohs(batch.count);
+        const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
+
+        for (uint16_t i = 0; i < count; ++i) {
+            if (cursor + sizeof(SnapshotEntityData) > payload + size)
+                break;
+
+            SnapshotEntityData entity{};
+            std::memcpy(&entity, cursor, sizeof(entity));
+            _sink->onSnapshot(entity);
+            cursor += sizeof(SnapshotEntityData);
+        }
     }
 } // namespace Ecs

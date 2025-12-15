@@ -7,16 +7,9 @@
 
 #include "GameWorld.hpp"
 
-#include "Position.hpp"
-#include "Velocity.hpp"
-#include "Health.hpp"
-#include "NetworkSync.hpp"
-#include <iostream>
-
 namespace Game
 {
-    GameWorld::GameWorld(Ecs::Registry &registry)
-        : _registry(registry)
+    GameWorld::GameWorld(Ecs::Registry &registry) : _registry(registry)
     {
         _registry.registerComponent<Ecs::Position>();
         _registry.registerComponent<Ecs::Velocity>();
@@ -37,13 +30,11 @@ namespace Game
         switch (cmd.type) {
 
             case CommandType::CreateEntity: {
-                Ecs::Entity ent = _registry.createEntity();
+                const Ecs::Entity ent = _registry.createEntity();
 
-                _registry.emplaceComponent<Ecs::Position>(
-                    ent, cmd.create.x, cmd.create.y);
+                _registry.emplaceComponent<Ecs::Position>(ent, cmd.create.x, cmd.create.y);
 
-                _registry.emplaceComponent<Ecs::NetworkSync>(
-                    ent, cmd.create.id); // <-- ID serveur réel
+                _registry.emplaceComponent<Ecs::NetworkSync>(ent, cmd.create.id); // <-- ID serveur réel
 
                 _entityMap[cmd.create.id] = ent;
                 break;
@@ -59,20 +50,13 @@ namespace Game
                 break;
             }
 
-            case CommandType::Accept:
-                std::cout << "[Client] Accepted by server\n";
-                break;
+            case CommandType::Accept: std::cout << "[Client] Accepted by server\n"; break;
 
-            case CommandType::Reject:
-                std::cout << "[Client] Rejected by server\n";
-                break;
+            case CommandType::Reject: std::cout << "[Client] Rejected by server\n"; break;
 
-            case CommandType::GameOver:
-                std::cout << "[Client] Game over\n";
-                break;
+            case CommandType::GameOver: std::cout << "[Client] Game over\n"; break;
 
-            default:
-                break;
+            default: break;
         }
     }
 
@@ -86,7 +70,9 @@ namespace Game
         _commandBuffer.push({CommandType::Reject});
     }
 
-    void GameWorld::onPong() {}
+    void GameWorld::onPong()
+    {
+    }
 
     void GameWorld::onGameOver()
     {
@@ -108,4 +94,4 @@ namespace Game
         cmd.destroy = data;
         _commandBuffer.push(cmd);
     }
-}
+} // namespace Game

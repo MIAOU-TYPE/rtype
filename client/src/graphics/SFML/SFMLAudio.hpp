@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "EmbeddedResourceManager.hpp"
 #include <unordered_map>
 
 /**
@@ -74,8 +75,9 @@ namespace Audio
       public:
         /**
          * @brief Constructor for SFMLAudio.
+         * @param resourceManager Shared pointer to the embedded resource manager.
          */
-        SFMLAudio();
+        explicit SFMLAudio(std::shared_ptr<Resources::EmbeddedResourceManager> resourceManager);
 
         /**
          * @brief Destructor for SFMLAudio.
@@ -171,8 +173,9 @@ namespace Audio
          */
         bool loadSoundBuffer(const std::string &soundName);
 
-        std::unordered_map<std::string, SoundInfo> _audioInfo;                     ///> Mapping sound names to info
-        std::unordered_map<std::string, sf::SoundBuffer> _soundBuffers;            ///> Loaded sound buffers
+        std::shared_ptr<Resources::EmbeddedResourceManager> _resourceManager; ///> Resource manager for embedded assets
+        std::unordered_map<std::string, SoundInfo> _audioInfo;                ///> Mapping sound names to info
+        std::unordered_map<std::string, sf::SoundBuffer> _soundBuffers;       ///> Loaded sound buffers
         std::unordered_map<std::string, std::unique_ptr<sf::Sound>> _activeSounds; ///> Currently playing sounds
         std::unique_ptr<sf::Music> _music;                                         ///> Music player
         float _globalSoundVolume = 100.0f;                                         ///> Global sound volume

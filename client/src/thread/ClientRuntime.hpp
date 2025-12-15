@@ -23,6 +23,21 @@ namespace Thread
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
      */
+    class ClientRuntimeError: public std::exception {
+      public:
+        explicit ClientRuntimeError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        const char *what() const noexcept
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     class ClientRuntime {
       public:
         /**

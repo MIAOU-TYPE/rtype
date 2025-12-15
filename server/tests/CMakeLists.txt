@@ -38,6 +38,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
+if (MSVC)
+    target_link_options(${PROJECT_NAME} PRIVATE /WHOLEARCHIVE)
+endif()
+
+
 # ------------------------------
 # GTEST
 # ------------------------------
@@ -57,10 +62,3 @@ endif()
 # REGISTER TESTS
 # ------------------------------
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
-# ------------------------------
-# OUTPUT DIRECTORY
-# ------------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
-)

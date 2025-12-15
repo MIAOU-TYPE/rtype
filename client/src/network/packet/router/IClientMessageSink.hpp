@@ -54,10 +54,10 @@ namespace Ecs
          */
         virtual void onEntityDestroy(const EntityDestroyData &) = 0;
 
-        // /**
-        //  * @brief Called when a SNAPSHOT message is received.
-        //  */
-        // virtual void onSnapshot(/**PARAM INCONNU**/) = 0;
+        /**
+         * @brief Called when a SNAPSHOT message is received.
+         */
+        virtual void onSnapshot(const SnapshotEntityData &data) = 0;
     };
 
     class testSink : public IClientMessageSink {

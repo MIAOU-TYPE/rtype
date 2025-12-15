@@ -46,7 +46,7 @@ namespace Game
          * @param world The game world to spawn enemies in.
          * @param lvl The level manager containing level data.
          */
-        static void handleWaves(IGameWorld &world, LevelManager &lvl);
+        static void handleWaves(IGameWorld &world, const LevelManager &lvl);
 
         /**
          * @brief Spawn all enemy groups in a given wave.

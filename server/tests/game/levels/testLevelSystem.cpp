@@ -21,9 +21,10 @@ TEST(LevelSystem, SpawnOneWave)
       "duration": 20,
       "ennemies": {
         "small": {
-            "hp": 10, "speed": -100,
-            "size": { "w": 8, "h": 8 },
-            "sprite": "enemy.png"
+          "hp": 10,
+          "speed": -100,
+          "size": { "w": 8, "h": 8 },
+          "sprite": "enemy.png"
         }
       },
       "waves": [
@@ -31,15 +32,15 @@ TEST(LevelSystem, SpawnOneWave)
       ]
     })";
 
-    ASSERT_TRUE(mgr.loadFromMemory(json));
+    ASSERT_TRUE(mgr.load(json));
 
-    EXPECT_EQ(world.registry().getComponents<Ecs::Position>().size(), 0);
+    EXPECT_EQ(world.registry().getComponents<Ecs::Position>().size(), 0u);
 
+    // advance time twice → wave triggers
     Game::LevelSystem::update(world, mgr, 0.3f);
     Game::LevelSystem::update(world, mgr, 0.3f);
 
     auto &posArr = world.registry().getComponents<Ecs::Position>();
-    auto &healthArr = world.registry().getComponents<Ecs::Health>();
 
     int spawnedCount = 0;
     for (size_t i = 0; i < posArr.size(); ++i) {
@@ -73,28 +74,33 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
       "name": "L1",
       "duration": 20,
       "ennemies": {
-        "small": { "hp": 5, "speed": -100, "size": { "w": 5, "h": 5 }, "sprite": "" }
+        "small": {
+          "hp": 5,
+          "speed": -100,
+          "size": { "w": 5, "h": 5 },
+          "sprite": ""
+        }
       },
       "waves": [
-        { "time": 1, "enemies": { "small": 1 } }
+        { "time": 1.0, "enemies": { "small": 1 } }
       ]
     })";
 
-    ASSERT_TRUE(mgr.loadFromMemory(json));
+    ASSERT_TRUE(mgr.load(json));
 
     Game::LevelSystem::update(world, mgr, 1.2f);
 
+    auto &posArr = world.registry().getComponents<Ecs::Position>();
     int firstSpawnCount = 0;
-    auto &pos = world.registry().getComponents<Ecs::Position>();
-    for (size_t i = 0; i < pos.size(); ++i)
-        if (pos[i].has_value())
+    for (size_t i = 0; i < posArr.size(); ++i)
+        if (posArr[i].has_value())
             firstSpawnCount++;
 
     Game::LevelSystem::update(world, mgr, 5.f);
 
     int secondSpawnCount = 0;
-    for (size_t i = 0; i < pos.size(); ++i)
-        if (pos[i].has_value())
+    for (size_t i = 0; i < posArr.size(); ++i)
+        if (posArr[i].has_value())
             secondSpawnCount++;
 
     EXPECT_EQ(firstSpawnCount, secondSpawnCount);

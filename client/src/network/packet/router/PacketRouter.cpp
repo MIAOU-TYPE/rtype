@@ -94,26 +94,22 @@ namespace Ecs
 
     void PacketRouter::handleAccept() const
     {
-        // Implementation for handling ACCEPT packet
         _sink->onAccept();
     }
 
     void PacketRouter::handleReject() const
     {
         _sink->onReject();
-        // Implementation for handling REJECT packet
     }
 
     void PacketRouter::handlePong() const
     {
         _sink->onPong();
-        // Implementation for handling PONG packet
     }
 
     void PacketRouter::handleGameOver() const
     {
         _sink->onGameOver();
-        // Implementation for handling GAME_OVER packet
     }
 
     void PacketRouter::handleEntityCreate(const uint8_t *payload, size_t size) const
@@ -134,14 +130,12 @@ namespace Ecs
 
     void PacketRouter::handleEntityDestroy() const
     {
-        // Implementation for handling ENTITY_DESTROY packet
         EntityDestroyData data{};
         _sink->onEntityDestroy(data);
     }
 
     void PacketRouter::handleSnapEntity() const
     {
-        // Implementation for handling SNAPSHOT packet
         _sink->onSnapshot();
     }
 } // namespace Ecs

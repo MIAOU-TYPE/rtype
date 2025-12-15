@@ -16,10 +16,6 @@ EventInit::EventInit(std::shared_ptr<Graphics::IRenderer> renderer) : _renderer(
     }
 }
 
-EventInit::~EventInit()
-{
-}
-
 void EventInit::run()
 {
     if (!_renderer) {

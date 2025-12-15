@@ -59,7 +59,11 @@ namespace Events
          * @param renderer Shared pointer to the renderer interface.
          */
         explicit EventInit(std::shared_ptr<Graphics::IRenderer> renderer);
-        ~EventInit();
+
+        /**
+         * @brief Destructor for EventInit.
+         */
+        ~EventInit() = default;
 
         /**
          * @brief Processes one cycle of event polling and handling.

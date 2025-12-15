@@ -64,7 +64,7 @@ namespace Ecs
 
         void handleGameOver() const;
 
-        void handleEntityCreate() const;
+        void handleEntityCreate(const uint8_t *payload, size_t size) const;
 
         void handleEntityDestroy() const;
 

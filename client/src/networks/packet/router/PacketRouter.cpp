@@ -41,7 +41,7 @@ namespace Ecs
             case Net::Protocol::GAME_OVER: handleGameOver(); break;
             case Net::Protocol::PONG: handlePong(); break;
             case Net::Protocol::REJECT: handleReject(); break;
-            case Net::Protocol::ENTITY_CREATE: handleEntityCreate(); break;
+            case Net::Protocol::ENTITY_CREATE: handleEntityCreate(payload, payloadSize); break;
             case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(); break;
             case Net::Protocol::SNAPSHOT: handleSnapEntity(); break;
             default:
@@ -58,7 +58,7 @@ namespace Ecs
             return false;
         }
 
-        if (header.version != 1) {
+        if (header.version != PROTOCOL_VERSION) {
             std::cerr << "{PacketRouter::isHeaderValid} Dropped: wrong protocol version "
                       << static_cast<int>(header.version) << " (expected " << static_cast<int>(1) << ")" << std::endl;
             return false;
@@ -98,35 +98,49 @@ namespace Ecs
     void PacketRouter::handleAccept() const
     {
         // Implementation for handling ACCEPT packet
+        _sink->onAccept();
     }
 
     void PacketRouter::handleReject() const
     {
+        _sink->onReject();
         // Implementation for handling REJECT packet
     }
 
     void PacketRouter::handlePong() const
     {
+        _sink->onPong();
         // Implementation for handling PONG packet
     }
 
     void PacketRouter::handleGameOver() const
     {
+        _sink->onGameOver();
         // Implementation for handling GAME_OVER packet
     }
 
-    void PacketRouter::handleEntityCreate() const
+    void PacketRouter::handleEntityCreate(const uint8_t *payload, size_t size) const
     {
-        // Implementation for handling ENTITY_CREATE packet
+        EntityCreateData data{};
+
+        if (size < sizeof(EntityCreateData)) {
+            std::cerr << "{PacketRouter::handleEntityCreate} Dropped: payload too small\n";
+            return;
+        }
+        std::memcpy(&data, payload, sizeof(EntityCreateData));
+        _sink->onEntityCreate(data);
     }
 
     void PacketRouter::handleEntityDestroy() const
     {
         // Implementation for handling ENTITY_DESTROY packet
+        EntityDestroyData data{};
+        _sink->onEntityDestroy(data);
     }
 
     void PacketRouter::handleSnapEntity() const
     {
         // Implementation for handling SNAPSHOT packet
+        _sink->onSnapshot();
     }
 } // namespace Ecs

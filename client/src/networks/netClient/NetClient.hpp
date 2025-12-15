@@ -75,7 +75,6 @@ namespace Network
         Net::NetWrapper _netWrapper; ///> Network wrapper
         std::mutex _packetDataMutex; ///> Mutex for synchronizing access to packet data
         Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _ringBuffer; ///> Ring buffer to store received packets
-        socketHandle _socketFd{kInvalidSocket};                        ///> Socket file descriptor
         sockaddr_in _serverAddr{};                                     ///> Server address structure
     };
 

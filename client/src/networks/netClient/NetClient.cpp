@@ -90,7 +90,6 @@ namespace Network
         }
 
         setRunning(true);
-        std::cout << "{NetClient::start} UDP Client started on " << _ip << ":" << _port << std::endl;
     }
 
     bool NetClient::sendPacket(const Net::IPacket &pkt)

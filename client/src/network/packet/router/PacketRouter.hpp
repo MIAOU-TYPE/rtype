@@ -113,7 +113,7 @@ namespace Ecs
         /**
          * @brief Handler for SNAP_ENTITY packets.
          */
-        void handleSnapEntity() const;
+        void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

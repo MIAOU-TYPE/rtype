@@ -48,7 +48,7 @@ namespace Game
          */
         Button(float x, float y, const std::string &normalTexture, const std::string &hoverTexture,
             const std::string &pressedTexture, std::shared_ptr<Graphics::ITextureManager> textureManager,
-            const std::string &labelText = "", const std::string &fontPath = "");
+            const std::string &labelText = "", const std::string &fontPath = "", unsigned int characterSize = 30);
 
         /**
          * @brief Updates the button state based on mouse position and click.

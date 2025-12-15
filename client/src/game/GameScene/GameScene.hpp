@@ -11,13 +11,13 @@
 #include <memory>
 #include <string>
 #include "EmbeddedResourceManager.hpp"
+#include "../StartField/Starfield.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include "InputSystem.hpp"
 #include "Registry.hpp"
 #include "SFMLAudio.hpp"
 #include "SFMLEntityDrawing.hpp"
-#include "Starfield.hpp"
 
 /**
  * @namespace Game

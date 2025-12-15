@@ -82,4 +82,3 @@ vcpkg/
 package-lock.json
 
 libraries/
-tests

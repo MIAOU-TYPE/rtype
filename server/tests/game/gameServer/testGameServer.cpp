@@ -14,16 +14,10 @@
 TEST(GameServer, creates_player_on_connect)
 {
     auto sessions = std::make_shared<MockSessionManager>();
-    auto server   = std::make_shared<MockServer>();
-    auto factory  = std::make_shared<Net::Factory::PacketFactory>(
-        std::make_shared<Net::UDPPacket>());
+    auto server = std::make_shared<MockServer>();
+    auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
 
-    Game::GameServer gs(
-        sessions,
-        server,
-        factory,
-        "game/levels/test_level.json"
-    );
+    Game::GameServer gs(sessions, server, factory, "game/levels/test_level.json");
 
     gs.onPlayerConnect(42);
 
@@ -37,16 +31,10 @@ TEST(GameServer, creates_player_on_connect)
 TEST(GameServer, destroys_player_on_disconnect)
 {
     auto sessions = std::make_shared<MockSessionManager>();
-    auto server   = std::make_shared<MockServer>();
-    auto factory  = std::make_shared<Net::Factory::PacketFactory>(
-        std::make_shared<Net::UDPPacket>());
+    auto server = std::make_shared<MockServer>();
+    auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
 
-    Game::GameServer gs(
-        sessions,
-        server,
-        factory,
-        "game/levels/test_level.json"
-    );
+    Game::GameServer gs(sessions, server, factory, "game/levels/test_level.json");
 
     gs.onPlayerConnect(1);
     gs.onPlayerDisconnect(1);

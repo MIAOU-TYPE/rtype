@@ -39,8 +39,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 if (MSVC)
-    target_link_options(${PROJECT_NAME} PRIVATE /WHOLEARCHIVE)
+    target_link_options(unit_tests PRIVATE
+            /WHOLEARCHIVE:Buffer
+            /WHOLEARCHIVE:NetWrapperLib
+            /WHOLEARCHIVE:NetPacketLib
+            /WHOLEARCHIVE:NetProtocol
+            /WHOLEARCHIVE:CommandBuffer
+    )
 endif()
+
 
 
 # ------------------------------
@@ -49,7 +56,6 @@ endif()
 find_package(GTest CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        GTest::gtest
         GTest::gtest_main
         GTest::gmock
 )

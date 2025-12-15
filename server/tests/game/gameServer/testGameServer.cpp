@@ -17,7 +17,7 @@ TEST(GameServer, creates_player_on_connect)
     auto server = std::make_shared<MockServer>();
     auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
 
-    Game::GameServer gs(sessions, server, factory);
+    Game::GameServer gs(sessions, server, factory, "game/levels/test_level.json");
 
     gs.onPlayerConnect(42);
 
@@ -25,8 +25,7 @@ TEST(GameServer, creates_player_on_connect)
     input.right = true;
     gs.onPlayerInput(42, input);
 
-    gs.update(1.0f);
-    SUCCEED();
+    EXPECT_NO_THROW(gs.update(1.0f));
 }
 
 TEST(GameServer, destroys_player_on_disconnect)
@@ -34,7 +33,8 @@ TEST(GameServer, destroys_player_on_disconnect)
     auto sessions = std::make_shared<MockSessionManager>();
     auto server = std::make_shared<MockServer>();
     auto factory = std::make_shared<Net::Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
-    Game::GameServer gs(sessions, server, factory);
+
+    Game::GameServer gs(sessions, server, factory, "game/levels/test_level.json");
 
     gs.onPlayerConnect(1);
     gs.onPlayerDisconnect(1);
@@ -44,5 +44,4 @@ TEST(GameServer, destroys_player_on_disconnect)
 
     EXPECT_NO_THROW(gs.onPlayerInput(1, input));
     EXPECT_NO_THROW(gs.update(1.0f));
-    SUCCEED();
 }

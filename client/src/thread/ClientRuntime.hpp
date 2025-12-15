@@ -84,7 +84,6 @@ namespace Thread
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updateThread;   ///> Thread for updating game state
-        std::thread _eventThread;    ///> Thread for handling events
 
         std::mutex _mutex;                       ///> Mutex for synchronizing access
         std::condition_variable _cv;             ///> Condition variable for signaling

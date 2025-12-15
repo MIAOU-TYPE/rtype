@@ -62,8 +62,6 @@ namespace Thread
             _receiverThread.join();
         if (_updateThread.joinable())
             _updateThread.join();
-        if (_eventThread.joinable())
-            _eventThread.join();
         if (_client) {
             _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
             _client->close();

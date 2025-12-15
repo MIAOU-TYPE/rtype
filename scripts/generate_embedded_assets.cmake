@@ -14,6 +14,15 @@ set(ASSET_FILES
     "${CLIENT_ASSETS_DIR}/sprites/play_bt_hold.png"
     "${CLIENT_ASSETS_DIR}/sprites/play_bt_press.png"
     "${CLIENT_ASSETS_DIR}/fonts/r-type.otf"
+    "${CLIENT_ASSETS_DIR}/sprites/player.png"
+    "${CLIENT_ASSETS_DIR}/sprites/player2.png"
+    "${CLIENT_ASSETS_DIR}/sprites/player3.png"
+    "${CLIENT_ASSETS_DIR}/sprites/player4.png"
+    "${CLIENT_ASSETS_DIR}/sprites/enemy.png"
+    "${CLIENT_ASSETS_DIR}/sprites/enemy2.png"
+    "${CLIENT_ASSETS_DIR}/sprites/enemy3.png"
+    "${CLIENT_ASSETS_DIR}/sprites/missile.png"
+    "${CLIENT_ASSETS_DIR}/sprites/explose.png"
 )
 
 foreach(asset_file ${ASSET_FILES})

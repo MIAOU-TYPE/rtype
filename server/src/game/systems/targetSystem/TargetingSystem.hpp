@@ -12,6 +12,7 @@
 #include "Controllable.hpp"
 #include "IGameWorld.hpp"
 #include "Position.hpp"
+#include "Rand.hpp"
 #include "Target.hpp"
 
 namespace Game

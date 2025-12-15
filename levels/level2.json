@@ -1,6 +1,6 @@
 {
   "name": "Level 2 - Escalation",
-  "ennemies": {
+  "enemies": {
     "smallEnemy": {
       "hp": 20,
       "speed": -90,

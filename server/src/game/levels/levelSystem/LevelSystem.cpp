@@ -17,21 +17,21 @@ namespace Game
         handleWaves(world, lvl);
     }
 
-    void LevelSystem::handleWaves(IGameWorld &world, LevelManager &lvl)
+    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl)
     {
         const Level &level = lvl.getCurrentLevel();
 
         if (_spawned.size() != level.waves.size())
             _spawned.assign(level.waves.size(), false);
 
-        for (size_t i = 0; i < level.waves.size(); ++i) {
+        for (size_t i = 0; i < level.waves.size(); i++) {
             const Wave &wave = level.waves[i];
             if (_spawned[i])
                 continue;
             if (!lvl.shouldSpawn(wave.time))
                 continue;
             _spawned[i] = true;
-            std::cout << "[LevelSystem] Wave " << i << " triggered at time=" << wave.time << "\n";
+            std::cout << "{LevelSystem::handleWaves} Wave " << i << " triggered at time=" << wave.time << "\n";
             spawnWave(world, level, wave);
         }
     }
@@ -42,7 +42,7 @@ namespace Game
             if (!level.enemyTypes.contains(group.type))
                 continue;
             const EnemyDefinition &def = level.enemyTypes.at(group.type);
-            for (int k = 0; k < group.count; ++k)
+            for (int k = 0; k < group.count; k++)
                 spawnSingleEnemy(world, def);
         }
     }

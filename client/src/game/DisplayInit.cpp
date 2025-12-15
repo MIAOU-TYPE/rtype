@@ -36,6 +36,11 @@ void DisplayInit::run()
                 float mouseY = 0.0f;
                 _renderer->getMousePosition(mouseX, mouseY);
                 _menuScene->update(mouseX, mouseY, _renderer->getIsMousePressed());
+            } else if (_currentScene == SceneState::GameOver) {
+                float mouseX = 0.0f;
+                float mouseY = 0.0f;
+                _renderer->getMousePosition(mouseX, mouseY);
+                _gameOverScene->update(mouseX, mouseY, _renderer->getIsMousePressed());
             } else {
                 _gameScene->update(deltaTime);
             }
@@ -45,6 +50,8 @@ void DisplayInit::run()
 
         if (_currentScene == SceneState::Menu) {
             _menuScene->render();
+        } else if (_currentScene == SceneState::GameOver) {
+            _gameOverScene->render();
         } else {
             _gameScene->render();
         }
@@ -68,6 +75,7 @@ void DisplayInit::init(unsigned int width, unsigned int height)
         _textureManager = std::make_shared<Graphics::SFMLTextureManager>(resourceManager);
         _gameScene = std::make_shared<Game::GameScene>(_renderer, _textureManager);
         _menuScene = std::make_shared<Game::MenuScene>(_renderer, _textureManager);
+        _gameOverScene = std::make_shared<Game::GameOverScene>(_renderer, _textureManager);
 
         _menuScene->setOnPlayCallback([this]() {
             _currentScene = SceneState::Gameplay;
@@ -76,6 +84,11 @@ void DisplayInit::init(unsigned int width, unsigned int height)
 
         _menuScene->setOnQuitCallback([this]() {
             _renderer->close();
+        });
+
+        _gameOverScene->setOnReturnToMenuCallback([this]() {
+            _currentScene = SceneState::Menu;
+            _renderer->setIsMousePressed(false);
         });
     } catch (const std::exception &e) {
         throw DisplayInitError("Failed to create window: " + std::string(e.what()));

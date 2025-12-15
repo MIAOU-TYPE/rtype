@@ -9,6 +9,7 @@
 
 #include <memory>
 #include "EmbeddedResourceManager.hpp"
+#include "GameOverScene.hpp"
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
@@ -27,8 +28,9 @@ namespace Display
      * @brief Represents the current scene state.
      */
     enum class SceneState {
-        Menu,    ///> Main menu scene
-        Gameplay ///> Gameplay scene
+        Menu,     ///> Main menu scene
+        Gameplay, ///> Gameplay scene
+        GameOver  ///> Game over scene
     };
 
     /**
@@ -103,6 +105,7 @@ namespace Display
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::shared_ptr<Game::GameScene> _gameScene = nullptr;                ///> The main game scene
         std::shared_ptr<Game::MenuScene> _menuScene = nullptr;                ///> The menu scene
+        std::shared_ptr<Game::GameOverScene> _gameOverScene = nullptr;        ///> The game over scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
         static constexpr float UPDATE_INTERVAL_MS = 16.67f;                   ///> Update interval in milliseconds
     };

@@ -23,8 +23,7 @@ namespace Thread
 
     ClientRuntime::~ClientRuntime()
     {
-        if (!_stopRequested)
-            stop();
+        stop();
         _client = nullptr;
     }
 
@@ -32,7 +31,7 @@ namespace Thread
     {
         std::unique_lock lock(_mutex);
         _cv.wait(lock, [this]() {
-            return _stopRequested;
+            return _stopRequested.load();
         });
     }
 
@@ -41,52 +40,46 @@ namespace Thread
         try {
             _client->start();
             _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
-        } catch (std::exception &e) {
+        } catch (const std::exception &e) {
             throw ClientRuntimeError(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
         }
+
         _running = true;
-        _displayThread = std::thread(&ClientRuntime::runDisplay, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updateThread = std::thread(&ClientRuntime::runUpdater, this);
-        while (_running && !_event->isWindowOpen()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-        _eventThread = std::thread(&ClientRuntime::runEvent, this);
+        runDisplay();
     }
 
     void ClientRuntime::stop()
     {
-        if (_client) {
-            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
-            _client->close();
-        }
-        {
-            std::scoped_lock lock(_mutex);
-            _stopRequested = true;
-            _running = false;
-        }
+        if (_stopRequested.exchange(true))
+            return;
+
+        _running = false;
         _cv.notify_all();
 
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updateThread.joinable())
             _updateThread.join();
-        if (_displayThread.joinable())
-            _displayThread.join();
         if (_eventThread.joinable())
             _eventThread.join();
+        if (_client) {
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
+            _client->close();
+        }
     }
 
     void ClientRuntime::runReceiver() const
     {
-        while (_client->isRunning() && _running) {
+        while (_running) {
             _client->receivePackets();
         }
     }
 
     void ClientRuntime::runUpdater() const
     {
-        while (_client->isRunning() && _running) {
+        while (_running) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
                 _packetRouter->handlePacket(pkt);
             } else {
@@ -99,21 +92,13 @@ namespace Thread
     {
         _display->init(800, 600);
 
-        _renderer->setActive(false);
-
-        while (_running && _display->isWindowOpen()) {
-            _renderer->setActive(true);
+        while (_running) {
             _display->run();
-            _renderer->setActive(false);
-        }
-    }
-
-    void ClientRuntime::runEvent()
-    {
-        while (_running && _event->isWindowOpen()) {
             _event->run();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            if (!_display->isWindowOpen() || !_event->isWindowOpen()) {
+                stop();
+                break;
+            }
         }
     }
-
 } // namespace Thread

@@ -61,9 +61,6 @@ namespace Display
 
     class DisplayInit {
       public:
-        /** @brief Default constructor for DisplayInit. */
-        DisplayInit();
-
         /**
          * @brief Constructor for DisplayInit.
          * @param renderer Shared pointer to the renderer interface.

@@ -2,21 +2,21 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketFactory
+** ClientPacketFactory
 */
 
-#include "PacketFactory.hpp"
+#include "ClientPacketFactory.hpp"
 
 namespace Network
 {
-    PacketFactory::PacketFactory(const std::shared_ptr<Net::IPacket> &packet)
+    ClientPacketFactory::ClientPacketFactory(const std::shared_ptr<Net::IPacket> &packet)
     {
         if (!packet)
             throw FactoryError("Invalid IPacket pointer");
         _packet = packet;
     }
 
-    HeaderData PacketFactory::makeHeader(const uint8_t type, const uint16_t size) noexcept
+    HeaderData ClientPacketFactory::makeHeader(const uint8_t type, const uint16_t size) noexcept
     {
         HeaderData header;
         header.type = type;
@@ -25,7 +25,7 @@ namespace Network
         return header;
     }
 
-    std::shared_ptr<Net::IPacket> PacketFactory::makeBase(const uint8_t flag) const noexcept
+    std::shared_ptr<Net::IPacket> ClientPacketFactory::makeBase(const uint8_t flag) const noexcept
     {
         DefaultData basePacket;
         basePacket.header = makeHeader(flag, sizeof(DefaultData));
@@ -33,12 +33,12 @@ namespace Network
         try {
             return makePacket<DefaultData>(basePacket);
         } catch (const FactoryError &e) {
-            std::cerr << "{PacketFactory::makePing} " << e.what() << std::endl;
+            std::cerr << "{ClientPacketFactory::makePing} " << e.what() << std::endl;
             return nullptr;
         }
     }
 
-    std::shared_ptr<Net::IPacket> PacketFactory::makeInput(
+    std::shared_ptr<Net::IPacket> ClientPacketFactory::makeInput(
         const uint32_t entity, const int8_t dx, const int8_t dy, const uint8_t shooting) const noexcept
     {
         InputData inputPacket;
@@ -51,7 +51,7 @@ namespace Network
         try {
             return makePacket<InputData>(inputPacket);
         } catch (const FactoryError &e) {
-            std::cerr << "{PacketFactory::makeInput} " << e.what() << std::endl;
+            std::cerr << "{ClientPacketFactory::makeInput} " << e.what() << std::endl;
             return nullptr;
         }
     }

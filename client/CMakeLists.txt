@@ -150,6 +150,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
 # ------------------------------
+# Signal Library
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE Signal)
+
+# ------------------------------
 # EXPORT VARIABLES FOR TESTS
 # ------------------------------
 set(CLIENT_SOURCES ${CLIENT_SOURCES} PARENT_SCOPE)

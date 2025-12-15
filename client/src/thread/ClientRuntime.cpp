@@ -10,9 +10,12 @@
 namespace Thread
 {
 
-    ClientRuntime::ClientRuntime(const std::shared_ptr<Network::NetClient> &client) : _client(client)
+    ClientRuntime::ClientRuntime(const std::shared_ptr<Network::INetClient> &client) : _client(client)
     {
-        _entitiesFactory = std::make_shared<Ecs::EntitiesFactory>();
+        if (!_client)
+            throw ClientRuntimeError("{ClientRuntime::ClientRuntime} client pointer is null");
+        _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
+        _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
         _renderer = std::make_shared<Graphics::SFMLRenderer>();
         _display = std::make_shared<Display::DisplayInit>(_renderer);
         _event = std::make_shared<Events::EventInit>(_renderer);
@@ -35,6 +38,12 @@ namespace Thread
 
     void ClientRuntime::start()
     {
+        try {
+            _client->start();
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
+        } catch (std::exception &e) {
+            throw ClientRuntimeError(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
+        }
         _running = true;
         _displayThread = std::thread(&ClientRuntime::runDisplay, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
@@ -47,6 +56,10 @@ namespace Thread
 
     void ClientRuntime::stop()
     {
+        if (_client) {
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
+            _client->close();
+        }
         {
             std::scoped_lock lock(_mutex);
             _stopRequested = true;
@@ -66,16 +79,19 @@ namespace Thread
 
     void ClientRuntime::runReceiver() const
     {
-        while (_running) {
+        while (_client->isRunning()) {
             _client->receivePackets();
         }
     }
 
     void ClientRuntime::runUpdater() const
     {
-        while (_running) {
-            std::vector<Network::PacketData> data = _client->getAndClearPacketData();
-            _entitiesFactory->parseData(data);
+        while (_client->isRunning()) {
+            if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
+                _packetRouter->handlePacket(pkt);
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
         }
     }
 

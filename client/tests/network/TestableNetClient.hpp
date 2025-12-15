@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "HeaderData.hpp"
 #include "NetClient.hpp"
 #include "TypesData.hpp"
 #include "UDPPacket.hpp"

@@ -1,6 +1,9 @@
 # ------------------------------
 # COLLECT TEST SOURCES
 # ------------------------------
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
@@ -11,7 +14,7 @@ list(FILTER SERVER_SOURCES EXCLUDE REGEX "Main\\.cpp$")
 # ------------------------------
 # TEST EXECUTABLE
 # ------------------------------
-set(PROJECT_NAME unit_tests)
+set(PROJECT_NAME unit_tests_server)
 
 add_executable(${PROJECT_NAME}
         ${TEST_SOURCES}
@@ -19,23 +22,23 @@ add_executable(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-        ${SERVER_INCLUDE_DIRS}
+            ${SERVER_INCLUDE_DIRS}
 )
 
 # ------------------------------
 # LINK LIBRARIES
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
+target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
-target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
+        ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
 # ------------------------------
@@ -46,7 +49,6 @@ find_package(GTest CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE
         GTest::gtest
         GTest::gtest_main
-        GTest::gmock
 )
 
 if (WIN32)

@@ -1,0 +1,55 @@
+{
+  "name": "Level 2 - Escalation",
+  "enemies": {
+    "smallEnemy": {
+      "hp": 20,
+      "speed": -90,
+      "size": { "w": 12, "h": 12 },
+      "sprite": "enemy_small.png"
+    },
+    "mediumEnemy": {
+      "hp": 60,
+      "speed": -70,
+      "size": { "w": 22, "h": 22 },
+      "sprite": "enemy_medium.png"
+    },
+    "fastEnemy": {
+      "hp": 10,
+      "speed": -120,
+      "size": { "w": 10, "h": 10 },
+      "sprite": "enemy_fast.png"
+    }
+  },
+  "duration": 40,
+  "waves": [
+    {
+      "time": 1.5,
+      "enemies": { "smallEnemy": 5 }
+    },
+    {
+      "time": 6,
+      "enemies": { "fastEnemy": 3 }
+    },
+    {
+      "time": 12,
+      "enemies": {
+        "mediumEnemy": 1,
+        "fastEnemy": 2
+      }
+    },
+    {
+      "time": 20,
+      "enemies": {
+        "smallEnemy": 2,
+        "mediumEnemy": 2
+      }
+    },
+    {
+      "time": 30,
+      "enemies": {
+        "fastEnemy": 4,
+        "mediumEnemy": 2
+      }
+    }
+  ]
+}

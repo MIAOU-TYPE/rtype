@@ -106,6 +106,23 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
+# ------------------------------
+# Signal Library
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE Signal)
+
+#------------------------------
+# JSON Library
+#------------------------------
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+
+# ------------------------------
+# OUTPUT LOCATION
+# ------------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
 
 # ------------------------------
 # EXPORT VARIABLES FOR TESTS

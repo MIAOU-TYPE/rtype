@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketFactory
+** ClientPacketFactory
 */
 
-#include "PacketFactory.hpp"
+#include "ClientPacketFactory.hpp"
 
 namespace Network
 {
     template <typename Type>
-    std::shared_ptr<Net::IPacket> PacketFactory::makePacket(const Type &packetData) const
+    std::shared_ptr<Net::IPacket> ClientPacketFactory::makePacket(const Type &packetData) const
     {
         if (!_packet)
             throw FactoryError("Template packet is null");

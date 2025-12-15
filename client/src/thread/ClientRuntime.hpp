@@ -13,9 +13,10 @@
 #include <condition_variable>
 
 #include "DisplayInit.hpp"
-#include "EntitiesFactory.hpp"
+#include "ClientPacketFactory.hpp"
 #include "EventInit.hpp"
 #include "NetClient.hpp"
+#include "PacketRouter.hpp"
 #include "SFMLRenderer.hpp"
 
 /**
@@ -29,29 +30,55 @@ namespace Thread
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
      */
+    class ClientRuntimeError : public std::exception {
+      public:
+        explicit ClientRuntimeError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        const char *what() const noexcept
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     class ClientRuntime {
       public:
         /**
          * @brief Constructor for ClientRuntime.
          * @param client Shared pointer to the network client.
          */
-        explicit ClientRuntime(const std::shared_ptr<Network::NetClient> &client);
+        explicit ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
 
         /**
          * @brief Destructor for ClientRuntime.
-         * Cleans up resources and stops all threads.
          */
         ~ClientRuntime();
 
+        /**
+         * @brief Starts the client runtime operations.
+         */
         void start();
+
+        /**
+         * @brief Stops the client runtime operations.
+         */
         void stop();
+
+        /**
+         * @brief Waits for the client runtime threads to finish.
+         */
         void wait();
 
       private:
         std::shared_ptr<Graphics::SFMLRenderer> _renderer; ///> Shared renderer
 
-        std::shared_ptr<Network::NetClient> _client;            ///> Network client
-        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory; ///> Entities factory
+        std::shared_ptr<Network::INetClient> _client;                 ///> Network client
+        std::shared_ptr<Ecs::PacketRouter> _packetRouter;             ///> Entities factory
+        std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
         std::shared_ptr<Display::DisplayInit> _display;         ///> Display manager
         std::shared_ptr<Events::EventInit> _event;              ///> Event manager
 

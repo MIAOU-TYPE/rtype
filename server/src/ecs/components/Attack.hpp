@@ -18,8 +18,8 @@ namespace Ecs
      * @brief Defines attack attributes of an entity.
      */
     struct Attack {
-        int damage = 0;       ///> Damage value
-        float range = 0.f;    ///> Attack range
-        float cooldown = 0.f; ///> Cooldown between attacks
+        int damage = 10;               ///> Damage value
+        float cooldown = 1.f;          ///> Cooldown between attacks
+        float projectileSpeed = 300.f; ///> Speed of the projectile
     };
 } // namespace Ecs

@@ -23,6 +23,21 @@ namespace EmbeddedResources
 
     extern const unsigned char r_type_otf[];
     extern const unsigned int r_type_otf_size;
+
+    extern const unsigned char boss_theme_flac[];
+    extern const unsigned int boss_theme_flac_size;
+    extern const unsigned char explosion_wav[];
+    extern const unsigned int explosion_wav_size;
+    extern const unsigned char game_theme_flac[];
+    extern const unsigned int game_theme_flac_size;
+    extern const unsigned char hit_wav[];
+    extern const unsigned int hit_wav_size;
+    extern const unsigned char menu_theme_flac[];
+    extern const unsigned int menu_theme_flac_size;
+    extern const unsigned char powerup_wav[];
+    extern const unsigned int powerup_wav_size;
+    extern const unsigned char shoot_wav[];
+    extern const unsigned int shoot_wav_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -44,6 +59,17 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::play_bt_press_png, EmbeddedResources::play_bt_press_png_size};
 
     _resources["fonts/r-type.otf"] = {EmbeddedResources::r_type_otf, EmbeddedResources::r_type_otf_size};
+
+    _resources["sounds/boss_theme.flac"] = {
+        EmbeddedResources::boss_theme_flac, EmbeddedResources::boss_theme_flac_size};
+    _resources["sounds/explosion.wav"] = {EmbeddedResources::explosion_wav, EmbeddedResources::explosion_wav_size};
+    _resources["sounds/game_theme.flac"] = {
+        EmbeddedResources::game_theme_flac, EmbeddedResources::game_theme_flac_size};
+    _resources["sounds/hit.wav"] = {EmbeddedResources::hit_wav, EmbeddedResources::hit_wav_size};
+    _resources["sounds/menu_theme.flac"] = {
+        EmbeddedResources::menu_theme_flac, EmbeddedResources::menu_theme_flac_size};
+    _resources["sounds/powerup.wav"] = {EmbeddedResources::powerup_wav, EmbeddedResources::powerup_wav_size};
+    _resources["sounds/shoot.wav"] = {EmbeddedResources::shoot_wav, EmbeddedResources::shoot_wav_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const

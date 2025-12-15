@@ -38,24 +38,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
-if (MSVC)
-    target_link_options(unit_tests PRIVATE
-            /WHOLEARCHIVE:Buffer
-            /WHOLEARCHIVE:NetWrapperLib
-            /WHOLEARCHIVE:NetPacketLib
-            /WHOLEARCHIVE:NetProtocol
-            /WHOLEARCHIVE:CommandBuffer
-    )
-endif()
-
-
-
 # ------------------------------
 # GTEST
 # ------------------------------
 find_package(GTest CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
+        GTest::gtest
         GTest::gtest_main
         GTest::gmock
 )
@@ -68,3 +57,10 @@ endif()
 # REGISTER TESTS
 # ------------------------------
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+# ------------------------------
+# OUTPUT DIRECTORY
+# ------------------------------
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+)

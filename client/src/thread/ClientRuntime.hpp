@@ -8,17 +8,20 @@
 #pragma once
 
 #include <atomic>
+#include <exception>
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
 
 #include "ClientPacketFactory.hpp"
+#include "GameScene.hpp"
+#include "GameWorld.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
 
 namespace Thread
 {
-
     /**
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
@@ -43,9 +46,10 @@ namespace Thread
         /**
          * @brief Constructor for ClientRuntime.
          * @param client Shared pointer to the network client.
+         * @param scene Shared pointer to the game scene.
          */
-        explicit ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
-
+        ClientRuntime(
+            const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene);
         /**
          * @brief Destructor for ClientRuntime.
          */
@@ -75,6 +79,9 @@ namespace Thread
         std::thread _updateThread;   ///> Thread for updating game state
         // std::thread _renderThread;    ///> Thread for rendering graphics
         // std::thread _inputThread;     ///> Thread for handling user input
+
+        std::shared_ptr<Game::GameWorld> _gameWorld; ///> Game world
+        std::shared_ptr<Game::GameScene> _gameScene; ///> Game scene
 
         std::mutex _mutex;                 ///> Mutex for synchronizing access
         std::condition_variable _cv;       ///> Condition variable for signaling

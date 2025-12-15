@@ -136,6 +136,7 @@ namespace Ecs
 
     void PacketRouter::handleSnapEntity() const
     {
-        _sink->onSnapshot();
+        // Implementation for handling SNAPSHOT packet
+        // _sink->onSnapshot();
     }
 } // namespace Ecs

@@ -73,6 +73,7 @@ void ServerRuntime::runReceiver() const
 {
     while (_server->isRunning()) {
         _server->readPackets();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

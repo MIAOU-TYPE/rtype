@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketFactory
+** ClientPacketFactory
 */
 
 #pragma once
@@ -49,23 +49,23 @@ namespace Network
     };
 
     /**
-     * @class PacketFactory
+     * @class ClientPacketFactory
      * @brief Factory class for creating and serializing client packets.
      * @details This class provides methods to create different types of packets
      * (connect, disconnect, input, ping) with proper endianness conversion and serialization.
      */
-    class PacketFactory {
+    class ClientPacketFactory {
       public:
         /**
-         * @brief Construct a new PacketFactory object
+         * @brief Construct a new ClientPacketFactory object
          * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit PacketFactory(const std::shared_ptr<Net::IPacket> &packet);
+        explicit ClientPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
-         * @brief Destroy the PacketFactory object
+         * @brief Destroy the ClientPacketFactory object
          */
-        ~PacketFactory() = default;
+        ~ClientPacketFactory() = default;
 
         /**
          * @brief Creates a base packet
@@ -108,4 +108,4 @@ namespace Network
 
 } // namespace Network
 
-#include "PacketFactory.tpp"
+#include "ClientPacketFactory.tpp"

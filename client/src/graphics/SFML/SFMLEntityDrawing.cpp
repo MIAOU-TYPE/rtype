@@ -60,8 +60,8 @@ SFMLEntityDrawing::SFMLEntityDrawing(
 
     auto entityExploseAnim = std::make_shared<SFMLAnimation>("explose", entityExploseFrames, false);
 
-    std::vector<AnimationFrame> bossIdleFrames = {AnimationFrame{0, 0, 177, 144, 0.5f}, 
-        AnimationFrame{177, 0, 177, 144, 0.5f}};
+    std::vector<AnimationFrame> bossIdleFrames = {
+        AnimationFrame{0, 0, 177, 144, 0.5f}, AnimationFrame{177, 0, 177, 144, 0.5f}};
 
     auto bossIdleAnim = std::make_shared<SFMLAnimation>("idle", bossIdleFrames, true);
 

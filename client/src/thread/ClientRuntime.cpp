@@ -48,6 +48,10 @@ namespace Thread
 
     void ClientRuntime::stop()
     {
+        if (_client) {
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
+            _client->close();
+        }
         {
             std::scoped_lock lock(_mutex);
             _stopRequested = true;

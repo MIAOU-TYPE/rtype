@@ -6,10 +6,10 @@
 */
 
 #pragma once
+#include <iostream>
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
-#include <iostream>
 
 namespace Ecs
 {

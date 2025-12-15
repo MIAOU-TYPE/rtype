@@ -77,9 +77,14 @@ namespace Game
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
          * @param packetFactory Factory to build outgoing packets.
+         * @param levelPath Path to the level configuration file.
          */
-        GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions, std::shared_ptr<Net::Server::IServer> server,
-            std::shared_ptr<Net::Factory::PacketFactory> packetFactory);
+        explicit GameServer(
+            std::shared_ptr<Net::Server::ISessionManager> sessions,
+            std::shared_ptr<Net::Server::IServer> server,
+            std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+            const std::string &levelPath = "levels/level1.json"
+        );
 
         /**
          * @brief Called when a new player connects.

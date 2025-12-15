@@ -21,11 +21,10 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         throw SFMLEntityDrawingError("Texture manager cannot be null");
     }
 
-    std::vector<AnimationFrame> playerIdleFrames = {AnimationFrame{0, 0, 33, 18, 0.15f},
-        AnimationFrame{33, 0, 33, 18, 0.15f}, AnimationFrame{66, 0, 33, 18, 0.15f},
-        AnimationFrame{99, 0, 33, 18, 0.15f}, AnimationFrame{132, 0, 33, 18, 0.15f},
-        AnimationFrame{165, 0, 33, 18, 0.15f}, AnimationFrame{198, 0, 33, 18, 0.15f},
-        AnimationFrame{231, 0, 33, 18, 0.15f}};
+    std::vector<AnimationFrame> playerIdleFrames = {AnimationFrame{0, 0, 33, 18, 0.5f},
+        AnimationFrame{33, 0, 33, 18, 0.5f}, AnimationFrame{66, 0, 33, 18, 0.5f}, AnimationFrame{99, 0, 33, 18, 0.5f},
+        AnimationFrame{132, 0, 33, 18, 0.5f}, AnimationFrame{165, 0, 33, 18, 0.5f},
+        AnimationFrame{198, 0, 33, 18, 0.5f}, AnimationFrame{231, 0, 33, 18, 0.5f}};
 
     auto playerIdleAnim = std::make_shared<SFMLAnimation>("idle", playerIdleFrames, true);
 
@@ -35,6 +34,19 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         AnimationFrame{390, 0, 65, 66, 0.3f}, AnimationFrame{455, 0, 65, 66, 0.3f}};
 
     auto enemyIdleAnim = std::make_shared<SFMLAnimation>("idle", enemyIdleFrames, true);
+
+    std::vector<AnimationFrame> enemy2IdleFrames = {AnimationFrame{2, 0, 65, 49, 0.2f},
+        AnimationFrame{67, 0, 65, 49, 0.2f}, AnimationFrame{132, 0, 65, 49, 0.2f},
+        AnimationFrame{197, 0, 65, 49, 0.2f}};
+
+    auto enemy2IdleAnim = std::make_shared<SFMLAnimation>("idle", enemy2IdleFrames, true);
+
+    std::vector<AnimationFrame> enemy3IdleFrames = {AnimationFrame{0, 0, 33, 22, 0.1f},
+        AnimationFrame{33, 0, 33, 22, 0.1f}, AnimationFrame{66, 0, 33, 22, 0.1f}, AnimationFrame{99, 0, 33, 22, 0.1f},
+        AnimationFrame{132, 0, 33, 22, 0.1f}, AnimationFrame{165, 0, 33, 22, 0.1f},
+        AnimationFrame{198, 0, 33, 22, 0.1f}, AnimationFrame{231, 0, 33, 22, 0.1f}};
+
+    auto enemy3IdleAnim = std::make_shared<SFMLAnimation>("idle", enemy3IdleFrames, true);
 
     std::vector<AnimationFrame> missileFlyFrames = {
         AnimationFrame{0, 0, 16, 12, 0.1f}, AnimationFrame{16, 0, 16, 12, 0.3f}};
@@ -53,6 +65,8 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         {"player3", {"sprites/player3.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
         {"player4", {"sprites/player4.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
         {"enemy", {"sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo{enemyIdleAnim}}, "idle"}},
+        {"enemy2", {"sprites/enemy2.png", 65.5f, 49.0f, {AnimationInfo{enemy2IdleAnim}}, "idle"}},
+        {"enemy3", {"sprites/enemy3.png", 33.1f, 22.0f, {AnimationInfo{enemy3IdleAnim}}, "idle"}},
         {"missile", {"sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim}}, "fly"}},
         {"explose", {"sprites/explose.png", 33.0f, 32.0f, {AnimationInfo{entityExploseAnim}}, "explose"}}};
 }

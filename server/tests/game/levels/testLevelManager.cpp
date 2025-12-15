@@ -14,7 +14,7 @@ TEST(LevelManager, Load_ValidJSON)
     {
       "name": "TestLevel",
       "duration": 30,
-      "ennemies": {
+      "enemies": {
         "small": {
           "hp": 10,
           "speed": -50,
@@ -80,7 +80,7 @@ TEST(LevelManager, TimeAdvancement)
     const std::string json = R"(
     {
       "name": "TimeTest",
-      "ennemies": {
+      "enemies": {
         "dummy": {
           "hp": 1,
           "speed": -1,
@@ -110,7 +110,7 @@ TEST(LevelManager, ShouldSpawn)
     const std::string json = R"(
     {
       "name": "SpawnTest",
-      "ennemies": {
+      "enemies": {
         "dummy": {
           "hp": 1,
           "speed": -1,

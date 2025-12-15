@@ -79,14 +79,14 @@ namespace Thread
 
     void ClientRuntime::runReceiver() const
     {
-        while (_client->isRunning()) {
+        while (_client->isRunning() && _running) {
             _client->receivePackets();
         }
     }
 
     void ClientRuntime::runUpdater() const
     {
-        while (_client->isRunning()) {
+        while (_client->isRunning() && _running) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
                 _packetRouter->handlePacket(pkt);
             } else {

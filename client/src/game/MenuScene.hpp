@@ -86,6 +86,12 @@ namespace Game
          * @brief Sets the callback for when Quit button is clicked.
          * @param callback The callback function.
          */
+        void setOnSettingsCallback(std::function<void()> callback);
+
+        /**
+         * @brief Sets the callback for when Quit button is clicked.
+         * @param callback The callback function.
+         */
         void setOnQuitCallback(std::function<void()> callback);
 
         /**
@@ -100,6 +106,7 @@ namespace Game
         std::unique_ptr<Graphics::ISprite> _backgroundSprite = nullptr;       ///> Background sprite
         std::unique_ptr<Button> _playButton = nullptr;                        ///> Play button
         std::unique_ptr<Button> _quitButton = nullptr;                        ///> Quit button
+        std::unique_ptr<Button> _settingsButton = nullptr;                    ///> Settings button
         std::unique_ptr<Graphics::IText> _errorText = nullptr;                ///> Error message text
         std::string _errorMessage = "";                                       ///> Error message string
     };

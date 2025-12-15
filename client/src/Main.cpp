@@ -13,7 +13,10 @@
 int main()
 {
     try {
-        Thread::ClientRuntime runtime(std::make_shared<Network::NetClient>());
+        auto server = std::make_shared<Network::NetClient>();
+        Thread::ClientRuntime runtime(server);
+
+        server->configure("127.0.0.1", 8080);
         runtime.start();
         runtime.wait();
         return 0;

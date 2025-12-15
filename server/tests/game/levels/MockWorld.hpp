@@ -10,7 +10,7 @@
 #include "World.hpp"
 
 class MockWorld final : public Game::IGameWorld {
-public:
+  public:
     MockWorld() = default;
     ~MockWorld() override = default;
 
@@ -34,6 +34,6 @@ public:
         _world.copyFrom(static_cast<Game::World &>(other));
     }
 
-private:
+  private:
     Game::World _world;
 };

@@ -10,6 +10,7 @@
 #include <exception>
 #include <memory>
 #include <string>
+#include <utility>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 

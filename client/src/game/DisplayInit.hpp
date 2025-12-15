@@ -104,6 +104,6 @@ namespace Display
         std::shared_ptr<Game::GameScene> _gameScene = nullptr;                ///> The main game scene
         std::shared_ptr<Game::MenuScene> _menuScene = nullptr;                ///> The menu scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
-        static constexpr float UPDATE_INTERVAL_MS;                            ///> Update interval in milliseconds
+        static constexpr float UPDATE_INTERVAL_MS = 16.67f;                   ///> Update interval in milliseconds
     };
 } // namespace Display

@@ -9,8 +9,6 @@
 
 using namespace Display;
 
-constexpr float Display::DisplayInit::UPDATE_INTERVAL_MS = 16.67f;
-
 DisplayInit::DisplayInit() : _renderer(std::make_shared<Graphics::SFMLRenderer>())
 {
 }

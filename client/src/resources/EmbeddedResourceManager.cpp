@@ -38,6 +38,8 @@ namespace EmbeddedResources
     extern const unsigned int missile_png_size;
     extern const unsigned char explose_png[];
     extern const unsigned int explose_png_size;
+    extern const unsigned char boss_png[];
+    extern const unsigned int boss_png_size;
 
     extern const unsigned char r_type_otf[];
     extern const unsigned int r_type_otf_size;
@@ -84,6 +86,7 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/enemy3.png"] = {EmbeddedResources::enemy3_png, EmbeddedResources::enemy3_png_size};
     _resources["sprites/missile.png"] = {EmbeddedResources::missile_png, EmbeddedResources::missile_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
+    _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
 
     _resources["fonts/r-type.otf"] = {EmbeddedResources::r_type_otf, EmbeddedResources::r_type_otf_size};
 

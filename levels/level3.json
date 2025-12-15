@@ -1,0 +1,48 @@
+{
+  "name": "Level 3 - Final Assault",
+  "enemies": {
+    "smallEnemy": {
+      "hp": 25,
+      "speed": -100,
+      "size": { "w": 12, "h": 12 },
+      "sprite": "enemy_small.png"
+    },
+    "mediumEnemy": {
+      "hp": 80,
+      "speed": -70,
+      "size": { "w": 24, "h": 24 },
+      "sprite": "enemy_medium.png"
+    },
+    "boss": {
+      "hp": 500,
+      "speed": -30,
+      "size": { "w": 40, "h": 40 },
+      "sprite": "boss.png"
+    }
+  },
+  "duration": 45,
+  "waves": [
+    {
+      "time": 3,
+      "enemies": { "smallEnemy": 6 }
+    },
+    {
+      "time": 10,
+      "enemies": {
+        "mediumEnemy": 2,
+        "smallEnemy": 2
+      }
+    },
+    {
+      "time": 20,
+      "enemies": {
+        "smallEnemy": 4,
+        "mediumEnemy": 4
+      }
+    },
+    {
+      "time": 30,
+      "enemies": { "boss": 1 }
+    }
+  ]
+}

@@ -20,6 +20,7 @@ namespace Ecs
     enum class AIState {
         Idle,   ///> AI is immobile or inactive
         Patrol, ///> AI is moving along a predefined path
+        Chase,  ///> AI is pursuing a target
         Attack, ///> AI is engaging a target
         Flee,   ///> AI is retreating from danger
         Dead    ///> AI is defeated
@@ -32,5 +33,6 @@ namespace Ecs
     struct AIBrain {
         AIState state = AIState::Idle; ///> Current state of the AI
         float timer = 0.f;             ///> Internal timer for state transitions
+        float attackCooldown = 0.f;    ///> Cooldown timer for attacks
     };
 } // namespace Ecs

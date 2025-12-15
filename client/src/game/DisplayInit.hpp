@@ -15,6 +15,7 @@
 #include "MenuScene.hpp"
 #include "SFMLRenderer.hpp"
 #include "SFMLTextureManager.hpp"
+#include "SettingScene.hpp"
 
 /**
  * @namespace Display
@@ -28,6 +29,7 @@ namespace Display
      */
     enum class SceneState {
         Menu,    ///> Main menu scene
+        Setting, ///> Setting scene
         Gameplay ///> Gameplay scene
     };
 
@@ -99,6 +101,7 @@ namespace Display
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::shared_ptr<Game::GameScene> _gameScene = nullptr;                ///> The main game scene
         std::shared_ptr<Game::MenuScene> _menuScene = nullptr;                ///> The menu scene
+        std::shared_ptr<Game::SettingScene> _settingScene = nullptr;          ///> The setting scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
         static constexpr float UPDATE_INTERVAL_MS = 16.67f;                   ///> Update interval in milliseconds
     };

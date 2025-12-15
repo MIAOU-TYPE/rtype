@@ -1,0 +1,118 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** SettingScene
+*/
+
+#include "SettingScene.hpp"
+
+using namespace Game;
+using namespace Graphics;
+
+SettingScene::SettingScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager)
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
+{
+    if (!_renderer) {
+        throw SettingSceneError("Renderer cannot be null");
+    }
+
+    if (!_textureManager) {
+        throw SettingSceneError("Texture manager cannot be null");
+    }
+
+    try {
+        const std::string bgPath = "sprites/bg-preview.png";
+        if (!_textureManager->loadTexture(bgPath)) {
+            throw SettingSceneError("Failed to load background texture: " + bgPath);
+        }
+
+        _backgroundSprite = _textureManager->createSprite(bgPath);
+        if (!_backgroundSprite) {
+            throw SettingSceneError("Failed to create background sprite");
+        }
+
+        _backgroundSprite->setPosition(-140.0f, 0.0f);
+        _backgroundSprite->setScale(1.3f, 1.3f);
+
+        unsigned int windowWidth = _renderer->getWindowWidth();
+        unsigned int windowHeight = _renderer->getWindowHeight();
+
+        float centerX = static_cast<float>(windowWidth) / 2.0f;
+        float buttonSpacing = 100.0f;
+
+        const std::string fontPath = "fonts/r-type.otf";
+
+        Button tempButton(centerX - 100.0f, static_cast<float>(windowHeight) / 2.0f - 100.0f, "sprites/play_bt.png",
+            "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
+
+        float backButtonCenterX = centerX - (tempButton.getWidth() / 2.0f);
+        _backButton = std::make_unique<Button>(backButtonCenterX - 250,
+            static_cast<float>(windowHeight) / 2.0f + 235.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+            "sprites/play_bt_press.png", _textureManager, "BACK", fontPath);
+
+        _audio = std::make_shared<Audio::SFMLAudio>(
+            std::make_shared<Resources::EmbeddedResourceManager>());
+
+        if (!_audio) {
+            throw SettingSceneError("Failed to initialize audio manager");
+        }
+    } catch (const std::exception &e) {
+        throw SettingSceneError("Failed to initialize setting scene: " + std::string(e.what()));
+    }
+}
+
+void SettingScene::update(float mouseX, float mouseY, bool isMouseClicked)
+{
+    try {
+        if (_backButton) {
+            _backButton->update(mouseX, mouseY, isMouseClicked);
+        }
+    } catch (const std::exception &e) {
+        throw SettingSceneError("Failed to update setting scene: " + std::string(e.what()));
+    }
+}
+
+void SettingScene::render()
+{
+    try {
+        if (_backgroundSprite) {
+            _renderer->renderSprite(*_backgroundSprite);
+        }
+
+        if (_backButton) {
+            _backButton->render(_renderer);
+        }
+
+        if (_errorText) {
+            _renderer->renderText(*_errorText);
+        }
+    } catch (const std::exception &e) {
+        throw SettingSceneError("Failed to render setting scene: " + std::string(e.what()));
+    }
+}
+
+void SettingScene::setOnBackCallback(std::function<void()> callback)
+{
+    if (_backButton) {
+        _backButton->setOnClick(std::move(callback));
+    }
+}
+
+void SettingScene::setErrorMessage(const std::string &message)
+{
+    _errorMessage = message;
+    if (!message.empty()) {
+        const std::string fontPath = "fonts/r-type.otf";
+        _errorText = _textureManager->createText(message, fontPath, 24);
+        if (_errorText) {
+            _errorText->setColor(255, 0, 0, 255);
+            unsigned int windowWidth = _renderer->getWindowWidth();
+            float textWidth = _errorText->getWidth();
+            float textX = (static_cast<float>(windowWidth) - textWidth) / 2.0f;
+            _errorText->setPosition(textX, 50.0f);
+        }
+    } else {
+        _errorText.reset();
+    }
+}

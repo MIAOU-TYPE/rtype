@@ -94,7 +94,7 @@ namespace Background
         std::unique_ptr<Graphics::ISprite> _sprite1; ///> First background sprite
         std::unique_ptr<Graphics::ISprite> _sprite2; ///> Second background sprite
 
-        const std::string BACKGROUND_TEXTURE_PATH = "sprites/background_space.png";
+        const std::string BACKGROUND_TEXTURE_PATH = "client/assets/sprites/background_space.png";
     };
 
 } // namespace Background

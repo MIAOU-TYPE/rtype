@@ -1,3 +1,10 @@
+##
+## EPITECH PROJECT, 2025
+## R-Type
+## File description:
+## CMakeLists
+##
+
 cmake_minimum_required(VERSION 3.20)
 
 # ------------------------------

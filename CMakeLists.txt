@@ -127,6 +127,14 @@ add_subdirectory(
         ${CMAKE_BINARY_DIR}/NetProtocolLib_build
 )
 
+# ------------------------------
+# Signal Library
+# ------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/Signal
+        ${CMAKE_BINARY_DIR}/SignalLib_build
+)
+
 if (NOT BUILD_CLIENT_ONLY)
     add_subdirectory(server)
 endif ()

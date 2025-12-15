@@ -10,7 +10,7 @@
 namespace Network
 {
 
-    NetClient::NetClient() : ANetClient(), _ringBuffer(1024), _netWrapper("NetPluginLib")
+    NetClient::NetClient() : ANetClient(), _netWrapper("NetPluginLib"), _ringBuffer(1024)
     {
         setRunning(false);
         if (_netWrapper.initNetwork() != 0)

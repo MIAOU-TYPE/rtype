@@ -76,7 +76,7 @@ namespace Network
 
             std::memset(&_serverAddr, 0, sizeof(_serverAddr));
             _serverAddr.sin_family = AF_INET;
-            _serverAddr.sin_port = htons(_port);
+            _serverAddr.sin_port = htons(static_cast<uint16_t>(_port));
 
             if (inet_pton(AF_INET, _ip.c_str(), &_serverAddr.sin_addr) <= 0)
                 throw NetClientError("{NetClient::start} Invalid server IP address");

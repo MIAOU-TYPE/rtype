@@ -79,12 +79,9 @@ namespace Game
          * @param packetFactory Factory to build outgoing packets.
          * @param levelPath Path to the level configuration file.
          */
-        explicit GameServer(
-            std::shared_ptr<Net::Server::ISessionManager> sessions,
-            std::shared_ptr<Net::Server::IServer> server,
-            std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
-            const std::string &levelPath = "levels/level1.json"
-        );
+        explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
+            std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+            const std::string &levelPath = "levels/level1.json");
 
         /**
          * @brief Called when a new player connects.

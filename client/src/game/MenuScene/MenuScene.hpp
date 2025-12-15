@@ -11,7 +11,7 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include "Button.hpp"
+#include "../Button/Button.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include "SFMLEntityDrawing.hpp"

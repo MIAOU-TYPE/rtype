@@ -17,7 +17,7 @@ namespace Ecs
      * to ensure smooth movement of entities based on server snapshots.
      */
     struct NetworkSync {
-        uint32_t networkId = 0; ///> Unique network ID of the entity
+        uint64_t networkId = 0; ///> Unique network ID of the entity
 
         float prevX = 0.f;   ///> Position at snapshot N-1
         float prevY = 0.f;   ///> Position at snapshot N-1

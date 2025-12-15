@@ -14,7 +14,12 @@
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket.hpp"
-
+#ifndef WIN32
+    #include <arpa/inet.h>
+#else
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#endif
 namespace Network
 {
     /**
@@ -46,16 +51,32 @@ namespace Network
          */
         void close() override;
 
+        /**
+         * @brief Starts the network client.
+         * @throws NetClientError if an error occurs while starting the client.
+         */
         void start() override;
 
+        /**
+         * @brief Sends a packet to the server.
+         * @param pkt The packet to be sent.
+         * @return True if the packet was sent successfully, false otherwise.
+         */
         bool sendPacket(const Net::IPacket &pkt) override;
 
+        /**
+         * @brief Pops a received packet from the internal buffer.
+         * @param pkt Reference to a shared pointer where the popped packet will be stored.
+         * @return True if a packet was successfully popped, false if the buffer was empty.
+         */
         bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
 
       private:
         Net::NetWrapper _netWrapper; ///> Network wrapper
         std::mutex _packetDataMutex; ///> Mutex for synchronizing access to packet data
         Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _ringBuffer; ///> Ring buffer to store received packets
+        socketHandle _socketFd{kInvalidSocket};                        ///> Socket file descriptor
+        sockaddr_in _serverAddr{};                                     ///> Server address structure
     };
 
 } // namespace Network

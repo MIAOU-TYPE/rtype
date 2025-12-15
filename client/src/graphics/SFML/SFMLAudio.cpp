@@ -10,21 +10,25 @@
 
 using namespace Audio;
 
-SFMLAudio::SFMLAudio()
+SFMLAudio::SFMLAudio(std::shared_ptr<Resources::EmbeddedResourceManager> resourceManager)
+    : _resourceManager(std::move(resourceManager))
 {
+    if (!_resourceManager) {
+        throw SFMLAudioError("ResourceManager cannot be null");
+    }
     registerAudioResources();
 }
 
 void SFMLAudio::registerAudioResources()
 {
-    _audioInfo["shoot"] = {"client/assets/sounds/shoot.wav", AudioType::Sound, 70.0f, false};
-    _audioInfo["explosion"] = {"client/assets/sounds/explosion.wav", AudioType::Sound, 80.0f, false};
-    _audioInfo["hit"] = {"client/assets/sounds/hit.wav", AudioType::Sound, 60.0f, false};
-    _audioInfo["powerup"] = {"client/assets/sounds/powerup.wav", AudioType::Sound, 75.0f, false};
+    _audioInfo["shoot"] = {"sounds/shoot.wav", AudioType::Sound, 70.0f, false};
+    _audioInfo["explosion"] = {"sounds/explosion.wav", AudioType::Sound, 80.0f, false};
+    _audioInfo["hit"] = {"sounds/hit.wav", AudioType::Sound, 60.0f, false};
+    _audioInfo["powerup"] = {"sounds/powerup.wav", AudioType::Sound, 75.0f, false};
 
-    _audioInfo["menu_theme"] = {"client/assets/sounds/menu_theme.flac", AudioType::Music, 50.0f, true};
-    _audioInfo["game_theme"] = {"client/assets/sounds/game_theme.flac", AudioType::Music, 50.0f, true};
-    _audioInfo["boss_theme"] = {"client/assets/sounds/boss_theme.flac", AudioType::Music, 60.0f, true};
+    _audioInfo["menu_theme"] = {"sounds/menu_theme.flac", AudioType::Music, 50.0f, true};
+    _audioInfo["game_theme"] = {"sounds/game_theme.flac", AudioType::Music, 50.0f, true};
+    _audioInfo["boss_theme"] = {"sounds/boss_theme.flac", AudioType::Music, 60.0f, true};
 }
 
 void SFMLAudio::playSound(const std::string &soundName)
@@ -67,8 +71,16 @@ void SFMLAudio::playMusic(const std::string &musicName, bool loop)
         _music->stop();
     }
 
+    auto resourceData = _resourceManager->loadResource(it->second.path);
+    if (resourceData.data == nullptr || resourceData.size == 0) {
+        throw SFMLAudioError("Failed to load embedded music resource '" + it->second.path + "'");
+    }
+
     try {
-        _music = std::make_unique<sf::Music>(it->second.path);
+        _music = std::make_unique<sf::Music>();
+        if (!_music->openFromMemory(resourceData.data, resourceData.size)) {
+            throw SFMLAudioError("Failed to open music from memory for '" + it->second.path + "'");
+        }
     } catch (const std::exception &e) {
         throw SFMLAudioError("Failed to load music from '" + it->second.path + "': " + std::string(e.what()));
     }
@@ -185,9 +197,15 @@ bool SFMLAudio::loadSoundBuffer(const std::string &soundName)
         return false;
     }
 
+    auto resourceData = _resourceManager->loadResource(it->second.path);
+    if (resourceData.data == nullptr || resourceData.size == 0) {
+        std::cerr << "Warning: Failed to load embedded sound resource '" << it->second.path << "'" << std::endl;
+        return false;
+    }
+
     sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile(it->second.path)) {
-        std::cerr << "Warning: Failed to load sound file '" << it->second.path << "'" << std::endl;
+    if (!buffer.loadFromMemory(resourceData.data, resourceData.size)) {
+        std::cerr << "Warning: Failed to load sound buffer from memory for '" << it->second.path << "'" << std::endl;
         return false;
     }
 

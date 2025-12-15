@@ -160,6 +160,8 @@ namespace Game
         GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
+
+        static constexpr size_t MAX_PLAYERS = 4; ///> Maximum number of concurrent players.
     };
 
 } // namespace Game

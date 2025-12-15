@@ -22,6 +22,12 @@ namespace EmbeddedResources
     extern const unsigned int play_bt_press_png_size;
     extern const unsigned char player_png[];
     extern const unsigned int player_png_size;
+    extern const unsigned char player2_png[];
+    extern const unsigned int player2_png_size;
+    extern const unsigned char player3_png[];
+    extern const unsigned int player3_png_size;
+    extern const unsigned char player4_png[];
+    extern const unsigned int player4_png_size;
     extern const unsigned char enemy_png[];
     extern const unsigned int enemy_png_size;
     extern const unsigned char missile_png[];
@@ -66,6 +72,9 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/play_bt_press.png"] = {
         EmbeddedResources::play_bt_press_png, EmbeddedResources::play_bt_press_png_size};
     _resources["sprites/player.png"] = {EmbeddedResources::player_png, EmbeddedResources::player_png_size};
+    _resources["sprites/player2.png"] = {EmbeddedResources::player2_png, EmbeddedResources::player2_png_size};
+    _resources["sprites/player3.png"] = {EmbeddedResources::player3_png, EmbeddedResources::player3_png_size};
+    _resources["sprites/player4.png"] = {EmbeddedResources::player4_png, EmbeddedResources::player4_png_size};
     _resources["sprites/enemy.png"] = {EmbeddedResources::enemy_png, EmbeddedResources::enemy_png_size};
     _resources["sprites/missile.png"] = {EmbeddedResources::missile_png, EmbeddedResources::missile_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};

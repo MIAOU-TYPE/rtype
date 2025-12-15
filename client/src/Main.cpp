@@ -10,6 +10,7 @@
 #include "ClientRuntime.hpp"
 #include "NetClient.hpp"
 #include "SignalHandler.hpp"
+#include "ArgParser.hpp"
 
 static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientRuntime &runtime)
 {
@@ -23,14 +24,23 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientR
     return signalHandler;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    Utils::ArgParser parser(argc, argv);
+    if (const Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
+        return 0;
+    } else if (result == Utils::ArgParseResult::Error) {
+        std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;
+        return 84;
+    }
+    const int port = parser.getPort();
+    const std::string host = parser.getHost();
     try {
         auto client = std::make_shared<Network::NetClient>();
         Thread::ClientRuntime runtime(client);
         const auto signalHandler = startSignalHandler(runtime);
 
-        client->configure("127.0.0.1", 8080);
+        client->configure(host, port);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

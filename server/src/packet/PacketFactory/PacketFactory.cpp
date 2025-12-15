@@ -42,7 +42,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
-        const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept
+        const sockaddr_in &addr, const size_t id, const float x, const float y, uint16_t sprite) const noexcept
     {
         EntityCreateData entityCreatePacket;
         entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreateData));

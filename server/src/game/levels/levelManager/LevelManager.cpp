@@ -14,12 +14,12 @@ namespace Game
     bool parseEnemies(const json &j, Level &level)
     {
         level.enemyTypes.clear();
-        if (!j.contains("ennemies") || !j["ennemies"].is_object())
+        if (!j.contains("enemies") || !j["enemies"].is_object())
             return false;
-        if (j["ennemies"].empty())
+        if (j["enemies"].empty())
             return false;
 
-        for (auto &[name, defNode] : j["ennemies"].items()) {
+        for (auto &[name, defNode] : j["enemies"].items()) {
             if (!defNode.is_object())
                 return false;
 

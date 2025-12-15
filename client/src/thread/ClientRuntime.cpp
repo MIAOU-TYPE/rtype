@@ -15,7 +15,7 @@ namespace Thread
         if (!_client)
             throw std::invalid_argument("{ClientRuntime::ClientRuntime} client pointer is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
-        _entitiesFactory = std::make_shared<Ecs::EntitiesFactory>();
+        _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
     }
 
     ClientRuntime::~ClientRuntime()
@@ -71,7 +71,9 @@ namespace Thread
     {
         while (_client->isRunning()) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
-                _entitiesFactory->handlePacket(pkt);
+                _packetRouter->handlePacket(pkt);
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
     }

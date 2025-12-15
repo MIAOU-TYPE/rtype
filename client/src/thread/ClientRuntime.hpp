@@ -13,8 +13,8 @@
 #include <condition_variable>
 
 #include "ClientPacketFactory.hpp"
-#include "EntitiesFactory.hpp"
 #include "NetClient.hpp"
+#include "PacketRouter.hpp"
 
 namespace Thread
 {
@@ -53,7 +53,7 @@ namespace Thread
 
       private:
         std::shared_ptr<Network::INetClient> _client;                 ///> Network client
-        std::shared_ptr<Ecs::EntitiesFactory> _entitiesFactory;       ///> Entities factory
+        std::shared_ptr<Ecs::PacketRouter> _packetRouter;             ///> Entities factory
         std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
 
         std::thread _receiverThread; ///> Thread for receiving packets

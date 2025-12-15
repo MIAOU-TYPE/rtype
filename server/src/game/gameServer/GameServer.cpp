@@ -18,9 +18,9 @@ namespace Game
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
-                std::cerr << "[GameServer] FAILED to load level file: " << levelPath << "\n";
+                std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
             else
-                std::cout << "[GameServer] Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+                std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
     }

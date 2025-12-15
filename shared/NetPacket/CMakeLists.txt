@@ -30,13 +30,3 @@ target_compile_features(NetPacketLib PUBLIC cxx_std_20)
 if(WIN32)
     target_link_libraries(NetPacketLib PRIVATE ws2_32)
 endif()
-
-# ------------------------------
-# Output directories
-# ------------------------------
-set_target_properties(NetPacketLib PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        POSITION_INDEPENDENT_CODE ON
-)

@@ -9,7 +9,7 @@
 
 using namespace Net::Server;
 
-void AServer::configure(const std::string &ip, uint16_t port)
+void AServer::configure(const std::string &ip, int32_t port)
 {
     _ip = ip;
     _port = port;

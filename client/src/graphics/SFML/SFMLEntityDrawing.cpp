@@ -49,6 +49,9 @@ SFMLEntityDrawing::SFMLEntityDrawing(
     auto entityExploseAnim = std::make_shared<SFMLAnimation>("explose", entityExploseFrames, false);
 
     _spriteInfo = {{"player", {"sprites/player.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
+        {"player2", {"sprites/player2.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
+        {"player3", {"sprites/player3.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
+        {"player4", {"sprites/player4.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
         {"enemy", {"sprites/enemy.png", 65.1f, 66.0f, {AnimationInfo{enemyIdleAnim}}, "idle"}},
         {"missile", {"sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim}}, "fly"}},
         {"explose", {"sprites/explose.png", 33.0f, 32.0f, {AnimationInfo{entityExploseAnim}}, "explose"}}};

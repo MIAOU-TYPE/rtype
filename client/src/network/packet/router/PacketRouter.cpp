@@ -24,8 +24,8 @@ namespace Ecs
 
         const std::uint8_t *raw = packet->buffer();
         const std::size_t total = packet->size();
-        const std::size_t payloadSize = total - sizeof(HeaderData);
-        const std::uint8_t *payload = raw + sizeof(HeaderData);
+        const std::uint8_t *payload = raw;
+        const std::size_t payloadSize = total;
 
         dispatchPacket(header, payload, payloadSize);
     }

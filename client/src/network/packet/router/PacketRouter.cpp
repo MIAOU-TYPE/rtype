@@ -33,9 +33,6 @@ namespace Ecs
     void PacketRouter::dispatchPacket(
         const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
     {
-        (void) payload;
-        (void) payloadSize;
-
         switch (header.type) {
             case Net::Protocol::ACCEPT: handleAccept(); break;
             case Net::Protocol::GAME_OVER: handleGameOver(); break;
@@ -122,6 +119,11 @@ namespace Ecs
     void PacketRouter::handleEntityCreate(const uint8_t *payload, size_t size) const
     {
         EntityCreateData data{};
+        std::cout << "Handling ENTITY_CREATE packet of size " << size << std::endl;
+        memcpy(&data, payload, size);
+        std::cout << "EntityCreateData - id: " << data.id << ", type: " << static_cast<int>(data.header.type)
+                  << ", x: " << data.x << ", y: " << data.y << "sprite:" << data.sprite
+                  << "header.size: " << data.header.size << std::endl;
 
         if (size < sizeof(EntityCreateData)) {
             std::cerr << "{PacketRouter::handleEntityCreate} Dropped: payload too small\n";

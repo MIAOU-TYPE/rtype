@@ -31,6 +31,12 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
+        if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
+            if (const auto *addr = _sessions->getAddress(sessionId))
+                if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::REJECT))
+                    _server->sendPacket(*pkt);
+        } else
+            _server->sendPacket(*_packetFactory->makeDefault(*_sessions->getAddress(sessionId), Net::Protocol::ACCEPT));
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
@@ -107,14 +113,27 @@ namespace Game
             case GameCommand::Type::PlayerConnect: {
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
+                const auto entityId = static_cast<std::size_t>(ent);
+                _sessions->forEachSession([&](int, const sockaddr_in &address) {
+                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 1))
+                        _server->sendPacket(*pkt);
+                });
                 break;
             }
+
             case GameCommand::Type::PlayerDisconnect: {
-                if (!_sessionToEntity.contains(cmd.sessionId))
+                const auto it = _sessionToEntity.find(cmd.sessionId);
+                if (it == _sessionToEntity.end())
                     break;
-                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                const Ecs::Entity ent = it->second;
+                const auto entityId = static_cast<std::size_t>(ent);
+                _sessionToEntity.erase(it);
+                _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
-                _sessionToEntity.erase(cmd.sessionId);
+                _sessions->forEachSession([&](int, const sockaddr_in &address) {
+                    if (const auto packet = _packetFactory->makeEntityDestroy(address, entityId))
+                        _server->sendPacket(*packet);
+                });
                 break;
             }
             case GameCommand::Type::PlayerInput: {

@@ -95,7 +95,7 @@ namespace Ecs
 
         void onSnapshot(/**PARAM INCONNU**/) override
         {
-            std::cout << "Snapshot received!" << std::endl;
+            // std::cout << "Snapshot received!" << std::endl;
         }
     };
 } // namespace Ecs

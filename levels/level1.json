@@ -1,6 +1,6 @@
 {
   "name": "Level 1 - Introduction",
-  "ennemies": {
+  "enemies": {
     "smallEnemy": {
       "hp": 15,
       "speed": -80,

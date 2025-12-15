@@ -120,7 +120,6 @@ namespace Ecs
     {
         EntityCreateData data{};
         std::cout << "Handling ENTITY_CREATE packet of size " << size << std::endl;
-        memcpy(&data, payload, size);
         std::cout << "EntityCreateData - id: " << data.id << ", type: " << static_cast<int>(data.header.type)
                   << ", x: " << data.x << ", y: " << data.y << "sprite:" << data.sprite
                   << "header.size: " << data.header.size << std::endl;

@@ -26,11 +26,11 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientR
 int main()
 {
     try {
-        auto server = std::make_shared<Network::NetClient>();
-        Thread::ClientRuntime runtime(server);
+        auto client = std::make_shared<Network::NetClient>();
+        Thread::ClientRuntime runtime(client);
         const auto signalHandler = startSignalHandler(runtime);
 
-        server->configure("127.0.0.1", 8080);
+        client->configure("127.0.0.1", 8080);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

@@ -83,14 +83,11 @@ namespace Game
         return true;
     }
 
-    bool LevelManager::loadFromFile(const std::string &path)
+    bool LevelManager::load(const std::string &content)
     {
-        std::ifstream file(path);
-        if (!file.is_open())
-            return false;
         json j;
         try {
-            file >> j;
+            j = json::parse(content);
         } catch (...) {
             return false;
         }
@@ -98,6 +95,17 @@ namespace Game
             return false;
         _time = 0.f;
         return true;
+    }
+
+    bool LevelManager::loadFromFile(const std::string &path)
+    {
+        std::ifstream file(path);
+        if (!file.is_open())
+            return false;
+
+        std::stringstream ss;
+        ss << file.rdbuf();
+        return load(ss.str());
     }
 
     void LevelManager::reset()

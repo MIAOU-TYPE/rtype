@@ -12,7 +12,7 @@
 
 #include "ecs/core/Registry.hpp"
 #include "ecs/core/Entity.hpp"
-#include "networks/packet/router/IClientMessageSink.hpp"
+#include "IClientMessageSink.hpp"
 #include "CommandBuffer.hpp"
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"

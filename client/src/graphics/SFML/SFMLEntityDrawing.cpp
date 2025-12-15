@@ -60,6 +60,11 @@ SFMLEntityDrawing::SFMLEntityDrawing(
 
     auto entityExploseAnim = std::make_shared<SFMLAnimation>("explose", entityExploseFrames, false);
 
+    std::vector<AnimationFrame> bossIdleFrames = {AnimationFrame{0, 0, 177, 144, 0.5f}, 
+        AnimationFrame{177, 0, 177, 144, 0.5f}};
+
+    auto bossIdleAnim = std::make_shared<SFMLAnimation>("idle", bossIdleFrames, true);
+
     _spriteInfo = {{"player", {"sprites/player.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
         {"player2", {"sprites/player2.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
         {"player3", {"sprites/player3.png", 33.1f, 18.0f, {AnimationInfo{playerIdleAnim}}, "idle"}},
@@ -68,7 +73,8 @@ SFMLEntityDrawing::SFMLEntityDrawing(
         {"enemy2", {"sprites/enemy2.png", 65.5f, 49.0f, {AnimationInfo{enemy2IdleAnim}}, "idle"}},
         {"enemy3", {"sprites/enemy3.png", 33.1f, 22.0f, {AnimationInfo{enemy3IdleAnim}}, "idle"}},
         {"missile", {"sprites/missile.png", 16.5f, 12.0f, {AnimationInfo{missileFlyAnim}}, "fly"}},
-        {"explose", {"sprites/explose.png", 33.0f, 32.0f, {AnimationInfo{entityExploseAnim}}, "explose"}}};
+        {"explose", {"sprites/explose.png", 33.0f, 32.0f, {AnimationInfo{entityExploseAnim}}, "explose"}},
+        {"boss", {"sprites/boss.png", 192.0f, 128.0f, {AnimationInfo{bossIdleAnim}}, "idle"}}};
 }
 
 std::shared_ptr<GraphicalEntity> SFMLEntityDrawing::createEntity(

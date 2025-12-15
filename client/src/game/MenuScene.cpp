@@ -57,6 +57,10 @@ MenuScene::MenuScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextu
         _quitButton = std::make_unique<Button>(playButtonCenterX, quitButtonY, "sprites/play_bt.png",
             "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "QUIT", fontPath);
 
+        _settingsButton =
+            std::make_unique<Button>(playButtonCenterX, quitButtonY - buttonSpacing + 25.0f, "sprites/play_bt.png",
+                "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "SETTINGS", fontPath);
+
     } catch (const std::exception &e) {
         throw MenuSceneError("Failed to initialize menu scene: " + std::string(e.what()));
     }
@@ -71,6 +75,10 @@ void MenuScene::update(float mouseX, float mouseY, bool isMouseClicked)
 
         if (_quitButton) {
             _quitButton->update(mouseX, mouseY, isMouseClicked);
+        }
+
+        if (_settingsButton) {
+            _settingsButton->update(mouseX, mouseY, isMouseClicked);
         }
 
     } catch (const std::exception &e) {
@@ -97,6 +105,10 @@ void MenuScene::render()
             _quitButton->render(_renderer);
         }
 
+        if (_settingsButton) {
+            _settingsButton->render(_renderer);
+        }
+
     } catch (const std::exception &e) {
         throw MenuSceneError("Failed to render menu scene: " + std::string(e.what()));
     }
@@ -106,6 +118,13 @@ void MenuScene::setOnPlayCallback(std::function<void()> callback)
 {
     if (_playButton) {
         _playButton->setOnClick(std::move(callback));
+    }
+}
+
+void MenuScene::setOnSettingsCallback(std::function<void()> callback)
+{
+    if (_settingsButton) {
+        _settingsButton->setOnClick(std::move(callback));
     }
 }
 

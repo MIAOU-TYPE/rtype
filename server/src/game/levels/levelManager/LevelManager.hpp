@@ -7,6 +7,7 @@
 
 #pragma once
 #include <fstream>
+#include "sstream"
 #include <nlohmann/json.hpp>
 #include <string>
 #include "Level.hpp"
@@ -19,7 +20,15 @@ namespace Game
     class LevelManager {
       public:
         /**
-         * @brief Load level data from a JSON file.
+         * @brief Load level data from a JSON string.
+         *
+         * @param jsonContent The JSON content as a string.
+         * @return true if loading was successful, false otherwise.
+         */
+        bool load(const std::string &jsonContent);
+
+        /**
+         * @brief Load level data from a file.
          *
          * @param path The path to the level file.
          * @return true if loading was successful, false otherwise.
@@ -60,7 +69,7 @@ namespace Game
          */
         bool shouldSpawn(float waveTime) const;
 
-    private:
+      private:
         Level _level;      ///> The current level data.
         float _time = 0.f; ///> The current time in the level.
     };

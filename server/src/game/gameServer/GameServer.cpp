@@ -31,12 +31,13 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
-        if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
-            if (const auto *addr = _sessions->getAddress(sessionId))
+        if (const auto *addr = _sessions->getAddress(sessionId)) {
+            if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
                 if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::REJECT))
                     _server->sendPacket(*pkt);
-        } else
-            _server->sendPacket(*_packetFactory->makeDefault(*_sessions->getAddress(sessionId), Net::Protocol::ACCEPT));
+            } else
+                _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
+        }
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)

@@ -13,7 +13,7 @@ namespace Thread
     ClientRuntime::ClientRuntime(const std::shared_ptr<Network::INetClient> &client) : _client(client)
     {
         if (!_client)
-            throw std::invalid_argument("{ClientRuntime::ClientRuntime} client pointer is null");
+            throw ClientRuntimeError("{ClientRuntime::ClientRuntime} client pointer is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
         _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
     }
@@ -37,8 +37,9 @@ namespace Thread
     {
         try {
             _client->start();
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
         } catch (std::exception &e) {
-            throw std::runtime_error(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
+            throw ClientRuntimeError(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
         }
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);

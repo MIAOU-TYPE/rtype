@@ -10,15 +10,16 @@
 #include <exception>
 #include <memory>
 #include <string>
-#include "EmbeddedResourceManager.hpp"
-#include "Starfield.hpp"
-#include "InputSystem.hpp"
 #include <utility>
+#include "EmbeddedResourceManager.hpp"
+#include "GameWorld.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "InputSystem.hpp"
 #include "Registry.hpp"
 #include "SFMLAudio.hpp"
 #include "SFMLEntityDrawing.hpp"
+#include "Starfield.hpp"
 
 /**
  * @namespace Game
@@ -80,12 +81,12 @@ namespace Game
          * @brief Updates the game scene.
          * @param deltaTime The time elapsed since the last update.
          */
-        void update(float deltaTime);
+        void update(float deltaTime) const;
 
         /**
          * @brief Renders the game scene.
          */
-        void render();
+        void render() const;
 
         /**
          * @brief Gets the ECS registry.
@@ -93,12 +94,20 @@ namespace Game
          */
         Ecs::Registry &getRegistry();
 
+        /**
+         * @brief Gets the game world.
+         * @return Reference to the game world.
+         */
+        GameWorld &getGameWorld() const;
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
-        Ecs::Registry _registry;                                              ///> The ECS registry
-        std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
+
+        Ecs::Registry _registry;                                  ///> The ECS registry
+        std::unique_ptr<GameWorld> _gameWorld;                    ///> The game world
+        std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
         std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
             nullptr;                                               ///> Resource manager for audio
         std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr; ///> The audio manager

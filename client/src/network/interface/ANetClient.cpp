@@ -10,7 +10,7 @@
 namespace Network
 {
 
-    void ANetClient::configure(const std::string &ip, uint32_t port)
+    void ANetClient::configure(const std::string &ip, int32_t port)
     {
         _ip = ip;
         _port = port;

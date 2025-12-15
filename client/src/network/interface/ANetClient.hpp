@@ -39,7 +39,7 @@ namespace Network
          * @param ip The IP address to bind the NetClient to.
          * @param port The port number to listen on.
          */
-        void configure(const std::string &ip, uint32_t port) override;
+        void configure(const std::string &ip, int32_t port) override;
 
         /**
          * @brief Starts the NetClient.

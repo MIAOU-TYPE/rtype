@@ -6,9 +6,6 @@
 */
 
 #include "GameScene.hpp"
-#include "InputSystem.hpp"
-
-#include <utility>
 
 using namespace Game;
 

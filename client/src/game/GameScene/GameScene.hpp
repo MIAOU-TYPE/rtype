@@ -11,10 +11,11 @@
 #include <memory>
 #include <string>
 #include "EmbeddedResourceManager.hpp"
-#include "../StartField/Starfield.hpp"
+#include "Starfield.hpp"
+#include "InputSystem.hpp"
+#include <utility>
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
-#include "InputSystem.hpp"
 #include "Registry.hpp"
 #include "SFMLAudio.hpp"
 #include "SFMLEntityDrawing.hpp"

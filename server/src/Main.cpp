@@ -6,6 +6,7 @@
 */
 
 #include <string>
+#include "ArgParser.hpp"
 #include "ServerRuntime.hpp"
 #include "SignalHandler.hpp"
 #include "UDPServer.hpp"
@@ -21,14 +22,22 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Net::Thread::Se
     return signalHandler;
 }
 
-int main(void)
+int main(const int argc, char **argv)
 {
+    Utils::ArgParser parser(argc, argv);
+    if (Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
+        return 0;
+    } else if (result == Utils::ArgParseResult::Error) {
+        std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;
+        return 84;
+    }
+    int port = parser.getPort();
     try {
         const auto server = std::make_shared<Net::Server::UDPServer>();
         Net::Thread::ServerRuntime runtime(server);
         const auto signalHandler = startSignalHandler(runtime);
 
-        server->configure("127.0.0.1", 8080);
+        server->configure("127.0.0.1", port);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

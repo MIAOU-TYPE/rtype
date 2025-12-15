@@ -11,9 +11,11 @@
 
 using namespace Net;
 
+const std::string defaultPath = "../../../libraries/";
+
 TEST(NetWrapperTests, LoadValidPlugin)
 {
-    ASSERT_NO_THROW({ NetWrapper wrapperNetPluginLib("NetPluginLib", "./"); });
+    ASSERT_NO_THROW({ NetWrapper wrapperNetPluginLib("NetPluginLib", defaultPath); });
 }
 
 TEST(NetWrapperTests, LoadInvalidPluginThrows)
@@ -23,7 +25,7 @@ TEST(NetWrapperTests, LoadInvalidPluginThrows)
 
 TEST(NetWrapperTests, SocketCreationThroughWrapper)
 {
-    NetWrapper wrapper("NetPluginLib", "./");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
     wrapper.initNetwork();
 
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
@@ -34,7 +36,7 @@ TEST(NetWrapperTests, SocketCreationThroughWrapper)
 
 TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 {
-    NetWrapper wrapper("NetPluginLib", "./");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
     wrapper.initNetwork();
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     ASSERT_NE(s, kInvalidSocket);
@@ -48,7 +50,7 @@ TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 
 TEST(NetWrapperTests, SendAndReceiveLocalUDP)
 {
-    NetWrapper wrapper("NetPluginLib", "./");
+    NetWrapper wrapper("NetPluginLib", defaultPath);
     wrapper.initNetwork();
 
     socketHandle s1 = wrapper.socket(AF_INET, SOCK_DGRAM, 0);

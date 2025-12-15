@@ -11,7 +11,7 @@
 
 using namespace Library;
 const std::string libName = "testlib";
-const std::string baseDir = "../../";
+const std::string baseDir = "../../../libraries/";
 
 const std::string libPath = DLLoader::getLibraryPath(libName, baseDir);
 

@@ -9,16 +9,26 @@
 
 namespace Game
 {
-    GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
-        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
-          _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
+    GameServer::GameServer(
+        std::shared_ptr<Net::Server::ISessionManager> sessions,
+        std::shared_ptr<Net::Server::IServer> server,
+        std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+        const std::string &levelPath
+    )
+        : _worldWrite(std::make_unique<World>()),
+          _worldRead(std::make_unique<World>()),
+          _worldTemp(std::make_unique<World>()),
+          _sessions(std::move(sessions)),
+          _server(std::move(server)),
           _packetFactory(std::move(packetFactory))
     {
-        if (!_levelManager.loadFromFile("levels/level1.json"))
-            std::cerr << "[GameServer] FAILED to load level file\n";
-        std::cout << "[GameServer] Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
-        _levelManager.reset();
+        if (!levelPath.empty()) {
+            if (!_levelManager.loadFromFile(levelPath))
+                std::cerr << "[GameServer] FAILED to load level file: " << levelPath << "\n";
+            else
+                std::cout << "[GameServer] Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+            _levelManager.reset();
+        }
     }
 
     void GameServer::onPlayerConnect(const int sessionId)

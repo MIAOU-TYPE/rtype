@@ -9,10 +9,6 @@
 
 using namespace Display;
 
-DisplayInit::DisplayInit() : _renderer(std::make_shared<Graphics::SFMLRenderer>())
-{
-}
-
 DisplayInit::DisplayInit(std::shared_ptr<Graphics::IRenderer> renderer) : _renderer(renderer)
 {
     if (!_renderer) {

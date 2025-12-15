@@ -63,9 +63,6 @@ namespace Display
 
     class DisplayInit {
       public:
-        /** @brief Default constructor for DisplayInit. */
-        DisplayInit();
-
         /**
          * @brief Constructor for DisplayInit.
          * @param renderer Shared pointer to the renderer interface.
@@ -99,7 +96,6 @@ namespace Display
          */
         std::shared_ptr<Graphics::IRenderer> getRenderer() const;
 
-      protected:
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface

@@ -27,7 +27,7 @@ TEST(GameServer, creates_player_on_connect)
     {
       "name": "TestLevel",
       "duration": 10,
-      "ennemies": {
+      "enemies": {
         "small": {
           "hp": 10,
           "speed": -50,
@@ -64,7 +64,7 @@ TEST(GameServer, destroys_player_on_disconnect)
     {
       "name": "TestLevel",
       "duration": 10,
-      "ennemies": {
+      "enemies": {
         "small": {
           "hp": 10,
           "speed": -50,

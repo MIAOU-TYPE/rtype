@@ -18,22 +18,18 @@
   "waves": [
     {
       "time": 2,
-      "count": 4,
       "enemies": { "smallEnemy": 4 }
     },
     {
       "time": 8,
-      "count": 3,
       "enemies": { "smallEnemy": 3 }
     },
     {
       "time": 15,
-      "count": 2,
       "enemies": { "mediumEnemy": 2 }
     },
     {
       "time": 25,
-      "count": 5,
       "enemies": { "smallEnemy": 5 }
     }
   ]

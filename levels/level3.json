@@ -24,12 +24,10 @@
   "waves": [
     {
       "time": 3,
-      "count": 6,
       "enemies": { "smallEnemy": 6 }
     },
     {
       "time": 10,
-      "count": 4,
       "enemies": {
         "mediumEnemy": 2,
         "smallEnemy": 2
@@ -37,7 +35,6 @@
     },
     {
       "time": 20,
-      "count": 8,
       "enemies": {
         "smallEnemy": 4,
         "mediumEnemy": 4
@@ -45,7 +42,6 @@
     },
     {
       "time": 30,
-      "count": 1,
       "enemies": { "boss": 1 }
     }
   ]

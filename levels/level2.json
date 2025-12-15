@@ -24,17 +24,14 @@
   "waves": [
     {
       "time": 1.5,
-      "count": 5,
       "enemies": { "smallEnemy": 5 }
     },
     {
       "time": 6,
-      "count": 3,
       "enemies": { "fastEnemy": 3 }
     },
     {
       "time": 12,
-      "count": 2,
       "enemies": {
         "mediumEnemy": 1,
         "fastEnemy": 2
@@ -42,7 +39,6 @@
     },
     {
       "time": 20,
-      "count": 4,
       "enemies": {
         "smallEnemy": 2,
         "mediumEnemy": 2
@@ -50,7 +46,6 @@
     },
     {
       "time": 30,
-      "count": 6,
       "enemies": {
         "fastEnemy": 4,
         "mediumEnemy": 2

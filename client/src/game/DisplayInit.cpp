@@ -6,9 +6,10 @@
 */
 
 #include "DisplayInit.hpp"
-#include <iostream>
 
 using namespace Display;
+
+constexpr float Display::DisplayInit::UPDATE_INTERVAL_MS = 16.67f;
 
 DisplayInit::DisplayInit() : _renderer(std::make_shared<Graphics::SFMLRenderer>())
 {
@@ -21,17 +22,11 @@ DisplayInit::DisplayInit(std::shared_ptr<Graphics::IRenderer> renderer) : _rende
     }
 }
 
-DisplayInit::~DisplayInit()
-{
-}
-
 void DisplayInit::run()
 {
     if (!_renderer || !_gameScene) {
         throw DisplayInitError("Game components not properly initialized");
     }
-
-    const float UPDATE_INTERVAL_MS = 16.67f;
 
     try {
         float frameTime = _renderer->getElapsedTime() * 1000.0f;

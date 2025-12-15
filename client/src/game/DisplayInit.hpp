@@ -71,7 +71,7 @@ namespace Display
         explicit DisplayInit(std::shared_ptr<Graphics::IRenderer> renderer);
 
         /** @brief Destructor for DisplayInit. */
-        ~DisplayInit();
+        ~DisplayInit() = default;
 
         /**
          * @brief Runs the main display loop.
@@ -104,5 +104,6 @@ namespace Display
         std::shared_ptr<Game::GameScene> _gameScene = nullptr;                ///> The main game scene
         std::shared_ptr<Game::MenuScene> _menuScene = nullptr;                ///> The menu scene
         SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
+        static constexpr float UPDATE_INTERVAL_MS;                            ///> Update interval in milliseconds
     };
 } // namespace Display

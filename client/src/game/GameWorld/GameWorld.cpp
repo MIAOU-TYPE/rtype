@@ -90,38 +90,30 @@ namespace Game
 
                 const size_t idx = static_cast<size_t>(ent);
 
-                // >>> IMPORTANT: décide UNE fois du scale <<<
-                // Si tes logs ressemblent à 702.902, c’est probablement déjà en unités "écran"
                 const float x =
-                    static_cast<float>(cmd.snapshot.x); // / 1000.f si (et seulement si) tu reçois du fixed-point
+                    static_cast<float>(cmd.snapshot.x);
                 const float y = static_cast<float>(cmd.snapshot.y);
 
-                // Create-once : NetworkIdentity
                 auto &idOpt = _registry.getComponents<Ecs::NetworkIdentity>()[idx];
                 if (!idOpt)
                     _registry.emplaceComponent<Ecs::NetworkIdentity>(ent, netId);
 
-                // Create-once : Position
                 auto &posOpt = _registry.getComponents<Ecs::Position>()[idx];
                 if (!posOpt)
                     _registry.emplaceComponent<Ecs::Position>(ent, x, y);
 
-                // Create-once : Interpolation
                 auto &interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[idx];
                 if (!interpOpt)
                     _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent, x, y, x, y, 1.f);
 
-                // Create-once : SpriteTag (ou mieux: un vrai composant Sprite/Drawable si ton rendu filtre dessus)
                 auto &tagOpt = _registry.getComponents<Ecs::SpriteTag>()[idx];
                 if (!tagOpt)
                     _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{"enemy2"});
 
-                // Update : interpolation
                 auto &pos = *_registry.getComponents<Ecs::Position>()[idx];
                 auto &interp = *_registry.getComponents<Ecs::NetworkInterpolation>()[idx];
 
                 if (isNew) {
-                    // première fois : pas d’interp “depuis 0”, on pose direct
                     pos.x = x;
                     pos.y = y;
                     interp.prevX = x;

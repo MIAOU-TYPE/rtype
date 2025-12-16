@@ -6,8 +6,6 @@
 */
 
 #include "GameOverScene.hpp"
-#include <utility>
-#include "SFMLSpriteManagement.hpp"
 
 using namespace Game;
 using namespace Graphics;

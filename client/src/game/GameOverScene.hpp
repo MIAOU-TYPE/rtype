@@ -11,9 +11,11 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <utility>
 #include "Button.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
+#include "SFMLSpriteManagement.hpp"
 
 /**
  * @namespace Game

@@ -16,7 +16,8 @@ namespace Thread
             throw ClientRuntimeError("{ClientRuntime::ClientRuntime} client pointer is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
         _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
-        _renderer = std::make_shared<Graphics::SFMLRenderer>();
+        _resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
+        _renderer = std::make_shared<Graphics::SFMLRenderer>(_resourceManager);
         _display = std::make_shared<Display::DisplayInit>(_renderer);
         _event = std::make_shared<Events::EventInit>(_renderer);
     }

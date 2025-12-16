@@ -14,6 +14,7 @@
 
 #include "ClientPacketFactory.hpp"
 #include "DisplayInit.hpp"
+#include "EmbeddedResourceManager.hpp"
 #include "EventInit.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
@@ -81,6 +82,7 @@ namespace Thread
         std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
         std::shared_ptr<Display::DisplayInit> _display;               ///> Display manager
         std::shared_ptr<Events::EventInit> _event;                    ///> Event manager
+        std::shared_ptr<Resources::EmbeddedResourceManager> _resourceManager; ///> Resource manager
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updateThread;   ///> Thread for updating game state

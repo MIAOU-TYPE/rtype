@@ -14,6 +14,7 @@ namespace Game
         _registry.registerComponent<Ecs::Position>();
         _registry.registerComponent<Ecs::Velocity>();
         _registry.registerComponent<Ecs::Health>();
+        _registry.registerComponent<Ecs::InputComponent>();
         _registry.registerComponent<Ecs::NetworkIdentity>();
         _registry.registerComponent<Ecs::NetworkInterpolation>();
         _registry.registerComponent<Ecs::SpriteTag>();
@@ -33,9 +34,8 @@ namespace Game
     void GameWorld::update(float dt)
     {
         Command cmd;
-        while (_commandBuffer.pop(cmd)) {
+        while (_commandBuffer.pop(cmd))
             applyCommand(cmd);
-        }
 
         _registry.view<Ecs::Position, Ecs::NetworkIdentity, Ecs::NetworkInterpolation>(
             [&](Ecs::Entity, auto &pos, auto &netId, auto &interp) {
@@ -59,9 +59,7 @@ namespace Game
                 _registry.emplaceComponent<Ecs::Position>(ent, cmd.create.x, cmd.create.y);
                 _registry.emplaceComponent<Ecs::NetworkIdentity>(ent, cmd.create.id, false);
                 _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent);
-                _registry.emplaceComponent<Ecs::SpriteTag>(
-                    ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)}
-                );
+                _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)});
                 _entityMap[cmd.create.id] = ent;
                 break;
             }

@@ -21,10 +21,11 @@
 #include "NetworkInterpolation.hpp"
 #include "Position.hpp"
 #include "Registry.hpp"
+#include "RenderLink.hpp"
 #include "SnapEntityData.hpp"
 #include "SpriteTag.hpp"
-#include "RenderLink.hpp"
 #include "Velocity.hpp"
+#include "InputComponent.hpp"
 
 namespace Game
 {

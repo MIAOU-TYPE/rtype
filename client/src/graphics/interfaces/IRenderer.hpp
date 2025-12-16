@@ -125,6 +125,24 @@ namespace Graphics
          * @brief Restarts the internal clock.
          */
         virtual void restartClock() = 0;
+
+        /**
+         * @brief Sets whether the mouse is currently pressed.
+         * @param isPressed True if the mouse is pressed, false otherwise.
+         */
+        virtual void setIsMousePressed(bool isPressed) = 0;
+
+        /**
+         * @brief Checks if the mouse is currently pressed.
+         * @return True if the mouse is pressed, false otherwise.
+         */
+        virtual bool getIsMousePressed() const = 0;
+
+        /**
+         * @brief Activates or deactivates the OpenGL context for the calling thread.
+         * @param active True to activate, false to deactivate.
+         */
+        virtual void setActive(bool active) = 0;
     };
 
 } // namespace Graphics

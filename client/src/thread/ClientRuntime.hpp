@@ -13,9 +13,16 @@
 #include <condition_variable>
 
 #include "ClientPacketFactory.hpp"
+#include "DisplayInit.hpp"
+#include "EventInit.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
+#include "SFMLRenderer.hpp"
 
+/**
+ * @namespace Thread
+ * @brief Contains all threading-related classes for the client.
+ */
 namespace Thread
 {
 
@@ -67,22 +74,25 @@ namespace Thread
         void wait();
 
       private:
+        std::shared_ptr<Graphics::SFMLRenderer> _renderer; ///> Shared renderer
+
         std::shared_ptr<Network::INetClient> _client;                 ///> Network client
         std::shared_ptr<Ecs::PacketRouter> _packetRouter;             ///> Entities factory
         std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
+        std::shared_ptr<Display::DisplayInit> _display;               ///> Display manager
+        std::shared_ptr<Events::EventInit> _event;                    ///> Event manager
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updateThread;   ///> Thread for updating game state
-        // std::thread _renderThread;    ///> Thread for rendering graphics
-        // std::thread _inputThread;     ///> Thread for handling user input
 
-        std::mutex _mutex;                 ///> Mutex for synchronizing access
-        std::condition_variable _cv;       ///> Condition variable for signaling
-        bool _stopRequested = false;       ///> Flag to indicate if a stop has been requested
-        std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the client is running
+        std::mutex _mutex;                       ///> Mutex for synchronizing access
+        std::condition_variable _cv;             ///> Condition variable for signaling
+        std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
+        std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
         void runReceiver() const; ///> Method for running the receiver thread
         void runUpdater() const;  ///> Method for running the updater thread
+        void runDisplay();        ///> Method for running the display thread
     };
 
 } // namespace Thread

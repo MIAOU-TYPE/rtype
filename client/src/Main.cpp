@@ -18,7 +18,6 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientR
 
     signalHandler->start();
     signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
-        std::cout << "\nInterrupt signal received. Stopping client..." << std::endl;
         runtime.stop();
     });
     return signalHandler;
@@ -46,7 +45,7 @@ int main(int argc, char **argv)
         signalHandler->stop();
         return 0;
     } catch (const std::exception &e) {
-        std::cerr << "R-Type Client System Error: " << e.what() << std::endl;
+        std::cerr << "{main}: " << e.what() << std::endl;
         return 1;
     }
 }

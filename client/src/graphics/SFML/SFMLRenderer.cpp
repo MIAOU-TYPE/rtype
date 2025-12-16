@@ -9,6 +9,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include "SFMLSpriteManagement.hpp"
 #include "SFMLText.hpp"
@@ -22,7 +23,7 @@ SFMLRenderer::SFMLRenderer(std::shared_ptr<Resources::IResourceManager> resource
 void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
     _window.create(sf::VideoMode({width, height}), title);
-    if (!_renderTexture.create(width, height))
+    if (!_renderTexture.resize({width, height}))
         throw std::runtime_error("Failed to create render texture for SFMLRenderer.");
     auto resource = _resourceManager->loadResource("shaders/colorblind.frag");
 
@@ -64,11 +65,14 @@ void SFMLRenderer::clear()
 
 void SFMLRenderer::display()
 {
-    if (_shaderLoaded && _colorBlindMode != ColorBlindType::NONE) {
+    if (_shaderLoaded) {
         _renderTexture.display();
-        sf::Sprite Sprite(_renderTexture.getTexture());
+        sf::Sprite sprite(_renderTexture.getTexture());
         _window.clear();
-        _window.draw(Sprite, &_colorBlindShader);
+        if (_colorBlindMode != ColorBlindType::NONE)
+            _window.draw(sprite, &_colorBlindShader);
+        else
+            _window.draw(sprite);
     }
     _window.display();
 }

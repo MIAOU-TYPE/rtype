@@ -18,6 +18,7 @@
 #include "InputSystem.hpp"
 #include "Registry.hpp"
 #include "SFMLAudio.hpp"
+#include "SFMLAudio.hpp"
 #include "SFMLEntityDrawing.hpp"
 #include "Starfield.hpp"
 
@@ -114,8 +115,7 @@ namespace Game
         Ecs::Registry _registry;                                  ///> The ECS registry
         std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
-        std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
-            nullptr;                                               ///> Resource manager for audio
+        std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager = nullptr;   ///> Resource manager for audio
         std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr; ///> The audio manager
         // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
     };

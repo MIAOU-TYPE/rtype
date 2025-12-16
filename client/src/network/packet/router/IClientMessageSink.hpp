@@ -47,17 +47,17 @@ namespace Ecs
          * @brief Called when an ENTITY_CREATE message is received.
          * @param data The data associated with the entity creation.
          */
-        virtual void onEntityCreate(const EntityCreateData &data) = 0;
+        virtual void onEntityCreate(const EntityCreate &data) = 0;
 
         /**
          * @brief Called when an ENTITY_DESTROY message is received.
          */
-        virtual void onEntityDestroy(const EntityDestroyData &) = 0;
+        virtual void onEntityDestroy(const EntityDestroy &data) = 0;
 
         /**
          * @brief Called when a SNAPSHOT message is received.
          */
-        virtual void onSnapshot(const SnapshotEntityData &data) = 0;
+        virtual void onSnapshot(const SnapshotEntity &entity) = 0;
     };
 
     class testSink : public IClientMessageSink {
@@ -82,21 +82,20 @@ namespace Ecs
             std::cout << "Game over!" << std::endl;
         }
 
-        void onEntityCreate(const EntityCreateData &data) override
+        void onEntityCreate(const EntityCreate &data) override
         {
-            (void) data;
-            std::cout << "Entity created!" << std::endl;
+            std::cout << "Entity created: ID=" << data.id << " X=" << data.x << " Y=" << data.y << std::endl;
         }
 
-        void onEntityDestroy(const EntityDestroyData &data) override
+        void onEntityDestroy(const EntityDestroy &data) override
         {
-            (void) data;
-            std::cout << "Entity destroyed!" << std::endl;
+            std::cout << "Entity created: ID=" << data.id << std::endl;
         }
 
-        // void onSnapshot(/**PARAM INCONNU**/) override
-        // {
-        //     // std::cout << "Snapshot received!" << std::endl;
-        // }
+        void onSnapshot(const SnapshotEntity entity) override
+        {
+            std::cout << "Snapshot Entity: ID=" << entity.entity << " X=" << entity.x << " Y=" << entity.y
+                      << " Sprite=" << entity.sprite << std::endl;
+        }
     };
 } // namespace Ecs

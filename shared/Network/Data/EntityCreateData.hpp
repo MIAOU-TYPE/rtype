@@ -9,6 +9,7 @@
 #include <cstdint>
 #include "HeaderData.hpp"
 #pragma pack(push, 1)
+#include <string>
 
 /**
  * @brief Structure representing the data for creating a new entity.
@@ -24,3 +25,13 @@ struct EntityCreateData {
 };
 
 #pragma pack(pop)
+
+/**
+ * @brief High-level ECS representation of an entity to be created.
+ */
+struct EntityCreate {
+    size_t id;          ///> Entity ID
+    float x;            ///> X position
+    float y;            ///> Y position
+    std::string sprite; ///> Sprite identifier
+};

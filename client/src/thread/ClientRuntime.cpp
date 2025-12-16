@@ -22,12 +22,14 @@ namespace Thread
             std::make_shared<Net::UDPPacket>());
         _packetRouter = std::make_shared<Ecs::PacketRouter>(
             _gameScene->getGameWorldPtr());
+        _renderer = std::make_shared<Graphics::SFMLRenderer>();
+        _display = std::make_shared<Display::DisplayInit>(_renderer);
+        _event = std::make_shared<Events::EventInit>(_renderer);
     }
 
     ClientRuntime::~ClientRuntime()
     {
-        if (!_stopRequested)
-            stop();
+        stop();
         _client = nullptr;
     }
 
@@ -35,7 +37,7 @@ namespace Thread
     {
         std::unique_lock lock(_mutex);
         _cv.wait(lock, [this]() {
-            return _stopRequested;
+            return _stopRequested.load();
         });
     }
 
@@ -44,47 +46,62 @@ namespace Thread
         try {
             _client->start();
             _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
-        } catch (std::exception &e) {
+        } catch (const std::exception &e) {
             throw ClientRuntimeError(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
         }
+
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updateThread = std::thread(&ClientRuntime::runUpdater, this);
+        runDisplay();
     }
 
     void ClientRuntime::stop()
     {
-        if (_client) {
-            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
-            _client->close();
-        }
-        {
-            std::scoped_lock lock(_mutex);
-            _stopRequested = true;
-            _running = false;
-        }
+        if (_stopRequested.exchange(true))
+            return;
+
+        _running = false;
         _cv.notify_all();
 
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updateThread.joinable())
             _updateThread.join();
+        if (_client) {
+            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
+            _client->close();
+        }
     }
 
     void ClientRuntime::runReceiver() const
     {
-        while (_client->isRunning()) {
+        while (_running) {
             _client->receivePackets();
         }
     }
 
     void ClientRuntime::runUpdater() const
     {
-        while (_client->isRunning()) {
+        while (_running) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
                 _packetRouter->handlePacket(pkt);
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+        }
+    }
+
+    void ClientRuntime::runDisplay()
+    {
+        _display->init(800, 600);
+
+        while (_running) {
+            _display->run();
+            _event->run();
+            if (!_display->isWindowOpen() || !_event->isWindowOpen()) {
+                stop();
+                break;
             }
         }
     }

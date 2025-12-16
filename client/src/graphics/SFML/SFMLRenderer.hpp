@@ -9,6 +9,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <mutex>
 #include "IRenderer.hpp"
 #include "SFMLEvent.hpp"
 
@@ -118,9 +119,29 @@ namespace Graphics
          */
         void restartClock() override;
 
+        /**
+         * @brief Sets the mouse pressed state.
+         * @param isPressed True if the mouse is pressed, false otherwise.
+         */
+        void setIsMousePressed(bool isPressed) override;
+
+        /**
+         * @brief Checks if the mouse is currently pressed.
+         * @return True if the mouse is pressed, false otherwise.
+         */
+        bool getIsMousePressed() const override;
+
+        /**
+         * @brief Activates or deactivates the OpenGL context for the calling thread.
+         * @param active True to activate, false to deactivate.
+         */
+        void setActive(bool active) override;
+
       private:
-        sf::RenderWindow _window; ///> The SFML render window
-        mutable sf::Clock _clock; ///> Internal clock for timing
+        sf::RenderWindow _window;     ///> The SFML render window
+        mutable sf::Clock _clock;     ///> Internal clock for timing
+        bool _isMousePressed = false; ///> Tracks if the mouse is currently pressed
+        mutable std::mutex _mutex;    ///> Mutex for thread-safe access
     };
 
 } // namespace Graphics

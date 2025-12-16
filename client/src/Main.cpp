@@ -38,7 +38,8 @@ int main(int argc, char **argv)
     const int port = parser.getPort();
     const std::string host = parser.getHost();
     try {
-        auto renderer = std::make_shared<Graphics::SFMLRenderer>();
+        auto resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
+        auto renderer = std::make_shared<Graphics::SFMLRenderer>(resourceManager);
         auto textureManager = std::make_shared<Graphics::SFMLTextureManager>();
         const auto client = std::make_shared<Network::NetClient>();
 

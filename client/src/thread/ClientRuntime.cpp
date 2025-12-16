@@ -14,7 +14,6 @@ namespace Thread
         if (!_client)
             throw ClientRuntimeError("NetClient is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
-        _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
         _resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
         _renderer = std::make_shared<Graphics::SFMLRenderer>(_resourceManager);
         _display = std::make_shared<Display::DisplayInit>(_renderer);

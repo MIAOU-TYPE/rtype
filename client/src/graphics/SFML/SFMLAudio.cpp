@@ -158,6 +158,15 @@ void SFMLAudio::setGlobalSoundVolume(float volume)
             }
         }
     }
+
+    if (_music) {
+        _music->setVolume(_musicVolume * (_globalSoundVolume / 100.0f));
+    }
+}
+
+float SFMLAudio::getGlobalSoundVolume() const
+{
+    return _globalSoundVolume;
 }
 
 bool SFMLAudio::hasSound(const std::string &soundName) const

@@ -9,19 +9,16 @@
 
 namespace Thread
 {
-    ClientRuntime::ClientRuntime(
-        const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene)
-        : _client(client), _gameScene(scene)
+    ClientRuntime::ClientRuntime(const std::shared_ptr<Network::INetClient> &client) : _client(client)
     {
         if (!_client)
             throw ClientRuntimeError("NetClient is null");
-        if (!_gameScene)
-            throw ClientRuntimeError("GameScene is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
-        _packetRouter = std::make_shared<Ecs::PacketRouter>(_gameScene->getGameWorldPtr());
         _renderer = std::make_shared<Graphics::SFMLRenderer>();
         _display = std::make_shared<Display::DisplayInit>(_renderer);
-        _event = std::make_shared<Events::EventInit>(_renderer);
+        _event = std::make_shared<Events::EventInit>(_renderer, _client, _packetFactory);
+        _inputEventManager = std::make_shared<Events::InputEventManager>();
+        _inputHandler = std::make_unique<Input::SFMLInputHandler>(_inputEventManager);
     }
 
     ClientRuntime::~ClientRuntime()
@@ -40,13 +37,13 @@ namespace Thread
 
     void ClientRuntime::start()
     {
-        try {
-            _client->start();
-            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
-        } catch (const std::exception &e) {
-            throw ClientRuntimeError(std::string("{ClientRuntime::start} Failed to start client: ") + e.what());
-        }
-
+        _display->init(800, 600);
+        _gameScene = _display->getGameScene();
+        if (!_gameScene)
+            throw ClientRuntimeError("GameScene not created by DisplayInit");
+        _packetRouter = std::make_shared<Ecs::PacketRouter>(_gameScene->getGameWorldPtr());
+        _client->start();
+        _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
         _running = true;
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updateThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -71,14 +68,14 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::runReceiver() const
+    void ClientRuntime::runReceiver()
     {
         while (_running) {
             _client->receivePackets();
         }
     }
 
-    void ClientRuntime::runUpdater() const
+    void ClientRuntime::runUpdater()
     {
         while (_running) {
             if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
@@ -91,8 +88,6 @@ namespace Thread
 
     void ClientRuntime::runDisplay()
     {
-        _display->init(800, 600);
-
         while (_running) {
             _display->run();
             _event->run();

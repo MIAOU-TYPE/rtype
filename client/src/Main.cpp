@@ -41,9 +41,8 @@ int main(int argc, char **argv)
         auto renderer = std::make_shared<Graphics::SFMLRenderer>();
         auto textureManager = std::make_shared<Graphics::SFMLTextureManager>();
         const auto client = std::make_shared<Network::NetClient>();
-        const auto scene = std::make_shared<Game::GameScene>(renderer, textureManager);
 
-        Thread::ClientRuntime runtime(client, scene);
+        Thread::ClientRuntime runtime(client);
         const auto signalHandler = startSignalHandler(runtime);
 
         client->configure(host, port);

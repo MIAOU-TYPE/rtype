@@ -143,9 +143,15 @@ namespace Game
                 if (!_sessionToEntity.contains(cmd.sessionId))
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
-                auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
-                    *inputOpt = cmd.input;
+                auto &inputs = _worldWrite->registry().getComponents<InputComponent>();
+
+                if (auto &inputOpt = inputs[static_cast<size_t>(ent)]; inputOpt.has_value()) {
+                    inputOpt->up = cmd.input.up;
+                    inputOpt->down = cmd.input.down;
+                    inputOpt->left = cmd.input.left;
+                    inputOpt->right = cmd.input.right;
+                    inputOpt->shoot = cmd.input.shoot;
+                }
                 break;
             }
             case GameCommand::Type::Ping: {

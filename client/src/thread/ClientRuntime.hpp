@@ -19,8 +19,11 @@
 #include "EventInit.hpp"
 #include "GameScene.hpp"
 #include "GameWorld.hpp"
+#include "InputData.hpp"
+#include "InputEvents.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
+#include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
 /**
@@ -55,8 +58,7 @@ namespace Thread
          * @param client Shared pointer to the network client.
          * @param scene Shared pointer to the game scene.
          */
-        ClientRuntime(
-            const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene);
+        ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
         /**
          * @brief Destructor for ClientRuntime.
          */
@@ -97,9 +99,12 @@ namespace Thread
         std::shared_ptr<Game::GameWorld> _gameWorld; ///> Game world
         std::shared_ptr<Game::GameScene> _gameScene; ///> Game scene
 
-        void runReceiver() const; ///> Method for running the receiver thread
-        void runUpdater() const;  ///> Method for running the updater thread
-        void runDisplay();        ///> Method for running the display thread
+        std::shared_ptr<Events::InputEventManager> _inputEventManager;
+        std::unique_ptr<Input::SFMLInputHandler> _inputHandler;
+
+        void runReceiver(); ///> Method for running the receiver thread
+        void runUpdater();  ///> Method for running the updater thread
+        void runDisplay();  ///> Method for running the display thread
     };
 
 } // namespace Thread

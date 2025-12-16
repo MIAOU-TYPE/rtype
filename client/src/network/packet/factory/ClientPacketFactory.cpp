@@ -56,4 +56,28 @@ namespace Network
         }
     }
 
+    std::shared_ptr<Net::IPacket> ClientPacketFactory::makePlayerInput(const PlayerInput &input) const noexcept
+    {
+        PlayerInputData packet{};
+        packet.header = makeHeader(Net::Protocol::INPUT, sizeof(PlayerInputData));
+
+        packet.flags = 0;
+        if (input.up)
+            packet.flags |= 0x01;
+        if (input.down)
+            packet.flags |= 0x02;
+        if (input.left)
+            packet.flags |= 0x04;
+        if (input.right)
+            packet.flags |= 0x08;
+        if (input.shoot)
+            packet.flags |= 0x10;
+
+        try {
+            return makePacket<PlayerInputData>(packet);
+        } catch (const FactoryError &e) {
+            std::cerr << "{ClientPacketFactory::makePlayerInput} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Network

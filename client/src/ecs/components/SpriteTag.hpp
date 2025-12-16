@@ -8,8 +8,9 @@
 #pragma once
 #include <string>
 
-namespace Ecs {
+namespace Ecs
+{
     struct SpriteTag {
         std::string name;
     };
-}
+} // namespace Ecs

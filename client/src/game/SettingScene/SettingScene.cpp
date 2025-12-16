@@ -6,7 +6,6 @@
 */
 
 #include "SettingScene.hpp"
-#include <iostream>
 
 using namespace Game;
 using namespace Graphics;
@@ -76,7 +75,6 @@ void SettingScene::setSoundButtons()
             float currentVolume = _audio->getGlobalSoundVolume();
             float newVolume = std::min(currentVolume + 10.0f, 100.0f);
             _audio->setGlobalSoundVolume(newVolume);
-            std::cout << "Volume increased to: " << newVolume << " from " << currentVolume << std::endl;
         });
     }
 
@@ -85,7 +83,6 @@ void SettingScene::setSoundButtons()
             float currentVolume = _audio->getGlobalSoundVolume();
             float newVolume = std::max(currentVolume - 10.0f, 0.0f);
             _audio->setGlobalSoundVolume(newVolume);
-            std::cout << "Volume decreased to: " << newVolume << " from " << currentVolume << std::endl;
         });
     }
 }

@@ -88,6 +88,7 @@ void DisplayInit::init(unsigned int width, unsigned int height)
             _currentScene = SceneState::Gameplay;
             _renderer->setIsMousePressed(false);
             _audioManager->playMusic("game_theme", true);
+            _audioManager->setGlobalSoundVolume(_audioManager->getGlobalSoundVolume());
         });
 
         _menuScene->setOnQuitCallback([this]() {

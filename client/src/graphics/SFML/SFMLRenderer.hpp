@@ -12,6 +12,7 @@
 #include <mutex>
 #include "IRenderer.hpp"
 #include "SFMLEvent.hpp"
+#include "IResourceManager.hpp"
 
 /**
  * @namespace Graphics
@@ -28,6 +29,11 @@ namespace Graphics
      */
     class SFMLRenderer : public IRenderer {
       public:
+        /**
+         * @brief Constructor for SFMLRenderer.
+         * @param resourceManager The resource manager for loading embedded assets.
+         */
+        explicit SFMLRenderer(std::shared_ptr<Resources::IResourceManager> resourceManager);
         /**
          * @brief Creates the SFML window.
          * @param width The width of the window.
@@ -137,11 +143,29 @@ namespace Graphics
          */
         void setActive(bool active) override;
 
+        /**
+         * @brief Sets the color blind mode.
+         * @param type The type of color blindness to simulate.
+         */
+        void setColorBlindMode(ColorBlindType type) override;
+
+        /**
+         * @brief Gets the current color blind mode.
+         * @return The type of color blindness currently simulated.
+         */
+        ColorBlindType getColorBlindMode() const override;
+
       private:
-        sf::RenderWindow _window;     ///> The SFML render window
-        mutable sf::Clock _clock;     ///> Internal clock for timing
-        bool _isMousePressed = false; ///> Tracks if the mouse is currently pressed
-        mutable std::mutex _mutex;    ///> Mutex for thread-safe access
+        sf::RenderWindow _window;                                       ///> The SFML render window
+        mutable sf::Clock _clock;                                       ///> Internal clock for timing
+        bool _isMousePressed = false;                                   ///> Tracks if the mouse is currently pressed
+        mutable std::mutex _mutex;                                      ///> Mutex for thread-safe access
+        ColorBlindType _colorBlindMode = ColorBlindType::NONE;          ///> Current color blind mode
+        sf::RenderTexture _renderTexture;                               ///> Off-screen render texture for color blind simulation
+        sf::Shader _colorBlindShader;                                   ///> Shader for color blind effects
+        bool _shaderLoaded = false;                                     ///> Flag to check if the shader loaded successfully
+        std::shared_ptr<Resources::IResourceManager> _resourceManager;  ///> Resource manager for embedded assets
+        sf::RenderTarget* _currentTarget = nullptr;                     ///> Current render target (window or render texture)
     };
 
 } // namespace Graphics

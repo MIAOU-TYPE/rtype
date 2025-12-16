@@ -110,7 +110,7 @@ void DisplayInit::init(unsigned int width, unsigned int height)
         _settingScene->setOnBackCallback([this]() {
             _currentScene = SceneState::Menu;
         });
-        
+
         _gameOverScene->setOnReturnToMenuCallback([this]() {
             _currentScene = SceneState::Menu;
             _renderer->setIsMousePressed(false);

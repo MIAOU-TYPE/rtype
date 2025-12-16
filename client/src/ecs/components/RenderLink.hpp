@@ -11,7 +11,10 @@
 
 namespace Ecs
 {
+    /** @struct RenderLink
+     * @brief Component that links an ECS entity to its graphical representation.
+     */
     struct RenderLink {
-        std::shared_ptr<Graphics::GraphicalEntity> gfx;
+        std::shared_ptr<Graphics::GraphicalEntity> gfx; ///> Pointer to the graphical entity.
     };
 } // namespace Ecs

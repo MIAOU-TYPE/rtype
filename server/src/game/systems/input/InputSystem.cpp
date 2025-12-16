@@ -13,7 +13,7 @@ namespace Game
     {
         world.registry().view<InputComponent, Ecs::Position>(
             [](Ecs::Entity, InputComponent &input, Ecs::Position &pos) {
-                constexpr float speed = 5000.f;
+                constexpr float speed = 7.f;
                 if (input.left)
                     pos.x -= speed;
                 if (input.right)

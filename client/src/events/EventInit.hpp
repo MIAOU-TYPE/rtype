@@ -46,7 +46,7 @@ namespace Events
         }
 
       private:
-        std::string _message = ""; //> Error message
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -84,8 +84,8 @@ namespace Events
         bool isWindowOpen() const;
 
       private:
-        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> The renderer interface
-        std::shared_ptr<Network::INetClient> _client = nullptr;   ///> The network client
-        std::shared_ptr<Network::ClientPacketFactory> _packetFactory = nullptr;
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;               ///> The renderer interface
+        std::shared_ptr<Network::INetClient> _client = nullptr;                 ///> The network client
+        std::shared_ptr<Network::ClientPacketFactory> _packetFactory = nullptr; ///> The client packet factory
     };
 } // namespace Events

@@ -22,6 +22,8 @@
 #include "Position.hpp"
 #include "Registry.hpp"
 #include "SnapEntityData.hpp"
+#include "SpriteTag.hpp"
+#include "RenderLink.hpp"
 #include "Velocity.hpp"
 
 namespace Game

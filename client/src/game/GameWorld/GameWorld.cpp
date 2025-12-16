@@ -16,6 +16,18 @@ namespace Game
         _registry.registerComponent<Ecs::Health>();
         _registry.registerComponent<Ecs::NetworkIdentity>();
         _registry.registerComponent<Ecs::NetworkInterpolation>();
+        _registry.registerComponent<Ecs::SpriteTag>();
+        _registry.registerComponent<Ecs::RenderLink>();
+    }
+
+    static std::string pickPlayerSprite(std::size_t id)
+    {
+        switch (id % 4) {
+            case 0: return "player";
+            case 1: return "player2";
+            case 2: return "player3";
+            default: return "player4";
+        }
     }
 
     void GameWorld::update(float dt)
@@ -47,6 +59,9 @@ namespace Game
                 _registry.emplaceComponent<Ecs::Position>(ent, cmd.create.x, cmd.create.y);
                 _registry.emplaceComponent<Ecs::NetworkIdentity>(ent, cmd.create.id, false);
                 _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent);
+                _registry.emplaceComponent<Ecs::SpriteTag>(
+                    ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)}
+                );
                 _entityMap[cmd.create.id] = ent;
                 break;
             }

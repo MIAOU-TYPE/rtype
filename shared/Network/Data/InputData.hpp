@@ -8,6 +8,7 @@
 #pragma once
 
 #include "HeaderData.hpp"
+#include <cstddef>
 
 #pragma pack(push, 1)
 

@@ -59,43 +59,4 @@ namespace Ecs
          */
         virtual void onSnapshot(const SnapshotEntity &entity) = 0;
     };
-
-    class testSink : public IClientMessageSink {
-      public:
-        void onAccept() override
-        {
-            std::cout << "Accepted by server!" << std::endl;
-        }
-
-        void onReject() override
-        {
-            std::cout << "Rejected by server!" << std::endl;
-        }
-
-        void onPong() override
-        {
-            std::cout << "Pong!" << std::endl;
-        }
-
-        void onGameOver() override
-        {
-            std::cout << "Game over!" << std::endl;
-        }
-
-        void onEntityCreate(const EntityCreate &data) override
-        {
-            std::cout << "Entity created: ID=" << data.id << " X=" << data.x << " Y=" << data.y << std::endl;
-        }
-
-        void onEntityDestroy(const EntityDestroy &data) override
-        {
-            std::cout << "Entity created: ID=" << data.id << std::endl;
-        }
-
-        void onSnapshot(const SnapshotEntity &entity) override
-        {
-            std::cout << "Snapshot Entity: ID=" << entity.entity << " X=" << entity.x << " Y=" << entity.y
-                      << " Sprite=" << entity.sprite << std::endl;
-        }
-    };
 } // namespace Ecs

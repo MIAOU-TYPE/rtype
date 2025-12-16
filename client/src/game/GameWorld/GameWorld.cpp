@@ -113,7 +113,7 @@ namespace Game
         _commandBuffer.push({CommandType::GameOver});
     }
 
-    void GameWorld::onEntityCreate(const EntityCreateData &data)
+    void GameWorld::onEntityCreate(const EntityCreate &data)
     {
         Command cmd;
         cmd.type = CommandType::CreateEntity;
@@ -121,7 +121,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameWorld::onEntityDestroy(const EntityDestroyData &data)
+    void GameWorld::onEntityDestroy(const EntityDestroy &data)
     {
         Command cmd;
         cmd.type = CommandType::DestroyEntity;
@@ -129,7 +129,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameWorld::onSnapshot(const SnapshotEntityData &data)
+    void GameWorld::onSnapshot(const SnapshotEntity &data)
     {
         Command cmd;
         cmd.type = CommandType::Snapshot;

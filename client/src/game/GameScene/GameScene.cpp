@@ -73,4 +73,3 @@ std::shared_ptr<GameWorld> GameScene::getGameWorldPtr()
 {
     return _gameWorld;
 }
-

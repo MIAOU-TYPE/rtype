@@ -93,10 +93,10 @@ namespace Game
         enum class CommandType { Accept, Reject, GameOver, CreateEntity, DestroyEntity, Snapshot };
 
         struct Command {
-            CommandType type;   ///> Type of command
-            EntityCreate create{}; ///> Data for entity creation
-            EntityDestroy destroy{}; ///> Data for entity destruction
-            SnapshotEntity snapshot{};  ///> Data for entity snapshot
+            CommandType type;          ///> Type of command
+            EntityCreate create{};     ///> Data for entity creation
+            EntityDestroy destroy{};   ///> Data for entity destruction
+            SnapshotEntity snapshot{}; ///> Data for entity snapshot
         };
 
         /**
@@ -105,8 +105,8 @@ namespace Game
          */
         void applyCommand(const Command &cmd);
 
-        Ecs::Registry &_registry;       ///> Reference to the ECS registry
-        ::Command::CommandBuffer<Command> _commandBuffer;       ///> Command buffer for processing server messages
-        std::unordered_map<std::uint64_t, Ecs::Entity> _entityMap;      ///> Map of network IDs to entities
+        Ecs::Registry &_registry;                                  ///> Reference to the ECS registry
+        ::Command::CommandBuffer<Command> _commandBuffer;          ///> Command buffer for processing server messages
+        std::unordered_map<std::uint64_t, Ecs::Entity> _entityMap; ///> Map of network IDs to entities
     };
 } // namespace Game

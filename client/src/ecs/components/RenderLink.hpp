@@ -9,8 +9,9 @@
 #include <memory>
 #include "SFMLEntityCreation.hpp"
 
-namespace Ecs {
+namespace Ecs
+{
     struct RenderLink {
         std::shared_ptr<Graphics::GraphicalEntity> gfx;
     };
-}
+} // namespace Ecs

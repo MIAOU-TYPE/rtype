@@ -10,11 +10,19 @@
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory)
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+        const std::string &levelPath)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
           _packetFactory(std::move(packetFactory))
     {
+        if (!levelPath.empty()) {
+            if (!_levelManager.loadFromFile(levelPath))
+                std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
+            else
+                std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+            _levelManager.reset();
+        }
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -23,6 +31,13 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
+        if (const auto *addr = _sessions->getAddress(sessionId)) {
+            if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
+                if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::REJECT))
+                    _server->sendPacket(*pkt);
+            } else
+                _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
+        }
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
@@ -50,13 +65,18 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::update(const float dt) const
+    void GameServer::update(const float dt)
     {
+        LevelSystem::update(*_worldWrite, _levelManager, dt);
+
+        TargetingSystem::update(*_worldWrite);
+        AISystem::update(*_worldWrite, dt);
+        AttackSystem::update(*_worldWrite, dt);
+
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
-        AISystem::update(*_worldWrite, dt);
+
         MovementSystem::update(*_worldWrite, dt);
-        EnemySpawnSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         DamageSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
@@ -92,16 +112,31 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
+                if (!_sessionToEntity.contains(cmd.sessionId) && _sessions->getAllSessions().size() > MAX_PLAYERS)
+                    break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
+                const auto entityId = static_cast<std::size_t>(ent);
+                _sessions->forEachSession([&](int, const sockaddr_in &address) {
+                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 1))
+                        _server->sendPacket(*pkt);
+                });
                 break;
             }
+
             case GameCommand::Type::PlayerDisconnect: {
-                if (!_sessionToEntity.contains(cmd.sessionId))
+                const auto it = _sessionToEntity.find(cmd.sessionId);
+                if (it == _sessionToEntity.end())
                     break;
-                const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
+                const Ecs::Entity ent = it->second;
+                const auto entityId = static_cast<std::size_t>(ent);
+                _sessionToEntity.erase(it);
+                _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
-                _sessionToEntity.erase(cmd.sessionId);
+                _sessions->forEachSession([&](int, const sockaddr_in &address) {
+                    if (const auto packet = _packetFactory->makeEntityDestroy(address, entityId))
+                        _server->sendPacket(*packet);
+                });
                 break;
             }
             case GameCommand::Type::PlayerInput: {
@@ -109,8 +144,7 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
                 auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                auto &inputOpt = inputArr[static_cast<size_t>(ent)];
-                if (inputOpt.has_value())
+                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
                     *inputOpt = cmd.input;
                 break;
             }

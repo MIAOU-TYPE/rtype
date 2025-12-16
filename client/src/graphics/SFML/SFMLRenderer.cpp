@@ -21,11 +21,13 @@ void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const s
 
 bool SFMLRenderer::isOpen() const
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     return _window.isOpen();
 }
 
 void SFMLRenderer::close()
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     _window.close();
 }
 
@@ -41,8 +43,16 @@ void SFMLRenderer::display()
 
 bool SFMLRenderer::pollEvent(std::shared_ptr<IEvent> &event)
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     if (auto opt = _window.pollEvent()) {
         event = std::make_shared<SFMLEvent>(*opt);
+
+        if (event->isType(EventType::MouseButtonPressed)) {
+            _isMousePressed = true;
+        } else if (event->isType(EventType::MouseButtonReleased)) {
+            _isMousePressed = false;
+        }
+
         return true;
     }
     return false;
@@ -99,4 +109,22 @@ float SFMLRenderer::getElapsedTime() const
 void SFMLRenderer::restartClock()
 {
     _clock.restart();
+}
+
+void SFMLRenderer::setIsMousePressed(bool isPressed)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    _isMousePressed = isPressed;
+}
+
+bool SFMLRenderer::getIsMousePressed() const
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    return _isMousePressed;
+}
+
+void SFMLRenderer::setActive(bool active)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    (void) _window.setActive(active);
 }

@@ -63,6 +63,7 @@ test-results/
 *.xml
 *.tar.gz
 *.zip
+*unit_tests*
 
 # Dependencies (uncomment as needed)
 # conan/
@@ -79,3 +80,5 @@ test-results/
 vcpkg_installed/
 vcpkg/
 package-lock.json
+
+libraries/

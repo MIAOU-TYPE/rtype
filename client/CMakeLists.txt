@@ -129,6 +129,11 @@ endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
 
 # ------------------------------
+# COMMAND BUFFER
+# ------------------------------
+target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
+
+# ------------------------------
 # NetWrapperLib
 # ------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
@@ -150,11 +155,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 
 # ------------------------------
-# OUTPUT LOCATION
+# Signal Library
 # ------------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE Signal)
 
 # ------------------------------
 # EXPORT VARIABLES FOR TESTS

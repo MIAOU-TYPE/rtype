@@ -20,3 +20,10 @@ struct EntityDestroyData {
 };
 
 #pragma pack(pop)
+
+/**
+ * @brief High-level ECS representation of an entity to be destroyed.
+ */
+struct EntityDestroy {
+    size_t id; ///> Entity ID
+};

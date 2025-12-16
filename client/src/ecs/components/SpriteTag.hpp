@@ -10,7 +10,10 @@
 
 namespace Ecs
 {
+    /** @struct SpriteTag
+     * @brief Component that holds a tag name for sprite identification.
+     */
     struct SpriteTag {
-        std::string name;
+        std::string name; ///> The tag name for the sprite.
     };
 } // namespace Ecs

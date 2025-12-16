@@ -15,7 +15,7 @@ using namespace Graphics;
 
 Button::Button(float x, float y, const std::string &normalTexture, const std::string &hoverTexture,
     const std::string &pressedTexture, std::shared_ptr<ITextureManager> textureManager, const std::string &labelText,
-    const std::string &fontPath, float scale)
+    const std::string &fontPath, float scale,, unsigned int characterSize)
     : _x(x), _y(y), _textureManager(std::move(textureManager))
 {
     if (!_textureManager) {

@@ -7,6 +7,8 @@
 
 #include "LevelSystem.hpp"
 
+#include "Damage.hpp"
+
 namespace Game
 {
     std::vector<bool> LevelSystem::_spawned;
@@ -31,7 +33,6 @@ namespace Game
             if (!lvl.shouldSpawn(wave.time))
                 continue;
             _spawned[i] = true;
-            std::cout << "{LevelSystem::handleWaves} Wave " << i << " triggered at time=" << wave.time << "\n";
             spawnWave(world, level, wave);
         }
     }
@@ -57,6 +58,8 @@ namespace Game
         reg.emplaceComponent<Ecs::Velocity>(mob, def.speed, 0.f);
         reg.emplaceComponent<Ecs::Health>(mob, def.hp, def.hp);
         reg.emplaceComponent<Ecs::Collision>(mob, def.colW, def.colH);
+        reg.emplaceComponent<Ecs::Damageable>(mob, true);
+        reg.emplaceComponent<Ecs::Damage>(mob, 200);
 
         Ecs::AIBrain brain;
         brain.state = Ecs::AIState::Patrol;

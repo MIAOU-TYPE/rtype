@@ -32,6 +32,7 @@ namespace Ecs
 
         _registry.view<InputComponent, ShootingComponent>(
             [deltaTime](Entity, const InputComponent &input, ShootingComponent &shooting) {
+                (void) input;
                 if (shooting.cooldown > 0.f)
                     shooting.cooldown = std::max(0.f, shooting.cooldown - deltaTime);
                 if (shooting.wantsToShoot) {

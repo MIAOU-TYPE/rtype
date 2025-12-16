@@ -8,7 +8,10 @@
 #include <exception>
 #include <iostream>
 #include "ClientRuntime.hpp"
+#include "GameScene.hpp"
 #include "NetClient.hpp"
+#include "SFMLRenderer.hpp"
+#include "SFMLTextureManager.hpp"
 #include "SignalHandler.hpp"
 
 static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientRuntime &runtime)
@@ -26,8 +29,12 @@ static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientR
 int main()
 {
     try {
-        auto client = std::make_shared<Network::NetClient>();
-        Thread::ClientRuntime runtime(client);
+        auto renderer = std::make_shared<Graphics::SFMLRenderer>();
+        auto textureManager = std::make_shared<Graphics::SFMLTextureManager>();
+        const auto client = std::make_shared<Network::NetClient>();
+        const auto scene = std::make_shared<Game::GameScene>(renderer, textureManager);
+
+        Thread::ClientRuntime runtime(client, scene);
         const auto signalHandler = startSignalHandler(runtime);
 
         client->configure("127.0.0.1", 8080);

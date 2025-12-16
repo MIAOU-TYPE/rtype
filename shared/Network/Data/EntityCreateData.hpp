@@ -7,9 +7,9 @@
 
 #pragma once
 #include <cstdint>
+#include <string>
 #include "HeaderData.hpp"
 #pragma pack(push, 1)
-#include <string>
 
 /**
  * @brief Structure representing the data for creating a new entity.

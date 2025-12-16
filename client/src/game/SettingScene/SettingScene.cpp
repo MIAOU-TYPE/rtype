@@ -41,7 +41,6 @@ SettingScene::SettingScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<
         unsigned int windowHeight = _renderer->getWindowHeight();
 
         float centerX = static_cast<float>(windowWidth) / 2.0f;
-        float buttonSpacing = 100.0f;
 
         const std::string fontPath = "fonts/r-type.otf";
 

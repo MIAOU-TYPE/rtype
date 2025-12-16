@@ -56,13 +56,13 @@ void GameEventHandler::handleMovement(InputAction action, InputState state)
     if (!input.has_value())
         return;
 
-    bool isPressed = (state == InputState::Pressed || state == InputState::Held);
+    // bool isPressed = (state == InputState::Pressed || state == InputState::Held);
 
     switch (action) {
-        case InputAction::MoveUp: input->up = isPressed; break;
-        case InputAction::MoveDown: input->down = isPressed; break;
-        case InputAction::MoveLeft: input->left = isPressed; break;
-        case InputAction::MoveRight: input->right = isPressed; break;
+        case InputAction::MoveUp: std::cout << "Move up pressed" ; break;
+        case InputAction::MoveDown:  std::cout << "Move up pressed"; break;
+        case InputAction::MoveLeft:  std::cout << "Move up pressed"; break;
+        case InputAction::MoveRight:  std::cout << "Move up pressed"; break;
         default: break;
     }
 }

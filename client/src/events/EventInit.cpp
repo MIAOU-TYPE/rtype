@@ -6,6 +6,8 @@
 */
 
 #include "EventInit.hpp"
+#include "SFMLEvent.hpp"
+#include <iostream>
 
 using namespace Events;
 
@@ -28,6 +30,16 @@ void EventInit::run()
         while (_renderer->pollEvent(event)) {
             if (!event) {
                 continue;
+            }
+
+            auto sfmlEventPtr = std::dynamic_pointer_cast<Graphics::SFMLEvent>(event);
+            if (sfmlEventPtr && event->isType(Graphics::EventType::KeyPressed)) {
+                const auto &sfEvent = sfmlEventPtr->getSFMLEvent();
+                if (auto kp = sfEvent.getIf<sf::Event::KeyPressed>()) {
+                    if (kp->code == sf::Keyboard::Key::Z) {
+                        std::cout << "Z pressed!" << std::endl;
+                    }
+                }
             }
 
             if (_renderer->isWindowCloseEvent(*event)) {

@@ -61,13 +61,12 @@ void SettingScene::initButtons(float backButtonCenterX, unsigned int windowHeigh
     _backButton = std::make_unique<Button>(backButtonCenterX - 250, static_cast<float>(windowHeight) / 2.0f + 235.0f,
         "sprites/play_bt.png", "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "BACK",
         fontPath);
-
-    _increaseVolumeButton = std::make_unique<Button>(backButtonCenterX + 100.0f,
+    _increaseVolumeButton = std::make_unique<Button>(backButtonCenterX + 200.0f,
         static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
-        "sprites/play_bt_press.png", _textureManager, "Vol +", fontPath);
-    _decreaseVolumeButton = std::make_unique<Button>(backButtonCenterX - 100.0f,
+        "sprites/play_bt_press.png", _textureManager, "ADD", fontPath);
+    _decreaseVolumeButton = std::make_unique<Button>(backButtonCenterX - 200.0f,
         static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
-        "sprites/play_bt_press.png", _textureManager, "Vol -", fontPath);
+        "sprites/play_bt_press.png", _textureManager, "SUB", fontPath);
     setSoundButtons();
 }
 

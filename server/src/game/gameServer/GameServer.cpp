@@ -23,6 +23,7 @@ namespace Game
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
+        _waitingClock.restart();
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -67,7 +68,8 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        LevelSystem::update(*_worldWrite, _levelManager, dt);
+        if (_waitingClock.elapsed() > 5.0)
+            LevelSystem::update(*_worldWrite, _levelManager, dt);
 
         TargetingSystem::update(*_worldWrite);
         AISystem::update(*_worldWrite, dt);

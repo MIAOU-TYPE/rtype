@@ -39,8 +39,8 @@ namespace Ecs
             case Net::Protocol::PONG: handlePong(); break;
             case Net::Protocol::REJECT: handleReject(); break;
             case Net::Protocol::ENTITY_CREATE: handleEntityCreate(payload, payloadSize); break;
-            case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(); break;
-            case Net::Protocol::SNAPSHOT: handleSnapEntity(); break;
+            case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(payload, payloadSize); break;
+            case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';
@@ -114,28 +114,62 @@ namespace Ecs
 
     void PacketRouter::handleEntityCreate(const uint8_t *payload, size_t size) const
     {
-        EntityCreateData data{};
-        std::cout << "Handling ENTITY_CREATE packet of size " << size << std::endl;
-        std::cout << "EntityCreateData - id: " << data.id << ", type: " << static_cast<int>(data.header.type)
-                  << ", x: " << data.x << ", y: " << data.y << "sprite:" << data.sprite
-                  << "header.size: " << data.header.size << std::endl;
-
         if (size < sizeof(EntityCreateData)) {
             std::cerr << "{PacketRouter::handleEntityCreate} Dropped: payload too small\n";
             return;
         }
-        std::memcpy(&data, payload, sizeof(EntityCreateData));
-        _sink->onEntityCreate(data);
+
+        EntityCreateData net{};
+        std::memcpy(&net, payload, sizeof(EntityCreateData));
+
+        EntityCreate evt{};
+        evt.id = be64toh(net.id);
+        evt.x = ntohf(net.x);
+        evt.y = ntohf(net.y);
+        // evt.sprite = spriteFromId(ntohs(net.sprite));
+        _sink->onEntityCreate(evt);
     }
 
-    void PacketRouter::handleEntityDestroy() const
+    void PacketRouter::handleEntityDestroy(const uint8_t *payload, size_t size) const
     {
         EntityDestroyData data{};
-        _sink->onEntityDestroy(data);
+
+        if (size < sizeof(EntityDestroyData)) {
+            std::cerr << "{PacketRouter::handleEntityDestroy} Dropped: payload too small\n";
+            return;
+        }
+        std::memcpy(&data, payload, sizeof(EntityDestroyData));
+        EntityDestroy entityDestroy{};
+        entityDestroy.id = be64toh(data.id);
+        _sink->onEntityDestroy(entityDestroy);
     }
 
-    void PacketRouter::handleSnapEntity() const
+    void PacketRouter::handleSnapEntity(const uint8_t *payload, size_t size) const
     {
-        _sink->onSnapshot();
+        if (size < sizeof(SnapshotBatchHeader)) {
+            std::cerr << "Snapshot batch too small\n";
+            return;
+        }
+
+        SnapshotBatchHeader batch{};
+        std::memcpy(&batch, payload, sizeof(batch));
+
+        const uint16_t count = ntohs(batch.count);
+        const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
+
+        for (uint16_t i = 0; i < count; ++i) {
+            if (cursor + sizeof(SnapshotEntityData) > payload + size)
+                break;
+
+            SnapshotEntityData entityData{};
+            std::memcpy(&entityData, cursor, sizeof(entityData));
+            SnapshotEntity entity{};
+            entity.entity = be64toh(entityData.entity);
+            entity.x = ntohf(entityData.x);
+            entity.y = ntohf(entityData.y);
+            // entity.sprite = spriteFromId(entityData.sprite);
+            _sink->onSnapshot(entity);
+            cursor += sizeof(SnapshotEntityData);
+        }
     }
 } // namespace Ecs

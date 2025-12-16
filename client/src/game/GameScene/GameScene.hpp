@@ -12,8 +12,8 @@
 #include <string>
 #include <utility>
 #include "EmbeddedResourceManager.hpp"
-#include "GameWorld.hpp"
 #include "GameHUD.hpp"
+#include "GameWorld.hpp"
 #include "IHUD.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
@@ -119,7 +119,7 @@ namespace Game
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
 
-        std::unique_ptr<Graphics::GameHUD> _hud = nullptr;                    ///> The game HUD
+        std::unique_ptr<Graphics::GameHUD> _hud = nullptr;        ///> The game HUD
         Ecs::Registry _registry;                                  ///> The ECS registry
         std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system

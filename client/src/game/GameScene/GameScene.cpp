@@ -9,8 +9,8 @@
 
 using namespace Game;
 
-GameScene::GameScene(
-    std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager, std::shared_ptr<Audio::SFMLAudio> audioManager)
+GameScene::GameScene(std::shared_ptr<Graphics::IRenderer> renderer,
+    std::shared_ptr<Graphics::ITextureManager> textureManager, std::shared_ptr<Audio::SFMLAudio> audioManager)
     : _renderer(std::move(renderer)), _textureManager(std::move(textureManager)), _audioManager(std::move(audioManager))
 {
     if (!_renderer) {

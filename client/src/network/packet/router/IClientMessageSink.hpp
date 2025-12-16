@@ -92,7 +92,7 @@ namespace Ecs
             std::cout << "Entity created: ID=" << data.id << std::endl;
         }
 
-        void onSnapshot(const SnapshotEntity entity) override
+        void onSnapshot(const SnapshotEntity &entity) override
         {
             std::cout << "Snapshot Entity: ID=" << entity.entity << " X=" << entity.x << " Y=" << entity.y
                       << " Sprite=" << entity.sprite << std::endl;

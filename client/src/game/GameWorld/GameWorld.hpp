@@ -17,6 +17,7 @@
 #include "EntityDestroyData.hpp"
 #include "Health.hpp"
 #include "IClientMessageSink.hpp"
+#include "InputComponent.hpp"
 #include "NetworkIdentity.hpp"
 #include "NetworkInterpolation.hpp"
 #include "Position.hpp"
@@ -25,7 +26,6 @@
 #include "SnapEntityData.hpp"
 #include "SpriteTag.hpp"
 #include "Velocity.hpp"
-#include "InputComponent.hpp"
 
 namespace Game
 {

@@ -61,6 +61,8 @@ namespace Game
                 _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent);
                 _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)});
                 _entityMap[cmd.create.id] = ent;
+                std::cout << cmd.create.id << std::endl;
+                std::cout << static_cast<size_t>(ent) << std::endl;
                 break;
             }
 
@@ -74,26 +76,52 @@ namespace Game
             }
 
             case CommandType::Snapshot: {
-                auto it = _entityMap.find(cmd.snapshot.entity);
-                if (it == _entityMap.end())
-                    return;
+                const auto netId = cmd.snapshot.entity;
+
+                auto it = _entityMap.find(netId);
+                if (it == _entityMap.end()) {
+                    const Ecs::Entity enti = _registry.createEntity();
+                    _entityMap[netId] = enti;
+                    it = _entityMap.find(netId);
+
+                    _registry.emplaceComponent<Ecs::NetworkIdentity>(enti, netId);
+
+                    constexpr float SNAPSHOT_SCALE = 1000.f;
+                    _registry.emplaceComponent<Ecs::Position>(enti, static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE,
+                        static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE);
+
+                    _registry.emplaceComponent<Ecs::NetworkInterpolation>(enti,
+                        /*prevX*/ 0.f, /*prevY*/ 0.f, /*targetX*/ 0.f, /*targetY*/ 0.f, /*alpha*/ 0.f);
+                    _registry.emplaceComponent<Ecs::SpriteTag>(enti, Ecs::SpriteTag{"enemy2"});
+                }
 
                 const Ecs::Entity ent = it->second;
+
                 auto &posOpt = _registry.getComponents<Ecs::Position>()[static_cast<size_t>(ent)];
                 auto &interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[static_cast<size_t>(ent)];
 
-                if (!posOpt || !interpOpt)
-                    return;
+                if (!posOpt) {
+                    constexpr float SNAPSHOT_SCALE = 1000.f;
+                    _registry.emplaceComponent<Ecs::Position>(ent, static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE,
+                        static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE);
+                    posOpt = _registry.getComponents<Ecs::Position>()[static_cast<size_t>(ent)];
+                }
+                if (!interpOpt) {
+                    _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent, 0.f, 0.f, 0.f, 0.f, 0.f);
+                    interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[static_cast<size_t>(ent)];
+                }
 
                 auto &pos = *posOpt;
                 auto &interp = *interpOpt;
 
                 interp.prevX = pos.x;
                 interp.prevY = pos.y;
+
                 constexpr float SNAPSHOT_SCALE = 1000.f;
                 interp.targetX = static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE;
                 interp.targetY = static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE;
                 interp.alpha = 0.f;
+
                 break;
             }
 

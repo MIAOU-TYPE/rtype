@@ -58,6 +58,8 @@ namespace EmbeddedResources
     extern const unsigned int powerup_wav_size;
     extern const unsigned char shoot_wav[];
     extern const unsigned int shoot_wav_size;
+    extern const unsigned char colorblind_frag[];
+    extern const unsigned int colorblind_frag_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -100,6 +102,8 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::menu_theme_flac, EmbeddedResources::menu_theme_flac_size};
     _resources["sounds/powerup.wav"] = {EmbeddedResources::powerup_wav, EmbeddedResources::powerup_wav_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::shoot_wav, EmbeddedResources::shoot_wav_size};
+
+    _resources["shaders/colorblind.frag"] = {EmbeddedResources::colorblind_frag, EmbeddedResources::colorblind_frag_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const

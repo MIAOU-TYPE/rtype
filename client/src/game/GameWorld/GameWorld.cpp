@@ -61,8 +61,8 @@ namespace Game
                 _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent);
                 _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)});
                 _entityMap[cmd.create.id] = ent;
-                std::cout << cmd.create.id << std::endl;
-                std::cout << static_cast<size_t>(ent) << std::endl;
+                std::cout << "cmd.create.it " << cmd.create.id << std::endl;
+                std::cout << "static_cast<size_t>(ent)" << static_cast<size_t>(ent) << std::endl;
                 break;
             }
 
@@ -78,49 +78,64 @@ namespace Game
             case CommandType::Snapshot: {
                 const auto netId = cmd.snapshot.entity;
 
+                Ecs::Entity ent;
                 auto it = _entityMap.find(netId);
-                if (it == _entityMap.end()) {
-                    const Ecs::Entity enti = _registry.createEntity();
-                    _entityMap[netId] = enti;
-                    it = _entityMap.find(netId);
-
-                    _registry.emplaceComponent<Ecs::NetworkIdentity>(enti, netId);
-
-                    constexpr float SNAPSHOT_SCALE = 1000.f;
-                    _registry.emplaceComponent<Ecs::Position>(enti, static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE,
-                        static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE);
-
-                    _registry.emplaceComponent<Ecs::NetworkInterpolation>(enti,
-                        /*prevX*/ 0.f, /*prevY*/ 0.f, /*targetX*/ 0.f, /*targetY*/ 0.f, /*alpha*/ 0.f);
-                    _registry.emplaceComponent<Ecs::SpriteTag>(enti, Ecs::SpriteTag{"enemy2"});
+                const bool isNew = (it == _entityMap.end());
+                if (isNew) {
+                    ent = _registry.createEntity();
+                    _entityMap[netId] = ent;
+                } else {
+                    ent = it->second;
                 }
 
-                const Ecs::Entity ent = it->second;
+                const size_t idx = static_cast<size_t>(ent);
 
-                auto &posOpt = _registry.getComponents<Ecs::Position>()[static_cast<size_t>(ent)];
-                auto &interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[static_cast<size_t>(ent)];
+                // >>> IMPORTANT: décide UNE fois du scale <<<
+                // Si tes logs ressemblent à 702.902, c’est probablement déjà en unités "écran"
+                const float x =
+                    static_cast<float>(cmd.snapshot.x); // / 1000.f si (et seulement si) tu reçois du fixed-point
+                const float y = static_cast<float>(cmd.snapshot.y);
 
-                if (!posOpt) {
-                    constexpr float SNAPSHOT_SCALE = 1000.f;
-                    _registry.emplaceComponent<Ecs::Position>(ent, static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE,
-                        static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE);
-                    posOpt = _registry.getComponents<Ecs::Position>()[static_cast<size_t>(ent)];
+                // Create-once : NetworkIdentity
+                auto &idOpt = _registry.getComponents<Ecs::NetworkIdentity>()[idx];
+                if (!idOpt)
+                    _registry.emplaceComponent<Ecs::NetworkIdentity>(ent, netId);
+
+                // Create-once : Position
+                auto &posOpt = _registry.getComponents<Ecs::Position>()[idx];
+                if (!posOpt)
+                    _registry.emplaceComponent<Ecs::Position>(ent, x, y);
+
+                // Create-once : Interpolation
+                auto &interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[idx];
+                if (!interpOpt)
+                    _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent, x, y, x, y, 1.f);
+
+                // Create-once : SpriteTag (ou mieux: un vrai composant Sprite/Drawable si ton rendu filtre dessus)
+                auto &tagOpt = _registry.getComponents<Ecs::SpriteTag>()[idx];
+                if (!tagOpt)
+                    _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{"enemy2"});
+
+                // Update : interpolation
+                auto &pos = *_registry.getComponents<Ecs::Position>()[idx];
+                auto &interp = *_registry.getComponents<Ecs::NetworkInterpolation>()[idx];
+
+                if (isNew) {
+                    // première fois : pas d’interp “depuis 0”, on pose direct
+                    pos.x = x;
+                    pos.y = y;
+                    interp.prevX = x;
+                    interp.prevY = y;
+                    interp.targetX = x;
+                    interp.targetY = y;
+                    interp.alpha = 1.f;
+                } else {
+                    interp.prevX = pos.x;
+                    interp.prevY = pos.y;
+                    interp.targetX = x;
+                    interp.targetY = y;
+                    interp.alpha = 0.f;
                 }
-                if (!interpOpt) {
-                    _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent, 0.f, 0.f, 0.f, 0.f, 0.f);
-                    interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[static_cast<size_t>(ent)];
-                }
-
-                auto &pos = *posOpt;
-                auto &interp = *interpOpt;
-
-                interp.prevX = pos.x;
-                interp.prevY = pos.y;
-
-                constexpr float SNAPSHOT_SCALE = 1000.f;
-                interp.targetX = static_cast<float>(cmd.snapshot.x) / SNAPSHOT_SCALE;
-                interp.targetY = static_cast<float>(cmd.snapshot.y) / SNAPSHOT_SCALE;
-                interp.alpha = 0.f;
 
                 break;
             }

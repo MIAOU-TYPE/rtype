@@ -61,8 +61,6 @@ namespace Game
                 _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent);
                 _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{pickPlayerSprite(cmd.create.id)});
                 _entityMap[cmd.create.id] = ent;
-                std::cout << "cmd.create.it " << cmd.create.id << std::endl;
-                std::cout << "static_cast<size_t>(ent)" << static_cast<size_t>(ent) << std::endl;
                 break;
             }
 

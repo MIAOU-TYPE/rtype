@@ -119,9 +119,6 @@ void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload,
     const bool right = (flags & 0x08u) != 0;
     const bool shoot = (flags & 0x10u) != 0;
 
-    std::cout << "{PacketRouter::handleInput} sessionId=" << sessionId << " up=" << up << " down=" << down
-              << " left=" << left << " right=" << right << " shoot=" << shoot << std::endl;
-
     _sink->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
 }
 

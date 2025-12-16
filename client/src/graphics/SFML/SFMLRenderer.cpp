@@ -74,7 +74,6 @@ void SFMLRenderer::renderSprite(const ISprite &sprite)
     const auto *sfmlSprite = dynamic_cast<const SFMLSprite *>(&sprite);
     if (sfmlSprite) {
         auto pos = sfmlSprite->getSFMLSprite().getPosition();
-        std::cout << "pos x: " << pos.x << " pos y: " << pos.y << std::endl;
         _window.draw(sfmlSprite->getSFMLSprite());
     }
 }

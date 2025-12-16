@@ -22,3 +22,11 @@ struct DamageData {
 };
 
 #pragma pack(pop)
+
+/**
+ * @brief High-level ECS representation of damage information.
+ */
+struct DamageEvent {
+    size_t id;       ///> Entity ID
+    uint16_t amount; ///> Amount of damage
+};

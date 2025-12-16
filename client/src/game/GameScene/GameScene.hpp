@@ -10,7 +10,9 @@
 #include <exception>
 #include <memory>
 #include <string>
+#include <utility>
 #include "EmbeddedResourceManager.hpp"
+#include "GameWorld.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include "InputSystem.hpp"
@@ -84,7 +86,7 @@ namespace Game
         /**
          * @brief Renders the game scene.
          */
-        void render();
+        void render() const;
 
         /**
          * @brief Gets the ECS registry.
@@ -92,14 +94,29 @@ namespace Game
          */
         Ecs::Registry &getRegistry();
 
+        /**
+         * @brief Gets the game world.
+         * @return Reference to the game world.
+         */
+        GameWorld &getGameWorld() const;
+
+        /**
+         * @brief Gets a shared pointer to the game world.
+         * @return Shared pointer to the game world.
+         */
+        std::shared_ptr<GameWorld> getGameWorldPtr();
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
         Ecs::Registry _registry;                                              ///> The ECS registry
+        std::shared_ptr<GameWorld> _gameWorld;                                ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
-        std::shared_ptr<Audio::SFMLAudio> _audioManager = nullptr;            ///> The audio manager
-        // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
+        std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
+            nullptr;                                                           ///> Resource manager for audio
+        std::shared_ptr<Audio::SFMLAudio> _audioManager = nullptr;             ///> The audio manager
+        std::shared_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> The entity drawing system
     };
 
 } // namespace Game

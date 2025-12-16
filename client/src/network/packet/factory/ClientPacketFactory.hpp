@@ -84,6 +84,13 @@ namespace Network
          */
         std::shared_ptr<Net::IPacket> makeInput(uint32_t entity, int8_t dx, int8_t dy, uint8_t shooting) const noexcept;
 
+        /**
+         * @brief Creates a player input packet
+         * @param input The PlayerInput structure containing input states
+         * @return A shared pointer to the created packet
+         */
+        std::shared_ptr<Net::IPacket> makePlayerInput(const PlayerInput &input) const noexcept;
+
       private:
         /**
          * @brief Creates a packet header with the specified parameters

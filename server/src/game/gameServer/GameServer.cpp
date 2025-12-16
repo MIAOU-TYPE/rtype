@@ -112,6 +112,8 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
+                if (!_sessionToEntity.contains(cmd.sessionId) && _sessions->getAllSessions().size() > MAX_PLAYERS)
+                    break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
                 const auto entityId = static_cast<std::size_t>(ent);
@@ -141,9 +143,15 @@ namespace Game
                 if (!_sessionToEntity.contains(cmd.sessionId))
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
-                auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
-                    *inputOpt = cmd.input;
+                auto &inputs = _worldWrite->registry().getComponents<InputComponent>();
+
+                if (auto &inputOpt = inputs[static_cast<size_t>(ent)]; inputOpt.has_value()) {
+                    inputOpt->up = cmd.input.up;
+                    inputOpt->down = cmd.input.down;
+                    inputOpt->left = cmd.input.left;
+                    inputOpt->right = cmd.input.right;
+                    inputOpt->shoot = cmd.input.shoot;
+                }
                 break;
             }
             case GameCommand::Type::Ping: {

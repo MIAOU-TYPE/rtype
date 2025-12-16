@@ -8,6 +8,8 @@
 #pragma once
 
 #include <atomic>
+#include <exception>
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
@@ -16,8 +18,13 @@
 #include "DisplayInit.hpp"
 #include "EmbeddedResourceManager.hpp"
 #include "EventInit.hpp"
+#include "GameScene.hpp"
+#include "GameWorld.hpp"
+#include "InputData.hpp"
+#include "InputEvents.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
+#include "SFMLInputHandler.hpp"
 #include "SFMLRenderer.hpp"
 
 /**
@@ -26,7 +33,6 @@
  */
 namespace Thread
 {
-
     /**
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
@@ -51,9 +57,9 @@ namespace Thread
         /**
          * @brief Constructor for ClientRuntime.
          * @param client Shared pointer to the network client.
+         * @param scene Shared pointer to the game scene.
          */
-        explicit ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
-
+        ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
         /**
          * @brief Destructor for ClientRuntime.
          */
@@ -92,9 +98,15 @@ namespace Thread
         std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
-        void runReceiver() const; ///> Method for running the receiver thread
-        void runUpdater() const;  ///> Method for running the updater thread
-        void runDisplay();        ///> Method for running the display thread
+        std::shared_ptr<Game::GameWorld> _gameWorld; ///> Game world
+        std::shared_ptr<Game::GameScene> _gameScene; ///> Game scene
+
+        std::shared_ptr<Events::InputEventManager> _inputEventManager;
+        std::unique_ptr<Input::SFMLInputHandler> _inputHandler;
+
+        void runReceiver(); ///> Method for running the receiver thread
+        void runUpdater();  ///> Method for running the updater thread
+        void runDisplay();  ///> Method for running the display thread
     };
 
 } // namespace Thread

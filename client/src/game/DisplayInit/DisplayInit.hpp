@@ -9,6 +9,7 @@
 
 #include <memory>
 #include "EmbeddedResourceManager.hpp"
+#include "GameOverScene.hpp"
 #include "GameScene.hpp"
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
@@ -31,7 +32,8 @@ namespace Display
     enum class SceneState {
         Menu,    ///> Main menu scene
         Setting, ///> Setting scene
-        Gameplay ///> Gameplay scene
+        Gameplay, ///> Gameplay scene
+        GameOver  ///> Game over scene
     };
 
     /**
@@ -114,5 +116,6 @@ namespace Display
             nullptr;                                        ///> Resource manager for audio
         SceneState _currentScene = SceneState::Menu;        ///> Current active scene
         static constexpr float UPDATE_INTERVAL_MS = 16.67f; ///> Update interval in milliseconds
+        std::shared_ptr<Game::GameOverScene> _gameOverScene = nullptr;        ///> The game over scene
     };
 } // namespace Display

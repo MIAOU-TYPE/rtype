@@ -14,6 +14,8 @@ namespace EmbeddedResources
     extern const unsigned int bg_preview_png_size;
     extern const unsigned char background_space_png[];
     extern const unsigned int background_space_png_size;
+    extern const unsigned char game_over_png[];
+    extern const unsigned int game_over_png_size;
     extern const unsigned char play_bt_png[];
     extern const unsigned int play_bt_png_size;
     extern const unsigned char play_bt_hold_png[];
@@ -72,6 +74,7 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/bg-preview.png"] = {EmbeddedResources::bg_preview_png, EmbeddedResources::bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
         EmbeddedResources::background_space_png, EmbeddedResources::background_space_png_size};
+    _resources["sprites/game_over.png"] = {EmbeddedResources::game_over_png, EmbeddedResources::game_over_png_size};
     _resources["sprites/play_bt.png"] = {EmbeddedResources::play_bt_png, EmbeddedResources::play_bt_png_size};
     _resources["sprites/play_bt_hold.png"] = {
         EmbeddedResources::play_bt_hold_png, EmbeddedResources::play_bt_hold_png_size};

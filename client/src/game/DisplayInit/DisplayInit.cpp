@@ -48,6 +48,11 @@ void DisplayInit::run()
                 float mouseY = 0.0f;
                 _renderer->getMousePosition(mouseX, mouseY);
                 _settingScene->update(mouseX, mouseY, _renderer->getIsMousePressed());
+            } else if (_currentScene == SceneState::GameOver) {
+                float mouseX = 0.0f;
+                float mouseY = 0.0f;
+                _renderer->getMousePosition(mouseX, mouseY);
+                _gameOverScene->update(mouseX, mouseY, _renderer->getIsMousePressed());
             } else {
                 _gameScene->update(deltaTime);
             }
@@ -59,6 +64,8 @@ void DisplayInit::run()
             _menuScene->render();
         } else if (_currentScene == SceneState::Setting) {
             _settingScene->render();
+        } else if (_currentScene == SceneState::GameOver) {
+            _gameOverScene->render();
         } else {
             _gameScene->render();
         }
@@ -83,6 +90,7 @@ void DisplayInit::init(unsigned int width, unsigned int height)
         _gameScene = std::make_shared<Game::GameScene>(_renderer, _textureManager, _audioManager);
         _menuScene = std::make_shared<Game::MenuScene>(_renderer, _textureManager);
         _settingScene = std::make_shared<Game::SettingScene>(_renderer, _textureManager, _audioManager);
+        _gameOverScene = std::make_shared<Game::GameOverScene>(_renderer, _textureManager);
 
         _menuScene->setOnPlayCallback([this]() {
             _currentScene = SceneState::Gameplay;
@@ -101,6 +109,11 @@ void DisplayInit::init(unsigned int width, unsigned int height)
 
         _settingScene->setOnBackCallback([this]() {
             _currentScene = SceneState::Menu;
+        });
+        
+        _gameOverScene->setOnReturnToMenuCallback([this]() {
+            _currentScene = SceneState::Menu;
+            _renderer->setIsMousePressed(false);
         });
     } catch (const std::exception &e) {
         throw DisplayInitError("Failed to create window: " + std::string(e.what()));

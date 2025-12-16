@@ -2,13 +2,13 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketInput
+** InputData
 */
 
 #pragma once
 
-#include "HeaderData.hpp"
 #include <cstddef>
+#include "HeaderData.hpp"
 
 #pragma pack(push, 1)
 
@@ -27,12 +27,19 @@ struct InputData {
 
 #pragma pack(pop)
 
-/**
- * @brief High-level ECS representation of input commands.
- */
-struct InputCommand {
-    size_t entity; ///> Entity ID
-    float dx;      ///> Change in X position
-    float dy;      ///> Change in Y position
-    bool shooting; ///> Shooting status
+#pragma pack(push, 1)
+
+struct PlayerInputData {
+    HeaderData header;
+    uint8_t flags;
+};
+
+#pragma pack(pop)
+
+struct PlayerInput {
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+    bool shoot = false;
 };

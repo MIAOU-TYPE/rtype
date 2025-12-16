@@ -17,7 +17,8 @@
 #include "EntityDestroyData.hpp"
 #include "Health.hpp"
 #include "IClientMessageSink.hpp"
-#include "NetworkSync.hpp"
+#include "NetworkInterpolation.hpp"
+#include "NetworkIdentity.hpp"
 #include "Position.hpp"
 #include "Registry.hpp"
 #include "SnapEntityData.hpp"
@@ -78,6 +79,12 @@ namespace Game
          * @param data Data for destroying the entity.
          */
         void onEntityDestroy(const EntityDestroyData &data) override;
+
+        /*
+         * @brief Handles the snapshot message from the server.
+         * @param data Data for updating the entity snapshot.
+         */
+        void onSnapshot(const SnapshotEntityData &data) override;
 
       private:
         enum class CommandType { Accept, Reject, GameOver, CreateEntity, DestroyEntity, Snapshot };

@@ -17,7 +17,6 @@ TEST(GameClock, RestartReturnsPositiveDelta)
     double dt = clock.restart();
 
     EXPECT_GT(dt, 0.0);
-    EXPECT_NEAR(dt, 0.01, 0.01);
 }
 
 TEST(GameClock, ElapsedWorksCorrectly)

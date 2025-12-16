@@ -9,13 +9,16 @@
 
 namespace Thread
 {
-
-    ClientRuntime::ClientRuntime(const std::shared_ptr<Network::INetClient> &client) : _client(client)
+    ClientRuntime::ClientRuntime(
+        const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene)
+        : _client(client), _gameScene(scene)
     {
         if (!_client)
-            throw ClientRuntimeError("{ClientRuntime::ClientRuntime} client pointer is null");
+            throw ClientRuntimeError("NetClient is null");
+        if (!_gameScene)
+            throw ClientRuntimeError("GameScene is null");
         _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
-        _packetRouter = std::make_shared<Ecs::PacketRouter>(std::make_shared<Ecs::testSink>());
+        _packetRouter = std::make_shared<Ecs::PacketRouter>(_gameScene->getGameWorldPtr());
         _renderer = std::make_shared<Graphics::SFMLRenderer>();
         _display = std::make_shared<Display::DisplayInit>(_renderer);
         _event = std::make_shared<Events::EventInit>(_renderer);

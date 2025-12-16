@@ -8,6 +8,8 @@
 #pragma once
 
 #include <atomic>
+#include <exception>
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
@@ -15,6 +17,8 @@
 #include "ClientPacketFactory.hpp"
 #include "DisplayInit.hpp"
 #include "EventInit.hpp"
+#include "GameScene.hpp"
+#include "GameWorld.hpp"
 #include "NetClient.hpp"
 #include "PacketRouter.hpp"
 #include "SFMLRenderer.hpp"
@@ -25,7 +29,6 @@
  */
 namespace Thread
 {
-
     /**
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
@@ -50,9 +53,10 @@ namespace Thread
         /**
          * @brief Constructor for ClientRuntime.
          * @param client Shared pointer to the network client.
+         * @param scene Shared pointer to the game scene.
          */
-        explicit ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
-
+        ClientRuntime(
+            const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene);
         /**
          * @brief Destructor for ClientRuntime.
          */
@@ -89,6 +93,9 @@ namespace Thread
         std::condition_variable _cv;             ///> Condition variable for signaling
         std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
+
+        std::shared_ptr<Game::GameWorld> _gameWorld; ///> Game world
+        std::shared_ptr<Game::GameScene> _gameScene; ///> Game scene
 
         void runReceiver() const; ///> Method for running the receiver thread
         void runUpdater() const;  ///> Method for running the updater thread

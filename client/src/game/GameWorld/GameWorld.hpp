@@ -72,28 +72,28 @@ namespace Game
          * @brief Handles the entity creation message from the server.
          * @param data Data for creating the entity.
          */
-        void onEntityCreate(const EntityCreateData &data) override;
+        void onEntityCreate(const EntityCreate &data) override;
 
         /*
          * @brief Handles the entity destruction message from the server.
          * @param data Data for destroying the entity.
          */
-        void onEntityDestroy(const EntityDestroyData &data) override;
+        void onEntityDestroy(const EntityDestroy &data) override;
 
         /*
          * @brief Handles the snapshot message from the server.
          * @param data Data for updating the entity snapshot.
          */
-        void onSnapshot(const SnapshotEntityData &data) override;
+        void onSnapshot(const SnapshotEntity &data) override;
 
       private:
         enum class CommandType { Accept, Reject, GameOver, CreateEntity, DestroyEntity, Snapshot };
 
         struct Command {
             CommandType type;
-            EntityCreateData create{};
-            EntityDestroyData destroy{};
-            SnapshotEntityData snapshot{};
+            EntityCreate create{};
+            EntityDestroy destroy{};
+            SnapshotEntity snapshot{};
         };
 
         void applyCommand(const Command &cmd);

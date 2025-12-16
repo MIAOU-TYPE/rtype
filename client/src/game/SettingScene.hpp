@@ -17,6 +17,7 @@
 #include "ITextureManager.hpp"
 #include "SFMLAudio.hpp"
 #include "SFMLEntityDrawing.hpp"
+#include "ColorBlindType.hpp"
 
 /**
  * @namespace Game
@@ -91,6 +92,8 @@ namespace Game
         void setErrorMessage(const std::string &message);
 
       private:
+        void toggleColorBlindMode(Graphics::ColorBlindType type);
+
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> Shared pointer to the renderer
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> Shared pointer to the texture manager
         std::unique_ptr<Graphics::ISprite> _backgroundSprite = nullptr; ///> Unique pointer to the background sprite
@@ -98,6 +101,9 @@ namespace Game
         std::unique_ptr<Button> _backButton = nullptr;                  ///> Unique pointer to the Back button
         std::unique_ptr<Button> _increaseVolumeButton = nullptr; ///> Unique pointer to the Increase Volume button
         std::unique_ptr<Button> _decreaseVolumeButton = nullptr; ///> Unique pointer to the Decrease Volume button
+        std::unique_ptr<Button> _protanopiaButton = nullptr;    ///> Unique pointer to the Protanopia button
+        std::unique_ptr<Button> _deuteranopiaButton = nullptr;  ///> Unique pointer to the Deuteranopia button
+        std::unique_ptr<Button> _tritanopiaButton = nullptr;    ///> Unique pointer to the Tritanopia button
         std::shared_ptr<Audio::SFMLAudio> _audio = nullptr;      ///> Shared pointer to the audio manager
         std::string _errorMessage = "";                          ///> Error message string
     };

@@ -62,11 +62,21 @@ void SettingScene::initButtons(float backButtonCenterX, unsigned int windowHeigh
         "sprites/play_bt.png", "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "BACK",
         fontPath);
     _increaseVolumeButton = std::make_unique<Button>(backButtonCenterX + 200.0f,
-        static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        static_cast<float>(windowHeight) / 2.0f - 200.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
         "sprites/play_bt_press.png", _textureManager, "ADD", fontPath);
     _decreaseVolumeButton = std::make_unique<Button>(backButtonCenterX - 200.0f,
-        static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        static_cast<float>(windowHeight) / 2.0f - 200.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
         "sprites/play_bt_press.png", _textureManager, "SUB", fontPath);
+    const float colorButtonScale = 3.0f;
+    _protanopiaButton = std::make_unique<Button>(backButtonCenterX - 200.0f,
+        static_cast<float>(windowHeight) / 2.0f - 100.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        "sprites/play_bt_press.png", _textureManager, "PROT", fontPath, colorButtonScale);
+    _deuteranopiaButton = std::make_unique<Button>(backButtonCenterX + 31.0f,
+        static_cast<float>(windowHeight) / 2.0f - 100.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        "sprites/play_bt_press.png", _textureManager, "DEUTER", fontPath, colorButtonScale);
+    _tritanopiaButton = std::make_unique<Button>(backButtonCenterX + 265.0f,
+        static_cast<float>(windowHeight) / 2.0f - 100.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        "sprites/play_bt_press.png", _textureManager, "TRIT", fontPath, colorButtonScale);
     setSoundButtons();
 }
 
@@ -103,9 +113,35 @@ void SettingScene::update(float mouseX, float mouseY, bool isMouseClicked)
         if (_decreaseVolumeButton) {
             _decreaseVolumeButton->update(mouseX, mouseY, isMouseClicked);
         }
+        if (_protanopiaButton) {
+            if (_protanopiaButton->update(mouseX, mouseY, isMouseClicked))
+                toggleColorBlindMode(ColorBlindType::PROTANOPIA);
+        }
+        if (_deuteranopiaButton) {
+            if (_deuteranopiaButton->update(mouseX, mouseY, isMouseClicked))
+                toggleColorBlindMode(ColorBlindType::DEUTERANOPIA);
+        }
+        if (_tritanopiaButton) {
+            if (_tritanopiaButton->update(mouseX, mouseY, isMouseClicked))
+                toggleColorBlindMode(ColorBlindType::TRITANOPIA);
+        }
     } catch (const std::exception &e) {
         throw SettingSceneError("Failed to update setting scene: " + std::string(e.what()));
     }
+}
+
+void SettingScene::toggleColorBlindMode(ColorBlindType type)
+{
+    if (!_renderer)
+        return;
+
+    ColorBlindType currentMode = _renderer->getColorBlindMode();
+    if (currentMode == type) {
+        _renderer->setColorBlindMode(ColorBlindType::NONE);
+        return;
+    }
+
+    _renderer->setColorBlindMode(type);
 }
 
 void SettingScene::render()
@@ -126,6 +162,15 @@ void SettingScene::render()
         if (_decreaseVolumeButton) {
             _decreaseVolumeButton->render(_renderer);
         }
+
+        if (_protanopiaButton)
+            _protanopiaButton->render(_renderer);
+
+        if (_deuteranopiaButton)
+            _deuteranopiaButton->render(_renderer);
+
+        if (_tritanopiaButton)
+            _tritanopiaButton->render(_renderer);
 
         if (_errorText) {
             _renderer->renderText(*_errorText);

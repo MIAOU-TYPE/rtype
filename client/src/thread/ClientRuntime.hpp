@@ -56,7 +56,7 @@ namespace Thread
          * @param scene Shared pointer to the game scene.
          */
         ClientRuntime(
-            const std::shared_ptr<Network::INetClient> &client, const std::shared_ptr<Game::GameScene> &scene);
+            const std::shared_ptr<Network::INetClient> &client);
         /**
          * @brief Destructor for ClientRuntime.
          */

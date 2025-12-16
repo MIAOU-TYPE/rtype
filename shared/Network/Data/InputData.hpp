@@ -25,3 +25,13 @@ struct InputData {
 };
 
 #pragma pack(pop)
+
+/**
+ * @brief High-level ECS representation of input commands.
+ */
+struct InputCommand {
+    size_t entity; ///> Entity ID
+    float dx;      ///> Change in X position
+    float dy;      ///> Change in Y position
+    bool shooting; ///> Shooting status
+};

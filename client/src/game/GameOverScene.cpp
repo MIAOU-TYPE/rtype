@@ -60,10 +60,7 @@ GameOverScene::GameOverScene(std::shared_ptr<IRenderer> renderer, std::shared_pt
 void GameOverScene::update(float mouseX, float mouseY, bool isMouseClicked)
 {
     try {
-        if (_returnToMenuButton) {
-            _returnToMenuButton->update(mouseX, mouseY, isMouseClicked);
-        }
-
+        _returnToMenuButton->update(mouseX, mouseY, isMouseClicked);
     } catch (const std::exception &e) {
         throw GameOverSceneError("Failed to update game over scene: " + std::string(e.what()));
     }
@@ -72,14 +69,8 @@ void GameOverScene::update(float mouseX, float mouseY, bool isMouseClicked)
 void GameOverScene::render()
 {
     try {
-        if (_backgroundSprite) {
-            _renderer->renderSprite(*_backgroundSprite);
-        }
-
-        if (_returnToMenuButton) {
-            _returnToMenuButton->render(_renderer);
-        }
-
+        _renderer->renderSprite(*_backgroundSprite);
+        _returnToMenuButton->render(_renderer);
     } catch (const std::exception &e) {
         throw GameOverSceneError("Failed to render game over scene: " + std::string(e.what()));
     }

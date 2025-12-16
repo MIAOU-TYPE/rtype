@@ -6,8 +6,10 @@
 */
 
 #include "SFMLRenderer.hpp"
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <iostream>
 #include "SFMLSpriteManagement.hpp"
 #include "SFMLText.hpp"
 

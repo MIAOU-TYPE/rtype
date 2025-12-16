@@ -100,3 +100,8 @@ std::shared_ptr<Graphics::IRenderer> DisplayInit::getRenderer() const
 {
     return _renderer;
 }
+
+std::shared_ptr<Game::GameScene> DisplayInit::getGameScene() const
+{
+    return _gameScene;
+}

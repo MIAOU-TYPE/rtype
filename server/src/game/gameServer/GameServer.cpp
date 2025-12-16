@@ -23,6 +23,7 @@ namespace Game
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
+        _waitingClock.restart();
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -67,7 +68,8 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        LevelSystem::update(*_worldWrite, _levelManager, dt);
+        if (_waitingClock.elapsed() > 5.0)
+            LevelSystem::update(*_worldWrite, _levelManager, dt);
 
         TargetingSystem::update(*_worldWrite);
         AISystem::update(*_worldWrite, dt);
@@ -143,9 +145,15 @@ namespace Game
                 if (!_sessionToEntity.contains(cmd.sessionId))
                     break;
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
-                auto &inputArr = _worldWrite->registry().getComponents<InputComponent>();
-                if (auto &inputOpt = inputArr[static_cast<size_t>(ent)]; inputOpt.has_value())
-                    *inputOpt = cmd.input;
+                auto &inputs = _worldWrite->registry().getComponents<InputComponent>();
+
+                if (auto &inputOpt = inputs[static_cast<size_t>(ent)]; inputOpt.has_value()) {
+                    inputOpt->up = cmd.input.up;
+                    inputOpt->down = cmd.input.down;
+                    inputOpt->left = cmd.input.left;
+                    inputOpt->right = cmd.input.right;
+                    inputOpt->shoot = cmd.input.shoot;
+                }
                 break;
             }
             case GameCommand::Type::Ping: {

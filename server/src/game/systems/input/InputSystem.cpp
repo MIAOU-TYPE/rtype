@@ -11,19 +11,25 @@ namespace Game
 {
     void InputSystem::update(IGameWorld &world)
     {
-        world.registry().view<InputComponent, Ecs::Velocity>(
-            [](Ecs::Entity, const InputComponent &input, Ecs::Velocity &vel) {
-                constexpr float speed = 200.f;
-                vel.vx = 0.f;
-                vel.vy = 0.f;
+        world.registry().view<InputComponent, Ecs::Position>(
+            [](Ecs::Entity, InputComponent &input, Ecs::Position &pos) {
+                constexpr float speed = 7.f;
                 if (input.left)
-                    vel.vx -= speed;
+                    pos.x -= speed;
                 if (input.right)
-                    vel.vx += speed;
+                    pos.x += speed;
                 if (input.up)
-                    vel.vy -= speed;
+                    pos.y -= speed;
                 if (input.down)
-                    vel.vy += speed;
+                    pos.y += speed;
+                input.left = false;
+                input.right = false;
+                input.up = false;
+                input.down = false;
+                if (pos.x < 0)
+                    pos.x = 0;
+                if (pos.y < 0)
+                    pos.y = 0;
             });
     }
 } // namespace Game

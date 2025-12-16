@@ -157,6 +157,7 @@ namespace Game
 
         Command::CommandBuffer<GameCommand> _commandBuffer; ///> Buffers incoming game commands.
 
+        GameClock _waitingClock;                       ///> Clock for player wait time.
         GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.

@@ -14,7 +14,7 @@
 #include <iostream>
 #include "IMessageSink.hpp"
 #include "IPacket.hpp"
-#include "NetMessages.hpp"
+#include "InputData.hpp"
 #include "PacketFactory.hpp"
 #include "SessionManager.hpp"
 

@@ -2,11 +2,12 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketInput
+** InputData
 */
 
 #pragma once
 
+#include <cstddef>
 #include "HeaderData.hpp"
 
 #pragma pack(push, 1)
@@ -26,12 +27,29 @@ struct InputData {
 
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+
 /**
- * @brief High-level ECS representation of input commands.
+ * @brief Structure representing player input data with flags.
+ * @details This structure contains the header information and a flags byte
+ * where each bit represents a different input action (up, down, left, right, shoot).
  */
-struct InputCommand {
-    size_t entity; ///> Entity ID
-    float dx;      ///> Change in X position
-    float dy;      ///> Change in Y position
-    bool shooting; ///> Shooting status
+struct PlayerInputData {
+    HeaderData header; ///> The packet header containing type, version, and size.
+    uint8_t flags;     ///> Bitwise flags representing player inputs:
+                       ///  Bit 0: Up
+                       ///  Bit 1: Down
+                       ///  Bit 2: Left
+                       ///  Bit 3: Right
+                       ///  Bit 4: Shoot
+};
+
+#pragma pack(pop)
+
+struct PlayerInput {
+    bool up = false;    ///> Flag indicating upward movement.
+    bool down = false;  ///> Flag indicating downward movement.
+    bool left = false;  ///> Flag indicating leftward movement.
+    bool right = false; ///> Flag indicating rightward movement.
+    bool shoot = false; ///> Flag indicating shooting action.
 };

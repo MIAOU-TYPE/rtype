@@ -7,8 +7,13 @@
 
 #pragma once
 
+#include <iostream>
 #include <memory>
+#include "ClientPacketFactory.hpp"
+#include "INetClient.hpp"
 #include "IRenderer.hpp"
+#include "InputData.hpp"
+#include "SFMLEvent.hpp"
 
 /**
  * @namespace Events
@@ -41,7 +46,7 @@ namespace Events
         }
 
       private:
-        std::string _message = ""; //> Error message
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -58,7 +63,8 @@ namespace Events
          * @brief Constructor for EventInit.
          * @param renderer Shared pointer to the renderer interface.
          */
-        explicit EventInit(std::shared_ptr<Graphics::IRenderer> renderer);
+        explicit EventInit(std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Network::INetClient> client,
+            std::shared_ptr<Network::ClientPacketFactory>);
 
         /**
          * @brief Destructor for EventInit.
@@ -78,6 +84,8 @@ namespace Events
         bool isWindowOpen() const;
 
       private:
-        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> The renderer interface
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;               ///> The renderer interface
+        std::shared_ptr<Network::INetClient> _client = nullptr;                 ///> The network client
+        std::shared_ptr<Network::ClientPacketFactory> _packetFactory = nullptr; ///> The client packet factory
     };
 } // namespace Events

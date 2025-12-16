@@ -17,11 +17,14 @@
 #include "EntityDestroyData.hpp"
 #include "Health.hpp"
 #include "IClientMessageSink.hpp"
+#include "InputComponent.hpp"
 #include "NetworkIdentity.hpp"
 #include "NetworkInterpolation.hpp"
 #include "Position.hpp"
 #include "Registry.hpp"
+#include "RenderLink.hpp"
 #include "SnapEntityData.hpp"
+#include "SpriteTag.hpp"
 #include "Velocity.hpp"
 
 namespace Game

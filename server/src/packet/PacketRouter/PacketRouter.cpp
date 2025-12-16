@@ -107,21 +107,19 @@ void PacketRouter::handleConnect(const int sessionId) const
 
 void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
 {
-    if (!payload || payloadSize < 1) {
+    if (!payload || payloadSize < sizeof(uint8_t)) {
         std::cerr << "{PacketRouter::handleInput} Dropped INPUT: missing payload" << std::endl;
         return;
     }
 
     const std::uint8_t flags = payload[0];
+    const bool up = (flags & 0x01u) != 0;
+    const bool down = (flags & 0x02u) != 0;
+    const bool left = (flags & 0x04u) != 0;
+    const bool right = (flags & 0x08u) != 0;
+    const bool shoot = (flags & 0x10u) != 0;
 
-    PlayerInputMessage msg{};
-    msg.up = (flags & 0x01u) != 0;
-    msg.down = (flags & 0x02u) != 0;
-    msg.left = (flags & 0x04u) != 0;
-    msg.right = (flags & 0x08u) != 0;
-    msg.shoot = (flags & 0x10u) != 0;
-
-    _sink->onPlayerInput(sessionId, Game::InputComponent{msg.up, msg.down, msg.left, msg.right, msg.shoot});
+    _sink->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
 }
 
 void PacketRouter::handlePing(const int sessionId) const

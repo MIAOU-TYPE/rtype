@@ -81,7 +81,7 @@ namespace Game
          * @brief Updates the game scene.
          * @param deltaTime The time elapsed since the last update.
          */
-        void update(float deltaTime) const;
+        void update(float deltaTime);
 
         /**
          * @brief Renders the game scene.
@@ -115,9 +115,9 @@ namespace Game
         std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
         std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
-            nullptr;                                               ///> Resource manager for audio
-        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr; ///> The audio manager
-        // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
+            nullptr;                                                           ///> Resource manager for audio
+        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr;             ///> The audio manager
+        std::shared_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> The entity drawing system
     };
 
 } // namespace Game

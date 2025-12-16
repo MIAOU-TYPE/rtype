@@ -28,7 +28,7 @@ GameScene::GameScene(
         _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
         if (!_inputSystem)
             throw GameSceneError("Failed to create input system instance");
-        _gameWorld = std::make_unique<GameWorld>(_registry);
+        _gameWorld = std::make_shared<GameWorld>(_registry);
         if (!_gameWorld)
             throw GameSceneError("Failed to create game world instance");
         _audioResourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
@@ -68,3 +68,9 @@ GameWorld &GameScene::getGameWorld() const
 {
     return *_gameWorld;
 }
+
+std::shared_ptr<GameWorld> GameScene::getGameWorldPtr()
+{
+    return _gameWorld;
+}
+

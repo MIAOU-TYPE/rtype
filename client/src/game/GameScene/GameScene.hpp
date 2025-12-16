@@ -100,13 +100,19 @@ namespace Game
          */
         GameWorld &getGameWorld() const;
 
+        /**
+         * @brief Gets a shared pointer to the game world.
+         * @return Shared pointer to the game world.
+         */
+        std::shared_ptr<GameWorld> getGameWorldPtr();
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
 
         Ecs::Registry _registry;                                  ///> The ECS registry
-        std::unique_ptr<GameWorld> _gameWorld;                    ///> The game world
+        std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
         std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
             nullptr;                                               ///> Resource manager for audio

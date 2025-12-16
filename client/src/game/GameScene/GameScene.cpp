@@ -25,9 +25,7 @@ GameScene::GameScene(
         _starfield = std::make_unique<Background::Starfield>(_renderer, _textureManager);
         if (!_starfield)
             throw GameSceneError("Failed to create starfield instance");
-        _entityDrawing = std::make_shared<Graphics::SFMLEntityDrawing>(
-            _renderer, _textureManager
-        );
+        _entityDrawing = std::make_shared<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
         _inputSystem = std::make_unique<Ecs::InputSystem>(_registry);
         if (!_inputSystem)
             throw GameSceneError("Failed to create input system instance");
@@ -51,26 +49,18 @@ void GameScene::update(float deltaTime)
     _gameWorld->update(deltaTime);
     _inputSystem->update(deltaTime);
     _starfield->update(deltaTime);
-    _registry.view<Ecs::Position, Ecs::SpriteTag>(
-        [&](Ecs::Entity e, auto &pos, auto &sprite) {
-            auto &linkOpt =
-                _registry.getComponents<Ecs::RenderLink>()[static_cast<size_t>(e)];
+    _registry.view<Ecs::Position, Ecs::SpriteTag>([&](Ecs::Entity e, auto &pos, auto &sprite) {
+        auto &linkOpt = _registry.getComponents<Ecs::RenderLink>()[static_cast<size_t>(e)];
 
-            if (!linkOpt) {
-                auto gfx = _entityDrawing->createEntity(
-                    pos.x, pos.y, sprite.name
-                );
-                _registry.emplaceComponent<Ecs::RenderLink>(
-                    e, Ecs::RenderLink{gfx}
-                );
-            } else {
-                linkOpt->gfx->setPosition(pos.x, pos.y);
-            }
+        if (!linkOpt) {
+            auto gfx = _entityDrawing->createEntity(pos.x, pos.y, sprite.name);
+            _registry.emplaceComponent<Ecs::RenderLink>(e, Ecs::RenderLink{gfx});
+        } else {
+            linkOpt->gfx->setPosition(pos.x, pos.y);
         }
-    );
+    });
     _entityDrawing->updateAllEntities(deltaTime);
 }
-
 
 void GameScene::render() const
 {

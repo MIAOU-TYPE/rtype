@@ -116,8 +116,8 @@ namespace Game
         std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
         std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
-            nullptr;                                               ///> Resource manager for audio
-        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr; ///> The audio manager
+            nullptr;                                                           ///> Resource manager for audio
+        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr;             ///> The audio manager
         std::shared_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> The entity drawing system
     };
 

@@ -12,6 +12,7 @@
 #include <string>
 #include "IEvent.hpp"
 #include "ITextureManager.hpp"
+#include "ColorBlindType.hpp"
 
 /**
  * @namespace Graphics
@@ -143,6 +144,18 @@ namespace Graphics
          * @param active True to activate, false to deactivate.
          */
         virtual void setActive(bool active) = 0;
+
+        /**
+         * @brief Sets the color blind mode.
+         * @param type The type of color blindness to simulate.
+         */
+        virtual void setColorBlindMode(ColorBlindType type) = 0;
+
+        /**
+         * @brief Gets the current color blind mode.
+         * @return The type of color blindness currently simulated.
+         */
+        virtual ColorBlindType getColorBlindMode() const = 0;
     };
 
 } // namespace Graphics

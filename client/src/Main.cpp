@@ -7,10 +7,10 @@
 
 #include <exception>
 #include <iostream>
+#include "ArgParser.hpp"
 #include "ClientRuntime.hpp"
 #include "NetClient.hpp"
 #include "SignalHandler.hpp"
-#include "ArgParser.hpp"
 
 static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientRuntime &runtime)
 {

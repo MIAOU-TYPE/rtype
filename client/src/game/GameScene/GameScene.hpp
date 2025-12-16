@@ -107,16 +107,15 @@ namespace Game
         std::shared_ptr<GameWorld> getGameWorldPtr();
 
       private:
-
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
-        Ecs::Registry _registry;                                  ///> The ECS registry
-        std::shared_ptr<GameWorld> _gameWorld;                    ///> The game world
-        std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr; ///> The input system
+        Ecs::Registry _registry;                                              ///> The ECS registry
+        std::shared_ptr<GameWorld> _gameWorld;                                ///> The game world
+        std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
         std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
             nullptr;                                                           ///> Resource manager for audio
-        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr;             ///> The audio manager
+        std::shared_ptr<Audio::SFMLAudio> _audioManager = nullptr;             ///> The audio manager
         std::shared_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> The entity drawing system
     };
 

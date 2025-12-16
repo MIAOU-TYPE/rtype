@@ -38,8 +38,7 @@ namespace Game
                 if (dmgArr[i].has_value() && hpArr[j].has_value()) {
                     hpArr[j]->hp -= dmgArr[i]->amount;
                     toDestroy.emplace_back(Ecs::Entity(i));
-                }
-                if (dmgArr[j].has_value() && hpArr[i].has_value()) {
+                } else if (dmgArr[j].has_value() && hpArr[i].has_value()) {
                     hpArr[i]->hp -= dmgArr[j]->amount;
                     toDestroy.emplace_back(Ecs::Entity(j));
                 }

@@ -6,11 +6,13 @@
 */
 
 #include "SFMLRenderer.hpp"
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <iostream>
 #include "SFMLSpriteManagement.hpp"
 #include "SFMLText.hpp"
 
@@ -110,6 +112,8 @@ void SFMLRenderer::renderSprite(const ISprite &sprite)
 {
     const auto *sfmlSprite = dynamic_cast<const SFMLSprite *>(&sprite);
     if (sfmlSprite && _currentTarget) {
+        auto pos = sfmlSprite->getSFMLSprite().getPosition();
+        std::cout << "pos x: " << pos.x << " pos y: " << pos.y << std::endl;
         _currentTarget->draw(sfmlSprite->getSFMLSprite());
     }
 }

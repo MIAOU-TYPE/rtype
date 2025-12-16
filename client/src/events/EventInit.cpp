@@ -39,23 +39,18 @@ void EventInit::run()
                 if (auto kp = sfEvent.getIf<sf::Event::KeyPressed>()) {
                     PlayerInput input;
                     if (kp->code == sf::Keyboard::Key::Space) {
-                        std::cout << "Space pressed!" << std::endl;
                         input.shoot = true;
                     }
                     if (kp->code == sf::Keyboard::Key::Up) {
-                        std::cout << "Z pressed!" << std::endl;
                         input.up = true;
                     }
                     if (kp->code == sf::Keyboard::Key::Left) {
-                        std::cout << "Left Arrow pressed!" << std::endl;
                         input.left = true;
                     }
                     if (kp->code == sf::Keyboard::Key::Right) {
-                        std::cout << "Right Arrow pressed!" << std::endl;
                         input.right = true;
                     }
                     if (kp->code == sf::Keyboard::Key::Down) {
-                        std::cout << "Down Arrow pressed!" << std::endl;
                         input.down = true;
                     }
                     auto packet = _packetFactory->makePlayerInput(input);

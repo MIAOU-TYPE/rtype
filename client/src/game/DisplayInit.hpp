@@ -94,6 +94,12 @@ namespace Display
          */
         std::shared_ptr<Graphics::IRenderer> getRenderer() const;
 
+        /**
+         * @brief Gets the game scene instance.
+         * @return Shared pointer to the game scene.
+         */
+        std::shared_ptr<Game::GameScene> getGameScene() const;
+
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;             ///> The renderer interface
         std::shared_ptr<Graphics::ITextureManager> _textureManager = nullptr; ///> The texture manager interface

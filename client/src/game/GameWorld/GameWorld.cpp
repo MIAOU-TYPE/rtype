@@ -79,35 +79,29 @@ namespace Game
                 const auto netId = cmd.snapshot.entity;
 
                 Ecs::Entity ent;
-                auto it = _entityMap.find(netId);
+                const auto it = _entityMap.find(netId);
                 const bool isNew = (it == _entityMap.end());
                 if (isNew) {
                     ent = _registry.createEntity();
                     _entityMap[netId] = ent;
-                } else {
+                } else
                     ent = it->second;
-                }
 
                 const size_t idx = static_cast<size_t>(ent);
 
-                const float x =
-                    static_cast<float>(cmd.snapshot.x);
+                const float x = static_cast<float>(cmd.snapshot.x);
                 const float y = static_cast<float>(cmd.snapshot.y);
 
-                auto &idOpt = _registry.getComponents<Ecs::NetworkIdentity>()[idx];
-                if (!idOpt)
+                if (!_registry.getComponents<Ecs::NetworkIdentity>()[idx])
                     _registry.emplaceComponent<Ecs::NetworkIdentity>(ent, netId);
 
-                auto &posOpt = _registry.getComponents<Ecs::Position>()[idx];
-                if (!posOpt)
+                if (!_registry.getComponents<Ecs::Position>()[idx])
                     _registry.emplaceComponent<Ecs::Position>(ent, x, y);
 
-                auto &interpOpt = _registry.getComponents<Ecs::NetworkInterpolation>()[idx];
-                if (!interpOpt)
+                if (!_registry.getComponents<Ecs::NetworkInterpolation>()[idx])
                     _registry.emplaceComponent<Ecs::NetworkInterpolation>(ent, x, y, x, y, 1.f);
 
-                auto &tagOpt = _registry.getComponents<Ecs::SpriteTag>()[idx];
-                if (!tagOpt)
+                if (!_registry.getComponents<Ecs::SpriteTag>()[idx])
                     _registry.emplaceComponent<Ecs::SpriteTag>(ent, Ecs::SpriteTag{"enemy2"});
 
                 auto &pos = *_registry.getComponents<Ecs::Position>()[idx];

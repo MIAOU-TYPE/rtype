@@ -7,8 +7,6 @@
 
 #include "Starfield.hpp"
 
-#include <utility>
-
 using namespace Background;
 
 Starfield::Starfield(

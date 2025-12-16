@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "DefaultData.hpp"
+#include "Endian.hpp"
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "HeaderData.hpp"
@@ -108,12 +109,12 @@ namespace Ecs
         /**
          * @brief Handler for ENTITY_DESTROY packets.
          */
-        void handleEntityDestroy() const;
+        void handleEntityDestroy(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for SNAP_ENTITY packets.
          */
-        void handleSnapEntity() const;
+        void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

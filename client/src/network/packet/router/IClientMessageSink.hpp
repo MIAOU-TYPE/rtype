@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <iostream>
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
@@ -46,56 +47,16 @@ namespace Ecs
          * @brief Called when an ENTITY_CREATE message is received.
          * @param data The data associated with the entity creation.
          */
-        virtual void onEntityCreate(const EntityCreateData &data) = 0;
+        virtual void onEntityCreate(const EntityCreate &data) = 0;
 
         /**
          * @brief Called when an ENTITY_DESTROY message is received.
          */
-        virtual void onEntityDestroy(const EntityDestroyData &) = 0;
+        virtual void onEntityDestroy(const EntityDestroy &data) = 0;
 
-        // /**
-        //  * @brief Called when a SNAPSHOT message is received.
-        //  */
-        virtual void onSnapshot(/**PARAM INCONNU**/) = 0;
-    };
-
-    class testSink : public IClientMessageSink {
-      public:
-        void onAccept() override
-        {
-            std::cout << "Accepted by server!" << std::endl;
-        }
-
-        void onReject() override
-        {
-            std::cout << "Rejected by server!" << std::endl;
-        }
-
-        void onPong() override
-        {
-            std::cout << "Pong!" << std::endl;
-        }
-
-        void onGameOver() override
-        {
-            std::cout << "Game over!" << std::endl;
-        }
-
-        void onEntityCreate(const EntityCreateData &data) override
-        {
-            (void) data;
-            std::cout << "Entity created!" << std::endl;
-        }
-
-        void onEntityDestroy(const EntityDestroyData &data) override
-        {
-            (void) data;
-            std::cout << "Entity destroyed!" << std::endl;
-        }
-
-        void onSnapshot(/**PARAM INCONNU**/) override
-        {
-            // std::cout << "Snapshot received!" << std::endl;
-        }
+        /**
+         * @brief Called when a SNAPSHOT message is received.
+         */
+        virtual void onSnapshot(const SnapshotEntity &entity) = 0;
     };
 } // namespace Ecs

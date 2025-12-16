@@ -39,7 +39,7 @@ namespace Network
          * @param ip The IP address to bind the NetClient to.
          * @param port The port number to listen on.
          */
-        void configure(const std::string &ip, uint32_t port) override;
+        void configure(const std::string &ip, int32_t port) override;
 
         /**
          * @brief Starts the NetClient.
@@ -106,7 +106,7 @@ namespace Network
 
       protected:
         std::string _ip = "";                ///> IP address the NetClient is bound to
-        uint32_t _port = 0;                  ///> Port number the NetClient is listening on
+        int32_t _port = 0;                   ///> Port number the NetClient is listening on
         std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the NetClient is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor

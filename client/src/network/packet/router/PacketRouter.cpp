@@ -40,7 +40,7 @@ namespace Ecs
             case Net::Protocol::REJECT: handleReject(); break;
             case Net::Protocol::ENTITY_CREATE: handleEntityCreate(payload, payloadSize); break;
             case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(); break;
-            case Net::Protocol::SNAPSHOT: handleSnapEntity(); break;
+            case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';

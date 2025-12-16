@@ -106,7 +106,7 @@ namespace Network
 
       protected:
         std::string _ip = "";                ///> IP address the NetClient is bound to
-        int32_t _port = 0;                  ///> Port number the NetClient is listening on
+        int32_t _port = 0;                   ///> Port number the NetClient is listening on
         std::atomic<bool> _isRunning{false}; ///> Atomic flag indicating if the NetClient is running
 
         socketHandle _socketFd = kInvalidSocket; ///> Socket file descriptor

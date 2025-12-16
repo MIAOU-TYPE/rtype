@@ -6,6 +6,7 @@
 */
 
 #include "Button.hpp"
+#include <algorithm>
 #include <utility>
 #include "MenuScene.hpp"
 
@@ -14,7 +15,7 @@ using namespace Graphics;
 
 Button::Button(float x, float y, const std::string &normalTexture, const std::string &hoverTexture,
     const std::string &pressedTexture, std::shared_ptr<ITextureManager> textureManager, const std::string &labelText,
-    const std::string &fontPath)
+    const std::string &fontPath, float scale)
     : _x(x), _y(y), _textureManager(std::move(textureManager))
 {
     if (!_textureManager) {
@@ -43,15 +44,22 @@ Button::Button(float x, float y, const std::string &normalTexture, const std::st
     _hoverSprite->setPosition(_x, _y);
     _pressedSprite->setPosition(_x, _y);
 
-    _normalSprite->setScale(4.0f, 4.0f);
-    _hoverSprite->setScale(4.0f, 4.0f);
-    _pressedSprite->setScale(4.0f, 4.0f);
+    const float appliedScale = scale;
+
+    _normalSprite->setScale(appliedScale, appliedScale);
+    _hoverSprite->setScale(appliedScale, appliedScale);
+    _pressedSprite->setScale(appliedScale, appliedScale);
 
     _width = _normalSprite->getWidth();
     _height = _normalSprite->getHeight();
 
     if (!labelText.empty() && !fontPath.empty()) {
-        _label = _textureManager->createText(fontPath, labelText, 30);
+        const unsigned int baseCharacterSize = 30;
+        const float baseScale = 4.0f;
+        unsigned int characterSize = static_cast<unsigned int>(baseCharacterSize * (appliedScale / baseScale));
+        characterSize = std::max(10u, characterSize);
+
+        _label = _textureManager->createText(fontPath, labelText, characterSize);
         if (_label) {
             float textX = _x + (_width - _label->getWidth()) / 2.0f;
             float textY = _y + (_height - _label->getHeight()) / 2.0f - 5.0f;

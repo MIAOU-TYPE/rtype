@@ -47,8 +47,8 @@ namespace Game
          * @param fontPath Path to the font file.
          */
         Button(float x, float y, const std::string &normalTexture, const std::string &hoverTexture,
-            const std::string &pressedTexture, std::shared_ptr<Graphics::ITextureManager> textureManager,
-            const std::string &labelText = "", const std::string &fontPath = "");
+          const std::string &pressedTexture, std::shared_ptr<Graphics::ITextureManager> textureManager,
+          const std::string &labelText = "", const std::string &fontPath = "", float scale = 4.0f);
 
         /**
          * @brief Updates the button state based on mouse position and click.

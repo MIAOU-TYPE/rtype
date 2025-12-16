@@ -8,14 +8,39 @@
 #include "SFMLRenderer.hpp"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include "SFMLSpriteManagement.hpp"
 #include "SFMLText.hpp"
 
 using namespace Graphics;
 
+SFMLRenderer::SFMLRenderer(std::shared_ptr<Resources::IResourceManager> resourceManager) : _resourceManager(std::move(resourceManager))
+{
+}
+
 void SFMLRenderer::createWindow(unsigned int width, unsigned int height, const std::string &title)
 {
     _window.create(sf::VideoMode({width, height}), title);
+    if (!_renderTexture.create(width, height))
+        throw std::runtime_error("Failed to create render texture for SFMLRenderer.");
+    auto resource = _resourceManager->loadResource("shaders/colorblind.frag");
+
+    if (resource.data) {
+        std::string shaderCode(reinterpret_cast<const char*>(resource.data), resource.size);
+        if (!_colorBlindShader.loadFromMemory(shaderCode, sf::Shader::Type::Fragment))
+            _shaderLoaded = false;
+        else {
+            _shaderLoaded = true;
+            _colorBlindShader.setUniform("texture", sf::Shader::CurrentTexture);
+            _colorBlindShader.setUniform("colorBlindMode", 0);
+        }
+    } else
+        _shaderLoaded = false;
+    if (_shaderLoaded)
+        _currentTarget = &_renderTexture;
+    else
+        _currentTarget = &_window;
 }
 
 bool SFMLRenderer::isOpen() const
@@ -32,11 +57,19 @@ void SFMLRenderer::close()
 
 void SFMLRenderer::clear()
 {
-    _window.clear();
+    if (_currentTarget) {
+        _currentTarget->clear();
+    }
 }
 
 void SFMLRenderer::display()
 {
+    if (_shaderLoaded && _colorBlindMode != ColorBlindType::NONE) {
+        _renderTexture.display();
+        sf::Sprite Sprite(_renderTexture.getTexture());
+        _window.clear();
+        _window.draw(Sprite, &_colorBlindShader);
+    }
     _window.display();
 }
 
@@ -64,22 +97,24 @@ bool SFMLRenderer::isWindowCloseEvent(const IEvent &event) const
 
 void SFMLRenderer::drawSprite(const sf::Sprite &sprite)
 {
-    _window.draw(sprite);
+    if (_currentTarget) {
+        _currentTarget->draw(sprite);
+    }
 }
 
 void SFMLRenderer::renderSprite(const ISprite &sprite)
 {
     const auto *sfmlSprite = dynamic_cast<const SFMLSprite *>(&sprite);
-    if (sfmlSprite) {
-        _window.draw(sfmlSprite->getSFMLSprite());
+    if (sfmlSprite && _currentTarget) {
+        _currentTarget->draw(sfmlSprite->getSFMLSprite());
     }
 }
 
 void SFMLRenderer::renderText(const IText &text)
 {
     const auto *sfmlText = dynamic_cast<const SFMLText *>(&text);
-    if (sfmlText) {
-        _window.draw(sfmlText->getSFMLText());
+    if (sfmlText && _currentTarget) {
+        _currentTarget->draw(sfmlText->getSFMLText());
     }
 }
 
@@ -126,4 +161,18 @@ void SFMLRenderer::setActive(bool active)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     (void) _window.setActive(active);
+}
+
+void SFMLRenderer::setColorBlindMode(ColorBlindType type)
+{
+    _colorBlindMode = type;
+
+    if (_shaderLoaded) {
+        _colorBlindShader.setUniform("colorBlindMode", static_cast<int>(type));
+    }
+}
+
+ColorBlindType SFMLRenderer::getColorBlindMode() const
+{
+    return _colorBlindMode;
 }

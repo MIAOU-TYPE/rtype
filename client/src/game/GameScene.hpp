@@ -67,8 +67,8 @@ namespace Game
          * @param renderer Shared pointer to the renderer.
          * @param textureManager Shared pointer to the texture manager.
          */
-        GameScene(
-            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager);
+        GameScene(std::shared_ptr<Graphics::IRenderer> renderer,
+            std::shared_ptr<Graphics::ITextureManager> textureManager, std::shared_ptr<Audio::SFMLAudio> audioManager);
 
         /**
          * @brief Destructor for GameScene.
@@ -98,9 +98,7 @@ namespace Game
         std::unique_ptr<Background::Starfield> _starfield = nullptr;          ///> The starfield background
         Ecs::Registry _registry;                                              ///> The ECS registry
         std::unique_ptr<Ecs::InputSystem> _inputSystem = nullptr;             ///> The input system
-        std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
-            nullptr;                                               ///> Resource manager for audio
-        std::unique_ptr<Audio::SFMLAudio> _audioManager = nullptr; ///> The audio manager
+        std::shared_ptr<Audio::SFMLAudio> _audioManager = nullptr;            ///> The audio manager
         // std::unique_ptr<Graphics::SFMLEntityDrawing> _entityDrawing = nullptr; ///> Entity drawing manager
     };
 

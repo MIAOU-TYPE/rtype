@@ -13,6 +13,7 @@ file(GLOB_RECURSE ASSET_FILES
     "${CLIENT_ASSETS_DIR}/fonts/*.otf"
     "${CLIENT_ASSETS_DIR}/sounds/*.wav"
     "${CLIENT_ASSETS_DIR}/sounds/*.flac"
+    "${CLIENT_ASSETS_DIR}/shaders/*.frag"
 )
 
 foreach(asset_file ${ASSET_FILES})

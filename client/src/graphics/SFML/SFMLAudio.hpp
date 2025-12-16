@@ -134,6 +134,12 @@ namespace Audio
         void setGlobalSoundVolume(float volume);
 
         /**
+         * @brief Gets the current global sound volume.
+         * @return The global sound volume (0.0f to 100.0f).
+         */
+        float getGlobalSoundVolume() const;
+
+        /**
          * @brief Checks if a sound exists in the registry.
          * @param soundName The name of the sound.
          * @return True if the sound exists, false otherwise.

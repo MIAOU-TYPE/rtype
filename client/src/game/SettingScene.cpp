@@ -6,12 +6,14 @@
 */
 
 #include "SettingScene.hpp"
+#include <iostream>
 
 using namespace Game;
 using namespace Graphics;
 
-SettingScene::SettingScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager)
-    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
+SettingScene::SettingScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ITextureManager> textureManager,
+    std::shared_ptr<Audio::SFMLAudio> audioManager)
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager)), _audio(std::move(audioManager))
 {
     if (!_renderer) {
         throw SettingSceneError("Renderer cannot be null");
@@ -47,18 +49,45 @@ SettingScene::SettingScene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<
             "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "PLAY", fontPath);
 
         float backButtonCenterX = centerX - (tempButton.getWidth() / 2.0f);
-        _backButton = std::make_unique<Button>(backButtonCenterX - 250,
-            static_cast<float>(windowHeight) / 2.0f + 235.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
-            "sprites/play_bt_press.png", _textureManager, "BACK", fontPath);
+        initButtons(backButtonCenterX, windowHeight, fontPath);
 
-        _audio = std::make_shared<Audio::SFMLAudio>(
-            std::make_shared<Resources::EmbeddedResourceManager>());
-
-        if (!_audio) {
-            throw SettingSceneError("Failed to initialize audio manager");
-        }
     } catch (const std::exception &e) {
         throw SettingSceneError("Failed to initialize setting scene: " + std::string(e.what()));
+    }
+}
+
+void SettingScene::initButtons(float backButtonCenterX, unsigned int windowHeight, const std::string &fontPath)
+{
+    _backButton = std::make_unique<Button>(backButtonCenterX - 250, static_cast<float>(windowHeight) / 2.0f + 235.0f,
+        "sprites/play_bt.png", "sprites/play_bt_hold.png", "sprites/play_bt_press.png", _textureManager, "BACK",
+        fontPath);
+    _increaseVolumeButton = std::make_unique<Button>(backButtonCenterX + 200.0f,
+        static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        "sprites/play_bt_press.png", _textureManager, "ADD", fontPath);
+    _decreaseVolumeButton = std::make_unique<Button>(backButtonCenterX - 200.0f,
+        static_cast<float>(windowHeight) / 2.0f, "sprites/play_bt.png", "sprites/play_bt_hold.png",
+        "sprites/play_bt_press.png", _textureManager, "SUB", fontPath);
+    setSoundButtons();
+}
+
+void SettingScene::setSoundButtons()
+{
+    if (_increaseVolumeButton) {
+        _increaseVolumeButton->setOnClick([this]() {
+            float currentVolume = _audio->getGlobalSoundVolume();
+            float newVolume = std::min(currentVolume + 10.0f, 100.0f);
+            _audio->setGlobalSoundVolume(newVolume);
+            std::cout << "Volume increased to: " << newVolume << " from " << currentVolume << std::endl;
+        });
+    }
+
+    if (_decreaseVolumeButton) {
+        _decreaseVolumeButton->setOnClick([this]() {
+            float currentVolume = _audio->getGlobalSoundVolume();
+            float newVolume = std::max(currentVolume - 10.0f, 0.0f);
+            _audio->setGlobalSoundVolume(newVolume);
+            std::cout << "Volume decreased to: " << newVolume << " from " << currentVolume << std::endl;
+        });
     }
 }
 
@@ -67,6 +96,12 @@ void SettingScene::update(float mouseX, float mouseY, bool isMouseClicked)
     try {
         if (_backButton) {
             _backButton->update(mouseX, mouseY, isMouseClicked);
+        }
+        if (_increaseVolumeButton) {
+            _increaseVolumeButton->update(mouseX, mouseY, isMouseClicked);
+        }
+        if (_decreaseVolumeButton) {
+            _decreaseVolumeButton->update(mouseX, mouseY, isMouseClicked);
         }
     } catch (const std::exception &e) {
         throw SettingSceneError("Failed to update setting scene: " + std::string(e.what()));
@@ -82,6 +117,14 @@ void SettingScene::render()
 
         if (_backButton) {
             _backButton->render(_renderer);
+        }
+
+        if (_increaseVolumeButton) {
+            _increaseVolumeButton->render(_renderer);
+        }
+
+        if (_decreaseVolumeButton) {
+            _decreaseVolumeButton->render(_renderer);
         }
 
         if (_errorText) {

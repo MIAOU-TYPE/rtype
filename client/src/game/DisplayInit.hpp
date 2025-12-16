@@ -13,6 +13,7 @@
 #include "IRenderer.hpp"
 #include "ITextureManager.hpp"
 #include "MenuScene.hpp"
+#include "SFMLAudio.hpp"
 #include "SFMLRenderer.hpp"
 #include "SFMLTextureManager.hpp"
 #include "SettingScene.hpp"
@@ -102,7 +103,10 @@ namespace Display
         std::shared_ptr<Game::GameScene> _gameScene = nullptr;                ///> The main game scene
         std::shared_ptr<Game::MenuScene> _menuScene = nullptr;                ///> The menu scene
         std::shared_ptr<Game::SettingScene> _settingScene = nullptr;          ///> The setting scene
-        SceneState _currentScene = SceneState::Menu;                          ///> Current active scene
-        static constexpr float UPDATE_INTERVAL_MS = 16.67f;                   ///> Update interval in milliseconds
+        std::shared_ptr<Audio::SFMLAudio> _audioManager = nullptr;            ///> The audio manager
+        std::shared_ptr<Resources::EmbeddedResourceManager> _audioResourceManager =
+            nullptr;                                        ///> Resource manager for audio
+        SceneState _currentScene = SceneState::Menu;        ///> Current active scene
+        static constexpr float UPDATE_INTERVAL_MS = 16.67f; ///> Update interval in milliseconds
     };
 } // namespace Display

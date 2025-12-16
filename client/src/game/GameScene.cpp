@@ -12,9 +12,9 @@
 
 using namespace Game;
 
-GameScene::GameScene(
-    std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<Graphics::ITextureManager> textureManager)
-    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager))
+GameScene::GameScene(std::shared_ptr<Graphics::IRenderer> renderer,
+    std::shared_ptr<Graphics::ITextureManager> textureManager, std::shared_ptr<Audio::SFMLAudio> audioManager)
+    : _renderer(std::move(renderer)), _textureManager(std::move(textureManager)), _audioManager(std::move(audioManager))
 {
     if (!_renderer) {
         throw GameSceneError("Renderer cannot be null");
@@ -33,18 +33,6 @@ GameScene::GameScene(
         if (!_inputSystem) {
             throw GameSceneError("Failed to create input system instance");
         }
-
-        _audioResourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
-        if (!_audioResourceManager) {
-            throw GameSceneError("Failed to create audio resource manager instance");
-        }
-
-        _audioManager = std::make_unique<Audio::SFMLAudio>(_audioResourceManager);
-        if (!_audioManager) {
-            throw GameSceneError("Failed to create audio manager instance");
-        }
-
-        _audioManager->playMusic("game_theme", true);
 
         // _entityDrawing = std::make_unique<Graphics::SFMLEntityDrawing>(_renderer, _textureManager);
         // if (!_entityDrawing) {

@@ -14,6 +14,17 @@ DisplayInit::DisplayInit(std::shared_ptr<Graphics::IRenderer> renderer) : _rende
     if (!_renderer) {
         throw DisplayInitError("Renderer is null");
     }
+    _audioResourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
+    if (!_audioResourceManager) {
+        throw DisplayInitError("Failed to create audio resource manager instance");
+    }
+
+    _audioManager = std::make_unique<Audio::SFMLAudio>(_audioResourceManager);
+    if (!_audioManager) {
+        throw DisplayInitError("Failed to create audio manager instance");
+    }
+
+    _audioManager->playMusic("menu_theme", true);
 }
 
 void DisplayInit::run()
@@ -69,13 +80,15 @@ void DisplayInit::init(unsigned int width, unsigned int height)
 
         auto resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
         _textureManager = std::make_shared<Graphics::SFMLTextureManager>(resourceManager);
-        _gameScene = std::make_shared<Game::GameScene>(_renderer, _textureManager);
+        _gameScene = std::make_shared<Game::GameScene>(_renderer, _textureManager, _audioManager);
         _menuScene = std::make_shared<Game::MenuScene>(_renderer, _textureManager);
-        _settingScene = std::make_shared<Game::SettingScene>(_renderer, _textureManager);
+        _settingScene = std::make_shared<Game::SettingScene>(_renderer, _textureManager, _audioManager);
 
         _menuScene->setOnPlayCallback([this]() {
             _currentScene = SceneState::Gameplay;
             _renderer->setIsMousePressed(false);
+            _audioManager->playMusic("game_theme", true);
+            _audioManager->setGlobalSoundVolume(_audioManager->getGlobalSoundVolume());
         });
 
         _menuScene->setOnQuitCallback([this]() {

@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/core/SparseArray.hpp"
+#include "SparseArray.hpp"
 
 TEST(SparseArray, insert_and_access)
 {

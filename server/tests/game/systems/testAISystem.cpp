@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 #include "AIBrain.hpp"
-#include "Velocity.hpp"
 #include "AISystem.hpp"
+#include "Velocity.hpp"
 #include "World.hpp"
 
 TEST(AISystem, idle_moves_slowly)

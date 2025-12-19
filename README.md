@@ -94,20 +94,22 @@ cmake -S . -B build -DBUILD_CLIENT_ONLY=ON
 Linux:
 
 ```bash
-./r-type_server --port 8080
+.//r-type_server --port 8080
 ```
 
 Windows:
 
 ```powershell
 cd bin
-./r-type_server.exe --port 8080
+./bin/r-type_server.exe --port 8080
 ```
 
 To display all available options:
 
 ```bash
 ./r-type_server --help
+or
+./bin/r-type_server --help
 ```
 
 ### Start one or more clients
@@ -121,14 +123,13 @@ Linux:
 Windows:
 
 ```powershell
-cd bin
-r-type_client.exe --host <ip> --port 8080
+./bin/r-type_client.exe --host <ip> --port 8080
 ```
 
 To display all available options:
 
 ```bash
-./r-type_client --help
+./bin/r-type_client --help
 ```
 
 > Make sure the **client targets the same IP and port** as the server.

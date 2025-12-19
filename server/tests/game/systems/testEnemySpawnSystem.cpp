@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "Health.hpp"
 #include "EnemySpawnSystem.hpp"
+#include "Health.hpp"
 #include "World.hpp"
 
 TEST(EnemySpawnSystem, spawns_enemy_every_2_seconds)

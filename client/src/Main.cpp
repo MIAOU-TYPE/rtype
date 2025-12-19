@@ -4,9 +4,6 @@
 ** File description:
 ** Main
 */
-
-#include <exception>
-#include <iostream>
 #include "ArgParser.hpp"
 #include "ClientRuntime.hpp"
 #include "GameScene.hpp"

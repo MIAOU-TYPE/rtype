@@ -6,10 +6,10 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/Health.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "ecs/core/Registry.hpp"
+#include "Health.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
+#include "Registry.hpp"
 
 TEST(Registry, create_entities)
 {

@@ -20,7 +20,7 @@
 #endif
 
 /**
- * @namespace NetClient
+ * @namespace Network
  * @brief Contains all NetClient-related classes and interfaces.
  */
 namespace Network
@@ -103,6 +103,12 @@ namespace Network
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
         bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override = 0;
+
+        /**
+         * @brief Retrieves a templated packet for serialization.
+         * @return A shared pointer to the templated IPacket.
+         */
+        std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override = 0;
 
       protected:
         std::string _ip = "";                ///> IP address the NetClient is bound to

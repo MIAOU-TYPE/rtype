@@ -31,7 +31,7 @@ namespace Network
          * @brief Constructor with error message.
          * @param message The error message.
          */
-        explicit FactoryError(const std::string &message) : _msg(message)
+        explicit FactoryError(const std::string &message) : _message("\t\n" + message)
         {
         }
 
@@ -41,11 +41,11 @@ namespace Network
          */
         const char *what() const noexcept override
         {
-            return _msg.c_str();
+            return _message.c_str();
         }
 
       private:
-        std::string _msg; ///> The error message
+        std::string _message; ///> The error message
     };
 
     /**
@@ -72,14 +72,14 @@ namespace Network
          * @param flag The flag indicating the type of base packet
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<Net::IPacket> makeBase(uint8_t flag) const noexcept;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeBase(uint8_t flag) const noexcept;
 
         /**
          * @brief Creates a player input packet
          * @param input The PlayerInput structure containing input states
          * @return A shared pointer to the created packet
          */
-        std::shared_ptr<Net::IPacket> makePlayerInput(const PlayerInput &input) const noexcept;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeInput(const PlayerInput &input) const noexcept;
 
       private:
         /**
@@ -88,7 +88,7 @@ namespace Network
          * @param size The size of the packet
          * @return The constructed PacketHeader
          */
-        static HeaderData makeHeader(uint8_t type, uint16_t size) noexcept;
+        [[nodiscard]] static HeaderData makeHeader(uint8_t type, uint16_t size) noexcept;
 
         /**
          * @brief Creates a packet of the specified type with the given packet data
@@ -97,7 +97,7 @@ namespace Network
          * @return A shared pointer to the created IPacket
          */
         template <typename Type>
-        std::shared_ptr<Net::IPacket> makePacket(const Type &packetData) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makePacket(const Type &packetData) const;
 
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Template packet for cloning
         static constexpr uint8_t VERSION = 1;            ///> Protocol version

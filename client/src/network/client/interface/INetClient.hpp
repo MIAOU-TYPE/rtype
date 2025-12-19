@@ -128,5 +128,11 @@ namespace Network
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
         virtual bool popPacket(std::shared_ptr<Net::IPacket> &pkt) = 0;
+
+        /**
+         * @brief Retrieves a templated packet for serialization.
+         * @return A shared pointer to the templated IPacket.
+         */
+        virtual std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept = 0;
     };
 } // namespace Network

@@ -10,18 +10,15 @@
 namespace Network
 {
 
-    void ANetClient::configure(const std::string &ip, int32_t port)
+    void ANetClient::configure(const std::string &ip, const int32_t port)
     {
         _ip = ip;
         _port = port;
-        if (!isStoredIpCorrect() || !isStoredPortCorrect()) {
-            _ip = "";
-            _port = 0;
+        if (!isStoredIpCorrect() || !isStoredPortCorrect())
             throw NetClientError("{ANetClient::configure} Invalid IP address or port number");
-        }
     }
 
-    void ANetClient::setNonBlocking(bool nonBlocking)
+    void ANetClient::setNonBlocking(const bool nonBlocking)
     {
         if (_socketFd == kInvalidSocket)
             return;
@@ -46,7 +43,7 @@ namespace Network
         return _isRunning.load();
     }
 
-    void ANetClient::setRunning(bool running) noexcept
+    void ANetClient::setRunning(const bool running) noexcept
     {
         _isRunning.store(running);
     }

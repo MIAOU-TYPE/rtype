@@ -35,9 +35,9 @@ namespace Ecs
     {
         switch (header.type) {
             case Net::Protocol::ACCEPT: handleAccept(); break;
+            case Net::Protocol::REJECT: handleReject(); break;
             case Net::Protocol::GAME_OVER: handleGameOver(); break;
             case Net::Protocol::PONG: handlePong(); break;
-            case Net::Protocol::REJECT: handleReject(); break;
             case Net::Protocol::ENTITY_CREATE: handleEntityCreate(payload, payloadSize); break;
             case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(payload, payloadSize); break;
             case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
@@ -112,7 +112,7 @@ namespace Ecs
         _sink->onGameOver();
     }
 
-    void PacketRouter::handleEntityCreate(const uint8_t *payload, size_t size) const
+    void PacketRouter::handleEntityCreate(const uint8_t *payload, const size_t size) const
     {
         if (size < sizeof(EntityCreateData)) {
             std::cerr << "{PacketRouter::handleEntityCreate} Dropped: payload too small\n";
@@ -130,7 +130,7 @@ namespace Ecs
         _sink->onEntityCreate(evt);
     }
 
-    void PacketRouter::handleEntityDestroy(const uint8_t *payload, size_t size) const
+    void PacketRouter::handleEntityDestroy(const uint8_t *payload, const size_t size) const
     {
         EntityDestroyData data{};
 
@@ -144,7 +144,7 @@ namespace Ecs
         _sink->onEntityDestroy(entityDestroy);
     }
 
-    void PacketRouter::handleSnapEntity(const uint8_t *payload, size_t size) const
+    void PacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
     {
         if (size < sizeof(SnapshotBatchHeader)) {
             std::cerr << "Snapshot batch too small\n";

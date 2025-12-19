@@ -13,12 +13,12 @@ namespace Network
     std::shared_ptr<Net::IPacket> ClientPacketFactory::makePacket(const Type &packetData) const
     {
         if (!_packet)
-            throw FactoryError("Template packet is null");
+            throw FactoryError("{ClientPacketFactory::makePacket}: Template packet is null");
         if (sizeof(Type) > _packet->capacity())
-            throw FactoryError("Packet type is too large to be serialized");
+            throw FactoryError("{ClientPacketFactory::makePacket}: Packet type is too large to be serialized");
         auto buffer = _packet->newPacket();
         if (!buffer)
-            throw FactoryError("Failed to create new packet buffer");
+            throw FactoryError("{ClientPacketFactory::makePacket}: Failed to create new packet buffer");
         std::memcpy(buffer->buffer(), &packetData, sizeof(Type));
         buffer->setSize(sizeof(Type));
         return buffer;

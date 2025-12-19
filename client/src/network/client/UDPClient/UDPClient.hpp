@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** NetClient
+** UDPClient
 */
 
 #pragma once
@@ -27,23 +27,23 @@
 namespace Network
 {
     /**
-     * @class NetClient
+     * @class UDPClient
      * @brief Network client for handling UDP communication with the server.
      */
-    class NetClient : public ANetClient {
+    class UDPClient : public ANetClient {
       public:
         /**
-         * @brief Constructor for NetClient.
+         * @brief Constructor for UDPClient.
          * Initializes the network wrapper, creates a UDP socket, and sets up the server address.
-         * @throws NetClientError if socket creation fails.
+         * @throws UDPClientError if socket creation fails.
          */
-        NetClient();
+        UDPClient();
 
         /**
-         * @brief Destructor for NetClient.
+         * @brief Destructor for UDPClient.
          * Closes the network connection and cleans up resources.
          */
-        ~NetClient() override;
+        ~UDPClient() override;
 
         /**
          * @brief Receives packets from the server.
@@ -57,7 +57,7 @@ namespace Network
 
         /**
          * @brief Starts the network client.
-         * @throws NetClientError if an error occurs while starting the client.
+         * @throws UDPClientError if an error occurs while starting the client.
          */
         void start() override;
 
@@ -74,6 +74,12 @@ namespace Network
          * @return True if a packet was successfully popped, false if the buffer was empty.
          */
         bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
+
+        /**
+         * @brief Retrieves a templated packet for serialization.
+         * @return A shared pointer to the templated IPacket.
+         */
+        std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override;
 
       private:
         Net::NetWrapper _netWrapper; ///> Network wrapper

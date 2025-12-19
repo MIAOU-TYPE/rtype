@@ -96,6 +96,14 @@ add_subdirectory(
 )
 
 #------------------------------
+# ECS
+#------------------------------
+add_subdirectory(
+        ${CMAKE_SOURCE_DIR}/shared/ecs
+        ${CMAKE_BINARY_DIR}/ecs_build
+)
+
+#------------------------------
 # NetWrapper Library (shared)
 #------------------------------
 add_subdirectory(

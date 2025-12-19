@@ -71,4 +71,4 @@ namespace Ecs
     };
 } // namespace Ecs
 
-#include "../SparseArray.tpp"
+#include "SparseArray.tpp"

@@ -120,4 +120,4 @@ namespace Ecs
     };
 } // namespace Ecs
 
-#include "../Registry.tpp"
+#include "Registry.tpp"

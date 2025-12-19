@@ -18,7 +18,13 @@ add_library(Ecs STATIC
         ${ECS_HEADERS}
 )
 
+# -----------------------------------
+# INCLUDE DIRECTORIES (FIX)
+# -----------------------------------
 target_include_directories(Ecs
         PUBLIC
         ${ECS_SRC_DIR}
+        ${ECS_SRC_DIR}/entity
+        ${ECS_SRC_DIR}/registry
+        ${ECS_SRC_DIR}/sparseArray
 )

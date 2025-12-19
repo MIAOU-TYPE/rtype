@@ -1,0 +1,14 @@
+{
+  "sprite": "boss",
+  "texture": "sprites/boss.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 177, "h": 144, "duration": 0.5 },
+        { "x": 177, "y": 0, "w": 177, "h": 144, "duration": 0.5 }
+      ]
+    }
+  }
+}

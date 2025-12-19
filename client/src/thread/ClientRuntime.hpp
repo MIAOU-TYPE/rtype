@@ -13,12 +13,12 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-#include "SpriteLoader.hpp"
-#include "SpriteRegistry.hpp"
 #include "ClientPacketFactory.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
+#include "SpriteLoader.hpp"
+#include "SpriteRegistry.hpp"
 #include <condition_variable>
 
 /**

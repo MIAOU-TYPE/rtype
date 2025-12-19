@@ -1,0 +1,121 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** ClientRuntime
+*/
+
+#pragma once
+
+#include <atomic>
+#include <exception>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include "SpriteLoader.hpp"
+#include "SpriteRegistry.hpp"
+#include "ClientPacketFactory.hpp"
+#include "IGraphics.hpp"
+#include "INetClient.hpp"
+#include "IRenderer.hpp"
+#include <condition_variable>
+
+/**
+ * @namespace Thread
+ * @brief Contains all threading-related classes for the client.
+ */
+namespace Thread
+{
+    /**
+     * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
+     * including starting, stopping, and handling incoming packets.
+     */
+    class ClientRuntimeError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for ClientRuntimeError.
+         * @param message The error message.
+         */
+        explicit ClientRuntimeError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
+    class ClientRuntime {
+      public:
+        /**
+         * @brief Constructor for ClientRuntime.
+         * @param graphics Shared pointer to the graphics interface.
+         * @param client Shared pointer to the network client interface.
+         */
+        explicit ClientRuntime(
+            const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client);
+
+        /**
+         * @brief Destructor for ClientRuntime.
+         * Cleans up resources and stops the client runtime.
+         */
+        ~ClientRuntime();
+
+        /**
+         * @brief Starts the client runtime, including network communication and game state updates.
+         * @throws ClientRuntimeError if the client fails to start.
+         * @details This method initializes the network client and starts the receiver and updater threads.
+         */
+        void start();
+
+        /**
+         * @brief Stops the client runtime gracefully.
+         * @details This method signals the receiver and updater threads to stop and waits for them to finish.
+         */
+        void stop();
+
+        /**
+         * @brief Waits for the client runtime to stop.
+         * @details This method blocks until the client runtime has been stopped.
+         */
+        void wait();
+
+        /**
+         * @brief Runs the display loop for rendering graphics.
+         * @details This method handles the rendering of graphics and user input.
+         * It should be called from the main thread.
+         */
+        void runDisplay();
+
+      private:
+        std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
+
+        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
+
+        std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
+
+        Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
+
+        std::thread _receiverThread; ///> Thread for receiving packets
+        std::thread _updaterThread;  ///> Thread for updating game state
+
+        std::mutex _mutex;                       ///> Mutex for synchronizing access
+        std::condition_variable _cv;             ///> Condition variable for signaling
+        std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
+        std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
+
+        void runReceiver() const; ///> Method for running the receiver thread
+        void runUpdater() const;  ///> Method for running the updater thread
+    };
+
+} // namespace Thread

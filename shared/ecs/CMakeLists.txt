@@ -21,7 +21,7 @@ file(GLOB ECS_HEADERS CONFIGURE_DEPENDS
 # ------------------------------
 add_library(Ecs STATIC
         ${ECS_SOURCES}
-        ${ECS_HEADERS} # optionnel, mais pratique dans les IDE
+        ${ECS_HEADERS}
 )
 
 # ------------------------------
@@ -33,7 +33,7 @@ target_include_directories(Ecs
 )
 
 # ------------------------------
-# Warnings (optionnel)
+# Warnings
 # ------------------------------
 if (NOT MSVC)
     target_compile_options(Ecs PRIVATE

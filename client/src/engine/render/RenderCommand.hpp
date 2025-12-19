@@ -7,7 +7,7 @@
 
 #pragma once
 #include <string>
-#include "../core/Animation/AnimationFrame.hpp"
+#include "AnimationFrame.hpp"
 #include "Position.hpp"
 
 namespace Engine

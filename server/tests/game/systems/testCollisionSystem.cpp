@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 #include "Collision.hpp"
+#include "CollisionSystem.hpp"
 #include "Damage.hpp"
 #include "Health.hpp"
 #include "Position.hpp"
-#include "CollisionSystem.hpp"
 #include "World.hpp"
 
 TEST(CollisionSystem, projectile_hits_enemy_and_deals_damage)

@@ -6,7 +6,6 @@
 */
 
 #include "SpriteRegistry.hpp"
-#include <stdexcept>
 
 namespace Engine
 {

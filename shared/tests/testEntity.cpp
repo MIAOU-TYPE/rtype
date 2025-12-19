@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/core/Entity.hpp"
+#include "Entity.hpp"
 
 TEST(Entity, default_constructor)
 {

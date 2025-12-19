@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 #include "Health.hpp"
 #include "Position.hpp"
-#include "Velocity.hpp"
 #include "Registry.hpp"
+#include "Velocity.hpp"
 
 TEST(Registry, create_entities)
 {

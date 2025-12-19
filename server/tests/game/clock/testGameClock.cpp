@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <thread>
-#include "game/clock/GameClock.hpp"
+#include "GameClock.hpp"
 
 TEST(GameClock, RestartReturnsPositiveDelta)
 {

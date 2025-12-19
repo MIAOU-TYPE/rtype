@@ -38,24 +38,6 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> ClientPacketFactory::makeInput(
-        const uint32_t entity, const int8_t dx, const int8_t dy, const uint8_t shooting) const noexcept
-    {
-        InputData inputPacket;
-        inputPacket.header = makeHeader(Net::Protocol::INPUT, sizeof(InputData));
-        inputPacket.entity = htonl(entity);
-        inputPacket.dx = dx;
-        inputPacket.dy = dy;
-        inputPacket.shooting = shooting;
-
-        try {
-            return makePacket<InputData>(inputPacket);
-        } catch (const FactoryError &e) {
-            std::cerr << "{ClientPacketFactory::makeInput} " << e.what() << std::endl;
-            return nullptr;
-        }
-    }
-
     std::shared_ptr<Net::IPacket> ClientPacketFactory::makePlayerInput(const PlayerInput &input) const noexcept
     {
         PlayerInputData packet{};

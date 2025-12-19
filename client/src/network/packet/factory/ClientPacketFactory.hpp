@@ -75,16 +75,6 @@ namespace Network
         std::shared_ptr<Net::IPacket> makeBase(uint8_t flag) const noexcept;
 
         /**
-         * @brief Creates an input packet
-         * @param entity The entity ID to control
-         * @param dx Horizontal movement axis (-1.0 to 1.0)
-         * @param dy Vertical movement axis (-1.0 to 1.0)
-         * @param shooting Shooting action flag
-         * @return A shared pointer to the created packet
-         */
-        std::shared_ptr<Net::IPacket> makeInput(uint32_t entity, int8_t dx, int8_t dy, uint8_t shooting) const noexcept;
-
-        /**
          * @brief Creates a player input packet
          * @param input The PlayerInput structure containing input states
          * @return A shared pointer to the created packet

@@ -4,6 +4,7 @@
 ** File description:
 ** testSnapshotSystem
 */
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "SnapshotSystem.hpp"

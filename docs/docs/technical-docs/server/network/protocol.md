@@ -338,12 +338,14 @@ struct PacketConnect {
 ## **7.3 INPUT (Client → Server)**
 
 ```cpp
-struct PacketInput {
-    PacketHeader header;
-    uint32_t entity;
-    float dx;
-    float dy;
-    uint8_t shooting;
+struct PlayerInputData {
+    HeaderData header; ///> The packet header containing type, version, and size.
+    uint8_t flags;     ///> Bitwise flags representing player inputs:
+                       ///  Bit 0: Up
+                       ///  Bit 1: Down
+                       ///  Bit 2: Left
+                       ///  Bit 3: Right
+                       ///  Bit 4: Shoot
 };
 ```
 

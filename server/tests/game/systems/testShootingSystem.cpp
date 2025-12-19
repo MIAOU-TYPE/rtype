@@ -10,8 +10,8 @@
 #include "Damage.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
-#include "Velocity.hpp"
 #include "ShootingSystem.hpp"
+#include "Velocity.hpp"
 #include "World.hpp"
 
 TEST(ShootingSystem, creates_projectile_when_shooting)

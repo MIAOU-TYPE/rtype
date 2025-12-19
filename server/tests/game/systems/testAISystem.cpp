@@ -6,10 +6,10 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/AIBrain.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "game/systems/AI/AISystem.hpp"
-#include "game/world/World.hpp"
+#include "AIBrain.hpp"
+#include "AISystem.hpp"
+#include "Velocity.hpp"
+#include "World.hpp"
 
 TEST(AISystem, idle_moves_slowly)
 {

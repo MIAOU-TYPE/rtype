@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/Health.hpp"
-#include "game/systems/health/HealthSystem.hpp"
-#include "game/world/World.hpp"
+#include "Health.hpp"
+#include "HealthSystem.hpp"
+#include "World.hpp"
 
 TEST(HealthSystem, destroys_entity_at_zero_hp)
 {

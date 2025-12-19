@@ -14,7 +14,6 @@ file(GLOB_RECURSE SERVER_HEADERS CONFIGURE_DEPENDS
         "${SERVER_SRC_DIR}/*.tpp"
 )
 
-set(SERVER_INCLUDE_DIRS "${SERVER_SRC_DIR}")
 foreach(header ${SERVER_HEADERS})
     get_filename_component(dir "${header}" DIRECTORY)
     list(APPEND SERVER_INCLUDE_DIRS "${dir}")
@@ -29,9 +28,7 @@ add_executable(${PROJECT_NAME}
 )
 
 # -----------------------------
-# fix for macOS + Homebrew LLVM bug
-# (__hash_memory missing symbol)
-# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# macOS LLVM fix
 # -----------------------------
 if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
     target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
@@ -74,46 +71,21 @@ endif ()
 # ------------------------------
 # DEPENDENCIES
 # ------------------------------
-
-# ------------------------------
-# Buffer
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
-
-# ------------------------------
-# COMMAND BUFFER
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
-
-# ------------------------------
-# NetWrapperLib
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        Buffer
+        CommandBuffer
+        NetWrapperLib
+        NetPacketLib
+        NetProtocol
+        Signal
+        Ecs
 )
 
-# ------------------------------
-# NetPacketLib
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
         ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
 
-# ------------------------------
-# NetProtocol
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
-
-# ------------------------------
-# Signal Library
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE Signal)
-
-#------------------------------
-# JSON Library
-#------------------------------
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 

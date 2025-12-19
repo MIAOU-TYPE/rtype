@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/Health.hpp"
-#include "game/systems/damage/DamageSystem.hpp"
-#include "game/world/World.hpp"
+#include "DamageSystem.hpp"
+#include "Health.hpp"
+#include "World.hpp"
 
 TEST(DamageSystem, removes_dead_entities)
 {

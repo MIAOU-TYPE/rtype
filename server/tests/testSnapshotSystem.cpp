@@ -4,9 +4,10 @@
 ** File description:
 ** testSnapshotSystem
 */
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "SnapshotSystem.hpp"
+#include "../../server/src/ecs/systems/snapshot/SnapshotSystem.hpp"
 
 TEST(SnapshotSystemTests, EmptyWorldProducesEmptySnapshot)
 {

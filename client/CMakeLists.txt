@@ -63,14 +63,11 @@ add_executable(${PROJECT_NAME}
 )
 
 # -----------------------------
-# fix for macOS + Homebrew LLVM bug
-# (__hash_memory missing symbol)
-# Force linking against Homebrew libc++ instead of Apple SDK libc++
+# macOS LLVM fix
 # -----------------------------
 if (APPLE AND DEFINED LLVM_LIBCXX_DIR)
     target_link_directories(${PROJECT_NAME} PUBLIC ${LLVM_LIBCXX_DIR})
 endif()
-
 
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CLIENT_INCLUDE_DIRS}
@@ -85,12 +82,22 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         SFML::System
         SFML::Audio
         SFML::Network
+        Buffer
+        CommandBuffer
+        NetWrapperLib
+        NetPacketLib
+        NetProtocol
+        Signal
+        Ecs
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
+        ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-            ws2_32
-    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
 elseif(APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE
             "-framework OpenGL"
@@ -99,9 +106,7 @@ elseif(APPLE)
             "-framework CoreVideo"
     )
 else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-            pthread
-    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
 endif()
 
 # ------------------------------
@@ -114,50 +119,10 @@ else()
             -Wall -Wextra -Wpedantic
             -Wshadow -Wnon-virtual-dtor -Wold-style-cast
             -Wcast-align -Woverloaded-virtual -Wconversion
-            -Wsign-conversion -Wnull-dereference -Wdouble-promotion
-            -Wformat=2
+            -Wsign-conversion -Wnull-dereference
+            -Wdouble-promotion -Wformat=2
     )
 endif()
-
-# ------------------------------
-# DEPENDENCIES
-# ------------------------------
-
-# ------------------------------
-# Buffer
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE Buffer)
-
-# ------------------------------
-# COMMAND BUFFER
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE CommandBuffer)
-
-# ------------------------------
-# NetWrapperLib
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetWrapperLib)
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
-)
-
-# ------------------------------
-# NetPacketLib
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
-)
-
-# ------------------------------
-# NetProtocol
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
-
-# ------------------------------
-# Signal Library
-# ------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE Signal)
 
 # ------------------------------
 # EXPORT VARIABLES FOR TESTS

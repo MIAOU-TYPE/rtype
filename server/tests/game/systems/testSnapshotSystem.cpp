@@ -6,11 +6,11 @@
 */
 
 #include <gtest/gtest.h>
+#include "Drawable.hpp"
+#include "Position.hpp"
+#include "Registry.hpp"
 #include "SnapshotSystem.hpp"
-#include "ecs/components/Drawable.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/core/Registry.hpp"
-#include "game/world/World.hpp"
+#include "World.hpp"
 
 using namespace Game;
 

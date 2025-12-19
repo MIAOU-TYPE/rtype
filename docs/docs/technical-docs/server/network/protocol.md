@@ -296,3 +296,146 @@ The server validates:
 ✔ input values are normalized
 
 Malformed packets are **ignored silently** to protect the server.
+
+# **7. Binary Layout Reference (Byte-level)**
+
+This section describes the **exact byte layout** of each packet on the wire.
+
+All offsets are **relative to the beginning of the packet**.
+
+---
+
+## **7.1 Packet Header (Common to all packets)**
+
+| Offset |  Size | Type   | Name    | Description               |
+| -----: | ----: | ------ | ------- | ------------------------- |
+|      0 |     1 | uint8  | type    | Packet type enum          |
+|      1 |     1 | uint8  | version | Protocol version (1)      |
+|      2 |     2 | uint16 | size    | Total packet size (htons) |
+|  **—** | **4** |        |         | **Header total size**     |
+
+---
+
+## **7.2 CONNECT (Client → Server)**
+
+```cpp
+struct PacketConnect {
+    PacketHeader header;
+    uint32_t clientId;
+};
+```
+
+| Offset |  Size | Type   | Name     | Description                 |
+| -----: | ----: | ------ | -------- | --------------------------- |
+|      0 |     1 | uint8  | type     | CONNECT (0x01)              |
+|      1 |     1 | uint8  | version  | Protocol version            |
+|      2 |     2 | uint16 | size     | Total size = 8              |
+|      4 |     4 | uint32 | clientId | Client ID (0 if new, htonl) |
+|  **—** | **8** |        |          | **Packet total size**       |
+
+---
+
+## **7.3 INPUT (Client → Server)**
+
+```cpp
+struct PlayerInputData {
+    HeaderData header; ///> The packet header containing type, version, and size.
+    uint8_t flags;     ///> Bitwise flags representing player inputs:
+                       ///  Bit 0: Up
+                       ///  Bit 1: Down
+                       ///  Bit 2: Left
+                       ///  Bit 3: Right
+                       ///  Bit 4: Shoot
+};
+```
+
+| Offset |   Size | Type   | Name     | Description                  |
+| -----: | -----: | ------ | -------- | ---------------------------- |
+|      0 |      1 | uint8  | type     | INPUT (0x02)                 |
+|      1 |      1 | uint8  | version  | Protocol version             |
+|      2 |      2 | uint16 | size     | Total size = 18              |
+|      4 |      4 | uint32 | entity   | Controlled entity ID (htonl) |
+|      8 |      4 | float  | dx       | Movement X axis              |
+|     12 |      4 | float  | dy       | Movement Y axis              |
+|     16 |      1 | uint8  | shooting | 0 or 1                       |
+|  **—** | **17** |        |          | **Packet total size**        |
+
+⚠️ Note: Some compilers may pad to 18 bytes — packing is mandatory.
+
+---
+
+## **7.4 ENTITY_CREATE (Server → Client)**
+
+```cpp
+struct PacketEntityCreate {
+    PacketHeader header;
+    uint32_t id;
+    float x;
+    float y;
+    uint16_t sprite;
+};
+```
+
+| Offset |   Size | Type   | Name    | Description           |
+| -----: | -----: | ------ | ------- | --------------------- |
+|      0 |      1 | uint8  | type    | ENTITY_CREATE (0x13)  |
+|      1 |      1 | uint8  | version | Protocol version      |
+|      2 |      2 | uint16 | size    | Total size = 16       |
+|      4 |      4 | uint32 | id      | Entity ID (htonl)     |
+|      8 |      4 | float  | x       | World X position      |
+|     12 |      4 | float  | y       | World Y position      |
+|     16 |      2 | uint16 | sprite  | Sprite ID (htons)     |
+|  **—** | **18** |        |         | **Packet total size** |
+
+---
+
+## **7.5 SNAPSHOT (Server → Client)**
+
+### SnapshotEntity layout
+
+```cpp
+struct SnapshotEntity {
+    uint32_t id;
+    float x;
+    float y;
+    float vx;
+    float vy;
+    uint16_t sprite;
+};
+```
+
+| Offset |   Size | Type   | Name   |
+| -----: | -----: | ------ | ------ |
+|      0 |      4 | uint32 | id     |
+|      4 |      4 | float  | x      |
+|      8 |      4 | float  | y      |
+|     12 |      4 | float  | vx     |
+|     16 |      4 | float  | vy     |
+|     20 |      2 | uint16 | sprite |
+|  **—** | **22** |        |        |
+
+---
+
+### PacketSnapshot layout
+
+```cpp
+struct PacketSnapshot {
+    PacketHeader header;
+    uint32_t tick;
+    uint16_t entityCount;
+    SnapshotEntity entities[];
+};
+```
+
+| Offset | Size | Type   | Name        |
+| -----: | ---: | ------ | ----------- |
+|      0 |    4 | Header | header      |
+|      4 |    4 | uint32 | tick        |
+|      8 |    2 | uint16 | entityCount |
+|     10 | N×22 | struct | entities[]  |
+
+Total size formula:
+
+```
+size = 10 + (entityCount × 22)
+```

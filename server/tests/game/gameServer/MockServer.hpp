@@ -6,7 +6,7 @@
 */
 
 #pragma once
-#include "server/interfaces/IServer.hpp"
+#include "IServer.hpp"
 
 class MockServer : public Net::Server::IServer {
   public:

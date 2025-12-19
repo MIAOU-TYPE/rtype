@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/Health.hpp"
-#include "game/systems/enemySpawn/EnemySpawnSystem.hpp"
-#include "game/world/World.hpp"
+#include "Health.hpp"
+#include "EnemySpawnSystem.hpp"
+#include "World.hpp"
 
 TEST(EnemySpawnSystem, spawns_enemy_every_2_seconds)
 {

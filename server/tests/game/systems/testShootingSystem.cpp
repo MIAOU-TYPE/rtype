@@ -6,13 +6,13 @@
 */
 
 #include <gtest/gtest.h>
-#include "ecs/components/Collision.hpp"
-#include "ecs/components/Damage.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/Position.hpp"
-#include "ecs/components/Velocity.hpp"
-#include "game/systems/shooting/ShootingSystem.hpp"
-#include "game/world/World.hpp"
+#include "Collision.hpp"
+#include "Damage.hpp"
+#include "InputComponent.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
+#include "ShootingSystem.hpp"
+#include "World.hpp"
 
 TEST(ShootingSystem, creates_projectile_when_shooting)
 {

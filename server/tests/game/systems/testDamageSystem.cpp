@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "Health.hpp"
 #include "DamageSystem.hpp"
+#include "Health.hpp"
 #include "World.hpp"
 
 TEST(DamageSystem, removes_dead_entities)

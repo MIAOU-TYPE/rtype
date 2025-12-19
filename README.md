@@ -42,29 +42,6 @@ cmake --build build -j
 
 ---
 
-## Architecture overview
-
-### Client / Server model
-
-* Clients send **inputs only**
-* The server processes inputs, updates the game world and sends snapshots
-* Clients render the received snapshots
-
-This ensures consistency and prevents client-side authority.
-
-### Server threading model
-
-The server runtime is split into dedicated threads:
-
-* UDP receive/send thread
-* Game logic thread (ECS systems)
-* Fixed-rate tick/update thread
-* Snapshot generation and broadcast thread
-
-This prevents network I/O from blocking gameplay updates.
-
----
-
 ## Requirements
 
 ### Build tools
@@ -138,14 +115,20 @@ To display all available options:
 Linux:
 
 ```bash
-./r-type_client
+./r-type_client --host <ip> --port 8080
 ```
 
 Windows:
 
 ```powershell
 cd bin
-r-type_client.exe
+r-type_client.exe --host <ip> --port 8080
+```
+
+To display all available options:
+
+```bash
+./r-type_client --help
 ```
 
 > Make sure the **client targets the same IP and port** as the server.
@@ -160,43 +143,6 @@ Default mappings:
 * Shoot: **Space** or **Left Ctrl**
 * Pause: **P**
 * Quit: **Escape**
-
----
-
-## Network protocol
-
-The game uses a **custom binary UDP protocol**:
-
-* Versioned packet headers
-* Typed payloads (inputs, entity state, events)
-* Fixed-rate server snapshots
-
-The protocol is designed to be compact and resilient to malformed packets.
-
-> See `docs/protocol.md` for the full specification.
-
----
-
-## Tests
-
-Enable tests at configure time:
-
-```bash
-cmake -S . -B build -DBUILD_TESTING=ON
-cmake --build build -j
-ctest --test-dir build -C Debug -V
-```
-
----
-
-## Project layout
-
-```
-server/   — authoritative server, ECS, runtime threads, networking
-client/   — SFML client (rendering, input, scenes, embedded assets)
-shared/   — reusable libraries (protocol, packets, buffers, net wrapper)
-docs/     — technical documentation
-```
 
 ---
 
@@ -217,7 +163,6 @@ docs/     — technical documentation
 ## Project members
 - [Anna POGHOSYAN](https://github.com/ann7415)
 - [Evann BLOUTIN](https://github.com/EvannBloutin)
-- [Jules FAYET](https://github.com/julesfayet)
 - [Santiago PIDCOVA](https://github.com/santiagopidji)
 - [Robin SCHUFFENECKER](https://github.com/rosh7887epitech)
 - [Romain BERARD](https://github.com/romain1717)

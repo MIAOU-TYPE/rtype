@@ -38,9 +38,7 @@ namespace Ecs
 
     void ClientController::onEntityCreate(const EntityCreate &data)
     {
-        EntityCreate localEntity = data;
-        localEntity.sprite = "player";
-        _commandBuffer.push({WorldCommand::Type::CreateEntity, localEntity});
+        _commandBuffer.push({WorldCommand::Type::CreateEntity, data});
     }
 
     void ClientController::onEntityDestroy(const EntityDestroy &data)
@@ -50,9 +48,7 @@ namespace Ecs
 
     void ClientController::onSnapshot(const SnapshotEntity &data)
     {
-        SnapshotEntity localSnapshot = data;
-        localSnapshot.sprite = "player";
-        _commandBuffer.push({WorldCommand::Type::Snapshot, localSnapshot});
+        _commandBuffer.push({WorldCommand::Type::Snapshot, data});
     }
 
 }; // namespace Ecs

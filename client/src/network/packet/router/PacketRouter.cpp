@@ -126,7 +126,7 @@ namespace Ecs
         evt.id = be64toh(net.id);
         evt.x = ntohf(net.x);
         evt.y = ntohf(net.y);
-        evt.sprite = std::to_string(ntohs(net.sprite));
+        evt.spriteId = ntohs(net.spriteId);
         _sink->onEntityCreate(evt);
     }
 
@@ -168,7 +168,7 @@ namespace Ecs
             entity.id = be64toh(entityData.id);
             entity.x = ntohf(entityData.x);
             entity.y = ntohf(entityData.y);
-            entity.sprite = std::to_string(ntohs(entityData.spriteId));
+            entity.spriteId = ntohs(entityData.spriteId);
 
             _sink->onSnapshot(entity);
             cursor += sizeof(SnapshotEntityData);

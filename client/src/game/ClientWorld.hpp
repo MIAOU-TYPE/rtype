@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Registry.hpp"
+#include "AnimationState.hpp"
 #include "AnimationSystem.hpp"
+#include "Drawable.hpp"
+#include "IRenderer.hpp"
+#include "Position.hpp"
+#include "Registry.hpp"
+#include "Render.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
-#include "AnimationState.hpp"
-#include "Drawable.hpp"
-#include "Position.hpp"
-#include "Render.hpp"
-#include "IRenderer.hpp"
 
 namespace Engine
 {
@@ -39,7 +39,7 @@ namespace Engine
         Ecs::Registry &registry();
 
       private:
-        Ecs::Registry _registry;    ///> Entity registry managing entities and their components
-        std::shared_ptr<SpriteRegistry> _spriteRegistry;    ///> Shared pointer to the SpriteRegistry for sprite management
+        Ecs::Registry _registry;                         ///> Entity registry managing entities and their components
+        std::shared_ptr<SpriteRegistry> _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
     };
 } // namespace Engine

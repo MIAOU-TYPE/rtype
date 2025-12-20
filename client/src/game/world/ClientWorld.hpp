@@ -9,6 +9,7 @@
 #include "Render.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
+#include "WorldCommandBuffer.hpp"
 
 namespace Engine
 {
@@ -38,8 +39,24 @@ namespace Engine
          */
         Ecs::Registry &registry();
 
+        void applyCommand(const WorldCommand &cmd)
+        {
+            switch (cmd.type) {
+                case WorldCommand::Type::CreateEntity: applyCreate(std::get<EntityCreate>(cmd.payload)); break;
+                case WorldCommand::Type::DestroyEntity: applyDestroy(std::get<EntityDestroy>(cmd.payload)); break;
+                case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotEntity>(cmd.payload)); break;
+                default: break;
+            }
+        }
+
       private:
+        void applyCreate(const EntityCreate &data);
+        void applyDestroy(const EntityDestroy &data);
+        void applySnapshot(const SnapshotEntity &entity);
+
         Ecs::Registry _registry;                         ///> Entity registry managing entities and their components
         std::shared_ptr<SpriteRegistry> _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
+
+        std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
     };
 } // namespace Engine

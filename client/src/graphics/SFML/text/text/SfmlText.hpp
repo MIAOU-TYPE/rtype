@@ -62,13 +62,13 @@ namespace Graphics
 
         /**
          * @brief Gets the width of the text.
-         * @return
+         * @return The width of the text.
          */
         float getWidth() const override;
 
         /**
          * @brief Gets the height of the text.
-         * @return
+         * @return The height of the text.
          */
         float getHeight() const override;
 

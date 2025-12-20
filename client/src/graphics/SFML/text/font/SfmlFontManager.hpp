@@ -7,8 +7,6 @@
 
 #pragma once
 
-#pragma once
-
 #include <SFML/Graphics/Font.hpp>
 #include <memory>
 #include <string>
@@ -75,8 +73,8 @@ namespace Graphics
          * @brief Internal structure to hold font data and reference count.
          */
         struct FontEntry {
-            sf::Font font;
-            std::size_t refCount = 1;
+            sf::Font font;            ///> The SFML font
+            std::size_t refCount = 1; ///> Reference count for the font
         };
 
         std::shared_ptr<const Resources::IResourceManager> _resources =

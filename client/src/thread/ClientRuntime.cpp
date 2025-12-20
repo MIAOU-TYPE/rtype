@@ -13,12 +13,20 @@ namespace Thread
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
     {
+        _graphics->create(800, 600, "R-Type", false);
+        _renderer = _graphics->createRenderer();
+        _eventBus = std::make_shared<Core::EventBus>();
+        _eventRegistry = std::make_unique<Core::EventRegistry>(_eventBus);
+
+        _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
+        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()
     {
         stop();
         _client.reset();
+        _graphics.reset();
     }
 
     void ClientRuntime::start()
@@ -32,9 +40,25 @@ namespace Thread
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
 
-        _renderer = _graphics->createRenderer();
-        _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
+            std::cout << "Key up pressed" << std::endl;
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false}));
+        });
+
+        _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
+            std::cout << "Key down pressed" << std::endl;
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false}));
+        });
+
+        _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
+            std::cout << "Key left pressed" << std::endl;
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false}));
+        });
+
+        _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
+            std::cout << "Key right pressed" << std::endl;
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true}));
+        });
 
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -62,6 +86,11 @@ namespace Thread
         });
     }
 
+    std::shared_ptr<Core::EventBus> ClientRuntime::getEventBus() const noexcept
+    {
+        return _eventBus;
+    }
+
     void ClientRuntime::runDisplay()
     {
         using clock = std::chrono::steady_clock;
@@ -72,6 +101,8 @@ namespace Thread
             const float dt = std::chrono::duration<float>(now - last).count();
             last = now;
 
+            _graphics->pollEvents(*_eventBus);
+            _eventBus->dispatch();
             _renderer->beginFrame();
             _world->update(dt, *_renderer);
             _renderer->endFrame();

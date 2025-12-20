@@ -8,19 +8,20 @@
 #pragma once
 
 #include <atomic>
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <condition_variable>
+
 #include "ClientPacketFactory.hpp"
 #include "ClientWorld.hpp"
+#include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
-#include "IRenderer.hpp"
-#include "SpriteLoader.hpp"
-#include "SpriteRegistry.hpp"
-#include <condition_variable>
+#include "PacketRouter.hpp"
 
 /**
  * @namespace Thread
@@ -91,6 +92,13 @@ namespace Thread
         void wait();
 
         /**
+         * @brief Retrieves the event bus used for handling events.
+         * @return Shared pointer to the event bus.
+         * @details The event bus is used for communication between different components of the client.
+         */
+        [[nodiscard]] std::shared_ptr<Core::EventBus> getEventBus() const noexcept;
+
+        /**
          * @brief Runs the display loop for rendering graphics.
          * @details This method handles the rendering of graphics and user input.
          * It should be called from the main thread.
@@ -98,6 +106,9 @@ namespace Thread
         void runDisplay();
 
       private:
+        std::shared_ptr<Core::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
+        std::unique_ptr<Core::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing event handlers
+
         std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
 
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
@@ -107,6 +118,8 @@ namespace Thread
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
+
+        std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state

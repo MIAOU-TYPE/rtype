@@ -22,6 +22,9 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
+#include "WorldCommandBuffer.hpp"
+#include "AssetLoader.hpp"
+#include "ClientController.hpp"
 
 /**
  * @namespace Thread
@@ -120,6 +123,8 @@ namespace Thread
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
 
         std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
+
+        WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state

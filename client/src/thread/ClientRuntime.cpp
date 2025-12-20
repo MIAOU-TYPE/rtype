@@ -17,9 +17,11 @@ namespace Thread
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Core::EventBus>();
         _eventRegistry = std::make_unique<Core::EventRegistry>(_eventBus);
+        _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
 
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()
@@ -42,22 +44,27 @@ namespace Thread
 
         _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
             std::cout << "Key up pressed" << std::endl;
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false}));
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
             std::cout << "Key down pressed" << std::endl;
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false}));
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
             std::cout << "Key left pressed" << std::endl;
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false}));
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
             std::cout << "Key right pressed" << std::endl;
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true}));
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
+        });
+
+        _eventRegistry->onKeyPressed(Core::Key::Space, [this]() {
+            std::cout << "Key space pressed" << std::endl;
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, true}));
         });
 
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
@@ -96,6 +103,8 @@ namespace Thread
         using clock = std::chrono::steady_clock;
         auto last = clock::now();
 
+        WorldCommand cmd;
+
         while (_running) {
             auto now = clock::now();
             const float dt = std::chrono::duration<float>(now - last).count();
@@ -103,6 +112,11 @@ namespace Thread
 
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
+
+            while (_commandBuffer.tryPop(cmd)) {
+                _world->applyCommand(cmd);
+            }
+
             _renderer->beginFrame();
             _world->update(dt, *_renderer);
             _renderer->endFrame();
@@ -122,7 +136,7 @@ namespace Thread
     {
         while (_running) {
             if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt)) {
-                std::cout << pkt << std::endl;
+                _packetRouter->handlePacket(pkt);
             }
         }
     }

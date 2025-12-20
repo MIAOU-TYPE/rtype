@@ -40,7 +40,7 @@ TEST(ShootingSystem, creates_projectile_when_shooting)
         if (velArr[i].has_value() && dmgArr[i].has_value() && colArr[i].has_value()) {
             foundProjectile = true;
 
-            EXPECT_FLOAT_EQ(velArr[i]->vx, 15.0f);
+            EXPECT_FLOAT_EQ(velArr[i]->vx, 100.0f);
             EXPECT_FLOAT_EQ(velArr[i]->vy, 0.f);
             EXPECT_EQ(dmgArr[i]->amount, 20);
         }

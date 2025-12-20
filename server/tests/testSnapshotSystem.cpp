@@ -26,11 +26,11 @@ TEST(SnapshotSystemTests, SingleEntitySnapshotIsCorrect)
     Game::World world;
     std::vector<SnapshotEntity> snapshot;
 
-    world.registry().registerComponent<Ecs::Drawable>();
-    world.registry().registerComponent<Ecs::Position>();
+    auto drawable = world.registry().registerComponent<Ecs::Drawable>();
+    auto position = world.registry().registerComponent<Ecs::Position>();
 
     const auto entity = world.registry().createEntity();
-    world.registry().createEntity();
+    auto fakeEntity = world.registry().createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{"spaceship"});
     world.registry().emplaceComponent<Ecs::Position>(entity, Ecs::Position{100.f, 200.f});
 
@@ -47,8 +47,8 @@ TEST(SnapshotSystemTests, MultipleEntitiesAreCapturedInOrder)
     Game::World world;
     std::vector<SnapshotEntity> snapshot;
 
-    world.registry().registerComponent<Ecs::Drawable>();
-    world.registry().registerComponent<Ecs::Position>();
+    auto drawable = world.registry().registerComponent<Ecs::Drawable>();
+    auto position = world.registry().registerComponent<Ecs::Position>();
 
     const auto entity1 = world.registry().createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity1, Ecs::Drawable{"ship1"});
@@ -63,12 +63,12 @@ TEST(SnapshotSystemTests, MultipleEntitiesAreCapturedInOrder)
     sys.update(world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 2);
-    EXPECT_EQ(snapshot[0].entity, static_cast<size_t>(entity1));
+    EXPECT_EQ(snapshot[0].id, static_cast<size_t>(entity1));
     EXPECT_EQ(snapshot[0].sprite, "ship1");
     EXPECT_EQ(snapshot[0].x, 10.f);
     EXPECT_EQ(snapshot[0].y, 20.f);
 
-    EXPECT_EQ(snapshot[1].entity, static_cast<size_t>(entity2));
+    EXPECT_EQ(snapshot[1].id, static_cast<size_t>(entity2));
     EXPECT_EQ(snapshot[1].sprite, "ship2");
     EXPECT_EQ(snapshot[1].x, 30.f);
     EXPECT_EQ(snapshot[1].y, 40.f);
@@ -80,8 +80,8 @@ TEST(SnapshotSystemTests, SnapshotIsClearedBeforeWriting)
     Game::World world;
     std::vector<SnapshotEntity> snapshot;
 
-    world.registry().registerComponent<Ecs::Drawable>();
-    world.registry().registerComponent<Ecs::Position>();
+    auto drawable = world.registry().registerComponent<Ecs::Drawable>();
+    auto position = world.registry().registerComponent<Ecs::Position>();
     const auto entity = world.registry().createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{"ship"});
     world.registry().emplaceComponent<Ecs::Position>(entity, Ecs::Position{50.f, 60.f});

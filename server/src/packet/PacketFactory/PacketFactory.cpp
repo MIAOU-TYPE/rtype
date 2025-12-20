@@ -131,8 +131,7 @@ namespace Net::Factory
                 packed.id = htonll(e.id);
                 packed.x = htonf(e.x);
                 packed.y = htonf(e.y);
-                // TODO
-                // packed.sprite = 0;
+                packed.spriteId = htons(std::stoul(e.sprite));
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);

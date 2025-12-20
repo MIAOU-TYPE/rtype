@@ -13,7 +13,7 @@ namespace Utils
 {
     class AssetLoader {
       public:
-        static void load(std::shared_ptr<Graphics::ITextureManager> textureManager,
+        static void load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
             const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry);
     };
 } // namespace Utils

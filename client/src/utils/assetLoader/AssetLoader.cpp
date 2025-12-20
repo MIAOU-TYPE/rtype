@@ -10,7 +10,7 @@
 
 namespace Utils
 {
-    void AssetLoader::load(std::shared_ptr<Graphics::ITextureManager> textureManager,
+    void AssetLoader::load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
         const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry)
     {
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss.json", *spriteRegistry);

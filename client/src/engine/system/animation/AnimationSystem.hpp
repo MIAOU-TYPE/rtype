@@ -20,7 +20,7 @@ namespace Engine
       public:
         /**
          * @brief Updates the animation state of the given client entity based on the provided animation and delta time.
-         * @param state
+         * @param state The animation state of the entity to update
          * @param anim The animation associated with the entity
          * @param dt The delta time since the last update (in seconds).
          */

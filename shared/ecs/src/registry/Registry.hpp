@@ -37,7 +37,7 @@ namespace Ecs
          * @brief Creates a new entity.
          * @return A newly created Entity with a unique ID.
          */
-        Entity createEntity() noexcept;
+        [[nodiscard]] Entity createEntity() noexcept;
 
         /**
          * @brief Destroys an entity and removes all of its components.
@@ -65,7 +65,7 @@ namespace Ecs
          * @return A reference to the component SparseArray
          */
         template <typename T>
-        SparseArray<T> &getComponents();
+        [[nodiscard]] SparseArray<T> &getComponents();
 
         /**
          * @brief Constructs and assigns a component to an entity.
@@ -86,7 +86,7 @@ namespace Ecs
          * @return true if the entity has the component, false otherwise
          */
         template <typename T>
-        bool hasComponent(Entity entity);
+        [[nodiscard]] bool hasComponent(Entity entity);
 
         /**
          * @brief Iterates over entities owning a set of components.

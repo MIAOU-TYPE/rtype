@@ -7,6 +7,7 @@
 
 #pragma once
 #include <functional>
+#include <memory>
 #include <vector>
 #include "Event.hpp"
 #include "EventBus.hpp"

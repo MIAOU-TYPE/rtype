@@ -65,13 +65,13 @@ namespace Core
          * @param x The x position of the mouse when pressed.
          * @param y The y position of the mouse when pressed.
          */
-        explicit MousePressed(const Key k, const int x, const int y) : Key(k), posX(x), posY(y)
+        explicit MousePressed(const Key k, const int x, const int y) : key(k), posX(x), posY(y)
         {
         }
 
-        Key Key;         ///> The mouse button that was pressed.
-        int posX = 0.0f; ///> The x position of the mouse when pressed.
-        int posY = 0.0f; ///> The y position of the mouse when
+        Key key;      ///> The mouse button that was pressed.
+        int posX = 0; ///> The x position of the mouse when pressed.
+        int posY = 0; ///> The y position of the mouse when
     };
 
     /**
@@ -82,10 +82,10 @@ namespace Core
          * @brief Constructor for MouseReleased event.
          * @param k The mouse button that was released.
          */
-        explicit MouseReleased(const Key k) : Key(k)
+        explicit MouseReleased(const Key k) : key(k)
         {
         }
 
-        Key Key; ///> The mouse button that was released.
+        Key key; ///> The mouse button that was released.
     };
 } // namespace Core

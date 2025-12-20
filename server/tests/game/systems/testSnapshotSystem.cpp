@@ -40,7 +40,7 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
     reg.registerComponent<Ecs::Drawable>();
     reg.registerComponent<Ecs::Position>();
 
-    reg.emplaceComponent<Ecs::Drawable>(e, Ecs::Drawable{"ship.png"});
+    reg.emplaceComponent<Ecs::Drawable>(e, Ecs::Drawable{7});
     reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{42.0f, 84.0f});
 
     SnapshotSystem::update(*world, snapshot);
@@ -51,7 +51,7 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
     EXPECT_EQ(s.id, static_cast<std::size_t>(e));
     EXPECT_FLOAT_EQ(s.x, 42.0f);
     EXPECT_FLOAT_EQ(s.y, 84.0f);
-    EXPECT_EQ(s.sprite, "ship.png");
+    EXPECT_EQ(s.spriteId, 7);
 }
 
 TEST_F(SnapshotSystemTest, EntityWithoutDrawableIsIgnored)
@@ -76,7 +76,7 @@ TEST_F(SnapshotSystemTest, EntityWithoutPositionIsIgnored)
     reg.registerComponent<Ecs::Position>();
 
     auto e1 = reg.createEntity();
-    reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{"enemy.png"});
+    reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{9});
 
     SnapshotSystem::update(*world, snapshot);
     EXPECT_TRUE(snapshot.empty());
@@ -90,11 +90,11 @@ TEST_F(SnapshotSystemTest, MultipleEntitiesSnapshotCorrectly)
     reg.registerComponent<Ecs::Position>();
 
     auto e1 = reg.createEntity();
-    reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{"enemy.png"});
+    reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{9});
     reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.0f, 20.0f});
 
     auto e2 = reg.createEntity();
-    reg.emplaceComponent<Ecs::Drawable>(e2, Ecs::Drawable{"bullet.png"});
+    reg.emplaceComponent<Ecs::Drawable>(e2, Ecs::Drawable{9});
     reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{50.0f, 60.0f});
 
     auto e3 = reg.createEntity(); // incomplete entity
@@ -105,11 +105,11 @@ TEST_F(SnapshotSystemTest, MultipleEntitiesSnapshotCorrectly)
     ASSERT_EQ(snapshot.size(), 2u);
 
     // order is deterministic since Registry stores by index
-    EXPECT_EQ(snapshot[0].sprite, "enemy.png");
+    EXPECT_EQ(snapshot[0].spriteId, 9);
     EXPECT_FLOAT_EQ(snapshot[0].x, 10.0f);
     EXPECT_FLOAT_EQ(snapshot[0].y, 20.0f);
 
-    EXPECT_EQ(snapshot[1].sprite, "bullet.png");
+    EXPECT_EQ(snapshot[1].spriteId, 9);
     EXPECT_FLOAT_EQ(snapshot[1].x, 50.0f);
     EXPECT_FLOAT_EQ(snapshot[1].y, 60.0f);
 }

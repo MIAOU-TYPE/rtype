@@ -72,7 +72,7 @@ TEST(PacketFactory, MakeEntityCreatePacket)
     size_t id = 777;
     float x = 12.5f;
     float y = 99.75f;
-    uint16_t sprite = 42;
+    int sprite = 42;
 
     auto p = f.makeEntityCreate(addr, id, x, y, sprite);
     ASSERT_NE(p, nullptr);
@@ -86,7 +86,7 @@ TEST(PacketFactory, MakeEntityCreatePacket)
     EXPECT_EQ(raw->id, htobe64(id));
     EXPECT_EQ(raw->x, htonf(x));
     EXPECT_EQ(raw->y, htonf(y));
-    EXPECT_EQ(raw->sprite, htons(sprite));
+    EXPECT_EQ(raw->spriteId, htons(sprite));
 }
 
 TEST(PacketFactory, MakeEntityDestroyPacket)

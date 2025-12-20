@@ -14,6 +14,7 @@
 #include <mutex>
 #include <thread>
 #include "ClientPacketFactory.hpp"
+#include "ClientWorld.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
@@ -101,6 +102,7 @@ namespace Thread
 
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
+        std::unique_ptr<Engine::ClientWorld> _world = nullptr;    ///> Client world for managing game state
 
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 

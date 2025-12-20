@@ -9,13 +9,13 @@
 
 namespace Engine
 {
-    void RenderSystem::submit(const ClientEntity &e, const Animation &anim, Graphics::IRenderer &renderer)
+    void RenderSystem::submit(const Position &pos, const Render &render, const AnimationState &animState,
+        const Animation &anim, Graphics::IRenderer &renderer)
     {
         RenderCommand cmd;
-        cmd.textureId = e.render.texture;
-        cmd.frame = anim.frames[e.animation.frameIndex].rect;
-        cmd.position = e.position;
-
+        cmd.textureId = render.texture;
+        cmd.frame = anim.frames[animState.frameIndex].rect;
+        cmd.position = {pos.x, pos.y};
         renderer.draw(cmd);
     }
 } // namespace Engine

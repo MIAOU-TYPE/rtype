@@ -7,8 +7,9 @@
 
 #pragma once
 #include "Animation.hpp"
-#include "EntityClient.hpp"
+#include "AnimationState.hpp"
 #include "IRenderer.hpp"
+#include "Render.hpp"
 #include "RenderCommand.hpp"
 
 namespace Engine
@@ -26,7 +27,7 @@ namespace Engine
          * @param anim The animation associated with the entity.
          * @param renderer The renderer to which the render command will be submitted.
          */
-        void submit(const ClientEntity &e, const Animation &anim, Graphics::IRenderer &renderer);
+        static void submit(const Position &pos, const Render &render, const AnimationState &animState,
+            const Animation &anim, Graphics::IRenderer &renderer);
     };
-
 } // namespace Engine

@@ -32,6 +32,10 @@ namespace Thread
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
 
+        _renderer = _graphics->createRenderer();
+        _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
+        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
     }
@@ -67,6 +71,10 @@ namespace Thread
             auto now = clock::now();
             const float dt = std::chrono::duration<float>(now - last).count();
             last = now;
+
+            _renderer->beginFrame();
+            _world->update(dt, *_renderer);
+            _renderer->endFrame();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }

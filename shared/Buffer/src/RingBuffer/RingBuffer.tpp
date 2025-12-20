@@ -11,8 +11,7 @@
 namespace Buffer
 {
     template <typename Tdata>
-    RingBuffer<Tdata>::RingBuffer(size_t capacity)
-        : _capacity(capacity), _buffer(std::make_unique<Tdata[]>(capacity))
+    RingBuffer<Tdata>::RingBuffer(size_t capacity) : _capacity(capacity), _buffer(std::make_unique<Tdata[]>(capacity))
     {
     }
 

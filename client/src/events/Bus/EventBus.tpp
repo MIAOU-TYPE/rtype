@@ -9,32 +9,27 @@
 
 namespace Core
 {
-    template<typename T>
+    template <typename T>
     void EventBus::on(Handler<T> handler)
     {
-        _handlers[typeid(T)].emplace_back(
-            [h = std::move(handler)](const void* e) {
-                h(*static_cast<const T*>(e));
-            }
-        );
+        _handlers[typeid(T)].emplace_back([h = std::move(handler)](const void *e) {
+            h(*static_cast<const T *>(e));
+        });
     }
 
-    template<typename T>
+    template <typename T>
     void EventBus::emit(T event)
     {
         std::scoped_lock lock(_queueMutex);
 
-        _queue.push(QueuedEvent{
-            typeid(T),
-            [this, e = std::move(event)]() {
-                const auto it = _handlers.find(typeid(T));
-                if (it == _handlers.end())
-                    return;
+        _queue.push(QueuedEvent{typeid(T), [this, e = std::move(event)]() {
+                                    const auto it = _handlers.find(typeid(T));
+                                    if (it == _handlers.end())
+                                        return;
 
-                for (auto& fn : it->second)
-                    fn(&e);
-            }
-        });
+                                    for (auto &fn : it->second)
+                                        fn(&e);
+                                }});
     }
 
     inline void EventBus::dispatch()
@@ -51,4 +46,4 @@ namespace Core
             local.pop();
         }
     }
-}
+} // namespace Core

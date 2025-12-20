@@ -12,6 +12,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include <iostream>
 #include <utility>
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"

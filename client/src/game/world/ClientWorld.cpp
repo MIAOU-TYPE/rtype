@@ -67,17 +67,11 @@ namespace Engine
 
             _registry.emplaceComponent<Render>(entity, Render{sprite.textureHandle});
             _registry.emplaceComponent<AnimationState>(
-                entity,
-                AnimationState{
-                    .currentAnimation = sprite.defaultAnimation,
-                    .frameIndex = 0,
-                    .elapsed = 0.f
-                });
+                entity, AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate}" << e.what() << std::endl;
         }
     }
-
 
     void ClientWorld::applyDestroy(const EntityDestroy &data)
     {
@@ -108,9 +102,8 @@ namespace Engine
         pos->x = entity.x;
         pos->y = entity.y;
 
-        auto &drawable =  _registry.getComponents<Drawable>()[static_cast<size_t>(localEntity)];
+        auto &drawable = _registry.getComponents<Drawable>()[static_cast<size_t>(localEntity)];
         drawable->spriteId = entity.sprite;
     }
-
 
 } // namespace Engine

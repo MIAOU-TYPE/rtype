@@ -9,18 +9,16 @@
 
 namespace Engine
 {
-    void AnimationSystem::update(ClientEntity &e, const Animation &anim, const float dt)
+    void AnimationSystem::update(AnimationState &state, const Animation &anim, float dt)
     {
-        e.animation.elapsed += dt;
+        state.elapsed += dt;
 
-        const auto &frames = anim.frames;
+        if (state.elapsed >= anim.frames[state.frameIndex].duration) {
+            state.elapsed = 0.f;
+            state.frameIndex++;
 
-        if (auto &index = e.animation.frameIndex; e.animation.elapsed >= frames[index].duration) {
-            e.animation.elapsed = 0.f;
-            index++;
-
-            if (index >= frames.size())
-                index = anim.loop ? 0 : frames.size() - 1;
+            if (state.frameIndex >= anim.frames.size())
+                state.frameIndex = anim.loop ? 0 : anim.frames.size() - 1;
         }
     }
 } // namespace Engine

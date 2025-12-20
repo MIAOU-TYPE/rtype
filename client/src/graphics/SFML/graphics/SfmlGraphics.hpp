@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** sfmlGraphics
+** SfmlGraphics
 */
 
 #pragma once
@@ -21,16 +21,16 @@
 namespace Graphics
 {
     /**
-     * @class sfmlGraphics
+     * @class SfmlGraphics
      * @brief SFML implementation of the IGraphics interface.
      * This class provides graphics functionality using the SFML library.
      */
-    class sfmlGraphics final : public IGraphics {
+    class SfmlGraphics final : public IGraphics {
       public:
         /**
-         * @brief Destructor for sfmlGraphics.
+         * @brief Destructor for SfmlGraphics.
          */
-        ~sfmlGraphics() override = default;
+        ~SfmlGraphics() override = default;
 
         /**
          * @brief Create a window with specified dimensions, title, and fullscreen mode.

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** sfmlGraphics
+** SfmlGraphics
 */
 
 #include "SfmlGraphics.hpp"
@@ -51,7 +51,7 @@ namespace
 
 namespace Graphics
 {
-    void sfmlGraphics::create(
+    void SfmlGraphics::create(
         const unsigned int width, const unsigned int height, const std::string &title, const bool fullscreen)
     {
         try {
@@ -66,22 +66,22 @@ namespace Graphics
             if (!isOpen())
                 throw;
         } catch (...) {
-            throw IGraphicsError("{sfmlGraphics::create}: Failed to create SFML window");
+            throw IGraphicsError("{SfmlGraphics::create}: Failed to create SFML window");
         }
     }
 
-    void sfmlGraphics::close() noexcept
+    void SfmlGraphics::close() noexcept
     {
         if (isOpen())
             _window->close();
     }
 
-    bool sfmlGraphics::isOpen() const noexcept
+    bool SfmlGraphics::isOpen() const noexcept
     {
         return _window && _window->isOpen();
     }
 
-    void sfmlGraphics::pollEvents(Core::EventBus &bus)
+    void SfmlGraphics::pollEvents(Core::EventBus &bus)
     {
         while (const auto event = _window->pollEvent()) {
             if (event->is<sf::Event::Closed>())
@@ -107,7 +107,7 @@ namespace Graphics
         }
     }
 
-    std::shared_ptr<IRenderer> sfmlGraphics::createRenderer() const noexcept
+    std::shared_ptr<IRenderer> SfmlGraphics::createRenderer() const noexcept
     {
         return std::make_shared<SfmlRenderer>(_window, _resourceManager);
     }

@@ -14,7 +14,7 @@
  * @brief High-level ECS snapshot representation.
  */
 struct SnapshotEntity {
-    size_t entity;      ///> Entity ID
+    size_t id;          ///> Entity ID
     float x;            ///> X position
     float y;            ///> Y position
     std::string sprite; ///> Sprite identifier
@@ -38,10 +38,10 @@ struct SnapshotBatchHeader {
  * @brief Serialized snapshot entity data.
  */
 struct SnapshotEntityData {
-    uint64_t entity;  ///> Entity ID
-    uint32_t x;       ///> X position
-    uint32_t y;       ///> Y position
-    uint8_t spriteId; ///> Sprite identifier
+    uint64_t id;    ///> Entity ID
+    uint32_t x;     ///> X position
+    uint32_t y;     ///> Y position
+    uint8_t sprite; ///> Sprite identifier
 };
 
 #pragma pack(pop)

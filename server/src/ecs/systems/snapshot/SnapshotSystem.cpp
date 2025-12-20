@@ -17,7 +17,7 @@ namespace Game
         reg.view<Ecs::Drawable, Ecs::Position>(
             [&](const Ecs::Entity &entity, const Ecs::Drawable &draw, const Ecs::Position &pos) {
                 SnapshotEntity s{};
-                s.entity = static_cast<size_t>(entity);
+                s.id = static_cast<size_t>(entity);
                 s.x = pos.x;
                 s.y = pos.y;
                 s.sprite = draw.sprite;

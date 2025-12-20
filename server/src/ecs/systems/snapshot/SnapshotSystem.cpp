@@ -20,7 +20,7 @@ namespace Game
                 s.id = static_cast<size_t>(entity);
                 s.x = pos.x;
                 s.y = pos.y;
-                s.sprite = draw.sprite;
+                s.spriteId = draw.spriteId;
 
                 snapshot.push_back(s);
             });

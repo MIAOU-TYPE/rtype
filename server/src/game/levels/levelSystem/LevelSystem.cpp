@@ -81,7 +81,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Damageable>(mob, true);
 
         Ecs::Drawable draw;
-        draw.sprite = def.sprite;
+        draw.spriteId = def.sprite;
         draw.drawable = true;
         reg.emplaceComponent<Ecs::Drawable>(mob, draw);
     }

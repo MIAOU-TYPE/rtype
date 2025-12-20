@@ -1,5 +1,6 @@
 {
   "sprite": "boss",
+  "spriteId": "1",
   "texture": "sprites/boss.png",
   "default_animation": "idle",
   "animations": {

@@ -14,9 +14,9 @@
  * @brief High-level ECS snapshot representation.
  */
 struct SnapshotEntity {
-    size_t id;          ///> Entity ID
-    float x;            ///> X position
-    float y;            ///> Y position
+    size_t id;    ///> Entity ID
+    float x;      ///> X position
+    float y;      ///> Y position
     int spriteId; ///> Sprite identifier
 };
 

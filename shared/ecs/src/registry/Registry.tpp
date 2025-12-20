@@ -43,6 +43,7 @@ namespace Ecs
         if (!_entityToIndex.contains(typeIdx))
             return false;
         auto &arr = std::any_cast<SparseArray<T> &>(_entityToIndex[typeIdx]);
+        auto &arr = std::any_cast<SparseArray<T> &>(_entityToIndex[typeIdx]);
         auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
@@ -62,11 +63,16 @@ namespace Ecs
             const bool ok = ((i < std::get<SparseArray<Components> &>(arrays).size()
                                  && std::get<SparseArray<Components> &>(arrays)[i].has_value())
                 && ...);
+            const bool ok = ((i < std::get<SparseArray<Components> &>(arrays).size()
+                                 && std::get<SparseArray<Components> &>(arrays)[i].has_value())
+                && ...);
             if (!ok)
                 continue;
 
             fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
+            fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
         }
     }
 
+} // namespace Ecs
 } // namespace Ecs

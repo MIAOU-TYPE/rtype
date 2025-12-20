@@ -128,12 +128,11 @@ namespace Net::Factory
 
             for (const auto &e : entities) {
                 SnapshotEntityData packed{};
-                packed.entity = htonll(e.entity);
+                packed.id = htonll(e.id);
                 packed.x = htonf(e.x);
                 packed.y = htonf(e.y);
-                packed.spriteId = 0;
                 // TODO
-                // packed.spriteId = spriteNameToId(e.sprite);
+                // packed.sprite = 0;
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);

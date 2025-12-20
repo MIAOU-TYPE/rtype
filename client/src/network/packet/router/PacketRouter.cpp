@@ -164,10 +164,10 @@ namespace Ecs
             SnapshotEntityData entityData{};
             std::memcpy(&entityData, cursor, sizeof(entityData));
             SnapshotEntity entity{};
-            entity.entity = be64toh(entityData.entity);
+            entity.id = be64toh(entityData.id);
             entity.x = ntohf(entityData.x);
             entity.y = ntohf(entityData.y);
-            // entity.sprite = spriteFromId(entityData.sprite);
+            // entity.sprite = entityData.sprite;
             _sink->onSnapshot(entity);
             cursor += sizeof(SnapshotEntityData);
         }

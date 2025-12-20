@@ -8,6 +8,7 @@
 #pragma once
 #include <exception>
 #include <string>
+#include "EventBus.hpp"
 #include "IRenderer.hpp"
 
 namespace Graphics
@@ -77,5 +78,10 @@ namespace Graphics
          * @return Shared pointer to the created IRenderer instance.
          */
         virtual std::shared_ptr<IRenderer> createRenderer() const noexcept = 0;
+
+        /**
+         * @brief Poll for window events.
+         */
+        virtual void pollEvents(Core::EventBus &bus) = 0;
     };
 } // namespace Graphics

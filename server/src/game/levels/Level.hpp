@@ -21,7 +21,7 @@ namespace Game
         float speed = 0.f;  ///> Movement speed
         float colW = 0.f;   ///> Collision width
         float colH = 0.f;   ///> Collision height
-        std::string sprite; ///> Sprite asset path
+        int sprite;         ///> Sprite asset path
     };
 
     /**

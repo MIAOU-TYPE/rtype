@@ -42,14 +42,14 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
-        const sockaddr_in &addr, const size_t id, const float x, const float y, uint16_t sprite) const noexcept
+        const sockaddr_in &addr, const size_t id, const float x, const float y, int sprite) const noexcept
     {
         EntityCreateData entityCreatePacket;
         entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreateData));
         entityCreatePacket.id = htobe64(id);
         entityCreatePacket.x = htonf(x);
         entityCreatePacket.y = htonf(y);
-        entityCreatePacket.sprite = htons(sprite);
+        entityCreatePacket.spriteId = htons(sprite);
 
         try {
             auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
@@ -131,7 +131,7 @@ namespace Net::Factory
                 packed.id = htonll(e.id);
                 packed.x = htonf(e.x);
                 packed.y = htonf(e.y);
-                packed.spriteId = htons(std::stoul(e.sprite));
+                packed.spriteId = htons(e.spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);

@@ -6,21 +6,21 @@
       "speed": -90,
       "size": { "w": 12, "h": 12 },
       "sprite": "enemy",
-      "spriteId": "2"
+      "spriteId": 2
     },
     "mediumEnemy": {
       "hp": 60,
       "speed": -70,
       "size": { "w": 22, "h": 22 },
       "sprite": "enemy2",
-      "spriteId": "3"
+      "spriteId": 3
     },
     "fastEnemy": {
       "hp": 10,
       "speed": -120,
       "size": { "w": 10, "h": 10 },
       "sprite": "enemy3",
-      "spriteId": "4"
+      "spriteId": 4
     }
   },
   "duration": 40,

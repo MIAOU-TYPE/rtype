@@ -1,6 +1,6 @@
 {
   "sprite": "enemy3",
-  "spriteId": "4",
+  "spriteId": 4,
   "texture": "sprites/enemy3.png",
   "default_animation": "idle",
   "animations": {

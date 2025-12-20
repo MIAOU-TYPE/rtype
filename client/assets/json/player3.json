@@ -1,6 +1,6 @@
 {
   "sprite": "player3",
-  "spriteId": "9",
+  "spriteId": 9,
   "texture": "sprites/player3.png",
   "default_animation": "idle",
   "animations": {

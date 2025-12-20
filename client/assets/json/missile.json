@@ -1,6 +1,6 @@
 {
   "sprite": "missile",
-  "spriteId": "6",
+  "spriteId": 6,
   "texture": "sprites/missile.png",
   "default_animation": "fly",
   "animations": {

@@ -72,6 +72,13 @@ namespace Engine
          */
         bool exists(const std::string &spriteId) const;
 
+        template <typename Fn>
+        void forEach(Fn &&fn)
+        {
+            for (auto &[id, def] : _sprites)
+                fn(id, def);
+        }
+
       private:
         std::unordered_map<std::string, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
     };

@@ -35,7 +35,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Velocity>(ent, 0.f, 0.f);
         _registry.emplaceComponent<Ecs::Health>(ent, 100, 100);
         _registry.emplaceComponent<InputComponent>(ent);
-        _registry.emplaceComponent<Ecs::Drawable>(ent, "player_sprite");
+        _registry.emplaceComponent<Ecs::Drawable>(ent, "player");
         _registry.emplaceComponent<Ecs::Collision>(ent);
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         return ent;

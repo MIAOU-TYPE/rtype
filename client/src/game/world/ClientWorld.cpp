@@ -61,9 +61,9 @@ namespace Engine
             _entityMap.emplace(data.id, entity);
 
             _registry.emplaceComponent<Position>(entity, Position{data.x, data.y});
-            _registry.emplaceComponent<Drawable>(entity, Drawable{data.sprite});
+            _registry.emplaceComponent<Drawable>(entity, Drawable{data.spriteId});
 
-            const auto &sprite = _spriteRegistry->get(data.sprite);
+            const auto &sprite = _spriteRegistry->get(data.spriteId);
 
             _registry.emplaceComponent<Render>(entity, Render{sprite.textureHandle});
             _registry.emplaceComponent<AnimationState>(
@@ -92,7 +92,7 @@ namespace Engine
         const auto it = _entityMap.find(entity.id);
         if (it == _entityMap.end()) {
             std::cout << "{ClientWorld::applySnapshot} Entity " << entity.id << " not found, creating it.\n";
-            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.sprite});
+            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.spriteId});
             return;
         }
 
@@ -103,7 +103,20 @@ namespace Engine
         pos->y = entity.y;
 
         auto &drawable = _registry.getComponents<Drawable>()[static_cast<size_t>(localEntity)];
-        drawable->spriteId = entity.sprite;
+        const bool spriteChanged = (drawable->spriteId != entity.spriteId);
+        drawable->spriteId = entity.spriteId;
+
+        if (spriteChanged) {
+            const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+
+            auto &render = _registry.getComponents<Render>()[static_cast<size_t>(localEntity)];
+            render->texture = sprite.textureHandle;
+
+            auto &animState = _registry.getComponents<AnimationState>()[static_cast<size_t>(localEntity)];
+            animState->currentAnimation = sprite.defaultAnimation;
+            animState->frameIndex = 0;
+            animState->elapsed = 0.f;
+        }
     }
 
 } // namespace Engine

@@ -33,9 +33,7 @@ namespace Ecs
     void Registry::emplaceComponent(const Entity entity, Args &&...args)
     {
         auto data = registerComponent<T>();
-        getComponents<T>().insert(
-            static_cast<size_t>(entity),
-            T(std::forward<Args>(args)...));
+        getComponents<T>().insert(static_cast<size_t>(entity), T(std::forward<Args>(args)...));
     }
 
     template <typename T>
@@ -44,7 +42,7 @@ namespace Ecs
         const auto typeIdx = std::type_index(typeid(T));
         if (!_entityToIndex.contains(typeIdx))
             return false;
-        auto &arr = std::any_cast<SparseArray<T>&>(_entityToIndex[typeIdx]);
+        auto &arr = std::any_cast<SparseArray<T> &>(_entityToIndex[typeIdx]);
         auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
@@ -61,17 +59,14 @@ namespace Ecs
         const size_t maxSize = first.size();
 
         for (size_t i = 0; i < maxSize; ++i) {
-            const bool ok = (
-                (i < std::get<SparseArray<Components>&>(arrays).size() &&
-                 std::get<SparseArray<Components>&>(arrays)[i].has_value()) && ...);
+            const bool ok = ((i < std::get<SparseArray<Components> &>(arrays).size()
+                                 && std::get<SparseArray<Components> &>(arrays)[i].has_value())
+                && ...);
             if (!ok)
                 continue;
 
-            fn(
-                Entity(i),
-                *std::get<SparseArray<Components>&>(arrays)[i]...
-            );
+            fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
         }
     }
 
-}
+} // namespace Ecs

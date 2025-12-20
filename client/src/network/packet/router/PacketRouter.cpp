@@ -122,11 +122,11 @@ namespace Ecs
         EntityCreateData net{};
         std::memcpy(&net, payload, sizeof(EntityCreateData));
 
-        std::cout << "EntityCreate id:" << be64toh(net.id) << " x:" << ntohf(net.x) << " y:" << ntohf(net.y) << "sprite: " << net.sprite << std::endl;
         EntityCreate evt{};
         evt.id = be64toh(net.id);
         evt.x = ntohf(net.x);
         evt.y = ntohf(net.y);
+        evt.sprite = std::to_string(ntohs(net.sprite));
         _sink->onEntityCreate(evt);
     }
 
@@ -163,13 +163,13 @@ namespace Ecs
 
             SnapshotEntityData entityData{};
             std::memcpy(&entityData, cursor, sizeof(entityData));
-            entityData.spriteId = ntohs(entityData.spriteId);
-            std::cout << "entityData:" << be64toh(entityData.id) << " " << ntohf(entityData.x) << " " << ntohf(entityData.y) <<  "spriteId:" << entityData.spriteId << std::endl;
+
             SnapshotEntity entity{};
             entity.id = be64toh(entityData.id);
             entity.x = ntohf(entityData.x);
             entity.y = ntohf(entityData.y);
-            // entity.sprite = std::string(entityData.spriteId);
+            entity.sprite = std::to_string(ntohs(entityData.spriteId));
+
             _sink->onSnapshot(entity);
             cursor += sizeof(SnapshotEntityData);
         }

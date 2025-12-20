@@ -72,15 +72,18 @@ namespace Engine
          */
         bool exists(const std::string &spriteId) const;
 
+        /**
+         * @brief Iterates over all sprite definitions in the registry.
+         * @tparam Fn Callable type that takes (const std::string &, SpriteDefinition &).
+         * @param fn Function to be called for each sprite definition.
+         */
         template <typename Fn>
-        void forEach(Fn &&fn)
-        {
-            for (auto &[id, def] : _sprites)
-                fn(id, def);
-        }
+        void forEach(Fn &&fn);
 
       private:
         std::unordered_map<std::string, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
     };
 
 } // namespace Engine
+
+#include "SpriteRegistry.tpp"

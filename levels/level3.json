@@ -5,19 +5,19 @@
       "hp": 25,
       "speed": -100,
       "size": { "w": 12, "h": 12 },
-      "sprite": "enemy_small.png"
+      "sprite": "enemy"
     },
     "mediumEnemy": {
       "hp": 80,
       "speed": -70,
       "size": { "w": 24, "h": 24 },
-      "sprite": "enemy_medium.png"
+      "sprite": "enemy2"
     },
     "boss": {
       "hp": 500,
       "speed": -30,
       "size": { "w": 40, "h": 40 },
-      "sprite": "boss.png"
+      "sprite": "boss"
     }
   },
   "duration": 45,

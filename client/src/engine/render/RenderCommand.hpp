@@ -20,7 +20,7 @@ namespace Engine
     struct RenderCommand {
         Graphics::TextureHandle textureId; //> Handle to the texture to be rendered
         IntRect frame;                     //> Rectangle defining the frame within the texture
-        Vec2<float> position;              ///> Position where the texture should be rendered
+        Position position;                 ///> Position where the texture should be rendered
     };
 
 } // namespace Engine

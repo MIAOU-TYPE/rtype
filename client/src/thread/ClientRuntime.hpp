@@ -16,6 +16,8 @@
 #include <thread>
 #include <condition_variable>
 
+#include "AssetLoader.hpp"
+#include "ClientController.hpp"
 #include "ClientPacketFactory.hpp"
 #include "ClientWorld.hpp"
 #include "EventRegistry.hpp"
@@ -23,8 +25,6 @@
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
 #include "WorldCommandBuffer.hpp"
-#include "AssetLoader.hpp"
-#include "ClientController.hpp"
 
 /**
  * @namespace Thread

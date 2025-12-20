@@ -43,22 +43,18 @@ namespace Thread
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
 
         _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
-            std::cout << "Key up pressed" << std::endl;
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
-            std::cout << "Key down pressed" << std::endl;
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
-            std::cout << "Key left pressed" << std::endl;
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
         _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
-            std::cout << "Key right pressed" << std::endl;
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 

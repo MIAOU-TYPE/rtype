@@ -16,7 +16,7 @@ namespace Engine
 
     const SpriteDefinition &SpriteRegistry::get(const std::string &spriteId) const
     {
-        auto it = _sprites.find(spriteId);
+        const auto it = _sprites.find(spriteId);
         if (it == _sprites.end())
             throw SpriteRegistryError("{SpriteRegistry::get}: unknown spriteId: " + spriteId);
         return it->second;

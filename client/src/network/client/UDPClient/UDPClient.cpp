@@ -27,7 +27,7 @@ namespace Network
         if (!isRunning() || _socketFd == kInvalidSocket)
             return;
 
-        auto pkt = std::make_shared<Net::UDPPacket>();
+        const auto pkt = std::make_shared<Net::UDPPacket>();
 
         sockaddr_in from{};
         socklen_t addrLen = sizeof(from);

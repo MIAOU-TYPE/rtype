@@ -21,6 +21,7 @@ namespace Game
             reg.emplaceComponent<Ecs::Position>(proj, pos.x + 20, pos.y);
             reg.emplaceComponent<Ecs::Velocity>(proj, 100.f, 0.f);
             reg.emplaceComponent<Ecs::Damage>(proj, 20);
+            reg.emplaceComponent<Ecs::Damageable>(proj);
             reg.emplaceComponent<Ecs::Collision>(proj, 8.f, 8.f);
             reg.emplaceComponent<Ecs::Drawable>(proj, 6);
         });

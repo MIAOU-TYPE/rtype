@@ -13,6 +13,7 @@
 #include "Position.hpp"
 #include "Velocity.hpp"
 #include "World.hpp"
+#include "Damageable.hpp"
 
 namespace Game
 {

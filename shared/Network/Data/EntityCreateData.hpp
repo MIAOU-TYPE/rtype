@@ -21,7 +21,7 @@ struct EntityCreateData {
     uint64_t id = 0;     ///> The unique identifier of the entity to be created.
     uint32_t x = 0;      ///> The x-coordinate of the entity's position.
     uint32_t y = 0;      ///> The y-coordinate of the entity's position.
-    uint16_t sprite = 0; ///> The identifier for the entity's sprite/visual representation.
+    uint32_t spriteId = 0;     ///> The identifier for the entity's sprite/visual representation.
 };
 
 #pragma pack(pop)
@@ -33,5 +33,5 @@ struct EntityCreate {
     size_t id;          ///> Entity ID
     float x;            ///> X position
     float y;            ///> Y position
-    std::string sprite; ///> Sprite identifier
+    int spriteId; ///> Sprite identifier
 };

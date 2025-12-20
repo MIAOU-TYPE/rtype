@@ -7,7 +7,7 @@
 
 #pragma once
 #include <string>
-#include "Animation/Animation.hpp"
+#include "Animation.hpp"
 #include <unordered_map>
 
 namespace Engine

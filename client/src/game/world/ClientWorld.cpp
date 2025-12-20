@@ -24,23 +24,21 @@ namespace Engine
         _registry.view<Position, Drawable, AnimationState, Render>(
             [&](Ecs::Entity, const Position &pos, const Drawable &drawable, AnimationState &animState,
                 const Render &render) {
-                try {
-                    const SpriteDefinition &sprite = _spriteRegistry->get(drawable.spriteId);
+                if (!_spriteRegistry->exists(drawable.spriteId))
+                    return;
+                const SpriteDefinition &sprite = _spriteRegistry->get(drawable.spriteId);
 
-                    if (animState.currentAnimation.empty())
-                        animState.currentAnimation = sprite.defaultAnimation;
+                if (animState.currentAnimation.empty())
+                    animState.currentAnimation = sprite.defaultAnimation;
 
-                    const auto animIt = sprite.animations.find(animState.currentAnimation);
-                    if (animIt == sprite.animations.end())
-                        return;
+                const auto animIt = sprite.animations.find(animState.currentAnimation);
+                if (animIt == sprite.animations.end())
+                    return;
 
-                    const Animation &anim = animIt->second;
+                const Animation &anim = animIt->second;
 
-                    AnimationSystem::update(animState, anim, dt);
-                    RenderSystem::submit(pos, render, animState, anim, renderer);
-                } catch (const std::exception &e) {
-                    std::cerr << "{ClientWorld::update}: " << e.what() << std::endl;
-                }
+                AnimationSystem::update(animState, anim, dt);
+                RenderSystem::submit(pos, render, animState, anim, renderer);
             });
     }
 
@@ -61,6 +59,8 @@ namespace Engine
             _entityMap.emplace(data.id, entity);
 
             _registry.emplaceComponent<Position>(entity, Position{data.x, data.y});
+            if (!_spriteRegistry->exists(data.spriteId))
+                return;
             _registry.emplaceComponent<Drawable>(entity, Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
@@ -75,14 +75,13 @@ namespace Engine
 
     void ClientWorld::applyDestroy(const EntityDestroy &data)
     {
-        auto entity = static_cast<Ecs::Entity>(data.id);
         const auto it = _entityMap.find(data.id);
         if (it == _entityMap.end()) {
             std::cerr << "{ClientWorld::applyDestroy} Entity with ID " << data.id
                       << " does not exist. Cannot destroy.\n";
             return;
         }
-        entity = it->second;
+        auto entity = it->second;
         _entityMap.erase(it);
         _registry.destroyEntity(entity);
     }

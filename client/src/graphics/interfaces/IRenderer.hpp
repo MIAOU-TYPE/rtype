@@ -1,148 +1,74 @@
 /*
 ** EPITECH PROJECT, 2025
-** real_r_type
+** R-Type
 ** File description:
 ** IRenderer
 */
-
 #pragma once
-
-#include <SFML/Graphics/Sprite.hpp>
-#include <memory>
+#include <exception>
 #include <string>
-#include "IEvent.hpp"
+#include "IFontManager.hpp"
 #include "ITextureManager.hpp"
+#include "RenderCommand.hpp"
 
-/**
- * @namespace Graphics
- * @brief Contains all graphics-related classes and interfaces.
- */
 namespace Graphics
 {
-    class ISprite;
+    class RenderException : public std::exception {
+      public:
+        explicit RenderException(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
+
+      private:
+        std::string _message = ""; ///> Error message
+    };
 
     /**
      * @class IRenderer
-     * @brief Interface for rendering operations.
-     *
-     * This interface abstracts the rendering backend, allowing different implementations
-     * (e.g., SFML, SDL) to be used interchangeably.
+     * @brief Interface for a renderer responsible for managing the rendering process.
+     * This interface defines methods to begin and end a rendering frame.
      */
     class IRenderer {
       public:
         /**
          * @brief Virtual destructor for IRenderer.
+         * Ensures proper cleanup of derived classes.
          */
         virtual ~IRenderer() = default;
 
         /**
-         * @brief Creates the rendering window.
-         * @param width The width of the window.
-         * @param height The height of the window.
-         * @param title The title of the window.
+         * @brief Begins a new rendering frame.
+         * This method should be called before any rendering operations for the frame.
          */
-        virtual void createWindow(unsigned int width, unsigned int height, const std::string &title) = 0;
+        virtual void beginFrame() = 0;
 
         /**
-         * @brief Checks if the window is open.
-         * @return True if the window is open, false otherwise.
+         * @brief Ends the current rendering frame.
+         * This method should be called after all rendering operations for the frame are complete.
          */
-        virtual bool isOpen() const = 0;
+        virtual void endFrame() = 0;
 
         /**
-         * @brief Closes the window.
+         * @brief Provides access to the font manager.
+         * @return Reference to the font manager.
          */
-        virtual void close() = 0;
+        virtual std::shared_ptr<IFontManager> fonts() const noexcept = 0;
 
         /**
-         * @brief Clears the window with the default color.
+         * @brief Provides access to the texture manager.
+         * @return Reference to the texture manager.
          */
-        virtual void clear() = 0;
+        virtual std::shared_ptr<ITextureManager> textures() const noexcept = 0;
 
         /**
-         * @brief Displays the rendered frame.
+         * @brief Draw a sprite based on the provided SpriteCmd.
+         * @param cmd The command containing sprite drawing parameters.
          */
-        virtual void display() = 0;
-
-        /**
-         * @brief Polls for events.
-         * @param event The event to fill if available.
-         * @return True if an event was polled, false otherwise.
-         */
-        virtual bool pollEvent(std::shared_ptr<IEvent> &event) = 0;
-
-        /**
-         * @brief Checks if the event is a window close event.
-         * @param event The event to check.
-         * @return True if the event is a window close event, false otherwise.
-         */
-        virtual bool isWindowCloseEvent(const IEvent &event) const = 0;
-
-        /**
-         * @brief Draws a sprite to the render target.
-         * @param sprite The sprite to draw.
-         */
-        virtual void drawSprite(const sf::Sprite &sprite) = 0;
-
-        /**
-         * @brief Renders an ISprite to the screen.
-         * @param sprite The sprite to render.
-         */
-        virtual void renderSprite(const ISprite &sprite) = 0;
-
-        /**
-         * @brief Renders text to the screen.
-         * @param text The text to render.
-         */
-        virtual void renderText(const IText &text) = 0;
-
-        /**
-         * @brief Gets the window width.
-         * @return The width of the window.
-         */
-        virtual unsigned int getWindowWidth() const = 0;
-
-        /**
-         * @brief Gets the window height.
-         * @return The height of the window.
-         */
-        virtual unsigned int getWindowHeight() const = 0;
-
-        /**
-         * @brief Gets the current mouse position relative to the window.
-         * @param x Reference to store the X coordinate.
-         * @param y Reference to store the Y coordinate.
-         */
-        virtual void getMousePosition(float &x, float &y) const = 0;
-
-        /**
-         * @brief Gets the elapsed time since last restart in seconds.
-         * @return The elapsed time in seconds.
-         */
-        virtual float getElapsedTime() const = 0;
-
-        /**
-         * @brief Restarts the internal clock.
-         */
-        virtual void restartClock() = 0;
-
-        /**
-         * @brief Sets whether the mouse is currently pressed.
-         * @param isPressed True if the mouse is pressed, false otherwise.
-         */
-        virtual void setIsMousePressed(bool isPressed) = 0;
-
-        /**
-         * @brief Checks if the mouse is currently pressed.
-         * @return True if the mouse is pressed, false otherwise.
-         */
-        virtual bool getIsMousePressed() const = 0;
-
-        /**
-         * @brief Activates or deactivates the OpenGL context for the calling thread.
-         * @param active True to activate, false to deactivate.
-         */
-        virtual void setActive(bool active) = 0;
+        virtual void draw(const Engine::RenderCommand &cmd) = 0;
     };
-
 } // namespace Graphics

@@ -12,7 +12,7 @@ namespace Network
     ClientPacketFactory::ClientPacketFactory(const std::shared_ptr<Net::IPacket> &packet)
     {
         if (!packet)
-            throw FactoryError("Invalid IPacket pointer");
+            throw FactoryError("{ClientPacketFactory::ClientPacketFactory}: invalid IPacket pointer");
         _packet = packet;
     }
 
@@ -38,7 +38,7 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> ClientPacketFactory::makePlayerInput(const PlayerInput &input) const noexcept
+    std::shared_ptr<Net::IPacket> ClientPacketFactory::makeInput(const PlayerInput &input) const noexcept
     {
         PlayerInputData packet{};
         packet.header = makeHeader(Net::Protocol::INPUT, sizeof(PlayerInputData));

@@ -1,0 +1,20 @@
+{
+  "sprite": "enemy",
+  "texture": "sprites/enemy.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 65, "h": 66, "duration": 1.0 },
+        { "x": 65, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 130, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 195, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 260, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 325, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 390, "y": 0, "w": 65, "h": 66, "duration": 0.3 },
+        { "x": 455, "y": 0, "w": 65, "h": 66, "duration": 0.3 }
+      ]
+    }
+  }
+}

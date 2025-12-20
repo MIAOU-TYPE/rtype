@@ -1,79 +1,54 @@
 /*
 ** EPITECH PROJECT, 2025
-** real_r_type
+** R-Type
 ** File description:
 ** ITextureManager
 */
 
 #pragma once
 
+#include <cstddef>
+#include <exception>
 #include <memory>
 #include <string>
-#include "IText.hpp"
 
-/**
- * @namespace Graphics
- * @brief Contains all graphics-related classes and interfaces.
- */
 namespace Graphics
 {
 
-    /**
-     * @class ISprite
-     * @brief Interface for sprite objects.
-     *
-     * This interface abstracts sprite functionality to make it independent
-     * of the underlying graphics library.
-     */
-    class ISprite {
+    class TextureError : public std::exception {
       public:
         /**
-         * @brief Virtual destructor for ISprite.
+         * @brief Constructor for TextureError.
+         * @param message The error message.
          */
-        virtual ~ISprite() = default;
+        explicit TextureError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
 
         /**
-         * @brief Sets the position of the sprite.
-         * @param x The X coordinate.
-         * @param y The Y coordinate.
+         * @brief Override of what() method from std::exception.
+         * @return The error message as a C-style string.
          */
-        virtual void setPosition(float x, float y) = 0;
+        const char *what() const noexcept override
+        {
+            return (_message).c_str();
+        }
 
-        /**
-         * @brief Gets the width of the sprite.
-         * @return The width of the sprite.
-         */
-        virtual float getWidth() const = 0;
-
-        /**
-         * @brief Gets the height of the sprite.
-         * @return The height of the sprite.
-         */
-        virtual float getHeight() const = 0;
-
-        /**
-         * @brief Sets the scale of the sprite.
-         * @param scaleX The X scale factor.
-         * @param scaleY The Y scale factor.
-         */
-        virtual void setScale(float scaleX, float scaleY) = 0;
-
-        /**
-         * @brief Sets the texture rectangle (sub-area of the texture to display).
-         * @param left The left coordinate of the rectangle.
-         * @param top The top coordinate of the rectangle.
-         * @param width The width of the rectangle.
-         * @param height The height of the rectangle.
-         */
-        virtual void setTextureRect(int left, int top, int width, int height) = 0;
+      private:
+        std::string _message; ///> Error message
     };
 
     /**
+     * @brief Opaque handle to a texture.
+     * Backend-specific implementations will internally map this
+     * handle to a real GPU texture (sf::Texture, OpenGL id, etc.)
+     */
+    using TextureHandle = std::size_t;
+    constexpr TextureHandle InvalidTexture = 0;
+
+    /**
      * @class ITextureManager
-     * @brief Interface for texture management operations.
-     *
-     * This interface abstracts texture loading and sprite creation,
-     * allowing different implementations to be used interchangeably.
+     * @brief Interface for managing textures independently of the graphics backend.
      */
     class ITextureManager {
       public:
@@ -83,35 +58,27 @@ namespace Graphics
         virtual ~ITextureManager() = default;
 
         /**
-         * @brief Loads a texture from file.
-         * @param filePath The path to the texture file.
-         * @return True if the texture was loaded successfully, false otherwise.
+         * @brief Load a texture from a resource identifier.
+         * If the texture is already loaded, returns the existing handle.
+         * @param resourcePath Path or identifier of the texture.
+         * @return TextureHandle Handle to the texture, or InvalidTexture on failure.
          */
-        virtual bool loadTexture(const std::string &filePath) = 0;
+        virtual TextureHandle load(const std::string &resourcePath) = 0;
 
         /**
-         * @brief Creates a sprite from a loaded texture.
-         * @param texturePath The path to the texture.
-         * @return A unique pointer to the created sprite.
+         * @brief Unload a texture.
+         * Reference-counting or deferred destruction is backend-specific.
          */
-        virtual std::unique_ptr<ISprite> createSprite(const std::string &texturePath) = 0;
+        virtual void unload(TextureHandle handle) = 0;
 
         /**
-         * @brief Loads a font from a file.
-         * @param fontPath The path to the font file.
-         * @return True if the font was loaded successfully, false otherwise.
+         * @brief Check if a texture handle is valid.
          */
-        virtual bool loadFont(const std::string &fontPath) = 0;
+        [[nodiscard]] virtual bool isValid(TextureHandle handle) const noexcept = 0;
 
         /**
-         * @brief Creates a text object using a loaded font.
-         * @param fontPath The path to the font to use.
-         * @param text The initial text string.
-         * @param characterSize The character size in pixels.
-         * @return A unique pointer to the created text object.
+         * @brief Release all loaded textures.
          */
-        virtual std::unique_ptr<IText> createText(
-            const std::string &fontPath, const std::string &text = "", unsigned int characterSize = 30) = 0;
+        virtual void clear() = 0;
     };
-
 } // namespace Graphics

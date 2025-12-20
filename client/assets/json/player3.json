@@ -1,0 +1,20 @@
+{
+  "sprite": "player3",
+  "texture": "sprites/player3.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0,   "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 33,  "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 66,  "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 99,  "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 132, "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 165, "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 198, "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 231, "y": 0, "w": 33, "h": 18, "duration": 0.5 }
+      ]
+    }
+  }
+}

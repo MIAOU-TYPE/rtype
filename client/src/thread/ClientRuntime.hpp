@@ -10,21 +10,16 @@
 #include <atomic>
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <thread>
-#include <condition_variable>
-
 #include "ClientPacketFactory.hpp"
-#include "DisplayInit.hpp"
-#include "EventInit.hpp"
-#include "GameScene.hpp"
-#include "GameWorld.hpp"
-#include "InputData.hpp"
-#include "InputEvents.hpp"
-#include "NetClient.hpp"
-#include "PacketRouter.hpp"
-#include "SFMLInputHandler.hpp"
-#include "SFMLRenderer.hpp"
+#include "IGraphics.hpp"
+#include "INetClient.hpp"
+#include "IRenderer.hpp"
+#include "SpriteLoader.hpp"
+#include "SpriteRegistry.hpp"
+#include <condition_variable>
 
 /**
  * @namespace Thread
@@ -38,11 +33,19 @@ namespace Thread
      */
     class ClientRuntimeError : public std::exception {
       public:
+        /**
+         * @brief Constructor for ClientRuntimeError.
+         * @param message The error message.
+         */
         explicit ClientRuntimeError(const std::string &message) : _message("\n\t" + message)
         {
         }
 
-        const char *what() const noexcept
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
         {
             return (_message).c_str();
         }
@@ -55,56 +58,64 @@ namespace Thread
       public:
         /**
          * @brief Constructor for ClientRuntime.
-         * @param client Shared pointer to the network client.
-         * @param scene Shared pointer to the game scene.
+         * @param graphics Shared pointer to the graphics interface.
+         * @param client Shared pointer to the network client interface.
          */
-        ClientRuntime(const std::shared_ptr<Network::INetClient> &client);
+        explicit ClientRuntime(
+            const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client);
+
         /**
          * @brief Destructor for ClientRuntime.
+         * Cleans up resources and stops the client runtime.
          */
         ~ClientRuntime();
 
         /**
-         * @brief Starts the client runtime operations.
+         * @brief Starts the client runtime, including network communication and game state updates.
+         * @throws ClientRuntimeError if the client fails to start.
+         * @details This method initializes the network client and starts the receiver and updater threads.
          */
         void start();
 
         /**
-         * @brief Stops the client runtime operations.
+         * @brief Stops the client runtime gracefully.
+         * @details This method signals the receiver and updater threads to stop and waits for them to finish.
          */
         void stop();
 
         /**
-         * @brief Waits for the client runtime threads to finish.
+         * @brief Waits for the client runtime to stop.
+         * @details This method blocks until the client runtime has been stopped.
          */
         void wait();
 
-      private:
-        std::shared_ptr<Graphics::SFMLRenderer> _renderer; ///> Shared renderer
+        /**
+         * @brief Runs the display loop for rendering graphics.
+         * @details This method handles the rendering of graphics and user input.
+         * It should be called from the main thread.
+         */
+        void runDisplay();
 
-        std::shared_ptr<Network::INetClient> _client;                 ///> Network client
-        std::shared_ptr<Ecs::PacketRouter> _packetRouter;             ///> Entities factory
-        std::shared_ptr<Network::ClientPacketFactory> _packetFactory; ///> Packet factory
-        std::shared_ptr<Display::DisplayInit> _display;               ///> Display manager
-        std::shared_ptr<Events::EventInit> _event;                    ///> Event manager
+      private:
+        std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
+
+        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
+
+        std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
+
+        Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
 
         std::thread _receiverThread; ///> Thread for receiving packets
-        std::thread _updateThread;   ///> Thread for updating game state
+        std::thread _updaterThread;  ///> Thread for updating game state
 
         std::mutex _mutex;                       ///> Mutex for synchronizing access
         std::condition_variable _cv;             ///> Condition variable for signaling
         std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
-        std::shared_ptr<Game::GameWorld> _gameWorld; ///> Game world
-        std::shared_ptr<Game::GameScene> _gameScene; ///> Game scene
-
-        std::shared_ptr<Events::InputEventManager> _inputEventManager;
-        std::unique_ptr<Input::SFMLInputHandler> _inputHandler;
-
-        void runReceiver(); ///> Method for running the receiver thread
-        void runUpdater();  ///> Method for running the updater thread
-        void runDisplay();  ///> Method for running the display thread
+        void runReceiver() const; ///> Method for running the receiver thread
+        void runUpdater() const;  ///> Method for running the updater thread
     };
 
 } // namespace Thread

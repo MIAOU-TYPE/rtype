@@ -30,7 +30,7 @@ namespace Utils
         }
 
         /**
-         * @brief Override of the what() method from std::exception.
+         * @brief Override of what() method from std::exception.
          * @return The error message.
          */
         const char *what() const noexcept override
@@ -59,7 +59,7 @@ namespace Utils
          * @brief Parses the command-line arguments.
          * @return An ArgParseResult indicating the outcome of the parsing.
          */
-        ArgParseResult parse();
+        [[nodiscard]] ArgParseResult parse();
 
         /**
          * @brief Gets the parsed port number.

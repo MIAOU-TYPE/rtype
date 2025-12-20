@@ -9,22 +9,45 @@
 
 namespace Thread
 {
-    ClientRuntime::ClientRuntime(const std::shared_ptr<Network::INetClient> &client) : _client(client)
+    ClientRuntime::ClientRuntime(
+        const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
+        : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
     {
-        if (!_client)
-            throw ClientRuntimeError("NetClient is null");
-        _packetFactory = std::make_shared<Network::ClientPacketFactory>(std::make_shared<Net::UDPPacket>());
-        _renderer = std::make_shared<Graphics::SFMLRenderer>();
-        _display = std::make_shared<Display::DisplayInit>(_renderer);
-        _event = std::make_shared<Events::EventInit>(_renderer, _client, _packetFactory);
-        _inputEventManager = std::make_shared<Events::InputEventManager>();
-        _inputHandler = std::make_unique<Input::SFMLInputHandler>(_inputEventManager);
     }
 
     ClientRuntime::~ClientRuntime()
     {
         stop();
-        _client = nullptr;
+        _client.reset();
+    }
+
+    void ClientRuntime::start()
+    {
+        try {
+            _client->start();
+        } catch (const std::exception &e) {
+            std::cerr << "Failed to start client: " << e.what() << std::endl;
+            return;
+        }
+        _running = true;
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
+
+        _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
+        _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
+    }
+
+    void ClientRuntime::stop()
+    {
+        if (_stopRequested.exchange(true))
+            return;
+
+        _running = false;
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
+        if (_receiverThread.joinable())
+            _receiverThread.join();
+        if (_updaterThread.joinable())
+            _updaterThread.join();
+        _cv.notify_all();
     }
 
     void ClientRuntime::wait()
@@ -35,65 +58,32 @@ namespace Thread
         });
     }
 
-    void ClientRuntime::start()
+    void ClientRuntime::runDisplay()
     {
-        _display->init(800, 600);
-        _gameScene = _display->getGameScene();
-        if (!_gameScene)
-            throw ClientRuntimeError("GameScene not created by DisplayInit");
-        _packetRouter = std::make_shared<Ecs::PacketRouter>(_gameScene->getGameWorldPtr());
-        _client->start();
-        _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::CONNECT));
-        _running = true;
-        _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
-        _updateThread = std::thread(&ClientRuntime::runUpdater, this);
-        runDisplay();
-    }
+        using clock = std::chrono::steady_clock;
+        auto last = clock::now();
 
-    void ClientRuntime::stop()
-    {
-        if (_stopRequested.exchange(true))
-            return;
+        while (_running) {
+            auto now = clock::now();
+            const float dt = std::chrono::duration<float>(now - last).count();
+            last = now;
 
-        _running = false;
-        _cv.notify_all();
-
-        if (_receiverThread.joinable())
-            _receiverThread.join();
-        if (_updateThread.joinable())
-            _updateThread.join();
-        if (_client) {
-            _client->sendPacket(*_packetFactory->makeBase(Net::Protocol::DISCONNECT));
-            _client->close();
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
 
-    void ClientRuntime::runReceiver()
+    void ClientRuntime::runReceiver() const
     {
         while (_running) {
             _client->receivePackets();
         }
     }
 
-    void ClientRuntime::runUpdater()
+    void ClientRuntime::runUpdater() const
     {
         while (_running) {
-            if (std::shared_ptr<Net::IPacket> pkt = nullptr; _client->popPacket(pkt)) {
-                _packetRouter->handlePacket(pkt);
-            } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }
-        }
-    }
-
-    void ClientRuntime::runDisplay()
-    {
-        while (_running) {
-            _display->run();
-            _event->run();
-            if (!_display->isWindowOpen() || !_event->isWindowOpen()) {
-                stop();
-                break;
+            if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt)) {
+                std::cout << pkt << std::endl;
             }
         }
     }

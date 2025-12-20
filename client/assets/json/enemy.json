@@ -1,5 +1,6 @@
 {
   "sprite": "enemy",
+  "spriteId": "2",
   "texture": "sprites/enemy.png",
   "default_animation": "idle",
   "animations": {

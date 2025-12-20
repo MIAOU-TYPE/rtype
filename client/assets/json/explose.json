@@ -1,5 +1,6 @@
 {
   "sprite": "explose",
+  "spriteId": "5",
   "texture": "sprites/explose.png",
   "default_animation": "idle",
   "animations": {

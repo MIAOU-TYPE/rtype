@@ -60,7 +60,7 @@ namespace Net
          * @param header The HeaderData extracted from the incoming packet.
          * @return True if the header is valid, false otherwise.
          */
-        static bool validateHeader(const IPacket &pkt, const HeaderData &header);
+        [[nodiscard]] static bool validateHeader(const IPacket &pkt, const HeaderData &header);
 
         /**
          * @brief Handler for player connection packets.
@@ -88,7 +88,6 @@ namespace Net
          */
         void handleDisconnect(int sessionId) const;
 
-      private:
         /**
          * @brief Validates the incoming packet.
          * @param packet Shared pointer to the incoming IPacket to validate.
@@ -109,7 +108,7 @@ namespace Net
          * @param packet The incoming IPacket to resolve the session for.
          * @return The session ID associated with the packet, or -1 if resolution fails.
          */
-        int resolveSession(const IPacket &packet) const;
+        [[nodiscard]] int resolveSession(const IPacket &packet) const;
 
         /**
          * @brief Dispatches the packet to the appropriate handler based on its type.

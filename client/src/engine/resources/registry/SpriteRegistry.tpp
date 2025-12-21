@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "SpriteRegistry.hpp"
-
 namespace Engine
 {
     template <typename Fn>

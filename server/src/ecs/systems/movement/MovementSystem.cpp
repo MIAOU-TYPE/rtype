@@ -9,16 +9,16 @@
 
 namespace Game
 {
-    void MovementSystem::update(IGameWorld &world, float dt)
+    void MovementSystem::update(IGameWorld &world, const float dt)
     {
         world.registry().view<Ecs::Position, Ecs::Velocity>(
             [&](const Ecs::Entity entity, Ecs::Position &pos, const Ecs::Velocity &vel) {
                 pos.x += vel.vx * dt;
                 pos.y += vel.vy * dt;
 
-                if (pos.x < 0 || pos.x > 1000)
+                if (pos.x < 0 || pos.x > 1920)
                     world.registry().destroyEntity(entity);
-                if (pos.y < 0 || pos.y > 1000)
+                if (pos.y < 0 || pos.y > 1080)
                     world.registry().destroyEntity(entity);
             });
     }

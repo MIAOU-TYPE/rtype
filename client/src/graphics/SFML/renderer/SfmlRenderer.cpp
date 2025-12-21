@@ -53,7 +53,7 @@ namespace Graphics
 
             _window->draw(sprite);
         } catch (const std::exception &e) {
-            std::cerr << "{SfmlRenderer::draw}: " << e.what();
+            std::cerr << "{SfmlRenderer::draw}: " << e.what() << std::endl;
         }
     }
 

@@ -14,10 +14,10 @@
  * @brief High-level ECS snapshot representation.
  */
 struct SnapshotEntity {
-    size_t id;    ///> Entity ID
-    float x;      ///> X position
-    float y;      ///> Y position
-    int spriteId; ///> Sprite identifier
+    size_t id;             ///> Entity ID
+    float x;               ///> X position
+    float y;               ///> Y position
+    unsigned int spriteId; ///> Sprite identifier
 };
 
 #pragma pack(push, 1)

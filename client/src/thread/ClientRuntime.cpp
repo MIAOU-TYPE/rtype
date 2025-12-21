@@ -77,6 +77,7 @@ namespace Thread
         _running = false;
         _cv.notify_all();
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
+
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updaterThread.joinable())

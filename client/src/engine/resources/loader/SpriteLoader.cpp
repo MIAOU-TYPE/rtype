@@ -40,7 +40,7 @@ namespace Engine
             def.animations.emplace(name, std::move(anim));
         }
 
-        auto spriteId = j.at("spriteId").get<int>();
+        auto spriteId = j.at("spriteId").get<unsigned int>();
         registry.add(spriteId, std::move(def));
     }
 } // namespace Engine

@@ -86,7 +86,7 @@ TEST(PacketFactory, MakeEntityCreatePacket)
     EXPECT_EQ(raw->id, htobe64(id));
     EXPECT_EQ(raw->x, htonf(x));
     EXPECT_EQ(raw->y, htonf(y));
-    EXPECT_EQ(raw->spriteId, htons(sprite));
+    EXPECT_EQ(raw->spriteId, htonl(sprite));
 }
 
 TEST(PacketFactory, MakeEntityDestroyPacket)

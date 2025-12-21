@@ -17,7 +17,7 @@ namespace Net::Factory
         _packet = packet;
     }
 
-    HeaderData PacketFactory::makeHeader(uint8_t type, uint8_t version, uint16_t size) noexcept
+    HeaderData PacketFactory::makeHeader(const uint8_t type, const uint8_t version, uint16_t size) noexcept
     {
         HeaderData header;
 
@@ -27,7 +27,7 @@ namespace Net::Factory
         return header;
     }
 
-    std::shared_ptr<IPacket> PacketFactory::makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeDefault(const sockaddr_in &addr, const uint8_t flag) const noexcept
     {
         DefaultData defaultPacket;
         defaultPacket.header = makeHeader(flag, VERSION, sizeof(DefaultData));
@@ -49,7 +49,7 @@ namespace Net::Factory
         entityCreatePacket.id = htobe64(id);
         entityCreatePacket.x = htonf(x);
         entityCreatePacket.y = htonf(y);
-        entityCreatePacket.spriteId = htons(sprite);
+        entityCreatePacket.spriteId = htonl(sprite);
 
         try {
             auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
@@ -60,7 +60,7 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept
+    std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, const size_t id) const noexcept
     {
         EntityDestroyData entityDestroyPacket;
         entityDestroyPacket.header = makeHeader(Protocol::ENTITY_DESTROY, VERSION, sizeof(EntityDestroyData));
@@ -126,12 +126,12 @@ namespace Net::Factory
             std::memcpy(buf, &header, sizeof(header));
             size_t offset = sizeof(header);
 
-            for (const auto &e : entities) {
+            for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
-                packed.id = htonll(e.id);
-                packed.x = htonf(e.x);
-                packed.y = htonf(e.y);
-                packed.spriteId = htons(e.spriteId);
+                packed.id = htonll(id);
+                packed.x = htonf(x);
+                packed.y = htonf(y);
+                packed.spriteId = htonl(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);

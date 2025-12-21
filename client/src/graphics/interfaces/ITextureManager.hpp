@@ -63,7 +63,7 @@ namespace Graphics
          * @param resourcePath Path or identifier of the texture.
          * @return TextureHandle Handle to the texture, or InvalidTexture on failure.
          */
-        virtual TextureHandle load(const std::string &resourcePath) = 0;
+        [[nodiscard]] virtual TextureHandle load(const std::string &resourcePath) = 0;
 
         /**
          * @brief Unload a texture.

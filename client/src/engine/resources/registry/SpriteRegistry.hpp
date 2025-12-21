@@ -87,5 +87,3 @@ namespace Engine
 } // namespace Engine
 
 #include "SpriteRegistry.tpp"
-
-#include "SpriteRegistry.tpp"

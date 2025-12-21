@@ -16,9 +16,9 @@ namespace Game
                 pos.x += vel.vx * dt;
                 pos.y += vel.vy * dt;
 
-                if (pos.x < 0 || pos.x > 1920)
+                if (pos.x < 0)
                     world.registry().destroyEntity(entity);
-                if (pos.y < 0 || pos.y > 1080)
+                if (pos.y < 0)
                     world.registry().destroyEntity(entity);
             });
     }

@@ -6,6 +6,7 @@
 */
 
 #include "ShootingSystem.hpp"
+#include "Lifetime.hpp"
 
 namespace Game
 {
@@ -24,6 +25,7 @@ namespace Game
             reg.emplaceComponent<Ecs::Damageable>(proj);
             reg.emplaceComponent<Ecs::Collision>(proj, 8.f, 8.f);
             reg.emplaceComponent<Ecs::Drawable>(proj, static_cast<unsigned int>(6));
+            reg.emplaceComponent<Ecs::Lifetime>(proj, 6.f);
         });
     }
 } // namespace Game

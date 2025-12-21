@@ -28,8 +28,8 @@ namespace Thread
     {
         _graphics->create(800, 600, "R-Type", false);
         _renderer = _graphics->createRenderer();
-        _eventBus = std::make_shared<Core::EventBus>();
-        _eventRegistry = std::make_unique<Core::EventRegistry>(_eventBus);
+        _eventBus = std::make_shared<Engine::EventBus>();
+        _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
         _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
 
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
@@ -83,7 +83,7 @@ namespace Thread
         });
     }
 
-    std::shared_ptr<Core::EventBus> ClientRuntime::getEventBus() const noexcept
+    std::shared_ptr<Engine::EventBus> ClientRuntime::getEventBus() const noexcept
     {
         return _eventBus;
     }
@@ -176,23 +176,23 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Down, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Left, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Right, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }

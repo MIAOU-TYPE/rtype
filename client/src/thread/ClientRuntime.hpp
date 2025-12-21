@@ -101,7 +101,7 @@ namespace Thread
          * @return Shared pointer to the event bus.
          * @details The event bus is used for communication between different components of the client.
          */
-        [[nodiscard]] std::shared_ptr<Core::EventBus> getEventBus() const noexcept;
+        [[nodiscard]] std::shared_ptr<Engine::EventBus> getEventBus() const noexcept;
 
         /**
          * @brief Runs the display loop for rendering graphics.
@@ -111,8 +111,8 @@ namespace Thread
         void runDisplay();
 
       private:
-        std::shared_ptr<Core::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
-        std::unique_ptr<Core::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing event handlers
+        std::shared_ptr<Engine::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
+        std::unique_ptr<Engine::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing events
 
         std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
 

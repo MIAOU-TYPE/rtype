@@ -49,7 +49,7 @@ namespace Net::Factory
         entityCreatePacket.id = htobe64(id);
         entityCreatePacket.x = htonf(x);
         entityCreatePacket.y = htonf(y);
-        entityCreatePacket.spriteId = htons(sprite);
+        entityCreatePacket.spriteId = htonl(sprite);
 
         try {
             auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
@@ -131,7 +131,7 @@ namespace Net::Factory
                 packed.id = htonll(id);
                 packed.x = htonf(x);
                 packed.y = htonf(y);
-                packed.spriteId = htons(spriteId);
+                packed.spriteId = htonl(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);

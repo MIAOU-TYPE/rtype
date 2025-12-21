@@ -116,7 +116,7 @@ namespace Net::Thread
 
         std::mutex _mutex;                 ///> Mutex for synchronizing access
         std::condition_variable _cv;       ///> Condition variable for signaling
-        bool _stopRequested = false;       ///> Flag to indicate if a stop has been requested
+        std::atomic<bool> _stopRequested{false};       ///> Flag to indicate if a stop has been requested
         std::atomic<bool> _running{false}; ///> Atomic flag to indicate if the server is running
     };
 } // namespace Net::Thread

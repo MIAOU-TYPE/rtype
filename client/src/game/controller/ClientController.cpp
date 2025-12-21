@@ -12,7 +12,7 @@
 
 namespace Ecs
 {
-    ClientController::ClientController(WorldCommandBuffer &buffer) : _commandBuffer(buffer)
+    ClientController::ClientController(Engine::WorldCommandBuffer &buffer) : _commandBuffer(buffer)
     {
     }
 
@@ -38,17 +38,17 @@ namespace Ecs
 
     void ClientController::onEntityCreate(const EntityCreate &data)
     {
-        _commandBuffer.push({WorldCommand::Type::CreateEntity, data});
+        _commandBuffer.get().push({Engine::WorldCommand::Type::CreateEntity, data});
     }
 
     void ClientController::onEntityDestroy(const EntityDestroy &data)
     {
-        _commandBuffer.push({WorldCommand::Type::DestroyEntity, data});
+        _commandBuffer.get().push({Engine::WorldCommand::Type::DestroyEntity, data});
     }
 
     void ClientController::onSnapshot(const SnapshotEntity &data)
     {
-        _commandBuffer.push({WorldCommand::Type::Snapshot, data});
+        _commandBuffer.get().push({Engine::WorldCommand::Type::Snapshot, data});
     }
 
 }; // namespace Ecs

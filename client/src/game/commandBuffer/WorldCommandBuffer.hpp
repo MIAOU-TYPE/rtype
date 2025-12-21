@@ -13,33 +13,48 @@
 #include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
 
-struct WorldCommand {
-    enum class Type { Accept, Reject, Pong, GameOver, CreateEntity, DestroyEntity, Snapshot };
+namespace Engine
+{
+    /**
+     * @struct WorldCommand
+     * @brief Represents a command to be processed by the game world.
+     */
+    struct WorldCommand {
+        enum class Type {
+            Accept,        ///> Accept connection
+            Reject,        ///> Reject connection
+            Pong,          ///> Pong response
+            GameOver,      ///> Game over notification
+            CreateEntity,  ///> CreateEntity
+            DestroyEntity, ///> DestroyEntity
+            Snapshot       ///> Snapshot
+        };
 
-    Type type;
-    std::variant<std::monostate, EntityCreate, EntityDestroy, SnapshotEntity> payload;
-};
+        Type type;                                                                         ///> Type of the command
+        std::variant<std::monostate, EntityCreate, EntityDestroy, SnapshotEntity> payload; ///> Command payload
+    };
 
-class WorldCommandBuffer {
-  public:
-    void push(WorldCommand cmd)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _queue.push(std::move(cmd));
-    }
+    /**
+     * @class WorldCommandBuffer
+     * @brief Thread-safe buffer for storing and retrieving world commands.
+     */
+    class WorldCommandBuffer {
+      public:
+        /**
+         * @brief Pushes a command into the buffer.
+         * @param cmd The command to be pushed.
+         */
+        void push(const WorldCommand &cmd);
 
-    bool tryPop(WorldCommand &out)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        if (_queue.empty())
-            return false;
+        /**
+         * @brief Tries to pop a command from the buffer.
+         * @param out Reference to store the popped command.
+         * @return True if a command was popped, false if the buffer was empty.
+         */
+        bool tryPop(WorldCommand &out);
 
-        out = std::move(_queue.front());
-        _queue.pop();
-        return true;
-    }
-
-  private:
-    std::mutex _mutex;
-    std::queue<WorldCommand> _queue;
-};
+      private:
+        std::mutex _mutex;               ///> Mutex for thread safety
+        std::queue<WorldCommand> _queue; ///> Queue of world commands
+    };
+} // namespace Engine

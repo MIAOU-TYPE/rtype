@@ -24,6 +24,7 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
+#include "RenderCommandBuffer.hpp"
 #include "WorldCommandBuffer.hpp"
 
 /**
@@ -124,7 +125,12 @@ namespace Thread
 
         std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
 
-        WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
+        Engine::WorldCommandBuffer _commandBuffer;        ///> Command buffer for storing commands
+
+        RenderFrame _frontFrame; // lu par le renderer
+        RenderFrame _backFrame;  // écrit par l'update
+        std::atomic<bool> _frameReady = false;
+
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state
@@ -135,7 +141,7 @@ namespace Thread
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
         void runReceiver() const; ///> Method for running the receiver thread
-        void runUpdater() const;  ///> Method for running the updater thread
+        void runUpdater();        ///> Method for running the updater thread
     };
 
 } // namespace Thread

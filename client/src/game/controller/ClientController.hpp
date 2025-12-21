@@ -6,14 +6,25 @@
 */
 
 #pragma once
+#include <functional>
 #include "IClientMessageSink.hpp"
 #include "WorldCommandBuffer.hpp"
 
 namespace Ecs
 {
+    /**
+     * @class ClientController
+     * @brief Handles incoming client messages and translates them into world commands.
+     * This class implements the IClientMessageSink interface to process various
+     * types of messages received from the server.
+     */
     class ClientController final : public IClientMessageSink {
       public:
-        explicit ClientController(WorldCommandBuffer &buffer);
+        /**
+         * @brief Constructor.
+         * @param buffer Reference to the WorldCommandBuffer to push commands into.
+         */
+        explicit ClientController(Engine::WorldCommandBuffer &buffer);
 
         /**
          * @brief Destructor.
@@ -57,6 +68,6 @@ namespace Ecs
         void onSnapshot(const SnapshotEntity &data) override;
 
       private:
-        WorldCommandBuffer &_commandBuffer;
+        std::reference_wrapper<Engine::WorldCommandBuffer> _commandBuffer; ///> Reference to the world command buffer
     };
 }; // namespace Ecs

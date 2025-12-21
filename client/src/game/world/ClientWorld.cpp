@@ -10,7 +10,7 @@
 
 namespace Engine
 {
-    ClientWorld::ClientWorld(std::shared_ptr<SpriteRegistry> spriteRegistry)
+    ClientWorld::ClientWorld(std::shared_ptr<const SpriteRegistry> spriteRegistry)
         : _spriteRegistry(std::move(spriteRegistry))
     {
         _registry.registerComponent<Position>();
@@ -19,13 +19,13 @@ namespace Engine
         _registry.registerComponent<Render>();
     }
 
-    void ClientWorld::update(const float dt, Graphics::IRenderer &renderer)
+    void ClientWorld::step(const float dt)
     {
         _registry.view<Position, Drawable, AnimationState, Render>(
-            [&](Ecs::Entity, const Position &pos, const Drawable &drawable, AnimationState &animState,
-                const Render &render) {
+            [&](Ecs::Entity, const Position &, const Drawable &drawable, AnimationState &animState, const Render &) {
                 if (!_spriteRegistry->exists(drawable.spriteId))
                     return;
+
                 const SpriteDefinition &sprite = _spriteRegistry->get(drawable.spriteId);
 
                 if (animState.currentAnimation.empty())
@@ -38,7 +38,6 @@ namespace Engine
                 const Animation &anim = animIt->second;
 
                 AnimationSystem::update(animState, anim, dt);
-                RenderSystem::submit(pos, render, animState, anim, renderer);
             });
     }
 
@@ -81,7 +80,7 @@ namespace Engine
                       << " does not exist. Cannot destroy.\n";
             return;
         }
-        auto entity = it->second;
+        const auto entity = it->second;
         _entityMap.erase(it);
         _registry.destroyEntity(entity);
     }
@@ -95,7 +94,7 @@ namespace Engine
             return;
         }
 
-        Ecs::Entity localEntity = it->second;
+        const Ecs::Entity localEntity = it->second;
 
         auto &pos = _registry.getComponents<Position>()[static_cast<size_t>(localEntity)];
         pos->x = entity.x;

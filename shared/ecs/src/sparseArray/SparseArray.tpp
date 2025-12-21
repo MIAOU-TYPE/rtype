@@ -30,7 +30,7 @@ namespace Ecs
         static std::optional<Component> empty = std::nullopt;
         if (index >= _components.size())
             return empty;
-        return _components[index];
+        return _components.at(index);
     }
 
     template <typename Component>

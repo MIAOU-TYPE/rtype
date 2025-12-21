@@ -108,6 +108,12 @@ namespace Ecs
          */
         void clear() noexcept;
 
+        template <typename... Components, typename Function>
+        void view(Function fn) const
+        {
+            const_cast<Registry *>(this)->view<Components...>(fn);
+        }
+
       private:
         /** @brief Counter used to assign unique IDs to entities */
         size_t _entityCounter = 0;

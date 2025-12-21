@@ -7,6 +7,8 @@
 
 #include "ClientRuntime.hpp"
 
+#include <SFML/Graphics/VertexBuffer.hpp>
+
 namespace Thread
 {
     ClientRuntime::ClientRuntime(
@@ -96,30 +98,20 @@ namespace Thread
 
     void ClientRuntime::runDisplay()
     {
-        using clock = std::chrono::steady_clock;
-        auto last = clock::now();
-
-        WorldCommand cmd;
-
         while (_running) {
-            auto now = clock::now();
-            const float dt = std::chrono::duration<float>(now - last).count();
-            last = now;
-
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
+            _renderer->beginFrame();
 
-            while (_commandBuffer.tryPop(cmd)) {
-                _world->applyCommand(cmd);
+            if (_frameReady.load(std::memory_order_acquire)) {
+                for (const auto& cmd : _frontFrame.commands)
+                    _renderer->draw(cmd);
             }
 
-            _renderer->beginFrame();
-            _world->update(dt, *_renderer);
             _renderer->endFrame();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
+
 
     void ClientRuntime::runReceiver() const
     {
@@ -128,12 +120,26 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::runUpdater() const
+    void ClientRuntime::runUpdater()
     {
+        using clock = std::chrono::steady_clock;
+        auto last = clock::now();
+
         while (_running) {
-            if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt)) {
+            Engine::WorldCommand cmd;
+            auto now = clock::now();
+            const float dt = std::chrono::duration<float>(now - last).count();
+            last = now;
+
+            if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt))
                 _packetRouter->handlePacket(pkt);
-            }
+            while (_commandBuffer.tryPop(cmd))
+                _world->applyCommand(cmd);
+            _world->step(dt);
+            _backFrame.commands.clear();
+            _world->buildRenderCommands(_backFrame.commands);
+            std::swap(_frontFrame, _backFrame);
+            _frameReady.store(true, std::memory_order_release);
         }
     }
 } // namespace Thread

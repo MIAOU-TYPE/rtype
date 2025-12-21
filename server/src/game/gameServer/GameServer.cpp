@@ -120,7 +120,7 @@ namespace Game
                 _sessionToEntity[cmd.sessionId] = ent;
                 const auto entityId = static_cast<std::size_t>(ent);
                 _sessions->forEachSession([&](int, const sockaddr_in &address) {
-                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 1))
+                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 7))
                         _server->sendPacket(*pkt);
                 });
                 break;

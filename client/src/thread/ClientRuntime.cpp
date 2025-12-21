@@ -7,10 +7,10 @@
 
 #include "ClientRuntime.hpp"
 
-#include <SFML/Graphics/VertexBuffer.hpp>
-
 namespace Thread
 {
+    using clock = std::chrono::steady_clock;
+
     ClientRuntime::ClientRuntime(
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
@@ -38,31 +38,31 @@ namespace Thread
         try {
             _client->start();
         } catch (const std::exception &e) {
+            stop();
             std::cerr << "Failed to start client: " << e.what() << std::endl;
             return;
         }
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
 
-        _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
+        _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
+        _eventRegistry->onKeyReleased(Core::Key::Down, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
+        _eventRegistry->onKeyReleased(Core::Key::Left, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
+        _eventRegistry->onKeyReleased(Core::Key::Right, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Space, [this]() {
-            std::cout << "Key space pressed" << std::endl;
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, true}));
+        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
 
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
@@ -75,12 +75,12 @@ namespace Thread
             return;
 
         _running = false;
+        _cv.notify_all();
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updaterThread.joinable())
             _updaterThread.join();
-        _cv.notify_all();
     }
 
     void ClientRuntime::wait()
@@ -98,48 +98,114 @@ namespace Thread
 
     void ClientRuntime::runDisplay()
     {
+        constexpr auto Tick = std::chrono::milliseconds(16);
+
+        auto nextTick = clock::now();
+
         while (_running) {
+            nextTick += Tick;
+
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
-            _renderer->beginFrame();
 
-            if (_frameReady.load(std::memory_order_acquire)) {
-                for (const auto& cmd : _frontFrame.commands)
-                    _renderer->draw(cmd);
+            std::shared_ptr<const std::vector<Engine::RenderCommand>> cmds;
+            {
+                std::scoped_lock lock(_frameMutex);
+                cmds = _frontCmds;
             }
 
+            _renderer->beginFrame();
+            if (cmds) {
+                for (const auto &cmd : *cmds)
+                    _renderer->draw(cmd);
+            }
             _renderer->endFrame();
+
+            std::this_thread::sleep_until(nextTick);
+
+            if (auto after = clock::now(); after > nextTick + 2 * Tick)
+                nextTick = after;
         }
     }
-
 
     void ClientRuntime::runReceiver() const
     {
         while (_running) {
             _client->receivePackets();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 
     void ClientRuntime::runUpdater()
     {
-        using clock = std::chrono::steady_clock;
-        auto last = clock::now();
+        constexpr auto Tick = std::chrono::milliseconds(16);
+        constexpr float FixedDt = 1.0f / 60.0f;
+        static constexpr float MaxFrameDt = 0.25f; // clamp gros freeze
+        static constexpr int MaxStepsPerTick = 4;  // évite spiral
+
+        std::vector<Engine::RenderCommand> built;
+        built.reserve(2048);
+
+        auto nextTick = clock::now();
+        auto last = nextTick;
+        float accumulator = 0.f;
+
+        _backCmds = std::make_shared<std::vector<Engine::RenderCommand>>();
 
         while (_running) {
-            Engine::WorldCommand cmd;
-            auto now = clock::now();
-            const float dt = std::chrono::duration<float>(now - last).count();
-            last = now;
+            nextTick += Tick;
 
-            if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt))
+            const auto tickStart = clock::now();
+            const auto deadline = tickStart + Tick - std::chrono::milliseconds(1); // marge
+
+            const auto now = tickStart;
+            float frameDt = std::chrono::duration<float>(now - last).count();
+            last = now;
+            if (frameDt > MaxFrameDt)
+                frameDt = MaxFrameDt;
+            accumulator += frameDt;
+
+            int pkts = 0;
+            while (pkts < 256 && clock::now() < deadline) {
+                std::shared_ptr<Net::IPacket> pkt;
+                if (!_client->popPacket(pkt))
+                    break;
                 _packetRouter->handlePacket(pkt);
-            while (_commandBuffer.tryPop(cmd))
+                ++pkts;
+            }
+
+            int applied = 0;
+            Engine::WorldCommand cmd;
+            while (applied < 5000 && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
                 _world->applyCommand(cmd);
-            _world->step(dt);
-            _backFrame.commands.clear();
-            _world->buildRenderCommands(_backFrame.commands);
-            std::swap(_frontFrame, _backFrame);
-            _frameReady.store(true, std::memory_order_release);
+                ++applied;
+            }
+
+            int steps = 0;
+            while (accumulator >= FixedDt && steps < MaxStepsPerTick && clock::now() < deadline) {
+                _world->step(FixedDt);
+                accumulator -= FixedDt;
+                ++steps;
+            }
+            if (steps == MaxStepsPerTick && accumulator > FixedDt) {
+                accumulator = 0.f;
+            }
+
+            _backCmds->clear();
+            _world->buildRenderCommands(*_backCmds);
+            {
+                std::scoped_lock lock(_frameMutex);
+                _frontCmds = _backCmds;
+                _backCmds = std::make_shared<std::vector<Engine::RenderCommand>>();
+            }
+
+            std::this_thread::sleep_until(nextTick);
+
+            if (const auto after = clock::now(); after > nextTick + 2 * Tick) {
+                nextTick = after;
+                last = after;
+                accumulator = 0.f;
+            }
         }
     }
 } // namespace Thread

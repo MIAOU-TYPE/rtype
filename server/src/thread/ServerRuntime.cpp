@@ -20,7 +20,6 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
 
 ServerRuntime::~ServerRuntime()
 {
-    std::scoped_lock lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;
@@ -30,7 +29,7 @@ void ServerRuntime::wait()
 {
     std::unique_lock lock(_mutex);
     _cv.wait(lock, [this]() {
-        return _stopRequested;
+        return _stopRequested.load();
     });
 }
 
@@ -73,7 +72,6 @@ void ServerRuntime::runReceiver() const
 {
     while (_server->isRunning()) {
         _server->readPackets();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
@@ -88,9 +86,19 @@ void ServerRuntime::runProcessor() const
 
 void ServerRuntime::runUpdate() const
 {
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(16); // ~60 Hz
+    auto next = clock::now();
+
     while (_running) {
+        next += Tick;
+
         _gameServer->tick();
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+        std::this_thread::sleep_until(next);
+
+        if (const auto now = clock::now(); now > next + 5 * Tick)
+            next = now;
     }
 }
 
@@ -98,24 +106,29 @@ void ServerRuntime::runSnapshot() const
 {
     std::vector<SnapshotEntity> entities;
 
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(50);
+    auto nextTick = clock::now();
+
     while (_running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
 
         _gameServer->buildSnapshot(entities);
 
-        if (entities.empty())
-            continue;
+        if (!entities.empty()) {
+            if (auto basePacket = _packetFactory->createSnapshotPacket(entities)) {
+                _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
+                    const auto packet = basePacket->clone();
+                    if (!packet)
+                        return;
+                    packet->setAddress(addr);
+                    _server->sendPacket(*packet);
+                });
+            }
+        }
 
-        auto basePacket = _packetFactory->createSnapshotPacket(entities);
-        if (!basePacket)
-            continue;
-
-        _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
-            auto packet = basePacket->clone();
-            if (!packet)
-                return;
-            packet->setAddress(addr);
-            _server->sendPacket(*packet);
-        });
+        if (auto now = clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }

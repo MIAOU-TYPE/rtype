@@ -125,12 +125,11 @@ namespace Thread
 
         std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
 
-        Engine::WorldCommandBuffer _commandBuffer;        ///> Command buffer for storing commands
+        Engine::WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
 
-        RenderFrame _frontFrame; // lu par le renderer
-        RenderFrame _backFrame;  // écrit par l'update
-        std::atomic<bool> _frameReady = false;
-
+        std::mutex _frameMutex;
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> _frontCmds;
+        std::shared_ptr<std::vector<Engine::RenderCommand>> _backCmds;
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state

@@ -88,18 +88,31 @@ namespace Game
     void GameServer::tick()
     {
         GameCommand cmd;
-        while (_commandBuffer.pop(cmd))
+        for (int i = 0; i < 10'000 && _commandBuffer.pop(cmd); ++i)
             applyCommand(cmd);
-        const double frameTime = _clock.restart();
+
+        double frameTime = _clock.restart();
+        frameTime = std::min(frameTime, 0.25);
         _accumulator += frameTime;
-        while (_accumulator >= FIXED_DT) {
+
+        constexpr int MaxStepsPerTick = 5;
+        int steps = 0;
+        bool advanced = false;
+
+        while (_accumulator >= FIXED_DT && steps < MaxStepsPerTick) {
             update(static_cast<float>(FIXED_DT));
-            _worldTemp->copyFrom(*_worldWrite);
-            {
-                std::scoped_lock lock(_snapshotMutex);
-                std::swap(_worldTemp, _worldRead);
-            }
             _accumulator -= FIXED_DT;
+            ++steps;
+            advanced = true;
+        }
+
+        if (steps == MaxStepsPerTick)
+            _accumulator = 0.0;
+
+        if (advanced) {
+            _worldTemp->copyFrom(*_worldWrite);
+            std::scoped_lock lock(_snapshotMutex);
+            std::swap(_worldTemp, _worldRead);
         }
     }
 

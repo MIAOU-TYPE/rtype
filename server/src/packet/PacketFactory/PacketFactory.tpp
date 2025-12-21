@@ -6,11 +6,11 @@
 */
 
 #pragma once
+
 namespace Net::Factory
 {
     template <typename Type>
-    std::shared_ptr<IPacket> PacketFactory::makePacket(
-        const sockaddr_in &addr, const Type &packetData) const
+    std::shared_ptr<IPacket> PacketFactory::makePacket(const sockaddr_in &addr, const Type &packetData) const
     {
         auto buffer = _packet->newPacket();
         if (!buffer)
@@ -24,4 +24,4 @@ namespace Net::Factory
         buffer->setSize(sizeof(Type));
         return buffer;
     }
-}
+} // namespace Net::Factory

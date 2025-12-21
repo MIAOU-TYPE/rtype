@@ -7,7 +7,7 @@
     "fly": {
       "loop": true,
       "frames": [
-        { "x": 0,  "y": 0, "w": 16, "h": 12, "duration": 0.1 },
+        { "x": 0,  "y": 0, "w": 16, "h": 12, "duration": 0.3 },
         { "x": 16, "y": 0, "w": 16, "h": 12, "duration": 0.3 }
       ]
     }

@@ -19,7 +19,7 @@ TEST(LevelManager, Load_ValidJSON)
           "hp": 10,
           "speed": -50,
           "size": { "w": 10, "h": 10 },
-          "sprite": 19
+          "spriteId": 19
         }
       },
       "waves": [

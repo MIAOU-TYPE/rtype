@@ -17,6 +17,7 @@
 #include "IRenderer.hpp"
 #include "SfmlFontManager.hpp"
 #include "SfmlTextureManager.hpp"
+#include <iostream>
 
 namespace Graphics
 {

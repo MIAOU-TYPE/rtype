@@ -41,21 +41,6 @@ namespace Thread
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
 
-        _renderer = _graphics->createRenderer();
-        _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
-
-        _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
-        _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
-    }
-
-    void ClientRuntime::stop()
-    {
-        if (_stopRequested.exchange(true))
-            return;
-
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
-
         _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
@@ -75,6 +60,17 @@ namespace Thread
         _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
+
+        _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
+        _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
+    }
+
+    void ClientRuntime::stop()
+    {
+        if (_stopRequested.exchange(true))
+            return;
+
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
 
         _running = false;
         _cv.notify_all();
@@ -106,6 +102,8 @@ namespace Thread
             auto now = clock::now();
             const float dt = std::chrono::duration<float>(now - last).count();
             last = now;
+            _graphics->pollEvents(*_eventBus);
+            _eventBus->dispatch();
 
             _renderer->beginFrame();
             _world->update(dt, *_renderer);
@@ -119,6 +117,7 @@ namespace Thread
     {
         while (_running) {
             _client->receivePackets();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 

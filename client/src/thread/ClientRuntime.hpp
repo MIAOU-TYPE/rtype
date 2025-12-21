@@ -139,8 +139,26 @@ namespace Thread
         std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
-        void runReceiver() const; ///> Method for running the receiver thread
-        void runUpdater();        ///> Method for running the updater thread
+        /**
+         * @brief Method for running the receiver thread.
+         * @details This method continuously receives packets from the network client
+         * and routes them for processing.
+         */
+        void runReceiver() const;
+
+        /**
+         * @brief Method for running the updater thread.
+         * @details This method updates the game state at a fixed timestep,
+         * processes incoming commands, and builds render commands.
+         */
+        void runUpdater();
+
+        /**
+         * @brief Sets up the event registry with key event handlers.
+         * @details This method registers key release events to send appropriate
+         * input packets to the server.
+         */
+        void setupEventsRegistry() const;
     };
 
 } // namespace Thread

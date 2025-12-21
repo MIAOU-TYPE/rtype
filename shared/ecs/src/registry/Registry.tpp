@@ -67,7 +67,6 @@ namespace Ecs
                 continue;
 
             fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
-            fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
         }
     }
 

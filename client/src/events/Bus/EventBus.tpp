@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace Core
+namespace Engine
 {
     template <typename T>
     void EventBus::on(Handler<T> handler)
@@ -46,4 +46,4 @@ namespace Core
             local.pop();
         }
     }
-} // namespace Core
+} // namespace Engine

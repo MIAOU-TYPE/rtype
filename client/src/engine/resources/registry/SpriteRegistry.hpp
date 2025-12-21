@@ -56,21 +56,21 @@ namespace Engine
          * @param spriteId Unique ID for the sprite.
          * @param def The SpriteDefinition to be added.
          */
-        void add(int spriteId, SpriteDefinition def);
+        void add(unsigned int spriteId, SpriteDefinition def);
 
         /**
          * @brief Retrieves a sprite definition by its ID.
          * @param spriteId Unique ID for the sprite.
          * @return Reference to the corresponding SpriteDefinition.
          */
-        const SpriteDefinition &get(int spriteId) const;
+        const SpriteDefinition &get(unsigned int spriteId) const;
 
         /**
          * @brief Checks if a sprite definition exists in the registry.
          * @param spriteId Unique ID for the sprite.
          * @return True if the sprite definition exists, false otherwise.
          */
-        bool exists(int spriteId) const;
+        bool exists(unsigned int spriteId) const;
 
         /**
          * @brief Iterates over all sprite definitions in the registry.
@@ -81,7 +81,7 @@ namespace Engine
         void forEach(Fn &&fn);
 
       private:
-        std::unordered_map<int, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
+        std::unordered_map<unsigned int, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
     };
 
 } // namespace Engine

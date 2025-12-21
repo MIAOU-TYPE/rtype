@@ -8,7 +8,7 @@
 #pragma once
 #include "Key.hpp"
 
-namespace Core
+namespace Engine
 {
     /**
      * @brief Base class for all events.
@@ -88,4 +88,4 @@ namespace Core
 
         Key key; ///> The mouse button that was released.
     };
-} // namespace Core
+} // namespace Engine

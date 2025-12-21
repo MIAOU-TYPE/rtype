@@ -129,6 +129,8 @@ namespace Thread
 
         void runReceiver() const; ///> Method for running the receiver thread
         void runUpdater() const;  ///> Method for running the updater thread
+
+        void setupEventsRegistry() const; ///> Method for setting up the event registry
     };
 
 } // namespace Thread

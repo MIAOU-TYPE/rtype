@@ -40,27 +40,7 @@ namespace Thread
         }
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
-
-        _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
-        });
-
-        _eventRegistry->onKeyReleased(Core::Key::Down, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
-        });
-
-        _eventRegistry->onKeyReleased(Core::Key::Left, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
-        });
-
-        _eventRegistry->onKeyReleased(Core::Key::Right, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
-        });
-
-        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
-        });
-
+        setupEventsRegistry();
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
     }
@@ -128,5 +108,28 @@ namespace Thread
                 std::cout << pkt << std::endl;
             }
         }
+    }
+
+    void ClientRuntime::setupEventsRegistry() const
+    {
+        _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
+        });
+
+        _eventRegistry->onKeyReleased(Core::Key::Down, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
+        });
+
+        _eventRegistry->onKeyReleased(Core::Key::Left, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
+        });
+
+        _eventRegistry->onKeyReleased(Core::Key::Right, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
+        });
+
+        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
+            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
+        });
     }
 } // namespace Thread

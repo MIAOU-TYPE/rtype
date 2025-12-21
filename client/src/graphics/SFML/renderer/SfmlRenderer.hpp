@@ -12,12 +12,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include <iostream>
 #include <utility>
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
 #include "SfmlFontManager.hpp"
 #include "SfmlTextureManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {

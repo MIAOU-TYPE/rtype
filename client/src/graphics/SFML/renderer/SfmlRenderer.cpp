@@ -52,7 +52,7 @@ namespace Graphics
             sprite.setPosition(sf::Vector2f(cmd.position.x, cmd.position.y));
 
             _window->draw(sprite);
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "{SfmlRenderer::draw}: " << e.what() << std::endl;
         }
     }

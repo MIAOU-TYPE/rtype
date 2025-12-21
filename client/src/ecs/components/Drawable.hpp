@@ -15,6 +15,6 @@ namespace Engine
      * @brief Component that holds the sprite identifier for rendering an entity.
      */
     struct Drawable {
-        std::string spriteId; ///> Identifier for the sprite to be used for rendering
+        int spriteId; ///> Identifier for the sprite to be used for rendering
     };
 } // namespace Engine

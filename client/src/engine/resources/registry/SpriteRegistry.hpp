@@ -53,27 +53,37 @@ namespace Engine
       public:
         /**
          * @brief Adds a sprite definition to the registry.
-         * @param spriteId Unique string identifier for the sprite.
+         * @param spriteId Unique ID for the sprite.
          * @param def The SpriteDefinition to be added.
          */
-        void add(const std::string &spriteId, SpriteDefinition def);
+        void add(unsigned int spriteId, SpriteDefinition def);
 
         /**
          * @brief Retrieves a sprite definition by its ID.
-         * @param spriteId Unique string identifier for the sprite.
+         * @param spriteId Unique ID for the sprite.
          * @return Reference to the corresponding SpriteDefinition.
          */
-        const SpriteDefinition &get(const std::string &spriteId) const;
+        const SpriteDefinition &get(unsigned int spriteId) const;
 
         /**
          * @brief Checks if a sprite definition exists in the registry.
-         * @param spriteId Unique string identifier for the sprite.
+         * @param spriteId Unique ID for the sprite.
          * @return True if the sprite definition exists, false otherwise.
          */
-        bool exists(const std::string &spriteId) const;
+        bool exists(unsigned int spriteId) const;
+
+        /**
+         * @brief Iterates over all sprite definitions in the registry.
+         * @tparam Fn Callable type that takes (int id, SpriteDefinition &).
+         * @param fn Function to be called for each sprite definition.
+         */
+        template <typename Fn>
+        void forEach(Fn &&fn);
 
       private:
-        std::unordered_map<std::string, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
+        std::unordered_map<unsigned int, SpriteDefinition> _sprites; ///> Map of sprite IDs to their definitions
     };
 
 } // namespace Engine
+
+#include "SpriteRegistry.tpp"

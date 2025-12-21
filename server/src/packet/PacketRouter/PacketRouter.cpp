@@ -36,7 +36,7 @@ bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) const noexcept
+bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept
 {
     if (!packet)
         return false;
@@ -48,7 +48,7 @@ bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) const n
     return true;
 }
 
-bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) const noexcept
+bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept
 {
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 

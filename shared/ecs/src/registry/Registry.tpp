@@ -32,7 +32,7 @@ namespace Ecs
     template <typename T, typename... Args>
     void Registry::emplaceComponent(const Entity entity, Args &&...args)
     {
-        registerComponent<T>();
+        auto data = registerComponent<T>();
         getComponents<T>().insert(static_cast<size_t>(entity), T(std::forward<Args>(args)...));
     }
 

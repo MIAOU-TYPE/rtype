@@ -30,7 +30,7 @@ void ServerRuntime::wait()
 {
     std::unique_lock lock(_mutex);
     _cv.wait(lock, [this]() {
-        return _stopRequested;
+        return _stopRequested.load();
     });
 }
 

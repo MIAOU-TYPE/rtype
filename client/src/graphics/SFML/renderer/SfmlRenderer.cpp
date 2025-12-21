@@ -43,14 +43,18 @@ namespace Graphics
 
     void SfmlRenderer::draw(const Engine::RenderCommand &cmd)
     {
-        sf::Sprite sprite(_textureManager->get(cmd.textureId));
+        try {
+            sf::Sprite sprite(_textureManager->get(cmd.textureId));
 
-        sprite.setTextureRect(
-            sf::Rect<int>(sf::Vector2i(cmd.frame.x, cmd.frame.y), sf::Vector2i(cmd.frame.w, cmd.frame.h)));
+            sprite.setTextureRect(
+                sf::Rect<int>(sf::Vector2i(cmd.frame.x, cmd.frame.y), sf::Vector2i(cmd.frame.w, cmd.frame.h)));
 
-        sprite.setPosition(sf::Vector2f(cmd.position.x, cmd.position.y));
+            sprite.setPosition(sf::Vector2f(cmd.position.x, cmd.position.y));
 
-        _window->draw(sprite);
+            _window->draw(sprite);
+        } catch (const std::exception &e) {
+            std::cerr << "{SfmlRenderer::draw}: " << e.what() << std::endl;
+        }
     }
 
 } // namespace Graphics

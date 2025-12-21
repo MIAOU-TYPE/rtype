@@ -9,6 +9,7 @@
 
 #include "Collision.hpp"
 #include "Damage.hpp"
+#include "Damageable.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"

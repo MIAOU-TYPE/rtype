@@ -55,7 +55,7 @@ namespace Ecs
          * @brief Constructs a PacketRouter with the given IClientMessageSink.
          * @param sink Shared pointer to the IClientMessageSink for handling routed messages.
          */
-        PacketRouter(const std::shared_ptr<IClientMessageSink> &sink);
+        explicit PacketRouter(const std::shared_ptr<IClientMessageSink> &sink);
 
         /**
          * @brief Handles an incoming packet by routing it to the appropriate handler.
@@ -70,14 +70,14 @@ namespace Ecs
          * @param header The HeaderData extracted from the incoming packet.
          * @return True if the header is valid, false otherwise.
          */
-        static bool isHeaderValid(const Net::IPacket &packet, const HeaderData &header);
+        [[nodiscard]] static bool isHeaderValid(const Net::IPacket &packet, const HeaderData &header);
 
         /**
          * @brief Validates the incoming packet.
          * @param packet Shared pointer to the incoming IPacket to validate.
          * @return True if the packet is valid, false otherwise.
          */
-        static bool isPacketValid(const std::shared_ptr<Net::IPacket> &packet) noexcept;
+        [[nodiscard]] static bool isPacketValid(const std::shared_ptr<Net::IPacket> &packet) noexcept;
 
         /**
          * @brief Handler for ACCEPT packets.
@@ -122,7 +122,7 @@ namespace Ecs
          * @param outHeader Reference to the HeaderData to populate with extracted data
          * @return True if the header was successfully extracted and validated, false otherwise.
          */
-        static bool extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept;
+        [[nodiscard]] static bool extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept;
 
         /**
          * @brief Dispatches the packet to the appropriate handler based on its type.

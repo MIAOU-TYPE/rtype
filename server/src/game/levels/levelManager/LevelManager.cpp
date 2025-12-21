@@ -32,7 +32,7 @@ namespace Game
 
             def.colW = defNode["size"].value("w", 20.f);
             def.colH = defNode["size"].value("h", 20.f);
-            def.sprite = defNode.value("sprite", "");
+            def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();

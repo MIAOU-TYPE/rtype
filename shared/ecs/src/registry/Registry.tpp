@@ -62,7 +62,6 @@ namespace Ecs
             const bool ok = ((i < std::get<SparseArray<Components> &>(arrays).size()
                                  && std::get<SparseArray<Components> &>(arrays)[i].has_value())
                 && ...);
-
             if (!ok)
                 continue;
 

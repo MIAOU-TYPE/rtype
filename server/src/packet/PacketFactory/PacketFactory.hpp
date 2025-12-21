@@ -93,7 +93,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeEntityCreate(
-            const sockaddr_in &addr, size_t id, float x, float y, uint16_t sprite) const noexcept;
+            const sockaddr_in &addr, size_t id, float x, float y, int sprite) const noexcept;
 
         /**
          * @brief Creates an EntityDestroyData for the specified entity ID.

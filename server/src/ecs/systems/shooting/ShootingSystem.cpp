@@ -23,7 +23,7 @@ namespace Game
             reg.emplaceComponent<Ecs::Damage>(proj, 20);
             reg.emplaceComponent<Ecs::Damageable>(proj);
             reg.emplaceComponent<Ecs::Collision>(proj, 8.f, 8.f);
-            reg.emplaceComponent<Ecs::Drawable>(proj, 6);
+            reg.emplaceComponent<Ecs::Drawable>(proj, static_cast<unsigned int>(6));
         });
     }
 } // namespace Game

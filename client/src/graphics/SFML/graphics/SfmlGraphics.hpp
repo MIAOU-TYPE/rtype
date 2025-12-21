@@ -55,7 +55,7 @@ namespace Graphics
         /**
          * @brief Poll for window events.
          */
-        void pollEvents(Core::EventBus &bus) override;
+        void pollEvents(Engine::EventBus &bus) override;
 
         /**
          * @brief Create a renderer for the graphics system.

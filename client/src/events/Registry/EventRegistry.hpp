@@ -14,7 +14,7 @@
 #include "Key.hpp"
 #include <unordered_map>
 
-namespace Core
+namespace Engine
 {
     /**
      * @class EventRegistry
@@ -50,4 +50,4 @@ namespace Core
         std::unordered_map<Key, std::vector<std::function<void()>>> _keyPressed;  ///> Map of key press handlers
         std::unordered_map<Key, std::vector<std::function<void()>>> _keyReleased; ///> Map of key release handlers
     };
-} // namespace Core
+} // namespace Engine

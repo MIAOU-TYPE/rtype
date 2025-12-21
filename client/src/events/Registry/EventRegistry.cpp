@@ -7,7 +7,7 @@
 
 #include "EventRegistry.hpp"
 
-namespace Core
+namespace Engine
 {
     EventRegistry::EventRegistry(const std::shared_ptr<EventBus> &bus) : _bus(bus)
     {
@@ -39,4 +39,4 @@ namespace Core
     {
         _keyReleased[key].push_back(std::move(fn));
     }
-} // namespace Core
+} // namespace Engine

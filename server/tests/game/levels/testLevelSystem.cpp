@@ -44,14 +44,14 @@ TEST(LevelSystem, SpawnOneWave)
 
     int spawnedCount = 0;
     for (size_t i = 0; i < posArr.size(); ++i) {
-        if (posArr[i].has_value())
+        if (posArr.at(i).has_value())
             spawnedCount++;
     }
 
     EXPECT_EQ(spawnedCount, 2);
 
     for (size_t i = 0; i < posArr.size(); ++i) {
-        if (!posArr[i].has_value())
+        if (!posArr.at(i).has_value())
             continue;
 
         EXPECT_TRUE(world.registry().hasComponent<Ecs::Velocity>(Ecs::Entity(i)));
@@ -93,14 +93,14 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
     auto &posArr = world.registry().getComponents<Ecs::Position>();
     int firstSpawnCount = 0;
     for (size_t i = 0; i < posArr.size(); ++i)
-        if (posArr[i].has_value())
+        if (posArr.at(i).has_value())
             firstSpawnCount++;
 
     Game::LevelSystem::update(world, mgr, 5.f);
 
     int secondSpawnCount = 0;
     for (size_t i = 0; i < posArr.size(); ++i)
-        if (posArr[i].has_value())
+        if (posArr.at(i).has_value())
             secondSpawnCount++;
 
     EXPECT_EQ(firstSpawnCount, secondSpawnCount);

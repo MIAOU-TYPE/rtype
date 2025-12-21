@@ -47,7 +47,7 @@ TEST(TargetingSystem, no_player_no_target_assigned)
 
     TargetingSystem::update(world);
 
-    const auto &tgt = *reg.getComponents<Ecs::Target>()[static_cast<size_t>(enemy)];
+    const auto &tgt = *reg.getComponents<Ecs::Target>().at(static_cast<size_t>(enemy));
     EXPECT_EQ(tgt.targetId, SIZE_MAX);
 }
 
@@ -61,7 +61,7 @@ TEST(TargetingSystem, assigns_target_when_player_in_range)
 
     TargetingSystem::update(world);
 
-    const auto &tgt = *reg.getComponents<Ecs::Target>()[static_cast<size_t>(enemy)];
+    const auto &tgt = *reg.getComponents<Ecs::Target>().at(static_cast<size_t>(enemy));
     EXPECT_EQ(tgt.targetId, static_cast<size_t>(player));
 }
 
@@ -75,7 +75,7 @@ TEST(TargetingSystem, does_not_assign_target_when_player_out_of_range)
 
     TargetingSystem::update(world);
 
-    const auto &tgt = *reg.getComponents<Ecs::Target>()[static_cast<size_t>(enemy)];
+    const auto &tgt = *reg.getComponents<Ecs::Target>().at(static_cast<size_t>(enemy));
     EXPECT_EQ(tgt.targetId, SIZE_MAX);
 }
 
@@ -88,10 +88,10 @@ TEST(TargetingSystem, clears_target_when_player_leaves_range)
     const Ecs::Entity enemy = createEnemy(world, 0.f, 0.f, 100.f);
 
     TargetingSystem::update(world);
-    EXPECT_EQ(reg.getComponents<Ecs::Target>()[static_cast<size_t>(enemy)]->targetId, static_cast<size_t>(player));
+    EXPECT_EQ(reg.getComponents<Ecs::Target>().at(static_cast<size_t>(enemy))->targetId, static_cast<size_t>(player));
 
-    reg.getComponents<Ecs::Position>()[static_cast<size_t>(player)]->x = 300.f;
+    reg.getComponents<Ecs::Position>().at(static_cast<size_t>(player))->x = 300.f;
 
     TargetingSystem::update(world);
-    EXPECT_EQ(reg.getComponents<Ecs::Target>()[static_cast<size_t>(enemy)]->targetId, SIZE_MAX);
+    EXPECT_EQ(reg.getComponents<Ecs::Target>().at(static_cast<size_t>(enemy))->targetId, SIZE_MAX);
 }

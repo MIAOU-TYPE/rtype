@@ -46,7 +46,7 @@ namespace Ecs
         auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
-        return arr[idx].has_value();
+        return arr.at(idx);
     }
 
     template <typename... Components, typename Function>
@@ -60,12 +60,12 @@ namespace Ecs
 
         for (size_t i = 0; i < maxSize; ++i) {
             const bool ok = ((i < std::get<SparseArray<Components> &>(arrays).size()
-                                 && std::get<SparseArray<Components> &>(arrays)[i].has_value())
+                                 && std::get<SparseArray<Components> &>(arrays).at(i).has_value())
                 && ...);
             if (!ok)
                 continue;
 
-            fn(Entity(i), *std::get<SparseArray<Components> &>(arrays)[i]...);
+            fn(Entity(i), *std::get<SparseArray<Components> &>(arrays).at(i)...);
         }
     }
 

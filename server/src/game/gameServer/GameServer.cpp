@@ -160,7 +160,7 @@ namespace Game
                 const Ecs::Entity ent = _sessionToEntity[cmd.sessionId];
                 auto &inputs = _worldWrite->registry().getComponents<InputComponent>();
 
-                if (auto &inputOpt = inputs[static_cast<size_t>(ent)]; inputOpt.has_value()) {
+                if (auto &inputOpt = inputs.at(static_cast<size_t>(ent)); inputOpt.has_value()) {
                     inputOpt->up = cmd.input.up;
                     inputOpt->down = cmd.input.down;
                     inputOpt->left = cmd.input.left;

@@ -57,7 +57,7 @@ namespace Ecs
          * @param index Entity index
          * @return Reference to the optional component
          */
-        std::optional<Component> &operator[](size_t index);
+        std::optional<Component> &at(size_t index) noexcept;
 
         /**
          * @brief Gets the current size of the sparse array.

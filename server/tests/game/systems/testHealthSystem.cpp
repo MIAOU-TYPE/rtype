@@ -16,7 +16,7 @@ TEST(HealthSystem, destroys_entity_at_zero_hp)
     Ecs::Entity e = world.createPlayer();
 
     auto &reg = world.registry();
-    auto &hp = reg.getComponents<Ecs::Health>()[static_cast<size_t>(e)];
+    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e));
 
     ASSERT_TRUE(hp.has_value());
 
@@ -24,5 +24,5 @@ TEST(HealthSystem, destroys_entity_at_zero_hp)
 
     Game::HealthSystem::update(world);
 
-    EXPECT_FALSE(reg.getComponents<Ecs::Health>()[static_cast<size_t>(e)].has_value());
+    EXPECT_FALSE(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e)).has_value());
 }

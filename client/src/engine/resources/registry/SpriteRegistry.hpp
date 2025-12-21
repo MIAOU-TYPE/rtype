@@ -74,7 +74,7 @@ namespace Engine
 
         /**
          * @brief Iterates over all sprite definitions in the registry.
-         * @tparam Fn Callable type that takes (const std::string &, SpriteDefinition &).
+         * @tparam Fn Callable type that takes (int id, SpriteDefinition &).
          * @param fn Function to be called for each sprite definition.
          */
         template <typename Fn>

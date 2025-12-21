@@ -9,20 +9,20 @@
 
 namespace Engine
 {
-    void SpriteRegistry::add(const std::string &spriteId, SpriteDefinition def)
+    void SpriteRegistry::add(const int spriteId, SpriteDefinition def)
     {
         _sprites.emplace(spriteId, std::move(def));
     }
 
-    const SpriteDefinition &SpriteRegistry::get(const std::string &spriteId) const
+    const SpriteDefinition &SpriteRegistry::get(const int spriteId) const
     {
-        auto it = _sprites.find(spriteId);
+        const auto it = _sprites.find(spriteId);
         if (it == _sprites.end())
-            throw SpriteRegistryError("{SpriteRegistry::get}: unknown spriteId: " + spriteId);
+            throw SpriteRegistryError("{SpriteRegistry::get}: unknown spriteId: " + std::to_string(spriteId));
         return it->second;
     }
 
-    bool SpriteRegistry::exists(const std::string &spriteId) const
+    bool SpriteRegistry::exists(const int spriteId) const
     {
         return _sprites.contains(spriteId);
     }

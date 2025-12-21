@@ -82,6 +82,6 @@ namespace Graphics
         /**
          * @brief Poll for window events.
          */
-        virtual void pollEvents(Core::EventBus &bus) = 0;
+        virtual void pollEvents(Engine::EventBus &bus) = 0;
     };
 } // namespace Graphics

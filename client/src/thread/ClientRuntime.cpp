@@ -26,7 +26,7 @@ namespace Thread
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
     {
-        _graphics->create(800, 600, "R-Type", false);
+        _graphics->create(800, 480, "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
@@ -34,6 +34,8 @@ namespace Thread
 
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        _stateManager = std::make_unique<Engine::StateManager>();
+        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -88,7 +90,7 @@ namespace Thread
         return _eventBus;
     }
 
-    void ClientRuntime::runDisplay()
+    void ClientRuntime::runDisplay() const
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
 
@@ -106,11 +108,19 @@ namespace Thread
                 localRenderCommands = _readRenderCommands;
             }
 
+            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
+            {
+                std::scoped_lock lock(_frameMutex);
+                localRenderCommands = _readRenderCommands;
+            }
+
+            _stateManager->update(dt);
             _renderer->beginFrame();
             if (localRenderCommands) {
                 for (const auto &cmd : *localRenderCommands)
                     _renderer->draw(cmd);
             }
+            _stateManager->render();
             _renderer->endFrame();
 
             syncToNextTick(nextTick, Tick * 2);

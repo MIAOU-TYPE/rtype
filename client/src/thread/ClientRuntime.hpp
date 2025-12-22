@@ -27,6 +27,12 @@
 #include "WorldCommandBuffer.hpp"
 
 using steadyClock = std::chrono::steady_clock;
+#include "IRenderer.hpp"
+#include "SpriteLoader.hpp"
+#include "SpriteRegistry.hpp"
+#include "StateManager.hpp"
+#include "MenuState.hpp"
+#include <condition_variable>
 
 /**
  * @namespace Thread
@@ -108,7 +114,7 @@ namespace Thread
          * @details This method handles the rendering of graphics and user input.
          * It should be called from the main thread.
          */
-        void runDisplay();
+        void runDisplay() const;
 
       private:
         std::shared_ptr<Engine::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
@@ -119,6 +125,7 @@ namespace Thread
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
         std::unique_ptr<Engine::ClientWorld> _world = nullptr;    ///> Client world for managing game state
+        std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 

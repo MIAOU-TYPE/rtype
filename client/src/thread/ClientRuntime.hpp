@@ -26,6 +26,8 @@
 #include "PacketRouter.hpp"
 #include "WorldCommandBuffer.hpp"
 
+using steadyClock = std::chrono::steady_clock;
+
 /**
  * @namespace Thread
  * @brief Contains all threading-related classes for the client.
@@ -127,8 +129,8 @@ namespace Thread
         Engine::WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
 
         std::mutex _frameMutex;
-        std::shared_ptr<const std::vector<Engine::RenderCommand>> _frontCmds;
-        std::shared_ptr<std::vector<Engine::RenderCommand>> _backCmds;
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> _readRenderCommands;
+        std::shared_ptr<std::vector<Engine::RenderCommand>> _writeRenderCommands;
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state
@@ -158,6 +160,30 @@ namespace Thread
          * input packets to the server.
          */
         void setupEventsRegistry() const;
+
+        /**
+         * @brief Processes incoming network packets up to a specified deadline and maximum count.
+         * @param deadline The time point by which to stop processing packets.
+         * @param maxPackets The maximum number of packets to process.
+         * @details This method retrieves packets from the network client and routes them for processing
+         * until the deadline is reached or the maximum number of packets has been processed per call.
+         */
+        void processNetworkPackets(steadyClock::time_point deadline, int maxPackets) const;
+
+        /**
+         * @brief Applies world commands from the command buffer up to a specified deadline and maximum count.
+         * @param deadline The time point by which to stop applying commands.
+         * @param maxCommands The maximum number of commands to apply.
+         * @details This method retrieves world commands from the command buffer and applies them
+         * to the client world until the deadline is reached or the maximum number of commands has been applied per
+         * call.
+         */
+        void applyWorldCommands(steadyClock::time_point deadline, int maxCommands);
+
+        /**
+         *
+         */
+        void buildAndSwapRenderCommands();
     };
 
 } // namespace Thread

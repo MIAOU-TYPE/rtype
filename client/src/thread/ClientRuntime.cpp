@@ -7,10 +7,21 @@
 
 #include "ClientRuntime.hpp"
 
-namespace Thread
+namespace
 {
     using clock = std::chrono::steady_clock;
 
+    void syncToNextTick(clock::time_point &nextTick, const std::chrono::milliseconds maxDrift)
+    {
+        std::this_thread::sleep_until(nextTick);
+
+        if (const auto now = clock::now(); now > nextTick + maxDrift)
+            nextTick = now;
+    }
+} // namespace
+
+namespace Thread
+{
     ClientRuntime::ClientRuntime(
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
@@ -89,23 +100,20 @@ namespace Thread
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> renderCmds;
+            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
             {
                 std::scoped_lock lock(_frameMutex);
-                renderCmds = _frontCmds;
+                localRenderCommands = _readRenderCommands;
             }
 
             _renderer->beginFrame();
-            if (renderCmds) {
-                for (const auto &cmd : *renderCmds)
+            if (localRenderCommands) {
+                for (const auto &cmd : *localRenderCommands)
                     _renderer->draw(cmd);
             }
             _renderer->endFrame();
 
-            std::this_thread::sleep_until(nextTick);
-
-            if (auto after = clock::now(); after > nextTick + 2 * Tick)
-                nextTick = after;
+            syncToNextTick(nextTick, Tick * 2);
         }
     }
 
@@ -121,7 +129,7 @@ namespace Thread
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
         constexpr float FixedDt = 1.0f / 60.0f;
-        static constexpr float MaxFrameDt = 0.25f;
+        static constexpr float MaxFrameDt = 0.16f;
         static constexpr int MaxStepsPerTick = 4;
 
         std::vector<Engine::RenderCommand> built;
@@ -131,54 +139,33 @@ namespace Thread
         auto last = nextTick;
         float accumulator = 0.f;
 
-        _backCmds = std::make_shared<std::vector<Engine::RenderCommand>>();
+        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
 
         while (_running) {
             nextTick += Tick;
 
-            const auto tickStart = clock::now();
-            const auto deadline = tickStart + Tick - std::chrono::milliseconds(1);
+            const auto now = clock::now();
+            const auto deadline = now + Tick - std::chrono::milliseconds(1);
 
-            const auto now = tickStart;
             float frameDt = std::chrono::duration<float>(now - last).count();
             last = now;
             if (frameDt > MaxFrameDt)
                 frameDt = MaxFrameDt;
             accumulator += frameDt;
 
-            int pkts = 0;
-            while (pkts < 256 && clock::now() < deadline) {
-                std::shared_ptr<Net::IPacket> pkt;
-                if (!_client->popPacket(pkt))
-                    break;
-                _packetRouter->handlePacket(pkt);
-                ++pkts;
-            }
-
-            int applied = 0;
-            Engine::WorldCommand cmd;
-            while (applied < 5000 && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
-                _world->applyCommand(cmd);
-                ++applied;
-            }
+            processNetworkPackets(deadline, 256);
+            applyWorldCommands(deadline, 500);
 
             int steps = 0;
             while (accumulator >= FixedDt && steps < MaxStepsPerTick && clock::now() < deadline) {
                 _world->step(FixedDt);
                 accumulator -= FixedDt;
-                ++steps;
+                steps++;
             }
-            if (steps == MaxStepsPerTick && accumulator > FixedDt) {
+            if (steps == MaxStepsPerTick && accumulator > FixedDt)
                 accumulator = 0.f;
-            }
 
-            _backCmds->clear();
-            Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_backCmds);
-            {
-                std::scoped_lock lock(_frameMutex);
-                _frontCmds = _backCmds;
-                _backCmds = std::make_shared<std::vector<Engine::RenderCommand>>();
-            }
+            buildAndSwapRenderCommands();
 
             std::this_thread::sleep_until(nextTick);
 
@@ -208,8 +195,47 @@ namespace Thread
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyPressed(Core::Key::Space, [this]() {
+        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }
+
+    void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
+    {
+        int processedPacket = 0;
+
+        while (processedPacket < maxPackets && clock::now() < deadline) {
+            std::shared_ptr<Net::IPacket> pkt;
+            if (!_client->popPacket(pkt))
+                break;
+
+            _packetRouter->handlePacket(pkt);
+            processedPacket++;
+        }
+    }
+
+    void ClientRuntime::applyWorldCommands(const steadyClock::time_point deadline, const int maxCommands)
+    {
+        int applied = 0;
+        Engine::WorldCommand cmd;
+
+        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
+            _world->applyCommand(cmd);
+            applied++;
+        }
+    }
+
+    void ClientRuntime::buildAndSwapRenderCommands()
+    {
+        _writeRenderCommands->clear();
+
+        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
+
+        {
+            std::scoped_lock lock(_frameMutex);
+            _readRenderCommands = _writeRenderCommands;
+            _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
+        }
+    }
+
 } // namespace Thread

@@ -17,8 +17,8 @@
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
 #include "SfmlFontManager.hpp"
-#include "SfmlTextureManager.hpp"
 #include "SfmlTextManager.hpp"
+#include "SfmlTextureManager.hpp"
 
 namespace Graphics
 {

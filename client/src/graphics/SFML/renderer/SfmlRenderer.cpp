@@ -25,7 +25,7 @@ namespace Graphics
     ViewportSize SfmlRenderer::getViewportSize() const noexcept
     {
         const auto size = _window->getSize();
-        return { size.x, size.y };
+        return {size.x, size.y};
     }
 
     void SfmlRenderer::beginFrame()

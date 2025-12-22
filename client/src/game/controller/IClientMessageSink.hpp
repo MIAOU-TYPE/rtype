@@ -44,17 +44,6 @@ namespace Ecs
         virtual void onGameOver() = 0;
 
         /**
-         * @brief Called when an ENTITY_CREATE message is received.
-         * @param data The data associated with the entity creation.
-         */
-        virtual void onEntityCreate(const EntityCreate &data) = 0;
-
-        /**
-         * @brief Called when an ENTITY_DESTROY message is received.
-         */
-        virtual void onEntityDestroy(const EntityDestroy &data) = 0;
-
-        /**
          * @brief Called when a SNAPSHOT message is received.
          */
         virtual void onSnapshot(const std::vector<SnapshotEntity> &entity) = 0;

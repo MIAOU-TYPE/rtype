@@ -42,8 +42,6 @@ namespace Engine
         void applyCommand(const WorldCommand &cmd)
         {
             switch (cmd.type) {
-                case WorldCommand::Type::CreateEntity: applyCreate(std::get<EntityCreate>(cmd.payload)); break;
-                case WorldCommand::Type::DestroyEntity: applyDestroy(std::get<EntityDestroy>(cmd.payload)); break;
                 case WorldCommand::Type::Snapshot:
                     applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
                     break;

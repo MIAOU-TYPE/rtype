@@ -46,7 +46,7 @@ namespace Ecs
         auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
-        return arr.at(idx);
+        return arr.at(idx).has_value();
     }
 
     template <typename... Components, typename Function>

@@ -4,12 +4,16 @@
 ** File description:
 ** IRenderer
 */
+
 #pragma once
 #include <exception>
 #include <string>
 #include "IFontManager.hpp"
 #include "ITextureManager.hpp"
+#include "ITextManager.hpp"
 #include "RenderCommand.hpp"
+#include "GraphicsTypes.hpp"
+#include "IText.hpp"
 
 namespace Graphics
 {
@@ -41,6 +45,8 @@ namespace Graphics
          */
         virtual ~IRenderer() = default;
 
+        virtual ViewportSize getViewportSize() const noexcept = 0;
+
         /**
          * @brief Begins a new rendering frame.
          * This method should be called before any rendering operations for the frame.
@@ -66,9 +72,21 @@ namespace Graphics
         virtual std::shared_ptr<ITextureManager> textures() const noexcept = 0;
 
         /**
+         * @brief Provides access to the text manager.
+         * @return Reference to the text manager.
+         */
+        virtual std::shared_ptr<ITextManager> texts() const noexcept = 0;
+
+        /**
          * @brief Draw a sprite based on the provided SpriteCmd.
          * @param cmd The command containing sprite drawing parameters.
          */
         virtual void draw(const Engine::RenderCommand &cmd) = 0;
+
+        /**
+         * @brief Draw text based on the provided IText object.
+         * @param text The text object containing text drawing parameters.
+         */
+        virtual void drawText(const IText &text) = 0;
     };
 } // namespace Graphics

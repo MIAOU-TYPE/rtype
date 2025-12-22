@@ -19,6 +19,18 @@ namespace EmbeddedResources
     extern const unsigned int menu_logo_png_size;
     extern const unsigned char game_over_png[];
     extern const unsigned int game_over_png_size;
+    extern const unsigned char button_play_png[];
+    extern const unsigned int button_play_png_size;
+    extern const unsigned char button_settings_png[];
+    extern const unsigned int button_settings_png_size;
+    extern const unsigned char button_left_png[];
+    extern const unsigned int button_left_png_size;
+    extern const unsigned char button_right_png[];
+    extern const unsigned int button_right_png_size;
+    extern const unsigned char button_audio_png[];
+    extern const unsigned int button_audio_png_size;
+    extern const unsigned char button_back_png[];
+    extern const unsigned int button_back_png_size;
     extern const unsigned char play_bt_png[];
     extern const unsigned int play_bt_png_size;
     extern const unsigned char play_bt_hold_png[];
@@ -79,6 +91,18 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::background_space_png, EmbeddedResources::background_space_png_size};
     _resources["sprites/menu_logo.png"] = {EmbeddedResources::menu_logo_png, EmbeddedResources::menu_logo_png_size};
     _resources["sprites/game_over.png"] = {EmbeddedResources::game_over_png, EmbeddedResources::game_over_png_size};
+    _resources["sprites/button_play.png"] = {
+        EmbeddedResources::button_play_png, EmbeddedResources::button_play_png_size};
+    _resources["sprites/button_settings.png"] = {
+        EmbeddedResources::button_settings_png, EmbeddedResources::button_settings_png_size};
+    _resources["sprites/button_left.png"] = {
+        EmbeddedResources::button_left_png, EmbeddedResources::button_left_png_size};
+    _resources["sprites/button_right.png"] = {
+        EmbeddedResources::button_right_png, EmbeddedResources::button_right_png_size};
+    _resources["sprites/button_audio.png"] = {
+        EmbeddedResources::button_audio_png, EmbeddedResources::button_audio_png_size};
+    _resources["sprites/button_back.png"] = {
+        EmbeddedResources::button_back_png, EmbeddedResources::button_back_png_size};
     _resources["sprites/play_bt.png"] = {EmbeddedResources::play_bt_png, EmbeddedResources::play_bt_png_size};
     _resources["sprites/play_bt_hold.png"] = {
         EmbeddedResources::play_bt_hold_png, EmbeddedResources::play_bt_hold_png_size};

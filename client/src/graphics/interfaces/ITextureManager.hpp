@@ -47,6 +47,15 @@ namespace Graphics
     constexpr TextureHandle InvalidTexture = 0;
 
     /**
+     * @struct TextureSize
+     * @brief Structure to hold texture metadata.
+     */
+    struct TextureSize {
+        unsigned int width;     ///> Width of the texture in pixels
+        unsigned int height;    ///> Height of the texture in pixels
+    };
+
+    /**
      * @class ITextureManager
      * @brief Interface for managing textures independently of the graphics backend.
      */
@@ -75,6 +84,13 @@ namespace Graphics
          * @brief Check if a texture handle is valid.
          */
         [[nodiscard]] virtual bool isValid(TextureHandle handle) const noexcept = 0;
+
+        /**
+         * @brief Get the size of a texture.
+         * @param handle The texture handle.
+         * @return TextureSize Structure containing width and height of the texture.
+         */
+        [[nodiscard]] virtual TextureSize getSize(TextureHandle handle) const = 0;
 
         /**
          * @brief Release all loaded textures.

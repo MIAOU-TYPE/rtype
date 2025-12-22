@@ -11,7 +11,7 @@ namespace Game
 {
     float EnemySpawnSystem::_timer = 0.f;
 
-    void EnemySpawnSystem::update(IGameWorld &world, float dt)
+    void EnemySpawnSystem::update(IGameWorld &world, const float dt)
     {
         _timer += dt;
         if (_timer < 2.f)

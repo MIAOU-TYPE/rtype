@@ -18,7 +18,7 @@ namespace Game
 
                 if (pos.x < 0)
                     world.registry().destroyEntity(entity);
-                if (pos.y < 0)
+                else if (pos.y < 0)
                     world.registry().destroyEntity(entity);
             });
     }

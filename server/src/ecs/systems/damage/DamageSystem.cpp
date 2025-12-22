@@ -6,18 +6,12 @@
 */
 
 #include "DamageSystem.hpp"
+#include "Damage.hpp"
 
 namespace Game
 {
-    void DamageSystem::update(IGameWorld &world)
+    void DamageSystem::update(const IGameWorld &world)
     {
-        auto &reg = world.registry();
-        auto &hpArr = reg.getComponents<Ecs::Health>();
-
-        for (size_t i = 0; i < hpArr.size(); i++) {
-            if (hpArr.at(i).has_value() && hpArr.at(i)->hp <= 0) {
-                reg.destroyEntity(Ecs::Entity(i));
-            }
-        }
+        (void)world;
     }
 } // namespace Game

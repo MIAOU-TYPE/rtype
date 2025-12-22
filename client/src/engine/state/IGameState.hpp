@@ -10,6 +10,7 @@
 namespace Engine
 {
     class StateManager;
+
     /**
      * @class IGameState
      * @brief Interface for game states in the state management system.
@@ -18,7 +19,7 @@ namespace Engine
      * including entering and exiting the state, updating the state logic, and rendering.
      */
     class IGameState {
-    public:
+      public:
         /**
          * @brief Virtual destructor for proper cleanup of derived classes.
          */
@@ -46,4 +47,4 @@ namespace Engine
          */
         virtual void render() = 0;
     };
-}
+} // namespace Engine

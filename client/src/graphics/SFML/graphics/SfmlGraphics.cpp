@@ -59,7 +59,7 @@ namespace Graphics
 
             const sf::VideoMode videoMode =
                 fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode({width, height});
-            constexpr uint32_t style = sf::Style::Default;
+            constexpr uint32_t style = sf::Style::Titlebar | sf::Style::Close;
             const sf::State state = fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
             _window = std::make_shared<sf::RenderWindow>();
             _window->create(videoMode, title, style, state);

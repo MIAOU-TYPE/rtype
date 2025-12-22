@@ -157,6 +157,9 @@ namespace Ecs
         const uint16_t count = ntohs(batch.count);
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
 
+        std::vector<SnapshotEntity> entities;
+        entities.reserve(count);
+
         for (uint16_t i = 0; i < count; ++i) {
             if (cursor + sizeof(SnapshotEntityData) > payload + size)
                 break;
@@ -170,8 +173,9 @@ namespace Ecs
             entity.y = ntohf(entityData.y);
             entity.spriteId = ntohl(entityData.spriteId);
 
-            _sink->onSnapshot(entity);
+            entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
         }
+        _sink->onSnapshot(entities);
     }
 } // namespace Ecs

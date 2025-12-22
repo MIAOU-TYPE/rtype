@@ -27,19 +27,19 @@ namespace Game
         std::vector<Ecs::Entity> toDestroy;
 
         for (size_t i = 0; i < posArr.size(); i++) {
-            if (!posArr[i].has_value() || !colArr[i].has_value())
+            if (!posArr.at(i).has_value() || !colArr.at(i).has_value())
                 continue;
 
             for (size_t j = i + 1; j < posArr.size(); j++) {
-                if (!posArr[j].has_value() || !colArr[j].has_value())
+                if (!posArr.at(j).has_value() || !colArr.at(j).has_value())
                     continue;
-                if (!intersects(*posArr[i], *colArr[i], *posArr[j], *colArr[j]))
+                if (!intersects(*posArr.at(i), *colArr.at(i), *posArr.at(j), *colArr.at(j)))
                     continue;
-                if (dmgArr[i].has_value() && hpArr[j].has_value()) {
-                    hpArr[j]->hp -= dmgArr[i]->amount;
+                if (dmgArr.at(i).has_value() && hpArr.at(j).has_value()) {
+                    hpArr.at(j)->hp -= dmgArr.at(i)->amount;
                     toDestroy.emplace_back(Ecs::Entity(i));
-                } else if (dmgArr[j].has_value() && hpArr[i].has_value()) {
-                    hpArr[i]->hp -= dmgArr[j]->amount;
+                } else if (dmgArr.at(j).has_value() && hpArr.at(i).has_value()) {
+                    hpArr.at(i)->hp -= dmgArr.at(j)->amount;
                     toDestroy.emplace_back(Ecs::Entity(j));
                 }
             }

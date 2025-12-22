@@ -50,7 +50,7 @@ namespace Game
                         }
                         {
                             auto &posArr = reg.getComponents<Ecs::Position>();
-                            Ecs::Position playerPos = *posArr[tgt.targetId];
+                            Ecs::Position playerPos = *posArr.at(tgt.targetId);
 
                             float dx = playerPos.x - pos.x;
                             float dy = playerPos.y - pos.y;

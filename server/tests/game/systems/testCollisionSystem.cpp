@@ -29,7 +29,7 @@ TEST(CollisionSystem, projectile_hits_enemy_and_deals_damage)
     reg.emplaceComponent<Ecs::Damage>(proj, 10);
     Game::CollisionSystem::update(world);
 
-    auto &hp = reg.getComponents<Ecs::Health>()[static_cast<size_t>(enemy)];
+    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
     ASSERT_TRUE(hp.has_value());
     EXPECT_EQ(hp->hp, 40);
 }
@@ -51,7 +51,7 @@ TEST(CollisionSystem, collision_works_even_if_projectile_has_lower_id)
 
     Game::CollisionSystem::update(world);
 
-    auto &hp = reg.getComponents<Ecs::Health>()[static_cast<size_t>(enemy)];
+    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
     ASSERT_TRUE(hp.has_value());
     EXPECT_EQ(hp->hp, 40);
 }
@@ -73,7 +73,7 @@ TEST(CollisionSystem, projectile_is_destroyed_after_collision)
 
     Game::CollisionSystem::update(world);
 
-    auto &dmg = reg.getComponents<Ecs::Damage>()[static_cast<size_t>(proj)];
+    auto &dmg = reg.getComponents<Ecs::Damage>().at(static_cast<size_t>(proj));
     EXPECT_FALSE(dmg.has_value());
 }
 
@@ -94,7 +94,7 @@ TEST(CollisionSystem, no_collision_no_damage)
 
     Game::CollisionSystem::update(world);
 
-    auto &hp = reg.getComponents<Ecs::Health>()[static_cast<size_t>(enemy)];
+    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
     ASSERT_TRUE(hp.has_value());
     EXPECT_EQ(hp->hp, 50);
 }
@@ -121,6 +121,6 @@ TEST(CollisionSystem, projectile_can_hit_multiple_enemies_same_frame)
 
     Game::CollisionSystem::update(world);
 
-    EXPECT_EQ(reg.getComponents<Ecs::Health>()[static_cast<size_t>(e1)]->hp, 40);
-    EXPECT_EQ(reg.getComponents<Ecs::Health>()[static_cast<size_t>(e2)]->hp, 40);
+    EXPECT_EQ(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e1))->hp, 40);
+    EXPECT_EQ(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e2))->hp, 40);
 }

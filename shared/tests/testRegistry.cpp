@@ -75,6 +75,6 @@ TEST(Registry, view_position_velocity)
 
     auto &pos = registry.getComponents<Ecs::Position>();
 
-    ASSERT_EQ(pos[static_cast<size_t>(e1)]->x, 2.f);
-    ASSERT_EQ(pos[static_cast<size_t>(e3)]->y, 4.f);
+    ASSERT_EQ(pos.at(static_cast<size_t>(e1))->x, 2.f);
+    ASSERT_EQ(pos.at(static_cast<size_t>(e3))->y, 4.f);
 }

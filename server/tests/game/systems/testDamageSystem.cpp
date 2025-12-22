@@ -20,5 +20,5 @@ TEST(DamageSystem, removes_dead_entities)
 
     Game::DamageSystem::update(world);
 
-    EXPECT_FALSE(reg.getComponents<Ecs::Health>()[static_cast<size_t>(e)].has_value());
+    EXPECT_FALSE(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e)).has_value());
 }

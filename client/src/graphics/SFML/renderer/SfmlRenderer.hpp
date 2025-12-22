@@ -18,6 +18,7 @@
 #include "IRenderer.hpp"
 #include "SfmlFontManager.hpp"
 #include "SfmlTextureManager.hpp"
+#include "SfmlTextManager.hpp"
 
 namespace Graphics
 {
@@ -25,7 +26,7 @@ namespace Graphics
      * @class SfmlRenderer
      * @brief SFML implementation of the IRenderer interface.
      */
-    class SfmlRenderer final : public IRenderer {
+    class SfmlRenderer : public IRenderer {
       public:
         /**
          * @brief Constructor for SfmlRenderer.
@@ -34,6 +35,8 @@ namespace Graphics
          */
         explicit SfmlRenderer(const std::shared_ptr<sf::RenderWindow> &window,
             std::shared_ptr<Resources::IResourceManager> resourceManager);
+
+        ViewportSize getViewportSize() const noexcept override;
 
         /**
          * @brief Begins a new rendering frame.
@@ -58,10 +61,22 @@ namespace Graphics
         std::shared_ptr<ITextureManager> textures() const noexcept override;
 
         /**
+         * @brief Provides access to the text manager.
+         * @return Reference to the text manager.
+         */
+        std::shared_ptr<ITextManager> texts() const noexcept override;
+
+        /**
          * @brief Draws a render command.
          * @param cmd The render command to draw.
          */
         void draw(const Engine::RenderCommand &cmd) override;
+
+        /**
+         * @brief Draws text.
+         * @param text The text to draw.
+         */
+        void drawText(const IText &text) override;
 
       private:
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.
@@ -70,5 +85,6 @@ namespace Graphics
             nullptr;                                                   ///> Shared pointer to the resource manager.
         std::shared_ptr<SfmlFontManager> _fontManager = nullptr;       ///> Shared pointer to the SFML Font Manager.
         std::shared_ptr<SfmlTextureManager> _textureManager = nullptr; ///> Shared pointer to the SFML Texture Manager.
+        std::shared_ptr<SfmlTextManager> _textManager = nullptr;       ///> Shared pointer to the SFML Text Manager.
     };
 } // namespace Graphics

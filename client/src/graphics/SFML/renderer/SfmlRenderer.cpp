@@ -19,6 +19,13 @@ namespace Graphics
 
         _fontManager = std::make_shared<SfmlFontManager>(_resourceManager);
         _textureManager = std::make_shared<SfmlTextureManager>(_resourceManager);
+        _textManager = std::make_shared<SfmlTextManager>(_fontManager);
+    }
+
+    ViewportSize SfmlRenderer::getViewportSize() const noexcept
+    {
+        const auto size = _window->getSize();
+        return { size.x, size.y };
     }
 
     void SfmlRenderer::beginFrame()
@@ -41,6 +48,11 @@ namespace Graphics
         return _textureManager;
     }
 
+    std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
+    {
+        return _textManager;
+    }
+
     void SfmlRenderer::draw(const Engine::RenderCommand &cmd)
     {
         try {
@@ -57,4 +69,9 @@ namespace Graphics
         }
     }
 
+    void SfmlRenderer::drawText(const IText &text)
+    {
+        const auto &sfText = static_cast<const SfmlText &>(text).get();
+        _window->draw(sfText);
+    }
 } // namespace Graphics

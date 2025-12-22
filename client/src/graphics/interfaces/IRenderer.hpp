@@ -8,12 +8,12 @@
 #pragma once
 #include <exception>
 #include <string>
-#include "IFontManager.hpp"
-#include "ITextureManager.hpp"
-#include "ITextManager.hpp"
-#include "RenderCommand.hpp"
 #include "GraphicsTypes.hpp"
+#include "IFontManager.hpp"
 #include "IText.hpp"
+#include "ITextManager.hpp"
+#include "ITextureManager.hpp"
+#include "RenderCommand.hpp"
 
 namespace Graphics
 {

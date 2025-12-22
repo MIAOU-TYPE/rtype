@@ -11,7 +11,7 @@
 
 namespace Game
 {
-    void LifetimeSystem::update(IGameWorld &world, const float dt, std::vector<Ecs::Entity> &toDestroy)
+    void LifetimeSystem::update(IGameWorld &world, const float dt)
     {
         auto &reg = world.registry();
 

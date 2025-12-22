@@ -39,77 +39,35 @@ namespace Engine
          */
         Ecs::Registry &registry();
 
-        void applyCommand(const WorldCommand &cmd)
-        {
-            switch (cmd.type) {
-                case WorldCommand::Type::Snapshot:
-                    applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
-                    break;
-                default: break;
-            }
-        }
+        /**
+         * @brief Applies a world command to the client world.
+         * @param cmd The world command to apply.
+         */
+        void applyCommand(const WorldCommand &cmd);
 
-        void buildRenderCommands(std::vector<RenderCommand> &out) const
-        {
-            _registry.view<Position, Drawable, AnimationState, Render>(
-                [&](Ecs::Entity, const Position &pos, const Drawable &drawable, const AnimationState &anim,
-                    const Render &render) {
-                    if (!_spriteRegistry->exists(drawable.spriteId))
-                        return;
+        /**
+         * @brief Applies a snapshot of entities to the client world.
+         * @param entities Vector of snapshot entities to apply.
+         */
+        void applySnapshot(const std::vector<SnapshotEntity> &entities);
 
-                    if (anim.currentAnimation.empty())
-                        return;
-
-                    const SpriteDefinition &sprite = _spriteRegistry->get(drawable.spriteId);
-
-                    const auto it = sprite.animations.find(anim.currentAnimation);
-                    if (it == sprite.animations.end())
-                        return;
-
-                    const Animation &animation = it->second;
-                    if (anim.frameIndex >= animation.frames.size())
-                        return;
-
-                    RenderCommand cmd;
-                    cmd.textureId = render.texture;
-                    cmd.position = {pos.x, pos.y};
-                    cmd.frame = animation.frames[anim.frameIndex].rect;
-
-                    out.push_back(cmd);
-                });
-        }
-
-        void applyCreate(const EntityCreate &data);
-        void applySingleSnapshot(const SnapshotEntity &entity);
-
-        void applySnapshot(const std::vector<SnapshotEntity> &entities)
-        {
-            std::unordered_set<size_t> receivedIds;
-            receivedIds.reserve(entities.size());
-
-            for (const auto &entity : entities) {
-                receivedIds.insert(entity.id);
-                applySingleSnapshot(entity);
-            }
-
-            for (auto it = _entityMap.begin(); it != _entityMap.end();) {
-                if (!receivedIds.contains(it->first)) {
-                    _registry.destroyEntity(it->second);
-                    it = _entityMap.erase(it);
-                } else {
-                    ++it;
-                }
-            }
-        }
-
+      private:
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
 
-        std::unordered_map<size_t, float> _destroyTimers; ///> Timers for entities scheduled for destruction
-        static constexpr float DestroyDelay =
-            0.5f; ///> Delay before destroying an entity after receiving a destroy command
+        /**
+         * @brief Applies a create entity command to the client world.
+         * @param data The data for the entity to be created.
+         */
+        void applyCreate(const EntityCreate &data);
+
+        /**
+         * @brief Applies a single snapshot entity update to the client world.
+         * @param entity The snapshot entity data to apply.
+         */
+        void applySingleSnapshot(const SnapshotEntity &entity);
     };
 } // namespace Engine

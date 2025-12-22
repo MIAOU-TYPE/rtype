@@ -53,6 +53,35 @@ namespace Engine
         return _registry;
     }
 
+    void ClientWorld::applyCommand(const WorldCommand &cmd)
+
+    {
+        switch (cmd.type) {
+            case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
+            default: break;
+        }
+    }
+
+    void ClientWorld::applySnapshot(const std::vector<SnapshotEntity> &entities)
+    {
+        std::unordered_set<size_t> receivedIds;
+        receivedIds.reserve(entities.size());
+
+        for (const auto &entity : entities) {
+            receivedIds.insert(entity.id);
+            applySingleSnapshot(entity);
+        }
+
+        for (auto it = _entityMap.begin(); it != _entityMap.end();) {
+            if (!receivedIds.contains(it->first)) {
+                _registry.destroyEntity(it->second);
+                it = _entityMap.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
@@ -83,9 +112,6 @@ namespace Engine
     {
         const auto it = _entityMap.find(entity.id);
         if (it == _entityMap.end()) {
-            if (_destroyTimers.contains(entity.id))
-                return;
-            std::cout << "{ClientWorld::applySnapshot} Entity " << entity.id << " not found, creating it.\n";
             applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.spriteId});
             return;
         }

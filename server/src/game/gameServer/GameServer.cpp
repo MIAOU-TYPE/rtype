@@ -118,7 +118,6 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
-                const auto entityId = static_cast<std::size_t>(ent);
                 break;
             }
 
@@ -127,7 +126,6 @@ namespace Game
                 if (it == _sessionToEntity.end())
                     break;
                 const Ecs::Entity ent = it->second;
-                const auto entityId = static_cast<std::size_t>(ent);
                 _sessionToEntity.erase(it);
                 _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);

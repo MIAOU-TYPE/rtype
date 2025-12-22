@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <functional>
 #include "IClientMessageSink.hpp"
 #include "WorldCommandBuffer.hpp"
 

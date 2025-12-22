@@ -7,9 +7,6 @@
 
 #include "ClientController.hpp"
 
-#include "Drawable.hpp"
-#include "Position.hpp"
-
 namespace Ecs
 {
     ClientController::ClientController(Engine::WorldCommandBuffer &buffer) : _commandBuffer(buffer)

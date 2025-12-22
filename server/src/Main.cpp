@@ -11,21 +11,24 @@
 #include "SignalHandler.hpp"
 #include "UDPServer.hpp"
 
-static std::shared_ptr<Signal::SignalHandler> startSignalHandler(Net::Thread::ServerRuntime &runtime)
+namespace
 {
-    std::shared_ptr<Signal::SignalHandler> signalHandler = std::make_shared<Signal::SignalHandler>();
+    std::shared_ptr<Signal::SignalHandler> startSignalHandler(Net::Thread::ServerRuntime &runtime)
+    {
+        auto signalHandler = std::make_shared<Signal::SignalHandler>();
 
-    signalHandler->start();
-    signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
-        runtime.stop();
-    });
-    return signalHandler;
-}
+        signalHandler->start();
+        signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
+            runtime.stop();
+        });
+        return signalHandler;
+    }
+} // namespace
 
 int main(const int argc, char **argv)
 {
     Utils::ArgParser parser(argc, argv);
-    if (Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
+    if (const Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
         return 0;
     } else if (result == Utils::ArgParseResult::Error) {
         std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;

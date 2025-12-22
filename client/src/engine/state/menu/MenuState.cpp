@@ -9,9 +9,7 @@
 
 namespace Engine
 {
-    MenuState::MenuState(
-        std::shared_ptr<Graphics::IGraphics> graphics,
-        std::shared_ptr<Graphics::IRenderer> renderer)
+    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer)
         : _graphics(std::move(graphics)), _renderer(std::move(renderer))
     {
     }
@@ -27,11 +25,13 @@ namespace Engine
         _menu.reset();
     }
 
-    void MenuState::update(const float dt) {
+    void MenuState::update(const float dt)
+    {
         _menu->update(dt);
     }
 
-    void MenuState::render() {
+    void MenuState::render()
+    {
         _menu->render();
     }
-}
+} // namespace Engine

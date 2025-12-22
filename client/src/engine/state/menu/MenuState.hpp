@@ -8,9 +8,9 @@
 #pragma once
 
 #include "IGameState.hpp"
-#include "Menu.hpp"
-#include "IRenderer.hpp"
 #include "IGraphics.hpp"
+#include "IRenderer.hpp"
+#include "Menu.hpp"
 
 namespace Engine
 {
@@ -18,7 +18,7 @@ namespace Engine
      * @brief Represents the menu state of the game.
      */
     class MenuState final : public IGameState {
-    public:
+      public:
         /**
          * @brief Construct a new Menu State object.
          *
@@ -26,8 +26,7 @@ namespace Engine
          * @param renderer Shared pointer to the renderer interface.
          */
         explicit MenuState(
-            std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer);
+            std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer);
 
         /**
          * @brief Destroy the Menu State object.
@@ -51,10 +50,10 @@ namespace Engine
          */
         void render() override;
 
-    private:
+      private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
-        std::unique_ptr<Menu> _menu;        ///> Unique pointer to the menu.
-        StateManager *_manager = nullptr;   ///> Pointer to the state manager.
+        std::unique_ptr<Menu> _menu;                    ///> Unique pointer to the menu.
+        StateManager *_manager = nullptr;               ///> Pointer to the state manager.
     };
-}
+} // namespace Engine

@@ -19,8 +19,7 @@ TEST(LevelManager, Load_ValidJSON)
           "hp": 10,
           "speed": -50,
           "size": { "w": 10, "h": 10 },
-          "sprite": "s",
-          "spriteId": 10
+          "spriteId": 19
         }
       },
       "waves": [
@@ -44,7 +43,7 @@ TEST(LevelManager, Load_ValidJSON)
     EXPECT_FLOAT_EQ(e.speed, -50.f);
     EXPECT_FLOAT_EQ(e.colW, 10.f);
     EXPECT_FLOAT_EQ(e.colH, 10.f);
-    EXPECT_EQ(e.sprite, 10);
+    EXPECT_EQ(e.sprite, 19);
 
     ASSERT_EQ(lvl.waves.size(), 1u);
     EXPECT_FLOAT_EQ(lvl.waves[0].time, 1.5f);

@@ -4,21 +4,21 @@
     "smallEnemy": {
       "hp": 25,
       "speed": -100,
-      "size": { "w": 12, "h": 12 },
+      "size": { "w": 65, "h": 66 },
       "sprite": "enemy",
       "spriteId": 2
     },
     "mediumEnemy": {
       "hp": 80,
       "speed": -70,
-      "size": { "w": 24, "h": 24 },
+      "size": { "w": 65, "h": 49 },
       "sprite": "enemy2",
       "spriteId": 3
     },
     "boss": {
       "hp": 500,
       "speed": -30,
-      "size": { "w": 40, "h": 40 },
+      "size": { "w": 177, "h": 144 },
       "sprite": "boss",
       "spriteId": 1
     }

@@ -7,6 +7,19 @@
 
 #include "ClientRuntime.hpp"
 
+namespace
+{
+    using clock = std::chrono::steady_clock;
+
+    void syncToNextTick(clock::time_point &nextTick, const std::chrono::milliseconds maxDrift)
+    {
+        std::this_thread::sleep_until(nextTick);
+
+        if (const auto now = clock::now(); now > nextTick + maxDrift)
+            nextTick = now;
+    }
+} // namespace
+
 namespace Thread
 {
     ClientRuntime::ClientRuntime(
@@ -17,9 +30,11 @@ namespace Thread
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Core::EventBus>();
         _eventRegistry = std::make_unique<Core::EventRegistry>(_eventBus);
+        _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
 
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()
@@ -50,10 +65,10 @@ namespace Thread
         if (_stopRequested.exchange(true))
             return;
 
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
-
         _running = false;
         _cv.notify_all();
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
+
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updaterThread.joinable())
@@ -75,21 +90,30 @@ namespace Thread
 
     void ClientRuntime::runDisplay()
     {
-        using clock = std::chrono::steady_clock;
-        auto last = clock::now();
+        constexpr auto Tick = std::chrono::milliseconds(16);
+
+        auto nextTick = clock::now();
 
         while (_running) {
-            auto now = clock::now();
-            const float dt = std::chrono::duration<float>(now - last).count();
-            last = now;
+            nextTick += Tick;
+
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
+            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
+            {
+                std::scoped_lock lock(_frameMutex);
+                localRenderCommands = _readRenderCommands;
+            }
+
             _renderer->beginFrame();
-            _world->update(dt, *_renderer);
+            if (localRenderCommands) {
+                for (const auto &cmd : *localRenderCommands)
+                    _renderer->draw(cmd);
+            }
             _renderer->endFrame();
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+            syncToNextTick(nextTick, Tick * 2);
         }
     }
 
@@ -101,30 +125,70 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::runUpdater() const
+    void ClientRuntime::runUpdater()
     {
+        constexpr auto Tick = std::chrono::milliseconds(16);
+        constexpr float FixedDt = 1.0f / 60.0f;
+        static constexpr float MaxFrameDt = 0.16f;
+        static constexpr int MaxStepsPerTick = 4;
+
+        auto nextTick = clock::now();
+        auto last = nextTick;
+        float accumulator = 0.f;
+
+        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
+
         while (_running) {
-            if (std::shared_ptr<Net::IPacket> pkt; _client->popPacket(pkt)) {
-                std::cout << pkt << std::endl;
+            nextTick += Tick;
+
+            const auto now = clock::now();
+            const auto deadline = now + Tick - std::chrono::milliseconds(1);
+
+            float frameDt = std::chrono::duration<float>(now - last).count();
+            last = now;
+            if (frameDt > MaxFrameDt)
+                frameDt = MaxFrameDt;
+            accumulator += frameDt;
+
+            processNetworkPackets(deadline, 256);
+            applyWorldCommands(deadline, 500);
+
+            int steps = 0;
+            while (accumulator >= FixedDt && steps < MaxStepsPerTick && clock::now() < deadline) {
+                _world->step(FixedDt);
+                accumulator -= FixedDt;
+                steps++;
+            }
+            if (steps == MaxStepsPerTick && accumulator > FixedDt)
+                accumulator = 0.f;
+
+            buildAndSwapRenderCommands();
+
+            std::this_thread::sleep_until(nextTick);
+
+            if (const auto after = clock::now(); after > nextTick + 2 * Tick) {
+                nextTick = after;
+                last = after;
+                accumulator = 0.f;
             }
         }
     }
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Down, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Left, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Right, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
@@ -132,4 +196,42 @@ namespace Thread
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }
+
+    void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
+    {
+        int processedPacket = 0;
+
+        while (processedPacket < maxPackets && clock::now() < deadline) {
+            std::shared_ptr<Net::IPacket> pkt;
+            if (!_client->popPacket(pkt))
+                break;
+
+            _packetRouter->handlePacket(pkt);
+            processedPacket++;
+        }
+    }
+
+    void ClientRuntime::applyWorldCommands(const steadyClock::time_point deadline, const int maxCommands)
+    {
+        int applied = 0;
+        Engine::WorldCommand cmd;
+
+        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
+            _world->applyCommand(cmd);
+            applied++;
+        }
+    }
+
+    void ClientRuntime::buildAndSwapRenderCommands()
+    {
+        _writeRenderCommands->clear();
+
+        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
+
+        {
+            std::scoped_lock lock(_frameMutex);
+            _readRenderCommands = _writeRenderCommands;
+        }
+    }
+
 } // namespace Thread

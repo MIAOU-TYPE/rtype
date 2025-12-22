@@ -104,6 +104,13 @@ namespace Ecs
         void view(Function fn);
 
         /**
+         * @brief Const version of view to iterate over entities owning a set of components.
+         * Only entities with all specified components will be passed to the function.
+         */
+        template <typename... Components, typename Function>
+        void view(Function fn) const;
+
+        /**
          * @brief Clears the registry, removing all entities and components.
          */
         void clear() noexcept;

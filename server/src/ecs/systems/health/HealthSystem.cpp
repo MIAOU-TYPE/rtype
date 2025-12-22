@@ -12,13 +12,10 @@ namespace Game
     void HealthSystem::update(IGameWorld &world)
     {
         auto &reg = world.registry();
-        auto &hpArr = reg.getComponents<Ecs::Health>();
 
-        for (size_t i = 0; i < hpArr.size(); i++) {
-            if (!hpArr.at(i).has_value())
-                continue;
-            if (hpArr.at(i)->hp <= 0)
-                reg.destroyEntity(Ecs::Entity(i));
-        }
+        reg.view<Ecs::Health>([&](const Ecs::Entity e, const Ecs::Health &health) {
+            if (health.hp <= 0)
+                reg.destroyEntity(e);
+        });
     }
 } // namespace Game

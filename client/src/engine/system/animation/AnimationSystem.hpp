@@ -6,24 +6,28 @@
 */
 
 #pragma once
-#include "Animation.hpp"
+
+#include <memory>
 #include "AnimationState.hpp"
+#include "Drawable.hpp"
+#include "Registry.hpp"
+#include "SpriteRegistry.hpp"
 
 namespace Engine
 {
     /**
      * @class AnimationSystem
-     * @brief System responsible for updating the animation state of client entities.
-     * Updates the current frame of the animation based on elapsed time.
+     * @brief System responsible for updating animation states of entities.
      */
     class AnimationSystem {
       public:
         /**
-         * @brief Updates the animation state of the given client entity based on the provided animation and delta time.
-         * @param state The animation state of the entity to update
-         * @param anim The animation associated with the entity
-         * @param dt The delta time since the last update (in seconds).
+         * @brief Update the animation state for a given entity.
+         * @param registry The client registry containing entities and their components.
+         * @param spriteRegistry Shared pointer to the sprite registry for retrieving sprite definitions.
+         * @param dt The delta time since the last update.
          */
-        static void update(AnimationState &state, const Animation &anim, float dt);
+        static void update(
+            Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry, float dt);
     };
 } // namespace Engine

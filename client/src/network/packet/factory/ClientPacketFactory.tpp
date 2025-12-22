@@ -5,7 +5,7 @@
 ** ClientPacketFactory
 */
 
-#include "ClientPacketFactory.hpp"
+#pragma once
 
 namespace Network
 {

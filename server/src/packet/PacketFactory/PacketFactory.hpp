@@ -16,8 +16,6 @@
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "SnapEntityData.hpp"
@@ -82,26 +80,6 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeDefault(const sockaddr_in &addr, uint8_t flag) const noexcept;
-
-        /**
-         * @brief Creates an EntityCreateData with the specified parameters.
-         * @param addr The address to which the packet will be sent.
-         * @param id The ID of the entity to create.
-         * @param x The x-coordinate of the entity.
-         * @param y The y-coordinate of the entity.
-         * @param sprite The sprite ID of the entity.
-         * @return A shared pointer to the created IPacket.
-         */
-        [[nodiscard]] std::shared_ptr<IPacket> makeEntityCreate(
-            const sockaddr_in &addr, size_t id, float x, float y, int sprite) const noexcept;
-
-        /**
-         * @brief Creates an EntityDestroyData for the specified entity ID.
-         * @param addr The address to which the packet will be sent.
-         * @param id The ID of the entity to destroy.
-         * @return A shared pointer to the created IPacket.
-         */
-        [[nodiscard]] std::shared_ptr<IPacket> makeEntityDestroy(const sockaddr_in &addr, size_t id) const noexcept;
 
         /**
          * @brief Creates a DamageData for the specified entity ID and damage amount.

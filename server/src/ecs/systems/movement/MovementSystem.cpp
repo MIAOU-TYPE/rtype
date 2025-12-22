@@ -11,15 +11,15 @@ namespace Game
 {
     void MovementSystem::update(IGameWorld &world, const float dt)
     {
-        world.registry().view<Ecs::Position, Ecs::Velocity>(
+        auto &reg = world.registry();
+
+        reg.view<Ecs::Position, Ecs::Velocity>(
             [&](const Ecs::Entity entity, Ecs::Position &pos, const Ecs::Velocity &vel) {
                 pos.x += vel.vx * dt;
                 pos.y += vel.vy * dt;
 
-                if (pos.x < 0)
-                    world.registry().destroyEntity(entity);
-                if (pos.y < 0)
-                    world.registry().destroyEntity(entity);
+                if (pos.x < 0 || pos.y < 0)
+                    reg.destroyEntity(entity);
             });
     }
 } // namespace Game

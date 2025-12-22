@@ -8,20 +8,25 @@
 #pragma once
 
 #include <atomic>
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <condition_variable>
+
+#include "AssetLoader.hpp"
+#include "ClientController.hpp"
 #include "ClientPacketFactory.hpp"
 #include "ClientWorld.hpp"
 #include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
-#include "IRenderer.hpp"
-#include "SpriteLoader.hpp"
-#include "SpriteRegistry.hpp"
-#include <condition_variable>
+#include "PacketRouter.hpp"
+#include "WorldCommandBuffer.hpp"
+
+using steadyClock = std::chrono::steady_clock;
 
 /**
  * @namespace Thread
@@ -107,7 +112,7 @@ namespace Thread
 
       private:
         std::shared_ptr<Core::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
-        std::unique_ptr<Core::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing events
+        std::unique_ptr<Core::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing event handlers
 
         std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
 
@@ -119,6 +124,14 @@ namespace Thread
 
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
 
+        std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
+
+        Engine::WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
+
+        std::mutex _frameMutex;
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> _readRenderCommands;
+        std::shared_ptr<std::vector<Engine::RenderCommand>> _writeRenderCommands;
+
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state
 
@@ -127,10 +140,50 @@ namespace Thread
         std::atomic<bool> _stopRequested{false}; ///> Atomic flag to indicate if stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the client is running
 
-        void runReceiver() const; ///> Method for running the receiver thread
-        void runUpdater() const;  ///> Method for running the updater thread
+        /**
+         * @brief Method for running the receiver thread.
+         * @details This method continuously receives packets from the network client
+         * and routes them for processing.
+         */
+        void runReceiver() const;
 
-        void setupEventsRegistry() const; ///> Method for setting up the event registry
+        /**
+         * @brief Method for running the updater thread.
+         * @details This method updates the game state at a fixed timestep,
+         * processes incoming commands, and builds render commands.
+         */
+        void runUpdater();
+
+        /**
+         * @brief Sets up the event registry with key event handlers.
+         * @details This method registers key release events to send appropriate
+         * input packets to the server.
+         */
+        void setupEventsRegistry() const;
+
+        /**
+         * @brief Processes incoming network packets up to a specified deadline and maximum count.
+         * @param deadline The time point by which to stop processing packets.
+         * @param maxPackets The maximum number of packets to process.
+         * @details This method retrieves packets from the network client and routes them for processing
+         * until the deadline is reached or the maximum number of packets has been processed per call.
+         */
+        void processNetworkPackets(steadyClock::time_point deadline, int maxPackets) const;
+
+        /**
+         * @brief Applies world commands from the command buffer up to a specified deadline and maximum count.
+         * @param deadline The time point by which to stop applying commands.
+         * @param maxCommands The maximum number of commands to apply.
+         * @details This method retrieves world commands from the command buffer and applies them
+         * to the client world until the deadline is reached or the maximum number of commands has been applied per
+         * call.
+         */
+        void applyWorldCommands(steadyClock::time_point deadline, int maxCommands);
+
+        /**
+         *
+         */
+        void buildAndSwapRenderCommands();
     };
 
 } // namespace Thread

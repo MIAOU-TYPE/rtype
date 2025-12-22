@@ -6,11 +6,13 @@
 */
 
 #pragma once
-#include "Animation.hpp"
+#include <memory>
 #include "AnimationState.hpp"
-#include "IRenderer.hpp"
+#include "Drawable.hpp"
+#include "Registry.hpp"
 #include "Render.hpp"
 #include "RenderCommand.hpp"
+#include "SpriteRegistry.hpp"
 
 namespace Engine
 {
@@ -23,11 +25,11 @@ namespace Engine
       public:
         /**
          * @brief Submits a render command for the given entity and animation to the renderer.
-         * @param e The client entity to be rendered.
-         * @param anim The animation associated with the entity.
-         * @param renderer The renderer to which the render command will be submitted.
+         * @param registry The ECS registry containing entity components.
+         * @param spriteRegistry Shared pointer to the sprite registry for retrieving sprite definitions.
+         * @param out Vector to store the generated render commands.
          */
-        static void submit(const Position &pos, const Render &render, const AnimationState &animState,
-            const Animation &anim, Graphics::IRenderer &renderer);
+        static void update(Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry,
+            std::vector<RenderCommand> &out);
     };
 } // namespace Engine

@@ -41,40 +41,6 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IPacket> PacketFactory::makeEntityCreate(
-        const sockaddr_in &addr, const size_t id, const float x, const float y, int sprite) const noexcept
-    {
-        EntityCreateData entityCreatePacket;
-        entityCreatePacket.header = makeHeader(Protocol::ENTITY_CREATE, VERSION, sizeof(EntityCreateData));
-        entityCreatePacket.id = htobe64(id);
-        entityCreatePacket.x = htonf(x);
-        entityCreatePacket.y = htonf(y);
-        entityCreatePacket.spriteId = htonl(sprite);
-
-        try {
-            auto packet = makePacket<EntityCreateData>(addr, entityCreatePacket);
-            return packet;
-        } catch (const FactoryError &e) {
-            std::cerr << "{PacketFactory::makeEntityCreate} " << e.what() << std::endl;
-            return nullptr;
-        }
-    }
-
-    std::shared_ptr<IPacket> PacketFactory::makeEntityDestroy(const sockaddr_in &addr, const size_t id) const noexcept
-    {
-        EntityDestroyData entityDestroyPacket;
-        entityDestroyPacket.header = makeHeader(Protocol::ENTITY_DESTROY, VERSION, sizeof(EntityDestroyData));
-        entityDestroyPacket.id = htobe64(id);
-
-        try {
-            auto packet = makePacket<EntityDestroyData>(addr, entityDestroyPacket);
-            return packet;
-        } catch (const FactoryError &e) {
-            std::cerr << "{PacketFactory::makeEntityDestroy} " << e.what() << std::endl;
-            return nullptr;
-        }
-    }
-
     std::shared_ptr<IPacket> PacketFactory::makeDamage(
         const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {

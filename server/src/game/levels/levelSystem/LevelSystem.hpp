@@ -65,6 +65,6 @@ namespace Game
          */
         static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def);
 
-        static std::vector<bool> _spawned; /// Tracks which waves have been spawned
+        static std::vector<bool> _spawned; ///> Tracks which waves have been spawned
     };
 } // namespace Game

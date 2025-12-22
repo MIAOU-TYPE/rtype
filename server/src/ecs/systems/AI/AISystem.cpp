@@ -50,10 +50,10 @@ namespace Game
                         }
                         {
                             auto &posArr = reg.getComponents<Ecs::Position>();
-                            Ecs::Position playerPos = *posArr.at(tgt.targetId);
+                            auto [x, y] = *posArr.at(tgt.targetId);
 
-                            float dx = playerPos.x - pos.x;
-                            float dy = playerPos.y - pos.y;
+                            float dx = x - pos.x;
+                            float dy = y - pos.y;
                             const float dist = std::sqrt(dx * dx + dy * dy);
 
                             dx /= (dist + 0.01f);

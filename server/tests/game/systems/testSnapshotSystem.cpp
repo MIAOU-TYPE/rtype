@@ -97,14 +97,13 @@ TEST_F(SnapshotSystemTest, MultipleEntitiesSnapshotCorrectly)
     reg.emplaceComponent<Ecs::Drawable>(e2, Ecs::Drawable{13});
     reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{50.0f, 60.0f});
 
-    auto e3 = reg.createEntity(); // incomplete entity
+    auto e3 = reg.createEntity();
     reg.emplaceComponent<Ecs::Position>(e3, Ecs::Position{0.0f, 0.0f});
 
     SnapshotSystem::update(*world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 2u);
 
-    // order is deterministic since Registry stores by index
     EXPECT_EQ(snapshot[0].spriteId, 10);
     EXPECT_FLOAT_EQ(snapshot[0].x, 10.0f);
     EXPECT_FLOAT_EQ(snapshot[0].y, 20.0f);

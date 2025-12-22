@@ -34,13 +34,13 @@ namespace Game
                 if (target.targetId == SIZE_MAX)
                     return;
                 auto &posArr = reg.getComponents<Ecs::Position>();
-                if (!posArr.at(target.targetId).has_value())
+                if (!posArr.at(target.targetId))
                     return;
 
-                Ecs::Position playerPos = *posArr.at(target.targetId);
+                auto [x, y] = *posArr.at(target.targetId);
 
-                float dx = playerPos.x - pos.x;
-                float dy = playerPos.y - pos.y;
+                float dx = x - pos.x;
+                float dy = y - pos.y;
                 const float len = std::sqrt(dx * dx + dy * dy);
                 if (len == 0)
                     return;

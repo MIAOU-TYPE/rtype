@@ -94,7 +94,7 @@ TEST(AttackSystem, does_not_shoot_during_cooldown)
     auto &reg = world.registry();
 
     const Ecs::Entity enemy = createEnemyWithAttack(world);
-    const size_t enemyIdx = static_cast<size_t>(enemy);
+    const auto enemyIdx = static_cast<size_t>(enemy);
 
     reg.getComponents<Ecs::AIBrain>().at(enemyIdx)->attackCooldown = 1.f;
 

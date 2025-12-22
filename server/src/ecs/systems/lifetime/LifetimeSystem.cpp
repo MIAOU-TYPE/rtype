@@ -10,18 +10,14 @@
 
 namespace Game
 {
-    void LifetimeSystem::update(IGameWorld &world, float dt)
+    void LifetimeSystem::update(IGameWorld &world, const float dt)
     {
         auto &reg = world.registry();
-        auto &lifeArr = reg.getComponents<Ecs::Lifetime>();
 
-        for (size_t i = 0; i < lifeArr.size(); i++) {
-            if (!lifeArr.at(i).has_value())
-                continue;
-
-            lifeArr.at(i)->remaining -= dt;
-            if (lifeArr.at(i)->remaining <= 0.f)
-                reg.destroyEntity(Ecs::Entity(i));
-        }
+        reg.view<Ecs::Lifetime>([&](const Ecs::Entity e, Ecs::Lifetime &life) {
+            life.remaining -= dt;
+            if (life.remaining <= 0.f)
+                reg.destroyEntity(e);
+        });
     }
 } // namespace Game

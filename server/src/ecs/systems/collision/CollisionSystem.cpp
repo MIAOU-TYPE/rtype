@@ -27,20 +27,20 @@ namespace Game
         std::vector<Ecs::Entity> toDestroy;
 
         for (size_t i = 0; i < posArr.size(); i++) {
-            if (!posArr.at(i).has_value() || !colArr.at(i).has_value())
+            if (!posArr.at(i) || !colArr.at(i))
                 continue;
 
             for (size_t j = i + 1; j < posArr.size(); j++) {
-                if (!posArr.at(j).has_value() || !colArr.at(j).has_value())
+                if (!posArr.at(j) || !colArr.at(j))
                     continue;
                 if (!intersects(*posArr.at(i), *colArr.at(i), *posArr.at(j), *colArr.at(j)))
                     continue;
-                if (dmgArr.at(i).has_value() && hpArr.at(j).has_value()) {
+                if (dmgArr.at(i) && hpArr.at(j)) {
                     hpArr.at(j)->hp -= dmgArr.at(i)->amount;
-                    toDestroy.emplace_back(Ecs::Entity(i));
-                } else if (dmgArr.at(j).has_value() && hpArr.at(i).has_value()) {
+                    toDestroy.emplace_back(i);
+                } else if (dmgArr.at(j) && hpArr.at(i)) {
                     hpArr.at(i)->hp -= dmgArr.at(j)->amount;
-                    toDestroy.emplace_back(Ecs::Entity(j));
+                    toDestroy.emplace_back(j);
                 }
             }
         }

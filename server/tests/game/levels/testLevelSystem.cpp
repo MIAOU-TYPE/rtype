@@ -36,7 +36,6 @@ TEST(LevelSystem, SpawnOneWave)
 
     EXPECT_EQ(world.registry().getComponents<Ecs::Position>().size(), 0u);
 
-    // advance time twice → wave triggers
     Game::LevelSystem::update(world, mgr, 0.3f);
     Game::LevelSystem::update(world, mgr, 0.3f);
 

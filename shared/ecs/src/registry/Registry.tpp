@@ -69,4 +69,9 @@ namespace Ecs
         }
     }
 
+    template <typename... Components, typename Function>
+    void Registry::view(Function fn) const
+    {
+        const_cast<Registry *>(this)->view<Components...>(fn);
+    }
 } // namespace Ecs

@@ -80,7 +80,6 @@ namespace Game
 
         MovementSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
-        DamageSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);
     }
@@ -118,11 +117,6 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
-                const auto entityId = static_cast<std::size_t>(ent);
-                _sessions->forEachSession([&](int, const sockaddr_in &address) {
-                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 7))
-                        _server->sendPacket(*pkt);
-                });
                 break;
             }
 
@@ -131,14 +125,9 @@ namespace Game
                 if (it == _sessionToEntity.end())
                     break;
                 const Ecs::Entity ent = it->second;
-                const auto entityId = static_cast<std::size_t>(ent);
                 _sessionToEntity.erase(it);
                 _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
-                _sessions->forEachSession([&](int, const sockaddr_in &address) {
-                    if (const auto packet = _packetFactory->makeEntityDestroy(address, entityId))
-                        _server->sendPacket(*packet);
-                });
                 break;
             }
             case GameCommand::Type::PlayerInput: {

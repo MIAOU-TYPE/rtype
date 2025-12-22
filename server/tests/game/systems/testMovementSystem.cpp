@@ -19,11 +19,13 @@ TEST(MovementSystem, moves_entities_correctly)
     auto &reg = world.registry();
 
     auto &vel = reg.getComponents<Ecs::Velocity>().at(static_cast<size_t>(e));
-    auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
+    const auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
 
     ASSERT_TRUE(vel.has_value());
     ASSERT_TRUE(pos.has_value());
 
+    if (!vel)
+        ASSERT_TRUE(vel);
     vel->vx = 10.f;
     vel->vy = 20.f;
 

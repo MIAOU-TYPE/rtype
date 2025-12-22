@@ -1,13 +1,8 @@
 #pragma once
-
 #include <iostream>
-#include "AnimationState.hpp"
+#include <memory>
 #include "AnimationSystem.hpp"
-#include "Drawable.hpp"
-#include "IRenderer.hpp"
-#include "Position.hpp"
 #include "Registry.hpp"
-#include "Render.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommandBuffer.hpp"
@@ -29,7 +24,7 @@ namespace Engine
         explicit ClientWorld(std::shared_ptr<const SpriteRegistry> spriteRegistry);
 
         /**
-         * @brief Updates the world state and renders entities.
+         * @brief Advances the world state by a given delta time.
          * @param dt Delta time since the last update.
          */
         void step(float dt);

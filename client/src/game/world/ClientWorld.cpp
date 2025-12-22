@@ -75,7 +75,7 @@ namespace Engine
             _registry.emplaceComponent<AnimationState>(
                 entity, AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
-            std::cerr << "{ClientWorld::applyCreate}" << e.what() << std::endl;
+            std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }
     }
 

@@ -28,10 +28,10 @@
 
 using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
+#include "MenuState.hpp"
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 #include "StateManager.hpp"
-#include "MenuState.hpp"
 #include <condition_variable>
 
 /**
@@ -122,9 +122,9 @@ namespace Thread
 
         std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
 
-        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
-        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
-        std::unique_ptr<Engine::ClientWorld> _world = nullptr;    ///> Client world for managing game state
+        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr;      ///> Graphics interface
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
+        std::unique_ptr<Engine::ClientWorld> _world = nullptr;         ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites

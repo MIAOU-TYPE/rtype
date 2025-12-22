@@ -88,31 +88,18 @@ namespace Game
     void GameServer::tick()
     {
         GameCommand cmd;
-        for (int i = 0; i < 10'000 && _commandBuffer.pop(cmd); ++i)
+        while (_commandBuffer.pop(cmd))
             applyCommand(cmd);
-
-        double frameTime = _clock.restart();
-        frameTime = std::min(frameTime, 0.25);
+        const double frameTime = _clock.restart();
         _accumulator += frameTime;
-
-        constexpr int MaxStepsPerTick = 5;
-        int steps = 0;
-        bool advanced = false;
-
-        while (_accumulator >= FIXED_DT && steps < MaxStepsPerTick) {
+        while (_accumulator >= FIXED_DT) {
             update(static_cast<float>(FIXED_DT));
-            _accumulator -= FIXED_DT;
-            ++steps;
-            advanced = true;
-        }
-
-        if (steps == MaxStepsPerTick)
-            _accumulator = 0.0;
-
-        if (advanced) {
             _worldTemp->copyFrom(*_worldWrite);
-            std::scoped_lock lock(_snapshotMutex);
-            std::swap(_worldTemp, _worldRead);
+            {
+                std::scoped_lock lock(_snapshotMutex);
+                std::swap(_worldTemp, _worldRead);
+            }
+            _accumulator -= FIXED_DT;
         }
     }
 
@@ -132,10 +119,6 @@ namespace Game
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
                 const auto entityId = static_cast<std::size_t>(ent);
-                _sessions->forEachSession([&](int, const sockaddr_in &address) {
-                    if (const auto pkt = _packetFactory->makeEntityCreate(address, entityId, 100.f, 100.f, 7))
-                        _server->sendPacket(*pkt);
-                });
                 break;
             }
 
@@ -148,10 +131,6 @@ namespace Game
                 _sessionToEntity.erase(it);
                 _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
-                _sessions->forEachSession([&](int, const sockaddr_in &address) {
-                    if (const auto packet = _packetFactory->makeEntityDestroy(address, entityId))
-                        _server->sendPacket(*packet);
-                });
                 break;
             }
             case GameCommand::Type::PlayerInput: {

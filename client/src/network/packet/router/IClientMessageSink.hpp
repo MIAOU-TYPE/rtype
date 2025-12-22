@@ -57,6 +57,6 @@ namespace Ecs
         /**
          * @brief Called when a SNAPSHOT message is received.
          */
-        virtual void onSnapshot(const SnapshotEntity &entity) = 0;
+        virtual void onSnapshot(const std::vector<SnapshotEntity> &entity) = 0;
     };
 } // namespace Ecs

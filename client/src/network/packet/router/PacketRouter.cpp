@@ -38,8 +38,6 @@ namespace Ecs
             case Net::Protocol::REJECT: handleReject(); break;
             case Net::Protocol::GAME_OVER: handleGameOver(); break;
             case Net::Protocol::PONG: handlePong(); break;
-            case Net::Protocol::ENTITY_CREATE: handleEntityCreate(payload, payloadSize); break;
-            case Net::Protocol::ENTITY_DESTROY: handleEntityDestroy(payload, payloadSize); break;
             case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
@@ -110,38 +108,6 @@ namespace Ecs
     void PacketRouter::handleGameOver() const
     {
         _sink->onGameOver();
-    }
-
-    void PacketRouter::handleEntityCreate(const uint8_t *payload, const size_t size) const
-    {
-        if (size < sizeof(EntityCreateData)) {
-            std::cerr << "{PacketRouter::handleEntityCreate} Dropped: payload too small\n";
-            return;
-        }
-
-        EntityCreateData net{};
-        std::memcpy(&net, payload, sizeof(EntityCreateData));
-
-        EntityCreate evt{};
-        evt.id = be64toh(net.id);
-        evt.x = ntohf(net.x);
-        evt.y = ntohf(net.y);
-        evt.spriteId = ntohl(net.spriteId);
-        _sink->onEntityCreate(evt);
-    }
-
-    void PacketRouter::handleEntityDestroy(const uint8_t *payload, const size_t size) const
-    {
-        EntityDestroyData data{};
-
-        if (size < sizeof(EntityDestroyData)) {
-            std::cerr << "{PacketRouter::handleEntityDestroy} Dropped: payload too small\n";
-            return;
-        }
-        std::memcpy(&data, payload, sizeof(EntityDestroyData));
-        EntityDestroy entityDestroy{};
-        entityDestroy.id = be64toh(data.id);
-        _sink->onEntityDestroy(entityDestroy);
     }
 
     void PacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const

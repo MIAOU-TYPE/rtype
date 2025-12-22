@@ -30,7 +30,7 @@ namespace Net
          * @brief Maximum size of the packet buffer.
          * @note This constant defines the maximum number of bytes that can be stored in the packet buffer.
          */
-        static constexpr size_t MAX_SIZE = 2048;
+        static constexpr size_t MAX_SIZE = 4096;
 
         /**
          * @brief Constructs a new UDPPacket object.

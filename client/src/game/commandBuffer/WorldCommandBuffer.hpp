@@ -9,6 +9,7 @@
 #include <mutex>
 #include <queue>
 #include <variant>
+#include <vector>
 #include "EntityCreateData.hpp"
 #include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
@@ -30,8 +31,9 @@ namespace Engine
             Snapshot       ///> Snapshot
         };
 
-        Type type;                                                                         ///> Type of the command
-        std::variant<std::monostate, EntityCreate, EntityDestroy, SnapshotEntity> payload; ///> Command payload
+        Type type; ///> Type of the command
+        std::variant<std::monostate, EntityCreate, EntityDestroy, std::vector<SnapshotEntity>>
+            payload; ///> Command payload
     };
 
     /**

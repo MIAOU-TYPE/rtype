@@ -12,6 +12,6 @@ namespace Game
 {
     void DamageSystem::update(const IGameWorld &world)
     {
-        (void)world;
+        (void) world;
     }
 } // namespace Game

@@ -10,8 +10,8 @@
 #include <memory>
 #include "IRenderer.hpp"
 #include "IText.hpp"
-#include "RenderCommand.hpp"
 #include "ITextureManager.hpp"
+#include "RenderCommand.hpp"
 
 namespace Engine
 {
@@ -19,7 +19,7 @@ namespace Engine
      * @brief Class representing the main menu of the game.
      */
     class Menu {
-    public:
+      public:
         /**
          * @brief Construct a new Menu object.
          *
@@ -51,7 +51,7 @@ namespace Engine
         [[nodiscard]] bool wantsToStart() const noexcept;
         [[nodiscard]] bool wantsToQuit() const noexcept;
 
-    private:
+      private:
         std::shared_ptr<Graphics::IRenderer> _renderer;
 
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture;
@@ -66,4 +66,4 @@ namespace Engine
         bool _startRequested = false;
         bool _quitRequested = false;
     };
-}
+} // namespace Engine

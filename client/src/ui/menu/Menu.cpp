@@ -9,17 +9,17 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace {
-    constexpr float REF_WIDTH  = 1920.f;
+namespace
+{
+    constexpr float REF_WIDTH = 1920.f;
     constexpr float REF_HEIGHT = 1080.f;
     constexpr float LOGO_W = 1000.f;
     constexpr float LOGO_H = 670.f;
-}
+} // namespace
 
 namespace Engine
 {
-    Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer)
-        : _renderer(renderer)
+    Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
     {
         const auto font = renderer->fonts()->load("fonts/r-type.otf");
         const auto textManager = renderer->texts();
@@ -50,7 +50,6 @@ namespace Engine
         _quit->setString("Press ESC to Quit");
     }
 
-
     void Menu::update(float)
     {
         const auto viewport = _renderer->getViewportSize();
@@ -73,16 +72,31 @@ namespace Engine
         _quit->setPosition((w - _quit->getWidth()) / 2.f, h * 0.85f);
     }
 
-    void Menu::render() const {
+    void Menu::render() const
+    {
         _renderer->draw(_backgroundCmd);
         _renderer->draw(_logoCmd);
         _renderer->drawText(*_start);
         _renderer->drawText(*_quit);
     }
 
-    void Menu::onEnterPressed() { _startRequested = true; }
-    void Menu::onEscapePressed() { _quitRequested = true; }
+    void Menu::onEnterPressed()
+    {
+        _startRequested = true;
+    }
 
-    bool Menu::wantsToStart() const noexcept { return _startRequested; }
-    bool Menu::wantsToQuit() const noexcept { return _quitRequested; }
-}
+    void Menu::onEscapePressed()
+    {
+        _quitRequested = true;
+    }
+
+    bool Menu::wantsToStart() const noexcept
+    {
+        return _startRequested;
+    }
+
+    bool Menu::wantsToQuit() const noexcept
+    {
+        return _quitRequested;
+    }
+} // namespace Engine

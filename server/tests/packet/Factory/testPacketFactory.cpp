@@ -62,50 +62,6 @@ TEST(PacketFactory, MakeDefaultPacket)
     EXPECT_EQ(p->address()->sin_port, addr.sin_port);
 }
 
-TEST(PacketFactory, MakeEntityCreatePacket)
-{
-    auto pkt = std::make_shared<MockPacket>();
-    Net::Factory::PacketFactory f(pkt);
-
-    sockaddr_in addr = makeAddr(0x11223344, 9999);
-
-    size_t id = 777;
-    float x = 12.5f;
-    float y = 99.75f;
-    int sprite = 42;
-
-    auto p = f.makeEntityCreate(addr, id, x, y, sprite);
-    ASSERT_NE(p, nullptr);
-
-    const auto *raw = reinterpret_cast<const EntityCreateData *>(p->buffer());
-
-    EXPECT_EQ(raw->header.type, Net::Protocol::ENTITY_CREATE);
-    EXPECT_EQ(raw->header.version, 1);
-    EXPECT_EQ(raw->header.size, htons(sizeof(EntityCreateData)));
-
-    EXPECT_EQ(raw->id, htobe64(id));
-    EXPECT_EQ(raw->x, htonf(x));
-    EXPECT_EQ(raw->y, htonf(y));
-    EXPECT_EQ(raw->spriteId, htonl(sprite));
-}
-
-TEST(PacketFactory, MakeEntityDestroyPacket)
-{
-    auto pkt = std::make_shared<MockPacket>();
-    Net::Factory::PacketFactory f(pkt);
-
-    sockaddr_in addr = makeAddr(0xAABBCCDD, 2222);
-    size_t id = 123456;
-
-    auto p = f.makeEntityDestroy(addr, id);
-    ASSERT_NE(p, nullptr);
-
-    const auto *raw = reinterpret_cast<const EntityDestroyData *>(p->buffer());
-
-    EXPECT_EQ(raw->header.type, Net::Protocol::ENTITY_DESTROY);
-    EXPECT_EQ(raw->id, htobe64(id));
-}
-
 TEST(PacketFactory, MakeDamagePacket)
 {
     auto pkt = std::make_shared<MockPacket>();

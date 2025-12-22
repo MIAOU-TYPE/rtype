@@ -24,7 +24,6 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
-#include "RenderCommandBuffer.hpp"
 #include "WorldCommandBuffer.hpp"
 
 /**

@@ -192,23 +192,23 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        _eventRegistry->onKeyReleased(Core::Key::Up, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Down, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Down, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Left, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Left, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Right, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Right, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyReleased(Core::Key::Space, [this]() {
+        _eventRegistry->onKeyPressed(Core::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }

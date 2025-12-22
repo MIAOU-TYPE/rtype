@@ -21,31 +21,7 @@ namespace Engine
 
     void ClientWorld::step(const float dt)
     {
-        _registry.view<Position, Drawable, AnimationState, Render>(
-            [&](Ecs::Entity, const Position &, const Drawable &drawable, AnimationState &animState, const Render &) {
-                if (!_spriteRegistry->exists(drawable.spriteId))
-                    return;
-
-                const SpriteDefinition &sprite = _spriteRegistry->get(drawable.spriteId);
-
-                if (animState.currentAnimation.empty())
-                    animState.currentAnimation = sprite.defaultAnimation;
-
-                auto animIt = sprite.animations.find(animState.currentAnimation);
-                if (animIt == sprite.animations.end()) {
-                    animState.currentAnimation = sprite.defaultAnimation;
-                    animState.frameIndex = 0;
-                    animState.elapsed = 0.f;
-
-                    animIt = sprite.animations.find(animState.currentAnimation);
-                    if (animIt == sprite.animations.end())
-                        return;
-                }
-
-                const Animation &anim = animIt->second;
-
-                AnimationSystem::update(animState, anim, dt);
-            });
+        AnimationSystem::update(_registry, _spriteRegistry, dt);
     }
 
     Ecs::Registry &ClientWorld::registry()

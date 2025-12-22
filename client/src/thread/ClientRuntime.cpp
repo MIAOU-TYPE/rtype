@@ -89,15 +89,15 @@ namespace Thread
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> cmds;
+            std::shared_ptr<const std::vector<Engine::RenderCommand>> renderCmds;
             {
                 std::scoped_lock lock(_frameMutex);
-                cmds = _frontCmds;
+                renderCmds = _frontCmds;
             }
 
             _renderer->beginFrame();
-            if (cmds) {
-                for (const auto &cmd : *cmds)
+            if (renderCmds) {
+                for (const auto &cmd : *renderCmds)
                     _renderer->draw(cmd);
             }
             _renderer->endFrame();
@@ -121,8 +121,8 @@ namespace Thread
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
         constexpr float FixedDt = 1.0f / 60.0f;
-        static constexpr float MaxFrameDt = 0.25f; // clamp gros freeze
-        static constexpr int MaxStepsPerTick = 4;  // évite spiral
+        static constexpr float MaxFrameDt = 0.25f;
+        static constexpr int MaxStepsPerTick = 4;
 
         std::vector<Engine::RenderCommand> built;
         built.reserve(2048);
@@ -137,7 +137,7 @@ namespace Thread
             nextTick += Tick;
 
             const auto tickStart = clock::now();
-            const auto deadline = tickStart + Tick - std::chrono::milliseconds(1); // marge
+            const auto deadline = tickStart + Tick - std::chrono::milliseconds(1);
 
             const auto now = tickStart;
             float frameDt = std::chrono::duration<float>(now - last).count();
@@ -173,7 +173,7 @@ namespace Thread
             }
 
             _backCmds->clear();
-            _world->buildRenderCommands(*_backCmds);
+            Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_backCmds);
             {
                 std::scoped_lock lock(_frameMutex);
                 _frontCmds = _backCmds;

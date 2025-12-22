@@ -8,8 +8,6 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
 
 namespace Ecs

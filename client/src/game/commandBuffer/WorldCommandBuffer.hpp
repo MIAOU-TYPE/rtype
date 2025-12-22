@@ -10,8 +10,6 @@
 #include <queue>
 #include <variant>
 #include <vector>
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "SnapEntityData.hpp"
 
 namespace Engine
@@ -22,18 +20,15 @@ namespace Engine
      */
     struct WorldCommand {
         enum class Type {
-            Accept,        ///> Accept connection
-            Reject,        ///> Reject connection
-            Pong,          ///> Pong response
-            GameOver,      ///> Game over notification
-            CreateEntity,  ///> CreateEntity
-            DestroyEntity, ///> DestroyEntity
-            Snapshot       ///> Snapshot
+            Accept,   ///> Accept connection
+            Reject,   ///> Reject connection
+            Pong,     ///> Pong response
+            GameOver, ///> Game over notification
+            Snapshot  ///> Snapshot
         };
 
-        Type type; ///> Type of the command
-        std::variant<std::monostate, EntityCreate, EntityDestroy, std::vector<SnapshotEntity>>
-            payload; ///> Command payload
+        Type type;                                                         ///> Type of the command
+        std::variant<std::monostate, std::vector<SnapshotEntity>> payload; ///> Command payload
     };
 
     /**
@@ -53,7 +48,7 @@ namespace Engine
          * @param out Reference to store the popped command.
          * @return True if a command was popped, false if the buffer was empty.
          */
-        bool tryPop(WorldCommand &out);
+        [[nodiscard]] bool tryPop(WorldCommand &out);
 
       private:
         std::mutex _mutex;               ///> Mutex for thread safety

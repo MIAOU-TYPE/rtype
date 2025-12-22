@@ -16,8 +16,6 @@
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "SnapEntityData.hpp"

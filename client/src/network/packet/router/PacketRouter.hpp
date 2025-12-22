@@ -11,12 +11,10 @@
 #include <iostream>
 #include <memory>
 
-#include "../../../game/controller/IClientMessageSink.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "HeaderData.hpp"
+#include "IClientMessageSink.hpp"
 #include "IPacket.hpp"
 #include "SnapEntityData.hpp"
 #include "TypesData.hpp"

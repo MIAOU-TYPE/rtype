@@ -53,6 +53,17 @@ namespace Engine
         void applySnapshot(const std::vector<SnapshotEntity> &entities);
 
       private:
+        /**
+         * @struct EntityCreate
+         * @brief Data structure for creating a new entity in the client world.
+         */
+        struct EntityCreate {
+            size_t id;             ///> Entity ID
+            float x;               ///> X position
+            float y;               ///> Y position
+            unsigned int spriteId; ///> Sprite identifier
+        };
+
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management

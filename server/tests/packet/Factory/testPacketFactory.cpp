@@ -15,8 +15,6 @@
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "EntityCreateData.hpp"
-#include "EntityDestroyData.hpp"
 #include "PacketFactory.hpp"
 #include "mockIPacket.hpp"
 

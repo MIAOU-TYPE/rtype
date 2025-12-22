@@ -46,7 +46,7 @@ namespace Ecs
         _commandBuffer.get().push({Engine::WorldCommand::Type::DestroyEntity, data});
     }
 
-    void ClientController::onSnapshot(const SnapshotEntity &data)
+    void ClientController::onSnapshot(const std::vector<SnapshotEntity> &data)
     {
         _commandBuffer.get().push({Engine::WorldCommand::Type::Snapshot, data});
     }

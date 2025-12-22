@@ -65,7 +65,7 @@ namespace Ecs
         /**
          * @brief Called when a SNAPSHOT message is received.
          */
-        void onSnapshot(const SnapshotEntity &data) override;
+        void onSnapshot(const std::vector<SnapshotEntity> &data) override;
 
       private:
         std::reference_wrapper<Engine::WorldCommandBuffer> _commandBuffer; ///> Reference to the world command buffer

@@ -36,4 +36,4 @@ namespace Engine
     {
         return _running;
     }
-}
+} // namespace Engine

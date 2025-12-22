@@ -16,7 +16,7 @@ namespace Engine
      * @brief Manages the different states of the game.
      */
     class StateManager {
-    public:
+      public:
         /**
          * @brief Construct a new State Manager object with an initial state.
          *
@@ -43,8 +43,8 @@ namespace Engine
          */
         bool isRunning() const;
 
-    private:
-        std::unique_ptr<IGameState> _current;   ///> The current game state.
-        bool _running = true;       ///> Indicates if the state manager is running.
+      private:
+        std::unique_ptr<IGameState> _current; ///> The current game state.
+        bool _running = true;                 ///> Indicates if the state manager is running.
     };
-}
+} // namespace Engine

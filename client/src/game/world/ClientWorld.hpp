@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "AnimationState.hpp"
 #include "AnimationSystem.hpp"
 #include "Drawable.hpp"

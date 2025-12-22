@@ -7,8 +7,8 @@
 
 #pragma once
 #include "ClientWorld.hpp"
-#include "SpriteRegistry.hpp"
 #include "Registry.hpp"
+#include "SpriteRegistry.hpp"
 
 namespace Engine
 {

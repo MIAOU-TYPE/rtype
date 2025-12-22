@@ -113,7 +113,7 @@ namespace Ecs
     void PacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
     {
         if (size < sizeof(SnapshotBatchHeader)) {
-            std::cerr << "Snapshot batch too small\n";
+            std::cerr << "{PacketRouter::handleSnapEntity} Snapshot batch too small\n";
             return;
         }
 

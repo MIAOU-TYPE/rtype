@@ -24,7 +24,6 @@ namespace
         if (animState.frameIndex >= anim.frames.size())
             animState.frameIndex = 0;
 
-
         while (anim.frames[animState.frameIndex].duration <= animState.elapsed) {
             animState.elapsed -= anim.frames[animState.frameIndex].duration;
             animState.frameIndex++;
@@ -40,7 +39,7 @@ namespace
             }
         }
     }
-}
+} // namespace
 
 namespace Engine
 {
@@ -68,8 +67,6 @@ namespace Engine
             const Animation &anim = animIt->second;
             animState.elapsed += dt;
             updateFrameIndex(animState, anim);
-
-
         });
     }
 } // namespace Engine

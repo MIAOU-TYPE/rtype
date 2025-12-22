@@ -14,7 +14,7 @@ namespace Engine
     {
         std::ifstream file(path);
         if (!file)
-            throw SpriteLoaderError("{SpriteLoader::loadFromFile}: cannot open sprite file: " + path);
+            throw SpriteLoaderError("{SpriteLoader::loadFromFile} cannot open sprite file: " + path);
 
         nlohmann::json j;
         file >> j;

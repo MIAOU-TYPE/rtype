@@ -6,7 +6,6 @@
 */
 
 #include "ClientWorld.hpp"
-#include <iostream>
 
 namespace Engine
 {
@@ -63,10 +62,6 @@ namespace Engine
         try {
             if (!_spriteRegistry->exists(data.spriteId))
                 return;
-            if (_entityMap.contains(data.id)) {
-                std::cerr << "{ClientWorld::applyCreate} Entity " << data.id << " already exists\n";
-                return;
-            }
 
             const Ecs::Entity entity = _registry.createEntity();
             _entityMap.emplace(data.id, entity);

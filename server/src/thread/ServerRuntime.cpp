@@ -87,7 +87,7 @@ void ServerRuntime::runProcessor() const
 void ServerRuntime::runUpdate() const
 {
     using clock = std::chrono::steady_clock;
-    constexpr auto Tick = std::chrono::milliseconds(16); // ~60 Hz
+    constexpr auto Tick = std::chrono::milliseconds(16);
     auto next = clock::now();
 
     while (_running) {

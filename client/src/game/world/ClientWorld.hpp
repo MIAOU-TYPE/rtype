@@ -7,10 +7,10 @@
 #include "Position.hpp"
 #include "Registry.hpp"
 #include "Render.hpp"
-#include "RenderCommandBuffer.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommandBuffer.hpp"
+#include <unordered_set>
 
 namespace Engine
 {
@@ -44,7 +44,9 @@ namespace Engine
             switch (cmd.type) {
                 case WorldCommand::Type::CreateEntity: applyCreate(std::get<EntityCreate>(cmd.payload)); break;
                 case WorldCommand::Type::DestroyEntity: applyDestroy(std::get<EntityDestroy>(cmd.payload)); break;
-                case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotEntity>(cmd.payload)); break;
+                case WorldCommand::Type::Snapshot:
+                    applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
+                    break;
                 default: break;
             }
         }
@@ -79,15 +81,37 @@ namespace Engine
                 });
         }
 
-      private:
         void applyCreate(const EntityCreate &data);
-        void applyDestroy(const EntityDestroy &data);
-        void applySnapshot(const SnapshotEntity &entity);
+        void applySingleSnapshot(const SnapshotEntity &entity);
+
+        void applySnapshot(const std::vector<SnapshotEntity> &entities)
+        {
+            std::unordered_set<size_t> receivedIds;
+            receivedIds.reserve(entities.size());
+
+            for (const auto &entity : entities) {
+                receivedIds.insert(entity.id);
+                applySingleSnapshot(entity);
+            }
+
+            for (auto it = _entityMap.begin(); it != _entityMap.end();) {
+                if (!receivedIds.contains(it->first)) {
+                    _registry.destroyEntity(it->second);
+                    it = _entityMap.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
 
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
+
+        std::unordered_map<size_t, float> _destroyTimers; ///> Timers for entities scheduled for destruction
+        static constexpr float DestroyDelay =
+            0.5f; ///> Delay before destroying an entity after receiving a destroy command
     };
 } // namespace Engine

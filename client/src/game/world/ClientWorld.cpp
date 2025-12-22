@@ -15,8 +15,8 @@ namespace Engine
     {
         _registry.registerComponent<Position>();
         _registry.registerComponent<Drawable>();
-        _registry.registerComponent<AnimationState>();
         _registry.registerComponent<Render>();
+        _registry.registerComponent<AnimationState>();
     }
 
     void ClientWorld::step(const float dt)
@@ -31,9 +31,16 @@ namespace Engine
                 if (animState.currentAnimation.empty())
                     animState.currentAnimation = sprite.defaultAnimation;
 
-                const auto animIt = sprite.animations.find(animState.currentAnimation);
-                if (animIt == sprite.animations.end())
-                    return;
+                auto animIt = sprite.animations.find(animState.currentAnimation);
+                if (animIt == sprite.animations.end()) {
+                    animState.currentAnimation = sprite.defaultAnimation;
+                    animState.frameIndex = 0;
+                    animState.elapsed = 0.f;
+
+                    animIt = sprite.animations.find(animState.currentAnimation);
+                    if (animIt == sprite.animations.end())
+                        return;
+                }
 
                 const Animation &anim = animIt->second;
 
@@ -49,6 +56,8 @@ namespace Engine
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
+            if (!_spriteRegistry->exists(data.spriteId))
+                return;
             if (_entityMap.contains(data.id)) {
                 std::cerr << "{ClientWorld::applyCreate} Entity " << data.id << " already exists\n";
                 return;
@@ -58,8 +67,6 @@ namespace Engine
             _entityMap.emplace(data.id, entity);
 
             _registry.emplaceComponent<Position>(entity, Position{data.x, data.y});
-            if (!_spriteRegistry->exists(data.spriteId))
-                return;
             _registry.emplaceComponent<Drawable>(entity, Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
@@ -68,53 +75,46 @@ namespace Engine
             _registry.emplaceComponent<AnimationState>(
                 entity, AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
+            applyDestroy(EntityDestroy{data.id});
             std::cerr << "{ClientWorld::applyCreate}" << e.what() << std::endl;
         }
     }
 
-    void ClientWorld::applyDestroy(const EntityDestroy &data)
-    {
-        const auto it = _entityMap.find(data.id);
-        if (it == _entityMap.end()) {
-            std::cerr << "{ClientWorld::applyDestroy} Entity with ID " << data.id
-                      << " does not exist. Cannot destroy.\n";
-            return;
-        }
-        const auto entity = it->second;
-        _entityMap.erase(it);
-        _registry.destroyEntity(entity);
-    }
-
-    void ClientWorld::applySnapshot(const SnapshotEntity &entity)
+    void ClientWorld::applySingleSnapshot(const SnapshotEntity &entity)
     {
         const auto it = _entityMap.find(entity.id);
         if (it == _entityMap.end()) {
+            if (_destroyTimers.contains(entity.id))
+                return;
             std::cout << "{ClientWorld::applySnapshot} Entity " << entity.id << " not found, creating it.\n";
             applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.spriteId});
             return;
         }
 
         const Ecs::Entity localEntity = it->second;
+        const auto entityIndex = static_cast<size_t>(localEntity);
 
-        auto &pos = _registry.getComponents<Position>()[static_cast<size_t>(localEntity)];
-        pos->x = entity.x;
-        pos->y = entity.y;
+        if (auto &pos = _registry.getComponents<Position>().at(entityIndex)) {
+            pos->x = entity.x;
+            pos->y = entity.y;
+        }
 
-        auto &drawable = _registry.getComponents<Drawable>()[static_cast<size_t>(localEntity)];
-        const bool spriteChanged = (drawable->spriteId != entity.spriteId);
-        drawable->spriteId = entity.spriteId;
+        if (auto &drawable = _registry.getComponents<Drawable>().at(entityIndex)) {
+            if (const bool spriteChanged = (drawable->spriteId != entity.spriteId);
+                spriteChanged && _spriteRegistry->exists(entity.spriteId)) {
+                drawable->spriteId = entity.spriteId;
+                const auto &sprite = _spriteRegistry->get(drawable->spriteId);
 
-        if (spriteChanged) {
-            const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                if (auto &render = _registry.getComponents<Render>().at(entityIndex)) {
+                    render->texture = sprite.textureHandle;
 
-            auto &render = _registry.getComponents<Render>()[static_cast<size_t>(localEntity)];
-            render->texture = sprite.textureHandle;
-
-            auto &animState = _registry.getComponents<AnimationState>()[static_cast<size_t>(localEntity)];
-            animState->currentAnimation = sprite.defaultAnimation;
-            animState->frameIndex = 0;
-            animState->elapsed = 0.f;
+                    if (auto &animState = _registry.getComponents<AnimationState>().at(entityIndex)) {
+                        animState->currentAnimation = sprite.defaultAnimation;
+                        animState->frameIndex = 0;
+                        animState->elapsed = 0.f;
+                    }
+                }
+            }
         }
     }
-
 } // namespace Engine

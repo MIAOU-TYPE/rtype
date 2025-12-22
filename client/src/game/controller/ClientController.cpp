@@ -36,16 +36,6 @@ namespace Ecs
         std::cout << "onGameOver" << std::endl;
     }
 
-    void ClientController::onEntityCreate(const EntityCreate &data)
-    {
-        _commandBuffer.get().push({Engine::WorldCommand::Type::CreateEntity, data});
-    }
-
-    void ClientController::onEntityDestroy(const EntityDestroy &data)
-    {
-        _commandBuffer.get().push({Engine::WorldCommand::Type::DestroyEntity, data});
-    }
-
     void ClientController::onSnapshot(const std::vector<SnapshotEntity> &data)
     {
         _commandBuffer.get().push({Engine::WorldCommand::Type::Snapshot, data});

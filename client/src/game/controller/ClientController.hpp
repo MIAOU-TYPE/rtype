@@ -52,17 +52,6 @@ namespace Ecs
         void onGameOver() override;
 
         /**
-         * @brief Called when an ENTITY_CREATE message is received.
-         * @param data The data associated with the entity creation.
-         */
-        void onEntityCreate(const EntityCreate &data) override;
-
-        /**
-         * @brief Called when an ENTITY_DESTROY message is received.
-         */
-        void onEntityDestroy(const EntityDestroy &data) override;
-
-        /**
          * @brief Called when a SNAPSHOT message is received.
          */
         void onSnapshot(const std::vector<SnapshotEntity> &data) override;

@@ -20,6 +20,7 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
 
 ServerRuntime::~ServerRuntime()
 {
+    std::scoped_lock lock(_mutex);
     if (!_stopRequested)
         stop();
     _server = nullptr;

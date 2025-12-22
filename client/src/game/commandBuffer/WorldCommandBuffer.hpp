@@ -24,7 +24,7 @@ namespace Engine
             Reject,   ///> Reject connection
             Pong,     ///> Pong response
             GameOver, ///> Game over notification
-            Snapshot  ///> Snapshot
+            Snapshot  ///> Snapshot of the world state
         };
 
         Type type;                                                         ///> Type of the command

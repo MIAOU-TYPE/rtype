@@ -6,7 +6,10 @@
 */
 
 #pragma once
-#include "ClientWorld.hpp"
+
+#include <memory>
+#include "AnimationState.hpp"
+#include "Drawable.hpp"
 #include "Registry.hpp"
 #include "SpriteRegistry.hpp"
 
@@ -24,6 +27,7 @@ namespace Engine
          * @param spriteRegistry Shared pointer to the sprite registry for retrieving sprite definitions.
          * @param dt The delta time since the last update.
          */
-        static void update(Ecs::Registry &registry, std::shared_ptr<const SpriteRegistry> &spriteRegistry, float dt);
+        static void update(
+            Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry, float dt);
     };
 } // namespace Engine

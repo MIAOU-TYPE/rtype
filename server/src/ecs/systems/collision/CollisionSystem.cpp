@@ -40,7 +40,7 @@ namespace Game
                     toDestroy.emplace_back(i);
                 } else if (dmgArr.at(j) && hpArr.at(i)) {
                     hpArr.at(i)->hp -= dmgArr.at(j)->amount;
-                    toDestroy.emplace_back(Ecs::Entity(j));
+                    toDestroy.emplace_back(j);
                 }
             }
         }

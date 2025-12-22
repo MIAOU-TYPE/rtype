@@ -132,9 +132,6 @@ namespace Thread
         static constexpr float MaxFrameDt = 0.16f;
         static constexpr int MaxStepsPerTick = 4;
 
-        std::vector<Engine::RenderCommand> built;
-        built.reserve(2048);
-
         auto nextTick = clock::now();
         auto last = nextTick;
         float accumulator = 0.f;
@@ -234,7 +231,6 @@ namespace Thread
         {
             std::scoped_lock lock(_frameMutex);
             _readRenderCommands = _writeRenderCommands;
-            _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         }
     }
 

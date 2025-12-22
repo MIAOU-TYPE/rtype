@@ -28,10 +28,8 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/player3.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/player4.json", *spriteRegistry);
 
-        spriteRegistry->forEach([&](const unsigned int, const Engine::SpriteDefinition &def) {
-            const Graphics::TextureHandle handle = textureManager->load(def.texturePath);
-            auto &mutableDef = const_cast<Engine::SpriteDefinition &>(def);
-            mutableDef.textureHandle = handle;
+        spriteRegistry->forEach([&](const unsigned int, Engine::SpriteDefinition &def) {
+            def.textureHandle = textureManager->load(def.texturePath);
         });
     }
 } // namespace Utils

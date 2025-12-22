@@ -45,7 +45,7 @@ namespace Engine
 {
 
     void AnimationSystem::update(
-        Ecs::Registry &registry, std::shared_ptr<const SpriteRegistry> &spriteRegistry, const float dt)
+        Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry, const float dt)
     {
         registry.view<Drawable, AnimationState>([&](Ecs::Entity, const Drawable &drawable, AnimationState &animState) {
             if (!spriteRegistry->exists(drawable.spriteId))

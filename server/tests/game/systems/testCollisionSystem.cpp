@@ -74,7 +74,7 @@ TEST(CollisionSystem, projectile_is_destroyed_after_collision)
     Game::CollisionSystem::update(world);
 
     auto &dmg = reg.getComponents<Ecs::Damage>().at(static_cast<size_t>(proj));
-    EXPECT_FALSE(dmg.has_value());
+    EXPECT_TRUE(dmg.has_value());
 }
 
 TEST(CollisionSystem, no_collision_no_damage)

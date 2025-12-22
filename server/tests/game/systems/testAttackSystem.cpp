@@ -66,7 +66,7 @@ TEST(AttackSystem, shoots_projectile_when_in_attack_state)
     const size_t enemyIdx = static_cast<size_t>(enemy);
     const size_t playerIdx = static_cast<size_t>(player);
 
-    reg.getComponents<Ecs::Target>()[enemyIdx]->targetId = playerIdx;
+    reg.getComponents<Ecs::Target>().at(enemyIdx)->targetId = playerIdx;
 
     AttackSystem::update(world, 0.1f);
 
@@ -77,11 +77,11 @@ TEST(AttackSystem, shoots_projectile_when_in_attack_state)
     bool projectileFound = false;
 
     for (size_t i = 0; i < velArr.size(); ++i) {
-        if (velArr[i].has_value() && dmgArr[i].has_value() && colArr[i].has_value()) {
+        if (velArr.at(i).has_value() && dmgArr.at(i).has_value() && colArr.at(i).has_value()) {
             projectileFound = true;
-            EXPECT_FLOAT_EQ(velArr[i]->vx, 100.f);
-            EXPECT_FLOAT_EQ(velArr[i]->vy, 0.f);
-            EXPECT_EQ(dmgArr[i]->amount, 10);
+            EXPECT_FLOAT_EQ(velArr.at(i)->vx, 100.f);
+            EXPECT_FLOAT_EQ(velArr.at(i)->vy, 0.f);
+            EXPECT_EQ(dmgArr.at(i)->amount, 10);
         }
     }
 
@@ -96,16 +96,16 @@ TEST(AttackSystem, does_not_shoot_during_cooldown)
     const Ecs::Entity enemy = createEnemyWithAttack(world);
     const size_t enemyIdx = static_cast<size_t>(enemy);
 
-    reg.getComponents<Ecs::AIBrain>()[enemyIdx]->attackCooldown = 1.f;
+    reg.getComponents<Ecs::AIBrain>().at(enemyIdx)->attackCooldown = 1.f;
 
     const Ecs::Entity player = createPlayer(world, 100.f, 0.f);
-    reg.getComponents<Ecs::Target>()[enemyIdx]->targetId = static_cast<size_t>(player);
+    reg.getComponents<Ecs::Target>().at(enemyIdx)->targetId = static_cast<size_t>(player);
 
     AttackSystem::update(world, 0.1f);
 
     auto &dmgArr = reg.getComponents<Ecs::Damage>();
     for (size_t i = 0; i < dmgArr.size(); ++i)
-        EXPECT_FALSE(dmgArr[i].has_value());
+        EXPECT_FALSE(dmgArr.at(i).has_value());
 }
 
 TEST(AttackSystem, does_not_shoot_without_target)
@@ -119,7 +119,7 @@ TEST(AttackSystem, does_not_shoot_without_target)
 
     auto &dmgArr = reg.getComponents<Ecs::Damage>();
     for (size_t i = 0; i < dmgArr.size(); ++i)
-        EXPECT_FALSE(dmgArr[i].has_value());
+        EXPECT_FALSE(dmgArr.at(i).has_value());
 }
 
 TEST(AttackSystem, resets_cooldown_after_shooting)
@@ -133,12 +133,12 @@ TEST(AttackSystem, resets_cooldown_after_shooting)
     const size_t enemyIdx = static_cast<size_t>(enemy);
     const size_t playerIdx = static_cast<size_t>(player);
 
-    reg.getComponents<Ecs::Target>()[enemyIdx]->targetId = playerIdx;
+    reg.getComponents<Ecs::Target>().at(enemyIdx)->targetId = playerIdx;
 
     AttackSystem::update(world, 0.1f);
 
-    const auto &brain = *reg.getComponents<Ecs::AIBrain>()[enemyIdx];
-    const auto &atk = *reg.getComponents<Ecs::Attack>()[enemyIdx];
+    const auto &brain = *reg.getComponents<Ecs::AIBrain>().at(enemyIdx);
+    const auto &atk = *reg.getComponents<Ecs::Attack>().at(enemyIdx);
 
     EXPECT_FLOAT_EQ(brain.attackCooldown, atk.cooldown);
 }

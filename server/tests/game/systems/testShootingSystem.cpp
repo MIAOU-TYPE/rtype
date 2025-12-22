@@ -20,8 +20,8 @@ TEST(ShootingSystem, creates_projectile_when_shooting)
     Ecs::Entity player = world.createPlayer();
 
     auto &reg = world.registry();
-    auto &input = reg.getComponents<Game::InputComponent>()[static_cast<size_t>(player)];
-    auto &pos = reg.getComponents<Ecs::Position>()[static_cast<size_t>(player)];
+    auto &input = reg.getComponents<Game::InputComponent>().at(static_cast<size_t>(player));
+    auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(player));
 
     ASSERT_TRUE(input.has_value());
     ASSERT_TRUE(pos.has_value());
@@ -37,12 +37,12 @@ TEST(ShootingSystem, creates_projectile_when_shooting)
     bool foundProjectile = false;
 
     for (size_t i = 0; i < velArr.size(); i++) {
-        if (velArr[i].has_value() && dmgArr[i].has_value() && colArr[i].has_value()) {
+        if (velArr.at(i).has_value() && dmgArr.at(i).has_value() && colArr.at(i).has_value()) {
             foundProjectile = true;
 
-            EXPECT_FLOAT_EQ(velArr[i]->vx, 100.0f);
-            EXPECT_FLOAT_EQ(velArr[i]->vy, 0.f);
-            EXPECT_EQ(dmgArr[i]->amount, 20);
+            EXPECT_FLOAT_EQ(velArr.at(i)->vx, 100.0f);
+            EXPECT_FLOAT_EQ(velArr.at(i)->vy, 0.f);
+            EXPECT_EQ(dmgArr.at(i)->amount, 20);
         }
     }
 
@@ -55,7 +55,7 @@ TEST(ShootingSystem, resets_shoot_flag)
     Ecs::Entity player = world.createPlayer();
 
     auto &reg = world.registry();
-    auto &input = reg.getComponents<Game::InputComponent>()[static_cast<size_t>(player)];
+    auto &input = reg.getComponents<Game::InputComponent>().at(static_cast<size_t>(player));
 
     ASSERT_TRUE(input.has_value());
 

@@ -20,5 +20,5 @@ TEST(LifetimeSystem, destroys_entity_after_time_expires)
 
     Game::LifetimeSystem::update(world, 0.6f);
 
-    EXPECT_FALSE(reg.getComponents<Ecs::Lifetime>()[static_cast<size_t>(e)].has_value());
+    EXPECT_FALSE(reg.getComponents<Ecs::Lifetime>().at(static_cast<size_t>(e)).has_value());
 }

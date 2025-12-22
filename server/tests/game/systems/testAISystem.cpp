@@ -22,12 +22,12 @@ TEST(AISystem, idle_moves_slowly)
     reg.emplaceComponent<Ecs::Position>(e, 0.f, 0.f);
     reg.emplaceComponent<Ecs::Target>(e);
 
-    auto &tgt = reg.getComponents<Ecs::Target>()[static_cast<size_t>(e)];
+    auto &tgt = reg.getComponents<Ecs::Target>().at(static_cast<size_t>(e));
     tgt->targetId = SIZE_MAX;
 
     Game::AISystem::update(world, 0.1f);
 
-    const auto &vel = reg.getComponents<Ecs::Velocity>()[static_cast<size_t>(e)];
+    const auto &vel = reg.getComponents<Ecs::Velocity>().at(static_cast<size_t>(e));
     ASSERT_TRUE(vel.has_value());
 
     EXPECT_FLOAT_EQ(vel->vx, -20.f);
@@ -44,12 +44,12 @@ TEST(AISystem, transitions_to_patrol_after_1s)
     reg.emplaceComponent<Ecs::Position>(e, 0.f, 0.f);
     reg.emplaceComponent<Ecs::Target>(e);
 
-    auto &tgt = reg.getComponents<Ecs::Target>()[static_cast<size_t>(e)];
+    auto &tgt = reg.getComponents<Ecs::Target>().at(static_cast<size_t>(e));
     tgt->targetId = SIZE_MAX;
 
     Game::AISystem::update(world, 1.6f);
 
-    const auto &brain = reg.getComponents<Ecs::AIBrain>()[static_cast<size_t>(e)];
+    const auto &brain = reg.getComponents<Ecs::AIBrain>().at(static_cast<size_t>(e));
     ASSERT_TRUE(brain.has_value());
 
     EXPECT_EQ(brain->state, Ecs::AIState::Patrol);

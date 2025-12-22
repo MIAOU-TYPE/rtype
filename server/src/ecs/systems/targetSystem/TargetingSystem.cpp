@@ -17,13 +17,13 @@ namespace Game
 
         std::vector<size_t> players;
         for (size_t i = 0; i < ctrlArr.size(); ++i)
-            if (ctrlArr[i].has_value())
+            if (ctrlArr.at(i).has_value())
                 players.push_back(i);
         if (players.empty())
             return;
 
         const size_t playerId = players[Rand::rng() % players.size()];
-        const Ecs::Position &playerPos = *posArr[playerId];
+        const Ecs::Position &playerPos = *posArr.at(playerId);
         reg.view<Ecs::Target, Ecs::Position>([&](Ecs::Entity, Ecs::Target &tgt, const Ecs::Position &pos) {
             const float dx = playerPos.x - pos.x;
             const float dy = playerPos.y - pos.y;

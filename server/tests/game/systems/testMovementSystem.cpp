@@ -18,8 +18,8 @@ TEST(MovementSystem, moves_entities_correctly)
 
     auto &reg = world.registry();
 
-    auto &vel = reg.getComponents<Ecs::Velocity>()[static_cast<size_t>(e)];
-    auto &pos = reg.getComponents<Ecs::Position>()[static_cast<size_t>(e)];
+    auto &vel = reg.getComponents<Ecs::Velocity>().at(static_cast<size_t>(e));
+    auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
 
     ASSERT_TRUE(vel.has_value());
     ASSERT_TRUE(pos.has_value());
@@ -40,8 +40,8 @@ TEST(MovementSystem, dt_affects_speed)
 
     auto &reg = world.registry();
 
-    auto &vel = reg.getComponents<Ecs::Velocity>()[static_cast<size_t>(e)];
-    auto &pos = reg.getComponents<Ecs::Position>()[static_cast<size_t>(e)];
+    auto &vel = reg.getComponents<Ecs::Velocity>().at(static_cast<size_t>(e));
+    auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
 
     ASSERT_TRUE(vel.has_value());
     ASSERT_TRUE(pos.has_value());

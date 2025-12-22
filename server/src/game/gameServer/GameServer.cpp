@@ -80,7 +80,6 @@ namespace Game
 
         MovementSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
-        DamageSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);
     }

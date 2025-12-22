@@ -100,18 +100,6 @@ namespace Ecs
         void handleGameOver() const;
 
         /**
-         * @brief Handler for ENTITY_CREATE packets.
-         * @param payload The payload data of the ENTITY_CREATE packet.
-         * @param size The size of the payload data.
-         */
-        void handleEntityCreate(const uint8_t *payload, size_t size) const;
-
-        /**
-         * @brief Handler for ENTITY_DESTROY packets.
-         */
-        void handleEntityDestroy(const uint8_t *payload, size_t size) const;
-
-        /**
          * @brief Handler for SNAP_ENTITY packets.
          */
         void handleSnapEntity(const uint8_t *payload, size_t size) const;

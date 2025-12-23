@@ -39,11 +39,11 @@ struct PendingProjectile {
     {
     }
 
-    Ecs::Position pos; ///> Position of the projectile
-    Ecs::Velocity velocity; ///> Velocity of the projectile
-    Ecs::Damage damage; ///> Damage component
+    Ecs::Position pos;          ///> Position of the projectile
+    Ecs::Velocity velocity;     ///> Velocity of the projectile
+    Ecs::Damage damage;         ///> Damage component
     Ecs::Projectile projectile; ///> Projectile component
-    Ecs::Collision collision; ///> Collision component
+    Ecs::Collision collision;   ///> Collision component
 };
 
 namespace Game

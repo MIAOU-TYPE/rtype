@@ -32,10 +32,8 @@ namespace Game
       public:
         /**
          * @brief Construct a new World.
-         *
-         * Registers every component type used in the ECS.
          */
-        World();
+        World() = default;
 
         /**
          * @brief Access the underlying ECS registry.

@@ -55,8 +55,7 @@ namespace Game
                 const float vx = -shoot.projectileSpeed * std::cos(angleRad);
                 const float vy = -shoot.projectileSpeed * std::sin(angleRad);
 
-                pendingProjectiles.emplace_back(
-                    posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), col.width, col.height);
+                pendingProjectiles.emplace_back(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), 8.f, 8.f);
             }
         });
         for (const auto &pending : pendingProjectiles)

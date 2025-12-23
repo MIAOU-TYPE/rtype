@@ -53,5 +53,12 @@ namespace Engine
          * @param y The y-coordinate of the mouse press.
          */
         virtual bool onMousePressed(float x, float y) = 0;
+
+        /**
+         * @brief Handles mouse release events.
+         * @param x The x-coordinate of the mouse release.
+         * @param y The y-coordinate of the mouse release.
+         */
+        virtual bool onMouseReleased(float x, float y) = 0;
     };
 } // namespace Engine

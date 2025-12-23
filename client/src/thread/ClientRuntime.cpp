@@ -205,6 +205,23 @@ namespace Thread
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
+        _eventBus->on<Engine::MousePressed>(
+            [this](const Engine::MousePressed& e) {
+                if (e.key != Engine::Key::MouseLeft)
+                    return;
+
+                if (_stateManager->current()) {
+                    const bool consumed =
+                        _stateManager->current()->onMousePressed(
+                            static_cast<float>(e.posX),
+                            static_cast<float>(e.posY)
+                        );
+                    if (consumed)
+                        return;
+                }
+            }
+        );
+
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const

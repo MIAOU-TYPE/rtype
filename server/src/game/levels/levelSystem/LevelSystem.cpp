@@ -7,8 +7,6 @@
 
 #include "LevelSystem.hpp"
 
-#include "Damage.hpp"
-
 namespace Game
 {
     std::vector<bool> LevelSystem::_spawned;
@@ -54,12 +52,12 @@ namespace Game
         float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity mob = reg.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, 900.f, y);
-        reg.emplaceComponent<Ecs::Velocity>(mob, def.speed, 0.f);
-        reg.emplaceComponent<Ecs::Health>(mob, def.hp, def.hp);
-        reg.emplaceComponent<Ecs::Collision>(mob, def.colW, def.colH);
-        reg.emplaceComponent<Ecs::Damageable>(mob, true);
-        reg.emplaceComponent<Ecs::Damage>(mob, 200);
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{900.f, y});
+        reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
+        reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
+        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});
+        reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
+        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{200});
 
         Ecs::AIBrain brain;
         brain.state = Ecs::AIState::Patrol;
@@ -84,5 +82,17 @@ namespace Game
         draw.spriteId = def.sprite;
         draw.drawable = true;
         reg.emplaceComponent<Ecs::Drawable>(mob, draw);
+
+        Ecs::AIShoot shoot;
+        shoot.type = def.shoot.type == "straight" ? Ecs::AIShoot::Type::Straight
+            : def.shoot.type == "diagonal"        ? Ecs::AIShoot::Type::Diagonal
+                                                  : Ecs::AIShoot::Type::Spread;
+        shoot.cooldown = def.shoot.cooldown;
+        shoot.timer = 0.f;
+        shoot.projectileSpeed = def.shoot.projectileSpeed;
+        shoot.damage = def.shoot.damage;
+        shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
+        shoot.angles = def.shoot.angles;
+        reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
     }
 } // namespace Game

@@ -76,8 +76,6 @@ namespace Game
         atk.projectileSpeed = 320.f;
         reg.emplaceComponent<Ecs::Attack>(mob, atk);
 
-        reg.emplaceComponent<Ecs::Damageable>(mob, true);
-
         Ecs::Drawable draw;
         draw.spriteId = def.sprite;
         draw.drawable = true;

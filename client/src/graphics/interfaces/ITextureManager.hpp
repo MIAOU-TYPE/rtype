@@ -51,8 +51,8 @@ namespace Graphics
      * @brief Structure to hold texture metadata.
      */
     struct TextureSize {
-        unsigned int width;     ///> Width of the texture in pixels
-        unsigned int height;    ///> Height of the texture in pixels
+        unsigned int width;  ///> Width of the texture in pixels
+        unsigned int height; ///> Height of the texture in pixels
     };
 
     /**

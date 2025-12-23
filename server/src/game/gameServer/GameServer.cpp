@@ -73,7 +73,7 @@ namespace Game
 
         TargetingSystem::update(*_worldWrite);
         AISystem::update(*_worldWrite, dt);
-        AttackSystem::update(*_worldWrite, dt);
+        AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);

@@ -22,14 +22,13 @@ namespace Game
         if (players.empty())
             return;
 
-        const size_t playerId = players[Rand::rng() % players.size()];
+        const size_t playerId = players.at(Rand::rng() % players.size());
         const auto &[x, y] = *posArr.at(playerId);
         reg.view<Ecs::Target, Ecs::Position>([&](Ecs::Entity, Ecs::Target &tgt, const Ecs::Position &pos) {
             const float dx = x - pos.x;
             const float dy = y - pos.y;
-            const float distSq = dx * dx + dy * dy;
 
-            if (distSq <= tgt.visionRange * tgt.visionRange)
+            if (const float distSq = dx * dx + dy * dy; distSq <= tgt.visionRange * tgt.visionRange)
                 tgt.targetId = playerId;
             else
                 tgt.targetId = SIZE_MAX;

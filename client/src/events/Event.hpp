@@ -56,6 +56,23 @@ namespace Engine
     };
 
     /**
+     * @brief Event triggered when the mouse is moved.
+     */
+    struct MouseMoved : Event {
+        /**
+         * @brief Constructor for MouseMoved event.
+         * @param x The x position of the mouse.
+         * @param y The y position of the mouse.
+         */
+        explicit MouseMoved(int x, int y) : posX(x), posY(y)
+        {
+        }
+
+        int posX;   ///> The x position of the mouse.
+        int posY;   ///> The y position of the mouse.
+    };
+
+    /**
      * @brief Event triggered when a mouse button is pressed.
      */
     struct MousePressed : Event {
@@ -87,5 +104,7 @@ namespace Engine
         }
 
         Key key; ///> The mouse button that was released.
+        int posX = 0; ///> The x position of the mouse when released.
+        int posY = 0; ///> The y position of the mouse when released.
     };
 } // namespace Engine

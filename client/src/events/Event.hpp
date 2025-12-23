@@ -68,8 +68,8 @@ namespace Engine
         {
         }
 
-        int posX;   ///> The x position of the mouse.
-        int posY;   ///> The y position of the mouse.
+        int posX; ///> The x position of the mouse.
+        int posY; ///> The y position of the mouse.
     };
 
     /**
@@ -103,7 +103,7 @@ namespace Engine
         {
         }
 
-        Key key; ///> The mouse button that was released.
+        Key key;      ///> The mouse button that was released.
         int posX = 0; ///> The x position of the mouse when released.
         int posY = 0; ///> The y position of the mouse when released.
     };

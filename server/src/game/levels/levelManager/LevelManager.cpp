@@ -11,7 +11,28 @@ using json = nlohmann::json;
 
 namespace
 {
-    bool parseEnemies(const json &j, Game::Level &level)
+    [[nodiscard]] Game::ShootDefinition parseShootDefinition(const json &j)
+    {
+        Game::ShootDefinition shootDef;
+        shootDef.type = j.value("type", "straight");
+        shootDef.cooldown = j.value("cooldown", 1.f);
+        shootDef.damage = j.value("damage", 10);
+        shootDef.projectileSpeed = j.value("projectileSpeed", 200.f);
+        if (j.contains("angles") && j.at("angles").is_array()) {
+            for (const auto &angleValue : j.at("angles"))
+                shootDef.angles.push_back(angleValue.get<float>());
+        }
+        if (j.contains("muzzle") && j.at("muzzle").is_object()) {
+            const auto &muzzleNode = j.at("muzzle");
+            shootDef.muzzle.first = muzzleNode.value("x", 0.f);
+            shootDef.muzzle.second = muzzleNode.value("y", 0.f);
+        } else {
+            shootDef.muzzle = {0.f, 0.f};
+        }
+        return shootDef;
+    }
+
+    [[nodiscard]] bool parseEnemies(const json &j, Game::Level &level)
     {
         level.enemyTypes.clear();
         if (!j.contains("enemies") || !j.at("enemies").is_object())
@@ -33,6 +54,8 @@ namespace
             def.colW = defNode.at("size").value("w", 20.f);
             def.colH = defNode.at("size").value("h", 20.f);
             def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
+            def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
+
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();

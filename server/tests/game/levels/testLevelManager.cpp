@@ -130,3 +130,91 @@ TEST(LevelManager, ShouldSpawn)
     mgr.advance(1.5f);
     EXPECT_TRUE(mgr.shouldSpawn(2.0f));
 }
+
+TEST(LevelManager, LoadWithShootStraightValue)
+{
+    Game::LevelManager mgr;
+
+    const std::string json = R"(
+    {
+      "name": "SpawnTest",
+      "enemies": {
+        "smallEnemy": {
+          "hp": 15,
+          "speed": -80,
+          "size": { "w": 65, "h": 66 },
+          "sprite": "enemy",
+          "spriteId": 2,
+          "shoot": {
+            "type": "straight",
+            "cooldown": 2.0,
+            "projectileSpeed": 100,
+            "damage": 50,
+            "muzzle": { "x": 0, "y": 20 }
+          }
+        }
+      },
+      "waves": [
+        { "time": 2.0, "enemies": { "smallEnemy": 1 } }
+      ]
+    }
+)";
+
+    ASSERT_TRUE(mgr.load(json));
+
+    const auto &level = mgr.getCurrentLevel();
+    ASSERT_EQ(level.enemyTypes.size(), 1);
+
+    const auto &enemy = level.enemyTypes.at("smallEnemy");
+    ASSERT_EQ(enemy.shoot.cooldown, 2.0f);
+    ASSERT_EQ(enemy.shoot.projectileSpeed, 100.f);
+    ASSERT_EQ(enemy.shoot.damage, 50);
+    ASSERT_EQ(enemy.shoot.muzzle.first, 0);
+    ASSERT_EQ(enemy.shoot.muzzle.second, 20);
+}
+
+TEST(LevelManager, LoadWithShootDiagonalValue)
+{
+    Game::LevelManager mgr;
+
+    const std::string json = R"(
+    {
+      "name": "SpawnTest",
+      "enemies": {
+        "smallEnemy": {
+          "hp": 15,
+          "speed": -80,
+          "size": { "w": 65, "h": 66 },
+          "sprite": "enemy",
+          "spriteId": 2,
+          "shoot": {
+            "type": "diagonal",
+            "cooldown": 2.0,
+            "projectileSpeed": 100,
+            "damage": 50,
+            "muzzle": { "x": 0, "y": 20 },
+            "angles": [45, -45]
+          }
+        }
+      },
+      "waves": [
+        { "time": 2.0, "enemies": { "smallEnemy": 1 } }
+      ]
+    }
+)";
+
+    ASSERT_TRUE(mgr.load(json));
+
+    const auto &level = mgr.getCurrentLevel();
+    ASSERT_EQ(level.enemyTypes.size(), 1);
+
+    const auto &enemy = level.enemyTypes.at("smallEnemy");
+    ASSERT_EQ(enemy.shoot.cooldown, 2.0f);
+    ASSERT_EQ(enemy.shoot.projectileSpeed, 100.f);
+    ASSERT_EQ(enemy.shoot.damage, 50);
+    ASSERT_EQ(enemy.shoot.muzzle.first, 0);
+    ASSERT_EQ(enemy.shoot.muzzle.second, 20);
+    ASSERT_EQ(enemy.shoot.angles.size(), 2);
+    EXPECT_EQ(enemy.shoot.angles.at(0), 45);
+    EXPECT_EQ(enemy.shoot.angles.at(1), -45);
+}

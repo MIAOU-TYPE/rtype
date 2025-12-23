@@ -1,0 +1,66 @@
+/*
+** EPITECH PROJECT, 2025
+** MenuState.hpp
+** File description:
+** SettingsState
+*/
+
+#pragma once
+
+#include "SettingsMenu.hpp"
+#include "MenuState.hpp"
+
+namespace Engine
+{
+    /**
+     * @brief Represents the settings state of the game.
+     */
+    class SettingsState : public IGameState {
+    public:
+        /**
+         * @brief Construct a new Settings State object.
+         *
+         * @param graphics Shared pointer to the graphics interface.
+         * @param renderer Shared pointer to the renderer interface.
+         */
+        explicit SettingsState(
+            std::shared_ptr<Graphics::IGraphics> graphics,
+            std::shared_ptr<Graphics::IRenderer> renderer);
+
+        /**
+         * @brief Destroy the Settings State object.
+         */
+        void onEnter(StateManager &manager) override;
+
+        /**
+         * @brief Clean up resources when exiting the settings state.
+         */
+        void onExit() override;
+
+        /**
+         * @brief Update the settings state.
+         *
+         * @param dt Delta time since last update.
+         */
+        void update(float dt) override;
+
+        /**
+         * @brief Render the settings state.
+         */
+        void render() override;
+
+        /**
+         * @brief Handle mouse press events.
+         *
+         * @param x The x-coordinate of the mouse press.
+         * @param y The y-coordinate of the mouse press.
+         */
+        bool onMousePressed(float x, float y) override;
+
+    private:
+        std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
+        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
+        std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
+        StateManager *_manager = nullptr;               ///> Pointer to the state manager
+    };
+}

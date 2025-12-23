@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "AIBrain.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "World.hpp"

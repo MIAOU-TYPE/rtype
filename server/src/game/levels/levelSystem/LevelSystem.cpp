@@ -27,12 +27,12 @@ namespace Game
             _spawned.assign(level.waves.size(), false);
 
         for (size_t i = 0; i < level.waves.size(); i++) {
-            const Wave &wave = level.waves[i];
-            if (_spawned[i])
+            const Wave &wave = level.waves.at(i);
+            if (_spawned.at(i))
                 continue;
             if (!lvl.shouldSpawn(wave.time))
                 continue;
-            _spawned[i] = true;
+            _spawned.at(i) = true;
             spawnWave(world, level, wave);
         }
     }

@@ -31,12 +31,12 @@ namespace Game
     {
         const Ecs::Entity ent = _registry.createEntity();
 
-        _registry.emplaceComponent<Ecs::Position>(ent, 100.f, 100.f);
-        _registry.emplaceComponent<Ecs::Velocity>(ent, 0.f, 0.f);
-        _registry.emplaceComponent<Ecs::Health>(ent, 100, 100);
+        _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, 100.f});
+        _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
+        _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{100, 100});
         _registry.emplaceComponent<InputComponent>(ent);
-        _registry.emplaceComponent<Ecs::Drawable>(ent, static_cast<unsigned int>(7));
-        _registry.emplaceComponent<Ecs::Collision>(ent);
+        _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
+        _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         return ent;
     }

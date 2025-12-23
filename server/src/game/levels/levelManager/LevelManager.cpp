@@ -9,53 +9,53 @@
 
 using json = nlohmann::json;
 
-namespace Game
+namespace
 {
-    bool parseEnemies(const json &j, Level &level)
+    bool parseEnemies(const json &j, Game::Level &level)
     {
         level.enemyTypes.clear();
-        if (!j.contains("enemies") || !j["enemies"].is_object())
+        if (!j.contains("enemies") || !j.at("enemies").is_object())
             return false;
-        if (j["enemies"].empty())
+        if (j.at("enemies").empty())
             return false;
 
-        for (auto &[name, defNode] : j["enemies"].items()) {
+        for (auto &[name, defNode] : j.at("enemies").items()) {
             if (!defNode.is_object())
                 return false;
 
-            EnemyDefinition def;
+            Game::EnemyDefinition def;
             def.hp = defNode.value("hp", 1);
             def.speed = defNode.value("speed", -80.f);
 
-            if (!defNode.contains("size") || !defNode["size"].is_object())
+            if (!defNode.contains("size") || !defNode.at("size").is_object())
                 return false;
 
-            def.colW = defNode["size"].value("w", 20.f);
-            def.colH = defNode["size"].value("h", 20.f);
+            def.colW = defNode.at("size").value("w", 20.f);
+            def.colH = defNode.at("size").value("h", 20.f);
             def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();
     }
 
-    bool parseWaves(const json &j, Level &level)
+    bool parseWaves(const json &j, Game::Level &level)
     {
         level.waves.clear();
 
-        if (!j.contains("waves") || !j["waves"].is_array())
+        if (!j.contains("waves") || !j.at("waves").is_array())
             return false;
-        if (j["waves"].empty())
+        if (j.at("waves").empty())
             return false;
-        for (const auto &w : j["waves"]) {
+        for (const auto &w : j.at("waves")) {
             if (!w.is_object())
                 return false;
-            Wave wave;
+            Game::Wave wave;
             wave.time = w.value("time", -1.f);
             if (wave.time < 0.f)
                 return false;
-            if (!w.contains("enemies") || !w["enemies"].is_object())
+            if (!w.contains("enemies") || !w.at("enemies").is_object())
                 return false;
-            for (auto &[type, countValue] : w["enemies"].items()) {
+            for (auto &[type, countValue] : w.at("enemies").items()) {
                 const int count = countValue.get<int>();
                 if (count <= 0)
                     return false;
@@ -68,12 +68,12 @@ namespace Game
         return true;
     }
 
-    bool parseLevelJson(const json &j, Level &level)
+    bool parseLevelJson(const json &j, Game::Level &level)
     {
-        if (!j.contains("name") || !j["name"].is_string())
+        if (!j.contains("name") || !j.at("name").is_string())
             return false;
 
-        level.name = j["name"].get<std::string>();
+        level.name = j.at("name").get<std::string>();
         level.duration = j.value("duration", 0.f);
 
         if (!parseEnemies(j, level))
@@ -82,6 +82,10 @@ namespace Game
             return false;
         return true;
     }
+} // namespace
+
+namespace Game
+{
 
     bool LevelManager::load(const std::string &content)
     {

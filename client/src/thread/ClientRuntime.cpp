@@ -208,26 +208,23 @@ namespace Thread
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
         _eventBus->on<Engine::MouseMoved>([this](const Engine::MouseMoved &e) {
-                _input->mouseX = static_cast<float>(e.posX);
-                _input->mouseY = static_cast<float>(e.posY);
-            }
-        );
+            _input->mouseX = static_cast<float>(e.posX);
+            _input->mouseY = static_cast<float>(e.posY);
+        });
 
-        _eventBus->on<Engine::MousePressed>( [this](const Engine::MousePressed &e) {
-                if (e.key == Engine::Key::MouseLeft) {
-                    _input->mouseLeftDown = true;
-                    _input->mouseLeftPressed = true;
-                }
+        _eventBus->on<Engine::MousePressed>([this](const Engine::MousePressed &e) {
+            if (e.key == Engine::Key::MouseLeft) {
+                _input->mouseLeftDown = true;
+                _input->mouseLeftPressed = true;
             }
-        );
+        });
 
         _eventBus->on<Engine::MouseReleased>([this](const Engine::MouseReleased &e) {
-                if (e.key == Engine::Key::MouseLeft) {
-                    _input->mouseLeftDown = false;
-                    _input->mouseLeftReleased = true;
-                }
+            if (e.key == Engine::Key::MouseLeft) {
+                _input->mouseLeftDown = false;
+                _input->mouseLeftReleased = true;
             }
-        );
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const

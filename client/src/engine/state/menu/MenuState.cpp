@@ -26,7 +26,7 @@ namespace Engine
         _menu.reset();
     }
 
-    void MenuState::update(float dt)
+    void MenuState::update(const float dt)
     {
         _menu->update(dt, _input->mouseX, _input->mouseY);
 

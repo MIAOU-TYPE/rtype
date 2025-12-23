@@ -36,12 +36,12 @@ namespace Game
         /**
          * @brief Get the ECS registry manipulated by systems.
          */
-        virtual Ecs::Registry &registry() = 0;
+        [[nodiscard]] virtual Ecs::Registry &registry() = 0;
 
         /**
          * @brief Create a new gameplay entity (e.g., player).
          */
-        virtual Ecs::Entity createPlayer() = 0;
+        [[nodiscard]] virtual Ecs::Entity createPlayer() = 0;
 
         /**
          * @brief Destroy an entity and all its components.

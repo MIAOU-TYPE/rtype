@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "SettingsMenu.hpp"
-#include "MenuState.hpp"
 #include "InputState.hpp"
+#include "MenuState.hpp"
+#include "SettingsMenu.hpp"
 
 namespace Engine
 {
@@ -17,7 +17,7 @@ namespace Engine
      * @brief Represents the settings state of the game.
      */
     class SettingsState : public IGameState {
-    public:
+      public:
         /**
          * @brief Construct a new Settings State object.
          *
@@ -25,10 +25,8 @@ namespace Engine
          * @param renderer Shared pointer to the renderer interface.
          * @param input Shared pointer to the input state.
          */
-        explicit SettingsState(
-            std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer,
-            std::shared_ptr<InputState> input);
+        explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
+            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<InputState> input);
 
         /**
          * @brief Destroy the Settings State object.
@@ -68,11 +66,11 @@ namespace Engine
          */
         bool onMouseReleased(float x, float y) override;
 
-    private:
+      private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
         std::shared_ptr<InputState> _input;             ///> Input state
         StateManager *_manager = nullptr;               ///> Pointer to the state manager
     };
-}
+} // namespace Engine

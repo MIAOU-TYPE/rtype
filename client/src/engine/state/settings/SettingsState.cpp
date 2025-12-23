@@ -6,17 +6,12 @@
 */
 
 #include "SettingsState.hpp"
-#include "SettingsState.hpp"
 
 namespace Engine
 {
-    SettingsState::SettingsState(
-        std::shared_ptr<Graphics::IGraphics> graphics,
-        std::shared_ptr<Graphics::IRenderer> renderer,
-        std::shared_ptr<InputState> input)
-        : _graphics(std::move(graphics)),
-          _renderer(std::move(renderer)),
-          _input(std::move(input))
+    SettingsState::SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
+        std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<InputState> input)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _input(std::move(input))
     {
     }
 
@@ -58,4 +53,4 @@ namespace Engine
             return _menu->onMouseReleased(x, y);
         return false;
     }
-}
+} // namespace Engine

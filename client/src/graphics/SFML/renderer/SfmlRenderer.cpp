@@ -71,7 +71,9 @@ namespace Graphics
 
     void SfmlRenderer::drawText(const IText &text)
     {
-        const auto &sfText = static_cast<const SfmlText &>(text).get();
-        _window->draw(sfText);
+        const auto &sfText = dynamic_cast<const SfmlText &>(text);
+        if (!sfText.isDrawable())
+            return;
+        _window->draw(sfText.get());
     }
 } // namespace Graphics

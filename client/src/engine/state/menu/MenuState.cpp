@@ -9,8 +9,9 @@
 
 namespace Engine
 {
-    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer))
+    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+        std::shared_ptr<InputState> input)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _input(std::move(input))
     {
     }
 
@@ -25,23 +26,19 @@ namespace Engine
         _menu.reset();
     }
 
-    void MenuState::onSettings() const
+    void MenuState::update(float dt)
     {
-        if (_menu)
-            _menu->onSettingsPressed();
-    }
+        _menu->update(dt, _input->mouseX, _input->mouseY);
 
-    void MenuState::update(const float dt)
-    {
-        _menu->update(dt);
+        if (_input->mouseLeftPressed)
+            _menu->onMousePressed(_input->mouseX, _input->mouseY);
+
+        if (_input->mouseLeftReleased)
+            _menu->onMouseReleased(_input->mouseX, _input->mouseY);
+
         if (_menu->wantsSettings()) {
-            _manager->changeState(
-                std::make_unique<SettingsState>(_graphics, _renderer)
-            );
-            return;
+            _manager->changeState(std::make_unique<SettingsState>(_graphics, _renderer, _input));
         }
-        if (_menu->wantsToQuit())
-            _manager->changeState(nullptr);
     }
 
     void MenuState::render()
@@ -49,10 +46,17 @@ namespace Engine
         _menu->render();
     }
 
-    bool MenuState::onMousePressed(float x, float y)
+    bool MenuState::onMousePressed(const float x, const float y)
     {
         if (_menu)
             return _menu->onMousePressed(x, y);
+        return false;
+    }
+
+    bool MenuState::onMouseReleased(const float x, const float y)
+    {
+        if (_menu)
+            return _menu->onMouseReleased(x, y);
         return false;
     }
 } // namespace Engine

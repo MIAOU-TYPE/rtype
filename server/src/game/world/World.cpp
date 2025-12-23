@@ -13,15 +13,6 @@
 
 namespace Game
 {
-    World::World()
-    {
-        _registry.registerComponent<Ecs::Position>();
-        _registry.registerComponent<Ecs::Velocity>();
-        _registry.registerComponent<Ecs::Health>();
-        _registry.registerComponent<InputComponent>();
-        _registry.registerComponent<Ecs::Drawable>();
-    }
-
     Ecs::Registry &World::registry()
     {
         return _registry;

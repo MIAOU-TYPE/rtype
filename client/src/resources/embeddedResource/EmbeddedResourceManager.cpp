@@ -60,8 +60,8 @@ namespace EmbeddedResources
 
     extern const unsigned char r_type_otf[];
     extern const unsigned int r_type_otf_size;
-    extern const unsigned char r_type_ttf[];
-    extern const unsigned int r_type_ttf_size;
+    extern const unsigned char font_ttf[];
+    extern const unsigned int font_ttf_size;
 
     extern const unsigned char boss_theme_flac[];
     extern const unsigned int boss_theme_flac_size;
@@ -122,7 +122,7 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
 
     _resources["fonts/r-type.otf"] = {EmbeddedResources::r_type_otf, EmbeddedResources::r_type_otf_size};
-    _resources["fonts/r-type.ttf"] = {EmbeddedResources::r_type_ttf, EmbeddedResources::r_type_ttf_size};
+    _resources["fonts/font.ttf"] = {EmbeddedResources::font_ttf, EmbeddedResources::font_ttf_size};
 
     _resources["sounds/boss_theme.flac"] = {
         EmbeddedResources::boss_theme_flac, EmbeddedResources::boss_theme_flac_size};

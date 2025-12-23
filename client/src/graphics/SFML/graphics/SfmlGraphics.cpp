@@ -87,6 +87,9 @@ namespace Graphics
             if (event->is<sf::Event::Closed>())
                 bus.emit(Engine::WindowClosed{});
 
+            if (const auto m = event->getIf<sf::Event::MouseMoved>())
+                bus.emit(Engine::MouseMoved(m->position.x, m->position.y));
+
             if (const auto key = event->getIf<sf::Event::MouseButtonPressed>()) {
                 const Engine::Key button =
                     (key->button == sf::Mouse::Button::Left) ? Engine::Key::MouseLeft : Engine::Key::MouseRight;

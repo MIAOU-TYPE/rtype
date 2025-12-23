@@ -9,6 +9,7 @@
 #include "AIBrain.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
+#include "Projectile.hpp"
 #include "World.hpp"
 
 namespace Game

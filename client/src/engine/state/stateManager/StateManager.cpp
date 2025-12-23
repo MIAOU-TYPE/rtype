@@ -17,8 +17,7 @@ namespace Engine
         if (_current) {
             _current->onEnter(*this);
             _current->update(0.f);
-        }
-        else
+        } else
             _running = false;
     }
 

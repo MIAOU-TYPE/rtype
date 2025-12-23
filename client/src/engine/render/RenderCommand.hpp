@@ -8,8 +8,8 @@
 #pragma once
 #include "AnimationFrame.hpp"
 #include "ITextureManager.hpp"
-#include "Position.hpp"
 #include "ITextureManager.hpp"
+#include "Position.hpp"
 
 namespace Engine
 {
@@ -17,10 +17,10 @@ namespace Engine
      * @brief A rectangle defined by floating point values.
      */
     struct FloatRect {
-        float x;    ///> The x-coordinate of the rectangle's top-left corner.
-        float y;    ///> The y-coordinate of the rectangle's top-left corner.
-        float w;    ///> The width of the rectangle.
-        float h;    ///> The height of the rectangle.
+        float x; ///> The x-coordinate of the rectangle's top-left corner.
+        float y; ///> The y-coordinate of the rectangle's top-left corner.
+        float w; ///> The width of the rectangle.
+        float h; ///> The height of the rectangle.
 
         /**
          * @brief Check if a point is inside the rectangle.
@@ -50,7 +50,7 @@ namespace Engine
          */
         [[nodiscard]] FloatRect bounds() const noexcept
         {
-            return { position.x, position.y, static_cast<float>(frame.w), static_cast<float>(frame.h) };
+            return {position.x, position.y, static_cast<float>(frame.w), static_cast<float>(frame.h)};
         }
     };
 } // namespace Engine

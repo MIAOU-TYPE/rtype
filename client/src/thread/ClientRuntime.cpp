@@ -32,10 +32,11 @@ namespace Thread
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
         _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
 
+        _input = std::make_shared<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
+        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _input));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -99,6 +100,7 @@ namespace Thread
         while (_running) {
             nextTick += Tick;
 
+            _input->resetFrame();
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
@@ -205,23 +207,27 @@ namespace Thread
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
-        _eventBus->on<Engine::MousePressed>(
-            [this](const Engine::MousePressed& e) {
-                if (e.key != Engine::Key::MouseLeft)
-                    return;
+        _eventBus->on<Engine::MouseMoved>([this](const Engine::MouseMoved &e) {
+                _input->mouseX = static_cast<float>(e.posX);
+                _input->mouseY = static_cast<float>(e.posY);
+            }
+        );
 
-                if (_stateManager->current()) {
-                    const bool consumed =
-                        _stateManager->current()->onMousePressed(
-                            static_cast<float>(e.posX),
-                            static_cast<float>(e.posY)
-                        );
-                    if (consumed)
-                        return;
+        _eventBus->on<Engine::MousePressed>( [this](const Engine::MousePressed &e) {
+                if (e.key == Engine::Key::MouseLeft) {
+                    _input->mouseLeftDown = true;
+                    _input->mouseLeftPressed = true;
                 }
             }
         );
 
+        _eventBus->on<Engine::MouseReleased>([this](const Engine::MouseReleased &e) {
+                if (e.key == Engine::Key::MouseLeft) {
+                    _input->mouseLeftDown = false;
+                    _input->mouseLeftReleased = true;
+                }
+            }
+        );
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const

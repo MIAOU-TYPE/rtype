@@ -6,13 +6,17 @@
 */
 
 #include "SettingsState.hpp"
+#include "SettingsState.hpp"
 
 namespace Engine
 {
     SettingsState::SettingsState(
         std::shared_ptr<Graphics::IGraphics> graphics,
-        std::shared_ptr<Graphics::IRenderer> renderer)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer))
+        std::shared_ptr<Graphics::IRenderer> renderer,
+        std::shared_ptr<InputState> input)
+        : _graphics(std::move(graphics)),
+          _renderer(std::move(renderer)),
+          _input(std::move(input))
     {
     }
 
@@ -29,12 +33,11 @@ namespace Engine
 
     void SettingsState::update(const float dt)
     {
-        _menu->update(dt);
-        if (_menu->wantsBack()) {
-            _manager->changeState(
-                std::make_unique<MenuState>(_graphics, _renderer)
-            );
-        }
+        _menu->update(dt, _input->mouseX, _input->mouseY);
+        if (_input->mouseLeftPressed)
+            _menu->onMousePressed(_input->mouseX, _input->mouseY);
+        if (_input->mouseLeftReleased)
+            _menu->onMouseReleased(_input->mouseX, _input->mouseY);
     }
 
     void SettingsState::render()
@@ -42,10 +45,17 @@ namespace Engine
         _menu->render();
     }
 
-    bool SettingsState::onMousePressed(float x, float y)
+    bool SettingsState::onMousePressed(const float x, const float y)
     {
         if (_menu)
             return _menu->onMousePressed(x, y);
+        return false;
+    }
+
+    bool SettingsState::onMouseReleased(const float x, const float y)
+    {
+        if (_menu)
+            return _menu->onMouseReleased(x, y);
         return false;
     }
 }

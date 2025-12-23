@@ -9,6 +9,7 @@
 
 #include "SettingsMenu.hpp"
 #include "MenuState.hpp"
+#include "InputState.hpp"
 
 namespace Engine
 {
@@ -22,10 +23,12 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
+         * @param input Shared pointer to the input state.
          */
         explicit SettingsState(
             std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer);
+            std::shared_ptr<Graphics::IRenderer> renderer,
+            std::shared_ptr<InputState> input);
 
         /**
          * @brief Destroy the Settings State object.
@@ -57,10 +60,19 @@ namespace Engine
          */
         bool onMousePressed(float x, float y) override;
 
+        /**
+         * @brief Handle mouse release events.
+         *
+         * @param x The x-coordinate of the mouse release.
+         * @param y The y-coordinate of the mouse release.
+         */
+        bool onMouseReleased(float x, float y) override;
+
     private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
+        std::shared_ptr<InputState> _input;             ///> Input state
         StateManager *_manager = nullptr;               ///> Pointer to the state manager
     };
 }

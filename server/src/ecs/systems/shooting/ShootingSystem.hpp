@@ -11,6 +11,7 @@
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "InputComponent.hpp"
+#include "Lifetime.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
 #include "World.hpp"

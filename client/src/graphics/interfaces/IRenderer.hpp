@@ -15,6 +15,14 @@
 #include "ITextureManager.hpp"
 #include "RenderCommand.hpp"
 
+namespace
+{
+    constexpr float REF_WIDTH = 1920.f;
+    constexpr float REF_HEIGHT = 1080.f;
+    constexpr float LOGO_W = 1000.f;
+    constexpr float LOGO_H = 670.f;
+} // namespace
+
 namespace Graphics
 {
     class RenderException : public std::exception {
@@ -45,6 +53,10 @@ namespace Graphics
          */
         virtual ~IRenderer() = default;
 
+        /**
+         * @brief Retrieves the current size of the viewport.
+         * @return ViewportSize struct containing width and height of the viewport.
+         */
         virtual ViewportSize getViewportSize() const noexcept = 0;
 
         /**

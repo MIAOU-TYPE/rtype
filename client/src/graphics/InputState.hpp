@@ -16,7 +16,7 @@ namespace Engine
         float mouseX = 0.f; ///> Current mouse X position
         float mouseY = 0.f; ///> Current mouse Y position
 
-        bool mouseLeftDown = false; ///> Is the left mouse button currently down
+        bool mouseLeftDown = false;     ///> Is the left mouse button currently down
         bool mouseLeftPressed = false;  ///> Was the left mouse button pressed this frame
         bool mouseLeftReleased = false; ///> Was the left mouse button released this frame
 
@@ -29,4 +29,4 @@ namespace Engine
             mouseLeftReleased = false;
         }
     };
-}
+} // namespace Engine

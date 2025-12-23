@@ -6,14 +6,29 @@
       "speed": -100,
       "size": { "w": 65, "h": 66 },
       "sprite": "enemy",
-      "spriteId": 2
+      "spriteId": 2,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 2.0,
+        "projectileSpeed": 100,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 30}
+      }
     },
     "mediumEnemy": {
       "hp": 80,
       "speed": -70,
       "size": { "w": 65, "h": 49 },
       "sprite": "enemy2",
-      "spriteId": 3
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [ -15, 15 ],
+        "cooldown": 2.0,
+        "projectileSpeed": 100,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 23}
+      }
     },
     "boss": {
       "hp": 500,

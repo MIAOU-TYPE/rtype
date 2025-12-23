@@ -14,14 +14,27 @@
 namespace Game
 {
     /**
+     * @brief Definition of shooting behavior for enemies.
+     */
+    struct ShootDefinition {
+        std::string type;               ///> Type of shooting pattern
+        float cooldown = 0.f;           ///> Time between shots
+        int damage = 0;                 ///> Damage per shot
+        float projectileSpeed = 0.f;    ///> Speed of the projectile
+        std::vector<float> angles;      ///> Shooting angles in degrees
+        std::pair<float, float> muzzle; ///> Muzzle offset (x, y)
+    };
+
+    /**
      * @brief Definition of an enemy type.
      */
     struct EnemyDefinition {
-        int hp = 0;          ///> Hit points
-        float speed = 0.f;   ///> Movement speed
-        float colW = 0.f;    ///> Collision width
-        float colH = 0.f;    ///> Collision height
-        unsigned int sprite; ///> Sprite asset path
+        int hp = 0;            ///> Hit points
+        float speed = 0.f;     ///> Movement speed
+        float colW = 0.f;      ///> Collision width
+        float colH = 0.f;      ///> Collision height
+        unsigned int sprite;   ///> Sprite asset path
+        ShootDefinition shoot; ///> Shooting behavior
     };
 
     /**

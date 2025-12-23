@@ -8,6 +8,7 @@
 #pragma once
 #include "World.hpp"
 
+#include <cmath>
 #include <numbers>
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"

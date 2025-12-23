@@ -46,5 +46,12 @@ namespace Engine
          * @brief Renders the state.
          */
         virtual void render() = 0;
+
+        /**
+         * @brief Handles mouse press events.
+         * @param x The x-coordinate of the mouse press.
+         * @param y The y-coordinate of the mouse press.
+         */
+        virtual bool onMousePressed(float x, float y) = 0;
     };
 } // namespace Engine

@@ -9,9 +9,9 @@
 
 #include <memory>
 #include <string>
-#include "RenderCommand.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
+#include "RenderCommand.hpp"
 #include "SfmlText.hpp"
 
 namespace Engine
@@ -20,40 +20,36 @@ namespace Engine
      * @brief Enum representing the size of a button.
      */
     enum class ButtonSize {
-        Small,  ///> Small
-        Large   ///> Large
+        Small, ///> Small
+        Large  ///> Large
     };
 
     /** @enum ButtonState
      * @brief Enum representing the state of a button.
      */
     enum class ButtonState {
-        Released,   ///> Released
-        Hover,      ///> Hover
-        Pressed     ///> Pressed
+        Released, ///> Released
+        Hover,    ///> Hover
+        Pressed   ///> Pressed
     };
 
     /** @class UIButton
      * @brief Class representing a UI button.
      */
     class UIButton {
-    public:
+      public:
         /** @brief Constructor for UIButton.
          * @param renderer Shared pointer to the renderer.
          * @param size Size of the button.
          * @param label Text label of the button.
          */
-        UIButton(
-            const std::shared_ptr<Graphics::IRenderer>& renderer,
-            ButtonSize size,
-            const std::string& label
-        );
+        UIButton(const std::shared_ptr<Graphics::IRenderer> &renderer, ButtonSize size, const std::string &label);
 
         /**
-        * @brief Set the position of the button.
-        * @param x X coordinate.
-        * @param y Y coordinate.
-        */
+         * @brief Set the position of the button.
+         * @param x X coordinate.
+         * @param y Y coordinate.
+         */
         void setPosition(float x, float y);
 
         /**
@@ -101,18 +97,18 @@ namespace Engine
          */
         void reset();
 
-    private:
-        std::shared_ptr<Graphics::IRenderer> _renderer;     ///> Renderer for drawing
+      private:
+        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer for drawing
 
-        RenderCommand _cmd; ///> Render command for the button
+        RenderCommand _cmd;                         ///> Render command for the button
         ButtonState _state = ButtonState::Released; ///> Current state of the button
 
-        Graphics::TextureHandle _released;  ///> Texture for released state
-        Graphics::TextureHandle _hover;     ///> Texture for hover state
-        Graphics::TextureHandle _pressed;   ///> Texture for pressed state
+        Graphics::TextureHandle _released; ///> Texture for released state
+        Graphics::TextureHandle _hover;    ///> Texture for hover state
+        Graphics::TextureHandle _pressed;  ///> Texture for pressed state
 
         std::unique_ptr<Graphics::IText> _text; ///> Text label of the button
 
         bool _clicked = false; ///> Flag indicating if the button was clicked
     };
-}
+} // namespace Engine

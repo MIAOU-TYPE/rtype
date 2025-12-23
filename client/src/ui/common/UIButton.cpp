@@ -10,20 +10,17 @@
 namespace Engine
 {
     UIButton::UIButton(
-        const std::shared_ptr<Graphics::IRenderer>& renderer, const ButtonSize size,
-        const std::string& label
-    )
+        const std::shared_ptr<Graphics::IRenderer> &renderer, const ButtonSize size, const std::string &label)
         : _renderer(renderer)
     {
         const auto textures = renderer->textures();
         const auto texts = renderer->texts();
         const auto fonts = renderer->fonts();
-        const std::string prefix =
-            (size == ButtonSize::Large) ? "sprites/button_l_" : "sprites/button_s_";
+        const std::string prefix = (size == ButtonSize::Large) ? "sprites/button_l_" : "sprites/button_s_";
 
         _released = textures->load(prefix + "released.png");
-        _hover    = textures->load(prefix + "hover.png");
-        _pressed  = textures->load(prefix + "pressed.png");
+        _hover = textures->load(prefix + "hover.png");
+        _pressed = textures->load(prefix + "pressed.png");
         _cmd.textureId = _released;
 
         const auto sizeTex = textures->getSize(_released);
@@ -47,17 +44,11 @@ namespace Engine
         const auto buttonH = static_cast<float>(_cmd.frame.h);
         const auto charSize = static_cast<unsigned int>(buttonH * 0.23f);
         _text->setCharacterSize(charSize);
-        const auto bounds =
-            dynamic_cast<const Graphics::SfmlText*>(_text.get())
-                ->get()
-                .getLocalBounds();
-        const float textX =
-            x + (buttonW - bounds.size.x) / 2.f - bounds.position.x;
-        const float textY =
-            y + (buttonH - bounds.size.y) / 2.f - bounds.position.y - 10.f;
+        const auto bounds = dynamic_cast<const Graphics::SfmlText *>(_text.get())->get().getLocalBounds();
+        const float textX = x + (buttonW - bounds.size.x) / 2.f - bounds.position.x;
+        const float textY = y + (buttonH - bounds.size.y) / 2.f - bounds.position.y - 10.f;
         _text->setPosition(textX, textY);
     }
-
 
     void UIButton::update(float mouseX, float mouseY)
     {
@@ -67,8 +58,8 @@ namespace Engine
             _state = hovered ? ButtonState::Hover : ButtonState::Released;
         switch (_state) {
             case ButtonState::Released: _cmd.textureId = _released; break;
-            case ButtonState::Hover:    _cmd.textureId = _hover;    break;
-            case ButtonState::Pressed:  _cmd.textureId = _pressed; break;
+            case ButtonState::Hover: _cmd.textureId = _hover; break;
+            case ButtonState::Pressed: _cmd.textureId = _pressed; break;
         }
     }
 
@@ -112,4 +103,4 @@ namespace Engine
         _clicked = false;
         _state = ButtonState::Released;
     }
-}
+} // namespace Engine

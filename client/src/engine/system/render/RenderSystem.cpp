@@ -29,7 +29,7 @@ namespace Engine
                     return;
 
                 out.push_back({.textureId = render.texture,
-                    .frame = animation.frames[anim.frameIndex].rect,
+                    .frame = animation.frames.at(anim.frameIndex).rect,
                     .position = {pos.x, pos.y}});
             });
     }

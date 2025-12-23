@@ -19,18 +19,18 @@ namespace EmbeddedResources
     extern const unsigned int menu_logo_png_size;
     extern const unsigned char game_over_png[];
     extern const unsigned int game_over_png_size;
-    extern const unsigned char button_play_png[];
-    extern const unsigned int button_play_png_size;
-    extern const unsigned char button_settings_png[];
-    extern const unsigned int button_settings_png_size;
-    extern const unsigned char button_left_png[];
-    extern const unsigned int button_left_png_size;
-    extern const unsigned char button_right_png[];
-    extern const unsigned int button_right_png_size;
-    extern const unsigned char button_audio_png[];
-    extern const unsigned int button_audio_png_size;
-    extern const unsigned char button_back_png[];
-    extern const unsigned int button_back_png_size;
+    extern const unsigned char button_s_pressed_png[];
+    extern const unsigned int button_s_pressed_png_size;
+    extern const unsigned char button_s_released_png[];
+    extern const unsigned int button_s_released_png_size;
+    extern const unsigned char button_s_hover_png[];
+    extern const unsigned int button_s_hover_png_size;
+    extern const unsigned char button_l_pressed_png[];
+    extern const unsigned int button_l_pressed_png_size;
+    extern const unsigned char button_l_released_png[];
+    extern const unsigned int button_l_released_png_size;
+    extern const unsigned char button_l_hover_png[];
+    extern const unsigned int button_l_hover_png_size;
     extern const unsigned char play_bt_png[];
     extern const unsigned int play_bt_png_size;
     extern const unsigned char play_bt_hold_png[];
@@ -60,6 +60,8 @@ namespace EmbeddedResources
 
     extern const unsigned char r_type_otf[];
     extern const unsigned int r_type_otf_size;
+    extern const unsigned char r_type_ttf[];
+    extern const unsigned int r_type_ttf_size;
 
     extern const unsigned char boss_theme_flac[];
     extern const unsigned int boss_theme_flac_size;
@@ -91,18 +93,18 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::background_space_png, EmbeddedResources::background_space_png_size};
     _resources["sprites/menu_logo.png"] = {EmbeddedResources::menu_logo_png, EmbeddedResources::menu_logo_png_size};
     _resources["sprites/game_over.png"] = {EmbeddedResources::game_over_png, EmbeddedResources::game_over_png_size};
-    _resources["sprites/button_play.png"] = {
-        EmbeddedResources::button_play_png, EmbeddedResources::button_play_png_size};
-    _resources["sprites/button_settings.png"] = {
-        EmbeddedResources::button_settings_png, EmbeddedResources::button_settings_png_size};
-    _resources["sprites/button_left.png"] = {
-        EmbeddedResources::button_left_png, EmbeddedResources::button_left_png_size};
-    _resources["sprites/button_right.png"] = {
-        EmbeddedResources::button_right_png, EmbeddedResources::button_right_png_size};
-    _resources["sprites/button_audio.png"] = {
-        EmbeddedResources::button_audio_png, EmbeddedResources::button_audio_png_size};
-    _resources["sprites/button_back.png"] = {
-        EmbeddedResources::button_back_png, EmbeddedResources::button_back_png_size};
+    _resources["sprites/button_s_pressed.png"] = {
+        EmbeddedResources::button_s_pressed_png, EmbeddedResources::button_s_pressed_png_size};
+    _resources["sprites/button_s_released.png"] = {
+        EmbeddedResources::button_s_released_png, EmbeddedResources::button_s_released_png_size};
+    _resources["sprites/button_s_hover.png"] = {
+        EmbeddedResources::button_s_hover_png, EmbeddedResources::button_s_hover_png_size};
+    _resources["sprites/button_l_pressed.png"] = {
+        EmbeddedResources::button_l_pressed_png, EmbeddedResources::button_l_pressed_png_size};
+    _resources["sprites/button_l_released.png"] = {
+        EmbeddedResources::button_l_released_png, EmbeddedResources::button_l_released_png_size};
+    _resources["sprites/button_l_hover.png"] = {
+        EmbeddedResources::button_l_hover_png, EmbeddedResources::button_l_hover_png_size};
     _resources["sprites/play_bt.png"] = {EmbeddedResources::play_bt_png, EmbeddedResources::play_bt_png_size};
     _resources["sprites/play_bt_hold.png"] = {
         EmbeddedResources::play_bt_hold_png, EmbeddedResources::play_bt_hold_png_size};
@@ -120,6 +122,7 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
 
     _resources["fonts/r-type.otf"] = {EmbeddedResources::r_type_otf, EmbeddedResources::r_type_otf_size};
+    _resources["fonts/r-type.ttf"] = {EmbeddedResources::r_type_ttf, EmbeddedResources::r_type_ttf_size};
 
     _resources["sounds/boss_theme.flac"] = {
         EmbeddedResources::boss_theme_flac, EmbeddedResources::boss_theme_flac_size};

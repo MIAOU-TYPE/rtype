@@ -13,9 +13,13 @@ namespace Game
     {
         auto &reg = world.registry();
 
+        std::vector<Ecs::Entity> toDestroy;
+
         reg.view<Ecs::Health>([&](const Ecs::Entity e, const Ecs::Health &health) {
             if (health.hp <= 0)
-                reg.destroyEntity(e);
+                toDestroy.emplace_back(e);
         });
+        for (const auto &entity : toDestroy)
+            reg.destroyEntity(entity);
     }
 } // namespace Game

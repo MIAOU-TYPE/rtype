@@ -6,32 +6,47 @@
       "speed": -80,
       "size": { "w": 65, "h": 66 },
       "sprite": "enemy",
-      "spriteId": 2
+      "spriteId": 2,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 2.0,
+        "projectileSpeed": 100,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 30}
+      }
     },
     "mediumEnemy": {
       "hp": 40,
       "speed": -60,
       "size": { "w": 65, "h": 49 },
       "sprite": "enemy2",
-      "spriteId": 3
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [ -15, 15 ],
+        "cooldown": 2.0,
+        "projectileSpeed": 100,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 23}
+      }
     }
   },
   "duration": 35,
   "waves": [
     {
       "time": 2,
-      "enemies": { "smallEnemy": 4 }
-    },
-    {
-      "time": 8,
       "enemies": { "smallEnemy": 3 }
     },
     {
-      "time": 15,
+      "time": 6,
+      "enemies": { "smallEnemy": 3 }
+    },
+    {
+      "time": 12,
       "enemies": { "mediumEnemy": 2 }
     },
     {
-      "time": 25,
+      "time": 20,
       "enemies": { "smallEnemy": 5 }
     }
   ]

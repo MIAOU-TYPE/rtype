@@ -27,6 +27,7 @@ namespace Game
         auto &dmgArr = reg.getComponents<Ecs::Damage>();
         auto &hpArr = reg.getComponents<Ecs::Health>();
         auto &iaBrainArr = reg.getComponents<Ecs::AIBrain>();
+        auto &projectileArr = reg.getComponents<Ecs::Projectile>();
 
         for (size_t i = 0; i < posArr.size(); i++) {
             if (!posArr.at(i) || !colArr.at(i))
@@ -36,6 +37,12 @@ namespace Game
                 if (iaBrainArr.at(j) && iaBrainArr.at(i))
                     continue;
                 if (!posArr.at(j) || !colArr.at(j))
+                    continue;
+                if (projectileArr.at(i) && projectileArr.at(j))
+                    continue;
+                if (projectileArr.at(i) && projectileArr.at(i)->shooter == j)
+                    continue;
+                if (projectileArr.at(j) && projectileArr.at(j)->shooter == i)
                     continue;
                 if (!intersects(*posArr.at(i), *colArr.at(i), *posArr.at(j), *colArr.at(j)))
                     continue;

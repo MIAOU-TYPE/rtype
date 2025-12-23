@@ -7,8 +7,8 @@
 
 #pragma once
 
+#include "AIShootSystem.hpp"
 #include "AISystem.hpp"
-#include "AttackSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"

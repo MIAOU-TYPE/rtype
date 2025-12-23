@@ -10,8 +10,10 @@
 #include <cstdlib>
 #include <iostream>
 #include "AIBrain.hpp"
+#include "AIShoot.hpp"
 #include "Attack.hpp"
 #include "Collision.hpp"
+#include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
 #include "Health.hpp"

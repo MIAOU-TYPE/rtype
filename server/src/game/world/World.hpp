@@ -28,20 +28,18 @@ namespace Game
      * - create/destroy gameplay entities (e.g., players)
      * - expose ECS registry for systems to operate on
      */
-    class World : public IGameWorld {
+    class World final : public IGameWorld {
       public:
         /**
          * @brief Construct a new World.
-         *
-         * Registers every component type used in the ECS.
          */
-        World();
+        World() = default;
 
         /**
          * @brief Access the underlying ECS registry.
          * @return Reference to the registry containing all components/entities.
          */
-        Ecs::Registry &registry() override;
+        [[nodiscard]] Ecs::Registry &registry() override;
 
         /**
          * @brief Create a new player entity with default components.
@@ -54,7 +52,7 @@ namespace Game
          *
          * @return The newly created ECS entity.
          */
-        Ecs::Entity createPlayer() override;
+        [[nodiscard]] Ecs::Entity createPlayer() override;
 
         /**
          * @brief Destroy an entity and all its components.

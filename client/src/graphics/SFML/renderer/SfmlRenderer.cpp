@@ -48,7 +48,7 @@ namespace Graphics
         return _textureManager;
     }
 
-    std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
+    [[nodiscard]] std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
     {
         return _textManager;
     }
@@ -74,8 +74,10 @@ namespace Graphics
         try {
             const auto &sfText = dynamic_cast<const SfmlText &>(text);
             _window->draw(sfText.get());
-        } catch (const TextError &) {
-            std::cerr << "{SfmlRenderer::drawText}: Invalid text object provided" << std::endl;
+        } catch (const std::bad_cast &) {
+            std::cerr << "{SfmlRenderer::drawText}: IText is not a SfmlText\n";
+        } catch (const TextError &e) {
+            std::cerr << "{SfmlRenderer::drawText}: " << e.what() << '\n';
         }
     }
 } // namespace Graphics

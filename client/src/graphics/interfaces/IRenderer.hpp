@@ -85,7 +85,7 @@ namespace Graphics
          * @brief Provides access to the text manager.
          * @return Reference to the text manager.
          */
-        virtual std::shared_ptr<ITextManager> texts() const noexcept = 0;
+        [[nodiscard]] virtual std::shared_ptr<ITextManager> texts() const noexcept = 0;
 
         /**
          * @brief Draw a sprite based on the provided SpriteCmd.

@@ -82,10 +82,11 @@ namespace Graphics
 
     void SfmlGraphics::setResolution(Extent2u size)
     {
-        if (!_window || !_window->isOpen())
+        if (!isOpen())
             return;
 
         _window->setSize({size.width, size.height});
+        _window->setPosition({0, 0});
 
         sf::View view;
         view.setSize({static_cast<float>(size.width), static_cast<float>(size.height)});

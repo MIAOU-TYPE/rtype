@@ -75,8 +75,8 @@ namespace Engine
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
         std::unique_ptr<EventRegistry> _eventRegistry;  ///> Unique pointer to the event registry.
-        std::shared_ptr<InputState> _input;
-        std::unique_ptr<Menu> _menu;      ///> Unique pointer to the menu.
-        StateManager *_manager = nullptr; ///> Pointer to the state manager.
+        std::shared_ptr<InputState> _input;             ///> Shared pointer to the input state.
+        std::unique_ptr<Menu> _menu;                    ///> Unique pointer to the menu.
+        StateManager *_manager = nullptr;               ///> Pointer to the state manager.
     };
 } // namespace Engine

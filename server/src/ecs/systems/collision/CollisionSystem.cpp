@@ -35,8 +35,6 @@ namespace Game
 
         auto &posArr = reg.getComponents<Ecs::Position>();
         auto &colArr = reg.getComponents<Ecs::Collision>();
-        auto &dmgArr = reg.getComponents<Ecs::Damage>();
-        auto &hpArr = reg.getComponents<Ecs::Health>();
 
         for (size_t i = 0; i < posArr.size(); i++) {
             const auto &posA = posArr.at(i);
@@ -55,18 +53,7 @@ namespace Game
                     continue;
                 if (projectileHitsShooter(reg, i, j) || projectileHitsShooter(reg, j, i))
                     continue;
-
-                const auto &dmgA = dmgArr.at(i);
-                if (auto &hpB = hpArr.at(j); dmgA && hpB) {
-                    hpB->hp -= dmgA->amount;
-                    world.events().emit(DamageEvent{i, j, dmgA->amount});
-                }
-
-                const auto &dmgB = dmgArr.at(j);
-                if (auto &hpA = hpArr.at(i); dmgB && hpA) {
-                    hpA->hp -= dmgB->amount;
-                    world.events().emit(DamageEvent{j, i, dmgB->amount});
-                }
+                world.events().emit(CollisionEvent{i, j});
             }
         }
     }

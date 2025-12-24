@@ -44,34 +44,12 @@ namespace Engine
         bool isRunning() const;
 
         /**
-         * @brief Get the current game state.
-         *
-         * @return Pointer to the current game state.
+         * @brief Request to quit the state manager.
          */
-        IGameState *current() const noexcept;
-
-        /**
-         * @brief Push an overlay state on top of the current state.
-         *
-         * @param overlay The overlay game state.
-         */
-        void pushOverlay(std::unique_ptr<IGameState> overlay);
-
-        /**
-         * @brief Pop the overlay state.
-         */
-        void popOverlay();
-
-        /**
-         * @brief Check if there is an overlay state.
-         *
-         * @return true if there is an overlay, false otherwise.
-         */
-        bool hasOverlay() const noexcept;
+        void requestQuit();
 
       private:
         std::unique_ptr<IGameState> _current; ///> The current game state.
-        std::unique_ptr<IGameState> _overlay; ///> An optional overlay state.
         bool _running = true;                 ///> Indicates if the state manager is running.
     };
 } // namespace Engine

@@ -26,7 +26,7 @@ namespace Engine
         _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
     }
 
-    void SettingsMenu::update(float, const float mouseX, const float mouseY)
+    void SettingsMenu::update(const float mouseX, const float mouseY)
     {
         const auto vp = _renderer->getViewportSize();
         const float w = static_cast<float>(vp.width);

@@ -18,7 +18,7 @@ namespace Ecs
      * @brief Stores the score of an entity.
      */
     struct Score {
-        int score = 0;     ///> Current score
-        int highScore = 0; ///> Highest score achieved
+        unsigned int score = 0;     ///> Current score
+        unsigned int highScore = 0; ///> Highest score achieved
     };
 } // namespace Ecs

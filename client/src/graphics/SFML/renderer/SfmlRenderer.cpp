@@ -58,10 +58,10 @@ namespace Graphics
         try {
             sf::Sprite sprite(_textureManager->get(cmd.textureId));
 
-            sprite.setTextureRect(
-                sf::Rect<int>(sf::Vector2i(cmd.frame.x, cmd.frame.y), sf::Vector2i(cmd.frame.w, cmd.frame.h)));
+            sprite.setTextureRect({{cmd.frame.x, cmd.frame.y}, {cmd.frame.w, cmd.frame.h}});
 
-            sprite.setPosition(sf::Vector2f(cmd.position.x, cmd.position.y));
+            sprite.setPosition({cmd.position.x, cmd.position.y});
+            sprite.setScale({cmd.scale.x, cmd.scale.y});
 
             _window->draw(sprite);
         } catch (const std::exception &e) {
@@ -71,9 +71,11 @@ namespace Graphics
 
     void SfmlRenderer::drawText(const IText &text)
     {
-        const auto &sfText = dynamic_cast<const SfmlText &>(text);
-        if (!sfText.isDrawable())
-            return;
-        _window->draw(sfText.get());
+        try {
+            const auto &sfText = dynamic_cast<const SfmlText &>(text);
+            _window->draw(sfText.get());
+        } catch (const TextError &) {
+            std::cerr << "{SfmlRenderer::drawText}: Invalid text object provided" << std::endl;
+        }
     }
 } // namespace Graphics

@@ -19,8 +19,6 @@ namespace
 {
     constexpr float REF_WIDTH = 1920.f;
     constexpr float REF_HEIGHT = 1080.f;
-    constexpr float LOGO_W = 1000.f;
-    constexpr float LOGO_H = 670.f;
 } // namespace
 
 namespace Graphics
@@ -57,7 +55,7 @@ namespace Graphics
          * @brief Retrieves the current size of the viewport.
          * @return ViewportSize struct containing width and height of the viewport.
          */
-        virtual ViewportSize getViewportSize() const noexcept = 0;
+        virtual Extent2u getViewportSize() const noexcept = 0;
 
         /**
          * @brief Begins a new rendering frame.

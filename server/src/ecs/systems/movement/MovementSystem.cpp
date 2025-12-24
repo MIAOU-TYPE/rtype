@@ -13,16 +13,13 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        std::vector<Ecs::Entity> toDestroy;
         reg.view<Ecs::Position, Ecs::Velocity>(
             [&](const Ecs::Entity entity, Ecs::Position &pos, const Ecs::Velocity &vel) {
                 pos.x += vel.vx * dt;
                 pos.y += vel.vy * dt;
 
                 if (pos.x < 0 || pos.y < 0)
-                    toDestroy.emplace_back(entity);
-        });
-        for (const Ecs::Entity entity : toDestroy)
-            reg.destroyEntity(entity);
+                    world.events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(entity)});
+            });
     }
 } // namespace Game

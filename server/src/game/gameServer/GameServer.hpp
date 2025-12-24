@@ -25,7 +25,6 @@
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
-#include "TargetingSystem.hpp"
 
 namespace Game
 {

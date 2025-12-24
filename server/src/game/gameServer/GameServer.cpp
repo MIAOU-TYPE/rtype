@@ -71,7 +71,6 @@ namespace Game
         if (_waitingClock.elapsed() > 5.0)
             LevelSystem::update(*_worldWrite, _levelManager, dt);
 
-        TargetingSystem::update(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
@@ -81,6 +80,8 @@ namespace Game
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);
+
+        _worldWrite->events().process();
     }
 
     void GameServer::tick()

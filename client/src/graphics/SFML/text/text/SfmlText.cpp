@@ -53,7 +53,7 @@ namespace Graphics
             _text->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     }
 
-    void SfmlText::setPosition(float x, float y)
+    void SfmlText::setPosition(const float x, const float y)
     {
         _position = {x, y};
         if (_text)

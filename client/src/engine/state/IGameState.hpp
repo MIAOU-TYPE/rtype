@@ -38,9 +38,8 @@ namespace Engine
 
         /**
          * @brief Updates the state logic.
-         * @param dt Delta time since the last update call.
          */
-        virtual void update(float dt) = 0;
+        virtual void update() = 0;
 
         /**
          * @brief Renders the state.

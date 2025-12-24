@@ -51,14 +51,13 @@ namespace
 
 namespace Graphics
 {
-    void SfmlGraphics::create(
-        const unsigned int width, const unsigned int height, const std::string &title, const bool fullscreen)
+    void SfmlGraphics::create(Extent2u size, const std::string &title, const bool fullscreen)
     {
         try {
             _resourceManager = std::make_shared<Resources::EmbeddedResourceManager>();
 
             const sf::VideoMode videoMode =
-                fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode({width, height});
+                fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode({size.width, size.height});
             constexpr uint32_t style = sf::Style::Titlebar | sf::Style::Close;
             const sf::State state = fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
             _window = std::make_shared<sf::RenderWindow>();
@@ -81,16 +80,16 @@ namespace Graphics
         return _window && _window->isOpen();
     }
 
-    void SfmlGraphics::setResolution(unsigned int width, unsigned int height)
+    void SfmlGraphics::setResolution(Extent2u size)
     {
         if (!_window || !_window->isOpen())
             return;
 
-        _window->setSize({width, height});
+        _window->setSize({size.width, size.height});
 
         sf::View view;
-        view.setSize({static_cast<float>(width), static_cast<float>(height)});
-        view.setCenter({static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f});
+        view.setSize({static_cast<float>(size.width), static_cast<float>(size.height)});
+        view.setCenter({static_cast<float>(size.width) / 2.f, static_cast<float>(size.height) / 2.f});
         _window->setView(view);
     }
 

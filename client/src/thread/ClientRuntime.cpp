@@ -26,7 +26,7 @@ namespace Thread
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
     {
-        _graphics->create(800, 480, "R-Type", false);
+        _graphics->create(1280, 720, "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
@@ -91,16 +91,15 @@ namespace Thread
         return _eventBus;
     }
 
-    void ClientRuntime::runDisplay() const
+    void ClientRuntime::runDisplay()
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
 
         auto nextTick = clock::now();
 
-        while (_running) {
+        while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
-            _input->resetFrame();
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
@@ -124,9 +123,11 @@ namespace Thread
             }
             _stateManager->render();
             _renderer->endFrame();
-
+            _input->resetFrame();
             syncToNextTick(nextTick, Tick * 2);
         }
+        _graphics->close();
+        stop();
     }
 
     void ClientRuntime::runReceiver() const
@@ -207,6 +208,23 @@ namespace Thread
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
+
+        _eventRegistry->onKeyReleased(Engine::Key::Q, [this]() {
+            _input->keysPressed.insert(Engine::Key::Q);
+        });
+
+        _eventRegistry->onKeyReleased(Engine::Key::S, [this]() {
+            _input->keysPressed.insert(Engine::Key::S);
+        });
+
+        _eventRegistry->onKeyReleased(Engine::Key::B, [this]() {
+            _input->keysPressed.insert(Engine::Key::B);
+        });
+
+        _eventRegistry->onKeyReleased(Engine::Key::Enter, [this]() {
+            _input->keysPressed.insert(Engine::Key::Enter);
+        });
+
         _eventBus->on<Engine::MouseMoved>([this](const Engine::MouseMoved &e) {
             _input->mouseX = static_cast<float>(e.posX);
             _input->mouseY = static_cast<float>(e.posY);

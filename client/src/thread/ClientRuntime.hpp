@@ -115,7 +115,7 @@ namespace Thread
          * @details This method handles the rendering of graphics and user input.
          * It should be called from the main thread.
          */
-        void runDisplay() const;
+        void runDisplay();
 
       private:
         std::shared_ptr<Engine::EventBus> _eventBus = nullptr;           ///> Event bus for handling events

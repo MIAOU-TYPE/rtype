@@ -98,8 +98,10 @@ namespace Engine
         /**
          * @brief Constructor for MouseReleased event.
          * @param k The mouse button that was released.
+         * @param x The x position of the mouse when released.
+         * @param y The y position of the mouse when released.
          */
-        explicit MouseReleased(const Key k) : key(k)
+        explicit MouseReleased(const Key k, const int x, const int y) : key(k), posX(x), posY(y)
         {
         }
 

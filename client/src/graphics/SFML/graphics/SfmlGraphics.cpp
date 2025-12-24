@@ -112,7 +112,7 @@ namespace Graphics
             if (const auto key = event->getIf<sf::Event::MouseButtonReleased>()) {
                 const Engine::Key button =
                     (key->button == sf::Mouse::Button::Left) ? Engine::Key::MouseLeft : Engine::Key::MouseRight;
-                bus.emit(Engine::MouseReleased(button));
+                bus.emit(Engine::MouseReleased(button, key->position.x, key->position.y));
             }
 
             if (const auto key = event->getIf<sf::Event::KeyPressed>())

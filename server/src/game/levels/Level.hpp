@@ -29,12 +29,13 @@ namespace Game
      * @brief Definition of an enemy type.
      */
     struct EnemyDefinition {
-        int hp = 0;            ///> Hit points
-        float speed = 0.f;     ///> Movement speed
-        float colW = 0.f;      ///> Collision width
-        float colH = 0.f;      ///> Collision height
-        unsigned int sprite;   ///> Sprite asset path
-        ShootDefinition shoot; ///> Shooting behavior
+        int hp = 0;                 ///> Hit points
+        float speed = 0.f;          ///> Movement speed
+        float colW = 0.f;           ///> Collision width
+        float colH = 0.f;           ///> Collision height
+        unsigned int sprite;        ///> Sprite asset path
+        unsigned int killScore = 0; ///> Score awarded for killing this enemy
+        ShootDefinition shoot;      ///> Shooting behavior
     };
 
     /**

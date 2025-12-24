@@ -5,6 +5,7 @@
       "hp": 25,
       "speed": -100,
       "size": { "w": 65, "h": 66 },
+      "killScore": 20,
       "sprite": "enemy",
       "spriteId": 2,
       "shoot": {
@@ -19,6 +20,7 @@
       "hp": 80,
       "speed": -70,
       "size": { "w": 65, "h": 49 },
+      "killScore": 30,
       "sprite": "enemy2",
       "spriteId": 3,
       "shoot": {
@@ -34,6 +36,7 @@
       "hp": 500,
       "speed": -30,
       "size": { "w": 177, "h": 144 },
+      "killScore": 300,
       "sprite": "boss",
       "spriteId": 1
     }

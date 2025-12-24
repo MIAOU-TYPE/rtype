@@ -19,7 +19,7 @@ namespace Engine
     {
         _manager = &manager;
         _menu = std::make_unique<Menu>(_renderer);
-        _menu->update(0.f, _input->mouseX, _input->mouseY);
+        _menu->update(_input->mouseX, _input->mouseY);
     }
 
     void MenuState::onExit()
@@ -27,9 +27,9 @@ namespace Engine
         _menu.reset();
     }
 
-    void MenuState::update(const float dt)
+    void MenuState::update()
     {
-        _menu->update(dt, _input->mouseX, _input->mouseY);
+        _menu->update(_input->mouseX, _input->mouseY);
 
         if (_input->mouseLeftPressed)
             _menu->onMousePressed(_input->mouseX, _input->mouseY);

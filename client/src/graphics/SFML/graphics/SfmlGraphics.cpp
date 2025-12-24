@@ -81,6 +81,19 @@ namespace Graphics
         return _window && _window->isOpen();
     }
 
+    void SfmlGraphics::setResolution(unsigned int width, unsigned int height)
+    {
+        if (!_window || !_window->isOpen())
+            return;
+
+        _window->setSize({width, height});
+
+        sf::View view;
+        view.setSize({static_cast<float>(width), static_cast<float>(height)});
+        view.setCenter({static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f});
+        _window->setView(view);
+    }
+
     void SfmlGraphics::pollEvents(Engine::EventBus &bus)
     {
         while (const auto event = _window->pollEvent()) {

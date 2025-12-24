@@ -53,6 +53,13 @@ namespace Graphics
         [[nodiscard]] bool isOpen() const noexcept override;
 
         /**
+         * @brief Set the resolution of the window.
+         * @param width The desired width of the window.
+         * @param height The desired height of the window.
+         */
+        void setResolution(unsigned int width, unsigned int height) override;
+
+        /**
          * @brief Poll for window events.
          */
         void pollEvents(Engine::EventBus &bus) override;

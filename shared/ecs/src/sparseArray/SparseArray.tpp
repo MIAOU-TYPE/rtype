@@ -34,6 +34,15 @@ namespace Ecs
     }
 
     template <typename Component>
+    std::optional<Component> SparseArray<Component>::at(size_t index) const noexcept
+    {
+        static std::optional<Component> empty = std::nullopt;
+        if (index >= _components.size())
+            return empty;
+        return _components[index];
+    }
+
+    template <typename Component>
     size_t SparseArray<Component>::size() const noexcept
     {
         return _components.size();

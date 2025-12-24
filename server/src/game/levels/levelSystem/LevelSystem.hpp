@@ -18,6 +18,7 @@
 #include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
+#include "KillScore.hpp"
 #include "LevelManager.hpp"
 #include "Position.hpp"
 #include "Rand.hpp"

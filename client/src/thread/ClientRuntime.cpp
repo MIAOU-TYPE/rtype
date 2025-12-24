@@ -26,7 +26,7 @@ namespace Thread
         const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
         : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
     {
-        _graphics->create(1280, 720, "R-Type", false);
+        _graphics->create(Graphics::Extent2u{1280, 720}, "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);

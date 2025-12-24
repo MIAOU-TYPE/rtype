@@ -19,6 +19,7 @@ namespace Engine
     {
         _manager = &manager;
         _menu = std::make_unique<Menu>(_renderer);
+        _menu->update(0.f, _input->mouseX, _input->mouseY);
     }
 
     void MenuState::onExit()
@@ -36,9 +37,12 @@ namespace Engine
         if (_input->mouseLeftReleased)
             _menu->onMouseReleased(_input->mouseX, _input->mouseY);
 
-        if (_menu->wantsSettings()) {
+        if (_menu->wantsSettings() || _input->isPressed(Key::S)) {
             _manager->changeState(std::make_unique<SettingsState>(_graphics, _renderer, _input));
+            return;
         }
+        if (_menu->wantsToQuit())
+            _manager->requestQuit();
     }
 
     void MenuState::render()

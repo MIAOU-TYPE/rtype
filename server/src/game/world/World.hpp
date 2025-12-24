@@ -8,7 +8,11 @@
 #pragma once
 
 #include <iostream>
+#include "Collision.hpp"
+#include "Damage.hpp"
+#include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "Events.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "InputComponent.hpp"
@@ -33,13 +37,19 @@ namespace Game
         /**
          * @brief Construct a new World.
          */
-        World() = default;
+        World();
 
         /**
          * @brief Access the underlying ECS registry.
          * @return Reference to the registry containing all components/entities.
          */
         [[nodiscard]] Ecs::Registry &registry() override;
+
+        /**
+         * @brief Access the Events manager for the world.
+         * @return Reference to the Events manager.
+         */
+        [[nodiscard]] Ecs::Events &events() override;
 
         /**
          * @brief Create a new player entity with default components.
@@ -69,5 +79,6 @@ namespace Game
 
       private:
         Ecs::Registry _registry; ///> The ECS registry (component storage).
+        Ecs::Events _events;     ///> Event bus for ECS events.
     };
 } // namespace Game

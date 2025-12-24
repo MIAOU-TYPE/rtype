@@ -8,7 +8,6 @@
 #pragma once
 #include "AnimationFrame.hpp"
 #include "ITextureManager.hpp"
-#include "ITextureManager.hpp"
 #include "Position.hpp"
 
 namespace Engine

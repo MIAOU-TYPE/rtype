@@ -93,6 +93,7 @@ namespace Thread
         constexpr auto Tick = std::chrono::milliseconds(16);
 
         auto nextTick = clock::now();
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
 
         while (_running) {
             nextTick += Tick;
@@ -100,7 +101,6 @@ namespace Thread
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
 
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
             {
                 std::scoped_lock lock(_frameMutex);
                 localRenderCommands = _readRenderCommands;

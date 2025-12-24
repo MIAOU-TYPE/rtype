@@ -13,6 +13,17 @@ namespace
     {
         return !(a.x > b.x + bc.width || a.x + ac.width < b.x || a.y > b.y + bc.height || a.y + ac.height < b.y);
     }
+
+    bool bothAI(const Ecs::Registry &reg, const size_t a, const size_t b)
+    {
+        return reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(a)) && reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(b));
+    }
+
+    bool projectileHitsShooter(Ecs::Registry &reg, const size_t projectileIdx, const size_t targetIdx)
+    {
+        const auto &projectile = reg.getComponents<Ecs::Projectile>().at(projectileIdx);
+        return projectile && projectile->shooter == targetIdx;
+    }
 } // namespace
 
 namespace Game
@@ -26,31 +37,35 @@ namespace Game
         auto &colArr = reg.getComponents<Ecs::Collision>();
         auto &dmgArr = reg.getComponents<Ecs::Damage>();
         auto &hpArr = reg.getComponents<Ecs::Health>();
-        auto &iaBrainArr = reg.getComponents<Ecs::AIBrain>();
-        auto &projectileArr = reg.getComponents<Ecs::Projectile>();
 
         for (size_t i = 0; i < posArr.size(); i++) {
-            if (!posArr.at(i) || !colArr.at(i))
+            const auto &posA = posArr.at(i);
+            const auto &colA = colArr.at(i);
+            if (!posA || !colA)
                 continue;
 
             for (size_t j = i + 1; j < posArr.size(); j++) {
-                if (iaBrainArr.at(j) && iaBrainArr.at(i))
+                const auto &posB = posArr.at(j);
+                const auto &colB = colArr.at(j);
+                if (!posB || !colB)
                     continue;
-                if (!posArr.at(j) || !colArr.at(j))
+                if (!intersects(*posA, *colA, *posB, *colB))
                     continue;
-                if (projectileArr.at(i) && projectileArr.at(j))
+                if (bothAI(reg, i, j))
                     continue;
-                if (projectileArr.at(i) && projectileArr.at(i)->shooter == j)
+                if (projectileHitsShooter(reg, i, j) || projectileHitsShooter(reg, j, i))
                     continue;
-                if (projectileArr.at(j) && projectileArr.at(j)->shooter == i)
-                    continue;
-                if (!intersects(*posArr.at(i), *colArr.at(i), *posArr.at(j), *colArr.at(j)))
-                    continue;
-                if (dmgArr.at(i) && hpArr.at(j)) {
-                    hpArr.at(j)->hp -= dmgArr.at(i)->amount;
+
+                const auto &dmgA = dmgArr.at(i);
+                if (auto &hpB = hpArr.at(j); dmgA && hpB) {
+                    hpB->hp -= dmgA->amount;
+                    world.events().emit(DamageEvent{i, j, dmgA->amount});
                 }
-                if (dmgArr.at(j) && hpArr.at(i)) {
-                    hpArr.at(i)->hp -= dmgArr.at(j)->amount;
+
+                const auto &dmgB = dmgArr.at(j);
+                if (auto &hpA = hpArr.at(i); dmgB && hpA) {
+                    hpA->hp -= dmgB->amount;
+                    world.events().emit(DamageEvent{j, i, dmgB->amount});
                 }
             }
         }

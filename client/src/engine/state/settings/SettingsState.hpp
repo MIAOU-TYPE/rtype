@@ -40,10 +40,8 @@ namespace Engine
 
         /**
          * @brief Update the settings state.
-         *
-         * @param dt Delta time since last update.
          */
-        void update(float dt) override;
+        void update() override;
 
         /**
          * @brief Render the settings state.

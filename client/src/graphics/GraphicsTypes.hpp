@@ -10,11 +10,11 @@
 namespace Graphics
 {
     /**
-     * @struct ViewportSize
-     * @brief Represents the size of a viewport with width and height.
+     * @struct Extent2u
+     * @brief Represents a 2D extent with unsigned integer dimensions.
      */
-    struct ViewportSize {
-        unsigned int width;  ///> The width of the viewport
-        unsigned int height; ///> The height of the viewport
+    struct Extent2u {
+        unsigned int width;
+        unsigned int height;
     };
 } // namespace Graphics

@@ -86,7 +86,7 @@ namespace Ecs
          * @return true if the entity has the component, false otherwise
          */
         template <typename T>
-        [[nodiscard]] bool hasComponent(Entity entity);
+        [[nodiscard]] bool hasComponent(Entity entity) const;
 
         /**
          * @brief Iterates over entities owning a set of components.

@@ -36,7 +36,7 @@ namespace Graphics
         explicit SfmlRenderer(const std::shared_ptr<sf::RenderWindow> &window,
             std::shared_ptr<Resources::IResourceManager> resourceManager);
 
-        ViewportSize getViewportSize() const noexcept override;
+        Extent2u getViewportSize() const noexcept override;
 
         /**
          * @brief Begins a new rendering frame.

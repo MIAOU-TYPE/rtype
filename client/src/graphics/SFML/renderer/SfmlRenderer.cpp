@@ -22,7 +22,7 @@ namespace Graphics
         _textManager = std::make_shared<SfmlTextManager>(_fontManager);
     }
 
-    ViewportSize SfmlRenderer::getViewportSize() const noexcept
+    Extent2u SfmlRenderer::getViewportSize() const noexcept
     {
         const auto size = _window->getSize();
         return {size.x, size.y};

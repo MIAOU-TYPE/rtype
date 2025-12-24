@@ -72,7 +72,6 @@ namespace Game
             LevelSystem::update(*_worldWrite, _levelManager, dt);
 
         TargetingSystem::update(*_worldWrite);
-        AISystem::update(*_worldWrite, dt);
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);

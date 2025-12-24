@@ -25,7 +25,7 @@ namespace Engine
         _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
     }
 
-    void Menu::update(float, const float mouseX, const float mouseY)
+    void Menu::update(const float mouseX, const float mouseY)
     {
         const auto vp = _renderer->getViewportSize();
         const auto w = static_cast<float>(vp.width);

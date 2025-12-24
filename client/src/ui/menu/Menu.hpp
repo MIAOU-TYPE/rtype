@@ -32,11 +32,10 @@ namespace Engine
 
         /**
          * @brief Update the menu state.
-         * @param dt Delta time since the last update.
          * @param mouseX The x-coordinate of the mouse.
          * @param mouseY The y-coordinate of the mouse.
          */
-        void update(float dt, float mouseX, float mouseY);
+        void update(float mouseX, float mouseY);
 
         /**
          * @brief Render the menu.

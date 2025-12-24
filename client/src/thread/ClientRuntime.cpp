@@ -108,14 +108,7 @@ namespace Thread
                 std::scoped_lock lock(_frameMutex);
                 localRenderCommands = _readRenderCommands;
             }
-
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
-            {
-                std::scoped_lock lock(_frameMutex);
-                localRenderCommands = _readRenderCommands;
-            }
-
-            _stateManager->update(dt);
+            _stateManager->update();
             _renderer->beginFrame();
             if (localRenderCommands) {
                 for (const auto &cmd : *localRenderCommands)

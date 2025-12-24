@@ -18,11 +18,11 @@
 #include "IGameWorld.hpp"
 #include "InputComponent.hpp"
 #include "KillScore.hpp"
+#include "Lifetime.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"
 #include "Score.hpp"
 #include "Velocity.hpp"
-#include "Lifetime.hpp"
 
 namespace Game
 {

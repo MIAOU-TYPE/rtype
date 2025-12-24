@@ -6,88 +6,89 @@
 */
 
 #include "Menu.hpp"
-#include <algorithm>
-#include <stdexcept>
-
-namespace
-{
-    constexpr float REF_WIDTH = 1920.f;
-    constexpr float REF_HEIGHT = 1080.f;
-    constexpr float LOGO_W = 1000.f;
-    constexpr float LOGO_H = 670.f;
-} // namespace
 
 namespace Engine
 {
     Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
     {
-        const auto font = renderer->fonts()->load("fonts/r-type.otf");
-        const auto textManager = renderer->texts();
-        const auto textureManager = renderer->textures();
-
-        if (font == Graphics::InvalidFont)
-            throw std::runtime_error("Failed to load font: fonts/r-type.otf");
-        if (!textManager || !textureManager)
-            throw std::runtime_error("Invalid text or texture manager");
-
-        _backgroundTexture = textureManager->load("sprites/bg-preview.png");
-        _logoTexture = textureManager->load("sprites/menu_logo.png");
-
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            throw std::runtime_error("Failed to load background");
-        if (_logoTexture == Graphics::InvalidTexture)
-            throw std::runtime_error("Failed to load logo");
+        const auto textures = renderer->textures();
+        _backgroundTexture = textures->load("sprites/bg-preview.png");
+        _logoTexture = textures->load("sprites/menu_logo.png");
+        if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
+            throw std::runtime_error("Menu: failed to load textures");
 
         _backgroundCmd.textureId = _backgroundTexture;
         _logoCmd.textureId = _logoTexture;
 
-        _start = textManager->createText();
-        _start->setFont(font);
-        _start->setString("Press ENTER to Start");
-
-        _quit = textManager->createText();
-        _quit->setFont(font);
-        _quit->setString("Press ESC to Quit");
+        _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
+        _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
+        _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
     }
 
-    void Menu::update(float)
+    void Menu::update(float, const float mouseX, const float mouseY)
     {
-        const auto viewport = _renderer->getViewportSize();
-        const float w = static_cast<float>(viewport.width);
-        const float h = static_cast<float>(viewport.height);
-        const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
-        const float logoW = LOGO_W * scale;
-        const float logoH = LOGO_H * scale;
+        const auto vp = _renderer->getViewportSize();
+        const auto w = static_cast<float>(vp.width);
+        const auto h = static_cast<float>(vp.height);
+        const auto texSize = _renderer->textures()->getSize(_backgroundTexture);
 
-        _backgroundCmd.frame = {0, 0, static_cast<int>(viewport.width), static_cast<int>(viewport.height)};
+        _backgroundCmd.frame = {0, 0, static_cast<int>(texSize.width), static_cast<int>(texSize.height)};
         _backgroundCmd.position = {0.f, 0.f};
+        _backgroundCmd.scale = {static_cast<float>(vp.width) / static_cast<float>(texSize.width),
+            static_cast<float>(vp.height) / static_cast<float>(texSize.height)};
 
-        _logoCmd.frame = {0, 0, static_cast<int>(logoW), static_cast<int>(logoH)};
-        _logoCmd.position = {(w - logoW) / 2.f, h * 0.05f};
+        const auto logoSize = _renderer->textures()->getSize(_logoTexture);
 
-        _start->setCharacterSize(static_cast<unsigned int>(35 * scale));
-        _start->setPosition((w - _start->getWidth()) / 2.f, h * 0.70f);
+        _logoCmd.frame = {0, 0, static_cast<int>(logoSize.width), static_cast<int>(logoSize.height)};
 
-        _quit->setCharacterSize(static_cast<unsigned int>(35 * scale));
-        _quit->setPosition((w - _quit->getWidth()) / 2.f, h * 0.85f);
+        constexpr float LOGO_SCALE = 1.0f;
+        _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
+        _logoCmd.position = {(w - logoSize.width * LOGO_SCALE) * 0.5f, h * 0.05f};
+
+        const float buttonX = (w - _play->bounds().w) / 2.f;
+        _play->setPosition(buttonX, h * 0.63f);
+        _settings->setPosition(buttonX, h * 0.76f);
+        _quit->setPosition(buttonX, h * 0.89f);
+        _play->update(mouseX, mouseY);
+        _settings->update(mouseX, mouseY);
+        _quit->update(mouseX, mouseY);
     }
 
     void Menu::render() const
     {
         _renderer->draw(_backgroundCmd);
         _renderer->draw(_logoCmd);
-        _renderer->drawText(*_start);
-        _renderer->drawText(*_quit);
+        _play->render();
+        _settings->render();
+        _quit->render();
     }
 
-    void Menu::onEnterPressed()
+    bool Menu::onMousePressed(const float x, const float y) const
     {
-        _startRequested = true;
+        _play->onMousePressed(x, y);
+        _settings->onMousePressed(x, y);
+        _quit->onMousePressed(x, y);
+        return false;
     }
 
-    void Menu::onEscapePressed()
+    bool Menu::onMouseReleased(const float x, const float y)
     {
-        _quitRequested = true;
+        if (_play->onMouseReleased(x, y)) {
+            _startRequested = true;
+            _play->reset();
+            return true;
+        }
+        if (_settings->onMouseReleased(x, y)) {
+            _settingsRequested = true;
+            _settings->reset();
+            return true;
+        }
+        if (_quit->onMouseReleased(x, y)) {
+            _quitRequested = true;
+            _quit->reset();
+            return true;
+        }
+        return false;
     }
 
     bool Menu::wantsToStart() const noexcept
@@ -98,5 +99,10 @@ namespace Engine
     bool Menu::wantsToQuit() const noexcept
     {
         return _quitRequested;
+    }
+
+    bool Menu::wantsSettings() const noexcept
+    {
+        return _settingsRequested;
     }
 } // namespace Engine

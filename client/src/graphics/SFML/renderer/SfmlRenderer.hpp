@@ -26,7 +26,7 @@ namespace Graphics
      * @class SfmlRenderer
      * @brief SFML implementation of the IRenderer interface.
      */
-    class SfmlRenderer : public IRenderer {
+    class SfmlRenderer final : public IRenderer {
       public:
         /**
          * @brief Constructor for SfmlRenderer.
@@ -36,6 +36,10 @@ namespace Graphics
         explicit SfmlRenderer(const std::shared_ptr<sf::RenderWindow> &window,
             std::shared_ptr<Resources::IResourceManager> resourceManager);
 
+        /**
+         * @brief Gets the size of the viewport.
+         * @return The size of the viewport as Extent2u.
+         */
         Extent2u getViewportSize() const noexcept override;
 
         /**
@@ -64,7 +68,7 @@ namespace Graphics
          * @brief Provides access to the text manager.
          * @return Reference to the text manager.
          */
-        std::shared_ptr<ITextManager> texts() const noexcept override;
+        [[nodiscard]] std::shared_ptr<ITextManager> texts() const noexcept override;
 
         /**
          * @brief Draws a render command.

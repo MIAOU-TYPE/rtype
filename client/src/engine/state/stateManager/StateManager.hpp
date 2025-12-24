@@ -26,10 +26,8 @@ namespace Engine
 
         /**
          * @brief Update the current state.
-         *
-         * @param dt Delta time since last update.
          */
-        void update(float dt) const;
+        void update() const;
 
         /**
          * @brief Render the current state.

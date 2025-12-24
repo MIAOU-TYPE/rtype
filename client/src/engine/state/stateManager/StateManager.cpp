@@ -20,10 +20,10 @@ namespace Engine
             _running = false;
     }
 
-    void StateManager::update(const float dt) const
+    void StateManager::update() const
     {
         if (_current)
-            _current->update(dt);
+            _current->update();
     }
 
     void StateManager::render() const

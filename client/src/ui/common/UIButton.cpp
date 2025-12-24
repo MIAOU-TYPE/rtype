@@ -27,26 +27,25 @@ namespace Engine
         _cmd.frame = {0, 0, static_cast<int>(sizeTex.width), static_cast<int>(sizeTex.height)};
 
         _text = texts->createText();
-        _text->setFont(fonts->load("fonts/r-type.otf"));
+        _text->setFont(fonts->load("fonts/font.ttf"));
         _text->setString(label);
         _text->setCharacterSize(size == ButtonSize::Large ? 42 : 28);
         _text->setColor({255, 255, 255, 255});
     }
 
-    void UIButton::setPosition(float x, float y)
+    void UIButton::setPosition(const float x, const float y)
     {
+        const float buttonW = static_cast<float>(_cmd.frame.w) * _cmd.scale.x;
+        const float buttonH = static_cast<float>(_cmd.frame.h) * _cmd.scale.y;
+        const auto charSize = static_cast<unsigned int>(buttonH * 0.45f);
+
         _cmd.position = {x, y};
 
         if (!_text)
             return;
-
-        const auto buttonW = static_cast<float>(_cmd.frame.w);
-        const auto buttonH = static_cast<float>(_cmd.frame.h);
-        const auto charSize = static_cast<unsigned int>(buttonH * 0.23f);
         _text->setCharacterSize(charSize);
-        const auto bounds = dynamic_cast<const Graphics::SfmlText *>(_text.get())->get().getLocalBounds();
-        const float textX = x + (buttonW - bounds.size.x) / 2.f - bounds.position.x;
-        const float textY = y + (buttonH - bounds.size.y) / 2.f - bounds.position.y - 10.f;
+        const float textX = x + (buttonW - _text->getWidth()) / 2.f;
+        const float textY = y + (buttonH - _text->getHeight()) / 2.f - 25.f;
         _text->setPosition(textX, textY);
     }
 
@@ -63,7 +62,7 @@ namespace Engine
         }
     }
 
-    bool UIButton::onMousePressed(float x, float y)
+    bool UIButton::onMousePressed(const float x, const float y)
     {
         if (!bounds().contains(x, y))
             return false;
@@ -71,7 +70,7 @@ namespace Engine
         return true;
     }
 
-    bool UIButton::onMouseReleased(float x, float y)
+    bool UIButton::onMouseReleased(const float x, const float y)
     {
         if (_state == ButtonState::Pressed && bounds().contains(x, y)) {
             _clicked = true;
@@ -95,7 +94,19 @@ namespace Engine
 
     FloatRect UIButton::bounds() const noexcept
     {
-        return _cmd.bounds();
+        return {_cmd.position.x, _cmd.position.y, _cmd.frame.w * _cmd.scale.x, _cmd.frame.h * _cmd.scale.y};
+    }
+
+    void UIButton::setLabel(const std::string &text) const
+    {
+        if (_text)
+            _text->setString(text);
+    }
+
+    void UIButton::setScale(float scale)
+    {
+        _scale = scale * 0.85f;
+        _cmd.scale = {scale, scale};
     }
 
     void UIButton::reset()

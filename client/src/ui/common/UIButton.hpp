@@ -93,12 +93,25 @@ namespace Engine
         bool wasClicked() const noexcept;
 
         /**
+         * @brief Set the label of the button.
+         * @param text New text label.
+         */
+        void setLabel(const std::string &text) const;
+
+        /**
+         * @brief Set the scale of the button.
+         * @param scale Scale factor.
+         */
+        void setScale(float scale);
+
+        /**
          * @brief Reset the clicked state of the button.
          */
         void reset();
 
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer for drawing
+        std::unique_ptr<Graphics::IText> _text;         ///> Text label of the button
 
         RenderCommand _cmd;                         ///> Render command for the button
         ButtonState _state = ButtonState::Released; ///> Current state of the button
@@ -107,8 +120,7 @@ namespace Engine
         Graphics::TextureHandle _hover;    ///> Texture for hover state
         Graphics::TextureHandle _pressed;  ///> Texture for pressed state
 
-        std::unique_ptr<Graphics::IText> _text; ///> Text label of the button
-
+        float _scale = 1.f;    ///> Scale factor for the button
         bool _clicked = false; ///> Flag indicating if the button was clicked
     };
 } // namespace Engine

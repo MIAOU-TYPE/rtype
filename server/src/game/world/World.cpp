@@ -34,15 +34,18 @@ namespace
             auto &health = world.registry().getComponents<Ecs::Health>().at(event.target);
             if (!health || health->hp <= 0)
                 return;
-            health->hp -= event.amount;
+            if (health->hp <= event.amount)
+                health->hp = 0;
+            else
+                health->hp -= event.amount;
 
+            if (health->hp > 0)
+                return;
             const auto &proj = world.registry().getComponents<Ecs::Projectile>().at(event.source);
             if (!proj)
                 return;
-            if (auto &ks = world.registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0) {
+            if (const auto &ks = world.registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0)
                 world.events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
-                ks = std::nullopt;
-            }
         });
     }
 
@@ -112,6 +115,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
+        _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         return ent;
     }
 

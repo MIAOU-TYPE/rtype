@@ -9,6 +9,7 @@
 #include <exception>
 #include <string>
 #include "GraphicsTypes.hpp"
+#include "IAudioManager.hpp"
 #include "IFontManager.hpp"
 #include "IText.hpp"
 #include "ITextManager.hpp"
@@ -86,6 +87,12 @@ namespace Graphics
          * @return Reference to the text manager.
          */
         [[nodiscard]] virtual std::shared_ptr<ITextManager> texts() const noexcept = 0;
+
+        /**
+         * @brief Provides access to the audio manager.
+         * @return Reference to the audio manager.
+         */
+        virtual std::shared_ptr<IAudioManager> audio() const noexcept = 0;
 
         /**
          * @brief Draw a sprite based on the provided SpriteCmd.

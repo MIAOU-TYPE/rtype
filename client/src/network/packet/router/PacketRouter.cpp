@@ -39,9 +39,10 @@ namespace Ecs
             case Net::Protocol::GAME_OVER: handleGameOver(); break;
             case Net::Protocol::PONG: handlePong(); break;
             case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
+            case Net::Protocol::SCORE: handleScore(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
-                          << '\n';
+                          << std::endl;
                 break;
         }
     }
@@ -143,5 +144,19 @@ namespace Ecs
             cursor += sizeof(SnapshotEntityData);
         }
         _sink->onSnapshot(entities);
+    }
+
+    void PacketRouter::handleScore(const uint8_t *payload, size_t size) const
+    {
+        if (size < sizeof(ScoreData)) {
+            std::cerr << "{PacketRouter::handleScore} Score packet too small\n";
+            return;
+        }
+
+        ScoreData scoreData{};
+        std::memcpy(&scoreData, payload, sizeof(scoreData));
+        const uint32_t score = ntohl(scoreData.score);
+
+        _sink->onScore(score);
     }
 } // namespace Ecs

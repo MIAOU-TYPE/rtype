@@ -128,7 +128,7 @@ namespace Thread
         std::unique_ptr<Engine::ClientWorld> _world = nullptr;         ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
-        std::shared_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
+        std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets

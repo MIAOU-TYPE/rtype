@@ -77,8 +77,10 @@ namespace
         world.events().subscribe<UpdateScoreEvent>([&](const UpdateScoreEvent &event) {
             auto &reg = world.registry();
             auto &scoreArr = reg.getComponents<Ecs::Score>();
-            if (auto &scoreComp = scoreArr.at(event.playerId))
+            if (auto &scoreComp = scoreArr.at(event.playerId)) {
                 scoreComp->score += event.scoreDelta;
+                world.events().emit(ScoreUpdatedEvent{event.playerId, scoreComp->score});
+            }
         });
     }
 } // namespace

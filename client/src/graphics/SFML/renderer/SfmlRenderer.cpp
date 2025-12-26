@@ -17,6 +17,7 @@ namespace Graphics
         if (!_resourceManager)
             throw RenderException("{SfmlRenderer::SfmlRenderer}: Resource manager cannot be null");
 
+        _audioManager = std::make_shared<SfmlAudioManager>(_resourceManager);
         _fontManager = std::make_shared<SfmlFontManager>(_resourceManager);
         _textureManager = std::make_shared<SfmlTextureManager>(_resourceManager);
         _textManager = std::make_shared<SfmlTextManager>(_fontManager);
@@ -51,6 +52,11 @@ namespace Graphics
     [[nodiscard]] std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
     {
         return _textManager;
+    }
+
+    std::shared_ptr<IAudioManager> SfmlRenderer::audio() const noexcept
+    {
+        return _audioManager;
     }
 
     void SfmlRenderer::draw(const Engine::RenderCommand &cmd)

@@ -16,6 +16,7 @@
 #include <utility>
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
+#include "SfmlAudioManager.hpp"
 #include "SfmlFontManager.hpp"
 #include "SfmlTextManager.hpp"
 #include "SfmlTextureManager.hpp"
@@ -71,6 +72,12 @@ namespace Graphics
         [[nodiscard]] std::shared_ptr<ITextManager> texts() const noexcept override;
 
         /**
+         * @brief Provides access to the audio manager.
+         * @return Reference to the audio manager.
+         */
+        std::shared_ptr<IAudioManager> audio() const noexcept override;
+
+        /**
          * @brief Draws a render command.
          * @param cmd The render command to draw.
          */
@@ -87,6 +94,7 @@ namespace Graphics
 
         std::shared_ptr<Resources::IResourceManager> _resourceManager =
             nullptr;                                                   ///> Shared pointer to the resource manager.
+        std::shared_ptr<SfmlAudioManager> _audioManager = nullptr;     ///> Shared pointer to the SFML Audio Manager.
         std::shared_ptr<SfmlFontManager> _fontManager = nullptr;       ///> Shared pointer to the SFML Font Manager.
         std::shared_ptr<SfmlTextureManager> _textureManager = nullptr; ///> Shared pointer to the SFML Texture Manager.
         std::shared_ptr<SfmlTextManager> _textManager = nullptr;       ///> Shared pointer to the SFML Text Manager.

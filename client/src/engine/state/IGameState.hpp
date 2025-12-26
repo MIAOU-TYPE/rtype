@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "InputState.hpp"
 
 namespace Engine
 {
@@ -39,25 +40,11 @@ namespace Engine
         /**
          * @brief Updates the state logic.
          */
-        virtual void update() = 0;
+        virtual void update(const InputFrame &frame) = 0;
 
         /**
          * @brief Renders the state.
          */
         virtual void render() = 0;
-
-        /**
-         * @brief Handles mouse press events.
-         * @param x The x-coordinate of the mouse press.
-         * @param y The y-coordinate of the mouse press.
-         */
-        virtual bool onMousePressed(float x, float y) = 0;
-
-        /**
-         * @brief Handles mouse release events.
-         * @param x The x-coordinate of the mouse release.
-         * @param y The y-coordinate of the mouse release.
-         */
-        virtual bool onMouseReleased(float x, float y) = 0;
     };
 } // namespace Engine

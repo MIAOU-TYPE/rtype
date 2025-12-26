@@ -9,17 +9,24 @@
 
 namespace
 {
-    bool intersects(const Ecs::Position &a, const Ecs::Collision &ac, const Ecs::Position &b, const Ecs::Collision &bc)
+    [[nodiscard]] bool intersects(
+        const Ecs::Position &a, const Ecs::Collision &ac, const Ecs::Position &b, const Ecs::Collision &bc)
     {
         return !(a.x > b.x + bc.width || a.x + ac.width < b.x || a.y > b.y + bc.height || a.y + ac.height < b.y);
     }
 
-    bool bothAI(const Ecs::Registry &reg, const size_t a, const size_t b)
+    [[nodiscard]] bool bothAI(const Ecs::Registry &reg, const size_t a, const size_t b)
     {
         return reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(a)) && reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(b));
     }
 
-    bool projectileHitsShooter(Ecs::Registry &reg, const size_t projectileIdx, const size_t targetIdx)
+    [[nodiscard]] bool sameShooter(Ecs::Registry reg, const size_t a, const size_t b)
+    {
+        auto shootArr = reg.getComponents<Ecs::Projectile>();
+        return shootArr.at(a) && shootArr.at(b) && shootArr.at(a)->shooter == shootArr.at(b)->shooter;
+    }
+
+    [[nodiscard]] bool projectileHitsShooter(Ecs::Registry &reg, const size_t projectileIdx, const size_t targetIdx)
     {
         const auto &projectile = reg.getComponents<Ecs::Projectile>().at(projectileIdx);
         return projectile && projectile->shooter == targetIdx;
@@ -52,6 +59,8 @@ namespace Game
                 if (bothAI(reg, i, j))
                     continue;
                 if (projectileHitsShooter(reg, i, j) || projectileHitsShooter(reg, j, i))
+                    continue;
+                if (sameShooter(reg, i, j))
                     continue;
                 world.events().emit(CollisionEvent{i, j});
             }

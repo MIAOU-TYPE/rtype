@@ -24,11 +24,12 @@ namespace Engine
             Reject,   ///> Reject connection
             Pong,     ///> Pong response
             GameOver, ///> Game over notification
-            Snapshot  ///> Snapshot of the world state
+            Snapshot, ///> Snapshot of the world state
+            Score
         };
 
-        Type type;                                                         ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>> payload; ///> Command payload
+        Type type;                                                                   ///> Type of the command
+        std::variant<std::monostate, std::vector<SnapshotEntity>, uint32_t> payload; ///> Command payload
     };
 
     /**

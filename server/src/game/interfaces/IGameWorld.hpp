@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "EventsRegistry.hpp"
 #include "Entity.hpp"
+#include "EventsRegistry.hpp"
 #include "Registry.hpp"
 
 /**

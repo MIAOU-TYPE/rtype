@@ -43,5 +43,6 @@ namespace Net::Protocol
     constexpr uint8_t PONG = 0x13;         ///> Server responds to client's ping
     constexpr uint8_t DAMAGE_EVENT = 0x14; ///> Server notifies client of a damage event
     constexpr uint8_t GAME_OVER = 0x15;    ///> Server notifies client of game over event
+    constexpr uint8_t SCORE = 0x16;        ///> Server sends score update to the client
 
 } // namespace Net::Protocol

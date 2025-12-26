@@ -9,12 +9,13 @@
 
 namespace
 {
-    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world, const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
         const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
         const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
     {
-        world.events().subscribe<UpdateScoreEvent>([&](const UpdateScoreEvent &evt) {
-            const size_t playerId = evt.playerId;
+        world.events().subscribe<ScoreUpdatedEvent>([&](const ScoreUpdatedEvent &scoreUpdated) {
+            const size_t playerId = scoreUpdated.playerId;
             const auto it = entityToSession.find(playerId);
             if (it == entityToSession.end())
                 return;
@@ -24,13 +25,7 @@ namespace
             if (!addr)
                 return;
 
-            auto &scoreArr = world.registry().getComponents<Ecs::Score>();
-            const auto &scoreOpt = scoreArr.at(playerId);
-            if (!scoreOpt)
-                return;
-
-            const auto totalScore = static_cast<uint32_t>(scoreOpt->score);
-
+            const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
             if (const auto pkt = packetFactory->createScorePacket(*addr, totalScore))
                 server->sendPacket(*pkt);
         });

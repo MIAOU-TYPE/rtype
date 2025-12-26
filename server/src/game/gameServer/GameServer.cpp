@@ -7,6 +7,36 @@
 
 #include "GameServer.hpp"
 
+namespace
+{
+    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world, const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+    {
+        world.events().subscribe<UpdateScoreEvent>([&](const UpdateScoreEvent &evt) {
+            const size_t playerId = evt.playerId;
+            const auto it = entityToSession.find(playerId);
+            if (it == entityToSession.end())
+                return;
+            const int sessionId = it->second;
+
+            const sockaddr_in *addr = sessions->getAddress(sessionId);
+            if (!addr)
+                return;
+
+            auto &scoreArr = world.registry().getComponents<Ecs::Score>();
+            const auto &scoreOpt = scoreArr.at(playerId);
+            if (!scoreOpt)
+                return;
+
+            const auto totalScore = static_cast<uint32_t>(scoreOpt->score);
+
+            if (const auto pkt = packetFactory->createScorePacket(*addr, totalScore))
+                server->sendPacket(*pkt);
+        });
+    }
+} // namespace
+
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
@@ -24,6 +54,8 @@ namespace Game
             _levelManager.reset();
         }
         _waitingClock.restart();
+
+        registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _packetFactory, _entityToSession, _server);
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -117,6 +149,7 @@ namespace Game
                     break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
+                _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;
                 break;
             }
 
@@ -125,6 +158,7 @@ namespace Game
                 if (it == _sessionToEntity.end())
                     break;
                 const Ecs::Entity ent = it->second;
+                _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
                 _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);

@@ -55,3 +55,12 @@ struct UpdateScoreEvent {
     size_t playerId;         ///> ID of the player whose score is to be updated
     unsigned int scoreDelta; ///> Amount to change the player's score by
 };
+
+/**
+ * @struct ScoreUpdatedEvent
+ * @brief Event triggered when a player's score has been updated.
+ */
+struct ScoreUpdatedEvent {
+    size_t playerId;       ///> ID of the player whose score was updated
+    unsigned int newScore; ///> The player's new total score
+};

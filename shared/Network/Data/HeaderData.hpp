@@ -21,3 +21,5 @@ struct HeaderData {
 };
 
 #pragma pack(pop)
+
+static_assert(sizeof(HeaderData) == 4, "HeaderData layout mismatch");

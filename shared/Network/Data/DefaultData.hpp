@@ -19,3 +19,5 @@ struct DefaultData {
 };
 
 #pragma pack(pop)
+
+static_assert(sizeof(DefaultData) == 4, "DefaultData layout mismatch");

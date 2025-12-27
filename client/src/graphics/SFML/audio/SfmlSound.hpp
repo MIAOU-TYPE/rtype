@@ -48,8 +48,6 @@ namespace Graphics
          */
         void setVolume(float volume);
 
-        [[nodiscard]] 
-
       private:
         std::shared_ptr<sf::SoundBuffer> _buffer; ///> Sound buffer
         sf::Sound _sound; ///> SFML sound object

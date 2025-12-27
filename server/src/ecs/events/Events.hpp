@@ -28,6 +28,10 @@ struct DamageEvent {
     int amount;    ///> Amount of damage dealt
 };
 
+/**
+ * @struct ShootEvent
+ * @brief Event triggered when an entity shoots a projectile.
+ */
 struct ShootEvent {
     float x;                          ///> Starting x position of the projectile
     float y;                          ///> Starting y position of the projectile

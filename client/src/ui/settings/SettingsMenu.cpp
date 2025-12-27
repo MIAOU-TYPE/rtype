@@ -74,7 +74,7 @@ namespace Engine
                 case Key::B: _backRequested = true; break;
                 case Key::Backspace: {
                     _currentResolution = (_currentResolution + 1) % _resolutions.size();
-                    const auto &res = _resolutions[_currentResolution];
+                    const auto &res = _resolutions.at(_currentResolution);
                     _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
                     _resolutionChanged = true;
                     break;
@@ -90,12 +90,12 @@ namespace Engine
             _back->onMousePressed(frame.mouseX, frame.mouseY);
         }
         if (frame.mouseReleased) {
-            _audio->onMouseReleased(frame.mouseX, frame.mouseY);
+            (void) _audio->onMouseReleased(frame.mouseX, frame.mouseY);
 
             if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
-                const auto &res = _resolutions[_currentResolution];
+                const auto &res = _resolutions.at(_currentResolution);
                 _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
                 _resolutionNext->reset();
                 return;
@@ -122,7 +122,11 @@ namespace Engine
 
     Graphics::Extent2u SettingsMenu::currentResolution() const noexcept
     {
-        return _resolutions[_currentResolution];
+        if (_resolutions.empty())
+            return {0, 0};
+        if (_currentResolution >= _resolutions.size())
+            return _resolutions.back();
+        return _resolutions.at(_currentResolution);
     }
 
     void SettingsMenu::render() const

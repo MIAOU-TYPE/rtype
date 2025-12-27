@@ -13,11 +13,35 @@
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "ITextureManager.hpp"
+#include "InputState.hpp"
 #include "RenderCommand.hpp"
 #include "UIButton.hpp"
 
 namespace Engine
 {
+    class MenuError : public std::runtime_error {
+      public:
+        /**
+         * @brief Constructor for MenuError.
+         * @param message The error message.
+         */
+        explicit MenuError(const std::string &message) : std::runtime_error("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     /**
      * @brief Class representing the main menu of the game.
      */
@@ -32,10 +56,9 @@ namespace Engine
 
         /**
          * @brief Update the menu state.
-         * @param mouseX The x-coordinate of the mouse.
-         * @param mouseY The y-coordinate of the mouse.
+         * @param frame The current input frame.
          */
-        void update(float mouseX, float mouseY);
+        void update(const InputFrame &frame);
 
         /**
          * @brief Render the menu.
@@ -43,22 +66,9 @@ namespace Engine
         void render() const;
 
         /**
-         * @brief Handle mouse press events.
-         *
-         * @param x The x-coordinate of the mouse press.
-         * @param y The y-coordinate of the mouse press.
-         * @return true if the event was handled, false otherwise.
+         * @brief Called when entering the menu state.
          */
-        bool onMousePressed(float x, float y) const;
-
-        /**
-         * @brief Handle mouse release events.
-         *
-         * @param x The x-coordinate of the mouse release.
-         * @param y The y-coordinate of the mouse release.
-         * @return true if the event was handled, false otherwise.
-         */
-        bool onMouseReleased(float x, float y);
+        void onEnter();
 
         /**
          * @brief Check if the user wants to start the game.
@@ -81,7 +91,18 @@ namespace Engine
          */
         [[nodiscard]] bool wantsSettings() const noexcept;
 
+        /**
+         * @brief Handle resizing of the menu.
+         */
+        void layout();
+
       private:
+        /**
+         * @brief Handle user input for the menu.
+         * @param frame The current input frame.
+         */
+        void handleInput(const InputFrame &frame);
+
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
 
         Graphics::TextureHandle _backgroundTexture; ///> Handle to the background texture.

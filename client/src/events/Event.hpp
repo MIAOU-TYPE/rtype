@@ -8,7 +8,7 @@
 #pragma once
 #include "Key.hpp"
 
-namespace Core
+namespace Engine
 {
     /**
      * @brief Base class for all events.
@@ -56,6 +56,23 @@ namespace Core
     };
 
     /**
+     * @brief Event triggered when the mouse is moved.
+     */
+    struct MouseMoved : Event {
+        /**
+         * @brief Constructor for MouseMoved event.
+         * @param x The x position of the mouse.
+         * @param y The y position of the mouse.
+         */
+        explicit MouseMoved(int x, int y) : posX(x), posY(y)
+        {
+        }
+
+        int posX; ///> The x position of the mouse.
+        int posY; ///> The y position of the mouse.
+    };
+
+    /**
      * @brief Event triggered when a mouse button is pressed.
      */
     struct MousePressed : Event {
@@ -81,11 +98,23 @@ namespace Core
         /**
          * @brief Constructor for MouseReleased event.
          * @param k The mouse button that was released.
+         * @param x The x position of the mouse when released.
+         * @param y The y position of the mouse when released.
          */
-        explicit MouseReleased(const Key k) : key(k)
+        explicit MouseReleased(const Key k, const int x, const int y) : key(k), posX(x), posY(y)
         {
         }
 
-        Key key; ///> The mouse button that was released.
+        Key key;      ///> The mouse button that was released.
+        int posX = 0; ///> The x position of the mouse when released.
+        int posY = 0; ///> The y position of the mouse when released.
     };
-} // namespace Core
+
+    /**
+     * @brief Event triggered when the window is resized.
+     */
+    struct WindowResized {
+        std::uint32_t width;  ///> The new width of the window.
+        std::uint32_t height; ///> The new height of the window.
+    };
+} // namespace Engine

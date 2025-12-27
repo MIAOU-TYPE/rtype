@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace Core
+namespace Engine
 {
     /**
      * @enum Key
@@ -73,4 +73,4 @@ namespace Core
         MouseLeft, ///> Left mouse button
         MouseRight ///> Right mouse button
     };
-} // namespace Core
+} // namespace Engine

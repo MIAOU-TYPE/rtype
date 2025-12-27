@@ -27,6 +27,13 @@
 #include "WorldCommandBuffer.hpp"
 
 using steadyClock = std::chrono::steady_clock;
+#include "IRenderer.hpp"
+#include "InputState.hpp"
+#include "MenuState.hpp"
+#include "SpriteLoader.hpp"
+#include "SpriteRegistry.hpp"
+#include "StateManager.hpp"
+#include <condition_variable>
 
 /**
  * @namespace Thread
@@ -101,7 +108,7 @@ namespace Thread
          * @return Shared pointer to the event bus.
          * @details The event bus is used for communication between different components of the client.
          */
-        [[nodiscard]] std::shared_ptr<Core::EventBus> getEventBus() const noexcept;
+        [[nodiscard]] std::shared_ptr<Engine::EventBus> getEventBus() const noexcept;
 
         /**
          * @brief Runs the display loop for rendering graphics.
@@ -111,15 +118,17 @@ namespace Thread
         void runDisplay();
 
       private:
-        std::shared_ptr<Core::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
-        std::unique_ptr<Core::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing event handlers
+        std::shared_ptr<Engine::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
+        std::unique_ptr<Engine::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing events
 
         std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
 
-        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr; ///> Graphics interface
-        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr; ///> Renderer for graphics
-        std::unique_ptr<Engine::ClientWorld> _world = nullptr;    ///> Client world for managing game state
+        std::shared_ptr<Graphics::IGraphics> _graphics = nullptr;      ///> Graphics interface
+        std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
+        std::unique_ptr<Engine::ClientWorld> _world = nullptr;         ///> Client world for managing game state
+        std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
+        std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
@@ -181,7 +190,9 @@ namespace Thread
         void applyWorldCommands(steadyClock::time_point deadline, int maxCommands);
 
         /**
-         *
+         * @brief Builds and swaps the render commands for the current frame.
+         * @details This method generates the render commands based on the current state of the client world
+         * and swaps them for rendering.
          */
         void buildAndSwapRenderCommands();
     };

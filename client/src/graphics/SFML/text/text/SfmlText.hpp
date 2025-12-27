@@ -80,7 +80,7 @@ namespace Graphics
 
       private:
         std::shared_ptr<SfmlFontManager> _fontManager; ///> Shared pointer to the font manager
-        std::optional<sf::Text> _text;                 ///> SFML text object
+        std::unique_ptr<sf::Text> _text;               ///> SFML text object
 
         std::pair<float, float> _position = {0, 0}; ///> Text position
         Color _color;                               ///> Text color

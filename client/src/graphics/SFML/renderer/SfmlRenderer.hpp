@@ -80,7 +80,7 @@ namespace Graphics
          * @brief Draws text.
          * @param text The text to draw.
          */
-        void drawText(const IText &text) override;
+        void draw(const IText &text) override;
 
       private:
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.

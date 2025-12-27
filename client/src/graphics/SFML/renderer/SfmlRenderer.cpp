@@ -69,15 +69,15 @@ namespace Graphics
         }
     }
 
-    void SfmlRenderer::drawText(const IText &text)
+    void SfmlRenderer::draw(const IText &text)
     {
         try {
             const auto &sfText = dynamic_cast<const SfmlText &>(text);
             _window->draw(sfText.get());
         } catch (const std::bad_cast &) {
-            std::cerr << "{SfmlRenderer::drawText}: IText is not a SfmlText\n";
+            std::cerr << "{SfmlRenderer::draw}: IText is not a SfmlText\n";
         } catch (const TextError &e) {
-            std::cerr << "{SfmlRenderer::drawText}: " << e.what() << '\n';
+            std::cerr << "{SfmlRenderer::draw}: " << e.what() << '\n';
         }
     }
 } // namespace Graphics

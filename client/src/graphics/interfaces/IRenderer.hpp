@@ -97,6 +97,6 @@ namespace Graphics
          * @brief Draw text based on the provided IText object.
          * @param text The text object containing text drawing parameters.
          */
-        virtual void drawText(const IText &text) = 0;
+        virtual void draw(const IText &text) = 0;
     };
 } // namespace Graphics

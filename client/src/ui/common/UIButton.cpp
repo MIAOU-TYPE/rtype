@@ -89,7 +89,7 @@ namespace Engine
     void UIButton::render() const
     {
         _renderer->draw(_cmd);
-        _renderer->drawText(*_text);
+        _renderer->draw(*_text);
     }
 
     FloatRect UIButton::bounds() const noexcept

@@ -49,7 +49,7 @@ namespace Engine
         _text->setPosition(textX, textY);
     }
 
-    void UIButton::update(float mouseX, float mouseY)
+    void UIButton::update(const float mouseX, const float mouseY)
     {
         const bool hovered = bounds().contains(mouseX, mouseY);
 

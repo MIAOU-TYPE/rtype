@@ -55,7 +55,7 @@ namespace Graphics
          * @brief Retrieves the current size of the viewport.
          * @return ViewportSize struct containing width and height of the viewport.
          */
-        virtual Extent2u getViewportSize() const noexcept = 0;
+        [[nodiscard]] virtual Extent2u getViewportSize() const noexcept = 0;
 
         /**
          * @brief Begins a new rendering frame.
@@ -73,13 +73,13 @@ namespace Graphics
          * @brief Provides access to the font manager.
          * @return Reference to the font manager.
          */
-        virtual std::shared_ptr<IFontManager> fonts() const noexcept = 0;
+        [[nodiscard]] virtual std::shared_ptr<IFontManager> fonts() const noexcept = 0;
 
         /**
          * @brief Provides access to the texture manager.
          * @return Reference to the texture manager.
          */
-        virtual std::shared_ptr<ITextureManager> textures() const noexcept = 0;
+        [[nodiscard]] virtual std::shared_ptr<ITextureManager> textures() const noexcept = 0;
 
         /**
          * @brief Provides access to the text manager.

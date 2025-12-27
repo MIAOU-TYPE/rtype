@@ -15,8 +15,10 @@ namespace Engine
             const auto textures = renderer->textures();
             _backgroundTexture = textures->load("sprites/bg-preview.png");
             _logoTexture = textures->load("sprites/menu_logo.png");
-            if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
-                throw MenuError("{Menu::Menu} failed to load textures" + + _logoTexture ? "sprites/menu_logo.png " : "" + _backgroundTexture ? "sprites/bg-preview.png" : "");
+            if (_backgroundTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/bg-preview.png texture");
+            if (_logoTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/menu_logo.png texture");
 
             _backgroundCmd.textureId = _backgroundTexture;
             _logoCmd.textureId = _logoTexture;
@@ -28,7 +30,6 @@ namespace Engine
             throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
         }
     }
-
 
     void Menu::onEnter()
     {

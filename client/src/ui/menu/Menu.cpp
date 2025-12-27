@@ -11,19 +11,24 @@ namespace Engine
 {
     Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
     {
-        const auto textures = renderer->textures();
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        _logoTexture = textures->load("sprites/menu_logo.png");
-        if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
-            throw MenuError("Menu: failed to load textures");
+        try {
+            const auto textures = renderer->textures();
+            _backgroundTexture = textures->load("sprites/bg-preview.png");
+            _logoTexture = textures->load("sprites/menu_logo.png");
+            if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load textures" + + _logoTexture ? "sprites/menu_logo.png " : "" + _backgroundTexture ? "sprites/bg-preview.png" : "");
 
-        _backgroundCmd.textureId = _backgroundTexture;
-        _logoCmd.textureId = _logoTexture;
+            _backgroundCmd.textureId = _backgroundTexture;
+            _logoCmd.textureId = _logoTexture;
 
-        _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
-        _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
-        _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+            _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
+            _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
+            _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+        } catch (const std::exception &e) {
+            throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
+        }
     }
+
 
     void Menu::onEnter()
     {

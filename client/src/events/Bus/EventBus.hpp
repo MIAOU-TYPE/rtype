@@ -13,7 +13,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace Core
+namespace Engine
 {
     /**
      * @class EventBus
@@ -68,6 +68,6 @@ namespace Core
         std::queue<QueuedEvent> _queue; ///> Queue of events to be dispatched
         std::mutex _queueMutex;         ///> Mutex for thread-safe access to the event queue
     };
-} // namespace Core
+} // namespace Engine
 
 #include "EventBus.tpp"

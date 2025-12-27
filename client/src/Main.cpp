@@ -4,6 +4,7 @@
 ** File description:
 ** Main
 */
+
 #include <iostream>
 #include "ArgParser.hpp"
 #include "ClientRuntime.hpp"
@@ -25,14 +26,14 @@ namespace
         }
     }
 
-    void createEventHandler(Core::EventRegistry &eventRegistry, Thread::ClientRuntime &clientRuntime,
-        const std::shared_ptr<Core::EventBus> &eventBus)
+    void createEventHandler(Engine::EventRegistry &eventRegistry, Thread::ClientRuntime &clientRuntime,
+        const std::shared_ptr<Engine::EventBus> &eventBus)
     {
-        eventRegistry.onKeyPressed(Core::Key::Escape, [&]() {
+        eventRegistry.onKeyPressed(Engine::Key::Escape, [&]() {
             clientRuntime.stop();
         });
 
-        eventBus->on<Core::WindowClosed>([&](const Core::WindowClosed &) {
+        eventBus->on<Engine::WindowClosed>([&](const Engine::WindowClosed &) {
             clientRuntime.stop();
         });
     }
@@ -50,7 +51,7 @@ int main(const int argc, char **argv)
 
     Thread::ClientRuntime clientRuntime(graphics, client);
     const auto eventBus = clientRuntime.getEventBus();
-    Core::EventRegistry eventRegistry(eventBus);
+    Engine::EventRegistry eventRegistry(eventBus);
 
     createEventHandler(eventRegistry, clientRuntime, eventBus);
     std::cout << "Connecting to " << argParser.getHost() << ":" << argParser.getPort() << "..." << std::endl;

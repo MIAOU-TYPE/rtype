@@ -34,12 +34,11 @@ namespace Graphics
 
         /**
          * @brief Create a window with specified dimensions, title, and fullscreen mode.
-         * @param width The width of the window
-         * @param height The height of the window
+         * @param size The size of the window as an Extent2u structure.
          * @param title The title of the window.
          * @param fullscreen Whether to create the window in fullscreen mode.
          */
-        void create(unsigned int width, unsigned int height, const std::string &title, bool fullscreen) override;
+        void create(Extent2u size, const std::string &title, bool fullscreen) override;
 
         /**
          * @brief Close the window.
@@ -53,9 +52,15 @@ namespace Graphics
         [[nodiscard]] bool isOpen() const noexcept override;
 
         /**
+         * @brief Set the resolution of the window.
+         * @param size The new size of the window as an Extent2u structure.
+         */
+        void setResolution(Extent2u size) override;
+
+        /**
          * @brief Poll for window events.
          */
-        void pollEvents(Core::EventBus &bus) override;
+        void pollEvents(Engine::EventBus &bus) override;
 
         /**
          * @brief Create a renderer for the graphics system.

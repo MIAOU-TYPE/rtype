@@ -55,12 +55,11 @@ namespace Graphics
 
         /**
          * @brief Create a window with specified dimensions, title, and fullscreen mode.
-         * @param width The width of the window
-         * @param height The height of the window
+         * @param size  The size of the window as an Extent2u structure.
          * @param title  The title of the window.
          * @param fullscreen  Whether to create the window in fullscreen mode.
          */
-        virtual void create(unsigned int width, unsigned int height, const std::string &title, bool fullscreen) = 0;
+        virtual void create(Extent2u size, const std::string &title, bool fullscreen) = 0;
 
         /**
          * @brief Close the currently open window.
@@ -74,6 +73,12 @@ namespace Graphics
         [[nodiscard]] virtual bool isOpen() const noexcept = 0;
 
         /**
+         * @brief Set the resolution of the window.
+         * @param size  The new size of the window as an Extent2u structure.
+         */
+        virtual void setResolution(Extent2u size) = 0;
+
+        /**
          * @brief Create and return a renderer instance.
          * @return Shared pointer to the created IRenderer instance.
          */
@@ -82,6 +87,6 @@ namespace Graphics
         /**
          * @brief Poll for window events.
          */
-        virtual void pollEvents(Core::EventBus &bus) = 0;
+        virtual void pollEvents(Engine::EventBus &bus) = 0;
     };
 } // namespace Graphics

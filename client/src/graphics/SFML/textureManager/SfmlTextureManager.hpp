@@ -47,6 +47,13 @@ namespace Graphics
         [[nodiscard]] bool isValid(TextureHandle handle) const noexcept override;
 
         /**
+         * @brief Get the size of a texture by its handle.
+         * @param handle The texture handle.
+         * @return TextureSize structure containing width and height.
+         */
+        [[nodiscard]] TextureSize getSize(TextureHandle handle) const override;
+
+        /**
          * @brief Clear all loaded textures.
          */
         void clear() override;

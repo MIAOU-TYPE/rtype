@@ -95,5 +95,4 @@ namespace Graphics
          */
         virtual float getHeight() const = 0;
     };
-
 } // namespace Graphics

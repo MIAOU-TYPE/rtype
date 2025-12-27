@@ -59,6 +59,13 @@ namespace Graphics
         return _textures.contains(handle);
     }
 
+    TextureSize SfmlTextureManager::getSize(const TextureHandle handle) const
+    {
+        const auto &tex = get(handle);
+        const auto size = tex.getSize();
+        return {size.x, size.y};
+    }
+
     void SfmlTextureManager::clear()
     {
         _textures.clear();

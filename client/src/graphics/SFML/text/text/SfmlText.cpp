@@ -4,6 +4,7 @@
 ** File description:
 ** SfmlText
 */
+
 #include "SfmlText.hpp"
 
 namespace Graphics
@@ -11,53 +12,52 @@ namespace Graphics
     SfmlText::SfmlText(const FontHandle font, const std::shared_ptr<SfmlFontManager> &fontManager)
         : _fontManager(fontManager), _color({255, 255, 255, 255})
     {
-        if (!_fontManager->isValid(font))
+        if (!_fontManager || !_fontManager->isValid(font))
             return;
-        _text = sf::Text(fontManager->get(font), "", 30);
+        _text = std::make_unique<sf::Text>(_fontManager->get(font), "", _characterSize);
     }
 
     void SfmlText::setString(const std::string &text)
     {
+        _content = text;
         if (_text)
             _text->setString(text);
-        _content = text;
     }
 
     void SfmlText::setFont(const FontHandle font)
     {
-        if (!_fontManager->isValid(font))
+        if (!_fontManager || !_fontManager->isValid(font))
             return;
 
         const sf::Font &sfFont = _fontManager->get(font);
 
-        if (_text)
+        if (!_text) {
+            _text = std::make_unique<sf::Text>(sfFont, _content, _characterSize);
+            _text->setFillColor(sf::Color(_color.r, _color.g, _color.b, _color.a));
+            _text->setPosition({_position.first, _position.second});
+        } else
             _text->setFont(sfFont);
-        else {
-            _text = sf::Text(sfFont, _content, _characterSize);
-            setColor(_color);
-            setPosition(_position.first, _position.second);
-        }
     }
 
     void SfmlText::setCharacterSize(const unsigned int size)
     {
+        _characterSize = size;
         if (_text)
             _text->setCharacterSize(size);
-        _characterSize = size;
     }
 
     void SfmlText::setColor(const Color &color)
     {
+        _color = color;
         if (_text)
             _text->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-        _color = color;
     }
 
     void SfmlText::setPosition(const float x, const float y)
     {
+        _position = {x, y};
         if (_text)
             _text->setPosition({x, y});
-        _position = {x, y};
     }
 
     float SfmlText::getWidth() const
@@ -74,6 +74,6 @@ namespace Graphics
     {
         if (!_text)
             throw TextError("SfmlText: Text object is not initialized.");
-        return _text.value();
+        return *_text;
     }
 } // namespace Graphics

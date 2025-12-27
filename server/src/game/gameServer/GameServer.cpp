@@ -9,12 +9,10 @@
 
 namespace
 {
-    void registerScoreUpdatePacketDispatch(
-        Game::IGameWorld &world,
+    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world,
         const std::shared_ptr<Net::Server::ISessionManager> &sessions,
         const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
-        const std::unordered_map<size_t, int> &entityToSession,
-        const std::shared_ptr<Net::Server::IServer> &server)
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
     {
         std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
         std::weak_ptr<Net::Factory::PacketFactory> wFactory = packetFactory;
@@ -44,7 +42,7 @@ namespace
                     serverL->sendPacket(*pkt);
             });
     }
-}
+} // namespace
 
 namespace Game
 {

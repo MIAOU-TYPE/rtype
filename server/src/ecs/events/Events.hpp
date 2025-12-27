@@ -39,7 +39,7 @@ struct ShootEvent {
     float vy;                         ///> Velocity in the y direction
     int damage;                       ///> Damage dealt by the projectile
     size_t shooter;                   ///> ID of the entity that fired the projectile
-    std::pair<size_t, size_t> bounds; ///> Width and height of the projectile
+    std::pair<float, float> bounds;   ///> Width and height of the projectile
     float lifetime;                   ///> Lifetime of the projectile in seconds
 };
 

@@ -19,6 +19,9 @@
 
 namespace Engine
 {
+    /**
+     * @brief Exception class for menu errors.
+     */
     class MenuError : public std::runtime_error {
       public:
         /**

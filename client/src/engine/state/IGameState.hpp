@@ -10,6 +10,8 @@
 
 namespace Engine
 {
+    /* @brief Forward declaration of StateManager to avoid circular dependency.
+     */
     class StateManager;
 
     /**

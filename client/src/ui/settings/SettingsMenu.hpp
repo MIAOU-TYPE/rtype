@@ -18,6 +18,9 @@
 
 namespace Engine
 {
+    /**
+     * @brief Exception class for settings menu errors.
+     */
     class SettingsMenuError : public std::runtime_error {
       public:
         /**

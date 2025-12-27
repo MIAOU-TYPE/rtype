@@ -73,17 +73,11 @@ namespace Engine
     bool UIButton::onMouseReleased(const float x, const float y)
     {
         if (_state == ButtonState::Pressed && bounds().contains(x, y)) {
-            _clicked = true;
             _state = ButtonState::Hover;
             return true;
         }
         _state = ButtonState::Released;
         return false;
-    }
-
-    bool UIButton::wasClicked() const noexcept
-    {
-        return _clicked;
     }
 
     void UIButton::render() const
@@ -103,15 +97,13 @@ namespace Engine
             _text->setString(text);
     }
 
-    void UIButton::setScale(float scale)
+    void UIButton::setScale(const float scale)
     {
-        _scale = scale * 0.85f;
         _cmd.scale = {scale, scale};
     }
 
     void UIButton::reset()
     {
-        _clicked = false;
         _state = ButtonState::Released;
     }
 } // namespace Engine

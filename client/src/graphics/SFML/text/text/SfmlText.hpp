@@ -82,9 +82,9 @@ namespace Graphics
         std::shared_ptr<SfmlFontManager> _fontManager; ///> Shared pointer to the font manager
         std::unique_ptr<sf::Text> _text;               ///> SFML text object
 
-        std::pair<float, float> _position = {0, 0}; ///> Text position
+        std::pair<float, float> _position; ///> Text position
         Color _color;                               ///> Text color
-        unsigned int _characterSize = 30;           ///> Character size
+        unsigned int _characterSize;           ///> Character size
         std::string _content = "";                  ///> Text content
     };
 } // namespace Graphics

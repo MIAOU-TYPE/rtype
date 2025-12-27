@@ -9,8 +9,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include "Events.hpp"
-#include "HealthSystem.hpp"
 #include "Health.hpp"
+#include "HealthSystem.hpp"
 #include "Registry.hpp"
 #include "mockTestsWorld.hpp"
 

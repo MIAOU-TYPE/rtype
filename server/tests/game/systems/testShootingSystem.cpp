@@ -2,66 +2,111 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** testShootingSystem
+** test_ShootingSystem
 */
 
 #include <gtest/gtest.h>
-#include "Collision.hpp"
-#include "Damage.hpp"
+#include <vector>
+#include "Events.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
+#include "Registry.hpp"
 #include "ShootingSystem.hpp"
-#include "Velocity.hpp"
-#include "World.hpp"
+#include "mockTestsWorld.hpp"
 
-TEST(ShootingSystem, creates_projectile_when_shooting)
-{
-    Game::World world;
-    Ecs::Entity player = world.createPlayer();
+class ShootingSystemTests : public ::testing::Test {
+  protected:
+    ::Test::TestWorld world;
+    std::vector<ShootEvent> shoots;
 
-    auto &reg = world.registry();
-    auto &input = reg.getComponents<Game::InputComponent>().at(static_cast<size_t>(player));
-    auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(player));
-
-    ASSERT_TRUE(input.has_value());
-    ASSERT_TRUE(pos.has_value());
-
-    input->shoot = true;
-
-    Game::ShootingSystem::update(world);
-
-    auto &velArr = reg.getComponents<Ecs::Velocity>();
-    auto &dmgArr = reg.getComponents<Ecs::Damage>();
-    auto &colArr = reg.getComponents<Ecs::Collision>();
-
-    bool foundProjectile = false;
-
-    for (size_t i = 0; i < velArr.size(); i++) {
-        if (velArr.at(i).has_value() && dmgArr.at(i).has_value() && colArr.at(i).has_value()) {
-            foundProjectile = true;
-
-            EXPECT_FLOAT_EQ(velArr.at(i)->vx, 100.0f);
-            EXPECT_FLOAT_EQ(velArr.at(i)->vy, 0.f);
-            EXPECT_EQ(dmgArr.at(i)->amount, 20);
-        }
+    void SetUp() override
+    {
+        world.events().subscribe<ShootEvent>([this](const ShootEvent &ev) {
+            shoots.push_back(ev);
+        });
     }
 
-    EXPECT_TRUE(foundProjectile);
+    void run()
+    {
+        Game::ShootingSystem::update(world);
+        world.events().process();
+    }
+};
+
+TEST_F(ShootingSystemTests, DoesNotEmit_WhenShootIsFalse)
+{
+    auto &reg = world.registry();
+
+    const Ecs::Entity e = reg.createEntity();
+    reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
+    reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
+
+    auto &inputArr = reg.getComponents<Game::InputComponent>();
+    ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
+    inputArr.at(static_cast<size_t>(e))->shoot = false;
+
+    run();
+
+    EXPECT_TRUE(shoots.empty());
 }
 
-TEST(ShootingSystem, resets_shoot_flag)
+TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
 {
-    Game::World world;
-    Ecs::Entity player = world.createPlayer();
-
     auto &reg = world.registry();
-    auto &input = reg.getComponents<Game::InputComponent>().at(static_cast<size_t>(player));
 
-    ASSERT_TRUE(input.has_value());
+    const Ecs::Entity e = reg.createEntity();
+    reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
+    reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
 
-    input->shoot = true;
+    auto &inputArr = reg.getComponents<Game::InputComponent>();
+    ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
+    inputArr.at(static_cast<size_t>(e))->shoot = true;
 
-    Game::ShootingSystem::update(world);
+    run();
 
-    EXPECT_FALSE(input->shoot);
+    ASSERT_EQ(shoots.size(), 1u);
+
+    ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
+    EXPECT_FALSE(inputArr.at(static_cast<size_t>(e))->shoot);
+
+    const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime] = shoots.at(0);
+
+    EXPECT_FLOAT_EQ(x, 130.f);
+    EXPECT_FLOAT_EQ(y, 50.f);
+    EXPECT_FLOAT_EQ(vx, 100.f);
+    EXPECT_FLOAT_EQ(vy, 0.f);
+    EXPECT_EQ(damage, 20);
+    EXPECT_EQ(shooter, static_cast<size_t>(e));
+
+    EXPECT_FLOAT_EQ(bounds.first, 8.f);
+    EXPECT_FLOAT_EQ(bounds.second, 8.f);
+
+    EXPECT_FLOAT_EQ(lifetime, 5.f);
+}
+
+TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue)
+{
+    auto &reg = world.registry();
+
+    const Ecs::Entity e1 = reg.createEntity();
+    reg.emplaceComponent<Game::InputComponent>(e1, Game::InputComponent{});
+    reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.f, 10.f});
+
+    const Ecs::Entity e2 = reg.createEntity();
+    reg.emplaceComponent<Game::InputComponent>(e2, Game::InputComponent{});
+    reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{20.f, 20.f});
+
+    auto &inputArr = reg.getComponents<Game::InputComponent>();
+    inputArr.at(static_cast<size_t>(e1))->shoot = true;
+    inputArr.at(static_cast<size_t>(e2))->shoot = false;
+
+    run();
+
+    ASSERT_EQ(shoots.size(), 1u);
+    EXPECT_EQ(shoots.at(0).shooter, static_cast<size_t>(e1));
+    EXPECT_FLOAT_EQ(shoots.at(0).x, 40.f);
+    EXPECT_FLOAT_EQ(shoots.at(0).y, 10.f);
+
+    EXPECT_FALSE(inputArr.at(static_cast<size_t>(e1))->shoot);
+    EXPECT_FALSE(inputArr.at(static_cast<size_t>(e2))->shoot);
 }

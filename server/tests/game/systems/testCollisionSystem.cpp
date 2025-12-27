@@ -78,7 +78,7 @@ class CollisionSystemEmitTests : public ::testing::Test {
 TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenOverlapAndNoFilters)
 {
     const auto a = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
-    const auto b = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap
+    const auto b = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
     run();
 
@@ -112,9 +112,9 @@ TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenBothAreAI)
 TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenProjectileHitsItsShooter)
 {
     const auto shooter = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
-    const auto proj = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap shooter
+    const auto proj = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
-    addProjectile(world, proj, id(shooter)); // projectile->shooter == target => skip
+    addProjectile(world, proj, id(shooter));
 
     run();
 
@@ -126,10 +126,10 @@ TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenTwoProjectilesHaveSameShooter)
     const auto shooter = makeEntity(world, 50.f, 50.f, 10.f, 10.f);
 
     const auto p1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
-    const auto p2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap p1
+    const auto p2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
     addProjectile(world, p1, id(shooter));
-    addProjectile(world, p2, id(shooter)); // same shooter => skip
+    addProjectile(world, p2, id(shooter));
 
     run();
 
@@ -142,10 +142,10 @@ TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenTwoProjectilesHaveDifferentS
     const auto shooterB = makeEntity(world, 200.f, 200.f, 10.f, 10.f);
 
     const auto pA = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
-    const auto pB = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap
+    const auto pB = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
     addProjectile(world, pA, id(shooterA));
-    addProjectile(world, pB, id(shooterB)); // different shooter => event
+    addProjectile(world, pB, id(shooterB));
 
     run();
 

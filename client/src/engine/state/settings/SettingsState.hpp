@@ -21,12 +21,12 @@ namespace Engine
         /**
          * @brief Construct a new Settings State object.
          *
+         * @param manager Reference to the state manager.
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
          */
-        explicit SettingsState(
-            std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer);
-
+        explicit SettingsState(StateManager &manager, std::shared_ptr<Graphics::IGraphics> graphics,
+            std::shared_ptr<Graphics::IRenderer> renderer);
         /**
          * @brief Destroy the Settings State object.
          */
@@ -48,7 +48,7 @@ namespace Engine
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
 
-        StateManager *_manager = nullptr; ///> Pointer to the state manager
+        StateManager &_manager; ///> Reference to the state manager
         bool _pendingResize = false;
     };
 } // namespace Engine

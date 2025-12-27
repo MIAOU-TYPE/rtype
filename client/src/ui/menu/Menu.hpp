@@ -22,13 +22,13 @@ namespace Engine
     /**
      * @brief Exception class for menu errors.
      */
-    class MenuError : public std::runtime_error {
+    class MenuError : public std::exception {
       public:
         /**
          * @brief Constructor for MenuError.
          * @param message The error message.
          */
-        explicit MenuError(const std::string &message) : std::runtime_error("\n\t" + message)
+        explicit MenuError(const std::string &message) : _message("\n\t" + message)
         {
         }
 

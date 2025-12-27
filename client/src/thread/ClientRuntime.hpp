@@ -190,7 +190,9 @@ namespace Thread
         void applyWorldCommands(steadyClock::time_point deadline, int maxCommands);
 
         /**
-         *
+         * @brief Builds and swaps the render commands for the current frame.
+         * @details This method generates the render commands based on the current state of the client world
+         * and swaps them for rendering.
          */
         void buildAndSwapRenderCommands();
     };

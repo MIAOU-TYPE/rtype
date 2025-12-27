@@ -23,10 +23,9 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
-         * @param input Shared pointer to the input state.
          */
-        explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<InputState> input);
+        explicit SettingsState(
+            std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer);
 
         /**
          * @brief Destroy the Settings State object.
@@ -34,41 +33,22 @@ namespace Engine
         void onEnter(StateManager &manager) override;
 
         /**
-         * @brief Clean up resources when exiting the settings state.
+         * @brief Update the menu state.
+         * @param frame The current input frame.
          */
-        void onExit() override;
-
-        /**
-         * @brief Update the settings state.
-         */
-        void update() override;
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Render the settings state.
          */
         void render() override;
 
-        /**
-         * @brief Handle mouse press events.
-         *
-         * @param x The x-coordinate of the mouse press.
-         * @param y The y-coordinate of the mouse press.
-         */
-        bool onMousePressed(float x, float y) override;
-
-        /**
-         * @brief Handle mouse release events.
-         *
-         * @param x The x-coordinate of the mouse release.
-         * @param y The y-coordinate of the mouse release.
-         */
-        bool onMouseReleased(float x, float y) override;
-
       private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
-        std::shared_ptr<InputState> _input;             ///> Input state
-        StateManager *_manager = nullptr;               ///> Pointer to the state manager
+
+        StateManager *_manager = nullptr; ///> Pointer to the state manager
+        bool _pendingResize = false;
     };
 } // namespace Engine

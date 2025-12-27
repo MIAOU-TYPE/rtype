@@ -42,7 +42,7 @@ namespace Ecs
             case Net::Protocol::SCORE: handleScore(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
-                          << std::endl;
+                          << '\n';
                 break;
         }
     }

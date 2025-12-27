@@ -41,6 +41,8 @@ namespace
 
 int main(const int argc, char **argv)
 {
+    try {
+
     Utils::ArgParser argParser(argc, argv);
 
     if (const auto result = parseArgs(argParser); result != Utils::ArgParseResult::Success)
@@ -62,4 +64,8 @@ int main(const int argc, char **argv)
     clientRuntime.wait();
 
     return 0;
+    } catch (std::exception &e) {
+        std::cerr << "{Main}: " << e.what() << std::endl;
+        return 84;
+    }
 }

@@ -101,7 +101,7 @@ namespace Net::Factory
             const std::vector<SnapshotEntity> &entities) const noexcept;
 
         /**
-        * @brief Creates a score packet with the specified address and score.
+         * @brief Creates a score packet with the specified address and score.
          * @param addr The address to which the packet will be sent.
          * @param score The score to include in the packet.
          * @return A shared pointer to the created IPacket.

@@ -9,28 +9,42 @@
 
 namespace
 {
-    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world,
+    void registerScoreUpdatePacketDispatch(
+        Game::IGameWorld &world,
         const std::shared_ptr<Net::Server::ISessionManager> &sessions,
         const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
-        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+        const std::unordered_map<size_t, int> &entityToSession,
+        const std::shared_ptr<Net::Server::IServer> &server)
     {
-        world.events().subscribe<ScoreUpdatedEvent>([&](const ScoreUpdatedEvent &scoreUpdated) {
-            const size_t playerId = scoreUpdated.playerId;
-            const auto it = entityToSession.find(playerId);
-            if (it == entityToSession.end())
-                return;
-            const int sessionId = it->second;
+        std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
+        std::weak_ptr<Net::Factory::PacketFactory> wFactory = packetFactory;
+        std::weak_ptr<Net::Server::IServer> wServer = server;
 
-            const sockaddr_in *addr = sessions->getAddress(sessionId);
-            if (!addr)
-                return;
+        const auto *mapPtr = &entityToSession;
 
-            const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
-            if (const auto pkt = packetFactory->createScorePacket(*addr, totalScore))
-                server->sendPacket(*pkt);
-        });
+        world.events().subscribe<ScoreUpdatedEvent>(
+            [wSessions, wFactory, wServer, mapPtr](const ScoreUpdatedEvent &scoreUpdated) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL || !mapPtr)
+                    return;
+
+                const auto it = mapPtr->find(scoreUpdated.playerId);
+                if (it == mapPtr->end())
+                    return;
+
+                const int sessionId = it->second;
+                const sockaddr_in *addr = sessionsL->getAddress(sessionId);
+                if (!addr)
+                    return;
+
+                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
+                if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
+                    serverL->sendPacket(*pkt);
+            });
     }
-} // namespace
+}
 
 namespace Game
 {

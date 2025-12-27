@@ -12,10 +12,14 @@ namespace Engine
     void StateManager::changeState(std::unique_ptr<IGameState> state)
     {
         _current = std::move(state);
-        if (_current)
-            _current->onEnter(*this);
-        else
+        try {
+            if (_current)
+                _current->onEnter(*this);
+            else
+                _running = false;
+        } catch (const std::exception &e) {
             _running = false;
+        }
     }
 
     void StateManager::queueState(std::unique_ptr<IGameState> state)

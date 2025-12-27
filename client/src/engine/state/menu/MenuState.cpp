@@ -26,7 +26,7 @@ namespace Engine
         _menu->update(frame);
 
         if (_menu->wantsSettings()) {
-            _manager->queueState(std::make_unique<SettingsState>(_graphics, _renderer));
+            _manager->queueState(std::make_unique<SettingsState>(*_manager, _graphics, _renderer));
             return;
         }
         if (_menu->wantsToQuit())

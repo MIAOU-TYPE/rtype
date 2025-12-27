@@ -6,121 +6,162 @@
 */
 
 #include <gtest/gtest.h>
-#include "Collision.hpp"
+#include "Events.hpp"
+#include "EventsRegistry.hpp"
+#include "IGameWorld.hpp"
+#include "Registry.hpp"
+
+#include <algorithm>
+#include <vector>
+
 #include "CollisionSystem.hpp"
-#include "Damage.hpp"
-#include "Health.hpp"
+
+#include "AIBrain.hpp"
+#include "Collision.hpp"
 #include "Position.hpp"
-#include "World.hpp"
+#include "Projectile.hpp"
+#include "mockTestsWorld.hpp"
 
-TEST(CollisionSystem, projectile_hits_enemy_and_deals_damage)
+namespace
 {
-    Game::World world;
-    auto &reg = world.registry();
+    Ecs::Entity makeEntity(Test::TestWorld &world, float x, float y, float w, float h)
+    {
+        auto &reg = world.registry();
+        const Ecs::Entity e = reg.createEntity();
+        reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Collision>(e, Ecs::Collision{w, h});
+        return e;
+    }
 
-    const Ecs::Entity enemy = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(enemy, 100.f, 100.f);
-    reg.emplaceComponent<Ecs::Collision>(enemy, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(enemy, 50, 50);
+    void addAI(Test::TestWorld &world, Ecs::Entity e)
+    {
+        world.registry().emplaceComponent<Ecs::AIBrain>(e, Ecs::AIBrain{});
+    }
 
-    const Ecs::Entity proj = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(proj, 110.f, 110.f);
-    reg.emplaceComponent<Ecs::Collision>(proj, 5.f, 5.f);
-    reg.emplaceComponent<Ecs::Damage>(proj, 10);
-    Game::CollisionSystem::update(world);
+    void addProjectile(Test::TestWorld &world, Ecs::Entity e, size_t shooterId)
+    {
+        world.registry().emplaceComponent<Ecs::Projectile>(e, Ecs::Projectile{shooterId});
+    }
 
-    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
-    ASSERT_TRUE(hp.has_value());
-    EXPECT_EQ(hp->hp, 40);
+    size_t id(Ecs::Entity e)
+    {
+        return static_cast<size_t>(e);
+    }
+
+    bool containsPair(const std::vector<CollisionEvent> &evs, size_t a, size_t b)
+    {
+        return std::any_of(evs.begin(), evs.end(), [&](const CollisionEvent &ev) {
+            return (ev.a == a && ev.b == b) || (ev.a == b && ev.b == a);
+        });
+    }
+} // namespace
+
+class CollisionSystemEmitTests : public ::testing::Test {
+  protected:
+    ::Test::TestWorld world;
+    std::vector<CollisionEvent> emitted;
+
+    void SetUp() override
+    {
+        world.events().subscribe<CollisionEvent>([this](const CollisionEvent &ev) {
+            emitted.push_back(ev);
+        });
+    }
+
+    void run()
+    {
+        Game::CollisionSystem::update(world);
+        world.events().process();
+    }
+};
+
+TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenOverlapAndNoFilters)
+{
+    const auto a = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto b = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap
+
+    run();
+
+    ASSERT_FALSE(emitted.empty());
+    EXPECT_TRUE(containsPair(emitted, id(a), id(b)));
 }
 
-TEST(CollisionSystem, collision_works_even_if_projectile_has_lower_id)
+TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenNoIntersection)
 {
-    Game::World world;
-    auto &reg = world.registry();
+    (void) makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    (void) makeEntity(world, 100.f, 100.f, 10.f, 10.f);
 
-    const Ecs::Entity proj = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(proj, 110.f, 110.f);
-    reg.emplaceComponent<Ecs::Collision>(proj, 5.f, 5.f);
-    reg.emplaceComponent<Ecs::Damage>(proj, 10);
+    run();
 
-    const Ecs::Entity enemy = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(enemy, 100.f, 100.f);
-    reg.emplaceComponent<Ecs::Collision>(enemy, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(enemy, 50, 50);
-
-    Game::CollisionSystem::update(world);
-
-    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
-    ASSERT_TRUE(hp.has_value());
-    EXPECT_EQ(hp->hp, 40);
+    EXPECT_TRUE(emitted.empty());
 }
 
-TEST(CollisionSystem, projectile_is_destroyed_after_collision)
+TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenBothAreAI)
 {
-    Game::World world;
-    auto &reg = world.registry();
+    const auto a = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto b = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
-    const Ecs::Entity enemy = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(enemy, 100.f, 100.f);
-    reg.emplaceComponent<Ecs::Collision>(enemy, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(enemy, 50, 50);
+    addAI(world, a);
+    addAI(world, b);
 
-    const Ecs::Entity proj = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(proj, 110.f, 110.f);
-    reg.emplaceComponent<Ecs::Collision>(proj, 5.f, 5.f);
-    reg.emplaceComponent<Ecs::Damage>(proj, 10);
+    run();
 
-    Game::CollisionSystem::update(world);
-
-    auto &dmg = reg.getComponents<Ecs::Damage>().at(static_cast<size_t>(proj));
-    EXPECT_TRUE(dmg.has_value());
+    EXPECT_TRUE(emitted.empty());
 }
 
-TEST(CollisionSystem, no_collision_no_damage)
+TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenProjectileHitsItsShooter)
 {
-    Game::World world;
-    auto &reg = world.registry();
+    const auto shooter = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto proj = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap shooter
 
-    const Ecs::Entity enemy = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(enemy, 100.f, 100.f);
-    reg.emplaceComponent<Ecs::Collision>(enemy, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(enemy, 50, 50);
+    addProjectile(world, proj, id(shooter)); // projectile->shooter == target => skip
 
-    const Ecs::Entity proj = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(proj, 500.f, 500.f);
-    reg.emplaceComponent<Ecs::Collision>(proj, 5.f, 5.f);
-    reg.emplaceComponent<Ecs::Damage>(proj, 10);
+    run();
 
-    Game::CollisionSystem::update(world);
-
-    auto &hp = reg.getComponents<Ecs::Health>().at(static_cast<size_t>(enemy));
-    ASSERT_TRUE(hp.has_value());
-    EXPECT_EQ(hp->hp, 50);
+    EXPECT_TRUE(emitted.empty());
 }
 
-TEST(CollisionSystem, projectile_can_hit_multiple_enemies_same_frame)
+TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenTwoProjectilesHaveSameShooter)
 {
-    Game::World world;
-    auto &reg = world.registry();
+    const auto shooter = makeEntity(world, 50.f, 50.f, 10.f, 10.f);
 
-    const Ecs::Entity e1 = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(e1, 100.f, 100.f);
-    reg.emplaceComponent<Ecs::Collision>(e1, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(e1, 50, 50);
+    const auto p1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto p2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap p1
 
-    const Ecs::Entity e2 = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(e2, 110.f, 110.f);
-    reg.emplaceComponent<Ecs::Collision>(e2, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Health>(e2, 50, 50);
+    addProjectile(world, p1, id(shooter));
+    addProjectile(world, p2, id(shooter)); // same shooter => skip
 
-    const Ecs::Entity proj = reg.createEntity();
-    reg.emplaceComponent<Ecs::Position>(proj, 115.f, 115.f);
-    reg.emplaceComponent<Ecs::Collision>(proj, 20.f, 20.f);
-    reg.emplaceComponent<Ecs::Damage>(proj, 10);
+    run();
 
-    Game::CollisionSystem::update(world);
+    EXPECT_TRUE(emitted.empty());
+}
 
-    EXPECT_EQ(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e1))->hp, 40);
-    EXPECT_EQ(reg.getComponents<Ecs::Health>().at(static_cast<size_t>(e2))->hp, 40);
+TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenTwoProjectilesHaveDifferentShooters)
+{
+    const auto shooterA = makeEntity(world, 100.f, 100.f, 10.f, 10.f);
+    const auto shooterB = makeEntity(world, 200.f, 200.f, 10.f, 10.f);
+
+    const auto pA = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto pB = makeEntity(world, 5.f, 5.f, 10.f, 10.f); // overlap
+
+    addProjectile(world, pA, id(shooterA));
+    addProjectile(world, pB, id(shooterB)); // different shooter => event
+
+    run();
+
+    ASSERT_FALSE(emitted.empty());
+    EXPECT_TRUE(containsPair(emitted, id(pA), id(pB)));
+}
+
+TEST_F(CollisionSystemEmitTests, EmitsForEachPair_AmongThreeOverlappingEntities)
+{
+    const auto e0 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto e1 = makeEntity(world, 2.f, 2.f, 10.f, 10.f);
+    const auto e2 = makeEntity(world, 4.f, 4.f, 10.f, 10.f);
+
+    run();
+
+    EXPECT_TRUE(containsPair(emitted, id(e0), id(e1)));
+    EXPECT_TRUE(containsPair(emitted, id(e0), id(e2)));
+    EXPECT_TRUE(containsPair(emitted, id(e1), id(e2)));
 }

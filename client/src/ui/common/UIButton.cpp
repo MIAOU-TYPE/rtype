@@ -21,6 +21,12 @@ namespace Engine
         _released = textures->load(prefix + "released.png");
         _hover = textures->load(prefix + "hover.png");
         _pressed = textures->load(prefix + "pressed.png");
+
+        if (_released == Graphics::InvalidTexture || _hover == Graphics::InvalidTexture
+            || _pressed == Graphics::InvalidTexture) {
+            throw UIButtonError("Failed to load button textures");
+        }
+
         _cmd.textureId = _released;
 
         const auto sizeTex = textures->getSize(_released);

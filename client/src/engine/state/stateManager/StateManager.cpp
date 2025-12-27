@@ -11,8 +11,6 @@ namespace Engine
 {
     void StateManager::changeState(std::unique_ptr<IGameState> state)
     {
-        if (_current)
-            _current->onExit();
         _current = std::move(state);
         if (_current)
             _current->onEnter(*this);
@@ -20,10 +18,28 @@ namespace Engine
             _running = false;
     }
 
-    void StateManager::update() const
+    void StateManager::queueState(std::unique_ptr<IGameState> state)
+    {
+        _pending = std::move(state);
+    }
+
+    void StateManager::queueQuit()
+    {
+        _quitRequested = true;
+    }
+
+    void StateManager::update(const InputFrame &frame)
     {
         if (_current)
-            _current->update();
+            _current->update(frame);
+
+        if (_quitRequested) {
+            _running = false;
+            return;
+        }
+
+        if (_pending)
+            changeState(std::move(_pending));
     }
 
     void StateManager::render() const
@@ -39,8 +55,6 @@ namespace Engine
 
     void StateManager::requestQuit()
     {
-        if (_current)
-            _current->onExit();
         _current.reset();
         _running = false;
     }

@@ -17,7 +17,7 @@ namespace Engine
                 _current->onEnter(*this);
             else
                 _running = false;
-        } catch (const std::exception &e) {
+        } catch (...) {
             _running = false;
         }
     }

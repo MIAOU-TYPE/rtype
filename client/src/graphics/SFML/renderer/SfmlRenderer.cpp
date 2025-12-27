@@ -48,7 +48,7 @@ namespace Graphics
         return _textureManager;
     }
 
-    [[nodiscard]] std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
+    std::shared_ptr<ITextManager> SfmlRenderer::texts() const noexcept
     {
         return _textManager;
     }

@@ -20,7 +20,7 @@
       "hp": 40,
       "speed": -60,
       "size": { "w": 65, "h": 49 },
-      "killScore": 30,
+      "killScore": 50,
       "sprite": "enemy2",
       "spriteId": 3,
       "shoot": {

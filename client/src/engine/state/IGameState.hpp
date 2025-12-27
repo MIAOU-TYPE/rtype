@@ -33,11 +33,6 @@ namespace Engine
         virtual void onEnter(StateManager &manager) = 0;
 
         /**
-         * @brief Called when exiting the state.
-         */
-        virtual void onExit() = 0;
-
-        /**
          * @brief Updates the state logic.
          */
         virtual void update(const InputFrame &frame) = 0;

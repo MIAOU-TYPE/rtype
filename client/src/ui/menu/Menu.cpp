@@ -56,7 +56,7 @@ namespace Engine
 
         constexpr float LOGO_SCALE = 1.0f;
         _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
-        _logoCmd.position = {(w - logoSize.width * LOGO_SCALE) * 0.5f, h * 0.05f};
+        _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         const float buttonX = (w - _play->bounds().w) / 2.f;
         _play->setPosition(buttonX, h * 0.63f);

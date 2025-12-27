@@ -20,9 +20,9 @@ namespace
         return reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(a)) && reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(b));
     }
 
-    [[nodiscard]] bool sameShooter(Ecs::Registry reg, const size_t a, const size_t b)
+    [[nodiscard]] bool sameShooter(Ecs::Registry &reg, const size_t a, const size_t b)
     {
-        auto shootArr = reg.getComponents<Ecs::Projectile>();
+        const auto &shootArr = reg.getComponents<Ecs::Projectile>();
         return shootArr.at(a) && shootArr.at(b) && shootArr.at(a)->shooter == shootArr.at(b)->shooter;
     }
 

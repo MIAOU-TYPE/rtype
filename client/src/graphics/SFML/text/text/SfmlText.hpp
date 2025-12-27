@@ -83,8 +83,8 @@ namespace Graphics
         std::unique_ptr<sf::Text> _text;               ///> SFML text object
 
         std::pair<float, float> _position; ///> Text position
-        Color _color;                               ///> Text color
-        unsigned int _characterSize;           ///> Character size
-        std::string _content = "";                  ///> Text content
+        Color _color;                      ///> Text color
+        unsigned int _characterSize;       ///> Character size
+        std::string _content = "";         ///> Text content
     };
 } // namespace Graphics

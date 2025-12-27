@@ -120,6 +120,15 @@ namespace Graphics
 
             if (const auto key = event->getIf<sf::Event::KeyReleased>())
                 bus.emit(Engine::KeyReleased(toCoreKey(key->code)));
+
+            if (const auto r = event->getIf<sf::Event::Resized>()) {
+                bus.emit(Engine::WindowResized{r->size.x, r->size.y});
+
+                sf::View view;
+                view.setSize({static_cast<float>(r->size.x), static_cast<float>(r->size.y)});
+                view.setCenter({static_cast<float>(r->size.x) / 2.f, static_cast<float>(r->size.y) / 2.f});
+                _window->setView(view);
+            }
         }
     }
 

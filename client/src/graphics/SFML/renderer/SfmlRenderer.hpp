@@ -40,7 +40,7 @@ namespace Graphics
          * @brief Gets the size of the viewport.
          * @return The size of the viewport as Extent2u.
          */
-        Extent2u getViewportSize() const noexcept override;
+        [[nodiscard]] Extent2u getViewportSize() const noexcept override;
 
         /**
          * @brief Begins a new rendering frame.

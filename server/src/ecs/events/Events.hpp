@@ -33,14 +33,14 @@ struct DamageEvent {
  * @brief Event triggered when an entity shoots a projectile.
  */
 struct ShootEvent {
-    float x;                          ///> Starting x position of the projectile
-    float y;                          ///> Starting y position of the projectile
-    float vx;                         ///> Velocity in the x direction
-    float vy;                         ///> Velocity in the y direction
-    int damage;                       ///> Damage dealt by the projectile
-    size_t shooter;                   ///> ID of the entity that fired the projectile
-    std::pair<float, float> bounds;   ///> Width and height of the projectile
-    float lifetime;                   ///> Lifetime of the projectile in seconds
+    float x;                        ///> Starting x position of the projectile
+    float y;                        ///> Starting y position of the projectile
+    float vx;                       ///> Velocity in the x direction
+    float vy;                       ///> Velocity in the y direction
+    int damage;                     ///> Damage dealt by the projectile
+    size_t shooter;                 ///> ID of the entity that fired the projectile
+    std::pair<float, float> bounds; ///> Width and height of the projectile
+    float lifetime;                 ///> Lifetime of the projectile in seconds
 };
 
 /**

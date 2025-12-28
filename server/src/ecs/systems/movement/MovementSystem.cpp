@@ -19,7 +19,7 @@ namespace Game
                 pos.y += vel.vy * dt;
 
                 if (pos.x < 0 || pos.y < 0)
-                    reg.destroyEntity(entity);
+                    world.events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(entity)});
             });
     }
 } // namespace Game

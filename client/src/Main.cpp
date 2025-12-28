@@ -41,25 +41,30 @@ namespace
 
 int main(const int argc, char **argv)
 {
-    Utils::ArgParser argParser(argc, argv);
+    try {
+        Utils::ArgParser argParser(argc, argv);
 
-    if (const auto result = parseArgs(argParser); result != Utils::ArgParseResult::Success)
-        return result == Utils::ArgParseResult::HelpDisplayed ? 0 : 84;
+        if (const auto result = parseArgs(argParser); result != Utils::ArgParseResult::Success)
+            return result == Utils::ArgParseResult::HelpDisplayed ? 0 : 84;
 
-    const auto graphics = std::make_shared<Graphics::SfmlGraphics>();
-    const auto client = std::make_shared<Network::UDPClient>();
+        const auto graphics = std::make_shared<Graphics::SfmlGraphics>();
+        const auto client = std::make_shared<Network::UDPClient>();
 
-    Thread::ClientRuntime clientRuntime(graphics, client);
-    const auto eventBus = clientRuntime.getEventBus();
-    Engine::EventRegistry eventRegistry(eventBus);
+        Thread::ClientRuntime clientRuntime(graphics, client);
+        const auto eventBus = clientRuntime.getEventBus();
+        Engine::EventRegistry eventRegistry(eventBus);
 
-    createEventHandler(eventRegistry, clientRuntime, eventBus);
-    std::cout << "Connecting to " << argParser.getHost() << ":" << argParser.getPort() << "..." << std::endl;
-    client->configure(argParser.getHost(), argParser.getPort());
+        createEventHandler(eventRegistry, clientRuntime, eventBus);
+        std::cout << "Connecting to " << argParser.getHost() << ":" << argParser.getPort() << "..." << std::endl;
+        client->configure(argParser.getHost(), argParser.getPort());
 
-    clientRuntime.start();
-    clientRuntime.runDisplay();
-    clientRuntime.wait();
+        clientRuntime.start();
+        clientRuntime.runDisplay();
+        clientRuntime.wait();
 
-    return 0;
+        return 0;
+    } catch (std::exception &e) {
+        std::cerr << "{Main}: " << e.what() << std::endl;
+        return 84;
+    }
 }

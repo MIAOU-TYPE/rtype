@@ -55,6 +55,12 @@ namespace Ecs
          */
         void onSnapshot(const std::vector<SnapshotEntity> &data) override;
 
+        /**
+         * @brief Called when a SCORE message is received.
+         * @param score The score received from the server.
+         */
+        void onScore(uint32_t score) override;
+
       private:
         std::reference_wrapper<Engine::WorldCommandBuffer> _commandBuffer; ///> Reference to the world command buffer
     };

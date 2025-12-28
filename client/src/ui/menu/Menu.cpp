@@ -11,18 +11,24 @@ namespace Engine
 {
     Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
     {
-        const auto textures = renderer->textures();
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        _logoTexture = textures->load("sprites/menu_logo.png");
-        if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
-            throw MenuError("Menu: failed to load textures");
+        try {
+            const auto textures = renderer->textures();
+            _backgroundTexture = textures->load("sprites/bg-preview.png");
+            _logoTexture = textures->load("sprites/menu_logo.png");
+            if (_backgroundTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/bg-preview.png texture");
+            if (_logoTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/menu_logo.png texture");
 
-        _backgroundCmd.textureId = _backgroundTexture;
-        _logoCmd.textureId = _logoTexture;
+            _backgroundCmd.textureId = _backgroundTexture;
+            _logoCmd.textureId = _logoTexture;
 
-        _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
-        _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
-        _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+            _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
+            _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
+            _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+        } catch (const std::exception &e) {
+            throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
+        }
     }
 
     void Menu::onEnter()
@@ -56,7 +62,7 @@ namespace Engine
 
         constexpr float LOGO_SCALE = 1.0f;
         _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
-        _logoCmd.position = {(w - logoSize.width * LOGO_SCALE) * 0.5f, h * 0.05f};
+        _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         const float buttonX = (w - _play->bounds().w) / 2.f;
         _play->setPosition(buttonX, h * 0.63f);

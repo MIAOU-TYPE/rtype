@@ -46,5 +46,11 @@ namespace Ecs
          * @brief Called when a SNAPSHOT message is received.
          */
         virtual void onSnapshot(const std::vector<SnapshotEntity> &entity) = 0;
+
+        /**
+         * @brief Called when a SCORE message is received.
+         * @param score The score received from the server.
+         */
+        virtual void onScore(uint32_t score) = 0;
     };
 } // namespace Ecs

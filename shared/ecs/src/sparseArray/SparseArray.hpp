@@ -60,6 +60,13 @@ namespace Ecs
         std::optional<Component> &at(size_t index) noexcept;
 
         /**
+         * @brief Accesses the optional component at a specific index (const version).
+         * @param index Entity index
+         * @return Reference to the optional component
+         */
+        std::optional<Component> at(size_t index) const noexcept;
+
+        /**
          * @brief Gets the current size of the sparse array.
          * @return Number of stored slots
          */

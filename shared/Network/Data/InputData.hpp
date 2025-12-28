@@ -29,6 +29,8 @@ struct PlayerInputData {
 
 #pragma pack(pop)
 
+static_assert(sizeof(PlayerInputData) == 5, "PlayerInputData layout mismatch");
+
 struct PlayerInput {
     bool up = false;    ///> Flag indicating upward movement.
     bool down = false;  ///> Flag indicating downward movement.

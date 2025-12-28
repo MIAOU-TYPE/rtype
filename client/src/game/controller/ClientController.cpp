@@ -38,4 +38,8 @@ namespace Ecs
         _commandBuffer.get().push({Engine::WorldCommand::Type::Snapshot, data});
     }
 
+    void ClientController::onScore(const uint32_t score)
+    {
+        std::cout << "onScore: " << score << std::endl;
+    }
 }; // namespace Ecs

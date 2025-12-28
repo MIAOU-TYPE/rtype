@@ -16,9 +16,13 @@ namespace Engine
 
     void MenuState::onEnter(StateManager &manager)
     {
-        _manager = &manager;
-        _menu = std::make_unique<Menu>(_renderer);
-        _menu->onEnter();
+        try {
+            _manager = &manager;
+            _menu = std::make_unique<Menu>(_renderer);
+            _menu->onEnter();
+        } catch (const std::exception &e) {
+            throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
+        }
     }
 
     void MenuState::update(const InputFrame &frame)

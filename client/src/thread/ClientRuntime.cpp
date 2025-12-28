@@ -96,6 +96,7 @@ namespace Thread
         constexpr auto Tick = std::chrono::milliseconds(16);
 
         auto nextTick = clock::now();
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
@@ -104,7 +105,6 @@ namespace Thread
             _eventBus->dispatch();
             _stateManager->update(_input->consumeFrame());
 
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
             {
                 std::scoped_lock lock(_frameMutex);
                 localRenderCommands = _readRenderCommands;

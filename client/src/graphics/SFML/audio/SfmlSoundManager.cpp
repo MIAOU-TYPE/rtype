@@ -65,7 +65,7 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    const sf::SoundBuffer *SfmlSoundManager::getSoundBuffer(AudioHandle handle) const noexcept
+    const sf::SoundBuffer *SfmlSoundManager::getSoundBuffer(const AudioHandle handle) const noexcept
     {
         if (auto it = _sounds.find(handle); it != _sounds.end()) {
             return &it->second.buffer;

@@ -66,7 +66,7 @@ namespace Graphics
          * @param handle The audio handle.
          * @return Pointer to the sound buffer, or nullptr if invalid.
          */
-        [[nodiscard]] const sf::SoundBuffer *getSoundBuffer(AudioHandle handle) const noexcept;
+        [[nodiscard]] const sf::SoundBuffer *getSoundBuffer(const AudioHandle handle) const noexcept;
 
       private:
         /**
@@ -84,8 +84,5 @@ namespace Graphics
         std::unordered_map<std::string, AudioHandle> _soundPathToHandle; ///> Map of sound paths to handles
 
         AudioHandle _nextHandle = 1;                           ///> Next available audio handle
-        AudioHandle _currentMusicHandle = InvalidAudio;        ///> Currently playing music handle
-        float _globalSoundVolume = 100.f;                      ///> Global sound volume
-        std::vector<std::unique_ptr<SfmlSound>> _activeSounds; ///> Active sounds being played
     };
 } // namespace Graphics

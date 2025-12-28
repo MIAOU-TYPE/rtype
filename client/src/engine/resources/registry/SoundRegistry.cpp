@@ -37,7 +37,10 @@ namespace Engine
                                 }),
             _activeSounds.end());
 
-        auto soundBuffer = std::make_shared<sf::SoundBuffer>(*buffer);
+        auto soundBuffer = std::shared_ptr<sf::SoundBuffer>(
+            const_cast<sf::SoundBuffer *>(buffer),
+            [](sf::SoundBuffer *) {}
+        );
         auto sound = std::make_unique<Graphics::SfmlSound>(soundBuffer, volume * (_globalSoundVolume / 100.f));
         sound->play();
         _activeSounds.push_back(std::move(sound));

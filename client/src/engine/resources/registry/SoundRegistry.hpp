@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** AudioRegistry
+** SoundRegistry
 */
 
 #pragma once
@@ -10,7 +10,6 @@
 #include <string>
 #include <exception>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 #include "IAudioManager.hpp"
 #include "SfmlSound.hpp"
@@ -19,18 +18,17 @@
 namespace Graphics
 {
     class SfmlSoundManager;
-    class SfmlMusicManager;
 }
 
 namespace Engine
 {
-    class AudioRegistryError : public std::exception {
+    class SoundRegistryError : public std::exception {
       public:
         /**
-         * @brief Constructs a AudioRegistryError with a given message.
+         * @brief Constructs a SoundRegistryError with a given message.
          * @param message Error message describing the issue.
          */
-        explicit AudioRegistryError(const std::string &message) : _message("\n\t" + message)
+        explicit SoundRegistryError(const std::string &message) : _message("\n\t" + message)
         {
         }
 
@@ -49,20 +47,18 @@ namespace Engine
     };
 
     /**
-     * @class AudioRegistry
-     * @brief Manages audio playback for sounds and music.
+     * @class SoundRegistry
+     * @brief Manages sound effect playback.
      */
-    class AudioRegistry {
+    class SoundRegistry {
       public:
         using AudioHandle = Graphics::AudioHandle;
 
         /**
-         * @brief Construct a new AudioRegistry object.
+         * @brief Construct a new SoundRegistry object.
          * @param soundManager Shared pointer to the sound manager.
-         * @param musicManager Shared pointer to the music manager.
          */
-        AudioRegistry(std::shared_ptr<Graphics::IAudioManager> soundManager,
-          std::shared_ptr<Graphics::IAudioManager> musicManager);
+        explicit SoundRegistry(std::shared_ptr<Graphics::IAudioManager> soundManager);
 
         /**
          * @brief Play a sound effect.
@@ -72,25 +68,6 @@ namespace Engine
         void playSound(AudioHandle handle, float volume = 100.f);
 
         /**
-         * @brief Play a music track.
-         * @param handle Handle to the music to play.
-         * @param loop Whether the music should loop.
-         * @param volume Volume level (0.0 to 100.0).
-         */
-        void playMusic(AudioHandle handle, bool loop = true, float volume = 50.f);
-
-        /**
-         * @brief Stop the currently playing music.
-         */
-        void stopMusic();
-
-        /**
-         * @brief Set the volume of the currently playing music.
-         * @param volume Volume level (0.0 to 100.0).
-         */
-        void setMusicVolume(float volume);
-
-        /**
          * @brief Set the global volume for all sound effects.
          * @param volume Volume level (0.0 to 100.0).
          */
@@ -98,14 +75,9 @@ namespace Engine
 
       private:
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr;   ///> Sound manager
-        std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr;   ///> Music manager
-        
         std::shared_ptr<Graphics::SfmlSoundManager> _sfmlSoundManager = nullptr; ///> Concrete sound manager
-        std::shared_ptr<Graphics::SfmlMusicManager> _sfmlMusicManager = nullptr; ///> Concrete music manager
 
         std::vector<std::unique_ptr<Graphics::SfmlSound>> _activeSounds;    ///> Active sounds being played
-
-        AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
         float _globalSoundVolume = 100.f;                                   ///> Global sound volume
     };
 } // namespace Engine

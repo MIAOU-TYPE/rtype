@@ -16,9 +16,9 @@
 #include <utility>
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
+#include "SfmlFontManager.hpp"
 #include "SfmlMusicManager.hpp"
 #include "SfmlSoundManager.hpp"
-#include "SfmlFontManager.hpp"
 #include "SfmlTextManager.hpp"
 #include "SfmlTextureManager.hpp"
 

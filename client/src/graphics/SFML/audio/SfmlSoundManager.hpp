@@ -66,7 +66,7 @@ namespace Graphics
          * @param handle The audio handle.
          * @return Pointer to the sound buffer, or nullptr if invalid.
          */
-        [[nodiscard]] const sf::SoundBuffer* getSoundBuffer(AudioHandle handle) const noexcept;
+        [[nodiscard]] const sf::SoundBuffer *getSoundBuffer(AudioHandle handle) const noexcept;
 
       private:
         /**
@@ -74,18 +74,18 @@ namespace Graphics
          * @brief Represents a loaded sound buffer and its reference count.
          */
         struct SoundEntry {
-            sf::SoundBuffer buffer;                                         ///> The SFML sound buffer
-            std::size_t refCount = 1;                                       ///> Reference count for the sound
+            sf::SoundBuffer buffer;   ///> The SFML sound buffer
+            std::size_t refCount = 1; ///> Reference count for the sound
         };
 
-        std::shared_ptr<Resources::IResourceManager> _resources = nullptr;  ///> Resource manager
+        std::shared_ptr<Resources::IResourceManager> _resources = nullptr; ///> Resource manager
 
-        std::unordered_map<AudioHandle, SoundEntry> _sounds;                ///> Map of sound handles to sound entries
-        std::unordered_map<std::string, AudioHandle> _soundPathToHandle;    ///> Map of sound paths to handles
+        std::unordered_map<AudioHandle, SoundEntry> _sounds;             ///> Map of sound handles to sound entries
+        std::unordered_map<std::string, AudioHandle> _soundPathToHandle; ///> Map of sound paths to handles
 
-        AudioHandle _nextHandle = 1;                                        ///> Next available audio handle
-        AudioHandle _currentMusicHandle = InvalidAudio;                     ///> Currently playing music handle
-        float _globalSoundVolume = 100.f;                                   ///> Global sound volume
-        std::vector<std::unique_ptr<SfmlSound>> _activeSounds;             ///> Active sounds being played
+        AudioHandle _nextHandle = 1;                           ///> Next available audio handle
+        AudioHandle _currentMusicHandle = InvalidAudio;        ///> Currently playing music handle
+        float _globalSoundVolume = 100.f;                      ///> Global sound volume
+        std::vector<std::unique_ptr<SfmlSound>> _activeSounds; ///> Active sounds being played
     };
 } // namespace Graphics

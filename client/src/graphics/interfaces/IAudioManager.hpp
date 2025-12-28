@@ -33,6 +33,7 @@ namespace Graphics
       private:
         std::string _message; ///> Error message
     };
+
     /**
      * @brief Handle type for audio resources (music and sounds)
      */

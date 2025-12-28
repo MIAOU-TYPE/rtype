@@ -9,8 +9,7 @@
 
 namespace Graphics
 {
-    SfmlMusic::SfmlMusic(std::unique_ptr<sf::Music> music)
-        : _music(std::move(music))
+    SfmlMusic::SfmlMusic(std::unique_ptr<sf::Music> music) : _music(std::move(music))
     {
     }
 
@@ -49,7 +48,7 @@ namespace Graphics
             _music->setLooping(loop);
     }
 
-    sf::Music* SfmlMusic::get() noexcept
+    sf::Music *SfmlMusic::get() noexcept
     {
         return _music.get();
     }

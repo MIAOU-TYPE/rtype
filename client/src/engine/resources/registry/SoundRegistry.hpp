@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <string>
+#include <SFML/Audio.hpp>
 #include <exception>
 #include <memory>
+#include <string>
 #include <vector>
 #include "IAudioManager.hpp"
 #include "SfmlSound.hpp"
-#include <SFML/Audio.hpp>
 
 namespace Graphics
 {
@@ -41,9 +41,8 @@ namespace Engine
             return _message.c_str();
         }
 
-        private:
-          std::string _message = ""; ///> Error message
-
+      private:
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -74,10 +73,10 @@ namespace Engine
         void setSoundVolume(float volume);
 
       private:
-        std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr;   ///> Sound manager
+        std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr;        ///> Sound manager
         std::shared_ptr<Graphics::SfmlSoundManager> _sfmlSoundManager = nullptr; ///> Concrete sound manager
 
-        std::vector<std::unique_ptr<Graphics::SfmlSound>> _activeSounds;    ///> Active sounds being played
-        float _globalSoundVolume = 100.f;                                   ///> Global sound volume
+        std::vector<std::unique_ptr<Graphics::SfmlSound>> _activeSounds; ///> Active sounds being played
+        float _globalSoundVolume = 100.f;                                ///> Global sound volume
     };
 } // namespace Engine

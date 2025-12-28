@@ -34,4 +34,4 @@ namespace Graphics
     {
         _sound.setVolume(volume);
     }
-} // namespace Graphics 
+} // namespace Graphics

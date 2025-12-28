@@ -50,6 +50,6 @@ namespace Graphics
 
       private:
         std::shared_ptr<sf::SoundBuffer> _buffer; ///> Sound buffer
-        sf::Sound _sound; ///> SFML sound object
+        sf::Sound _sound;                         ///> SFML sound object
     };
 } // namespace Graphics

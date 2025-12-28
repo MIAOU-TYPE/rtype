@@ -6,8 +6,8 @@
 */
 
 #include "MusicRegistry.hpp"
-#include "SfmlMusicManager.hpp"
 #include "SfmlMusic.hpp"
+#include "SfmlMusicManager.hpp"
 
 namespace Engine
 {
@@ -28,7 +28,7 @@ namespace Engine
         if (!_musicManager->isValid(handle))
             return;
 
-        if (Graphics::SfmlMusic* music = _sfmlMusicManager->getMusic(handle)) {
+        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(handle)) {
             if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
                 stopMusic();
 
@@ -44,7 +44,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::SfmlMusic* music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
+        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
             music->stop();
         }
         _currentMusicHandle = InvalidAudio;
@@ -55,7 +55,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::SfmlMusic* music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
+        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
             music->setVolume(volume);
         }
     }

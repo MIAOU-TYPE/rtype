@@ -27,13 +27,14 @@ namespace Engine
         if (!_soundManager->isValid(handle))
             return;
 
-        const sf::SoundBuffer* buffer = _sfmlSoundManager->getSoundBuffer(handle);
+        const sf::SoundBuffer *buffer = _sfmlSoundManager->getSoundBuffer(handle);
         if (!buffer)
             return;
 
-        _activeSounds.erase(
-            std::remove_if(_activeSounds.begin(), _activeSounds.end(),
-                [](const auto &sound) { return !sound->isPlaying(); }),
+        _activeSounds.erase(std::remove_if(_activeSounds.begin(), _activeSounds.end(),
+                                [](const auto &sound) {
+                                    return !sound->isPlaying();
+                                }),
             _activeSounds.end());
 
         auto soundBuffer = std::make_shared<sf::SoundBuffer>(*buffer);

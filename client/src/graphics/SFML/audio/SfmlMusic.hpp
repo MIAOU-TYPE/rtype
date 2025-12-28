@@ -62,7 +62,7 @@ namespace Graphics
          * @brief Get the underlying SFML music object.
          * @return Pointer to the sf::Music object.
          */
-        [[nodiscard]] sf::Music* get() noexcept;
+        [[nodiscard]] sf::Music *get() noexcept;
 
       private:
         std::unique_ptr<sf::Music> _music; ///> SFML music object

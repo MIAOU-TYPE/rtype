@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <string>
 #include <exception>
 #include <memory>
+#include <string>
 #include "IAudioManager.hpp"
 
 namespace Graphics
@@ -38,9 +38,8 @@ namespace Engine
             return _message.c_str();
         }
 
-        private:
-          std::string _message = ""; ///> Error message
-
+      private:
+        std::string _message = ""; ///> Error message
     };
 
     /**
@@ -77,7 +76,7 @@ namespace Engine
         void setMusicVolume(float volume);
 
       private:
-        std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr;   ///> Music manager
+        std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr;        ///> Music manager
         std::shared_ptr<Graphics::SfmlMusicManager> _sfmlMusicManager = nullptr; ///> Concrete music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle

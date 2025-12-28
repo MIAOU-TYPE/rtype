@@ -66,7 +66,7 @@ namespace Graphics
          * @param handle The audio handle.
          * @return Pointer to the music object, or nullptr if invalid.
          */
-        [[nodiscard]] SfmlMusic* getMusic(AudioHandle handle) noexcept;
+        [[nodiscard]] SfmlMusic *getMusic(AudioHandle handle) noexcept;
 
       private:
         /**
@@ -74,15 +74,15 @@ namespace Graphics
          * @brief Represents a loaded music track.
          */
         struct MusicEntry {
-            std::unique_ptr<SfmlMusic> music;                               ///> The SFML music wrapper
-            std::string resourcePath;                                       ///> Path to the music resource
+            std::unique_ptr<SfmlMusic> music; ///> The SFML music wrapper
+            std::string resourcePath;         ///> Path to the music resource
         };
 
-        std::shared_ptr<Resources::IResourceManager> _resources = nullptr;  ///> Resource manager
+        std::shared_ptr<Resources::IResourceManager> _resources = nullptr; ///> Resource manager
 
-        std::unordered_map<AudioHandle, MusicEntry> _musics;                ///> Map of music handles to music entries
-        std::unordered_map<std::string, AudioHandle> _musicPathToHandle;    ///> Map of music paths to handles
+        std::unordered_map<AudioHandle, MusicEntry> _musics;             ///> Map of music handles to music entries
+        std::unordered_map<std::string, AudioHandle> _musicPathToHandle; ///> Map of music paths to handles
 
-        AudioHandle _nextHandle = 1;                                        ///> Next available audio handle
+        AudioHandle _nextHandle = 1; ///> Next available audio handle
     };
 } // namespace Graphics

@@ -32,9 +32,7 @@ namespace World
 
     {
         switch (cmd.type) {
-            case WorldCommand::Type::Snapshot:
-                applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
-                break;
+            case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
             default: break;
         }
     }
@@ -74,8 +72,8 @@ namespace World
             const auto &sprite = _spriteRegistry->get(data.spriteId);
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
-            _registry.emplaceComponent<Ecs::AnimationState>(
-                entity, Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
+            _registry.emplaceComponent<Ecs::AnimationState>(entity,
+                Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }

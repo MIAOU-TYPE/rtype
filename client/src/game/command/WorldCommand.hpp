@@ -28,4 +28,4 @@ namespace World
         Type type;                                                         ///> Type of the command
         std::variant<std::monostate, std::vector<SnapshotEntity>> payload; ///> Command payload
     };
-}
+} // namespace World

@@ -17,4 +17,4 @@ namespace Ecs
     struct Render {
         Graphics::TextureHandle texture = Graphics::InvalidTexture; ///> Handle to the texture used for rendering
     };
-} // namespace Engine
+} // namespace Ecs

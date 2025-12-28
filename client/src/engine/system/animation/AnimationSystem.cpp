@@ -47,26 +47,27 @@ namespace Engine
     void AnimationSystem::update(
         Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry, const float dt)
     {
-        registry.view<Ecs::Drawable, Ecs::AnimationState>([&](Ecs::Entity, const Ecs::Drawable &drawable, Ecs::AnimationState &animState) {
-            if (!spriteRegistry->exists(drawable.spriteId))
-                return;
-
-            const SpriteDefinition &sprite = spriteRegistry->get(drawable.spriteId);
-
-            if (animState.currentAnimation.empty())
-                animState.currentAnimation = sprite.defaultAnimation;
-
-            auto animIt = sprite.animations.find(animState.currentAnimation);
-            if (animIt == sprite.animations.end()) {
-                resetAnimationState(animState, sprite.defaultAnimation);
-                animIt = sprite.animations.find(animState.currentAnimation);
-                if (animIt == sprite.animations.end())
+        registry.view<Ecs::Drawable, Ecs::AnimationState>(
+            [&](Ecs::Entity, const Ecs::Drawable &drawable, Ecs::AnimationState &animState) {
+                if (!spriteRegistry->exists(drawable.spriteId))
                     return;
-            }
 
-            const Animation &anim = animIt->second;
-            animState.elapsed += dt;
-            updateFrameIndex(animState, anim);
-        });
+                const SpriteDefinition &sprite = spriteRegistry->get(drawable.spriteId);
+
+                if (animState.currentAnimation.empty())
+                    animState.currentAnimation = sprite.defaultAnimation;
+
+                auto animIt = sprite.animations.find(animState.currentAnimation);
+                if (animIt == sprite.animations.end()) {
+                    resetAnimationState(animState, sprite.defaultAnimation);
+                    animIt = sprite.animations.find(animState.currentAnimation);
+                    if (animIt == sprite.animations.end())
+                        return;
+                }
+
+                const Animation &anim = animIt->second;
+                animState.elapsed += dt;
+                updateFrameIndex(animState, anim);
+            });
     }
 } // namespace Engine

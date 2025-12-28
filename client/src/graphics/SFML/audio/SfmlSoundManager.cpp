@@ -53,7 +53,7 @@ namespace Graphics
         }
     }
 
-    bool SfmlSoundManager::isValid(AudioHandle handle) const noexcept
+    bool SfmlSoundManager::isValid(const AudioHandle handle) const noexcept
     {
         return _sounds.find(handle) != _sounds.end();
     }

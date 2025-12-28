@@ -8,7 +8,7 @@
 #pragma once
 #include "ITextureManager.hpp"
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Render

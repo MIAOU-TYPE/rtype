@@ -20,11 +20,11 @@
 #include "ClientController.hpp"
 #include "ClientPacketFactory.hpp"
 #include "ClientWorld.hpp"
+#include "CommandBuffer.hpp"
 #include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
-#include "WorldCommandBuffer.hpp"
 
 using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
@@ -125,7 +125,7 @@ namespace Thread
 
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr;      ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
-        std::unique_ptr<Engine::ClientWorld> _world = nullptr;         ///> Client world for managing game state
+        std::unique_ptr<World::ClientWorld> _world = nullptr;         ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
@@ -135,7 +135,7 @@ namespace Thread
 
         std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
 
-        Engine::WorldCommandBuffer _commandBuffer; ///> Command buffer for storing commands
+        Command::CommandBuffer<World::WorldCommand> _commandBuffer; ///> Command buffer for storing commands
 
         std::mutex _frameMutex;
         std::shared_ptr<const std::vector<Engine::RenderCommand>> _readRenderCommands;

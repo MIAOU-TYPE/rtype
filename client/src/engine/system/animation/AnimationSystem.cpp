@@ -9,14 +9,14 @@
 
 namespace
 {
-    void resetAnimationState(Engine::AnimationState &animState, const std::string &defaultAnimation)
+    void resetAnimationState(Ecs::AnimationState &animState, const std::string &defaultAnimation)
     {
         animState.currentAnimation = defaultAnimation;
         animState.frameIndex = 0;
         animState.elapsed = 0.f;
     }
 
-    void updateFrameIndex(Engine::AnimationState &animState, const Engine::Animation &anim)
+    void updateFrameIndex(Ecs::AnimationState &animState, const Engine::Animation &anim)
     {
         if (anim.frames.empty())
             return;
@@ -47,7 +47,7 @@ namespace Engine
     void AnimationSystem::update(
         Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry, const float dt)
     {
-        registry.view<Drawable, AnimationState>([&](Ecs::Entity, const Drawable &drawable, AnimationState &animState) {
+        registry.view<Ecs::Drawable, Ecs::AnimationState>([&](Ecs::Entity, const Ecs::Drawable &drawable, Ecs::AnimationState &animState) {
             if (!spriteRegistry->exists(drawable.spriteId))
                 return;
 

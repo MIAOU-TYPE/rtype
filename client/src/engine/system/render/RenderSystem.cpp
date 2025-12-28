@@ -12,9 +12,9 @@ namespace Engine
     void RenderSystem::update(Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry,
         std::vector<RenderCommand> &out)
     {
-        registry.view<Position, Drawable, AnimationState, Render>(
-            [&](Ecs::Entity, const Position &pos, const Drawable &drawable, const AnimationState &anim,
-                const Render &render) {
+        registry.view<Ecs::Position, Ecs::Drawable, Ecs::AnimationState, Ecs::Render>(
+            [&](Ecs::Entity, const Ecs::Position &pos, const Ecs::Drawable &drawable, const Ecs::AnimationState &anim,
+                const Ecs::Render &render) {
                 if (!spriteRegistry->exists(drawable.spriteId) || anim.currentAnimation.empty())
                     return;
 

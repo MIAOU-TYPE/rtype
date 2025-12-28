@@ -7,20 +7,20 @@
 
 #include "ClientWorld.hpp"
 
-namespace Engine
+namespace World
 {
-    ClientWorld::ClientWorld(std::shared_ptr<const SpriteRegistry> spriteRegistry)
+    ClientWorld::ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry)
         : _spriteRegistry(std::move(spriteRegistry))
     {
-        _registry.registerComponent<Position>();
-        _registry.registerComponent<Drawable>();
-        _registry.registerComponent<Render>();
-        _registry.registerComponent<AnimationState>();
+        _registry.registerComponent<Ecs::Position>();
+        _registry.registerComponent<Ecs::Drawable>();
+        _registry.registerComponent<Ecs::Render>();
+        _registry.registerComponent<Ecs::AnimationState>();
     }
 
     void ClientWorld::step(const float dt)
     {
-        AnimationSystem::update(_registry, _spriteRegistry, dt);
+        Engine::AnimationSystem::update(_registry, _spriteRegistry, dt);
     }
 
     Ecs::Registry &ClientWorld::registry()
@@ -32,7 +32,9 @@ namespace Engine
 
     {
         switch (cmd.type) {
-            case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
+            case WorldCommand::Type::Snapshot:
+                applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
+                break;
             default: break;
         }
     }
@@ -66,14 +68,14 @@ namespace Engine
             const Ecs::Entity entity = _registry.createEntity();
             _entityMap.emplace(data.id, entity);
 
-            _registry.emplaceComponent<Position>(entity, Position{data.x, data.y});
-            _registry.emplaceComponent<Drawable>(entity, Drawable{data.spriteId});
+            _registry.emplaceComponent<Ecs::Position>(entity, Ecs::Position{data.x, data.y});
+            _registry.emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
 
-            _registry.emplaceComponent<Render>(entity, Render{sprite.textureHandle});
-            _registry.emplaceComponent<AnimationState>(
-                entity, AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
+            _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
+            _registry.emplaceComponent<Ecs::AnimationState>(
+                entity, Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }
@@ -90,21 +92,21 @@ namespace Engine
         const Ecs::Entity localEntity = it->second;
         const auto entityIndex = static_cast<size_t>(localEntity);
 
-        if (auto &pos = _registry.getComponents<Position>().at(entityIndex)) {
+        if (auto &pos = _registry.getComponents<Ecs::Position>().at(entityIndex)) {
             pos->x = entity.x;
             pos->y = entity.y;
         }
 
-        if (auto &drawable = _registry.getComponents<Drawable>().at(entityIndex)) {
+        if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
             if (const bool spriteChanged = (drawable->spriteId != entity.spriteId);
                 spriteChanged && _spriteRegistry->exists(entity.spriteId)) {
                 drawable->spriteId = entity.spriteId;
                 const auto &sprite = _spriteRegistry->get(drawable->spriteId);
 
-                if (auto &render = _registry.getComponents<Render>().at(entityIndex)) {
+                if (auto &render = _registry.getComponents<Ecs::Render>().at(entityIndex)) {
                     render->texture = sprite.textureHandle;
 
-                    if (auto &animState = _registry.getComponents<AnimationState>().at(entityIndex)) {
+                    if (auto &animState = _registry.getComponents<Ecs::AnimationState>().at(entityIndex)) {
                         animState->currentAnimation = sprite.defaultAnimation;
                         animState->frameIndex = 0;
                         animState->elapsed = 0.f;
@@ -113,4 +115,4 @@ namespace Engine
             }
         }
     }
-} // namespace Engine
+} // namespace World

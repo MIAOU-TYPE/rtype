@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <string>
 
-namespace Engine
+namespace Ecs
 {
     /**
     ** @brief Component that holds the state of an animation for an entity.

@@ -8,7 +8,7 @@
 #pragma once
 #include <string>
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Drawable

@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Position

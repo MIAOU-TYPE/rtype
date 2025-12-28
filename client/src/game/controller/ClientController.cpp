@@ -9,7 +9,7 @@
 
 namespace Ecs
 {
-    ClientController::ClientController(Engine::WorldCommandBuffer &buffer) : _commandBuffer(buffer)
+    ClientController::ClientController(Command::CommandBuffer<World::WorldCommand> &buffer) : _commandBuffer(buffer)
     {
     }
 
@@ -35,7 +35,7 @@ namespace Ecs
 
     void ClientController::onSnapshot(const std::vector<SnapshotEntity> &data)
     {
-        _commandBuffer.get().push({Engine::WorldCommand::Type::Snapshot, data});
+        _commandBuffer.get().push({World::WorldCommand::Type::Snapshot, data});
     }
 
     void ClientController::onScore(const uint32_t score)

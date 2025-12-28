@@ -34,7 +34,7 @@ namespace Thread
 
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
@@ -241,9 +241,9 @@ namespace Thread
     void ClientRuntime::applyWorldCommands(const steadyClock::time_point deadline, const int maxCommands)
     {
         int applied = 0;
-        Engine::WorldCommand cmd;
+        World::WorldCommand cmd;
 
-        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
+        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.pop(cmd)) {
             _world->applyCommand(cmd);
             applied++;
         }

@@ -40,8 +40,8 @@ namespace Engine
     struct RenderCommand {
         Graphics::TextureHandle textureId; ///> Handle to the texture to be rendered
         IntRect frame;                     ///> Rectangle defining the frame within the texture
-        Position position;                 ///> Position where the texture should be rendered
-        Position scale{1.f, 1.f};          ///> Scale factors for rendering the texture
+        Ecs::Position position;            ///> Position where the texture should be rendered
+        Ecs::Position scale{1.f, 1.f};     ///> Scale factors for rendering the texture
 
         /**
          * @brief Get the bounding rectangle of the render command.

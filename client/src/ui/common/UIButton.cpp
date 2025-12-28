@@ -94,7 +94,8 @@ namespace Engine
 
     FloatRect UIButton::bounds() const noexcept
     {
-        return {_cmd.position.x, _cmd.position.y, _cmd.frame.w * _cmd.scale.x, _cmd.frame.h * _cmd.scale.y};
+        return {_cmd.position.x, _cmd.position.y, static_cast<float>(_cmd.frame.w) * _cmd.scale.x,
+            static_cast<float>(_cmd.frame.h) * _cmd.scale.y};
     }
 
     void UIButton::setLabel(const std::string &text) const

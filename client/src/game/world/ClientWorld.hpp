@@ -12,10 +12,10 @@
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
-#include "WorldCommandBuffer.hpp"
+#include "WorldCommand.hpp"
 #include <unordered_set>
 
-namespace Engine
+namespace World
 {
     /**
      * @class ClientWorld
@@ -28,7 +28,7 @@ namespace Engine
          * @brief Constructs a ClientWorld with the given SpriteRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
          */
-        explicit ClientWorld(std::shared_ptr<const SpriteRegistry> spriteRegistry);
+        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry);
 
         /**
          * @brief Advances the world state by a given delta time.
@@ -67,7 +67,7 @@ namespace Engine
         };
 
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
-        std::shared_ptr<const SpriteRegistry>
+        std::shared_ptr<const Engine::SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
@@ -84,4 +84,4 @@ namespace Engine
          */
         void applySingleSnapshot(const SnapshotEntity &entity);
     };
-} // namespace Engine
+} // namespace World

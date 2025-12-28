@@ -8,7 +8,7 @@
 #pragma once
 #include <string>
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Drawable
@@ -17,4 +17,4 @@ namespace Engine
     struct Drawable {
         unsigned int spriteId; ///> Identifier for the sprite to be used for rendering
     };
-} // namespace Engine
+} // namespace Ecs

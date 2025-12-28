@@ -6,7 +6,6 @@
 */
 
 #include "SfmlMusicManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {

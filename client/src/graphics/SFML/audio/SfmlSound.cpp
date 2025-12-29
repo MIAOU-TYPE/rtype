@@ -34,4 +34,14 @@ namespace Graphics
     {
         _sound.setVolume(volume);
     }
+
+    void SfmlSound::setLooping(bool loop)
+    {
+        _sound.setLooping(loop);
+    }
+
+    sf::Sound &SfmlSound::get() noexcept
+    {
+        return _sound;
+    }
 } // namespace Graphics

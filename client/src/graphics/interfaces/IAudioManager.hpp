@@ -11,6 +11,10 @@
 
 namespace Graphics
 {
+    /**
+     * @class AudioError
+     * @brief Exception class for audio-related errors.
+     */
     class AudioError : public std::exception {
       public:
         /**

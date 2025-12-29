@@ -47,7 +47,7 @@ namespace Graphics
          * @brief Unload a sound or music resource.
          * @param handle Handle to the audio resource to unload.
          */
-        void unload(AudioHandle handle) override;
+        void unload(const AudioHandle handle) override;
 
         /**
          * @brief Check if an audio handle is valid.

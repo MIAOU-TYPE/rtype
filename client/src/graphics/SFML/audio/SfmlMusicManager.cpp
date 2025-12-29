@@ -35,7 +35,7 @@ namespace Graphics
         return handle;
     }
 
-    void SfmlMusicManager::unload(AudioHandle handle)
+    void SfmlMusicManager::unload(const AudioHandle handle)
     {
         if (auto it = _musics.find(handle); it != _musics.end()) {
             if (it->second.music && it->second.music->isPlaying()) {

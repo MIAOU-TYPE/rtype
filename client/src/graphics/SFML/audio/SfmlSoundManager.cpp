@@ -36,7 +36,7 @@ namespace Graphics
         return handle;
     }
 
-    void SfmlSoundManager::unload(AudioHandle handle)
+    void SfmlSoundManager::unload(const AudioHandle handle)
     {
         if (auto it = _sounds.find(handle); it != _sounds.end()) {
             if (--it->second.refCount == 0) {

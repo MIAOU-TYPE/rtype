@@ -93,8 +93,8 @@ namespace Graphics
          * @param volume Initial volume level (0.0 to 100.0).
          * @return Unique pointer to the sound, or nullptr if not supported or invalid.
          */
-        [[nodiscard]] virtual std::unique_ptr<IAudioPlayable> createSound(AudioHandle handle,
-            float volume = 100.f) const noexcept = 0;
+        [[nodiscard]] virtual std::unique_ptr<IAudioPlayable> createSound(
+            AudioHandle handle, float volume = 100.f) const noexcept = 0;
 
         /**
          * @brief Get the music object for a given handle.

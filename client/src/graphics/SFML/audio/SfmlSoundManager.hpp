@@ -68,7 +68,8 @@ namespace Graphics
          * @param volume Initial volume level (0.0 to 100.0).
          * @return Unique pointer to the sound, or nullptr if invalid.
          */
-        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(const AudioHandle handle, float volume = 100.f) const noexcept override;
+        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(
+            const AudioHandle handle, float volume = 100.f) const noexcept override;
 
         /**
          * @brief Not supported for sound manager.

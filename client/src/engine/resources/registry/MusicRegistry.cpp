@@ -9,7 +9,6 @@
 
 namespace Engine
 {
-    using Graphics::AudioHandle;
     using Graphics::InvalidAudio;
 
     MusicRegistry::MusicRegistry(std::shared_ptr<Graphics::SfmlMusicManager> musicManager)

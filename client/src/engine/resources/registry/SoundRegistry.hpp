@@ -16,11 +16,6 @@
 #include "SfmlSound.hpp"
 #include "SfmlSoundManager.hpp"
 
-namespace Graphics
-{
-    class SfmlSoundManager;
-}
-
 namespace Engine
 {
     class SoundRegistryError : public std::exception {

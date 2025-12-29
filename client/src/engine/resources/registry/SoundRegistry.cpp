@@ -9,9 +9,6 @@
 
 namespace Engine
 {
-    using Graphics::AudioHandle;
-    using Graphics::InvalidAudio;
-
     SoundRegistry::SoundRegistry(std::shared_ptr<Graphics::SfmlSoundManager> soundManager)
         : _soundManager(std::move(soundManager))
     {

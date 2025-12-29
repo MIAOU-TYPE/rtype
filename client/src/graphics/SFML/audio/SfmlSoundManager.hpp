@@ -23,7 +23,7 @@ namespace Graphics
      * @brief SFML implementation of the IAudioManager interface.
      * This class manages audio loading, playback, and control using SFML.
      */
-    class SfmlSoundManager : public IAudioManager {
+    class SfmlSoundManager final : public IAudioManager {
       public:
         /**
          * @brief Constructor for SfmlSoundManager.

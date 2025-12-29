@@ -21,6 +21,10 @@ namespace Graphics
 
 namespace Engine
 {
+    /**
+     * @class MusicRegistryError
+     * @brief Exception class for MusicRegistry errors.
+     */
     class MusicRegistryError : public std::exception {
       public:
         /**

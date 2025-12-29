@@ -55,9 +55,9 @@ namespace Engine
 
         /**
          * @brief Construct a new SoundRegistry object.
-         * @param soundManager Shared pointer to the sound manager.
+         * @param soundManager Shared pointer to the SFML sound manager.
          */
-        explicit SoundRegistry(std::shared_ptr<Graphics::IAudioManager> soundManager);
+        explicit SoundRegistry(std::shared_ptr<Graphics::SfmlSoundManager> soundManager);
 
         /**
          * @brief Play a sound effect.
@@ -73,8 +73,7 @@ namespace Engine
         void setSoundVolume(float volume);
 
       private:
-        std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr;        ///> Sound manager
-        std::shared_ptr<Graphics::SfmlSoundManager> _sfmlSoundManager = nullptr; ///> Concrete sound manager
+        std::shared_ptr<Graphics::SfmlSoundManager> _soundManager = nullptr; ///> Sound manager
 
         std::vector<std::unique_ptr<Graphics::SfmlSound>> _activeSounds; ///> Active sounds being played
         float _globalSoundVolume = 100.f;                                ///> Global sound volume

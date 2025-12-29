@@ -13,13 +13,11 @@ namespace Engine
     using Graphics::AudioHandle;
     using Graphics::InvalidAudio;
 
-    SoundRegistry::SoundRegistry(std::shared_ptr<Graphics::IAudioManager> soundManager)
+    SoundRegistry::SoundRegistry(std::shared_ptr<Graphics::SfmlSoundManager> soundManager)
         : _soundManager(std::move(soundManager))
     {
-        _sfmlSoundManager = std::dynamic_pointer_cast<Graphics::SfmlSoundManager>(_soundManager);
-
-        if (!_sfmlSoundManager)
-            throw SoundRegistryError("SoundRegistry: soundManager must be a SfmlSoundManager");
+        if (!_soundManager)
+            throw SoundRegistryError("SoundRegistry: soundManager cannot be null");
     }
 
     void SoundRegistry::playSound(AudioHandle handle, float volume)
@@ -27,7 +25,7 @@ namespace Engine
         if (!_soundManager->isValid(handle))
             return;
 
-        const sf::SoundBuffer *buffer = _sfmlSoundManager->getSoundBuffer(handle);
+        const sf::SoundBuffer *buffer = _soundManager->getSoundBuffer(handle);
         if (!buffer)
             return;
 

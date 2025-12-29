@@ -52,9 +52,9 @@ namespace Engine
 
         /**
          * @brief Construct a new MusicRegistry object.
-         * @param musicManager Shared pointer to the music manager.
+         * @param musicManager Shared pointer to the SFML music manager.
          */
-        explicit MusicRegistry(std::shared_ptr<Graphics::IAudioManager> musicManager);
+        explicit MusicRegistry(std::shared_ptr<Graphics::SfmlMusicManager> musicManager);
 
         /**
          * @brief Play a music track.
@@ -76,8 +76,7 @@ namespace Engine
         void setMusicVolume(float volume);
 
       private:
-        std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr;        ///> Music manager
-        std::shared_ptr<Graphics::SfmlMusicManager> _sfmlMusicManager = nullptr; ///> Concrete music manager
+        std::shared_ptr<Graphics::SfmlMusicManager> _musicManager = nullptr; ///> Music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
     };

@@ -14,13 +14,11 @@ namespace Engine
     using Graphics::AudioHandle;
     using Graphics::InvalidAudio;
 
-    MusicRegistry::MusicRegistry(std::shared_ptr<Graphics::IAudioManager> musicManager)
+    MusicRegistry::MusicRegistry(std::shared_ptr<Graphics::SfmlMusicManager> musicManager)
         : _musicManager(std::move(musicManager))
     {
-        _sfmlMusicManager = std::dynamic_pointer_cast<Graphics::SfmlMusicManager>(_musicManager);
-
-        if (!_sfmlMusicManager)
-            throw MusicRegistryError("MusicRegistry: musicManager must be a SfmlMusicManager");
+        if (!_musicManager)
+            throw MusicRegistryError("MusicRegistry: musicManager cannot be null");
     }
 
     void MusicRegistry::playMusic(AudioHandle handle, bool loop, float volume)
@@ -28,7 +26,7 @@ namespace Engine
         if (!_musicManager->isValid(handle))
             return;
 
-        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(handle)) {
+        if (Graphics::SfmlMusic *music = _musicManager->getMusic(handle)) {
             if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
                 stopMusic();
 
@@ -44,7 +42,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
+        if (Graphics::SfmlMusic *music = _musicManager->getMusic(_currentMusicHandle)) {
             music->stop();
         }
         _currentMusicHandle = InvalidAudio;
@@ -55,7 +53,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::SfmlMusic *music = _sfmlMusicManager->getMusic(_currentMusicHandle)) {
+        if (Graphics::SfmlMusic *music = _musicManager->getMusic(_currentMusicHandle)) {
             music->setVolume(volume);
         }
     }

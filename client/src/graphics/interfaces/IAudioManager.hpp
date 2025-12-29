@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
+#include "IAudioPlayable.hpp"
 
 namespace Graphics
 {
@@ -84,5 +86,21 @@ namespace Graphics
          * @brief Clear all loaded audio resources.
          */
         virtual void clear() = 0;
+
+        /**
+         * @brief Create a new sound instance from a loaded sound buffer.
+         * @param handle The audio handle.
+         * @param volume Initial volume level (0.0 to 100.0).
+         * @return Unique pointer to the sound, or nullptr if not supported or invalid.
+         */
+        [[nodiscard]] virtual std::unique_ptr<IAudioPlayable> createSound(AudioHandle handle,
+            float volume = 100.f) const noexcept = 0;
+
+        /**
+         * @brief Get the music object for a given handle.
+         * @param handle The audio handle.
+         * @return Pointer to the music object, or nullptr if not supported or invalid.
+         */
+        [[nodiscard]] virtual IAudioPlayable *get(AudioHandle handle) noexcept = 0;
     };
 } // namespace Graphics

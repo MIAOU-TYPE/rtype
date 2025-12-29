@@ -17,6 +17,10 @@
 
 namespace Engine
 {
+    /**
+     * @class SoundRegistryError
+     * @brief Exception class for SoundRegistry errors.
+     */
     class SoundRegistryError : public std::exception {
       public:
         /**

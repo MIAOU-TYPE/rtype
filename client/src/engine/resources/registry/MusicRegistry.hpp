@@ -11,8 +11,7 @@
 #include <memory>
 #include <string>
 #include "IAudioManager.hpp"
-#include "SfmlMusic.hpp"
-#include "SfmlMusicManager.hpp"
+#include "IAudioPlayable.hpp"
 
 namespace Engine
 {
@@ -56,9 +55,9 @@ namespace Engine
 
         /**
          * @brief Construct a new MusicRegistry object.
-         * @param musicManager Shared pointer to the SFML music manager.
+         * @param musicManager Shared pointer to the audio manager.
          */
-        explicit MusicRegistry(std::shared_ptr<Graphics::SfmlMusicManager> musicManager);
+        explicit MusicRegistry(std::shared_ptr<Graphics::IAudioManager> musicManager);
 
         /**
          * @brief Play a music track.
@@ -80,7 +79,7 @@ namespace Engine
         void setMusicVolume(float volume);
 
       private:
-        std::shared_ptr<Graphics::SfmlMusicManager> _musicManager = nullptr; ///> Music manager
+        std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr; ///> Music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
     };

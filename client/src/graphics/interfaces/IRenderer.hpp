@@ -92,13 +92,13 @@ namespace Graphics
          * @brief Provides access to the sound manager.
          * @return Reference to the sound manager.
          */
-        virtual std::shared_ptr<IAudioManager> audioSound() const noexcept = 0;
+        virtual std::shared_ptr<IAudioManager> sounds() const noexcept = 0;
 
         /**
          * @brief Provides access to the music manager.
          * @return Reference to the music manager.
          */
-        virtual std::shared_ptr<IAudioManager> audioMusic() const noexcept = 0;
+        virtual std::shared_ptr<IAudioManager> musics() const noexcept = 0;
 
         /**
          * @brief Draw a sprite based on the provided SpriteCmd.

@@ -76,13 +76,13 @@ namespace Graphics
          * @brief Provides access to the sound manager.
          * @return Reference to the sound manager.
          */
-        std::shared_ptr<IAudioManager> audioSound() const noexcept override;
+        std::shared_ptr<IAudioManager> sounds() const noexcept override;
 
         /**
          * @brief Provides access to the music manager.
          * @return Reference to the music manager.
          */
-        std::shared_ptr<IAudioManager> audioMusic() const noexcept override;
+        std::shared_ptr<IAudioManager> musics() const noexcept override;
 
         /**
          * @brief Draws a render command.

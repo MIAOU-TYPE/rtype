@@ -55,12 +55,12 @@ namespace Graphics
         return _textManager;
     }
 
-    std::shared_ptr<IAudioManager> SfmlRenderer::audioSound() const noexcept
+    std::shared_ptr<IAudioManager> SfmlRenderer::sounds() const noexcept
     {
         return _soundManager;
     }
 
-    std::shared_ptr<IAudioManager> SfmlRenderer::audioMusic() const noexcept
+    std::shared_ptr<IAudioManager> SfmlRenderer::musics() const noexcept
     {
         return _musicManager;
     }

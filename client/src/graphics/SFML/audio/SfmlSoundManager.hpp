@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include "IAudioManager.hpp"
+#include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
 #include "SfmlSound.hpp"
 
@@ -20,8 +21,8 @@ namespace Graphics
 {
     /**
      * @class SfmlSoundManager
-     * @brief SFML implementation of the IAudioManager interface.
-     * This class manages audio loading, playback, and control using SFML.
+     * @brief SFML implementation of the IAudioManager interface for sound effects.
+     * This class manages sound loading and playback using SFML.
      */
     class SfmlSoundManager final : public IAudioManager {
       public:
@@ -62,11 +63,18 @@ namespace Graphics
         void clear() override;
 
         /**
-         * @brief Get the sound buffer for a given handle.
+         * @brief Create a new sound instance from a loaded sound buffer.
          * @param handle The audio handle.
-         * @return Pointer to the sound buffer, or nullptr if invalid.
+         * @param volume Initial volume level (0.0 to 100.0).
+         * @return Unique pointer to the sound, or nullptr if invalid.
          */
-        [[nodiscard]] const sf::SoundBuffer *getSoundBuffer(const AudioHandle handle) const noexcept;
+        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(const AudioHandle handle, float volume = 100.f) const noexcept override;
+
+        /**
+         * @brief Not supported for sound manager.
+         * @return Always returns nullptr.
+         */
+        [[nodiscard]] IAudioPlayable *get(AudioHandle) noexcept override;
 
       private:
         /**

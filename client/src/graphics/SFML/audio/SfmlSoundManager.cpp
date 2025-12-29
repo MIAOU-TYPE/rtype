@@ -64,11 +64,20 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    const sf::SoundBuffer *SfmlSoundManager::getSoundBuffer(const AudioHandle handle) const noexcept
+    std::unique_ptr<IAudioPlayable> SfmlSoundManager::createSound(const AudioHandle handle, float volume) const noexcept
     {
-        if (auto it = _sounds.find(handle); it != _sounds.end()) {
-            return &it->second.buffer;
-        }
+        auto it = _sounds.find(handle);
+        if (it == _sounds.end())
+            return nullptr;
+
+        auto bufferPtr =
+            std::shared_ptr<sf::SoundBuffer>(const_cast<sf::SoundBuffer *>(&it->second.buffer), [](sf::SoundBuffer *) {
+            });
+        return std::make_unique<SfmlSound>(bufferPtr, volume);
+    }
+
+    IAudioPlayable *SfmlSoundManager::get(AudioHandle) noexcept
+    {
         return nullptr;
     }
 } // namespace Graphics

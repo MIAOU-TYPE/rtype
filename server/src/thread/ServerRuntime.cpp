@@ -14,8 +14,10 @@ ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid server pointer");
     _packetFactory = std::make_shared<Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
-    _gameServer = std::make_shared<Game::GameServer>(_sessionManager, _server, _packetFactory);
-    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _gameServer);
+    _roomManager =
+        std::make_shared<Engine::RoomManager>(_sessionManager, _server, _packetFactory, "levels/level1.json");
+
+    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _roomManager);
 }
 
 ServerRuntime::~ServerRuntime()
@@ -44,7 +46,6 @@ void ServerRuntime::start()
     _running = true;
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
-    _updateThread = std::thread(&ServerRuntime::runUpdate, this);
     _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
 }
 
@@ -58,14 +59,15 @@ void ServerRuntime::stop()
     _cv.notify_all();
 
     _server->setRunning(false);
+    _roomManager->forEachRoom([](Engine::Room &room) {
+        room.stop();
+    });
     if (_snapshotThread.joinable())
         _snapshotThread.join();
     if (_receiverThread.joinable())
         _receiverThread.join();
     if (_processorThread.joinable())
         _processorThread.join();
-    if (_updateThread.joinable())
-        _updateThread.join();
     _server->stop();
 }
 
@@ -85,49 +87,33 @@ void ServerRuntime::runProcessor() const
     }
 }
 
-void ServerRuntime::runUpdate() const
-{
-    using clock = std::chrono::steady_clock;
-    constexpr auto Tick = std::chrono::milliseconds(16);
-    auto next = clock::now();
-
-    while (_running) {
-        next += Tick;
-
-        _gameServer->tick();
-
-        std::this_thread::sleep_until(next);
-
-        if (const auto now = clock::now(); now > next + 5 * Tick)
-            next = now;
-    }
-}
-
 void ServerRuntime::runSnapshot() const
 {
-    std::vector<SnapshotEntity> entities;
-
     using clock = std::chrono::steady_clock;
     constexpr auto Tick = std::chrono::milliseconds(50);
     auto nextTick = clock::now();
+    std::vector<SnapshotEntity> entities;
 
     while (_running) {
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
 
-        _gameServer->buildSnapshot(entities);
+        _roomManager->forEachRoom([&](const Engine::Room &room) {
+            room.gameServer().buildSnapshot(entities);
 
-        if (!entities.empty()) {
-            if (auto basePacket = _packetFactory->createSnapshotPacket(entities)) {
-                _sessionManager->forEachSession([&](int, const sockaddr_in &addr) {
-                    const auto packet = basePacket->clone();
-                    if (!packet)
-                        return;
-                    packet->setAddress(addr);
-                    _server->sendPacket(*packet);
-                });
+            if (entities.empty())
+                return;
+
+            if (const auto basePacket = _packetFactory->createSnapshotPacket(entities)) {
+                for (const int sessionId : room.sessions()) {
+                    if (const sockaddr_in *addr = _sessionManager->getAddress(sessionId)) {
+                        auto packet = basePacket->clone();
+                        packet->setAddress(*addr);
+                        _server->sendPacket(*packet);
+                    }
+                }
             }
-        }
+        });
 
         if (auto now = clock::now(); now > nextTick + Tick)
             nextTick = now;

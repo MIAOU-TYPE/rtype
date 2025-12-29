@@ -66,7 +66,7 @@ namespace Graphics
          * @param handle The audio handle.
          * @return Pointer to the music object, or nullptr if invalid.
          */
-        [[nodiscard]] SfmlMusic *getMusic(AudioHandle handle) noexcept;
+        [[nodiscard]] SfmlMusic *getMusic(const AudioHandle handle) noexcept;
 
       private:
         /**

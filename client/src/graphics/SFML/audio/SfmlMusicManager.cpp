@@ -68,7 +68,7 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    SfmlMusic *SfmlMusicManager::getMusic(AudioHandle handle) noexcept
+    SfmlMusic *SfmlMusicManager::getMusic(const AudioHandle handle) noexcept
     {
         if (auto it = _musics.find(handle); it != _musics.end()) {
             return it->second.music.get();

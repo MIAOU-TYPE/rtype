@@ -11,6 +11,8 @@
 #include <memory>
 #include <string>
 #include "IAudioManager.hpp"
+#include "SfmlMusic.hpp"
+#include "SfmlMusicManager.hpp"
 
 namespace Graphics
 {

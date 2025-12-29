@@ -6,8 +6,6 @@
 */
 
 #include "MusicRegistry.hpp"
-#include "SfmlMusic.hpp"
-#include "SfmlMusicManager.hpp"
 
 namespace Engine
 {

@@ -6,10 +6,11 @@
 */
 
 #include "SoundRegistry.hpp"
+#include <algorithm>
 
 namespace Engine
 {
-    SoundRegistry::SoundRegistry(std::shared_ptr<Graphics::SfmlSoundManager> soundManager)
+    SoundRegistry::SoundRegistry(std::shared_ptr<Graphics::IAudioManager> soundManager)
         : _soundManager(std::move(soundManager))
     {
         if (!_soundManager)
@@ -21,20 +22,16 @@ namespace Engine
         if (!_soundManager->isValid(handle))
             return;
 
-        const sf::SoundBuffer *buffer = _soundManager->getSoundBuffer(handle);
-        if (!buffer)
-            return;
-
         _activeSounds.erase(std::remove_if(_activeSounds.begin(), _activeSounds.end(),
                                 [](const auto &sound) {
                                     return !sound->isPlaying();
                                 }),
             _activeSounds.end());
 
-        auto soundBuffer =
-            std::shared_ptr<sf::SoundBuffer>(const_cast<sf::SoundBuffer *>(buffer), [](sf::SoundBuffer *) {
-            });
-        auto sound = std::make_unique<Graphics::SfmlSound>(soundBuffer, volume * (_globalSoundVolume / 100.f));
+        auto sound = _soundManager->createSound(handle, volume * (_globalSoundVolume / 100.f));
+        if (!sound)
+            return;
+
         sound->play();
         _activeSounds.push_back(std::move(sound));
     }
@@ -42,5 +39,11 @@ namespace Engine
     void SoundRegistry::setSoundVolume(float volume)
     {
         _globalSoundVolume = volume;
+
+        for (auto &sound : _activeSounds) {
+            if (sound && sound->isPlaying()) {
+                sound->setVolume(volume);
+            }
+        }
     }
 } // namespace Engine

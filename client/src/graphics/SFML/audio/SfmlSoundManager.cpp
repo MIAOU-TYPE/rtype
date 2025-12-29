@@ -14,7 +14,7 @@ namespace Graphics
     {
     }
 
-    AudioHandle SfmlSoundManager::loadAudio(const std::string &resourcePath)
+    AudioHandle SfmlSoundManager::load(const std::string &resourcePath)
     {
         if (const auto it = _soundPathToHandle.find(resourcePath); it != _soundPathToHandle.end()) {
             _sounds[it->second].refCount++;

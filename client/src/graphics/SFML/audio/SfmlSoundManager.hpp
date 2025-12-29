@@ -41,7 +41,7 @@ namespace Graphics
          * @param resourcePath Path to the sound resource.
          * @return AudioHandle Handle to the loaded sound, or InvalidAudio on failure.
          */
-        AudioHandle loadAudio(const std::string &resourcePath) override;
+        AudioHandle load(const std::string &resourcePath) override;
 
         /**
          * @brief Unload a sound or music resource.

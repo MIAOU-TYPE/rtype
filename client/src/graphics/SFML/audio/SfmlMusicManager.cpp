@@ -51,9 +51,9 @@ namespace Graphics
         }
     }
 
-    bool SfmlMusicManager::isValid(AudioHandle handle) const noexcept
+    bool SfmlMusicManager::isValid(const AudioHandle handle) const noexcept
     {
-        return _musics.find(handle) != _musics.end();
+        return _musics.contains(handle);
     }
 
     void SfmlMusicManager::clear()

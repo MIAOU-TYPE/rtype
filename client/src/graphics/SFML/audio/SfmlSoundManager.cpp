@@ -6,7 +6,6 @@
 */
 
 #include "SfmlSoundManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {
@@ -55,7 +54,7 @@ namespace Graphics
 
     bool SfmlSoundManager::isValid(const AudioHandle handle) const noexcept
     {
-        return _sounds.find(handle) != _sounds.end();
+        return _sounds.contains(handle);
     }
 
     void SfmlSoundManager::clear()

@@ -54,7 +54,7 @@ namespace Graphics
          * @param handle The audio handle to check.
          * @return True if the handle is valid, false otherwise.
          */
-        bool isValid(AudioHandle handle) const noexcept override;
+        bool isValid(const AudioHandle handle) const noexcept override;
 
         /**
          * @brief Clear all loaded audio resources.

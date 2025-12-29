@@ -9,28 +9,26 @@
 
 namespace Game
 {
-    std::vector<bool> LevelSystem::_spawned;
-
-    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt)
+    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned)
     {
         lvl.advance(dt);
-        handleWaves(world, lvl);
+        handleWaves(world, lvl, spawned);
     }
 
-    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl)
+    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned)
     {
         const Level &level = lvl.getCurrentLevel();
 
-        if (_spawned.size() != level.waves.size())
-            _spawned.assign(level.waves.size(), false);
+        if (spawned.size() != level.waves.size())
+            spawned.assign(level.waves.size(), false);
 
         for (size_t i = 0; i < level.waves.size(); i++) {
             const Wave &wave = level.waves.at(i);
-            if (_spawned.at(i))
+            if (spawned.at(i))
                 continue;
             if (!lvl.shouldSpawn(wave.time))
                 continue;
-            _spawned.at(i) = true;
+            spawned.at(i) = true;
             spawnWave(world, level, wave);
         }
     }

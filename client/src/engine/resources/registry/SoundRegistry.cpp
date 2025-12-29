@@ -6,7 +6,6 @@
 */
 
 #include "SoundRegistry.hpp"
-#include "SfmlSoundManager.hpp"
 
 namespace Engine
 {

@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include "IAudioManager.hpp"
+#include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
 #include "SfmlMusic.hpp"
 
@@ -20,8 +21,8 @@ namespace Graphics
 {
     /**
      * @class SfmlMusicManager
-     * @brief SFML implementation of the IAudioManager interface.
-     * This class manages audio loading, playback, and control using SFML.
+     * @brief SFML implementation of the IAudioManager interface for music.
+     * This class manages music loading and playback using SFML.
      */
     class SfmlMusicManager final : public IAudioManager {
       public:
@@ -62,11 +63,17 @@ namespace Graphics
         void clear() override;
 
         /**
+         * @brief Not supported for music manager.
+         * @return Always returns nullptr.
+         */
+        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(AudioHandle, float = 100.f) const noexcept override;
+
+        /**
          * @brief Get the music object for a given handle.
          * @param handle The audio handle.
          * @return Pointer to the music object, or nullptr if invalid.
          */
-        [[nodiscard]] SfmlMusic *getMusic(const AudioHandle handle) noexcept;
+        [[nodiscard]] IAudioPlayable *get(const AudioHandle handle) noexcept override;
 
       private:
         /**

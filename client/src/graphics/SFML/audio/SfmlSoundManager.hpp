@@ -83,6 +83,6 @@ namespace Graphics
         std::unordered_map<AudioHandle, SoundEntry> _sounds;             ///> Map of sound handles to sound entries
         std::unordered_map<std::string, AudioHandle> _soundPathToHandle; ///> Map of sound paths to handles
 
-        AudioHandle _nextHandle = 1;                           ///> Next available audio handle
+        AudioHandle _nextHandle = 1; ///> Next available audio handle
     };
 } // namespace Graphics

@@ -50,6 +50,9 @@ namespace Engine
      */
     class SoundRegistry {
       public:
+        /**
+         * @brief Type alias for audio handle used to reference sound resources.
+         */
         using AudioHandle = Graphics::AudioHandle;
 
         /**

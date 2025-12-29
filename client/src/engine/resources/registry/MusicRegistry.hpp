@@ -14,11 +14,6 @@
 #include "SfmlMusic.hpp"
 #include "SfmlMusicManager.hpp"
 
-namespace Graphics
-{
-    class SfmlMusicManager;
-}
-
 namespace Engine
 {
     /**

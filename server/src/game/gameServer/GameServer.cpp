@@ -72,11 +72,7 @@ namespace Game
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
         if (const auto *addr = _sessions->getAddress(sessionId)) {
-            if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
-                if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::REJECT))
-                    _server->sendPacket(*pkt);
-            } else
-                _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
+            _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
         }
     }
 
@@ -108,7 +104,7 @@ namespace Game
     void GameServer::update(const float dt)
     {
         if (_waitingClock.elapsed() > 5.0)
-            LevelSystem::update(*_worldWrite, _levelManager, dt);
+            LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
         AIShootSystem::update(*_worldWrite, dt);
 
@@ -152,8 +148,6 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                if (!_sessionToEntity.contains(cmd.sessionId) && _sessions->getAllSessions().size() > MAX_PLAYERS)
-                    break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
                 _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;

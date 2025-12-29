@@ -129,8 +129,8 @@ namespace Engine
 
       private:
         std::unordered_map<RoomId, std::unique_ptr<Room>>
-            _rooms;                                          ///>  Maps room IDs to their corresponding Room instances
-        std::unordered_map<SessionId, RoomId> _playerToRoom; ///> Maps session IDs to their corresponding room IDs
+            _rooms;                                    ///>  Maps room IDs to their corresponding Room instances
+        std::unordered_map<int, RoomId> _playerToRoom; ///> Maps session IDs to their corresponding room IDs
 
         RoomId _nextRoomId = 1; ///> Counter for generating unique room IDs
 

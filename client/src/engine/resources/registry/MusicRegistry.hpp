@@ -49,6 +49,9 @@ namespace Engine
      */
     class MusicRegistry {
       public:
+        /**
+         * @brief Type alias for audio handle used to reference music resources.
+         */
         using AudioHandle = Graphics::AudioHandle;
 
         /**

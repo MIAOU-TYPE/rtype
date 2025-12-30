@@ -78,54 +78,30 @@ namespace Engine
         template <typename Func>
         void forEachRoom(Func &&func);
 
-        RoomId createRoomUnlocked()
-        {
-            RoomId id = _nextRoomId++;
+        /**
+         * @brief Handles player connection
+         * @param sessionId The session ID of the connected player
+         */
+        void onPlayerConnect(int sessionId);
 
-            auto room = std::make_unique<Room>(_sessions, _server, _packetFactory, _levelPath);
-            room->start();
-            _rooms.emplace(id, std::move(room));
+        /**
+         * @brief Handles player input
+         * @param sessionId The session ID of the player
+         * @param input The input component from the player
+         */
+        void onPlayerInput(int sessionId, const Game::InputComponent &input) const;
 
-            return id;
-        }
+        /**
+         * @brief Handles player disconnection
+         * @param sessionId The session ID of the disconnected player
+         */
+        void onPlayerDisconnect(int sessionId);
 
-        void onPlayerConnect(const int sessionId)
-        {
-            RoomId roomId;
-
-            {
-                std::scoped_lock lock(_mutex);
-                if (_rooms.empty())
-                    roomId = createRoomUnlocked();
-                else
-                    roomId = createRoomUnlocked();
-            }
-            addPlayerToRoom(roomId, sessionId);
-        }
-
-        void onPlayerInput(const int sessionId, const Game::InputComponent &input)
-        {
-            const Room *room = nullptr;
-
-            {
-                std::scoped_lock lock(_mutex);
-                const RoomId roomId = _playerToRoom.at(sessionId);
-                room = _rooms.at(roomId).get();
-            }
-
-            room->gameServer().onPlayerInput(sessionId, input);
-        }
-
-        void onPlayerDisconnect(const int sessionId)
-        {
-            removePlayer(sessionId);
-        }
-
-        void onPing(const int sessionId)
-        {
-            (void) sessionId;
-            std::cout << "[RoomManager] Ping received from session " << sessionId << std::endl;
-        }
+        /**
+         * @brief Handles ping from a player
+         * @param sessionId The session ID of the player
+         */
+        void onPing(int sessionId) const;
 
       private:
         std::unordered_map<RoomId, std::unique_ptr<Room>>

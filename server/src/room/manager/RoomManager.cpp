@@ -19,12 +19,9 @@ namespace Engine
 
     RoomId RoomManager::createRoom()
     {
-        std::scoped_lock lock(_mutex);
-
         RoomId id = _nextRoomId++;
 
         auto room = std::make_unique<Room>(_sessions, _server, _packetFactory, _levelPath);
-
         room->start();
         _rooms.emplace(id, std::move(room));
 
@@ -84,5 +81,50 @@ namespace Engine
     {
         std::scoped_lock lock(_mutex);
         return *_rooms.at(roomId);
+    }
+
+    void RoomManager::onPlayerConnect(const int sessionId)
+    {
+        RoomId roomId;
+
+        {
+            std::scoped_lock lock(_mutex);
+            if (_rooms.empty())
+                roomId = createRoom();
+            else
+                roomId = _rooms.begin()->first;
+        }
+        addPlayerToRoom(roomId, sessionId);
+    }
+
+    void RoomManager::onPlayerInput(const int sessionId, const Game::InputComponent &input) const
+    {
+        const Room *room = nullptr;
+
+        {
+            std::scoped_lock lock(_mutex);
+            const RoomId roomId = _playerToRoom.at(sessionId);
+            room = _rooms.at(roomId).get();
+        }
+
+        room->gameServer().onPlayerInput(sessionId, input);
+    }
+
+    void RoomManager::onPlayerDisconnect(const int sessionId)
+    {
+        removePlayer(sessionId);
+    }
+
+    void RoomManager::onPing(const int sessionId) const
+    {
+        const Room *room = nullptr;
+
+        {
+            std::scoped_lock lock(_mutex);
+            const RoomId roomId = _playerToRoom.at(sessionId);
+            room = _rooms.at(roomId).get();
+        }
+
+        room->gameServer().onPing(sessionId);
     }
 } // namespace Engine

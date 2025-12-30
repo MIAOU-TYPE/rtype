@@ -103,7 +103,7 @@ namespace Net::Thread
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
         std::shared_ptr<PacketRouter> _packetRouter;              ///> Routes incoming packets to appropriate handlers
         std::shared_ptr<Factory::PacketFactory> _packetFactory;   ///> Builds outgoing packets.
-        std::shared_ptr<Engine::RoomManager> _roomManager;        ////> Manages game rooms
+        std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets

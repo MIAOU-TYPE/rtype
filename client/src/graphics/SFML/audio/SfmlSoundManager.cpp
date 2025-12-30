@@ -17,7 +17,6 @@ namespace Graphics
     AudioHandle SfmlSoundManager::load(const std::string &resourcePath)
     {
         if (const auto it = _soundPathToHandle.find(resourcePath); it != _soundPathToHandle.end()) {
-            _sounds[it->second].refCount++;
             return it->second;
         }
 
@@ -25,12 +24,12 @@ namespace Graphics
         if (!data || size == 0)
             return InvalidAudio;
 
-        sf::SoundBuffer buffer;
-        if (!buffer.loadFromMemory(data, size))
+        auto buffer = std::make_shared<sf::SoundBuffer>();
+        if (!buffer->loadFromMemory(data, size))
             return InvalidAudio;
 
         AudioHandle handle = _nextHandle++;
-        _sounds.emplace(handle, SoundEntry{std::move(buffer), 1});
+        _sounds.emplace(handle, SoundEntry{buffer});
         _soundPathToHandle.emplace(resourcePath, handle);
 
         return handle;
@@ -38,18 +37,17 @@ namespace Graphics
 
     void SfmlSoundManager::unload(const AudioHandle handle)
     {
-        if (auto it = _sounds.find(handle); it != _sounds.end()) {
-            if (--it->second.refCount == 0) {
-                for (auto pathIt = _soundPathToHandle.begin(); pathIt != _soundPathToHandle.end(); ++pathIt) {
-                    if (pathIt->second == handle) {
-                        _soundPathToHandle.erase(pathIt);
-                        break;
-                    }
-                }
-                _sounds.erase(it);
-            }
+        auto it = _sounds.find(handle);
+        if (it == _sounds.end())
             return;
+
+        for (auto pathIt = _soundPathToHandle.begin(); pathIt != _soundPathToHandle.end(); ++pathIt) {
+            if (pathIt->second == handle) {
+                _soundPathToHandle.erase(pathIt);
+                break;
+            }
         }
+        _sounds.erase(it);
     }
 
     bool SfmlSoundManager::isValid(const AudioHandle handle) const noexcept
@@ -70,10 +68,7 @@ namespace Graphics
         if (it == _sounds.end())
             return nullptr;
 
-        auto bufferPtr =
-            std::shared_ptr<sf::SoundBuffer>(const_cast<sf::SoundBuffer *>(&it->second.buffer), [](sf::SoundBuffer *) {
-            });
-        return std::make_unique<SfmlSound>(bufferPtr, volume);
+        return std::make_unique<SfmlSound>(it->second.buffer, volume);
     }
 
     IAudioPlayable *SfmlSoundManager::get(AudioHandle) noexcept

@@ -19,15 +19,7 @@ namespace Graphics
         if (const auto it = _musicPathToHandle.find(resourcePath); it != _musicPathToHandle.end())
             return it->second;
 
-        auto [data, size] = _resources->loadResource(resourcePath);
-        if (!data || size == 0)
-            return InvalidAudio;
-
-        auto sfmlMusic = std::make_unique<sf::Music>();
-        if (!sfmlMusic->openFromMemory(data, size))
-            return InvalidAudio;
-
-        auto music = std::make_unique<SfmlMusic>(std::move(sfmlMusic));
+        auto music = std::make_unique<SfmlMusic>(_resources, resourcePath);
         AudioHandle handle = _nextHandle++;
         _musics.emplace(handle, MusicEntry{std::move(music), resourcePath});
         _musicPathToHandle.emplace(resourcePath, handle);

@@ -6,14 +6,18 @@
 */
 
 #include "SfmlMusic.hpp"
-#include "IAudioManager.hpp"
 
 namespace Graphics
 {
-    SfmlMusic::SfmlMusic(std::unique_ptr<sf::Music> music) : _music(std::move(music))
+    SfmlMusic::SfmlMusic(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath)
     {
-        if (!_music)
-            throw AudioError("SfmlMusic: music cannot be null");
+        auto [data, size] = resources->loadResource(resourcePath);
+        if (!data || size == 0)
+            throw AudioError("SfmlMusic: failed to load resource");
+
+        _music = std::make_unique<sf::Music>();
+        if (!_music->openFromMemory(data, size))
+            throw AudioError("SfmlMusic: failed to open music from memory");
     }
 
     void SfmlMusic::play()

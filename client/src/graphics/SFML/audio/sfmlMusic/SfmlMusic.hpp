@@ -9,7 +9,10 @@
 
 #include <SFML/Audio.hpp>
 #include <memory>
+#include <string>
 #include "IAudioPlayable.hpp"
+#include "IResourceManager.hpp"
+#include "IAudioManager.hpp"
 
 namespace Graphics
 {
@@ -22,9 +25,10 @@ namespace Graphics
       public:
         /**
          * @brief Constructor for SfmlMusic.
-         * @param music Unique pointer to the music object.
+         * @param resources Shared pointer to the resource manager.
+         * @param resourcePath Path to the music resource.
          */
-        explicit SfmlMusic(std::unique_ptr<sf::Music> music);
+        explicit SfmlMusic(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath);
 
         /**
          * @brief Play the music.

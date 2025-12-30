@@ -17,22 +17,22 @@ extern "C"
 {
     EXPORT int net_initNetwork()
     {
-        #ifdef _WIN32
-                WSADATA wsaData;
-                return WSAStartup(MAKEWORD(2, 2), &wsaData);
-        #else
-                return 0;
-        #endif
+#ifdef _WIN32
+        WSADATA wsaData;
+        return WSAStartup(MAKEWORD(2, 2), &wsaData);
+#else
+        return 0;
+#endif
     }
 
     EXPORT int net_cleanupNetwork()
 
     {
-        #ifdef _WIN32
-                return WSACleanup();
-        #else
-                return 0;
-        #endif
+#ifdef _WIN32
+        return WSACleanup();
+#else
+        return 0;
+#endif
     }
 
     EXPORT socketHandle net_socket(const int domain, const int type, const int protocol)
@@ -50,7 +50,7 @@ extern "C"
         return ::accept(sockFd, addr, addrLen);
     }
 
-    EXPORT int net_bind(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen)
+    EXPORT int net_bind(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
     {
         return ::bind(sockFd, addr, addrLen);
     }
@@ -68,26 +68,30 @@ extern "C"
     }
 
     EXPORT recvfrom_return_t net_recvFrom(
-        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
+        socketHandle sockFd, void *buf, size_t len, int flags, sockaddr *srcAddr, socklen_t *addrLen)
     {
         return ::recvfrom(sockFd, (char *) buf, static_cast<int>(len), flags, srcAddr, (int *) addrLen);
     }
 
     EXPORT sendto_return_t net_sendTo(
-        socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
+        socketHandle sockFd, const void *buf, size_t len, int flags, const sockaddr *destAddr, socklen_t addrLen)
     {
         return ::sendto(sockFd, (const char *) buf, static_cast<int>(len), flags, destAddr, static_cast<int>(addrLen));
     }
 
-    EXPORT recv_return_t net_recv(socketHandle sockFd, void *buf, size_t len, int flags)
+    EXPORT recv_return_t net_recv(const socketHandle sockFd, void *buf, const size_t len, const int flags)
     {
         return ::recv(sockFd, (char *) buf, static_cast<int>(len), flags);
     }
 
-    EXPORT send_return_t net_send(
-    socketHandle sockFd, const void *buf, size_t len, int flags)
+    EXPORT send_return_t net_send(const socketHandle sockFd, const void *buf, const size_t len, const int flags)
     {
-        return ::send(sockFd, (const char *)buf, static_cast<int>(len), flags);
+        return ::send(sockFd, (const char *) buf, static_cast<int>(len), flags);
+    }
+
+    EXPORT int net_connect(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
+    {
+        return ::connect(sockFd, addr, static_cast<int>(addrLen));
     }
 #endif
 
@@ -98,18 +102,20 @@ extern "C"
             close(s);
     }
 
-    EXPORT int net_setOpt(const socketHandle s, const int level, const int optName, const void *optVal, const int optLen)
+    EXPORT int net_setOpt(
+        const socketHandle s, const int level, const int optName, const void *optVal, const int optLen)
     {
         return ::setsockopt(s, level, optName, static_cast<const void *>(optVal), static_cast<socklen_t>(optLen));
     }
 
     EXPORT recvfrom_return_t net_recvFrom(
-        const socketHandle sockFd, void *buf, const size_t len, const int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
+        const socketHandle sockFd, void *buf, const size_t len, const int flags, sockaddr *srcAddr, socklen_t *addrLen)
     {
         return ::recvfrom(sockFd, buf, len, flags, srcAddr, addrLen);
     }
 
-    EXPORT sendto_return_t net_sendTo(const socketHandle sockFd, const void *buf, const size_t len, const int flags, const sockaddr *destAddr, const socklen_t addrLen)
+    EXPORT sendto_return_t net_sendTo(const socketHandle sockFd, const void *buf, const size_t len, const int flags,
+        const sockaddr *destAddr, const socklen_t addrLen)
     {
         return ::sendto(sockFd, buf, len, flags, destAddr, addrLen);
     }
@@ -122,6 +128,11 @@ extern "C"
     EXPORT send_return_t net_send(const socketHandle sockFd, const void *buf, const size_t len, const int flags)
     {
         return ::send(sockFd, buf, len, flags);
+    }
+
+    EXPORT int net_connect(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
+    {
+        return ::connect(sockFd, addr, addrLen);
     }
 #endif
 }

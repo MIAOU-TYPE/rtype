@@ -75,7 +75,7 @@ namespace Graphics
          * @brief Not supported for sound manager.
          * @return Always returns nullptr.
          */
-        [[nodiscard]] IAudioPlayable *get(AudioHandle) noexcept override;
+        [[nodiscard]] std::shared_ptr<IAudioPlayable> get(AudioHandle) noexcept override;
 
       private:
         /**

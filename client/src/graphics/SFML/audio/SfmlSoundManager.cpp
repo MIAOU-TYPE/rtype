@@ -66,7 +66,7 @@ namespace Graphics
         return std::make_unique<SfmlSound>(it->second.buffer, volume);
     }
 
-    IAudioPlayable *SfmlSoundManager::get(AudioHandle) noexcept
+    std::shared_ptr<IAudioPlayable> SfmlSoundManager::get(AudioHandle) noexcept
     {
         return nullptr;
     }

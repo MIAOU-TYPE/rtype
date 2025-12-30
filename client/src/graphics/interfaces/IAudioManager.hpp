@@ -99,8 +99,8 @@ namespace Graphics
         /**
          * @brief Get the music object for a given handle.
          * @param handle The audio handle.
-         * @return Pointer to the music object, or nullptr if not supported or invalid.
+         * @return Shared pointer to the music object, or nullptr if not supported or invalid.
          */
-        [[nodiscard]] virtual IAudioPlayable *get(AudioHandle handle) noexcept = 0;
+        [[nodiscard]] virtual std::shared_ptr<IAudioPlayable> get(AudioHandle handle) noexcept = 0;
     };
 } // namespace Graphics

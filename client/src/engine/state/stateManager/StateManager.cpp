@@ -35,7 +35,7 @@ namespace Engine
     void StateManager::update(const InputFrame &frame)
     {
         if (_current)
-            _current->update(frame);
+            _current->update(*this, frame);
 
         if (_quitRequested) {
             _running = false;

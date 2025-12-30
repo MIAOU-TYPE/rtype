@@ -85,7 +85,7 @@ namespace Engine
 
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr; ///> Sound manager
 
-        std::vector<ActiveSound> _activeSounds;  ///> Active sounds being played with their original volumes
-        float _globalSoundVolume = 100.f;        ///> Global sound volume
+        std::vector<ActiveSound> _activeSounds; ///> Active sounds being played with their original volumes
+        float _globalSoundVolume = 100.f;       ///> Global sound volume
     };
 } // namespace Engine

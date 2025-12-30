@@ -73,7 +73,8 @@ namespace Graphics
     std::shared_ptr<IAudioPlayable> SfmlMusicManager::get(const AudioHandle handle) noexcept
     {
         if (auto it = _musics.find(handle); it != _musics.end()) {
-            return std::shared_ptr<IAudioPlayable>(it->second.music.get(), [](IAudioPlayable *) {});
+            return std::shared_ptr<IAudioPlayable>(it->second.music.get(), [](IAudioPlayable *) {
+            });
         }
         return nullptr;
     }

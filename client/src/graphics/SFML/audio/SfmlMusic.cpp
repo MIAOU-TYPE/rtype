@@ -6,14 +6,14 @@
 */
 
 #include "SfmlMusic.hpp"
-#include <stdexcept>
+#include "IAudioManager.hpp"
 
 namespace Graphics
 {
     SfmlMusic::SfmlMusic(std::unique_ptr<sf::Music> music) : _music(std::move(music))
     {
         if (!_music)
-            throw std::invalid_argument("SfmlMusic: music cannot be null");
+            throw AudioError("SfmlMusic: music cannot be null");
     }
 
     void SfmlMusic::play()

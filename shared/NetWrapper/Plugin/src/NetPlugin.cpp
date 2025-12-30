@@ -93,6 +93,13 @@ extern "C"
     {
         return ::connect(sockFd, addr, static_cast<int>(addrLen));
     }
+
+    EXPORT int net_setNonBlocking(const socketHandle s, const int enabled)
+    {
+        u_long mode = enabled ? 1 : 0;
+        return ioctlsocket(s, FIONBIO, &mode);
+    }
+
 #endif
 
 #ifndef _WIN32
@@ -133,6 +140,16 @@ extern "C"
     EXPORT int net_connect(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
     {
         return ::connect(sockFd, addr, addrLen);
+    }
+
+    EXPORT int net_setNonBlocking(const socketHandle s, const int enabled)
+    {
+        const int flags = ::fcntl(s, F_GETFL, 0);
+        if (flags < 0)
+            return -1;
+
+        const int newFlags = enabled ? (flags | O_NONBLOCK) : (flags & ~O_NONBLOCK);
+        return ::fcntl(s, F_SETFL, newFlags);
     }
 #endif
 }

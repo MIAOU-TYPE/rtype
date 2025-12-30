@@ -64,16 +64,15 @@ namespace Engine
 
     void Room::run() const
     {
-        using clock = std::chrono::steady_clock;
         constexpr auto Tick = std::chrono::milliseconds(16);
-        auto next = clock::now();
+        auto next = std::chrono::steady_clock::now();
 
         while (_running) {
             next += Tick;
             _gameServer->tick();
             std::this_thread::sleep_until(next);
 
-            if (auto now = clock::now(); now > next + 5 * Tick)
+            if (auto now = std::chrono::steady_clock::now(); now > next + 5 * Tick)
                 next = now;
         }
     }

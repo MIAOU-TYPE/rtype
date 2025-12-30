@@ -10,9 +10,9 @@
 #include <SFML/Audio.hpp>
 #include <memory>
 #include <string>
+#include "IAudioManager.hpp"
 #include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
-#include "IAudioManager.hpp"
 
 namespace Graphics
 {

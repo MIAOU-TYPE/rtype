@@ -9,8 +9,8 @@
 using namespace Net;
 
 PacketRouter::PacketRouter(
-    const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink)
-    : _sessions(sessions), _sink(sink)
+    const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<Engine::RoomManager> &roomManager)
+    : _sessions(sessions), _roomManager(roomManager)
 {
 }
 
@@ -102,7 +102,7 @@ void PacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 
 void PacketRouter::handleConnect(const int sessionId) const
 {
-    _sink->onPlayerConnect(sessionId);
+    _roomManager->onPlayerConnect(sessionId);
 }
 
 void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
@@ -119,16 +119,16 @@ void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload,
     const bool right = (flags & 0x08u) != 0;
     const bool shoot = (flags & 0x10u) != 0;
 
-    _sink->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
+    _roomManager->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
 }
 
 void PacketRouter::handlePing(const int sessionId) const
 {
-    _sink->onPing(sessionId);
+    _roomManager->onPing(sessionId);
 }
 
 void PacketRouter::handleDisconnect(const int sessionId) const
 {
-    _sink->onPlayerDisconnect(sessionId);
+    _roomManager->onPlayerDisconnect(sessionId);
     _sessions->removeSession(sessionId);
 }

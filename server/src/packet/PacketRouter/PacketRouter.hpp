@@ -12,10 +12,10 @@
 #include <memory>
 
 #include <iostream>
-#include "IMessageSink.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "PacketFactory.hpp"
+#include "RoomManager.hpp"
 #include "SessionManager.hpp"
 
 #ifndef _WIN32
@@ -42,10 +42,10 @@ namespace Net
         /**
          * @brief Constructs a PacketRouter with the given SessionManager and IMessageSink.
          * @param sessions Shared pointer to the SessionManager for managing player sessions.
-         * @param sink Shared pointer to the IMessageSink for handling routed messages.
+         * @param roomManager Shared pointer to the RoomManager for managing game rooms.
          */
-        PacketRouter(
-            const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<IMessageSink> &sink);
+        PacketRouter(const std::shared_ptr<Server::ISessionManager> &sessions,
+            const std::shared_ptr<Engine::RoomManager> &roomManager);
 
         /**
          * @brief Handles an incoming packet by routing it to the appropriate handler.
@@ -121,8 +121,8 @@ namespace Net
             int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
 
         std::shared_ptr<Server::ISessionManager>
-            _sessions;                       ///> Pointer to the SessionManager for managing player sessions.
-        std::shared_ptr<IMessageSink> _sink; ///> Pointer to the IMessageSink for handling routed messages.
+            _sessions; ///> Pointer to the SessionManager for managing player sessions.
+        std::shared_ptr<Engine::RoomManager> _roomManager; ///> Pointer to the RoomManager for managing game rooms.
 
         static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
     };

@@ -9,7 +9,8 @@
 
 namespace Graphics
 {
-    SfmlSound::SfmlSound(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath, float volume)
+    SfmlSound::SfmlSound(
+        std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath, float volume)
         : _buffer(std::make_unique<sf::SoundBuffer>()), _sound(*_buffer)
     {
         auto [data, size] = resources->loadResource(resourcePath);

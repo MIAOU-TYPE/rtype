@@ -39,6 +39,11 @@ namespace Engine
             const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory, const std::string &levelPath);
 
         /**
+         * @brief Destructor for Room
+         */
+        ~Room();
+
+        /**
          * @brief Starts the room's game server thread
          */
         void start();

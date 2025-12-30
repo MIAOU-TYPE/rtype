@@ -17,6 +17,11 @@ namespace Engine
         _gameServer = std::make_unique<Game::GameServer>(sessions, server, packetFactory, levelPath);
     }
 
+    Room::~Room()
+    {
+        stop();
+    }
+
     void Room::start()
     {
         _running = true;

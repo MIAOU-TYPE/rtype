@@ -17,6 +17,7 @@ target_include_directories(NetPacketLib
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/interfaces
         ${CMAKE_CURRENT_SOURCE_DIR}/src/UDPPacket
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/TCPPacket
 )
 
 # ------------------------------

@@ -9,15 +9,15 @@
 
 namespace Engine
 {
-    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer))
+    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+        std::shared_ptr<RoomService> roomService)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _roomService(std::move(roomService))
     {
     }
 
-    void MenuState::onEnter(StateManager &manager)
+    void MenuState::onEnter(StateManager &)
     {
         try {
-            _manager = &manager;
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
         } catch (const std::exception &e) {
@@ -25,16 +25,20 @@ namespace Engine
         }
     }
 
-    void MenuState::update(const InputFrame &frame)
+    void MenuState::update(StateManager &manager, const InputFrame &frame)
     {
         _menu->update(frame);
 
         if (_menu->wantsSettings()) {
-            _manager->queueState(std::make_unique<SettingsState>(*_manager, _graphics, _renderer));
+            manager.queueState(std::make_unique<SettingsState>(_graphics, _renderer, _roomService));
+            return;
+        }
+        if (_menu->wantsToStart()) {
+            manager.queueState(std::make_unique<RoomState>(_graphics, _renderer, _roomService));
             return;
         }
         if (_menu->wantsToQuit())
-            _manager->queueQuit();
+            manager.queueQuit();
     }
 
     void MenuState::render()

@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** R-Type
+** File description:
+** RoomManager
+*/
+
 #pragma once
 
 #include <memory>

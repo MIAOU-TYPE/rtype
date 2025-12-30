@@ -42,7 +42,7 @@ namespace Net
         /**
          * @brief Constructs a PacketRouter with the given SessionManager and IMessageSink.
          * @param sessions Shared pointer to the SessionManager for managing player sessions.
-         * @param roomManager Shared pointer to the IMessageSink for handling routed messages.
+         * @param roomManager Shared pointer to the RoomManager for managing game rooms.
          */
         PacketRouter(const std::shared_ptr<Server::ISessionManager> &sessions,
             const std::shared_ptr<Engine::RoomManager> &roomManager);

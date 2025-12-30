@@ -122,7 +122,7 @@ namespace Net
 
         std::shared_ptr<Server::ISessionManager>
             _sessions; ///> Pointer to the SessionManager for managing player sessions.
-        std::shared_ptr<Engine::RoomManager> _roomManager;
+        std::shared_ptr<Engine::RoomManager> _roomManager; ///> Pointer to the RoomManager for managing game rooms.
 
         static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
     };

@@ -99,6 +99,7 @@ void ServerRuntime::runSnapshot() const
         nextTick += Tick;
 
         _roomManager->forEachRoom([&](const Engine::Room &room) {
+            entities.clear();
             room.gameServer().buildSnapshot(entities);
 
             if (entities.empty())
@@ -107,9 +108,8 @@ void ServerRuntime::runSnapshot() const
             if (const auto basePacket = _packetFactory->createSnapshotPacket(entities)) {
                 for (const int sessionId : room.sessions()) {
                     if (const sockaddr_in *addr = _sessionManager->getAddress(sessionId)) {
-                        auto packet = basePacket->clone();
-                        packet->setAddress(*addr);
-                        _server->sendPacket(*packet);
+                        basePacket->setAddress(*addr);
+                        _server->sendPacket(*basePacket);
                     }
                 }
             }

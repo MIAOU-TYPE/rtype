@@ -31,6 +31,7 @@ NetWrapper::NetWrapper(const std::string &pluginPath, const std::string &baseDir
         _acceptFn = _loader->getSymbol<socketHandle (*)(socketHandle, sockaddr *, socklen_t *)>("net_accept");
         _listenFn = _loader->getSymbol<int (*)(socketHandle, int)>("net_listen");
         _connectFn = _loader->getSymbol<int (*)(socketHandle, const sockaddr *, const socklen_t)>("net_connect");
+        _setNonBlockingFn = _loader->getSymbol<int (*)(socketHandle, int)>("net_setNonBlocking");
     } catch (const std::exception &e) {
         throw NetWrapperError(std::string("{NetWrapper::NetWrapper} ") + e.what());
     }
@@ -132,4 +133,11 @@ int NetWrapper::connect(const socketHandle sockFd, const sockaddr *addr, const s
     if (!_connectFn)
         throw NetWrapperError("Connect function not loaded");
     return _connectFn(sockFd, addr, addrLen);
+}
+
+int NetWrapper::setNonBlocking(socketHandle s, int enabled) const
+{
+    if (!_setNonBlockingFn)
+        throw NetWrapperError("setNonBlocking function not loaded");
+    return _setNonBlockingFn(s, enabled ? 1 : 0);
 }

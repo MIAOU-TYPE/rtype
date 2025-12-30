@@ -212,6 +212,14 @@ namespace Net
          */
         int connect(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen) const;
 
+        /**
+         * @brief Sets a socket to non-blocking mode.
+         * @param s The socket handle.
+         * @param enabled Non-zero to enable non-blocking mode, zero to disable.
+         * @return 0 on success, or -1 on error.
+         */
+        int setNonBlocking(socketHandle s, int enabled) const;
+
       private:
         std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.
 
@@ -279,5 +287,10 @@ namespace Net
          * @brief Pointer to the connect function.
          */
         int (*_connectFn)(socketHandle, const sockaddr *, socklen_t) = nullptr;
+
+        /**
+         * @brief Pointer to the set non-blocking function.
+         */
+        int (*_setNonBlockingFn)(socketHandle, int) = nullptr;
     };
 } // namespace Net

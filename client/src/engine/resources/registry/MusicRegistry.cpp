@@ -23,7 +23,7 @@ namespace Engine
         if (!_musicManager->isValid(handle))
             return;
 
-        if (Graphics::IAudioPlayable *music = _musicManager->get(handle)) {
+        if (auto music = _musicManager->get(handle)) {
             if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
                 stopMusic();
 
@@ -39,7 +39,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::IAudioPlayable *music = _musicManager->get(_currentMusicHandle)) {
+        if (auto music = _musicManager->get(_currentMusicHandle)) {
             music->stop();
         }
         _currentMusicHandle = InvalidAudio;
@@ -50,7 +50,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (Graphics::IAudioPlayable *music = _musicManager->get(_currentMusicHandle)) {
+        if (auto music = _musicManager->get(_currentMusicHandle)) {
             music->setVolume(volume);
         }
     }

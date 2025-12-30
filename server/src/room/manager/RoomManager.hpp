@@ -10,11 +10,6 @@
 namespace Engine
 {
     /**
-     * @brief Type alias for Room IDs
-     */
-    using RoomId = std::uint32_t;
-
-    /**
      * @class RoomManager
      * @brief Manages game rooms and player assignments
      */
@@ -35,40 +30,53 @@ namespace Engine
          * @brief Creates a new game room
          * @return The ID of the newly created room
          */
-        [[nodiscard]] RoomId createRoom();
+        [[nodiscard]] RoomId createRoom() noexcept;
 
         /**
          * @brief Removes a game room
          * @param roomId The ID of the room to be removed
          */
-        void removeRoom(RoomId roomId);
+        void removeRoom(RoomId roomId) noexcept;
+
+        /**
+         * @brief Starts a game room
+         * @param roomId The ID of the room to be started
+         */
+        void start(RoomId roomId) const noexcept;
 
         /**
          * @brief Adds a player to a specified room
          * @param roomId The ID of the room
          * @param sessionId The session ID of the player to be added
          */
-        void addPlayerToRoom(RoomId roomId, int sessionId);
+        void addPlayerToRoom(RoomId roomId, int sessionId) noexcept;
 
         /**
          * @brief Removes a player from their assigned room
          * @param sessionId The session ID of the player to be removed
          */
-        void removePlayer(int sessionId);
+        void removePlayer(int sessionId) noexcept;
 
         /**
          * @brief Gets the room ID of the room a player is assigned to
          * @param sessionId The session ID of the player
          * @return The ID of the room the player is assigned to
          */
-        [[nodiscard]] RoomId getRoomOfPlayer(int sessionId) const;
+        [[nodiscard]] RoomId getRoomIdOfPlayer(int sessionId) const noexcept;
+
+        /**
+         * @brief Gets a reference to the room a player is assigned to
+         * @param sessionId The session ID of the player
+         * @return Reference to the Room instance
+         */
+        [[nodiscard]] std::shared_ptr<Room> getRoomOfPlayer(int sessionId) const noexcept;
 
         /**
          * @brief Gets a reference to a room by its ID
          * @param roomId The ID of the room
          * @return Reference to the Room instance
          */
-        [[nodiscard]] Room &getRoom(RoomId roomId) const;
+        [[nodiscard]] std::shared_ptr<Room> getRoomById(RoomId roomId) const noexcept;
 
         /**
          * @brief Executes a function for each room managed by the RoomManager
@@ -82,33 +90,34 @@ namespace Engine
          * @brief Handles player connection
          * @param sessionId The session ID of the connected player
          */
-        void onPlayerConnect(int sessionId);
+        void onPlayerConnect(int sessionId) noexcept;
+
+        /**
+         * @brief Handles player disconnection
+         * @param sessionId The session ID of the disconnected player
+         */
+        void onPlayerDisconnect(int sessionId) noexcept;
 
         /**
          * @brief Handles player input
          * @param sessionId The session ID of the player
          * @param input The input component from the player
          */
-        void onPlayerInput(int sessionId, const Game::InputComponent &input) const;
-
-        /**
-         * @brief Handles player disconnection
-         * @param sessionId The session ID of the disconnected player
-         */
-        void onPlayerDisconnect(int sessionId);
+        void onPlayerInput(int sessionId, const Game::InputComponent &input) const noexcept;
 
         /**
          * @brief Handles ping from a player
          * @param sessionId The session ID of the player
          */
-        void onPing(int sessionId) const;
+        void onPing(int sessionId) const noexcept;
 
       private:
-        std::unordered_map<RoomId, std::unique_ptr<Room>>
+        std::unordered_map<RoomId, std::shared_ptr<Room>>
             _rooms;                                    ///>  Maps room IDs to their corresponding Room instances
         std::unordered_map<int, RoomId> _playerToRoom; ///> Maps session IDs to their corresponding room IDs
 
-        RoomId _nextRoomId = 1; ///> Counter for generating unique room IDs
+        RoomId _nextRoomId = 1;                    ///> Counter for generating unique room IDs
+        static constexpr RoomId InvalidRoomId = 0; ///> Constant representing an invalid room ID
 
         std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Session manager for handling player sessions
         std::shared_ptr<Net::Server::IServer> _server;               ///> Server instance for network communication

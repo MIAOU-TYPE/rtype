@@ -17,114 +17,145 @@ namespace Engine
     {
     }
 
-    RoomId RoomManager::createRoom()
+    RoomId RoomManager::createRoom() noexcept
     {
-        RoomId id = _nextRoomId++;
-
-        auto room = std::make_unique<Room>(_sessions, _server, _packetFactory, _levelPath);
-        room->start();
-        _rooms.emplace(id, std::move(room));
-
-        return id;
+        try {
+            auto room = std::make_shared<Room>(_sessions, _server, _packetFactory, _levelPath);
+            std::scoped_lock lock(_mutex);
+            auto id = _nextRoomId++;
+            _rooms.emplace(id, room);
+            return id;
+        } catch (...) {
+            return InvalidRoomId;
+        }
     }
 
-    void RoomManager::removeRoom(const RoomId roomId)
+    void RoomManager::removeRoom(const RoomId roomId) noexcept
     {
-        std::scoped_lock lock(_mutex);
+        std::shared_ptr<Room> room;
 
-        const auto it = _rooms.find(roomId);
-        if (it == _rooms.end())
+        {
+            std::scoped_lock lock(_mutex);
+            const auto it = _rooms.find(roomId);
+            if (it == _rooms.end())
+                return;
+
+            for (auto pit = _playerToRoom.begin(); pit != _playerToRoom.end();) {
+                if (pit->second == roomId)
+                    pit = _playerToRoom.erase(pit);
+                else
+                    ++pit;
+            }
+
+            room = it->second;
+            _rooms.erase(it);
+        }
+
+        try {
+            room->stop();
+        } catch (...) {
+            std::cerr << "{RoomManager::removeRoom} failed to stop room " << roomId << std::endl;
+        }
+    }
+
+    void RoomManager::start(const RoomId roomId) const noexcept
+    {
+        const auto room = getRoomById(roomId);
+        if (!room)
             return;
-
-        auto &room = *(it->second);
-        room.stop();
-        _rooms.erase(it);
+        try {
+            room->start();
+        } catch (...) {
+            std::cerr << "{RoomManager::start} failed to start room " << roomId << std::endl;
+        }
     }
 
-    void RoomManager::addPlayerToRoom(const RoomId roomId, const int sessionId)
+    void RoomManager::addPlayerToRoom(const RoomId roomId, const int sessionId) noexcept
     {
+        const auto room = getRoomById(roomId);
+        if (!room)
+            return;
+        try {
+            room->join(sessionId);
+        } catch (...) {
+            return;
+        }
         std::scoped_lock lock(_mutex);
-
-        auto &room = *_rooms.at(roomId);
-
-        room.join(sessionId);
         _playerToRoom[sessionId] = roomId;
     }
 
-    void RoomManager::removePlayer(const int sessionId)
+    void RoomManager::removePlayer(const int sessionId) noexcept
     {
-        std::scoped_lock lock(_mutex);
+        const auto room = getRoomOfPlayer(sessionId);
 
-        const auto it = _playerToRoom.find(sessionId);
-        if (it == _playerToRoom.end())
+        if (!room)
             return;
-
-        const RoomId roomId = it->second;
-        auto &room = *_rooms.at(roomId);
-
-        room.leave(sessionId);
-        _playerToRoom.erase(it);
-
-        if (room.empty()) {
-            room.stop();
-            _rooms.erase(roomId);
+        try {
+            room->leave(sessionId);
+            if (room->empty())
+                removeRoom(getRoomIdOfPlayer(sessionId));
+        } catch (...) {
+            return;
         }
+        std::scoped_lock lock(_mutex);
+        _playerToRoom.erase(sessionId);
     }
 
-    RoomId RoomManager::getRoomOfPlayer(const int sessionId) const
+    RoomId RoomManager::getRoomIdOfPlayer(const int sessionId) const noexcept
     {
         std::scoped_lock lock(_mutex);
-        return _playerToRoom.at(sessionId);
+        if (const auto it = _playerToRoom.find(sessionId); it != _playerToRoom.end())
+            return it->second;
+        return InvalidRoomId;
     }
 
-    Room &RoomManager::getRoom(const RoomId roomId) const
+    std::shared_ptr<Room> RoomManager::getRoomById(const RoomId roomId) const noexcept
     {
         std::scoped_lock lock(_mutex);
-        return *_rooms.at(roomId);
+        if (const auto it = _rooms.find(roomId); it != _rooms.end())
+            return it->second;
+        return nullptr;
     }
 
-    void RoomManager::onPlayerConnect(const int sessionId)
+    std::shared_ptr<Room> RoomManager::getRoomOfPlayer(const int sessionId) const noexcept
     {
-        RoomId roomId;
+        const auto roomId = getRoomIdOfPlayer(sessionId);
+        if (roomId == InvalidRoomId)
+            return nullptr;
+        return getRoomById(roomId);
+    }
 
-        {
-            std::scoped_lock lock(_mutex);
-            if (_rooms.empty())
-                roomId = createRoom();
-            else
-                roomId = _rooms.begin()->first;
+    void RoomManager::onPlayerConnect(const int sessionId) noexcept
+    {
+        if (const auto room = getRoomOfPlayer(sessionId)) {
+            room->gameServer().onPlayerConnect(sessionId);
+            return;
         }
-        addPlayerToRoom(roomId, sessionId);
-    }
-
-    void RoomManager::onPlayerInput(const int sessionId, const Game::InputComponent &input) const
-    {
-        const Room *room = nullptr;
-
-        {
-            std::scoped_lock lock(_mutex);
-            const RoomId roomId = _playerToRoom.at(sessionId);
-            room = _rooms.at(roomId).get();
+        const auto id = createRoom();
+        if (id == InvalidRoomId)
+            return;
+        addPlayerToRoom(id, sessionId);
+        if (const auto room = getRoomById(id)) {
+            room->start();
         }
-
-        room->gameServer().onPlayerInput(sessionId, input);
     }
 
-    void RoomManager::onPlayerDisconnect(const int sessionId)
+    void RoomManager::onPlayerDisconnect(const int sessionId) noexcept
     {
+        if (const auto room = getRoomOfPlayer(sessionId))
+            room->gameServer().onPlayerDisconnect(sessionId);
         removePlayer(sessionId);
     }
 
-    void RoomManager::onPing(const int sessionId) const
+    void RoomManager::onPlayerInput(const int sessionId, const Game::InputComponent &input) const noexcept
     {
-        const Room *room = nullptr;
+        if (const auto room = getRoomOfPlayer(sessionId))
+            room->gameServer().onPlayerInput(sessionId, input);
+    }
 
-        {
-            std::scoped_lock lock(_mutex);
-            const RoomId roomId = _playerToRoom.at(sessionId);
-            room = _rooms.at(roomId).get();
-        }
-
-        room->gameServer().onPing(sessionId);
+    void RoomManager::onPing(int sessionId) const noexcept
+    {
+        if (const auto room = getRoomOfPlayer(sessionId))
+            room->gameServer().onPing(sessionId);
     }
 } // namespace Engine

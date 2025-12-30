@@ -24,12 +24,8 @@ namespace Graphics
         if (!data || size == 0)
             return InvalidAudio;
 
-        auto buffer = std::make_shared<sf::SoundBuffer>();
-        if (!buffer->loadFromMemory(data, size))
-            return InvalidAudio;
-
         AudioHandle handle = _nextHandle++;
-        _sounds.emplace(handle, SoundEntry{buffer, resourcePath});
+        _sounds.emplace(handle, SoundEntry{resourcePath});
         _soundPathToHandle.emplace(resourcePath, handle);
 
         return handle;
@@ -63,7 +59,11 @@ namespace Graphics
         if (it == _sounds.end())
             return nullptr;
 
-        return std::make_unique<SfmlSound>(it->second.buffer, volume);
+        try {
+            return std::make_unique<SfmlSound>(_resources, it->second.resourcePath, volume);
+        } catch (const AudioError &) {
+            return nullptr;
+        }
     }
 
     std::shared_ptr<IAudioPlayable> SfmlSoundManager::get(AudioHandle) noexcept

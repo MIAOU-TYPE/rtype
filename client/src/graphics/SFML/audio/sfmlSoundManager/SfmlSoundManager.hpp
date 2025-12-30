@@ -80,11 +80,10 @@ namespace Graphics
       private:
         /**
          * @struct SoundEntry
-         * @brief Represents a loaded sound buffer.
+         * @brief Represents a loaded sound.
          */
         struct SoundEntry {
-            std::shared_ptr<sf::SoundBuffer> buffer; ///> Shared pointer to the SFML sound buffer
-            std::string resourcePath;                ///> Path to the sound resource
+            std::string resourcePath; ///> Path to the sound resource
         };
 
         std::shared_ptr<Resources::IResourceManager> _resources = nullptr; ///> Resource manager

@@ -9,7 +9,10 @@
 
 #include <SFML/Audio.hpp>
 #include <memory>
+#include <string>
 #include "IAudioPlayable.hpp"
+#include "IResourceManager.hpp"
+#include "IAudioManager.hpp"
 
 namespace Graphics
 {
@@ -22,10 +25,11 @@ namespace Graphics
       public:
         /**
          * @brief Constructor for SfmlSound.
-         * @param buffer Shared pointer to the sound buffer.
+         * @param resources Shared pointer to the resource manager.
+         * @param resourcePath Path to the sound resource.
          * @param volume Volume level (0.0 to 100.0).
          */
-        explicit SfmlSound(std::shared_ptr<sf::SoundBuffer> buffer, float volume = 100.f);
+        explicit SfmlSound(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath, float volume = 100.f);
 
         /**
          * @brief Play the sound.
@@ -62,7 +66,7 @@ namespace Graphics
         [[nodiscard]] sf::Sound &get() noexcept;
 
       private:
-        std::shared_ptr<sf::SoundBuffer> _buffer; ///> Sound buffer
+        std::unique_ptr<sf::SoundBuffer> _buffer; ///> Sound buffer
         sf::Sound _sound;                         ///> SFML sound object
     };
 } // namespace Graphics

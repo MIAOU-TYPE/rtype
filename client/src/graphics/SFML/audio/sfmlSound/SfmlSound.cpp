@@ -9,9 +9,16 @@
 
 namespace Graphics
 {
-    SfmlSound::SfmlSound(std::shared_ptr<sf::SoundBuffer> buffer, float volume)
-        : _buffer(std::move(buffer)), _sound(*_buffer)
+    SfmlSound::SfmlSound(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath, float volume)
+        : _buffer(std::make_unique<sf::SoundBuffer>()), _sound(*_buffer)
     {
+        auto [data, size] = resources->loadResource(resourcePath);
+        if (!data || size == 0)
+            throw AudioError("SfmlSound: failed to load resource");
+
+        if (!_buffer->loadFromMemory(data, size))
+            throw AudioError("SfmlSound: failed to load sound buffer");
+
         _sound.setVolume(volume);
     }
 

@@ -23,8 +23,8 @@ namespace Engine
             return;
 
         _activeSounds.erase(std::remove_if(_activeSounds.begin(), _activeSounds.end(),
-                                [](const auto &sound) {
-                                    return !sound->isPlaying();
+                                [](const auto &activeSound) {
+                                    return !activeSound.sound->isPlaying();
                                 }),
             _activeSounds.end());
 
@@ -33,16 +33,16 @@ namespace Engine
             return;
 
         sound->play();
-        _activeSounds.push_back(std::move(sound));
+        _activeSounds.push_back(ActiveSound{std::move(sound), volume});
     }
 
     void SoundRegistry::setSoundVolume(float volume)
     {
         _globalSoundVolume = volume;
 
-        for (auto &sound : _activeSounds) {
-            if (sound && sound->isPlaying()) {
-                sound->setVolume(volume);
+        for (auto &activeSound : _activeSounds) {
+            if (activeSound.sound && activeSound.sound->isPlaying()) {
+                activeSound.sound->setVolume(activeSound.originalVolume * (volume / 100.f));
             }
         }
     }

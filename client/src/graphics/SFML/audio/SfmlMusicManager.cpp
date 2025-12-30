@@ -37,18 +37,15 @@ namespace Graphics
 
     void SfmlMusicManager::unload(const AudioHandle handle)
     {
-        if (auto it = _musics.find(handle); it != _musics.end()) {
-            if (it->second.music && it->second.music->isPlaying()) {
-                it->second.music->stop();
-            }
-            for (auto pathIt = _musicPathToHandle.begin(); pathIt != _musicPathToHandle.end(); ++pathIt) {
-                if (pathIt->second == handle) {
-                    _musicPathToHandle.erase(pathIt);
-                    break;
-                }
-            }
-            _musics.erase(it);
+        auto it = _musics.find(handle);
+        if (it == _musics.end())
+            return;
+
+        if (it->second.music && it->second.music->isPlaying()) {
+            it->second.music->stop();
         }
+        _musicPathToHandle.erase(it->second.resourcePath);
+        _musics.erase(it);
     }
 
     bool SfmlMusicManager::isValid(const AudioHandle handle) const noexcept

@@ -29,7 +29,7 @@ namespace Graphics
             return InvalidAudio;
 
         AudioHandle handle = _nextHandle++;
-        _sounds.emplace(handle, SoundEntry{buffer});
+        _sounds.emplace(handle, SoundEntry{buffer, resourcePath});
         _soundPathToHandle.emplace(resourcePath, handle);
 
         return handle;
@@ -41,12 +41,7 @@ namespace Graphics
         if (it == _sounds.end())
             return;
 
-        for (auto pathIt = _soundPathToHandle.begin(); pathIt != _soundPathToHandle.end(); ++pathIt) {
-            if (pathIt->second == handle) {
-                _soundPathToHandle.erase(pathIt);
-                break;
-            }
-        }
+        _soundPathToHandle.erase(it->second.resourcePath);
         _sounds.erase(it);
     }
 

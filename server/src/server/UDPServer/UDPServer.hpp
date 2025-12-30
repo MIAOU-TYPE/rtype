@@ -53,8 +53,14 @@ namespace Net::Server
         void stop() override;
 
         /**
-         * @brief Polls the UDP server for incoming datagrams.
-         * @param timeout The maximum time to wait for incoming datagrams, in milliseconds.
+         * @brief Sets the UDP socket to non-blocking or blocking mode.
+         * @param nonBlocking True to set the socket to non-blocking mode, false for blocking mode.
+         */
+        void setNonBlocking(bool nonBlocking) override;
+
+        /**
+         * @brief Reads incoming packets from the UDP server.
+         * @note This method polls the UDP socket for incoming datagrams and stores them in the reception buffer.
          */
         void readPackets() override;
 

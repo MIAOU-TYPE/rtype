@@ -50,7 +50,17 @@ void UDPServer::stop()
         _socketFd = kInvalidSocket;
         std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
     }
-    _netWrapper.cleanupNetwork();
+    if (const auto result = _netWrapper.cleanupNetwork(); result != 0)
+        throw ServerError("{UDPServer::stop} Failed to cleanup network");
+}
+
+void UDPServer::setNonBlocking(const bool nonBlocking)
+{
+    if (_socketFd == kInvalidSocket)
+        throw ServerError("{UDPServer::setNonBlocking} Socket not initialized");
+
+    if (_netWrapper.setNonBlocking(_socketFd, nonBlocking ? 1 : 0) < 0)
+        throw ServerError("{UDPServer::setNonBlocking} Failed to set socket non-blocking mode");
 }
 
 void UDPServer::readPackets()
@@ -120,6 +130,7 @@ void UDPServer::bindSocket(family_t family) const
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
-    if (const int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)); result != 0)
+    if (const int result = _netWrapper.bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
+        result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

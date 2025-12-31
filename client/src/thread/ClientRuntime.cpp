@@ -134,7 +134,7 @@ namespace Thread
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
         constexpr float FixedDt = 1.0f / 60.0f;
-        static constexpr float MAXSIZEDt = 0.16f;
+        static constexpr float MaxFrameDt = 0.16f;
         static constexpr int MaxStepsPerTick = 4;
 
         auto nextTick = clock::now();
@@ -151,8 +151,8 @@ namespace Thread
 
             float frameDt = std::chrono::duration<float>(now - last).count();
             last = now;
-            if (frameDt > MAXSIZEDt)
-                frameDt = MAXSIZEDt;
+            if (frameDt > MaxFrameDt)
+                frameDt = MaxFrameDt;
             accumulator += frameDt;
 
             processNetworkPackets(deadline, 256);

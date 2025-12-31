@@ -18,7 +18,7 @@
  * @details This namespace contains definitions and enumerations related to
  * the network protocol used for communication between client and server.
  */
-namespace Net::Protocol
+namespace Net::Protocol::UDP
 {
     /**
      * @brief Enumeration of UDP packet types.
@@ -45,4 +45,4 @@ namespace Net::Protocol
     constexpr uint8_t GAME_OVER = 0x15;    ///> Server notifies client of game over event
     constexpr uint8_t SCORE = 0x16;        ///> Server sends score update to the client
 
-} // namespace Net::Protocol
+} // namespace Net::Protocol::UDP

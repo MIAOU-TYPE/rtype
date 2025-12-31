@@ -21,6 +21,12 @@ namespace Engine
         _released = textures->load(prefix + "released.png");
         _hover = textures->load(prefix + "hover.png");
         _pressed = textures->load(prefix + "pressed.png");
+
+        if (_released == Graphics::InvalidTexture || _hover == Graphics::InvalidTexture
+            || _pressed == Graphics::InvalidTexture) {
+            throw UIButtonError("Failed to load button textures");
+        }
+
         _cmd.textureId = _released;
 
         const auto sizeTex = textures->getSize(_released);
@@ -49,7 +55,7 @@ namespace Engine
         _text->setPosition(textX, textY);
     }
 
-    void UIButton::update(float mouseX, float mouseY)
+    void UIButton::update(const float mouseX, const float mouseY)
     {
         const bool hovered = bounds().contains(mouseX, mouseY);
 
@@ -73,7 +79,6 @@ namespace Engine
     bool UIButton::onMouseReleased(const float x, const float y)
     {
         if (_state == ButtonState::Pressed && bounds().contains(x, y)) {
-            _clicked = true;
             _state = ButtonState::Hover;
             return true;
         }
@@ -81,20 +86,16 @@ namespace Engine
         return false;
     }
 
-    bool UIButton::wasClicked() const noexcept
-    {
-        return _clicked;
-    }
-
     void UIButton::render() const
     {
         _renderer->draw(_cmd);
-        _renderer->drawText(*_text);
+        _renderer->draw(*_text);
     }
 
     FloatRect UIButton::bounds() const noexcept
     {
-        return {_cmd.position.x, _cmd.position.y, _cmd.frame.w * _cmd.scale.x, _cmd.frame.h * _cmd.scale.y};
+        return {_cmd.position.x, _cmd.position.y, static_cast<float>(_cmd.frame.w) * _cmd.scale.x,
+            static_cast<float>(_cmd.frame.h) * _cmd.scale.y};
     }
 
     void UIButton::setLabel(const std::string &text) const
@@ -103,15 +104,13 @@ namespace Engine
             _text->setString(text);
     }
 
-    void UIButton::setScale(float scale)
+    void UIButton::setScale(const float scale)
     {
-        _scale = scale * 0.85f;
         _cmd.scale = {scale, scale};
     }
 
     void UIButton::reset()
     {
-        _clicked = false;
         _state = ButtonState::Released;
     }
 } // namespace Engine

@@ -7,6 +7,43 @@
 
 #include "GameServer.hpp"
 
+namespace
+{
+    void registerScoreUpdatePacketDispatch(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+    {
+        std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
+        std::weak_ptr<Net::Factory::PacketFactory> wFactory = packetFactory;
+        std::weak_ptr<Net::Server::IServer> wServer = server;
+
+        const auto *mapPtr = &entityToSession;
+
+        world.events().subscribe<ScoreUpdatedEvent>(
+            [wSessions, wFactory, wServer, mapPtr](const ScoreUpdatedEvent &scoreUpdated) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL || !mapPtr)
+                    return;
+
+                const auto it = mapPtr->find(scoreUpdated.playerId);
+                if (it == mapPtr->end())
+                    return;
+
+                const int sessionId = it->second;
+                const sockaddr_in *addr = sessionsL->getAddress(sessionId);
+                if (!addr)
+                    return;
+
+                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
+                if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
+                    serverL->sendPacket(*pkt);
+            });
+    }
+} // namespace
+
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
@@ -24,6 +61,8 @@ namespace Game
             _levelManager.reset();
         }
         _waitingClock.restart();
+
+        registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _packetFactory, _entityToSession, _server);
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -33,11 +72,7 @@ namespace Game
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
         if (const auto *addr = _sessions->getAddress(sessionId)) {
-            if (_sessions->getAllSessions().size() > MAX_PLAYERS) {
-                if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::REJECT))
-                    _server->sendPacket(*pkt);
-            } else
-                _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
+            _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
         }
     }
 
@@ -69,10 +104,8 @@ namespace Game
     void GameServer::update(const float dt)
     {
         if (_waitingClock.elapsed() > 5.0)
-            LevelSystem::update(*_worldWrite, _levelManager, dt);
+            LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
-        TargetingSystem::update(*_worldWrite);
-        AISystem::update(*_worldWrite, dt);
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
@@ -82,6 +115,8 @@ namespace Game
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);
+
+        _worldWrite->events().process();
     }
 
     void GameServer::tick()
@@ -113,10 +148,9 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                if (!_sessionToEntity.contains(cmd.sessionId) && _sessions->getAllSessions().size() > MAX_PLAYERS)
-                    break;
                 const Ecs::Entity ent = _worldWrite->createPlayer();
                 _sessionToEntity[cmd.sessionId] = ent;
+                _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;
                 break;
             }
 
@@ -125,6 +159,7 @@ namespace Game
                 if (it == _sessionToEntity.end())
                     break;
                 const Ecs::Entity ent = it->second;
+                _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
                 _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);

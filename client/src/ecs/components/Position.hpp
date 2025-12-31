@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Position
@@ -17,4 +17,4 @@ namespace Engine
         float x = 0.f; ///> X coordinate of the entity
         float y = 0.f; ///> Y coordinate of the entity
     };
-} // namespace Engine
+} // namespace Ecs

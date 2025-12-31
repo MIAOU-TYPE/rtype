@@ -7,15 +7,113 @@
 
 #include "World.hpp"
 
-#include "Collision.hpp"
-#include "Damage.hpp"
-#include "Damageable.hpp"
+namespace
+{
+    void registerCollisionDamage(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
+            auto &reg = w->registry();
+
+            auto &hpArr = reg.getComponents<Ecs::Health>();
+
+            const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
+            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB) {
+                w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
+            }
+
+            const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
+            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA) {
+                w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
+            }
+        });
+    }
+
+    void registerDamageToScoreEvent(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<DamageEvent>([w](const DamageEvent &event) {
+            auto &health = w->registry().getComponents<Ecs::Health>().at(event.target);
+            if (!health || health->hp <= 0)
+                return;
+            if (health->hp <= event.amount)
+                health->hp = 0;
+            else
+                health->hp -= event.amount;
+
+            if (health->hp > 0)
+                return;
+            const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
+            if (!proj)
+                return;
+            if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0)
+                w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
+        });
+    }
+
+    void registerProjectileSpawning(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<ShootEvent>([w](const ShootEvent &event) {
+            const Ecs::Entity proj = w->registry().createEntity();
+            w->registry().emplaceComponent<Ecs::Position>(proj, Ecs::Position{event.x, event.y});
+            w->registry().emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{event.vx, event.vy});
+            w->registry().emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{event.damage});
+            w->registry().emplaceComponent<Ecs::Damageable>(proj);
+            w->registry().emplaceComponent<Ecs::Collision>(proj, Ecs::Collision{8.f, 8.f});
+            w->registry().emplaceComponent<Ecs::Drawable>(proj, Ecs::Drawable{6, true});
+            w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{1, 1});
+            w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
+            w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
+        });
+    }
+
+    void registerDestroyEvent(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<DestroyEvent>([w](const DestroyEvent &event) {
+            w->destroyEntity(Ecs::Entity(event.entityId));
+        });
+    }
+
+    void registerDamageToScore(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<UpdateScoreEvent>([w](const UpdateScoreEvent &event) {
+            auto &reg = w->registry();
+            auto &scoreArr = reg.getComponents<Ecs::Score>();
+            if (auto &scoreComp = scoreArr.at(event.playerId)) {
+                scoreComp->score += event.scoreDelta;
+                w->events().emit(ScoreUpdatedEvent{event.playerId, scoreComp->score});
+            }
+        });
+    }
+} // namespace
 
 namespace Game
 {
+    World::World()
+    {
+        registerCollisionDamage(*this);
+        registerDamageToScoreEvent(*this);
+        registerProjectileSpawning(*this);
+        registerDestroyEvent(*this);
+        registerDamageToScore(*this);
+    }
+
     Ecs::Registry &World::registry()
     {
         return _registry;
+    }
+
+    Ecs::EventsRegistry &World::events()
+    {
+        return _events;
     }
 
     Ecs::Entity World::createPlayer()
@@ -29,6 +127,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
+        _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         return ent;
     }
 
@@ -46,7 +145,7 @@ namespace Game
 
         std::unordered_map<size_t, Ecs::Entity> remap;
         src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](Ecs::Entity e, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
+            [&](const Ecs::Entity e, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
                 const Ecs::Entity newEnt = dst.createEntity();
                 remap[static_cast<size_t>(e)] = newEnt;
             });

@@ -18,6 +18,7 @@
 #include "Endian.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "TypesData.hpp"
 
@@ -98,6 +99,15 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> createSnapshotPacket(
             const std::vector<SnapshotEntity> &entities) const noexcept;
+
+        /**
+         * @brief Creates a score packet with the specified address and score.
+         * @param addr The address to which the packet will be sent.
+         * @param score The score to include in the packet.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createScorePacket(
+            const sockaddr_in &addr, uint32_t score) const noexcept;
 
       private:
         /**

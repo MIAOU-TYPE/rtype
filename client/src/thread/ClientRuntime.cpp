@@ -32,11 +32,11 @@ namespace Thread
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
         _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
 
-        _input = std::make_shared<Engine::InputState>();
+        _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<Engine::ClientWorld>(_spriteRegistry);
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _input));
+        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -96,19 +96,19 @@ namespace Thread
         constexpr auto Tick = std::chrono::milliseconds(16);
 
         auto nextTick = clock::now();
+        std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
+            _stateManager->update(_input->consumeFrame());
 
-            std::shared_ptr<const std::vector<Engine::RenderCommand>> localRenderCommands;
             {
                 std::scoped_lock lock(_frameMutex);
                 localRenderCommands = _readRenderCommands;
             }
-            _stateManager->update();
             _renderer->beginFrame();
             if (localRenderCommands) {
                 for (const auto &cmd : *localRenderCommands)
@@ -116,7 +116,6 @@ namespace Thread
             }
             _stateManager->render();
             _renderer->endFrame();
-            _input->resetFrame();
             syncToNextTick(nextTick, Tick * 2);
         }
         _graphics->close();
@@ -202,39 +201,26 @@ namespace Thread
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::Q, [this]() {
-            _input->keysPressed.insert(Engine::Key::Q);
+        _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
+            _input->setKeyPressed(e.key);
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::S, [this]() {
-            _input->keysPressed.insert(Engine::Key::S);
-        });
-
-        _eventRegistry->onKeyReleased(Engine::Key::B, [this]() {
-            _input->keysPressed.insert(Engine::Key::B);
-        });
-
-        _eventRegistry->onKeyReleased(Engine::Key::Enter, [this]() {
-            _input->keysPressed.insert(Engine::Key::Enter);
+        _eventBus->on<Engine::KeyReleased>([this](const Engine::KeyReleased &e) {
+            _input->setKeyReleased(e.key);
         });
 
         _eventBus->on<Engine::MouseMoved>([this](const Engine::MouseMoved &e) {
-            _input->mouseX = static_cast<float>(e.posX);
-            _input->mouseY = static_cast<float>(e.posY);
+            _input->setMouse(static_cast<float>(e.posX), static_cast<float>(e.posY));
         });
 
         _eventBus->on<Engine::MousePressed>([this](const Engine::MousePressed &e) {
-            if (e.key == Engine::Key::MouseLeft) {
-                _input->mouseLeftDown = true;
-                _input->mouseLeftPressed = true;
-            }
+            _input->setMouse(static_cast<float>(e.posX), static_cast<float>(e.posY));
+            _input->setMousePressed();
         });
 
         _eventBus->on<Engine::MouseReleased>([this](const Engine::MouseReleased &e) {
-            if (e.key == Engine::Key::MouseLeft) {
-                _input->mouseLeftDown = false;
-                _input->mouseLeftReleased = true;
-            }
+            _input->setMouse(static_cast<float>(e.posX), static_cast<float>(e.posY));
+            _input->setMouseReleased();
         });
     }
 
@@ -255,9 +241,9 @@ namespace Thread
     void ClientRuntime::applyWorldCommands(const steadyClock::time_point deadline, const int maxCommands)
     {
         int applied = 0;
-        Engine::WorldCommand cmd;
+        World::WorldCommand cmd;
 
-        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.tryPop(cmd)) {
+        while (applied < maxCommands && clock::now() < deadline && _commandBuffer.pop(cmd)) {
             _world->applyCommand(cmd);
             applied++;
         }

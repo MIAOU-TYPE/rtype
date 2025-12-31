@@ -120,6 +120,11 @@ namespace Graphics
 
             if (const auto key = event->getIf<sf::Event::KeyReleased>())
                 bus.emit(Engine::KeyReleased(toCoreKey(key->code)));
+
+            if (const auto r = event->getIf<sf::Event::Resized>()) {
+                bus.emit(Engine::WindowResized{r->size.x, r->size.y});
+                setResolution({static_cast<uint32_t>(r->size.x), static_cast<uint32_t>(r->size.y)});
+            }
         }
     }
 

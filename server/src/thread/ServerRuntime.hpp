@@ -14,6 +14,7 @@
 #include "IServer.hpp"
 #include "PacketFactory.hpp"
 #include "PacketRouter.hpp"
+#include "RoomManager.hpp"
 #include "SessionManager.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacket.hpp"
@@ -94,24 +95,18 @@ namespace Net::Thread
         void runProcessor() const;
 
         /**
-         * @brief Thread function to handle updating game state
-         */
-        void runUpdate() const;
-
-        /**
          * @brief Thread function to handle taking snapshots of the game state
          */
         void runSnapshot() const;
 
         std::shared_ptr<Server::IServer> _server;                 ///> The server instance
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
-        std::shared_ptr<Game::GameServer> _gameServer;            ///> The game server logic
         std::shared_ptr<PacketRouter> _packetRouter;              ///> Routes incoming packets to appropriate handlers
         std::shared_ptr<Factory::PacketFactory> _packetFactory;   ///> Builds outgoing packets.
+        std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets
-        std::thread _updateThread;    ///> Thread for updating game state
         std::thread _snapshotThread;  ///> Thread for handling snapshots
 
         std::mutex _mutex;                       ///> Mutex for synchronizing access

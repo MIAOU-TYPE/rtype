@@ -11,14 +11,14 @@ using namespace Net::Server;
 
 UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 {
-    setRunning(false);
+    AServer::setRunning(false);
     if (_netWrapper.initNetwork() != 0)
         throw ServerError("{UDPServer::UDPServer} Failed to initialize network");
 }
 
 UDPServer::~UDPServer()
 {
-    stop();
+    UDPServer::stop();
 }
 
 void UDPServer::start()
@@ -57,10 +57,10 @@ void UDPServer::readPackets()
 {
     if (!isRunning() || _socketFd == kInvalidSocket)
         return;
-    auto pkt = std::make_shared<Net::UDPPacket>();
+    const auto pkt = std::make_shared<Net::UDPPacket>();
     socklen_t addrLen = sizeof(sockaddr_in);
 
-    recvfrom_return_t received = _netWrapper.recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
+    const recvfrom_return_t received = _netWrapper.recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
         reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
     if (received <= 0)
         return;
@@ -92,7 +92,7 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     if (!isStoredIpCorrect() || !isStoredPortCorrect())
         throw ServerError("{UDPServer::setupSocket} Invalid IP address or port number");
 
-    socketHandle sockFd = _netWrapper.socket(static_cast<int>(params.family), params.type, params.proto);
+    const socketHandle sockFd = _netWrapper.socket(static_cast<int>(params.family), params.type, params.proto);
     if (sockFd == kInvalidSocket)
         throw ServerError("{UDPServer::setupSocket} Failed to create socket");
 
@@ -107,7 +107,7 @@ void UDPServer::setupSocket(const Net::SocketConfig &params, const Net::SocketOp
     _socketFd = sockFd;
 }
 
-void UDPServer::bindSocket(family_t family)
+void UDPServer::bindSocket(family_t family) const
 {
     if (_socketFd == kInvalidSocket)
         throw ServerError("{UDPServer::bindSocket} Socket not initialized");
@@ -120,7 +120,6 @@ void UDPServer::bindSocket(family_t family)
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
-    int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
-    if (result != 0)
+    if (const int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)); result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

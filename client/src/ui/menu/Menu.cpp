@@ -11,21 +11,40 @@ namespace Engine
 {
     Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
     {
-        const auto textures = renderer->textures();
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        _logoTexture = textures->load("sprites/menu_logo.png");
-        if (_backgroundTexture == Graphics::InvalidTexture || _logoTexture == Graphics::InvalidTexture)
-            throw std::runtime_error("Menu: failed to load textures");
+        try {
+            const auto textures = renderer->textures();
+            _backgroundTexture = textures->load("sprites/bg-preview.png");
+            _logoTexture = textures->load("sprites/menu_logo.png");
+            if (_backgroundTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/bg-preview.png texture");
+            if (_logoTexture == Graphics::InvalidTexture)
+                throw MenuError("{Menu::Menu} failed to load sprite/menu_logo.png texture");
 
-        _backgroundCmd.textureId = _backgroundTexture;
-        _logoCmd.textureId = _logoTexture;
+            _backgroundCmd.textureId = _backgroundTexture;
+            _logoCmd.textureId = _logoTexture;
 
-        _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
-        _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
-        _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+            _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
+            _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
+            _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+        } catch (const std::exception &e) {
+            throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
+        }
     }
 
-    void Menu::update(const float mouseX, const float mouseY)
+    void Menu::onEnter()
+    {
+        _startRequested = false;
+        _quitRequested = false;
+        _settingsRequested = false;
+
+        _play->reset();
+        _settings->reset();
+        _quit->reset();
+
+        layout();
+    }
+
+    void Menu::layout()
     {
         const auto vp = _renderer->getViewportSize();
         const auto w = static_cast<float>(vp.width);
@@ -43,15 +62,21 @@ namespace Engine
 
         constexpr float LOGO_SCALE = 1.0f;
         _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
-        _logoCmd.position = {(w - logoSize.width * LOGO_SCALE) * 0.5f, h * 0.05f};
+        _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         const float buttonX = (w - _play->bounds().w) / 2.f;
         _play->setPosition(buttonX, h * 0.63f);
         _settings->setPosition(buttonX, h * 0.76f);
         _quit->setPosition(buttonX, h * 0.89f);
-        _play->update(mouseX, mouseY);
-        _settings->update(mouseX, mouseY);
-        _quit->update(mouseX, mouseY);
+    }
+
+    void Menu::update(const InputFrame &frame)
+    {
+        handleInput(frame);
+
+        _play->update(frame.mouseX, frame.mouseY);
+        _settings->update(frame.mouseX, frame.mouseY);
+        _quit->update(frame.mouseX, frame.mouseY);
     }
 
     void Menu::render() const
@@ -63,32 +88,36 @@ namespace Engine
         _quit->render();
     }
 
-    bool Menu::onMousePressed(const float x, const float y) const
+    void Menu::handleInput(const InputFrame &frame)
     {
-        _play->onMousePressed(x, y);
-        _settings->onMousePressed(x, y);
-        _quit->onMousePressed(x, y);
-        return false;
-    }
+        if (frame.keyPressed) {
+            switch (frame.key) {
+                case Key::S: _settingsRequested = true; break;
+                case Key::Q: _quitRequested = true; break;
+                case Key::Enter: _startRequested = true; break;
+                default: break;
+            }
+        }
 
-    bool Menu::onMouseReleased(const float x, const float y)
-    {
-        if (_play->onMouseReleased(x, y)) {
-            _startRequested = true;
-            _play->reset();
-            return true;
+        if (frame.mousePressed) {
+            _play->onMousePressed(frame.mouseX, frame.mouseY);
+            _settings->onMousePressed(frame.mouseX, frame.mouseY);
+            _quit->onMousePressed(frame.mouseX, frame.mouseY);
         }
-        if (_settings->onMouseReleased(x, y)) {
-            _settingsRequested = true;
-            _settings->reset();
-            return true;
+        if (frame.mouseReleased) {
+            if (_play->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _startRequested = true;
+                _play->reset();
+            }
+            if (_settings->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _settingsRequested = true;
+                _settings->reset();
+            }
+            if (_quit->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _quitRequested = true;
+                _quit->reset();
+            }
         }
-        if (_quit->onMouseReleased(x, y)) {
-            _quitRequested = true;
-            _quit->reset();
-            return true;
-        }
-        return false;
     }
 
     bool Menu::wantsToStart() const noexcept

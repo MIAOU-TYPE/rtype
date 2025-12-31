@@ -9,58 +9,36 @@
 
 namespace Engine
 {
-    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-        std::shared_ptr<InputState> input)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _input(std::move(input))
+    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer))
     {
     }
 
     void MenuState::onEnter(StateManager &manager)
     {
-        _manager = &manager;
-        _menu = std::make_unique<Menu>(_renderer);
-        _menu->update(_input->mouseX, _input->mouseY);
+        try {
+            _manager = &manager;
+            _menu = std::make_unique<Menu>(_renderer);
+            _menu->onEnter();
+        } catch (const std::exception &e) {
+            throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
+        }
     }
 
-    void MenuState::onExit()
+    void MenuState::update(const InputFrame &frame)
     {
-        _menu.reset();
-    }
+        _menu->update(frame);
 
-    void MenuState::update()
-    {
-        _menu->update(_input->mouseX, _input->mouseY);
-
-        if (_input->mouseLeftPressed)
-            _menu->onMousePressed(_input->mouseX, _input->mouseY);
-
-        if (_input->mouseLeftReleased)
-            _menu->onMouseReleased(_input->mouseX, _input->mouseY);
-
-        if (_menu->wantsSettings() || _input->isPressed(Key::S)) {
-            _manager->changeState(std::make_unique<SettingsState>(_graphics, _renderer, _input));
+        if (_menu->wantsSettings()) {
+            _manager->queueState(std::make_unique<SettingsState>(*_manager, _graphics, _renderer));
             return;
         }
         if (_menu->wantsToQuit())
-            _manager->requestQuit();
+            _manager->queueQuit();
     }
 
     void MenuState::render()
     {
         _menu->render();
-    }
-
-    bool MenuState::onMousePressed(const float x, const float y)
-    {
-        if (_menu)
-            return _menu->onMousePressed(x, y);
-        return false;
-    }
-
-    bool MenuState::onMouseReleased(const float x, const float y)
-    {
-        if (_menu)
-            return _menu->onMouseReleased(x, y);
-        return false;
     }
 } // namespace Engine

@@ -10,7 +10,7 @@
 namespace Graphics
 {
     SfmlText::SfmlText(const FontHandle font, const std::shared_ptr<SfmlFontManager> &fontManager)
-        : _fontManager(fontManager), _color({255, 255, 255, 255})
+        : _fontManager(fontManager), _position({0.f, 0.f}), _color({255, 255, 255, 255}), _characterSize(30)
     {
         if (!_fontManager || !_fontManager->isValid(font))
             return;

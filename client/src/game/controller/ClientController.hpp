@@ -6,8 +6,9 @@
 */
 
 #pragma once
+#include "CommandBuffer.hpp"
 #include "IClientMessageSink.hpp"
-#include "WorldCommandBuffer.hpp"
+#include "WorldCommand.hpp"
 
 namespace Ecs
 {
@@ -23,7 +24,7 @@ namespace Ecs
          * @brief Constructor.
          * @param buffer Reference to the WorldCommandBuffer to push commands into.
          */
-        explicit ClientController(Engine::WorldCommandBuffer &buffer);
+        explicit ClientController(Command::CommandBuffer<World::WorldCommand> &buffer);
 
         /**
          * @brief Destructor.
@@ -55,7 +56,14 @@ namespace Ecs
          */
         void onSnapshot(const std::vector<SnapshotEntity> &data) override;
 
+        /**
+         * @brief Called when a SCORE message is received.
+         * @param score The score received from the server.
+         */
+        void onScore(uint32_t score) override;
+
       private:
-        std::reference_wrapper<Engine::WorldCommandBuffer> _commandBuffer; ///> Reference to the world command buffer
+        std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
+            _commandBuffer; ///> Reference to the world command buffer
     };
 }; // namespace Ecs

@@ -34,6 +34,11 @@ class MockWorld final : public Game::IGameWorld {
         _world.copyFrom(static_cast<Game::World &>(other));
     }
 
+    Ecs::EventsRegistry &events() override
+    {
+        return _world.events();
+    }
+
   private:
     Game::World _world;
 };

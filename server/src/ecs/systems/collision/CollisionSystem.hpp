@@ -9,6 +9,8 @@
 #include "AIBrain.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
+#include "Events.hpp"
+#include "KillScore.hpp"
 #include "Projectile.hpp"
 #include "World.hpp"
 

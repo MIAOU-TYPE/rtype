@@ -54,6 +54,7 @@ namespace
             def.colW = defNode.at("size").value("w", 20.f);
             def.colH = defNode.at("size").value("h", 20.f);
             def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
+            def.killScore = defNode.value("killScore", 10u);
             def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
 
             level.enemyTypes[name] = def;
@@ -110,11 +111,11 @@ namespace
 namespace Game
 {
 
-    bool LevelManager::load(const std::string &content)
+    bool LevelManager::load(const std::string &jsonContent)
     {
         json j;
         try {
-            j = json::parse(content);
+            j = json::parse(jsonContent);
         } catch (...) {
             return false;
         }
@@ -140,7 +141,7 @@ namespace Game
         _time = 0.f;
     }
 
-    void LevelManager::advance(float dt)
+    void LevelManager::advance(const float dt)
     {
         _time += dt;
     }

@@ -62,23 +62,23 @@ namespace Net::Server
          * @brief Sends a packet via the UDP server.
          * @return true if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const Net::IPacket &pkt) override;
+        bool sendPacket(const IPacket &pkt) override;
 
         /**
          * @brief Pops a received packet from the server's packet queue.
-         * @param pkt Shared pointer to a Net::IPacket where the popped packet will be stored.
+         * @param pkt Shared pointer to a IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
+        bool popPacket(std::shared_ptr<IPacket> &pkt) override;
 
       private:
-        void setupSocket(const Net::SocketConfig &params,
-            const Net::SocketOptions &optParams);        ///> Sets up the UDP socket with specified parameters
-        void bindSocket(Net::family_t family = AF_INET); ///> Binds the UDP socket to an address
+        void setupSocket(const SocketConfig &params,
+            const SocketOptions &optParams);    ///> Sets up the UDP socket with specified parameters
+        void bindSocket(family_t family) const; ///> Binds the UDP socket to an address
 
-        Buffer::RingBuffer<std::shared_ptr<Net::IPacket>> _rxBuffer; ///> Ring buffer to store received packets
+        Buffer::RingBuffer<std::shared_ptr<IPacket>> _rxBuffer; ///> Ring buffer to store received packets
 
-        Net::NetWrapper _netWrapper; ///> Network wrapper for socket operations
-        std::mutex _rxMutex;         ///> Mutex for synchronizing access to the receive buffer
+        NetWrapper _netWrapper; ///> Network wrapper for socket operations
+        std::mutex _rxMutex;    ///> Mutex for synchronizing access to the reception buffer
     };
 } // namespace Net::Server

@@ -42,7 +42,7 @@ namespace Graphics
          * @brief Gets the size of the viewport.
          * @return The size of the viewport as Extent2u.
          */
-        Extent2u getViewportSize() const noexcept override;
+        [[nodiscard]] Extent2u getViewportSize() const noexcept override;
 
         /**
          * @brief Begins a new rendering frame.
@@ -94,7 +94,7 @@ namespace Graphics
          * @brief Draws text.
          * @param text The text to draw.
          */
-        void drawText(const IText &text) override;
+        void draw(const IText &text) override;
 
       private:
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.

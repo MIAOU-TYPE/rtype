@@ -8,11 +8,20 @@
 #pragma once
 
 #include <iostream>
+#include "AIBrain.hpp"
+#include "Collision.hpp"
+#include "Damage.hpp"
+#include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "EventsRegistry.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "InputComponent.hpp"
+#include "KillScore.hpp"
+#include "Lifetime.hpp"
 #include "Position.hpp"
+#include "Projectile.hpp"
+#include "Score.hpp"
 #include "Velocity.hpp"
 
 namespace Game
@@ -33,13 +42,19 @@ namespace Game
         /**
          * @brief Construct a new World.
          */
-        World() = default;
+        World();
 
         /**
          * @brief Access the underlying ECS registry.
          * @return Reference to the registry containing all components/entities.
          */
         [[nodiscard]] Ecs::Registry &registry() override;
+
+        /**
+         * @brief Access the Events manager for the world.
+         * @return Reference to the Events manager.
+         */
+        [[nodiscard]] Ecs::EventsRegistry &events() override;
 
         /**
          * @brief Create a new player entity with default components.
@@ -68,6 +83,7 @@ namespace Game
         void copyFrom(IGameWorld &other) override;
 
       private:
-        Ecs::Registry _registry; ///> The ECS registry (component storage).
+        Ecs::Registry _registry;     ///> The ECS registry (component storage).
+        Ecs::EventsRegistry _events; ///> Event bus for ECS events.
     };
 } // namespace Game

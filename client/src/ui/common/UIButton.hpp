@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "RenderCommand.hpp"
@@ -31,6 +32,30 @@ namespace Engine
         Released, ///> Released
         Hover,    ///> Hover
         Pressed   ///> Pressed
+    };
+
+    /** @class UIButtonError
+     * @brief Exception class for UIButton errors.
+     */
+    class UIButtonError : public std::exception {
+      public:
+        /** @brief Constructor for UIButtonError.
+         * @param message Error message.
+         */
+        explicit UIButtonError(std::string message) : _message(std::move(message))
+        {
+        }
+
+        /** @brief Get the error message.
+         * @return Error message as a C-string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
     };
 
     /** @class UIButton
@@ -84,13 +109,7 @@ namespace Engine
          * @param y Y coordinate of the mouse.
          * @return True if the button was released, false otherwise.
          */
-        bool onMouseReleased(float x, float y);
-
-        /**
-         * @brief Check if the button was clicked.
-         * @return True if clicked, false otherwise.
-         */
-        bool wasClicked() const noexcept;
+        [[nodiscard]] bool onMouseReleased(float x, float y);
 
         /**
          * @brief Set the label of the button.
@@ -119,8 +138,5 @@ namespace Engine
         Graphics::TextureHandle _released; ///> Texture for released state
         Graphics::TextureHandle _hover;    ///> Texture for hover state
         Graphics::TextureHandle _pressed;  ///> Texture for pressed state
-
-        float _scale = 1.f;    ///> Scale factor for the button
-        bool _clicked = false; ///> Flag indicating if the button was clicked
     };
 } // namespace Engine

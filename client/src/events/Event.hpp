@@ -109,4 +109,12 @@ namespace Engine
         int posX = 0; ///> The x position of the mouse when released.
         int posY = 0; ///> The y position of the mouse when released.
     };
+
+    /**
+     * @brief Event triggered when the window is resized.
+     */
+    struct WindowResized {
+        std::uint32_t width;  ///> The new width of the window.
+        std::uint32_t height; ///> The new height of the window.
+    };
 } // namespace Engine

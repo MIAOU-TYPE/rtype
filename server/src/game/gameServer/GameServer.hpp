@@ -8,12 +8,10 @@
 #pragma once
 
 #include "AIShootSystem.hpp"
-#include "AISystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
 #include "Damage.hpp"
-#include "EnemySpawnSystem.hpp"
 #include "GameClock.hpp"
 #include "HealthSystem.hpp"
 #include "IMessageSink.hpp"
@@ -27,7 +25,6 @@
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
-#include "TargetingSystem.hpp"
 
 namespace Game
 {
@@ -153,6 +150,7 @@ namespace Game
         std::shared_ptr<Net::Factory::PacketFactory> _packetFactory; ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
+        std::unordered_map<size_t, int> _entityToSession;      ///> Maps entities to sessions.
 
         Command::CommandBuffer<GameCommand> _commandBuffer; ///> Buffers incoming game commands.
 
@@ -161,7 +159,7 @@ namespace Game
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
-        static constexpr size_t MAX_PLAYERS = 4; ///> Maximum number of concurrent players.
+        std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
     };
 
 } // namespace Game

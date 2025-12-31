@@ -110,4 +110,19 @@ namespace Net::Factory
             return nullptr;
         }
     }
+
+    std::shared_ptr<IPacket> PacketFactory::createScorePacket(const sockaddr_in &addr, uint32_t score) const noexcept
+    {
+        ScoreData scoreData;
+        scoreData.header = makeHeader(Protocol::SCORE, VERSION, sizeof(ScoreData));
+        scoreData.score = htonl(score);
+        try {
+            auto packet = makePacket<ScoreData>(addr, scoreData);
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{PacketFactory::createScorePacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
 } // namespace Net::Factory

@@ -37,13 +37,14 @@ namespace Ecs
     }
 
     template <typename T>
-    bool Registry::hasComponent(const Entity entity)
+    bool Registry::hasComponent(const Entity entity) const
     {
         const auto typeIdx = std::type_index(typeid(T));
         if (!_entityToIndex.contains(typeIdx))
             return false;
-        auto &arr = std::any_cast<SparseArray<T> &>(_entityToIndex[typeIdx]);
-        auto idx = static_cast<size_t>(entity);
+
+        const auto &arr = std::any_cast<const SparseArray<T> &>(_entityToIndex.at(typeIdx));
+        const auto idx = static_cast<size_t>(entity);
         if (idx >= arr.size())
             return false;
         return arr.at(idx).has_value();

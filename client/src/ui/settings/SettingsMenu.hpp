@@ -12,11 +12,38 @@
 #include <stdexcept>
 #include "IRenderer.hpp"
 #include "IText.hpp"
+#include "InputState.hpp"
 #include "RenderCommand.hpp"
 #include "UIButton.hpp"
 
 namespace Engine
 {
+    /**
+     * @brief Exception class for settings menu errors.
+     */
+    class SettingsMenuError : public std::runtime_error {
+      public:
+        /**
+         * @brief Constructor for SettingsMenuError.
+         * @param message The error message.
+         */
+        explicit SettingsMenuError(const std::string &message) : std::runtime_error("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     /**
      * @brief Class representing the settings menu of the game.
      */
@@ -31,10 +58,9 @@ namespace Engine
 
         /**
          * @brief Update the settings menu state.
-         * @param mouseX Current mouse x-coordinate.
-         * @param mouseY Current mouse y-coordinate.
+         * @param frame The current input frame.
          */
-        void update(float mouseX, float mouseY);
+        void update(const InputFrame &frame);
 
         /**
          * @brief Render the settings menu.
@@ -42,22 +68,9 @@ namespace Engine
         void render() const;
 
         /**
-         * @brief Handle mouse press events.
-         *
-         * @param x The x-coordinate of the mouse press.
-         * @param y The y-coordinate of the mouse press.
-         * @return true if the event was handled, false otherwise.
+         * @brief Called when entering the settings menu.
          */
-        bool onMousePressed(float x, float y) const;
-
-        /**
-         * @brief Handle mouse release events.
-         *
-         * @param x The x-coordinate of the mouse release.
-         * @param y The y-coordinate of the mouse release.
-         * @return true if the event was handled, false otherwise.
-         */
-        bool onMouseReleased(float x, float y);
+        void onEnter();
 
         /**
          * @brief Check if the user wants to go back from the settings menu.
@@ -80,7 +93,18 @@ namespace Engine
          */
         Graphics::Extent2u currentResolution() const noexcept;
 
+        /**
+         * @brief Handle resizing of the settings menu.
+         */
+        void layout();
+
       private:
+        /**
+         * @brief Handle input for the settings menu.
+         * @param frame The current input frame.
+         */
+        void handleInput(const InputFrame &frame);
+
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
 
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image

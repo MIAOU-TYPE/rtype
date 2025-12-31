@@ -9,39 +9,37 @@
 
 namespace Game
 {
-    std::vector<bool> LevelSystem::_spawned;
-
-    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt)
+    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned)
     {
         lvl.advance(dt);
-        handleWaves(world, lvl);
+        handleWaves(world, lvl, spawned);
     }
 
-    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl)
+    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned)
     {
         const Level &level = lvl.getCurrentLevel();
 
-        if (_spawned.size() != level.waves.size())
-            _spawned.assign(level.waves.size(), false);
+        if (spawned.size() != level.waves.size())
+            spawned.assign(level.waves.size(), false);
 
         for (size_t i = 0; i < level.waves.size(); i++) {
             const Wave &wave = level.waves.at(i);
-            if (_spawned.at(i))
+            if (spawned.at(i))
                 continue;
             if (!lvl.shouldSpawn(wave.time))
                 continue;
-            _spawned.at(i) = true;
+            spawned.at(i) = true;
             spawnWave(world, level, wave);
         }
     }
 
     void LevelSystem::spawnWave(IGameWorld &world, const Level &level, const Wave &wave)
     {
-        for (const WaveEnemyGroup &group : wave.groups) {
-            if (!level.enemyTypes.contains(group.type))
+        for (const auto &[type, count] : wave.groups) {
+            if (!level.enemyTypes.contains(type))
                 continue;
-            const EnemyDefinition &def = level.enemyTypes.at(group.type);
-            for (int k = 0; k < group.count; k++)
+            const EnemyDefinition &def = level.enemyTypes.at(type);
+            for (int k = 0; k < count; k++)
                 spawnSingleEnemy(world, def);
         }
     }
@@ -49,7 +47,7 @@ namespace Game
     void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def)
     {
         auto &reg = world.registry();
-        float y = Rand::enemyY(Rand::rng);
+        const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity mob = reg.createEntity();
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{900.f, y});
@@ -58,6 +56,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{200});
+        reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{def.killScore});
 
         Ecs::AIBrain brain;
         brain.state = Ecs::AIState::Patrol;

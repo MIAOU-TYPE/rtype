@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "EventsRegistry.hpp"
 #include "Registry.hpp"
 
 /**
@@ -37,6 +38,12 @@ namespace Game
          * @brief Get the ECS registry manipulated by systems.
          */
         [[nodiscard]] virtual Ecs::Registry &registry() = 0;
+
+        /**
+         * @brief Get the Events manager for the world.
+         * @return Reference to the Events manager.
+         */
+        [[nodiscard]] virtual Ecs::EventsRegistry &events() = 0;
 
         /**
          * @brief Create a new gameplay entity (e.g., player).

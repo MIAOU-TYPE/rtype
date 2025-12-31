@@ -8,7 +8,7 @@
 #pragma once
 #include "ITextureManager.hpp"
 
-namespace Engine
+namespace Ecs
 {
     /**
      * @struct Render
@@ -17,4 +17,4 @@ namespace Engine
     struct Render {
         Graphics::TextureHandle texture = Graphics::InvalidTexture; ///> Handle to the texture used for rendering
     };
-} // namespace Engine
+} // namespace Ecs

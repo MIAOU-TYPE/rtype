@@ -22,7 +22,7 @@ namespace Graphics
         _fontManager = std::make_shared<SfmlFontManager>(_resourceManager);
         _textureManager = std::make_shared<SfmlTextureManager>(_resourceManager);
         _textManager = std::make_shared<SfmlTextManager>(_fontManager);
-        _colorBlindManager = std::make_unique<ColorBlindManager>();
+        _colorBlindManager = std::make_unique<ColorBlindManager>(_resourceManager);
         _renderTexture = std::make_unique<sf::RenderTexture>();
         const auto windowSize = _window->getSize();
         if (!_renderTexture->resize(windowSize)) {
@@ -39,7 +39,6 @@ namespace Graphics
 
     void SfmlRenderer::beginFrame()
     {
-        // Update render texture size if window size changed
         if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
             const auto windowSize = _window->getSize();
             const auto textureSize = _renderTexture->getSize();

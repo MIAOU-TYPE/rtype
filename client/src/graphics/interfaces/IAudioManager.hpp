@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <string>
-#include "IAudioPlayable.hpp"
 
 namespace Graphics
 {
@@ -88,19 +87,29 @@ namespace Graphics
         virtual void clear() = 0;
 
         /**
-         * @brief Create a new sound instance from a loaded sound buffer.
+         * @brief Play the audio resource.
          * @param handle The audio handle.
-         * @param volume Initial volume level (0.0 to 100.0).
-         * @return Unique pointer to the sound, or nullptr if not supported or invalid.
          */
-        [[nodiscard]] virtual std::unique_ptr<IAudioPlayable> createSound(
-            AudioHandle handle, float volume = 100.f) const noexcept = 0;
+        virtual void play(AudioHandle handle) = 0;
 
         /**
-         * @brief Get the music object for a given handle.
+         * @brief Stop the audio resource.
          * @param handle The audio handle.
-         * @return Shared pointer to the music object, or nullptr if not supported or invalid.
          */
-        [[nodiscard]] virtual std::shared_ptr<IAudioPlayable> get(AudioHandle handle) noexcept = 0;
+        virtual void stop(AudioHandle handle) = 0;
+
+        /**
+         * @brief Set the volume of the audio resource.
+         * @param handle The audio handle.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        virtual void setVolume(AudioHandle handle, float volume) = 0;
+
+        /**
+         * @brief Set whether the audio resource should loop.
+         * @param handle The audio handle.
+         * @param loop True to loop, false otherwise.
+         */
+        virtual void setLooping(AudioHandle handle, bool loop) = 0;
     };
 } // namespace Graphics

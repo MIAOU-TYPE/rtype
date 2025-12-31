@@ -57,17 +57,35 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    std::unique_ptr<IAudioPlayable> SfmlMusicManager::createSound(AudioHandle, float) const noexcept
+    void SfmlMusicManager::play(AudioHandle handle)
     {
-        return nullptr;
+        auto it = _musics.find(handle);
+        if (it != _musics.end()) {
+            it->second.music->play();
+        }
     }
 
-    std::shared_ptr<IAudioPlayable> SfmlMusicManager::get(const AudioHandle handle) noexcept
+    void SfmlMusicManager::stop(AudioHandle handle)
     {
-        if (auto it = _musics.find(handle); it != _musics.end()) {
-            return std::shared_ptr<IAudioPlayable>(it->second.music.get(), [](IAudioPlayable *) {
-            });
+        auto it = _musics.find(handle);
+        if (it != _musics.end()) {
+            it->second.music->stop();
         }
-        return nullptr;
+    }
+
+    void SfmlMusicManager::setVolume(AudioHandle handle, float volume)
+    {
+        auto it = _musics.find(handle);
+        if (it != _musics.end()) {
+            it->second.music->setVolume(volume);
+        }
+    }
+
+    void SfmlMusicManager::setLooping(AudioHandle handle, bool loop)
+    {
+        auto it = _musics.find(handle);
+        if (it != _musics.end()) {
+            it->second.music->setLooping(loop);
+        }
     }
 } // namespace Graphics

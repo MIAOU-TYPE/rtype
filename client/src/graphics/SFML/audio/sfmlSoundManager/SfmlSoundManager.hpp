@@ -13,7 +13,6 @@
 #include <unordered_map>
 
 #include "IAudioManager.hpp"
-#include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
 #include "SfmlSound.hpp"
 
@@ -63,21 +62,41 @@ namespace Graphics
         void clear() override;
 
         /**
-         * @brief Create a new sound instance from a loaded sound buffer.
+         * @brief Play the sound.
          * @param handle The audio handle.
-         * @param volume Initial volume level (0.0 to 100.0).
-         * @return Unique pointer to the sound, or nullptr if invalid.
          */
-        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(
-            const AudioHandle handle, float volume = 100.f) const noexcept override;
+        void play(AudioHandle handle) override;
 
         /**
-         * @brief Not supported for sound manager.
-         * @return Always returns nullptr.
+         * @brief Stop the sound.
+         * @param handle The audio handle.
          */
-        [[nodiscard]] std::shared_ptr<IAudioPlayable> get(AudioHandle) noexcept override;
+        void stop(AudioHandle handle) override;
+
+        /**
+         * @brief Set the volume of the sound.
+         * @param handle The audio handle.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        void setVolume(AudioHandle handle, float volume) override;
+
+        /**
+         * @brief Set whether the sound should loop.
+         * @param handle The audio handle.
+         * @param loop True to loop, false otherwise.
+         */
+        void setLooping(AudioHandle handle, bool loop) override;
 
       private:
+        /**
+         * @struct ActiveSound
+         * @brief Represents an active playing sound.
+         */
+        struct ActiveSound {
+            AudioHandle handle;
+            std::unique_ptr<SfmlSound> sound;
+        };
+
         /**
          * @struct SoundEntry
          * @brief Represents a loaded sound.
@@ -90,6 +109,7 @@ namespace Graphics
 
         std::unordered_map<AudioHandle, SoundEntry> _sounds;             ///> Map of sound handles to sound entries
         std::unordered_map<std::string, AudioHandle> _soundPathToHandle; ///> Map of sound paths to handles
+        std::vector<ActiveSound> _activeSounds;                          ///> List of active playing sounds
 
         AudioHandle _nextHandle = 1; ///> Next available audio handle
     };

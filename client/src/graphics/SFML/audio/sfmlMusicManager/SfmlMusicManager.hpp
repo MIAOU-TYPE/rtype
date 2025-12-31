@@ -13,7 +13,6 @@
 #include <unordered_map>
 
 #include "IAudioManager.hpp"
-#include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
 #include "SfmlMusic.hpp"
 
@@ -63,17 +62,30 @@ namespace Graphics
         void clear() override;
 
         /**
-         * @brief Not supported for music manager.
-         * @return Always returns nullptr.
+         * @brief Play the music.
+         * @param handle The audio handle.
          */
-        [[nodiscard]] std::unique_ptr<IAudioPlayable> createSound(AudioHandle, float = 100.f) const noexcept override;
+        void play(AudioHandle handle) override;
 
         /**
-         * @brief Get the music object for a given handle.
+         * @brief Stop the music.
          * @param handle The audio handle.
-         * @return Shared pointer to the music object, or nullptr if invalid.
          */
-        [[nodiscard]] std::shared_ptr<IAudioPlayable> get(const AudioHandle handle) noexcept override;
+        void stop(AudioHandle handle) override;
+
+        /**
+         * @brief Set the volume of the music.
+         * @param handle The audio handle.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        void setVolume(AudioHandle handle, float volume) override;
+
+        /**
+         * @brief Set whether the music should loop.
+         * @param handle The audio handle.
+         * @param loop True to loop, false otherwise.
+         */
+        void setLooping(AudioHandle handle, bool loop) override;
 
       private:
         /**

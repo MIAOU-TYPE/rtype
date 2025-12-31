@@ -32,6 +32,34 @@ inline void writeU32BE(uint8_t *p, uint32_t v)
     p[3] = static_cast<uint8_t>(v & 0xFF);
 }
 
+struct AddressKey {
+    uint32_t ip;   ///> The IP address in network byte order.
+    uint16_t port; ///> The port number in network byte order.
+
+    /**
+     * @brief Equality operator for AddressKey.
+     */
+    bool operator==(const AddressKey &other) const noexcept
+    {
+        return ip == other.ip && port == other.port;
+    }
+};
+
+/**
+ * @brief Hash function for AddressKey to be used in unordered_map.
+ */
+struct AddressKeyHash {
+    /**
+     * @brief Hash function implementation.
+     * @param k The AddressKey to hash.
+     * @return The computed hash value.
+     */
+    std::size_t operator()(const AddressKey &k) const noexcept
+    {
+        return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
+    }
+};
+
 #if defined(__APPLE__)
 
     #include <libkern/OSByteOrder.h>

@@ -7,13 +7,14 @@
 
 #pragma once
 
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
 #include <iostream>
 #include <utility>
+#include "ColorBlindManager.hpp"
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
 #include "SfmlFontManager.hpp"
@@ -82,6 +83,18 @@ namespace Graphics
          */
         void draw(const IText &text) override;
 
+        /**
+         * @brief Set the colorblind filter mode.
+         * @param mode The colorblind mode to apply.
+         */
+        void setColorBlindMode(ColorBlindMode mode) override;
+
+        /**
+         * @brief Get the current colorblind filter mode.
+         * @return ColorBlindMode The current mode.
+         */
+        [[nodiscard]] ColorBlindMode getColorBlindMode() const noexcept override;
+
       private:
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.
 
@@ -90,5 +103,7 @@ namespace Graphics
         std::shared_ptr<SfmlFontManager> _fontManager = nullptr;       ///> Shared pointer to the SFML Font Manager.
         std::shared_ptr<SfmlTextureManager> _textureManager = nullptr; ///> Shared pointer to the SFML Texture Manager.
         std::shared_ptr<SfmlTextManager> _textManager = nullptr;       ///> Shared pointer to the SFML Text Manager.
+        std::unique_ptr<ColorBlindManager> _colorBlindManager = nullptr; ///> Colorblind shader manager.
+        std::unique_ptr<sf::RenderTexture> _renderTexture = nullptr;     ///> Render texture for shader post-processing.
     };
 } // namespace Graphics

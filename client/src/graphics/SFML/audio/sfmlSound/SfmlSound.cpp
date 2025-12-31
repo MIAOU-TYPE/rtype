@@ -47,9 +47,4 @@ namespace Graphics
     {
         _sound.setLooping(loop);
     }
-
-    sf::Sound &SfmlSound::get() noexcept
-    {
-        return _sound;
-    }
 } // namespace Graphics

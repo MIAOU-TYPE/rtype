@@ -44,9 +44,4 @@ namespace Graphics
     {
         _music->setLooping(loop);
     }
-
-    sf::Music &SfmlMusic::get() noexcept
-    {
-        return *_music;
-    }
 } // namespace Graphics

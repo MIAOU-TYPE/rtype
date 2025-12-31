@@ -11,7 +11,6 @@
 #include <memory>
 #include <string>
 #include "IAudioManager.hpp"
-#include "IAudioPlayable.hpp"
 #include "IResourceManager.hpp"
 
 namespace Graphics
@@ -21,7 +20,7 @@ namespace Graphics
      * @brief Wrapper class for managing SFML music.
      * This class handles the lifecycle of a music track.
      */
-    class SfmlMusic final : public IAudioPlayable {
+    class SfmlMusic {
       public:
         /**
          * @brief Constructor for SfmlMusic.
@@ -33,36 +32,30 @@ namespace Graphics
         /**
          * @brief Play the music.
          */
-        void play() override;
+        void play();
 
         /**
          * @brief Stop the music.
          */
-        void stop() override;
+        void stop();
 
         /**
          * @brief Check if the music is currently playing.
          * @return True if playing, false otherwise.
          */
-        [[nodiscard]] bool isPlaying() const override;
+        [[nodiscard]] bool isPlaying() const;
 
         /**
          * @brief Set the volume of the music.
          * @param volume Volume level (0.0 to 100.0).
          */
-        void setVolume(float volume) override;
+        void setVolume(float volume);
 
         /**
          * @brief Set whether the music should loop.
          * @param loop True to loop, false otherwise.
          */
-        void setLooping(bool loop) override;
-
-        /**
-         * @brief Get the underlying SFML music object.
-         * @return Reference to the sf::Music object.
-         */
-        [[nodiscard]] sf::Music &get() noexcept;
+        void setLooping(bool loop);
 
       private:
         std::unique_ptr<sf::Music> _music; ///> SFML music object

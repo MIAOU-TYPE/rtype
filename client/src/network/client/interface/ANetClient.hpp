@@ -59,7 +59,7 @@ namespace Network
          * @brief Sets the NetClient's socket to non-blocking or blocking mode.
          * @param nonBlocking True to set the socket to non-blocking mode, false for blocking mode.
          */
-        void setNonBlocking(bool nonBlocking) override;
+        void setNonBlocking(bool nonBlocking) override = 0;
 
         /**
          * @brief Checks if the NetClient is currently running.

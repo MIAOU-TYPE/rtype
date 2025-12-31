@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include "GraphicsTypes.hpp"
+#include "IResourceManager.hpp"
 
 namespace Graphics
 {
@@ -19,12 +20,18 @@ namespace Graphics
     /**
      * @brief Exception class for colorblind manager errors.
      */
-    class ColorBlindError : public std::runtime_error {
+    class ColorBlindError : public std::exception{
       public:
-        explicit ColorBlindError(const std::string &message) : std::runtime_error("\n\t" + message)
+        /** @brief Constructor for ColorBlindError.
+         * @param message The error message.
+         */
+        explicit ColorBlindError(const std::string &message) : _message(std::move(message))
         {
         }
 
+        /** @brief Get the error message.
+         * @return The error message as a C-style string.
+         */
         const char *what() const noexcept override
         {
             return _message.c_str();
@@ -42,8 +49,9 @@ namespace Graphics
       public:
         /**
          * @brief Construct a new ColorBlindManager.
+         * @param resourceManager Shared pointer to the resource manager for loading shaders.
          */
-        ColorBlindManager();
+        explicit ColorBlindManager(std::shared_ptr<Resources::IResourceManager> resourceManager);
 
         /**
          * @brief Destroy the ColorBlindManager.

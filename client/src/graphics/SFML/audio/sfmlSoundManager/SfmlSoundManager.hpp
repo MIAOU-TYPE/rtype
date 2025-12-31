@@ -87,6 +87,12 @@ namespace Graphics
          */
         void setLooping(AudioHandle handle, bool loop) override;
 
+        /**
+         * @brief Set the global volume multiplier for all active audio.
+         * @param multiplier Volume multiplier (e.g., 0.5 for half volume).
+         */
+        void setGlobalVolume(float multiplier) override;
+
       private:
         /**
          * @struct ActiveSound

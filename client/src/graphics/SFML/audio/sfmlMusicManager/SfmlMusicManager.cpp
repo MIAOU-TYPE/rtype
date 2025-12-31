@@ -88,4 +88,13 @@ namespace Graphics
             it->second.music->setLooping(loop);
         }
     }
+
+    void SfmlMusicManager::setGlobalVolume(float multiplier)
+    {
+        for (auto &[handle, entry] : _musics) {
+            if (entry.music->isPlaying()) {
+                entry.music->setVolume(entry.music->getVolume() * multiplier);
+            }
+        }
+    }
 } // namespace Graphics

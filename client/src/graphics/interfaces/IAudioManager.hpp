@@ -111,5 +111,11 @@ namespace Graphics
          * @param loop True to loop, false otherwise.
          */
         virtual void setLooping(AudioHandle handle, bool loop) = 0;
+
+        /**
+         * @brief Set the global volume multiplier for all active audio.
+         * @param multiplier Volume multiplier (e.g., 0.5 for half volume).
+         */
+        virtual void setGlobalVolume(float multiplier) = 0;
     };
 } // namespace Graphics

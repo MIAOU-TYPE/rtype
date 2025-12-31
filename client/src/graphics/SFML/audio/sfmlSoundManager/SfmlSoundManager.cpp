@@ -98,4 +98,11 @@ namespace Graphics
             }
         }
     }
+
+    void SfmlSoundManager::setGlobalVolume(float multiplier)
+    {
+        for (auto &active : _activeSounds) {
+            active.sound->setVolume(active.sound->getVolume() * multiplier);
+        }
+    }
 } // namespace Graphics

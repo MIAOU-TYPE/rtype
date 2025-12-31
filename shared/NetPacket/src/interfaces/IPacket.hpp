@@ -42,19 +42,19 @@ namespace Net
          * @brief Retrieves the packet buffer.
          * @return A pointer to the packet buffer.
          */
-        virtual uint8_t *buffer() = 0;
+        [[nodiscard]] virtual uint8_t *buffer() = 0;
 
         /**
          * @brief Retrieves the packet buffer (const version).
          * @return A const pointer to the packet buffer.
          */
-        virtual const uint8_t *buffer() const = 0;
+        [[nodiscard]] virtual const uint8_t *buffer() const = 0;
 
         /**
          * @brief Retrieves the size of the packet.
          * @return The size of the packet.
          */
-        virtual size_t size() const = 0;
+        [[nodiscard]] virtual size_t size() const = 0;
 
         /**
          * @brief Sets the size of the packet.
@@ -66,7 +66,7 @@ namespace Net
          * @brief Retrieves the source address of the packet.
          * @return A pointer to the sockaddr_in structure representing the source address.
          */
-        virtual const sockaddr_in *address() const = 0;
+        [[nodiscard]] virtual const sockaddr_in *address() const = 0;
 
         /**
          * @brief Sets the source address of the packet.
@@ -78,17 +78,18 @@ namespace Net
          * @brief Creates a clone of the current packet.
          * @return A shared pointer to the cloned IPacket.
          */
-        virtual std::shared_ptr<IPacket> clone() const = 0;
+        [[nodiscard]] virtual std::shared_ptr<IPacket> clone() const = 0;
 
         /**
          * @brief Creates a new instance of the packet.
          * @return A shared pointer to the newly created IPacket instance.
          */
-        virtual std::shared_ptr<IPacket> newPacket() const = 0;
+        [[nodiscard]] virtual std::shared_ptr<IPacket> newPacket() const = 0;
+
         /**
          * @brief Retrieves the capacity of the packet buffer.
          * @return The capacity of the packet buffer.
          */
-        virtual size_t capacity() const noexcept = 0;
+        [[nodiscard]] virtual size_t capacity() const noexcept = 0;
     };
 } // namespace Net

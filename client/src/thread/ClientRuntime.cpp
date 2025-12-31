@@ -57,7 +57,7 @@ namespace Thread
             return;
         }
         _running = true;
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::CONNECT));
         setupEventsRegistry();
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -70,7 +70,7 @@ namespace Thread
 
         _running = false;
         _cv.notify_all();
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::DISCONNECT));
 
         if (_receiverThread.joinable())
             _receiverThread.join();
@@ -134,7 +134,7 @@ namespace Thread
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
         constexpr float FixedDt = 1.0f / 60.0f;
-        static constexpr float MaxFrameDt = 0.16f;
+        static constexpr float MAXSIZEDt = 0.16f;
         static constexpr int MaxStepsPerTick = 4;
 
         auto nextTick = clock::now();
@@ -151,8 +151,8 @@ namespace Thread
 
             float frameDt = std::chrono::duration<float>(now - last).count();
             last = now;
-            if (frameDt > MaxFrameDt)
-                frameDt = MaxFrameDt;
+            if (frameDt > MAXSIZEDt)
+                frameDt = MAXSIZEDt;
             accumulator += frameDt;
 
             processNetworkPackets(deadline, 256);

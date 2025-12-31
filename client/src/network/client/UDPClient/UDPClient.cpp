@@ -58,7 +58,7 @@ namespace Network
             std::cout << "{UDPClient::close} UDP Client stopped." << std::endl;
         }
 
-        (void)_netWrapper.cleanupNetwork();
+        (void) _netWrapper.cleanupNetwork();
     }
 
     void UDPClient::setNonBlocking(const bool nonBlocking)

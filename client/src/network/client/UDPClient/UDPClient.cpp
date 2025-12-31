@@ -12,14 +12,14 @@ namespace Network
 
     UDPClient::UDPClient() : ANetClient(), _netWrapper("NetPluginLib"), _ringBuffer(1024)
     {
-        setRunning(false);
+        ANetClient::setRunning(false);
         if (_netWrapper.initNetwork() != 0)
             throw NetClientError("{UDPClient::NetClient} Failed to initialize network");
     }
 
     UDPClient::~UDPClient()
     {
-        close();
+        UDPClient::close();
     }
 
     void UDPClient::receivePackets()
@@ -58,7 +58,16 @@ namespace Network
             std::cout << "{UDPClient::close} UDP Client stopped." << std::endl;
         }
 
-        _netWrapper.cleanupNetwork();
+        (void)_netWrapper.cleanupNetwork();
+    }
+
+    void UDPClient::setNonBlocking(const bool nonBlocking)
+    {
+        if (_socketFd == kInvalidSocket)
+            throw NetClientError("{UDPClient::setNonBlocking} Socket not initialized");
+
+        if (_netWrapper.setNonBlocking(_socketFd, nonBlocking ? 1 : 0) < 0)
+            throw NetClientError("{UDPClient::setNonBlocking} Failed to set socket non-blocking mode");
     }
 
     void UDPClient::start()

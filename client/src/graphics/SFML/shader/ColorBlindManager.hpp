@@ -20,7 +20,7 @@ namespace Graphics
     /**
      * @brief Exception class for colorblind manager errors.
      */
-    class ColorBlindError : public std::exception{
+    class ColorBlindError : public std::exception {
       public:
         /** @brief Constructor for ColorBlindError.
          * @param message The error message.

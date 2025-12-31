@@ -18,7 +18,11 @@ UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 
 UDPServer::~UDPServer()
 {
-    UDPServer::stop();
+    try {
+        UDPServer::stop();
+    } catch (...) {
+        std::cerr << "{UDPServer::~UDPServer} Exception caught during server stop\n";
+    }
 }
 
 void UDPServer::start()

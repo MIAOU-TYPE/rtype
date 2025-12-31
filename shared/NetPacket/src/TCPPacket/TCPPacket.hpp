@@ -6,70 +6,84 @@
 */
 
 #pragma once
-#include <cstring>
+
 #include <vector>
 #include "IPacket.hpp"
 
 namespace Net
 {
+    /**
+     * @class TCPPacket
+     * @brief Implementation of the IPacket interface for TCP packets.
+     * @details This class provides a concrete implementation of the IPacket interface,
+     * allowing for the creation and manipulation of TCP packets, including buffer management
+     * and source address handling.
+     */
     class TCPPacket final : public IPacket {
       public:
-        explicit TCPPacket(size_t cap = 64 * 1024) : _buf(cap)
-        {
-        }
+        /**
+         * @brief Construct a new TCPPacket object with a specified capacity.
+         * @param capacity The capacity of the packet buffer.
+         */
+        explicit TCPPacket(size_t capacity);
 
-        uint8_t *buffer() override
-        {
-            return _buf.data();
-        }
+        /**
+         * @brief Retrieves the packet buffer.
+         * @return A pointer to the packet buffer.
+         */
+        [[nodiscard]] uint8_t *buffer() override;
 
-        const uint8_t *buffer() const override
-        {
-            return _buf.data();
-        }
+        /**
+         * @brief Retrieves the packet buffer (const version).
+         * @return A const pointer to the packet buffer.
+         */
+        [[nodiscard]] const uint8_t *buffer() const override;
 
-        size_t size() const override
-        {
-            return _size;
-        }
+        /**
+         * @brief Retrieves the size of the packet.
+         * @return The size of the packet.
+         */
+        [[nodiscard]] size_t size() const override;
 
-        void setSize(size_t s) override
-        {
-            _size = (s <= _buf.size() ? s : _buf.size());
-        }
+        /**
+         * @brief Sets the size of the packet.
+         * @param s The size to set for the packet.
+         */
+        void setSize(size_t s) override;
 
-        const sockaddr_in *address() const override
-        {
-            return &_addr;
-        }
+        /**
+         * @brief Retrieves the source address of the packet.
+         * @return A pointer to the sockaddr_in structure representing the source address.
+         */
+        [[nodiscard]] const sockaddr_in *address() const override;
 
-        void setAddress(const sockaddr_in &addr) override
-        {
-            _addr = addr;
-        }
+        /**
+         * @brief Sets the source address of the packet.
+         * @param addr The sockaddr_in structure representing the source address to set.
+         */
+        void setAddress(const sockaddr_in &addr) override;
 
-        std::shared_ptr<IPacket> clone() const override
-        {
-            auto p = std::make_shared<TCPPacket>(_buf.size());
-            p->_addr = _addr;
-            p->_size = _size;
-            std::memcpy(p->_buf.data(), _buf.data(), _size);
-            return p;
-        }
+        /**
+         * @brief Creates a clone of the current TCPPacket.
+         * @return A shared pointer to the cloned IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> clone() const override;
 
-        std::shared_ptr<IPacket> newPacket() const override
-        {
-            return std::make_shared<TCPPacket>(_buf.size());
-        }
+        /**
+         * @brief Creates a new instance of the TCPPacket.
+         * @return A shared pointer to the newly created IPacket instance.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> newPacket() const override;
 
-        size_t capacity() const noexcept override
-        {
-            return _buf.size();
-        }
+        /**
+         * @brief Retrieves the capacity of the packet buffer.
+         * @return The capacity of the packet buffer.
+         */
+        [[nodiscard]] size_t capacity() const noexcept override;
 
       private:
-        sockaddr_in _addr{};
-        std::vector<uint8_t> _buf;
-        size_t _size = 0;
+        sockaddr_in _addr{};       ///> Source address of the packet
+        std::vector<uint8_t> _buf; ///> Packet buffer
+        size_t _size = 0;          ///> Size of the packet
     };
 } // namespace Net

@@ -84,6 +84,7 @@ namespace Net
         /**
          * @brief Constructor for NetWrapper that loads functions from a shared library.
          * @param pluginPath The path to the shared library containing the network functions.
+         * @param baseDir The base directory for the shared library (default is "./libraries/").
          * @throws NetWrapperError if loading the library or functions fails.
          */
         explicit NetWrapper(const std::string &pluginPath, const std::string &baseDir = "./libraries/");
@@ -100,7 +101,7 @@ namespace Net
          * @param protocol The protocol to be used (e.g., IPPROTO_TCP).
          * @return The handle to the created socket.
          */
-        socketHandle socket(int domain, int type, int protocol) const;
+        [[nodiscard]] socketHandle socket(int domain, int type, int protocol) const;
 
         /**
          * @brief Closes a socket.
@@ -117,7 +118,7 @@ namespace Net
          * @param optLen The size of the option value.
          * @return 0 on success, or -1 on error.
          */
-        int setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen) const;
+        [[nodiscard]] int setSocketOpt(socketHandle s, int level, int optName, const void *optVal, int optLen) const;
 
         /**
          * @brief Receives data from a socket.
@@ -129,7 +130,7 @@ namespace Net
          * @param addrLen The length of the source address.
          * @return The number of bytes received.
          */
-        recvfrom_return_t recvFrom(
+        [[nodiscard]] recvfrom_return_t recvFrom(
             socketHandle sockFd, void *buf, size_t len, int flags, sockaddr *srcAddr, socklen_t *addrLen) const;
 
         /**
@@ -142,8 +143,8 @@ namespace Net
          * @param addrLen The length of the destination address.
          * @return The number of bytes sent.
          */
-        sendto_return_t sendTo(socketHandle sockFd, const void *buf, size_t len, int flags, const sockaddr *destAddr,
-            socklen_t addrLen) const;
+        [[nodiscard]] sendto_return_t sendTo(socketHandle sockFd, const void *buf, size_t len, int flags,
+            const sockaddr *destAddr, socklen_t addrLen) const;
 
         /**
          * @brief Receives data from a socket.
@@ -153,7 +154,7 @@ namespace Net
          * @param flags Flags for the reception operation.
          * @return The number of bytes received.
          */
-        recv_return_t recv(socketHandle sockFd, void *buf, size_t len, int flags) const;
+        [[nodiscard]] recv_return_t recv(socketHandle sockFd, void *buf, size_t len, int flags) const;
 
         /**
          * @brief Sends data to a socket.
@@ -163,19 +164,19 @@ namespace Net
          * @param flags Flags for the send operation.
          * @return The number of bytes sent.
          */
-        send_return_t send(socketHandle sockFd, const void *buf, size_t len, int flags) const;
+        [[nodiscard]] send_return_t send(socketHandle sockFd, const void *buf, size_t len, int flags) const;
 
         /**
          * @brief Initializes the network (e.g., WSAStartup on Windows).
          * @return 0 on success, or an error code on failure.
          */
-        int initNetwork() const;
+        [[nodiscard]] int initNetwork() const;
 
         /**
          * @brief Cleans up the network (e.g., WSACleanup on Windows).
          * @return 0 on success, or an error code on failure.
          */
-        int cleanupNetwork() const;
+        [[nodiscard]] int cleanupNetwork() const;
 
         /**
          * @brief Puts the socket into listening mode.
@@ -183,7 +184,7 @@ namespace Net
          * @param backlog The maximum length of the queue of pending connections.
          * @return 0 on success, or -1 on error.
          */
-        int listen(socketHandle sockFd, int backlog) const;
+        [[nodiscard]] int listen(socketHandle sockFd, int backlog) const;
 
         /**
          * @brief Accepts a new connection on a listening socket.
@@ -192,7 +193,7 @@ namespace Net
          * @param addrLen Pointer to a socklen_t variable that initially contains the size of the addr structure.
          * @return The handle to the accepted socket.
          */
-        socketHandle accept(socketHandle sockFd, sockaddr *addr, socklen_t *addrLen) const;
+        [[nodiscard]] socketHandle accept(socketHandle sockFd, sockaddr *addr, socklen_t *addrLen) const;
 
         /**
          * @brief Binds a socket to an address.
@@ -201,7 +202,7 @@ namespace Net
          * @param addrLen The length of the address structure.
          * @return 0 on success, or -1 on error.
          */
-        int bind(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen) const;
+        [[nodiscard]] int bind(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen) const;
 
         /**
          * @brief Connects a socket to a remote address.
@@ -210,7 +211,7 @@ namespace Net
          * @param addrLen The length of the address structure.
          * @return 0 on success, or -1 on error.
          */
-        int connect(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen) const;
+        [[nodiscard]] int connect(socketHandle sockFd, const sockaddr *addr, socklen_t addrLen) const;
 
         /**
          * @brief Sets a socket to non-blocking mode.
@@ -218,7 +219,7 @@ namespace Net
          * @param enabled Non-zero to enable non-blocking mode, zero to disable.
          * @return 0 on success, or -1 on error.
          */
-        int setNonBlocking(socketHandle s, int enabled) const;
+        [[nodiscard]] int setNonBlocking(socketHandle s, int enabled) const;
 
       private:
         std::unique_ptr<Library::DLLoader> _loader = nullptr; ///> Dynamic library loader.

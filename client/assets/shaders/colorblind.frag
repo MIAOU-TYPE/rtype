@@ -32,5 +32,5 @@ void main()
         );
     }
 
-    gl_FragColor = color;
+    gl_FragColor = vec4(color.rgb, color.a);
 }

@@ -111,5 +111,17 @@ namespace Graphics
          * @param text The text object containing text drawing parameters.
          */
         virtual void draw(const IText &text) = 0;
+
+        /**
+         * @brief Set the colorblind filter mode.
+         * @param mode The colorblind mode to apply to all rendering.
+         */
+        virtual void setColorBlindMode(ColorBlindMode mode) = 0;
+
+        /**
+         * @brief Get the current colorblind filter mode.
+         * @return ColorBlindMode The current colorblind mode.
+         */
+        [[nodiscard]] virtual ColorBlindMode getColorBlindMode() const noexcept = 0;
     };
 } // namespace Graphics

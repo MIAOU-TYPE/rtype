@@ -52,6 +52,12 @@ namespace Graphics
         void setVolume(float volume);
 
         /**
+         * @brief Get the current volume of the music.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getVolume() const;
+
+        /**
          * @brief Set whether the music should loop.
          * @param loop True to loop, false otherwise.
          */

@@ -40,6 +40,11 @@ namespace Graphics
         _music->setVolume(volume);
     }
 
+    float SfmlMusic::getVolume() const
+    {
+        return _music->getVolume();
+    }
+
     void SfmlMusic::setLooping(bool loop)
     {
         _music->setLooping(loop);

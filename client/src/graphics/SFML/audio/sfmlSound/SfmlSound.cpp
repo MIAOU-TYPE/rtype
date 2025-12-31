@@ -43,6 +43,11 @@ namespace Graphics
         _sound.setVolume(volume);
     }
 
+    float SfmlSound::getVolume() const
+    {
+        return _sound.getVolume();
+    }
+
     void SfmlSound::setLooping(bool loop)
     {
         _sound.setLooping(loop);

@@ -22,18 +22,17 @@ namespace
 
 namespace Net::Server
 {
-    TCPServer::TCPServer(std::shared_ptr<NetWrapper> net, std::shared_ptr<IPacket> packetPrototype)
-        : AServer(), _netWrapper(std::move(net)), _packetProto(std::move(packetPrototype))
+    TCPServer::TCPServer() : _netWrapper("NetPluginLib"), _packet(std::make_shared<TCPPacket>(64 * 1024))
     {
-        if (!_netWrapper)
-            throw ServerError("{TCPServer::TCPServer} requires NetWrapper");
-        if (!_packetProto)
-            throw ServerError("{TCPServer::TCPServer} requires a packet prototype (ex: make_shared<TcpPacket>())");
     }
 
     TCPServer::~TCPServer()
     {
-        stop();
+        try {
+            stop();
+        } catch (...) {
+            std::cerr << "{TCPServer::~TCPServer} Exception during stop()" << std::endl;
+        }
     }
 
     void TCPServer::setNonBlocking(const bool nonBlocking)
@@ -41,11 +40,11 @@ namespace Net::Server
         _nonBlocking = nonBlocking;
 
         if (_listenFd != kInvalidSocket)
-            (void) _netWrapper->setNonBlocking(_listenFd, _nonBlocking);
+            (void) _netWrapper.setNonBlocking(_listenFd, _nonBlocking);
 
         std::scoped_lock lock(_mutex);
         for (const auto &sock : _clients | std::views::keys)
-            (void) _netWrapper->setNonBlocking(sock, _nonBlocking);
+            (void) _netWrapper.setNonBlocking(sock, _nonBlocking);
     }
 
     void TCPServer::start()
@@ -55,15 +54,15 @@ namespace Net::Server
         if (!isStoredPortCorrect())
             throw ServerError("{TCPServer::start} Invalid port number");
 
-        if (_netWrapper->initNetwork() != 0)
+        if (_netWrapper.initNetwork() != 0)
             throw ServerError("{TCPServer::start} Network initialization failed");
 
-        _listenFd = _netWrapper->socket(AF_INET, SOCK_STREAM, 0);
+        _listenFd = _netWrapper.socket(AF_INET, SOCK_STREAM, 0);
         if (_listenFd == kInvalidSocket)
             throw ServerError("{TCPServer::start} Socket creation failed");
 
         constexpr int yes = 1;
-        if (const auto result = _netWrapper->setSocketOpt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+        if (const auto result = _netWrapper.setSocketOpt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
             result != 0)
             throw ServerError("{TCPServer::start} setsockopt(SO_REUSEADDR) failed");
 
@@ -73,13 +72,13 @@ namespace Net::Server
         if (::inet_pton(AF_INET, _ip.c_str(), &addr.sin_addr) != 1)
             throw ServerError("{TCPServer::start} Invalid IP address format");
 
-        if (_netWrapper->bind(_listenFd, reinterpret_cast<const sockaddr *>(&addr), sizeof(addr)) != 0)
+        if (_netWrapper.bind(_listenFd, reinterpret_cast<const sockaddr *>(&addr), sizeof(addr)) != 0)
             throw ServerError("{TCPServer::start}");
 
-        if (_netWrapper->listen(_listenFd, 64) != 0)
+        if (_netWrapper.listen(_listenFd, 64) != 0)
             throw ServerError("{TCPServer::start} listen failed");
 
-        if (_netWrapper->setNonBlocking(_listenFd, _nonBlocking) != 0)
+        if (_netWrapper.setNonBlocking(_listenFd, _nonBlocking) != 0)
             throw ServerError("{TCPServer::start} setNonBlocking(listen) failed");
 
         AServer::setRunning(true);
@@ -93,17 +92,17 @@ namespace Net::Server
         {
             std::scoped_lock lock(_mutex);
             for (const auto &sock : _clients | std::views::keys)
-                _netWrapper->closeSocket(sock);
+                _netWrapper.closeSocket(sock);
             _clients.clear();
             _endpointToFd.clear();
         }
 
         if (_listenFd != kInvalidSocket) {
-            _netWrapper->closeSocket(_listenFd);
+            _netWrapper.closeSocket(_listenFd);
             _listenFd = kInvalidSocket;
         }
 
-        (void) _netWrapper->cleanupNetwork();
+        (void) _netWrapper.cleanupNetwork();
     }
 
     void TCPServer::readPackets()
@@ -123,7 +122,7 @@ namespace Net::Server
         while (true) {
             sockaddr_in clientAddr{};
             socklen_t len = sizeof(clientAddr);
-            socketHandle clientFd = _netWrapper->accept(_listenFd, reinterpret_cast<sockaddr *>(&clientAddr), &len);
+            socketHandle clientFd = _netWrapper.accept(_listenFd, reinterpret_cast<sockaddr *>(&clientAddr), &len);
 
             if (clientFd == kInvalidSocket) {
                 if (wouldBlock())
@@ -131,8 +130,8 @@ namespace Net::Server
                 break;
             }
 
-            if (_netWrapper->setNonBlocking(clientFd, _nonBlocking) != 0) {
-                _netWrapper->closeSocket(clientFd);
+            if (_netWrapper.setNonBlocking(clientFd, _nonBlocking) != 0) {
+                _netWrapper.closeSocket(clientFd);
                 continue;
             }
 
@@ -151,7 +150,7 @@ namespace Net::Server
 
     void TCPServer::dropClient(const socketHandle clientFd, const sockaddr_in &clientAddr)
     {
-        _netWrapper->closeSocket(clientFd);
+        _netWrapper.closeSocket(clientFd);
         std::scoped_lock lock(_mutex);
         _clients.erase(clientFd);
         _endpointToFd.erase({clientAddr.sin_addr.s_addr, clientAddr.sin_port});
@@ -171,7 +170,7 @@ namespace Net::Server
 
         for (socketHandle s : sockets) {
             while (true) {
-                const auto r = _netWrapper->recv(s, tmp, sizeof(tmp), 0);
+                const auto r = _netWrapper.recv(s, tmp, sizeof(tmp), 0);
 
                 if (r == 0) {
                     sockaddr_in a{};
@@ -222,7 +221,7 @@ namespace Net::Server
                     if (state->rx.size() < 4 + size)
                         break;
 
-                    auto pkt = _packetProto->newPacket();
+                    auto pkt = _packet->newPacket();
                     pkt->setAddress(state->addr);
                     pkt->setSize(size);
 
@@ -253,7 +252,7 @@ namespace Net::Server
     {
         size_t off = 0;
         while (off < len) {
-            const auto r = _netWrapper->send(clientFd, data + off, len - off, 0);
+            const auto r = _netWrapper.send(clientFd, data + off, len - off, 0);
             if (r <= 0)
                 return false;
             off += static_cast<size_t>(r);

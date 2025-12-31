@@ -45,10 +45,8 @@ namespace Net::Server
       public:
         /**
          * @brief Construct a new TCPServer object.
-         * @param net Shared pointer to the NetWrapper for network operations.
-         * @param packetPrototype Shared pointer to a packet prototype for creating packets.
          */
-        TCPServer(std::shared_ptr<NetWrapper> net, std::shared_ptr<IPacket> packetPrototype);
+        TCPServer();
 
         /**
          * @brief Destructor for TCPServer.
@@ -122,16 +120,20 @@ namespace Net::Server
          */
         bool sendAll(socketHandle clientFd, const uint8_t *data, size_t len) const;
 
-        std::shared_ptr<NetWrapper> _netWrapper; ///> Network operations wrapper
-        std::shared_ptr<IPacket> _packetProto;   ///> Packet prototype for creating packets
+        NetWrapper _netWrapper;           ///> Network wrapper for socket operations
+        std::shared_ptr<IPacket> _packet; ///> Packet prototype for creating packets
 
         bool _nonBlocking = true; ///> Non-blocking mode flag
 
         socketHandle _listenFd = kInvalidSocket; ///> Listening socket handle
 
+        /**
+         * @struct ClientState
+         * @brief Represents the state of a connected client.
+         */
         struct ClientState {
-            sockaddr_in addr{};
-            std::vector<uint8_t> rx;
+            sockaddr_in addr{};      ///> Client address
+            std::vector<uint8_t> rx; ///> Receive buffer
         };
 
         mutable std::mutex _mutex;                              ///> Mutex for protecting client maps

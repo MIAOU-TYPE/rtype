@@ -112,6 +112,7 @@ namespace Engine
                     case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
                     case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
                     case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
+                    default: label = "UNKNOWN"; break;
                 }
                 _colorBlindMode->setLabel(label);
                 _colorBlindNext->reset();

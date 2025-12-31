@@ -54,18 +54,19 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    void SfmlSoundManager::play(AudioHandle handle)
+    bool SfmlSoundManager::play(AudioHandle handle)
     {
         auto it = _sounds.find(handle);
         if (it == _sounds.end())
-            return;
+            return false;
 
         try {
             auto sound = std::make_unique<SfmlSound>(_resources, it->second.resourcePath);
             sound->play();
             _activeSounds.push_back({handle, std::move(sound)});
-        } catch (const AudioError &) {
-            // Ignore
+            return true;
+        } catch (const AudioError &e) {
+            return false;
         }
     }
 

@@ -57,12 +57,14 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    void SfmlMusicManager::play(AudioHandle handle)
+    bool SfmlMusicManager::play(AudioHandle handle)
     {
         auto it = _musics.find(handle);
         if (it != _musics.end()) {
             it->second.music->play();
+            return true;
         }
+        return false;
     }
 
     void SfmlMusicManager::stop(AudioHandle handle)

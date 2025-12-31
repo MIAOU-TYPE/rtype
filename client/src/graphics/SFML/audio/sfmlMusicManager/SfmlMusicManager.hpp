@@ -65,7 +65,7 @@ namespace Graphics
          * @brief Play the music.
          * @param handle The audio handle.
          */
-        void play(AudioHandle handle) override;
+        bool play(AudioHandle handle) override;
 
         /**
          * @brief Stop the music.

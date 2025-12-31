@@ -22,7 +22,7 @@ namespace Graphics
             _shaderLoaded = false;
             throw ColorBlindError("ColorBlindManager: Failed to load colorblind shader from resources");
         }
-        const std::string shaderCode(reinterpret_cast<const char*>(shaderData.data), shaderData.size);
+        const std::string shaderCode(reinterpret_cast<const char *>(shaderData.data), shaderData.size);
         if (!_shader.loadFromMemory(shaderCode, sf::Shader::Type::Fragment)) {
             _shaderLoaded = false;
             throw ColorBlindError("ColorBlindManager: Failed to compile colorblind shader");

@@ -5,8 +5,8 @@
 ** Endian
 */
 #pragma once
-
 #include <cstring>
+#include <functional>
 
 /**
  * @brief Read a 32-bit unsigned integer from a big-endian byte array.

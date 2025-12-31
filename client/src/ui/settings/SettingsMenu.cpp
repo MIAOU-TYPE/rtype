@@ -20,6 +20,8 @@ namespace Engine
         _backgroundCmd.textureId = _backgroundTexture;
 
         _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
+        _colorBlindMode = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
         _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
         _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
@@ -31,6 +33,8 @@ namespace Engine
         _resolutionChanged = false;
 
         _audio->reset();
+        _colorBlindMode->reset();
+        _colorBlindNext->reset();
         _resolution->reset();
         _resolutionNext->reset();
         _back->reset();
@@ -52,9 +56,11 @@ namespace Engine
         _backgroundCmd.position = {0.f, 0.f};
         _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
 
-        _audio->setPosition(cx - 400.f * scale, cy - 60.f * scale);
-        _resolution->setPosition(cx + 150.f * scale, cy - 60.f * scale);
-        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 60.f * scale);
+        _audio->setPosition(cx - 400.f * scale, cy - 120.f * scale);
+        _colorBlindMode->setPosition(cx - 400.f * scale, cy + 40.f * scale);
+        _colorBlindNext->setPosition(cx + (150.f + _colorBlindMode->bounds().w + 250.f) * scale, cy + 40.f * scale);
+        _resolution->setPosition(cx - 400.f * scale, cy - 260.f * scale);
+        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 260.f * scale);
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
@@ -62,6 +68,8 @@ namespace Engine
     {
         handleInput(frame);
         _audio->update(frame.mouseX, frame.mouseY);
+        _colorBlindMode->update(frame.mouseX, frame.mouseY);
+        _colorBlindNext->update(frame.mouseX, frame.mouseY);
         _resolution->update(frame.mouseX, frame.mouseY);
         _resolutionNext->update(frame.mouseX, frame.mouseY);
         _back->update(frame.mouseX, frame.mouseY);
@@ -85,12 +93,31 @@ namespace Engine
 
         if (frame.mousePressed) {
             _audio->onMousePressed(frame.mouseX, frame.mouseY);
+            _colorBlindMode->onMousePressed(frame.mouseX, frame.mouseY);
+            _colorBlindNext->onMousePressed(frame.mouseX, frame.mouseY);
             _resolution->onMousePressed(frame.mouseX, frame.mouseY);
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
         }
         if (frame.mouseReleased) {
             (void) _audio->onMouseReleased(frame.mouseX, frame.mouseY);
+
+            if (_colorBlindNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _currentColorBlindMode = (_currentColorBlindMode + 1) % _colorBlindModes.size();
+                const auto mode = _colorBlindModes.at(_currentColorBlindMode);
+                _renderer->setColorBlindMode(mode);
+
+                std::string label;
+                switch (mode) {
+                    case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
+                    case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
+                    case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
+                    case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
+                }
+                _colorBlindMode->setLabel(label);
+                _colorBlindNext->reset();
+                return;
+            }
 
             if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
@@ -133,6 +160,8 @@ namespace Engine
     {
         _renderer->draw(_backgroundCmd);
         _audio->render();
+        _colorBlindMode->render();
+        _colorBlindNext->render();
         _resolution->render();
         _resolutionNext->render();
         _back->render();

@@ -94,28 +94,6 @@ namespace Net::Server
         bool popPacket(std::shared_ptr<IPacket> &pkt) override;
 
       private:
-        struct EndpointKey {
-            uint32_t ip;
-            uint16_t port;
-
-            bool operator==(const EndpointKey &o) const noexcept
-            {
-                return ip == o.ip && port == o.port;
-            }
-        };
-
-        struct EndpointHash {
-            size_t operator()(const EndpointKey &k) const noexcept
-            {
-                return (static_cast<size_t>(k.ip) << 16) ^ static_cast<size_t>(k.port);
-            }
-        };
-
-        static EndpointKey keyFrom_(const sockaddr_in &a) noexcept
-        {
-            return {a.sin_addr.s_addr, a.sin_port};
-        }
-
         /**
          * @brief Accept incoming client connections in a loop.
          * This function handles new client connections and adds them to the client list.
@@ -131,13 +109,13 @@ namespace Net::Server
         /**
          * @brief Drop a client connection.
          * @param clientFd Socket handle of the client to drop.
-         * @param addr Address of the client to drop.
+         * @param clientAddr Address of the client to drop.
          */
-        void dropClient(socketHandle clientFd, const sockaddr_in &addr);
+        void dropClient(socketHandle clientFd, const sockaddr_in &clientAddr);
 
         /**
          * @brief Send all data to a socket.
-         * @param clientFds Socket handle to send data to.
+         * @param clientFd Socket handle to send data to.
          * @param data Pointer to the data to send.
          * @param len Length of the data to send.
          * @return true if all data was sent successfully, false otherwise.
@@ -158,12 +136,12 @@ namespace Net::Server
 
         mutable std::mutex _mutex;                              ///> Mutex for protecting client maps
         std::unordered_map<socketHandle, ClientState> _clients; ///> Map of client socket handles to their states
-        std::unordered_map<EndpointKey, socketHandle, EndpointHash>
-            _endpointToSock; ///> Map of endpoint keys to socket handles
+        std::unordered_map<AddressKey, socketHandle, AddressKeyHash>
+            _endpointToFd; ///> Map of endpoint keys to socket handles
 
         mutable std::mutex _queueMutex;              ///> Mutex for protecting the packet queue
         std::queue<std::shared_ptr<IPacket>> _queue; ///> Queue of received packets
 
-        static constexpr uint32_t MaxFrame = 64 * 1024; ///> Maximum allowed frame size
+        static constexpr uint32_t MAXSIZE = 64 * 1024; ///> Maximum allowed frame size
     };
 } // namespace Net::Server

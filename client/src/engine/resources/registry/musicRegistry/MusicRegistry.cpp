@@ -23,15 +23,13 @@ namespace Engine
         if (!_musicManager->isValid(handle))
             return;
 
-        if (auto music = _musicManager->get(handle)) {
-            if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
-                stopMusic();
+        if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
+            stopMusic();
 
-            music->setLooping(loop);
-            music->setVolume(volume);
-            music->play();
-            _currentMusicHandle = handle;
-        }
+        _musicManager->setLooping(handle, loop);
+        _musicManager->setVolume(handle, volume);
+        _musicManager->play(handle);
+        _currentMusicHandle = handle;
     }
 
     void MusicRegistry::stopMusic()
@@ -39,9 +37,7 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (auto music = _musicManager->get(_currentMusicHandle)) {
-            music->stop();
-        }
+        _musicManager->stop(_currentMusicHandle);
         _currentMusicHandle = InvalidAudio;
     }
 
@@ -50,8 +46,6 @@ namespace Engine
         if (_currentMusicHandle == InvalidAudio)
             return;
 
-        if (auto music = _musicManager->get(_currentMusicHandle)) {
-            music->setVolume(volume);
-        }
+        _musicManager->setVolume(_currentMusicHandle, volume);
     }
 } // namespace Engine

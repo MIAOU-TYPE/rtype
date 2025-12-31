@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include "IAudioManager.hpp"
-#include "IAudioPlayable.hpp"
 
 namespace Engine
 {
@@ -74,18 +73,8 @@ namespace Engine
         void setSoundVolume(float volume);
 
       private:
-        /**
-         * @struct ActiveSound
-         * @brief Holds an active sound with its original volume level.
-         */
-        struct ActiveSound {
-            std::unique_ptr<Graphics::IAudioPlayable> sound; ///> The sound instance
-            float originalVolume;                            ///> Original volume (0-100) before global adjustment
-        };
-
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr; ///> Sound manager
 
-        std::vector<ActiveSound> _activeSounds; ///> Active sounds being played with their original volumes
-        float _globalSoundVolume = 100.f;       ///> Global sound volume
+        float _globalSoundVolume = 100.f; ///> Global sound volume
     };
 } // namespace Engine

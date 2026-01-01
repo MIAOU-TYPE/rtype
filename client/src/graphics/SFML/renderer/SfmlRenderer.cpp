@@ -39,8 +39,7 @@ namespace Graphics
 
     void SfmlRenderer::beginFrame()
     {
-        const bool wantsPostProcess =
-            (_colorBlindManager && _colorBlindManager->isShaderAvailable());
+        const bool wantsPostProcess = (_colorBlindManager && _colorBlindManager->isShaderAvailable());
         const auto windowSize = _window->getSize();
         const auto texSize = _renderTexture->getSize();
         if (!wantsPostProcess) {

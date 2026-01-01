@@ -96,5 +96,41 @@ namespace Buffer
          * @return true if the buffer is full, false otherwise.
          */
         virtual bool isFull() const noexcept = 0;
+
+        /**
+         * @brief Get the current size of the buffer.
+         * @return The number of elements currently in the buffer.
+         */
+        virtual size_t readable() const noexcept = 0;
+
+        /**
+         * @brief Get the remaining capacity of the buffer.
+         * @return The number of elements that can still be added to the buffer.
+         */
+        virtual size_t writable() const noexcept = 0;
+
+        /**
+         * @brief Write multiple elements to the buffer.
+         * @param data Pointer to the data to be written.
+         * @param count Number of elements to write.
+         * @return true if the data was successfully written, false otherwise.
+         */
+        virtual bool write(const Tdata *data, size_t count) noexcept = 0;
+
+        /**
+         * @brief Read multiple elements from the buffer.
+         * @param data Pointer to store the read data.
+         * @param count Number of elements to read.
+         * @return true if the data was successfully read, false otherwise.
+         */
+        virtual bool read(Tdata *data, size_t count) noexcept = 0;
+
+        /**
+         * @brief Peek at multiple elements from the buffer without removing them.
+         * @param data Pointer to store the peeked data.
+         * @param count Number of elements to peek.
+         * @return true if the data was successfully peeked, false otherwise.
+         */
+        virtual bool peek(Tdata *data, size_t count) const noexcept = 0;
     };
 } // namespace Buffer

@@ -129,10 +129,10 @@ namespace Engine
         bool _resolutionChanged = false;    ///> Flag indicating if the resolution has been changed
 
         /**
-        * @brief Get the next colorblind mode in sequence.
-        * @param m The current colorblind mode.
-        * @return The next colorblind mode.
-        */
+         * @brief Get the next colorblind mode in sequence.
+         * @param m The current colorblind mode.
+         * @return The next colorblind mode.
+         */
         static Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m);
         Graphics::ColorBlindMode _currentColorBlindMode = Graphics::ColorBlindMode::NONE; ///> Current colorblind mode
     };

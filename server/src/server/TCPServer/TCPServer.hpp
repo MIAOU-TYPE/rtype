@@ -16,14 +16,15 @@
 #include <vector>
 #include <unordered_map>
 
+#include <cstring>
+#include <iostream>
+#include <memory>
+#include <ranges>
 #include "AServer.hpp"
 #include "Endian.hpp"
 #include "NetWrapper.hpp"
+#include "RingBuffer/RingBuffer.hpp"
 #include "TCPPacket.hpp"
-
-#include <cstring>
-#include <iostream>
-#include <ranges>
 
 #ifdef _WIN32
     #include <winsock2.h>
@@ -44,9 +45,10 @@ namespace Net::Server
     class TCPServer final : public AServer {
       public:
         /**
-         * @brief Construct a new TCPServer object.
+         * @brief Construct a new TCPServer object with a custom NetWrapper.
+         * @param wrapper The NetWrapper instance to use for network operations.
          */
-        TCPServer();
+        explicit TCPServer(const std::shared_ptr<NetWrapper> &wrapper = std::make_shared<NetWrapper>("NetPluginLib"));
 
         /**
          * @brief Destructor for TCPServer.
@@ -92,6 +94,28 @@ namespace Net::Server
         bool popPacket(std::shared_ptr<IPacket> &pkt) override;
 
       private:
+        /*
+         * @brief Snapshot the current client sockets.
+         * @return A vector of current client socket handles.
+         */
+        std::vector<socketHandle> snapshotClientSockets() const;
+
+        /**
+         * @brief Read data from a single client.
+         * @param clientFd Socket handle of the client to read from.
+         * @param tmp Temporary buffer for reading data.
+         */
+        void readOneClient(socketHandle clientFd, std::array<uint8_t, 4096> &tmp);
+
+        /**
+         * @brief Handle received bytes from a client.
+         * @param clientFd Socket handle of the client.
+         * @param data Pointer to the received data.
+         * @param len Length of the received data.
+         * @return true if the data was processed successfully, false otherwise.
+         */
+        bool onBytesReceived(socketHandle clientFd, const uint8_t *data, size_t len);
+
         /**
          * @brief Accept incoming client connections in a loop.
          * This function handles new client connections and adds them to the client list.
@@ -105,23 +129,19 @@ namespace Net::Server
         void readClients();
 
         /**
-         * @brief Drop a client connection.
-         * @param clientFd Socket handle of the client to drop.
-         * @param clientAddr Address of the client to drop.
+         * @brief Flush pending writes to a client.
+         * @param clientFd Socket handle of the client to flush writes to.
          */
-        void dropClient(socketHandle clientFd, const sockaddr_in &clientAddr);
+        void flushWrites(socketHandle clientFd);
 
         /**
-         * @brief Send all data to a socket.
-         * @param clientFd Socket handle to send data to.
-         * @param data Pointer to the data to send.
-         * @param len Length of the data to send.
-         * @return true if all data was sent successfully, false otherwise.
+         * @brief Drop a client connection.
+         * @param clientFd Socket handle of the client to drop.
          */
-        bool sendAll(socketHandle clientFd, const uint8_t *data, size_t len) const;
+        void dropClient(socketHandle clientFd);
 
-        NetWrapper _netWrapper;           ///> Network wrapper for socket operations
-        std::shared_ptr<IPacket> _packet; ///> Packet prototype for creating packets
+        std::shared_ptr<NetWrapper> _netWrapper; ///> Network wrapper for socket operations
+        std::shared_ptr<IPacket> _packet;        ///> Packet prototype for creating packets
 
         bool _nonBlocking = true; ///> Non-blocking mode flag
 
@@ -132,12 +152,18 @@ namespace Net::Server
          * @brief Represents the state of a connected client.
          */
         struct ClientState {
-            sockaddr_in addr{};      ///> Client address
-            std::vector<uint8_t> rx; ///> Receive buffer
+            explicit ClientState(const sockaddr_in addr) : addr(addr), rx(MAXSIZE), tx(MAXSIZE)
+            {
+            }
+
+            sockaddr_in addr{};             ///> Client address
+            Buffer::RingBuffer<uint8_t> rx; ///> Receive buffer
+            Buffer::RingBuffer<uint8_t> tx; ///> Transmit buffer
         };
 
-        mutable std::mutex _mutex;                              ///> Mutex for protecting client maps
-        std::unordered_map<socketHandle, ClientState> _clients; ///> Map of client socket handles to their states
+        mutable std::mutex _mutex; ///> Mutex for protecting client maps
+        std::unordered_map<socketHandle, std::unique_ptr<ClientState>>
+            _clients; ///> Map of client socket handles to their states
         std::unordered_map<AddressKey, socketHandle, AddressKeyHash>
             _endpointToFd; ///> Map of endpoint keys to socket handles
 

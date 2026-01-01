@@ -22,14 +22,16 @@ namespace
 
 namespace Net::Server
 {
-    TCPServer::TCPServer() : _netWrapper("NetPluginLib"), _packet(std::make_shared<TCPPacket>(64 * 1024))
+
+    TCPServer::TCPServer(const std::shared_ptr<NetWrapper> &wrapper)
+        : _netWrapper(wrapper), _packet(std::make_shared<TCPPacket>(64 * 1024))
     {
     }
 
     TCPServer::~TCPServer()
     {
         try {
-            stop();
+            TCPServer::stop();
         } catch (...) {
             std::cerr << "{TCPServer::~TCPServer} Exception during stop()" << std::endl;
         }
@@ -40,47 +42,48 @@ namespace Net::Server
         _nonBlocking = nonBlocking;
 
         if (_listenFd != kInvalidSocket)
-            (void) _netWrapper.setNonBlocking(_listenFd, _nonBlocking);
+            (void) _netWrapper->setNonBlocking(_listenFd, _nonBlocking);
 
         std::scoped_lock lock(_mutex);
         for (const auto &sock : _clients | std::views::keys)
-            (void) _netWrapper.setNonBlocking(sock, _nonBlocking);
+            (void) _netWrapper->setNonBlocking(sock, _nonBlocking);
     }
 
     void TCPServer::start()
     {
-        if (!AServer::isStoredIpCorrect())
-            throw ServerError("{TCPServer::start} Invalid IP address");
-        if (!isStoredPortCorrect())
-            throw ServerError("{TCPServer::start} Invalid port number");
+        try {
+            if (!AServer::isStoredIpCorrect() || !AServer::isStoredPortCorrect())
+                throw ServerError("{TCPServer::start} Invalid IP or Port");
 
-        if (_netWrapper.initNetwork() != 0)
-            throw ServerError("{TCPServer::start} Network initialization failed");
+            if (_netWrapper->initNetwork() != 0)
+                throw ServerError("{TCPServer::start} Network initialization failed");
 
-        _listenFd = _netWrapper.socket(AF_INET, SOCK_STREAM, 0);
-        if (_listenFd == kInvalidSocket)
-            throw ServerError("{TCPServer::start} Socket creation failed");
+            if (_listenFd = _netWrapper->socket(AF_INET, SOCK_STREAM, 0); _listenFd == kInvalidSocket)
+                throw ServerError("{TCPServer::start} Socket creation failed");
 
-        constexpr int yes = 1;
-        if (const auto result = _netWrapper.setSocketOpt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-            result != 0)
-            throw ServerError("{TCPServer::start} setsockopt(SO_REUSEADDR) failed");
+            constexpr int yes = 1;
+            if (const auto result = _netWrapper->setSocketOpt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+                result != 0)
+                throw ServerError("{TCPServer::start} setsockopt(SO_REUSEADDR) failed");
 
-        sockaddr_in addr{};
-        addr.sin_family = AF_INET;
-        addr.sin_port = htons(static_cast<uint16_t>(_port));
-        if (::inet_pton(AF_INET, _ip.c_str(), &addr.sin_addr) != 1)
-            throw ServerError("{TCPServer::start} Invalid IP address format");
+            sockaddr_in addr{};
+            addr.sin_family = AF_INET;
+            addr.sin_port = htons(static_cast<uint16_t>(_port));
+            if (::inet_pton(AF_INET, _ip.c_str(), &addr.sin_addr) != 1)
+                throw ServerError("{TCPServer::start} Invalid IP address format");
 
-        if (_netWrapper.bind(_listenFd, reinterpret_cast<const sockaddr *>(&addr), sizeof(addr)) != 0)
-            throw ServerError("{TCPServer::start}");
+            if (_netWrapper->bind(_listenFd, reinterpret_cast<const sockaddr *>(&addr), sizeof(addr)) != 0)
+                throw ServerError("{TCPServer::start}");
 
-        if (_netWrapper.listen(_listenFd, 64) != 0)
-            throw ServerError("{TCPServer::start} listen failed");
+            if (_netWrapper->listen(_listenFd, 64) != 0)
+                throw ServerError("{TCPServer::start} listen failed");
 
-        if (_netWrapper.setNonBlocking(_listenFd, _nonBlocking) != 0)
-            throw ServerError("{TCPServer::start} setNonBlocking(listen) failed");
-
+            if (_netWrapper->setNonBlocking(_listenFd, _nonBlocking) != 0)
+                throw ServerError("{TCPServer::start} setNonBlocking(listen) failed");
+        } catch (...) {
+            stop();
+            throw;
+        }
         AServer::setRunning(true);
     }
 
@@ -92,17 +95,17 @@ namespace Net::Server
         {
             std::scoped_lock lock(_mutex);
             for (const auto &sock : _clients | std::views::keys)
-                _netWrapper.closeSocket(sock);
+                _netWrapper->closeSocket(sock);
             _clients.clear();
             _endpointToFd.clear();
         }
 
         if (_listenFd != kInvalidSocket) {
-            _netWrapper.closeSocket(_listenFd);
+            _netWrapper->closeSocket(_listenFd);
             _listenFd = kInvalidSocket;
         }
 
-        (void) _netWrapper.cleanupNetwork();
+        (void) _netWrapper->cleanupNetwork();
     }
 
     void TCPServer::readPackets()
@@ -122,120 +125,190 @@ namespace Net::Server
         while (true) {
             sockaddr_in clientAddr{};
             socklen_t len = sizeof(clientAddr);
-            socketHandle clientFd = _netWrapper.accept(_listenFd, reinterpret_cast<sockaddr *>(&clientAddr), &len);
+            socketHandle clientFd = _netWrapper->accept(_listenFd, reinterpret_cast<sockaddr *>(&clientAddr), &len);
 
             if (clientFd == kInvalidSocket) {
                 if (wouldBlock())
                     break;
+                std::cerr << "{TCPServer::acceptLoop} accept socket connection failed" << std::endl;
                 break;
             }
 
-            if (_netWrapper.setNonBlocking(clientFd, _nonBlocking) != 0) {
-                _netWrapper.closeSocket(clientFd);
+            if (_netWrapper->setNonBlocking(clientFd, _nonBlocking) != 0) {
+                _netWrapper->closeSocket(clientFd);
                 continue;
             }
-
-            ClientState st;
-            st.addr = clientAddr;
-            st.rx.reserve(4096);
 
             {
                 const AddressKey key = {clientAddr.sin_addr.s_addr, clientAddr.sin_port};
                 std::scoped_lock lock(_mutex);
-                _clients.emplace(clientFd, std::move(st));
+                _clients.emplace(clientFd, std::make_unique<ClientState>(clientAddr));
                 _endpointToFd[key] = clientFd;
             }
         }
     }
 
-    void TCPServer::dropClient(const socketHandle clientFd, const sockaddr_in &clientAddr)
+    void TCPServer::dropClient(const socketHandle clientFd)
     {
-        _netWrapper.closeSocket(clientFd);
+        {
+            sockaddr_in addr{};
+            std::scoped_lock lock(_mutex);
+            const auto it = _clients.find(clientFd);
+            if (it == _clients.end())
+                return;
+            addr = it->second->addr;
+            _clients.erase(it);
+            _endpointToFd.erase({addr.sin_addr.s_addr, addr.sin_port});
+        }
+        _netWrapper->closeSocket(clientFd);
+    }
+
+    std::vector<socketHandle> TCPServer::snapshotClientSockets() const
+    {
+        std::vector<socketHandle> sockets;
         std::scoped_lock lock(_mutex);
-        _clients.erase(clientFd);
-        _endpointToFd.erase({clientAddr.sin_addr.s_addr, clientAddr.sin_port});
+
+        sockets.reserve(_clients.size());
+        for (const auto &sock : _clients | std::views::keys)
+            sockets.push_back(sock);
+
+        return sockets;
+    }
+
+    void TCPServer::readOneClient(const socketHandle clientFd, std::array<uint8_t, 4096> &tmp)
+    {
+        while (true) {
+            const auto received = _netWrapper->recv(clientFd, tmp.data(), tmp.size(), 0);
+
+            if (received == 0) {
+                dropClient(clientFd);
+                return;
+            }
+
+            if (received < 0) {
+                if (wouldBlock())
+                    return;
+                dropClient(clientFd);
+                return;
+            }
+
+            if (!onBytesReceived(clientFd, tmp.data(), static_cast<size_t>(received)))
+                return;
+        }
+    }
+
+    bool TCPServer::onBytesReceived(const socketHandle clientFd, const uint8_t *data, const size_t len)
+    {
+        struct PendingPayload {
+            sockaddr_in addr{};
+            std::vector<uint8_t> bytes;
+        };
+
+        std::vector<PendingPayload> ready;
+        ready.reserve(4);
+
+        bool mustDrop = false;
+
+        {
+            std::scoped_lock lock(_mutex);
+            const auto it = _clients.find(clientFd);
+            if (it == _clients.end())
+                return false;
+
+            if (const auto &client = it->second; !client->rx.write(data, len)) {
+                mustDrop = true;
+            } else {
+                while (client->rx.readable() >= 4) {
+                    uint32_t size = 0;
+                    if (!client->rx.peek(reinterpret_cast<uint8_t *>(&size), 4))
+                        break;
+                    size = ntohl(size);
+
+                    if (size == 0 || size > MAXSIZE) {
+                        mustDrop = true;
+                        break;
+                    }
+
+                    if (client->rx.readable() < 4 + size)
+                        break;
+
+                    client->rx.read(nullptr, 4);
+
+                    PendingPayload p;
+                    p.addr = client->addr;
+                    p.bytes.resize(size);
+                    client->rx.read(p.bytes.data(), size);
+
+                    ready.push_back(std::move(p));
+                }
+            }
+        }
+
+        if (mustDrop) {
+            dropClient(clientFd);
+            return false;
+        }
+
+        {
+            std::scoped_lock qLock(_queueMutex);
+            for (auto &p : ready) {
+                auto pkt = _packet->newPacket();
+                pkt->setAddress(p.addr);
+                pkt->setSize(static_cast<uint32_t>(p.bytes.size()));
+                std::memcpy(pkt->buffer(), p.bytes.data(), p.bytes.size());
+                _queue.push(std::move(pkt));
+            }
+        }
+
+        return true;
     }
 
     void TCPServer::readClients()
     {
-        std::vector<socketHandle> sockets;
+        const auto clientSockets = snapshotClientSockets();
+
+        std::array<uint8_t, 4096> tmp{};
+
+        for (const socketHandle clientFd : clientSockets) {
+            readOneClient(clientFd, tmp);
+            flushWrites(clientFd);
+        }
+    }
+
+    void TCPServer::flushWrites(const socketHandle clientFd)
+    {
+        bool mustDrop = false;
+
         {
             std::scoped_lock lock(_mutex);
-            sockets.reserve(_clients.size());
-            for (const auto &sock : _clients | std::views::keys)
-                sockets.push_back(sock);
-        }
+            const auto it = _clients.find(clientFd);
+            if (it == _clients.end())
+                return;
 
-        uint8_t tmp[4096];
+            const auto &client = it->second;
 
-        for (socketHandle s : sockets) {
-            while (true) {
-                const auto r = _netWrapper.recv(s, tmp, sizeof(tmp), 0);
+            while (client->tx.readable() > 0) {
+                uint8_t tmp[4096];
+                const size_t toSend = std::min(client->tx.readable(), sizeof(tmp));
+                client->tx.peek(tmp, toSend);
 
-                if (r == 0) {
-                    sockaddr_in a{};
-                    {
-                        std::scoped_lock lock(_mutex);
-                        auto it = _clients.find(s);
-                        if (it == _clients.end())
-                            break;
-                        a = it->second.addr;
-                    }
-                    dropClient(s, a);
-                    break;
-                }
+                const auto size = _netWrapper->send(clientFd, tmp, toSend, 0);
 
-                if (r < 0) {
+                if (size < 0) {
                     if (wouldBlock())
-                        break;
-
-                    sockaddr_in a{};
-                    {
-                        std::scoped_lock lock(_mutex);
-                        auto it = _clients.find(s);
-                        if (it == _clients.end())
-                            break;
-                        a = it->second.addr;
-                    }
-                    dropClient(s, a);
+                        return;
+                    mustDrop = true;
                     break;
                 }
+                if (size == 0)
+                    return;
 
-                ClientState *state = nullptr;
-                {
-                    std::scoped_lock lock(_mutex);
-                    auto it = _clients.find(s);
-                    if (it == _clients.end())
-                        break;
-                    state = &it->second;
-                }
-
-                state->rx.insert(state->rx.end(), tmp, tmp + static_cast<size_t>(r));
-
-                while (state->rx.size() >= 4) {
-                    const uint32_t size = readU32BE(state->rx.data());
-                    if (size == 0 || size > MAXSIZE) {
-                        dropClient(s, state->addr);
-                        goto next_socket;
-                    }
-                    if (state->rx.size() < 4 + size)
-                        break;
-
-                    auto pkt = _packet->newPacket();
-                    pkt->setAddress(state->addr);
-                    pkt->setSize(size);
-
-                    std::memcpy(pkt->buffer(), state->rx.data() + 4, size);
-                    state->rx.erase(state->rx.begin(), state->rx.begin() + 4 + size);
-
-                    {
-                        std::scoped_lock qLock(_queueMutex);
-                        _queue.push(std::move(pkt));
-                    }
-                }
+                client->tx.read(nullptr, static_cast<size_t>(size));
             }
-        next_socket:;
         }
+
+        if (mustDrop)
+            dropClient(clientFd);
     }
 
     bool TCPServer::popPacket(std::shared_ptr<IPacket> &pkt)
@@ -248,41 +321,33 @@ namespace Net::Server
         return true;
     }
 
-    bool TCPServer::sendAll(const socketHandle clientFd, const uint8_t *data, const size_t len) const
-    {
-        size_t off = 0;
-        while (off < len) {
-            const auto r = _netWrapper.send(clientFd, data + off, len - off, 0);
-            if (r <= 0)
-                return false;
-            off += static_cast<size_t>(r);
-        }
-        return true;
-    }
-
     bool TCPServer::sendPacket(const IPacket &pkt)
     {
-        const sockaddr_in *addr = pkt.address();
+        const auto addr = pkt.address();
         if (!addr)
             return false;
 
-        socketHandle destFd = kInvalidSocket;
-        {
-            std::scoped_lock lock(_mutex);
-            const auto it = _endpointToFd.find({addr->sin_addr.s_addr, addr->sin_port});
-            if (it == _endpointToFd.end())
-                return false;
-            destFd = it->second;
-        }
+        std::scoped_lock lock(_mutex);
+
+        const auto it = _endpointToFd.find({addr->sin_addr.s_addr, addr->sin_port});
+        if (it == _endpointToFd.end())
+            return false;
+
+        const auto &client = _clients.at(it->second);
 
         const auto size = static_cast<uint32_t>(pkt.size());
         if (size == 0 || size > MAXSIZE)
             return false;
 
-        std::vector<uint8_t> frame(4 + size);
-        writeU32BE(frame.data(), size);
-        std::memcpy(frame.data() + 4, pkt.buffer(), size);
+        uint32_t beSize = htonl(size);
 
-        return sendAll(destFd, frame.data(), frame.size());
+        if (!client->tx.write(reinterpret_cast<uint8_t *>(&beSize), 4))
+            return false;
+
+        if (!client->tx.write(pkt.buffer(), size))
+            return false;
+
+        return true;
     }
+
 } // namespace Net::Server

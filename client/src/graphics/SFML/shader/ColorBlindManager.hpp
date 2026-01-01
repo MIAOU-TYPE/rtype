@@ -11,36 +11,12 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <memory>
 #include <string>
+#include <iostream>
 #include "GraphicsTypes.hpp"
 #include "IResourceManager.hpp"
 
 namespace Graphics
 {
-
-    /**
-     * @brief Exception class for colorblind manager errors.
-     */
-    class ColorBlindError : public std::exception {
-      public:
-        /** @brief Constructor for ColorBlindError.
-         * @param message The error message.
-         */
-        explicit ColorBlindError(const std::string &message) : _message(std::move(message))
-        {
-        }
-
-        /** @brief Get the error message.
-         * @return The error message as a C-style string.
-         */
-        const char *what() const noexcept override
-        {
-            return _message.c_str();
-        }
-
-      private:
-        std::string _message; ///> Error message
-    };
-
     /**
      * @class ColorBlindManager
      * @brief Manages colorblind filters using GLSL shaders.
@@ -56,7 +32,7 @@ namespace Graphics
         /**
          * @brief Destroy the ColorBlindManager.
          */
-        ~ColorBlindManager();
+        ~ColorBlindManager() = default;
 
         /**
          * @brief Set the colorblind filter mode.

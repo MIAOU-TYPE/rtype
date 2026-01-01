@@ -103,12 +103,11 @@ namespace Engine
             (void) _audio->onMouseReleased(frame.mouseX, frame.mouseY);
 
             if (_colorBlindNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
-                _currentColorBlindMode = (_currentColorBlindMode + 1) % _colorBlindModes.size();
-                const auto mode = _colorBlindModes.at(_currentColorBlindMode);
-                _renderer->setColorBlindMode(mode);
+                _currentColorBlindMode = nextMode(_currentColorBlindMode);
+                _renderer->setColorBlindMode(_currentColorBlindMode);
 
                 std::string label;
-                switch (mode) {
+                switch (_currentColorBlindMode) {
                     case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
                     case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
                     case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
@@ -166,5 +165,16 @@ namespace Engine
         _resolution->render();
         _resolutionNext->render();
         _back->render();
+    }
+
+    Graphics::ColorBlindMode SettingsMenu::nextMode(Graphics::ColorBlindMode m)
+    {
+        switch (m) {
+            case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
+            case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
+            case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
+            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
+            default: return Graphics::ColorBlindMode::NONE;
+        }
     }
 } // namespace Engine

@@ -289,7 +289,7 @@ namespace Net::Server
 
             while (client->tx.readable() > 0) {
                 uint8_t tmp[4096];
-                const size_t toSend = std::min(client->tx.readable(), sizeof(tmp));
+                const size_t toSend = (std::min) (client->tx.readable(), sizeof(tmp));
                 client->tx.peek(tmp, toSend);
 
                 const auto size = _netWrapper->send(clientFd, tmp, toSend, 0);

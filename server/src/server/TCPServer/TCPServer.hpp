@@ -7,8 +7,10 @@
 
 #pragma once
 
+#include <array>
 #include <atomic>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <queue>

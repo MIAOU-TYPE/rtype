@@ -9,9 +9,9 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <iostream>
 #include <memory>
 #include <string>
-#include <iostream>
 #include "GraphicsTypes.hpp"
 #include "IResourceManager.hpp"
 

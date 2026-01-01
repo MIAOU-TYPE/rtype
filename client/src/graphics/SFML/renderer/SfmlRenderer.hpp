@@ -89,12 +89,6 @@ namespace Graphics
          */
         void setColorBlindMode(ColorBlindMode mode) override;
 
-        /**
-         * @brief Get the current colorblind filter mode.
-         * @return ColorBlindMode The current mode.
-         */
-        [[nodiscard]] ColorBlindMode getColorBlindMode() const noexcept override;
-
       private:
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.
 

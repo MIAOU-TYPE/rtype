@@ -6,34 +6,33 @@
 */
 
 #include "ColorBlindManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {
 
-    ColorBlindManager::ColorBlindManager(std::shared_ptr<Resources::IResourceManager> resourceManager)
+    ColorBlindManager::ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> resourceManager)
         : _mode(ColorBlindMode::NONE), _shaderLoaded(false)
     {
         if (!sf::Shader::isAvailable()) {
-            throw ColorBlindError("ColorBlindManager: Shaders are not supported on this system");
+            std::cerr << "ColorBlindManager: Shaders are not supported on this system\n";
+            _shaderLoaded = false;
+            return;
         }
         const auto shaderData = resourceManager->loadResource("shaders/colorblind.frag");
         if (!shaderData.data || shaderData.size == 0) {
             _shaderLoaded = false;
-            throw ColorBlindError("ColorBlindManager: Failed to load colorblind shader from resources");
+            std::cerr << "ColorBlindManager: Failed to load colorblind shader resource\n";
+            return;
         }
         const std::string shaderCode(reinterpret_cast<const char *>(shaderData.data), shaderData.size);
         if (!_shader.loadFromMemory(shaderCode, sf::Shader::Type::Fragment)) {
             _shaderLoaded = false;
-            throw ColorBlindError("ColorBlindManager: Failed to compile colorblind shader");
+            std::cerr << "ColorBlindManager: Failed to compile colorblind shader\n";
+            return;
         }
         _shaderLoaded = true;
         _shader.setUniform("texture", sf::Shader::CurrentTexture);
         _shader.setUniform("mode", 0);
-    }
-
-    ColorBlindManager::~ColorBlindManager()
-    {
     }
 
     void ColorBlindManager::setMode(ColorBlindMode mode)

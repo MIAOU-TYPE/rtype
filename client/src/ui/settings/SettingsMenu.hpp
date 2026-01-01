@@ -129,11 +129,11 @@ namespace Engine
         bool _resolutionChanged = false;    ///> Flag indicating if the resolution has been changed
 
         /**
-         * @brief List of available colorblind modes.
-         */
-        std::vector<Graphics::ColorBlindMode> _colorBlindModes{Graphics::ColorBlindMode::NONE,
-            Graphics::ColorBlindMode::DEUTERANOPIA, Graphics::ColorBlindMode::PROTANOPIA,
-            Graphics::ColorBlindMode::TRITANOPIA};
-        std::size_t _currentColorBlindMode = 0; ///> Index of the current colorblind mode
+        * @brief Get the next colorblind mode in sequence.
+        * @param m The current colorblind mode.
+        * @return The next colorblind mode.
+        */
+        static Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m);
+        Graphics::ColorBlindMode _currentColorBlindMode = Graphics::ColorBlindMode::NONE; ///> Current colorblind mode
     };
 } // namespace Engine

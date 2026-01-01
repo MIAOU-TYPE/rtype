@@ -39,23 +39,27 @@ namespace Graphics
 
     void SfmlRenderer::beginFrame()
     {
-        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
-            const auto windowSize = _window->getSize();
-            const auto textureSize = _renderTexture->getSize();
-
-            if (windowSize.x != textureSize.x || windowSize.y != textureSize.y) {
-                if (!_renderTexture->resize(windowSize)) {
-                    std::cerr << "[SfmlRenderer] Failed to resize render texture, disabling shader" << std::endl;
-                    _renderTexture.reset();
-                }
+        const bool wantsPostProcess =
+            (_colorBlindManager && _colorBlindManager->isShaderAvailable());
+        const auto windowSize = _window->getSize();
+        const auto texSize = _renderTexture->getSize();
+        if (!wantsPostProcess) {
+            _window->clear();
+            return;
+        }
+        if (!_renderTexture)
+            _renderTexture = std::make_unique<sf::RenderTexture>();
+        if (texSize.x != windowSize.x || texSize.y != windowSize.y) {
+            if (!_renderTexture->resize(windowSize)) {
+                std::cerr << "[SfmlRenderer] Failed to resize render texture, disabling colorblind shader\n";
+                if (_colorBlindManager)
+                    _colorBlindManager->setMode(ColorBlindMode::NONE);
+                _renderTexture.reset();
+                _window->clear();
+                return;
             }
         }
-
-        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
-            _renderTexture->clear();
-        } else {
-            _window->clear();
-        }
+        _renderTexture->clear();
     }
 
     void SfmlRenderer::endFrame()

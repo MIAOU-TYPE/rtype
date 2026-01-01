@@ -18,7 +18,7 @@
  * @details This namespace contains definitions and enumerations related to
  * the network protocol used for communication between client and server.
  */
-namespace Net::Protocol::UDP
+namespace Net::Protocol::TCP
 {
     /**
      * @brief Packet types for TCP communication from client to server.
@@ -44,4 +44,4 @@ namespace Net::Protocol::UDP
     constexpr uint8_t ROOM_LEFT = 0x15;    ///> Server confirms leaving a room
     constexpr uint8_t ROOM_UPDATE = 0x16;  ///> Server sends an update about the room
     constexpr uint8_t GAME_START = 0x17;   ///> Server notifies clients that the game is starting
-} // namespace Net::Protocol::UDP
+} // namespace Net::Protocol::TCP

@@ -7,9 +7,6 @@
 
 #include "TCPWriter.hpp"
 
-#include <iostream>
-#include <ostream>
-
 namespace Net::TCP
 {
     void Writer::u8(const uint8_t v)

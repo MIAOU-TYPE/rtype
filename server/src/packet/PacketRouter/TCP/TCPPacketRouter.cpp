@@ -114,7 +114,7 @@ namespace Net
         if (roomName.empty() || roomName.size() > 32)
             return sendError(addr, req, 6, "invalid roomName");
 
-        if (maxPlayers < 1 || maxPlayers > 8)
+        if (maxPlayers < 1 || maxPlayers > 4)
             return sendError(addr, req, 5, "invalid maxPlayers");
 
         if (r.remaining() != 0)
@@ -160,9 +160,6 @@ namespace Net
         b.u32(roomId);
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_JOINED, req, b.bytes());
         _tcp->sendPacket(*_packetFactory->make(addr, payload));
-
-        // Option: push update aux membres de la room (req=0)
-        // broadcastRoomUpdate(roomId);
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const

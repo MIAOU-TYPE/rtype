@@ -34,7 +34,7 @@ namespace Thread
 
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _renderer);
         _stateManager = std::make_unique<Engine::StateManager>();
         _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
@@ -103,7 +103,7 @@ namespace Thread
 
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
-            _stateManager->update(_input->consumeFrame());
+            // _stateManager->update(_input->consumeFrame());
 
             {
                 std::scoped_lock lock(_frameMutex);
@@ -114,7 +114,7 @@ namespace Thread
                 for (const auto &cmd : *localRenderCommands)
                     _renderer->draw(cmd);
             }
-            _stateManager->render();
+            // _stateManager->render();
             _renderer->endFrame();
             syncToNextTick(nextTick, Tick * 2);
         }
@@ -253,6 +253,9 @@ namespace Thread
     {
         _writeRenderCommands->clear();
 
+        const auto viewportSize = _renderer->getViewportSize();
+        Engine::BackgroundSystem::render(
+            _world->registry(), *_writeRenderCommands, viewportSize.width, viewportSize.height);
         Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
 
         {

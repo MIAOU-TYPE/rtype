@@ -85,14 +85,14 @@ namespace Utils
          * @param value The string representing the port number.
          * @return True if parsing was successful, false otherwise.
          */
-        bool parsePort(const std::string &value);
+        [[nodiscard]] bool parsePort(const std::string &value);
 
         /**
          * @brief Parses the host address from a string.
          * @param value The string representing the host address.
          * @return True if parsing was successful, false otherwise.
          */
-        bool parseHost(const std::string &value);
+        [[nodiscard]] bool parseHost(const std::string &value);
 
         int _argc;    ///> Number of command-line arguments
         char **_argv; ///> Array of command-line arguments

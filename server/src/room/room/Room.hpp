@@ -99,6 +99,12 @@ namespace Engine
          */
         [[nodiscard]] size_t getMaxPlayers() const noexcept;
 
+        /**
+         * @brief Gets the name of the room
+         * @return The name of the room
+         */
+        [[nodiscard]] std::string getName() const noexcept;
+
       private:
         /**
          * @brief Main loop for the room's game server

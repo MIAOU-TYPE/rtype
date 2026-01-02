@@ -73,6 +73,11 @@ namespace Engine
         return _maxPlayers;
     }
 
+    std::string Room::getName() const noexcept
+    {
+        return _name;
+    }
+
     void Room::run() const
     {
         constexpr auto Tick = std::chrono::milliseconds(16);

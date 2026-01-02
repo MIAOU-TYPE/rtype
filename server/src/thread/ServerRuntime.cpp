@@ -6,25 +6,37 @@
 */
 
 #include "ServerRuntime.hpp"
+
+#include "TCPPacket.hpp"
 using namespace Net::Thread;
 
-ServerRuntime::ServerRuntime(const std::shared_ptr<Server::IServer> &server) : _server(server)
+ServerRuntime::ServerRuntime(
+    const std::shared_ptr<Server::IServer> &UdpServer, const std::shared_ptr<Server::IServer> &TcpServer)
+    : _udpServer(UdpServer), _tcpServer(TcpServer)
 {
-    if (!_server)
+    if (!_udpServer)
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid server pointer");
-    _packetFactory = std::make_shared<Factory::PacketFactory>(std::make_shared<Net::UDPPacket>());
+    _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
     _roomManager =
-        std::make_shared<Engine::RoomManager>(_sessionManager, _server, _packetFactory, "levels/level1.json");
+        std::make_shared<Engine::RoomManager>(_sessionManager, _udpServer, _udpPacketFactory, "levels/level1.json");
 
-    _packetRouter = std::make_shared<PacketRouter>(_sessionManager, _roomManager);
+    _udpPacketRouter = std::make_shared<UDPPacketRouter>(_sessionManager, _roomManager);
+
+    _tcpPacketFactory = std::make_shared<Factory::TCPPacketFactory>(std::make_shared<TCPPacket>());
+    _tcpPacketRouter = std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory);
+    _stopRequested.store(false);
 }
 
 ServerRuntime::~ServerRuntime()
 {
-    if (!_stopRequested.load())
-        stop();
-    _server = nullptr;
+    try {
+        if (!_stopRequested.load())
+            stop();
+        _udpServer = nullptr;
+    } catch (...) {
+        std::cerr << "{ServerRuntime::~ServerRuntime} Exception during destruction" << std::endl;
+    }
 }
 
 void ServerRuntime::wait()
@@ -38,7 +50,8 @@ void ServerRuntime::wait()
 void ServerRuntime::start()
 {
     try {
-        _server->start();
+        _udpServer->start();
+        _tcpServer->start();
     } catch (std::exception &e) {
         throw ThreadError(std::string("{ServerRuntime::start} Failed to start server: ") + e.what());
     }
@@ -46,6 +59,7 @@ void ServerRuntime::start()
     _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
     _processorThread = std::thread(&ServerRuntime::runProcessor, this);
     _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
+    _tcpThread = std::thread(&ServerRuntime::runTcp, this);
 }
 
 void ServerRuntime::stop()
@@ -57,7 +71,7 @@ void ServerRuntime::stop()
     }
     _cv.notify_all();
 
-    _server->setRunning(false);
+    _udpServer->setRunning(false);
     _roomManager->forEachRoom([](Engine::Room &room) {
         room.stop();
     });
@@ -67,21 +81,24 @@ void ServerRuntime::stop()
         _receiverThread.join();
     if (_processorThread.joinable())
         _processorThread.join();
-    _server->stop();
+    if (_tcpThread.joinable())
+        _tcpThread.join();
+    _tcpServer->stop();
+    _udpServer->stop();
 }
 
 void ServerRuntime::runReceiver() const
 {
-    while (_server->isRunning()) {
-        _server->readPackets();
+    while (_udpServer->isRunning()) {
+        _udpServer->readPackets();
     }
 }
 
 void ServerRuntime::runProcessor() const
 {
-    while (_server->isRunning()) {
-        if (std::shared_ptr<IPacket> pkt = nullptr; _server->popPacket(pkt)) {
-            _packetRouter->handlePacket(pkt);
+    while (_udpServer->isRunning()) {
+        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt)) {
+            _udpPacketRouter->handlePacket(pkt);
         }
     }
 }
@@ -104,11 +121,11 @@ void ServerRuntime::runSnapshot() const
             if (entities.empty())
                 return;
 
-            if (const auto basePacket = _packetFactory->createSnapshotPacket(entities)) {
+            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities)) {
                 for (const int sessionId : room.sessions()) {
                     if (const sockaddr_in *addr = _sessionManager->getAddress(sessionId)) {
                         basePacket->setAddress(*addr);
-                        _server->sendPacket(*basePacket);
+                        _udpServer->sendPacket(*basePacket);
                     }
                 }
             }
@@ -116,5 +133,17 @@ void ServerRuntime::runSnapshot() const
 
         if (auto now = clock::now(); now > nextTick + Tick)
             nextTick = now;
+    }
+}
+
+void ServerRuntime::runTcp() const
+{
+    _tcpServer->setNonBlocking(true);
+    while (_running) {
+        _tcpServer->readPackets();
+        if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt)) {
+            std::cout << "Received TCP packet of size " << pkt->size() << std::endl;
+            _tcpPacketRouter->handle(pkt);
+        }
     }
 }

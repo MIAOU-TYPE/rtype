@@ -98,41 +98,46 @@ namespace Engine
         const float w = static_cast<float>(vp.width);
         const float h = static_cast<float>(vp.height);
         const float cx = w * 0.5f;
-        const float cy = h * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
         const auto texSize = _renderer->textures()->getSize(_backgroundTexture);
-        const float audioX = w * 0.25f;
-        const float audioYStart = h * 0.25f;
+        const float leftColX = w * 0.25f;
+        const float rightColX = w * 0.75f;
+        const float audioYStart = h * 0.2f;
+        const float videoYStart = h * 0.3f;
         const float spacingY = h * 0.12f;
         const float labelMargin = w * 0.02f;
         const float musicLabelHalfWidth = _musicVolLabel->bounds().w * 0.5f;
         const float buttonHalfWidth = _musicVolDown->bounds().w * 0.5f;
         const float sfxLabelHalfWidth = _sfxVolLabel->bounds().w * 0.5f;
+        const float videoButtonOffset = _colorBlindMode->bounds().w * 0.5f + labelMargin;
+        const float videoButtonSpacing = w * 0.05f;
 
         _backgroundCmd.frame = {0, 0, static_cast<int>(texSize.width), static_cast<int>(texSize.height)};
         _backgroundCmd.position = {0.f, 0.f};
         _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
 
-        _colorBlindMode->setPosition(cx - 400.f * scale, cy + 40.f * scale);
-        _colorBlindNext->setPosition(cx + (150.f + _colorBlindMode->bounds().w + 250.f) * scale, cy + 40.f * scale);
-        _resolution->setPosition(cx - 400.f * scale, cy - 260.f * scale);
-        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 260.f * scale);
-        _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
-
-        _musicVolLabel->setPosition(audioX - musicLabelHalfWidth, audioYStart);
+        _musicVolLabel->setPosition(leftColX - musicLabelHalfWidth, audioYStart);
         _musicVolDown->setPosition(
-            audioX - (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
+            leftColX - (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
         _musicVolUp->setPosition(
-            audioX + (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
+            leftColX + (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
 
-        _sfxVolLabel->setPosition(audioX - sfxLabelHalfWidth, audioYStart + spacingY);
+        _sfxVolLabel->setPosition(leftColX - sfxLabelHalfWidth, audioYStart + spacingY);
         _sfxVolDown->setPosition(
-            audioX - (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
+            leftColX - (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
         _sfxVolUp->setPosition(
-            audioX + (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
+            leftColX + (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
 
-        _muteMusic->setPosition(audioX - _muteMusic->bounds().w * 0.5f, audioYStart + 2 * spacingY);
-        _muteSFX->setPosition(audioX - _muteSFX->bounds().w * 0.5f, audioYStart + 3 * spacingY);
+        _muteMusic->setPosition(leftColX - _muteMusic->bounds().w * 0.5f, audioYStart + 2 * spacingY);
+        _muteSFX->setPosition(leftColX - _muteSFX->bounds().w * 0.5f, audioYStart + 3 * spacingY);
+
+        _colorBlindMode->setPosition(rightColX - videoButtonOffset, videoYStart);
+        _colorBlindNext->setPosition(rightColX + videoButtonOffset + videoButtonSpacing, videoYStart);
+
+        _resolution->setPosition(rightColX - videoButtonOffset, videoYStart + spacingY);
+        _resolutionNext->setPosition(rightColX + videoButtonOffset + videoButtonSpacing, videoYStart + spacingY);
+
+        _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
     void SettingsMenu::update(const InputFrame &frame)

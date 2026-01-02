@@ -18,6 +18,10 @@ namespace Graphics
      */
     class IRenderTextureManager {
       public:
+      
+        /**
+         * @brief Virtual destructor.
+         */
         virtual ~IRenderTextureManager() = default;
 
         /**

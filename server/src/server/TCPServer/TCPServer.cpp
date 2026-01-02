@@ -74,8 +74,7 @@ namespace Net::Server
             if (_netWrapper->listen(_listenFd, 64) != 0)
                 throw ServerError("{TCPServer::start} listen failed");
 
-            if (_netWrapper->setNonBlocking(_listenFd, _nonBlocking) != 0)
-                throw ServerError("{TCPServer::start} setNonBlocking(listen) failed");
+            setNonBlocking(true);
         } catch (...) {
             stop();
             throw;

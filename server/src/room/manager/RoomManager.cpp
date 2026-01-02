@@ -10,17 +10,17 @@
 namespace Engine
 {
     RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> UDPPacketFactory,
         std::string levelPath)
-        : _sessions(std::move(sessions)), _server(std::move(server)), _packetFactory(std::move(packetFactory)),
+        : _sessions(std::move(sessions)), _server(std::move(server)), _udpPacketFactory(std::move(UDPPacketFactory)),
           _levelPath(std::move(levelPath))
     {
     }
 
-    RoomId RoomManager::createRoom() noexcept
+    RoomId RoomManager::createRoom(const std::string &name, size_t maxPlayers) noexcept
     {
         try {
-            auto room = std::make_shared<Room>(_sessions, _server, _packetFactory, _levelPath);
+            auto room = std::make_shared<Room>(_sessions, _server, _udpPacketFactory, _levelPath, name, maxPlayers);
             std::scoped_lock lock(_mutex);
             auto id = _nextRoomId++;
             _rooms.emplace(id, room);
@@ -58,16 +58,18 @@ namespace Engine
         }
     }
 
-    void RoomManager::start(const RoomId roomId) const noexcept
+    bool RoomManager::start(const RoomId roomId) const noexcept
     {
         const auto room = getRoomById(roomId);
-        if (!room)
-            return;
+        if (!room || room->getCurrentPlayers() < room->getMaxPlayers())
+            return false;
         try {
             room->start();
         } catch (...) {
             std::cerr << "{RoomManager::start} failed to start room " << roomId << std::endl;
+            return false;
         }
+        return true;
     }
 
     void RoomManager::addPlayerToRoom(const RoomId roomId, const int sessionId) noexcept
@@ -84,21 +86,24 @@ namespace Engine
         _playerToRoom[sessionId] = roomId;
     }
 
-    void RoomManager::removePlayer(const int sessionId) noexcept
+    RoomId RoomManager::removePlayer(const int sessionId) noexcept
     {
         const auto room = getRoomOfPlayer(sessionId);
+        auto roomId = InvalidRoomId;
 
         if (!room)
-            return;
+            return roomId;
         try {
+            roomId = getRoomIdOfPlayer(sessionId);
             room->leave(sessionId);
             if (room->empty())
-                removeRoom(getRoomIdOfPlayer(sessionId));
+                removeRoom(roomId);
         } catch (...) {
-            return;
+            return InvalidRoomId;
         }
         std::scoped_lock lock(_mutex);
         _playerToRoom.erase(sessionId);
+        return roomId;
     }
 
     RoomId RoomManager::getRoomIdOfPlayer(const int sessionId) const noexcept
@@ -131,7 +136,7 @@ namespace Engine
             room->gameServer().onPlayerConnect(sessionId);
             return;
         }
-        const auto id = createRoom();
+        const auto id = createRoom("basic", 4);
         if (id == InvalidRoomId)
             return;
         addPlayerToRoom(id, sessionId);
@@ -144,7 +149,7 @@ namespace Engine
     {
         if (const auto room = getRoomOfPlayer(sessionId))
             room->gameServer().onPlayerDisconnect(sessionId);
-        removePlayer(sessionId);
+        (void) removePlayer(sessionId);
     }
 
     void RoomManager::onPlayerInput(const int sessionId, const Game::InputComponent &input) const noexcept
@@ -157,5 +162,21 @@ namespace Engine
     {
         if (const auto room = getRoomOfPlayer(sessionId))
             room->gameServer().onPing(sessionId);
+    }
+
+    std::vector<RoomManager::RoomEntry> RoomManager::listRooms() const noexcept
+    {
+        std::vector<RoomEntry> roomsList;
+        std::scoped_lock lock(_mutex);
+
+        for (const auto &[id, room] : _rooms) {
+            RoomEntry entry;
+            entry.id = id;
+            entry.name = "room";
+            entry.currentPlayers = room->getCurrentPlayers();
+            entry.maxPlayers = room->getMaxPlayers();
+            roomsList.push_back(entry);
+        }
+        return roomsList;
     }
 } // namespace Engine

@@ -25,6 +25,8 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
+#include "MusicRegistry.hpp"
+#include "SoundRegistry.hpp"
 
 using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
@@ -130,6 +132,8 @@ namespace Thread
 
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
+        std::shared_ptr<Engine::MusicRegistry> _musicRegistry = nullptr;   ///> Music registry for managing music
+        std::shared_ptr<Engine::SoundRegistry> _soundRegistry = nullptr;   ///> Sound registry for managing sound effects
 
         Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
 

@@ -12,7 +12,9 @@
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
 #include "Menu.hpp"
+#include "MusicRegistry.hpp"
 #include "SettingsState.hpp"
+#include "SoundRegistry.hpp"
 #include "StateManager.hpp"
 
 namespace Engine
@@ -27,9 +29,12 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
+         * @param musicRegistry Shared pointer to the music registry.
+         * @param soundRegistry Shared pointer to the sound registry.
          */
-        explicit MenuState(
-            std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer);
+        explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics,
+            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<MusicRegistry> musicRegistry,
+            std::shared_ptr<SoundRegistry> soundRegistry);
 
         /**
          * @brief Destroy the Menu State object.
@@ -50,8 +55,11 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
+        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Shared pointer to the music registry.
+        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
 
         std::unique_ptr<Menu> _menu;      ///> Unique pointer to the menu.
         StateManager *_manager = nullptr; ///> Pointer to the state manager.
+        Graphics::AudioHandle _menuMusicHandle = Graphics::InvalidAudio; ///> Handle to the menu music.
     };
 } // namespace Engine

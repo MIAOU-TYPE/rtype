@@ -9,8 +9,10 @@
 
 namespace Engine
 {
-    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer))
+    MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+        std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
+          _soundRegistry(std::move(soundRegistry))
     {
     }
 
@@ -20,6 +22,12 @@ namespace Engine
             _manager = &manager;
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
+            
+            if (_musicRegistry) {
+                _menuMusicHandle = _renderer->musics()->load("sounds/menu_theme.flac");
+                if (_menuMusicHandle != Graphics::InvalidAudio)
+                    _musicRegistry->playMusic(_menuMusicHandle, true, 50.f);
+            }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
         }
@@ -30,7 +38,8 @@ namespace Engine
         _menu->update(frame);
 
         if (_menu->wantsSettings()) {
-            _manager->queueState(std::make_unique<SettingsState>(*_manager, _graphics, _renderer));
+            _manager->queueState(
+                std::make_unique<SettingsState>(*_manager, _graphics, _renderer, _musicRegistry, _soundRegistry));
             return;
         }
         if (_menu->wantsToQuit())

@@ -9,7 +9,9 @@
 
 #include "InputState.hpp"
 #include "MenuState.hpp"
+#include "MusicRegistry.hpp"
 #include "SettingsMenu.hpp"
+#include "SoundRegistry.hpp"
 
 namespace Engine
 {
@@ -24,9 +26,12 @@ namespace Engine
          * @param manager Reference to the state manager.
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
+         * @param musicRegistry Shared pointer to the music registry.
+         * @param soundRegistry Shared pointer to the sound registry.
          */
         explicit SettingsState(StateManager &manager, std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer);
+            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<MusicRegistry> musicRegistry,
+            std::shared_ptr<SoundRegistry> soundRegistry);
         /**
          * @brief Destroy the Settings State object.
          */
@@ -46,6 +51,8 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
+        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
+        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Sound registry
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
 
         StateManager &_manager; ///> Reference to the state manager

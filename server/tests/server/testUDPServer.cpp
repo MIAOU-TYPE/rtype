@@ -33,8 +33,8 @@ TEST(UDPPacket, WriteAndReadBuffer)
 {
     UDPPacket pkt;
 
-    const char *str = "HelloWorld";
-    size_t len = strlen(str);
+    const auto str = "HelloWorld";
+    const size_t len = strlen(str);
 
     std::memcpy(pkt.buffer(), str, len);
     pkt.setSize(len);

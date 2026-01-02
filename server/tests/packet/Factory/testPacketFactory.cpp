@@ -44,7 +44,7 @@ TEST(PacketFactory, MakeDefaultPacket)
     Net::Factory::PacketFactory f(pkt);
 
     sockaddr_in addr = makeAddr(0x12345678, 5555);
-    uint8_t flag = Net::Protocol::PING;
+    uint8_t flag = Net::Protocol::UDP::PING;
 
     auto p = f.makeDefault(addr, flag);
     ASSERT_NE(p, nullptr);
@@ -74,7 +74,7 @@ TEST(PacketFactory, MakeDamagePacket)
 
     const auto *raw = reinterpret_cast<const DamageData *>(p->buffer());
 
-    EXPECT_EQ(raw->header.type, Net::Protocol::DAMAGE_EVENT);
+    EXPECT_EQ(raw->header.type, Net::Protocol::UDP::DAMAGE_EVENT);
     EXPECT_EQ(raw->id, htonl(id));
     EXPECT_EQ(raw->amount, htons(amount));
 }

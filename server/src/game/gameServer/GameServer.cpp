@@ -72,7 +72,7 @@ namespace Game
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
         if (const auto *addr = _sessions->getAddress(sessionId)) {
-            _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::ACCEPT));
+            _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
         }
     }
 
@@ -182,7 +182,7 @@ namespace Game
             }
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
-                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::PONG))
+                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
                         _server->sendPacket(*pkt);
                 }
                 break;

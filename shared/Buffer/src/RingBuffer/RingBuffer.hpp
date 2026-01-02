@@ -21,7 +21,7 @@ namespace Buffer
      * @tparam Tdata The type of data to be stored in the buffer.
      */
     template <typename Tdata>
-    class RingBuffer : public IBuffer<Tdata> {
+    class RingBuffer final : public IBuffer<Tdata> {
       public:
         /**
          * @brief Constructor to initialize the ring buffer with a given capacity.
@@ -71,6 +71,42 @@ namespace Buffer
          * @return true if the buffer is full, false otherwise.
          */
         bool isFull() const noexcept override;
+
+        /**
+         * @brief Get the current size of the buffer.
+         * @return The number of elements currently in the buffer.
+         */
+        size_t readable() const noexcept override;
+
+        /**
+         * @brief Get the remaining capacity of the buffer.
+         * @return The number of elements that can still be added to the buffer.
+         */
+        size_t writable() const noexcept override;
+
+        /**
+         * @brief Write multiple elements to the buffer.
+         * @param data Pointer to the data to be written.
+         * @param count Number of elements to write.
+         * @return true if the data was successfully written, false otherwise.
+         */
+        bool write(const Tdata *data, size_t count) noexcept override;
+
+        /**
+         * @brief Read multiple elements from the buffer.
+         * @param data Pointer to store the read data.
+         * @param count Number of elements to read.
+         * @return true if the data was successfully read, false otherwise.
+         */
+        bool read(Tdata *data, size_t count) noexcept override;
+
+        /**
+         * @brief Peek at multiple elements from the buffer without removing them.
+         * @param data Pointer to store the peeked data.
+         * @param count Number of elements to peek.
+         * @return true if the data was successfully peeked, false otherwise.
+         */
+        bool peek(Tdata *data, size_t count) const noexcept override;
 
       private:
         size_t _capacity = 0;                  ///> Maximum number of elements in the buffer

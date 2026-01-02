@@ -18,7 +18,11 @@ UDPServer::UDPServer() : AServer(), _rxBuffer(1024), _netWrapper("NetPluginLib")
 
 UDPServer::~UDPServer()
 {
-    UDPServer::stop();
+    try {
+        UDPServer::stop();
+    } catch (...) {
+        std::cerr << "{UDPServer::~UDPServer} Exception caught during server stop\n";
+    }
 }
 
 void UDPServer::start()
@@ -42,7 +46,7 @@ void UDPServer::start()
     std::cout << "{UDPServer::start} UDP Server started on " << _ip << ":" << _port << std::endl;
 }
 
-void UDPServer::stop()
+void UDPServer::stop() noexcept
 {
     setRunning(false);
     if (_socketFd != kInvalidSocket) {
@@ -50,10 +54,20 @@ void UDPServer::stop()
         _socketFd = kInvalidSocket;
         std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
     }
-    _netWrapper.cleanupNetwork();
+    if (const auto result = _netWrapper.cleanupNetwork(); result != 0)
+        std::cerr << "{UDPServer::stop} Failed to cleanup network" << std::endl;
 }
 
-void UDPServer::readPackets()
+void UDPServer::setNonBlocking(const bool nonBlocking)
+{
+    if (_socketFd == kInvalidSocket)
+        throw ServerError("{UDPServer::setNonBlocking} Socket not initialized");
+
+    if (_netWrapper.setNonBlocking(_socketFd, nonBlocking ? 1 : 0) < 0)
+        throw ServerError("{UDPServer::setNonBlocking} Failed to set socket non-blocking mode");
+}
+
+void UDPServer::readPackets() noexcept
 {
     if (!isRunning() || _socketFd == kInvalidSocket)
         return;
@@ -73,14 +87,14 @@ void UDPServer::readPackets()
     }
 }
 
-bool UDPServer::sendPacket(const Net::IPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt) noexcept
 {
     return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
                sizeof(sockaddr_in))
         != -1;
 }
 
-bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
+bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt) noexcept
 {
     std::scoped_lock lock(_rxMutex);
 
@@ -120,6 +134,7 @@ void UDPServer::bindSocket(family_t family) const
     if (inet_pton(family, _ip.c_str(), &addr.sin_addr) <= 0)
         throw ServerError("{UDPServer::bindSocket} Invalid IP address format");
 
-    if (const int result = bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)); result != 0)
+    if (const int result = _netWrapper.bind(_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
+        result != 0)
         throw ServerError("{UDPServer::bindSocket} Failed to bind socket");
 }

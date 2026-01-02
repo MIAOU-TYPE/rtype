@@ -35,9 +35,24 @@ extern "C"
 #endif
     }
 
-    EXPORT socketHandle net_socket(int domain, int type, int protocol)
+    EXPORT socketHandle net_socket(const int domain, const int type, const int protocol)
     {
         return ::socket(domain, type, protocol);
+    }
+
+    EXPORT int net_listen(const socketHandle sockFd, const int backlog)
+    {
+        return ::listen(sockFd, backlog);
+    }
+
+    EXPORT socketHandle net_accept(const socketHandle sockFd, sockaddr *addr, socklen_t *addrLen)
+    {
+        return ::accept(sockFd, addr, addrLen);
+    }
+
+    EXPORT int net_bind(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
+    {
+        return ::bind(sockFd, addr, addrLen);
     }
 
 #ifdef _WIN32
@@ -53,40 +68,88 @@ extern "C"
     }
 
     EXPORT recvfrom_return_t net_recvFrom(
-        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
+        socketHandle sockFd, void *buf, size_t len, int flags, sockaddr *srcAddr, socklen_t *addrLen)
     {
         return ::recvfrom(sockFd, (char *) buf, static_cast<int>(len), flags, srcAddr, (int *) addrLen);
     }
 
     EXPORT sendto_return_t net_sendTo(
-        socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
+        socketHandle sockFd, const void *buf, size_t len, int flags, const sockaddr *destAddr, socklen_t addrLen)
     {
         return ::sendto(sockFd, (const char *) buf, static_cast<int>(len), flags, destAddr, static_cast<int>(addrLen));
     }
+
+    EXPORT recv_return_t net_recv(const socketHandle sockFd, void *buf, const size_t len, const int flags)
+    {
+        return ::recv(sockFd, (char *) buf, static_cast<int>(len), flags);
+    }
+
+    EXPORT send_return_t net_send(const socketHandle sockFd, const void *buf, const size_t len, const int flags)
+    {
+        return ::send(sockFd, (const char *) buf, static_cast<int>(len), flags);
+    }
+
+    EXPORT int net_connect(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
+    {
+        return ::connect(sockFd, addr, static_cast<int>(addrLen));
+    }
+
+    EXPORT int net_setNonBlocking(const socketHandle s, const int enabled)
+    {
+        u_long mode = enabled ? 1 : 0;
+        return ioctlsocket(s, FIONBIO, &mode);
+    }
+
 #endif
 
 #ifndef _WIN32
-    void net_close(socketHandle s)
+    EXPORT void net_close(socketHandle s)
     {
         if (s != kInvalidSocket)
             close(s);
     }
 
-    int net_setOpt(socketHandle s, int level, int optName, const void *optVal, int optLen)
+    EXPORT int net_setOpt(
+        const socketHandle s, const int level, const int optName, const void *optVal, const int optLen)
     {
         return ::setsockopt(s, level, optName, static_cast<const void *>(optVal), static_cast<socklen_t>(optLen));
     }
 
-    recvfrom_return_t net_recvFrom(
-        socketHandle sockFd, void *buf, size_t len, int flags, struct sockaddr *srcAddr, socklen_t *addrLen)
+    EXPORT recvfrom_return_t net_recvFrom(
+        const socketHandle sockFd, void *buf, const size_t len, const int flags, sockaddr *srcAddr, socklen_t *addrLen)
     {
         return ::recvfrom(sockFd, buf, len, flags, srcAddr, addrLen);
     }
 
-    sendto_return_t net_sendTo(
-        socketHandle sockFd, const void *buf, size_t len, int flags, const struct sockaddr *destAddr, socklen_t addrLen)
+    EXPORT sendto_return_t net_sendTo(const socketHandle sockFd, const void *buf, const size_t len, const int flags,
+        const sockaddr *destAddr, const socklen_t addrLen)
     {
         return ::sendto(sockFd, buf, len, flags, destAddr, addrLen);
+    }
+
+    EXPORT recv_return_t net_recv(const socketHandle sockFd, void *buf, const size_t len, const int flags)
+    {
+        return ::recv(sockFd, buf, len, flags);
+    }
+
+    EXPORT send_return_t net_send(const socketHandle sockFd, const void *buf, const size_t len, const int flags)
+    {
+        return ::send(sockFd, buf, len, flags);
+    }
+
+    EXPORT int net_connect(const socketHandle sockFd, const sockaddr *addr, const socklen_t addrLen)
+    {
+        return ::connect(sockFd, addr, addrLen);
+    }
+
+    EXPORT int net_setNonBlocking(const socketHandle s, const int enabled)
+    {
+        const int flags = ::fcntl(s, F_GETFL, 0);
+        if (flags < 0)
+            return -1;
+
+        const int newFlags = enabled ? (flags | O_NONBLOCK) : (flags & ~O_NONBLOCK);
+        return ::fcntl(s, F_SETFL, newFlags);
     }
 #endif
 }

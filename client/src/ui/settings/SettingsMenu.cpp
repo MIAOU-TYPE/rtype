@@ -6,6 +6,21 @@
 */
 
 #include "SettingsMenu.hpp"
+#include <iostream>
+
+namespace
+{
+    Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m)
+    {
+        switch (m) {
+            case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
+            case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
+            case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
+            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
+            default: return Graphics::ColorBlindMode::NONE;
+        }
+    }
+} // namespace
 
 namespace Engine
 {
@@ -21,6 +36,8 @@ namespace Engine
 
         _backgroundCmd.textureId = _backgroundTexture;
 
+        _colorBlindMode = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
         _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
         _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
@@ -39,6 +56,8 @@ namespace Engine
         _backRequested = false;
         _resolutionChanged = false;
 
+        _colorBlindMode->reset();
+        _colorBlindNext->reset();
         _resolution->reset();
         _resolutionNext->reset();
         _back->reset();
@@ -55,6 +74,20 @@ namespace Engine
         _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
         _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
         _muteSFX->setLabel(_sfxMuted ? "ON SFX" : "OFF SFX");
+
+        _currentColorBlindMode = _renderer->getColorBlindMode();
+
+        std::string label;
+        switch (_currentColorBlindMode) {
+            case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
+            case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
+            case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
+            case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
+            default: label = "UNKNOWN"; break;
+        }
+        _colorBlindMode->setLabel(label);
+        const auto &res = _resolutions.at(_currentResolution);
+        _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
 
         layout();
     }
@@ -80,8 +113,10 @@ namespace Engine
         _backgroundCmd.position = {0.f, 0.f};
         _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
 
-        _resolution->setPosition(cx + 150.f * scale, cy - 60.f * scale);
-        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 60.f * scale);
+        _colorBlindMode->setPosition(cx - 400.f * scale, cy + 40.f * scale);
+        _colorBlindNext->setPosition(cx + (150.f + _colorBlindMode->bounds().w + 250.f) * scale, cy + 40.f * scale);
+        _resolution->setPosition(cx - 400.f * scale, cy - 260.f * scale);
+        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 260.f * scale);
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
 
         _musicVolLabel->setPosition(audioX - musicLabelHalfWidth, audioYStart);
@@ -103,6 +138,8 @@ namespace Engine
     void SettingsMenu::update(const InputFrame &frame)
     {
         handleInput(frame);
+        _colorBlindMode->update(frame.mouseX, frame.mouseY);
+        _colorBlindNext->update(frame.mouseX, frame.mouseY);
         _resolution->update(frame.mouseX, frame.mouseY);
         _resolutionNext->update(frame.mouseX, frame.mouseY);
         _back->update(frame.mouseX, frame.mouseY);
@@ -133,6 +170,8 @@ namespace Engine
         }
 
         if (frame.mousePressed) {
+            _colorBlindMode->onMousePressed(frame.mouseX, frame.mouseY);
+            _colorBlindNext->onMousePressed(frame.mouseX, frame.mouseY);
             _resolution->onMousePressed(frame.mouseX, frame.mouseY);
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
@@ -144,6 +183,23 @@ namespace Engine
             _muteSFX->onMousePressed(frame.mouseX, frame.mouseY);
         }
         if (frame.mouseReleased) {
+            if (_colorBlindNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _currentColorBlindMode = nextMode(_currentColorBlindMode);
+                _renderer->setColorBlindMode(_currentColorBlindMode);
+
+                std::string label;
+                switch (_currentColorBlindMode) {
+                    case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
+                    case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
+                    case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
+                    case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
+                    default: label = "UNKNOWN"; break;
+                }
+                _colorBlindMode->setLabel(label);
+                _colorBlindNext->reset();
+                return;
+            }
+
             if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
@@ -233,6 +289,8 @@ namespace Engine
     void SettingsMenu::render() const
     {
         _renderer->draw(_backgroundCmd);
+        _colorBlindMode->render();
+        _colorBlindNext->render();
         _resolution->render();
         _resolutionNext->render();
         _back->render();

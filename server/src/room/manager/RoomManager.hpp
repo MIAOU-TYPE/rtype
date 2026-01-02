@@ -112,7 +112,7 @@ namespace Engine
          * @brief Lists all game rooms with their details
          * @return A vector of RoomEntry structures representing the rooms
          */
-        std::vector<RoomEntry> listRooms() const noexcept;
+        [[nodiscard]] std::vector<RoomEntry> listRooms() const noexcept;
 
         /**
          * @brief Gets the room ID of the room a player is assigned to

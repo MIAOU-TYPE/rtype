@@ -16,13 +16,12 @@ namespace Engine
         _backgroundTexture = textures->load("sprites/bg-preview.png");
         if (_backgroundTexture == Graphics::InvalidTexture)
             throw SettingsMenuError("SettingsMenu: failed to load background texture");
-
         _backgroundCmd.textureId = _backgroundTexture;
 
-        _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
-        _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
-        _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
+        _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
+        _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
+        _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
     }
 
     void SettingsMenu::onEnter()
@@ -41,8 +40,8 @@ namespace Engine
     void SettingsMenu::layout()
     {
         const auto vp = _renderer->getViewportSize();
-        const float w = static_cast<float>(vp.width);
-        const float h = static_cast<float>(vp.height);
+        const auto w = static_cast<float>(vp.width);
+        const auto h = static_cast<float>(vp.height);
         const float cx = w * 0.5f;
         const float cy = h * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
@@ -89,22 +88,17 @@ namespace Engine
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
         }
-        if (frame.mouseReleased) {
-            (void) _audio->onMouseReleased(frame.mouseX, frame.mouseY);
-
-            if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+        if (_resolutionNext->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
                 const auto &res = _resolutions.at(_currentResolution);
                 _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
-                _resolutionNext->reset();
-                return;
-            }
-            if (_back->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            }))
+            return;
+
+        if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                 _backRequested = true;
-                _back->reset();
-            }
-        }
+            })) {}
     }
 
     bool SettingsMenu::wantsBack() const noexcept

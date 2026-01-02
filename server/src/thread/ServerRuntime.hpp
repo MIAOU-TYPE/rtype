@@ -104,6 +104,9 @@ namespace Net::Thread
          */
         void runSnapshot() const;
 
+        /**
+         * @brief Thread function to handle TCP connections and packets
+         */
         void runTcp() const;
 
         std::shared_ptr<Server::IServer> _udpServer;       ///> The server instance

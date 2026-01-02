@@ -33,6 +33,7 @@ ServerRuntime::~ServerRuntime()
         if (!_stopRequested.load())
             stop();
         _udpServer = nullptr;
+        _tcpServer = nullptr;
     } catch (...) {
         std::cerr << "{ServerRuntime::~ServerRuntime} Exception during destruction" << std::endl;
     }
@@ -71,6 +72,7 @@ void ServerRuntime::stop()
     _cv.notify_all();
 
     _udpServer->setRunning(false);
+    _tcpServer->setRunning(false);
     _roomManager->forEachRoom([](Engine::Room &room) {
         room.stop();
     });
@@ -137,8 +139,7 @@ void ServerRuntime::runSnapshot() const
 
 void ServerRuntime::runTcp() const
 {
-    _tcpServer->setNonBlocking(true);
-    while (_running) {
+    while (_tcpServer->isRunning()) {
         _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt)) {
             std::cout << "Received TCP packet of size " << pkt->size() << std::endl;

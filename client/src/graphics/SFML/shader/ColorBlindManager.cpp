@@ -18,13 +18,13 @@ namespace Graphics
             _shaderLoaded = false;
             return;
         }
-        const auto shaderData = resourceManager->loadResource("shaders/colorblind.frag");
-        if (!shaderData.data || shaderData.size == 0) {
+        const auto [data, size] = resourceManager->loadResource("shaders/colorblind.frag");
+        if (!data || size == 0) {
             _shaderLoaded = false;
             std::cerr << "ColorBlindManager: Failed to load colorblind shader resource\n";
             return;
         }
-        const std::string shaderCode(reinterpret_cast<const char *>(shaderData.data), shaderData.size);
+        const std::string shaderCode(reinterpret_cast<const char *>(data), size);
         if (!_shader.loadFromMemory(shaderCode, sf::Shader::Type::Fragment)) {
             _shaderLoaded = false;
             std::cerr << "ColorBlindManager: Failed to compile colorblind shader\n";

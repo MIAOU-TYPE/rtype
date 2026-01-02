@@ -16,6 +16,8 @@ namespace Net::Factory
     std::shared_ptr<IPacket> TCPPacketFactory::make(const sockaddr_in &addr, const std::vector<uint8_t> &payload) const
     {
         auto p = _packet->newPacket();
+        if (payload.size() > p->capacity())
+            return nullptr;
         p->setAddress(addr);
         std::memcpy(p->buffer(), payload.data(), payload.size());
         p->setSize(static_cast<uint32_t>(payload.size()));

@@ -22,7 +22,7 @@ namespace Engine
             _manager = &manager;
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
-            
+
             if (_musicRegistry) {
                 _menuMusicHandle = _renderer->musics()->load("sounds/menu_theme.flac");
                 if (_menuMusicHandle != Graphics::InvalidAudio)

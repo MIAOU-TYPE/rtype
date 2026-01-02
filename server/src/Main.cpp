@@ -36,6 +36,7 @@ int main(const int argc, char **argv)
         return 84;
     }
     const int port = parser.getPort();
+    auto host = parser.getHost();
     try {
         const auto UdpServer = std::make_shared<Net::Server::UDPServer>();
         const auto TcpServer = std::make_shared<Net::Server::TCPServer>();
@@ -43,8 +44,8 @@ int main(const int argc, char **argv)
         Net::Thread::ServerRuntime runtime(UdpServer, TcpServer);
         const auto signalHandler = startSignalHandler(runtime);
 
-        TcpServer->configure("127.0.0.1", port);
-        UdpServer->configure("127.0.0.1", port + 1);
+        TcpServer->configure(host, port);
+        UdpServer->configure(host, port + 1);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

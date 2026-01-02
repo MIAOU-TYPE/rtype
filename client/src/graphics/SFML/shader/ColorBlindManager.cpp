@@ -10,7 +10,7 @@
 namespace Graphics
 {
 
-    ColorBlindManager::ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> resourceManager)
+    ColorBlindManager::ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> &resourceManager)
         : _mode(ColorBlindMode::NONE), _shaderLoaded(false)
     {
         if (!sf::Shader::isAvailable()) {

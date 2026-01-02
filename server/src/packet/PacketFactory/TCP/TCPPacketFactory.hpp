@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <memory>
 #include <cstring>
+#include <memory>
 #include <vector>
 #include "IPacket.hpp"
 #include "payload/TCPPayload.hpp"

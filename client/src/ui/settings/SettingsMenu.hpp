@@ -8,6 +8,7 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 #include "IRenderer.hpp"
@@ -110,12 +111,25 @@ namespace Engine
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
         RenderCommand _backgroundCmd;               ///> Render command for the background image
 
-        std::unique_ptr<UIButton> _audio;          ///> Audio settings button
         std::unique_ptr<UIButton> _left;           ///> Decrease resolution button
         std::unique_ptr<UIButton> _right;          ///> Increase resolution button
         std::unique_ptr<UIButton> _back;           ///> Back button
         std::unique_ptr<UIButton> _resolution;     ///> Current resolution display button
         std::unique_ptr<UIButton> _resolutionNext; ///> Next resolution button
+
+        int _musicVolume = 50;    ///> Music volume level (0-100)
+        int _sfxVolume = 50;      ///> SFX volume level (0-100)
+        bool _musicMuted = false; ///> Music mute state
+        bool _sfxMuted = false;   ///> SFX mute state
+
+        std::unique_ptr<UIButton> _musicVolLabel; ///> Music volume display
+        std::unique_ptr<UIButton> _musicVolUp;    ///> Increase music volume
+        std::unique_ptr<UIButton> _musicVolDown;  ///> Decrease music volume
+        std::unique_ptr<UIButton> _sfxVolLabel;   ///> SFX volume display
+        std::unique_ptr<UIButton> _sfxVolUp;      ///> Increase SFX volume
+        std::unique_ptr<UIButton> _sfxVolDown;    ///> Decrease SFX volume
+        std::unique_ptr<UIButton> _muteMusic;     ///> Mute/unmute music
+        std::unique_ptr<UIButton> _muteSFX;       ///> Mute/unmute SFX
 
         bool _backRequested = false; ///> Flag indicating if the user wants to go back
 

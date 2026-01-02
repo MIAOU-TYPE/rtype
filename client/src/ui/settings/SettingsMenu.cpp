@@ -19,10 +19,17 @@ namespace Engine
 
         _backgroundCmd.textureId = _backgroundTexture;
 
-        _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
         _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
         _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
+        _musicVolLabel = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "50");
+        _musicVolUp = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        _musicVolDown = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "-");
+        _sfxVolLabel = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "50");
+        _sfxVolUp = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        _sfxVolDown = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "-");
+        _muteMusic = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "MUTE MUSIC");
+        _muteSFX = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "MUTE SFX");
     }
 
     void SettingsMenu::onEnter()
@@ -30,10 +37,22 @@ namespace Engine
         _backRequested = false;
         _resolutionChanged = false;
 
-        _audio->reset();
         _resolution->reset();
         _resolutionNext->reset();
         _back->reset();
+        _musicVolLabel->reset();
+        _musicVolUp->reset();
+        _musicVolDown->reset();
+        _sfxVolLabel->reset();
+        _sfxVolUp->reset();
+        _sfxVolDown->reset();
+        _muteMusic->reset();
+        _muteSFX->reset();
+
+        _musicVolLabel->setLabel(std::to_string(_musicVolume));
+        _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+        _muteMusic->setLabel(_musicMuted ? "UNMUTE MUSIC" : "MUTE MUSIC");
+        _muteSFX->setLabel(_sfxMuted ? "UNMUTE SFX" : "MUTE SFX");
 
         layout();
     }
@@ -47,24 +66,52 @@ namespace Engine
         const float cy = h * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
         const auto texSize = _renderer->textures()->getSize(_backgroundTexture);
+        const float audioX = w * 0.25f;
+        const float audioYStart = h * 0.25f;
+        const float spacingY = h * 0.12f;
+        const float labelMargin = w * 0.02f;
+        const float musicLabelHalfWidth = _musicVolLabel->bounds().w * 0.5f;
+        const float buttonHalfWidth = _musicVolDown->bounds().w * 0.5f;
+        const float sfxLabelHalfWidth = _sfxVolLabel->bounds().w * 0.5f;
 
         _backgroundCmd.frame = {0, 0, static_cast<int>(texSize.width), static_cast<int>(texSize.height)};
         _backgroundCmd.position = {0.f, 0.f};
         _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
 
-        _audio->setPosition(cx - 400.f * scale, cy - 60.f * scale);
         _resolution->setPosition(cx + 150.f * scale, cy - 60.f * scale);
         _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 60.f * scale);
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
+
+        _musicVolLabel->setPosition(audioX - musicLabelHalfWidth, audioYStart);
+        _musicVolDown->setPosition(
+            audioX - (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
+        _musicVolUp->setPosition(
+            audioX + (musicLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart);
+
+        _sfxVolLabel->setPosition(audioX - sfxLabelHalfWidth, audioYStart + spacingY);
+        _sfxVolDown->setPosition(
+            audioX - (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
+        _sfxVolUp->setPosition(
+            audioX + (sfxLabelHalfWidth + labelMargin + buttonHalfWidth) - buttonHalfWidth, audioYStart + spacingY);
+
+        _muteMusic->setPosition(audioX - _muteMusic->bounds().w * 0.5f, audioYStart + 2 * spacingY);
+        _muteSFX->setPosition(audioX - _muteSFX->bounds().w * 0.5f, audioYStart + 3 * spacingY);
     }
 
     void SettingsMenu::update(const InputFrame &frame)
     {
         handleInput(frame);
-        _audio->update(frame.mouseX, frame.mouseY);
         _resolution->update(frame.mouseX, frame.mouseY);
         _resolutionNext->update(frame.mouseX, frame.mouseY);
         _back->update(frame.mouseX, frame.mouseY);
+        _musicVolLabel->update(frame.mouseX, frame.mouseY);
+        _musicVolUp->update(frame.mouseX, frame.mouseY);
+        _musicVolDown->update(frame.mouseX, frame.mouseY);
+        _sfxVolLabel->update(frame.mouseX, frame.mouseY);
+        _sfxVolUp->update(frame.mouseX, frame.mouseY);
+        _sfxVolDown->update(frame.mouseX, frame.mouseY);
+        _muteMusic->update(frame.mouseX, frame.mouseY);
+        _muteSFX->update(frame.mouseX, frame.mouseY);
     }
 
     void SettingsMenu::handleInput(const InputFrame &frame)
@@ -84,14 +131,17 @@ namespace Engine
         }
 
         if (frame.mousePressed) {
-            _audio->onMousePressed(frame.mouseX, frame.mouseY);
             _resolution->onMousePressed(frame.mouseX, frame.mouseY);
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
+            _musicVolUp->onMousePressed(frame.mouseX, frame.mouseY);
+            _musicVolDown->onMousePressed(frame.mouseX, frame.mouseY);
+            _sfxVolUp->onMousePressed(frame.mouseX, frame.mouseY);
+            _sfxVolDown->onMousePressed(frame.mouseX, frame.mouseY);
+            _muteMusic->onMousePressed(frame.mouseX, frame.mouseY);
+            _muteSFX->onMousePressed(frame.mouseX, frame.mouseY);
         }
         if (frame.mouseReleased) {
-            (void) _audio->onMouseReleased(frame.mouseX, frame.mouseY);
-
             if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
@@ -103,6 +153,43 @@ namespace Engine
             if (_back->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _backRequested = true;
                 _back->reset();
+                return;
+            }
+            if (_musicVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _musicVolume = std::min(100, _musicVolume + 10);
+                _musicVolLabel->setLabel(std::to_string(_musicVolume));
+                _musicVolUp->reset();
+                return;
+            }
+            if (_musicVolDown->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _musicVolume = std::max(0, _musicVolume - 10);
+                _musicVolLabel->setLabel(std::to_string(_musicVolume));
+                _musicVolDown->reset();
+                return;
+            }
+            if (_sfxVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _sfxVolume = std::min(100, _sfxVolume + 10);
+                _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+                _sfxVolUp->reset();
+                return;
+            }
+            if (_sfxVolDown->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _sfxVolume = std::max(0, _sfxVolume - 10);
+                _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+                _sfxVolDown->reset();
+                return;
+            }
+            if (_muteMusic->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _musicMuted = !_musicMuted;
+                _muteMusic->setLabel(_musicMuted ? "UNMUTE MUSIC" : "MUTE MUSIC");
+                _muteMusic->reset();
+                return;
+            }
+            if (_muteSFX->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                _sfxMuted = !_sfxMuted;
+                _muteSFX->setLabel(_sfxMuted ? "UNMUTE SFX" : "MUTE SFX");
+                _muteSFX->reset();
+                return;
             }
         }
     }
@@ -132,9 +219,16 @@ namespace Engine
     void SettingsMenu::render() const
     {
         _renderer->draw(_backgroundCmd);
-        _audio->render();
         _resolution->render();
         _resolutionNext->render();
         _back->render();
+        _musicVolLabel->render();
+        _musicVolUp->render();
+        _musicVolDown->render();
+        _sfxVolLabel->render();
+        _sfxVolUp->render();
+        _sfxVolDown->render();
+        _muteMusic->render();
+        _muteSFX->render();
     }
 } // namespace Engine

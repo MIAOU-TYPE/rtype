@@ -11,11 +11,11 @@ namespace
 {
     void registerScoreUpdatePacketDispatch(Game::IGameWorld &world,
         const std::shared_ptr<Net::Server::ISessionManager> &sessions,
-        const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
         const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
     {
         std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
-        std::weak_ptr<Net::Factory::PacketFactory> wFactory = packetFactory;
+        std::weak_ptr<Net::Factory::UDPPacketFactory> wFactory = UDPPacketFactory;
         std::weak_ptr<Net::Server::IServer> wServer = server;
 
         const auto *mapPtr = &entityToSession;
@@ -47,11 +47,11 @@ namespace
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> UDPPacketFactory,
         const std::string &levelPath)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _packetFactory(std::move(packetFactory))
+ _udpPacketFactory(std::move(UDPPacketFactory))
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
@@ -62,7 +62,7 @@ namespace Game
         }
         _waitingClock.restart();
 
-        registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _packetFactory, _entityToSession, _server);
+        registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
     void GameServer::onPlayerConnect(const int sessionId)
@@ -72,7 +72,7 @@ namespace Game
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
         if (const auto *addr = _sessions->getAddress(sessionId)) {
-            _server->sendPacket(*_packetFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
+            _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
         }
     }
 
@@ -182,7 +182,7 @@ namespace Game
             }
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
-                    if (const auto pkt = _packetFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
+                    if (const auto pkt = _udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
                         _server->sendPacket(*pkt);
                 }
                 break;

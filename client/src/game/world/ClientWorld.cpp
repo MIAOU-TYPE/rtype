@@ -10,22 +10,18 @@
 namespace World
 {
     ClientWorld::ClientWorld(
-        std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry, std::shared_ptr<Graphics::IRenderer> renderer)
-        : _spriteRegistry(std::move(spriteRegistry)), _renderer(std::move(renderer))
+        std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry)
+        : _spriteRegistry(std::move(spriteRegistry))
     {
         _registry.registerComponent<Ecs::Position>();
         _registry.registerComponent<Ecs::Drawable>();
         _registry.registerComponent<Ecs::Render>();
         _registry.registerComponent<Ecs::AnimationState>();
-        _registry.registerComponent<Ecs::ScrollingBackground>();
-
-        initializeScrollingBackground();
     }
 
     void ClientWorld::step(const float dt)
     {
         Engine::AnimationSystem::update(_registry, _spriteRegistry, dt);
-        Engine::BackgroundSystem::update(_registry, dt);
     }
 
     Ecs::Registry &ClientWorld::registry()
@@ -117,32 +113,5 @@ namespace World
                 }
             }
         }
-    }
-
-    void ClientWorld::initializeScrollingBackground()
-    {
-        auto bgTexture = _renderer->textures()->load("sprites/background_space.png");
-        if (bgTexture == Graphics::InvalidTexture)
-            return;
-
-        auto texSize = _renderer->textures()->getSize(bgTexture);
-        const float spriteWidth = static_cast<float>(texSize.width);
-        const float spriteHeight = static_cast<float>(texSize.height);
-
-        const auto viewportSize = _renderer->getViewportSize();
-        const float scale = static_cast<float>(viewportSize.height) / spriteHeight;
-        const float scaledWidth = spriteWidth * scale;
-
-        const Ecs::Entity bg1 = _registry.createEntity();
-        _registry.emplaceComponent<Ecs::Position>(bg1, Ecs::Position{0.f, 0.f});
-        _registry.emplaceComponent<Ecs::Render>(bg1, Ecs::Render{bgTexture});
-        _registry.emplaceComponent<Ecs::ScrollingBackground>(bg1,
-            Ecs::ScrollingBackground{.scrollSpeed = -50.f, .spriteWidth = scaledWidth, .spriteHeight = spriteHeight});
-
-        const Ecs::Entity bg2 = _registry.createEntity();
-        _registry.emplaceComponent<Ecs::Position>(bg2, Ecs::Position{scaledWidth, 0.f});
-        _registry.emplaceComponent<Ecs::Render>(bg2, Ecs::Render{bgTexture});
-        _registry.emplaceComponent<Ecs::ScrollingBackground>(bg2,
-            Ecs::ScrollingBackground{.scrollSpeed = -50.f, .spriteWidth = scaledWidth, .spriteHeight = spriteHeight});
     }
 } // namespace World

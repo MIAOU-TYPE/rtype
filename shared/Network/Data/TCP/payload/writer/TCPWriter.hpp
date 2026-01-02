@@ -15,6 +15,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "Endian.hpp"
 #include <string_view>
 
 namespace Net::TCP

@@ -57,7 +57,7 @@ namespace Net::TCP
 
     bool Reader::need(const size_t n) const noexcept
     {
-        if (static_cast<size_t>(_end - _cursor) < n)
+        if (std::cmp_less(_end - _cursor, n))
             return false;
         return true;
     }

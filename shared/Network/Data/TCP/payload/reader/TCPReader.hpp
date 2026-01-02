@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include "Endian.hpp"
 
 namespace Net::TCP
 {

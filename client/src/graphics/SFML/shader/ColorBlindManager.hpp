@@ -44,7 +44,7 @@ namespace Graphics
          * @brief Get the current colorblind filter mode.
          * @return ColorBlindMode The current mode.
          */
-        ColorBlindMode getMode() const;
+        ColorBlindMode getMode() const noexcept;
 
         /**
          * @brief Get the shader for applying to render targets.

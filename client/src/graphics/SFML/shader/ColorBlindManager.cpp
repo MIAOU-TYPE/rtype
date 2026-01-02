@@ -54,7 +54,7 @@ namespace Graphics
         _shader.setUniform("mode", shaderMode);
     }
 
-    ColorBlindMode ColorBlindManager::getMode() const
+    ColorBlindMode ColorBlindManager::getMode() const noexcept
     {
         return _mode;
     }

@@ -129,7 +129,7 @@ namespace Thread
         std::unique_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
-        std::shared_ptr<Engine::RoomService> _roomService = nullptr; ///> Shared lobby/room state cache
+        std::shared_ptr<Engine::RoomService> _roomService = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
 

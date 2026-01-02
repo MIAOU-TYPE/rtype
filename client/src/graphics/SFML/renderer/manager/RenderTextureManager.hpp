@@ -52,11 +52,6 @@ namespace Graphics
         void display() override;
 
         /**
-         * @brief Disable the render texture.
-         */
-        void disable() override;
-
-        /**
          * @brief Get the underlying SFML RenderTexture for drawing operations.
          * @return Pointer to the SFML RenderTexture, or nullptr if not available.
          */

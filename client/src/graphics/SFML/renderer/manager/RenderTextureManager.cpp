@@ -15,8 +15,6 @@ namespace Graphics
         _renderTexture = std::make_unique<sf::RenderTexture>();
         if (!_renderTexture->resize({initialWidth, initialHeight})) {
             std::cerr << "{RenderTextureManager::RenderTextureManager} Failed to create render texture" << std::endl;
-            _renderTexture.reset();
-            throw RenderTextureError("{RenderTextureManager::RenderTextureManager}: Failed to create render texture");
         }
     }
 
@@ -33,7 +31,6 @@ namespace Graphics
 
         if (!_renderTexture->resize({width, height})) {
             std::cerr << "{RenderTextureManager::resize} Failed to resize render texture" << std::endl;
-            _renderTexture.reset();
             return false;
         }
 
@@ -52,11 +49,6 @@ namespace Graphics
         if (_renderTexture) {
             _renderTexture->display();
         }
-    }
-
-    void RenderTextureManager::disable()
-    {
-        _renderTexture.reset();
     }
 
     sf::RenderTexture *RenderTextureManager::getRenderTexture() noexcept

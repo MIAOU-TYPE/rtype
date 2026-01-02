@@ -53,6 +53,20 @@ namespace Engine
         _resolutionNext->reset();
         _back->reset();
 
+        _currentColorBlindMode = _renderer->getColorBlindMode();
+
+        std::string label;
+        switch (_currentColorBlindMode) {
+            case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
+            case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
+            case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
+            case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
+            default: label = "UNKNOWN"; break;
+        }
+        _colorBlindMode->setLabel(label);
+        const auto &res = _resolutions.at(_currentResolution);
+        _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
+
         layout();
     }
 

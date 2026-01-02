@@ -47,11 +47,11 @@ namespace
 namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> UDPPacketFactory,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
         const std::string &levelPath)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _udpPacketFactory(std::move(UDPPacketFactory))
+          _udpPacketFactory(std::move(udpPacketFactory))
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))

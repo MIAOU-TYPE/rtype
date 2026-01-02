@@ -14,6 +14,10 @@
 
 namespace Engine
 {
+  /**
+   * @brief Alias for invalid audio handle
+   */
+    using Graphics::InvalidAudio;
     /**
      * @class MusicRegistryError
      * @brief Exception class for MusicRegistry errors.

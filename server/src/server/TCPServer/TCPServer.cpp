@@ -87,28 +87,31 @@ namespace Net::Server
         AServer::setRunning(true);
     }
 
-    void TCPServer::stop()
+    void TCPServer::stop() noexcept
     {
-        if (!_isRunning.exchange(false))
-            return;
+        try {
+            if (!_isRunning.exchange(false))
+                return;
 
-        {
-            std::scoped_lock lock(_mutex);
-            for (const auto &sock : _clients | std::views::keys)
-                _netWrapper->closeSocket(sock);
-            _clients.clear();
-            _endpointToFd.clear();
+            {
+                std::scoped_lock lock(_mutex);
+                for (const auto &sock : _clients | std::views::keys)
+                    _netWrapper->closeSocket(sock);
+                _clients.clear();
+                _endpointToFd.clear();
+            }
+
+            if (_listenFd != kInvalidSocket) {
+                _netWrapper->closeSocket(_listenFd);
+                _listenFd = kInvalidSocket;
+            }
+
+            (void) _netWrapper->cleanupNetwork();
+        } catch (...) {
         }
-
-        if (_listenFd != kInvalidSocket) {
-            _netWrapper->closeSocket(_listenFd);
-            _listenFd = kInvalidSocket;
-        }
-
-        (void) _netWrapper->cleanupNetwork();
     }
 
-    void TCPServer::readPackets()
+    void TCPServer::readPackets() noexcept
     {
         if (!_isRunning.load())
             return;
@@ -197,73 +200,76 @@ namespace Net::Server
         }
     }
 
-    bool TCPServer::onBytesReceived(const socketHandle clientFd, const uint8_t *data, const size_t len)
+    bool TCPServer::extractPayloads(
+        socketHandle clientFd, const uint8_t *data, size_t len, std::vector<PendingPayload> &out)
     {
-        struct PendingPayload {
-            sockaddr_in addr{};
-            std::vector<uint8_t> bytes;
-        };
+        const auto it = _clients.find(clientFd);
+        if (it == _clients.end())
+            return false;
 
-        std::vector<PendingPayload> ready;
-        ready.reserve(4);
+        const auto &client = it->second;
 
-        bool mustDrop = false;
+        if (!client->rx.write(data, len))
+            return false;
 
-        {
-            std::scoped_lock lock(_mutex);
-            const auto it = _clients.find(clientFd);
-            if (it == _clients.end())
+        while (client->rx.readable() >= 4) {
+            uint32_t size = 0;
+            if (!client->rx.peek(reinterpret_cast<uint8_t *>(&size), 4))
+                break;
+
+            size = ntohl(size);
+            if (size == 0 || size > MAXSIZE)
                 return false;
 
-            if (const auto &client = it->second; !client->rx.write(data, len)) {
-                mustDrop = true;
-            } else {
-                while (client->rx.readable() >= 4) {
-                    uint32_t size = 0;
-                    if (!client->rx.peek(reinterpret_cast<uint8_t *>(&size), 4))
-                        break;
-                    size = ntohl(size);
+            if (client->rx.readable() < 4 + size)
+                break;
 
-                    if (size == 0 || size > MAXSIZE) {
-                        mustDrop = true;
-                        break;
-                    }
+            client->rx.read(nullptr, 4);
 
-                    if (client->rx.readable() < 4 + size)
-                        break;
+            PendingPayload p;
+            p.addr = client->addr;
+            p.bytes.resize(size);
+            client->rx.read(p.bytes.data(), size);
 
-                    client->rx.read(nullptr, 4);
-
-                    PendingPayload p;
-                    p.addr = client->addr;
-                    p.bytes.resize(size);
-                    client->rx.read(p.bytes.data(), size);
-
-                    ready.push_back(std::move(p));
-                }
-            }
-        }
-
-        if (mustDrop) {
-            dropClient(clientFd);
-            return false;
-        }
-
-        {
-            std::scoped_lock qLock(_queueMutex);
-            for (auto &p : ready) {
-                auto pkt = _packet->newPacket();
-                pkt->setAddress(p.addr);
-                pkt->setSize(static_cast<uint32_t>(p.bytes.size()));
-                std::memcpy(pkt->buffer(), p.bytes.data(), p.bytes.size());
-                _queue.push(std::move(pkt));
-            }
+            out.push_back(std::move(p));
         }
 
         return true;
     }
 
-    void TCPServer::readClients()
+    void TCPServer::enqueuePayloads(std::vector<PendingPayload> &payloads) noexcept
+    {
+        std::scoped_lock lock(_queueMutex);
+
+        for (auto &p : payloads) {
+            auto pkt = _packet->newPacket();
+            pkt->setAddress(p.addr);
+            pkt->setSize(static_cast<uint32_t>(p.bytes.size()));
+            std::memcpy(pkt->buffer(), p.bytes.data(), p.bytes.size());
+            _queue.push(std::move(pkt));
+        }
+    }
+
+    bool TCPServer::onBytesReceived(socketHandle clientFd, const uint8_t *data, size_t len) noexcept
+    {
+        std::vector<PendingPayload> ready;
+        ready.reserve(4);
+
+        {
+            std::scoped_lock lock(_mutex);
+            if (!extractPayloads(clientFd, data, len, ready)) {
+                dropClient(clientFd);
+                return false;
+            }
+        }
+
+        if (!ready.empty())
+            enqueuePayloads(ready);
+
+        return true;
+    }
+
+    void TCPServer::readClients() noexcept
     {
         const auto clientSockets = snapshotClientSockets();
 
@@ -275,7 +281,7 @@ namespace Net::Server
         }
     }
 
-    void TCPServer::flushWrites(const socketHandle clientFd)
+    void TCPServer::flushWrites(const socketHandle clientFd) noexcept
     {
         bool mustDrop = false;
 
@@ -311,7 +317,7 @@ namespace Net::Server
             dropClient(clientFd);
     }
 
-    bool TCPServer::popPacket(std::shared_ptr<IPacket> &pkt)
+    bool TCPServer::popPacket(std::shared_ptr<IPacket> &pkt) noexcept
     {
         std::scoped_lock lock(_queueMutex);
         if (_queue.empty())
@@ -321,7 +327,7 @@ namespace Net::Server
         return true;
     }
 
-    bool TCPServer::sendPacket(const IPacket &pkt)
+    bool TCPServer::sendPacket(const IPacket &pkt) noexcept
     {
         const auto addr = pkt.address();
         if (!addr)

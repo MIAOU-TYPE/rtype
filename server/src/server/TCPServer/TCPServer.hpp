@@ -11,7 +11,6 @@
 #include <atomic>
 #include <cstdint>
 #include <limits>
-#include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -66,7 +65,7 @@ namespace Net::Server
         /**
          * @brief Stop the TCP server.
          */
-        void stop() override;
+        void stop() noexcept override;
 
         /**
          * @brief Set the non-blocking mode for the server.
@@ -79,28 +78,33 @@ namespace Net::Server
          * @note This function should be called periodically to process incoming data.
          * @throws ServerError if reading packets fails.
          */
-        void readPackets() override;
+        void readPackets() noexcept override;
 
         /**
          * @brief Send a packet to a client.
          * @param pkt The packet to send.
          * @return true if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const IPacket &pkt) override;
+        [[nodiscard]] bool sendPacket(const IPacket &pkt) noexcept override;
 
         /**
          * @brief Pop a received packet from the internal queue.
          * @param pkt Reference to a shared pointer where the popped packet will be stored.
          * @return true if a packet was popped, false if the queue is empty.
          */
-        bool popPacket(std::shared_ptr<IPacket> &pkt) override;
+        [[nodiscard]] bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept override;
+
+        struct PendingPayload {
+            sockaddr_in addr{};
+            std::vector<uint8_t> bytes;
+        };
 
       private:
         /*
          * @brief Snapshot the current client sockets.
          * @return A vector of current client socket handles.
          */
-        std::vector<socketHandle> snapshotClientSockets() const;
+        [[nodiscard]] std::vector<socketHandle> snapshotClientSockets() const;
 
         /**
          * @brief Read data from a single client.
@@ -110,13 +114,30 @@ namespace Net::Server
         void readOneClient(socketHandle clientFd, std::array<uint8_t, 4096> &tmp);
 
         /**
+         * @brief Enqueue extracted payloads into the packet queue.
+         * @param payloads Vector of PendingPayloads to enqueue.
+         */
+        void enqueuePayloads(std::vector<PendingPayload> &payloads);
+
+        /**
+         * @brief Extract complete payloads from received data.
+         * @param clientFd Socket handle of the client.
+         * @param data Pointer to the received data.
+         * @param len Length of the received data.
+         * @param out Vector to store the extracted PendingPayloads.
+         * @return true if extraction was successful, false otherwise.
+         */
+        [[nodiscard]] bool extractPayloads(
+            socketHandle clientFd, const uint8_t *data, size_t len, std::vector<PendingPayload> &out) noexcept;
+
+        /**
          * @brief Handle received bytes from a client.
          * @param clientFd Socket handle of the client.
          * @param data Pointer to the received data.
          * @param len Length of the received data.
          * @return true if the data was processed successfully, false otherwise.
          */
-        bool onBytesReceived(socketHandle clientFd, const uint8_t *data, size_t len);
+        [[nodiscard]] bool onBytesReceived(socketHandle clientFd, const uint8_t *data, size_t len) noexcept;
 
         /**
          * @brief Accept incoming client connections in a loop.
@@ -154,6 +175,10 @@ namespace Net::Server
          * @brief Represents the state of a connected client.
          */
         struct ClientState {
+            /**
+             * @brief Construct a new Client State object.
+             * @param addr The sockaddr_in address of the client.
+             */
             explicit ClientState(const sockaddr_in addr) : addr(addr), rx(MAXSIZE), tx(MAXSIZE)
             {
             }

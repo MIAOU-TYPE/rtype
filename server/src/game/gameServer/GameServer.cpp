@@ -51,7 +51,7 @@ namespace Game
         const std::string &levelPath)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
- _udpPacketFactory(std::move(UDPPacketFactory))
+          _udpPacketFactory(std::move(UDPPacketFactory))
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))

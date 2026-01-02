@@ -18,7 +18,6 @@ namespace Graphics
      */
     class IRenderTextureManager {
       public:
-      
         /**
          * @brief Virtual destructor.
          */
@@ -41,11 +40,11 @@ namespace Graphics
         /**
          * @brief Clear the render texture.
          */
-        virtual void clear() = 0;
+        virtual void clear() const = 0;
 
         /**
          * @brief Finalize rendering to texture and prepare for display.
          */
-        virtual void display() = 0;
+        virtual void display() const = 0;
     };
 } // namespace Graphics

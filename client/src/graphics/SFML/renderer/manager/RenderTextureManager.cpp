@@ -6,7 +6,6 @@
 */
 
 #include "RenderTextureManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {
@@ -59,7 +58,7 @@ namespace Graphics
     sf::Sprite RenderTextureManager::getSprite() const
     {
         if (!_renderTexture) {
-            throw RenderTextureError("{RenderTextureManager::getSprite}: Render texture is not available");
+            std::cerr << "{RenderTextureManager::getSprite} Render texture is not available" << std::endl;
         }
         return sf::Sprite(_renderTexture->getTexture());
     }

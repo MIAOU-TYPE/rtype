@@ -9,7 +9,10 @@
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+
+#include <iostream>
 #include <memory>
+
 #include "IRenderTextureManager.hpp"
 
 namespace Graphics
@@ -39,7 +42,7 @@ namespace Graphics
          * @param height New height for the render texture.
          * @return True if resize was successful.
          */
-        bool resize(unsigned int width, unsigned int height) override;
+        [[nodiscard]] bool resize(unsigned int width, unsigned int height) override;
 
         /**
          * @brief Clear the render texture.

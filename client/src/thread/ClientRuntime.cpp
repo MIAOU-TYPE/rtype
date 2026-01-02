@@ -91,6 +91,12 @@ namespace Thread
         return _eventBus;
     }
 
+    void ClientRuntime::rebindControls()
+    {
+        _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
+        setupEventsRegistry();
+    }
+
     void ClientRuntime::runDisplay()
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
@@ -100,6 +106,11 @@ namespace Thread
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
+
+            if (Utils::InputConfig::getInstance().needsRebind()) {
+                rebindControls();
+                Utils::InputConfig::getInstance().clearRebindFlag();
+            }
 
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
@@ -181,19 +192,21 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        _eventRegistry->onKeyPressed(Engine::Key::Up, [this]() {
+        const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
+        
+        _eventRegistry->onKeyPressed(keys.up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Down, [this]() {
+        _eventRegistry->onKeyPressed(keys.down, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Left, [this]() {
+        _eventRegistry->onKeyPressed(keys.left, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Right, [this]() {
+        _eventRegistry->onKeyPressed(keys.right, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 

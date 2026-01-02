@@ -25,6 +25,7 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "PacketRouter.hpp"
+#include "InputConfig.hpp"
 
 using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
@@ -109,6 +110,13 @@ namespace Thread
          * @details The event bus is used for communication between different components of the client.
          */
         [[nodiscard]] std::shared_ptr<Engine::EventBus> getEventBus() const noexcept;
+
+        /**
+         * @brief Rebinds control inputs based on the current configuration.
+         * @details This method recreates the event registry with updated key bindings
+         * from the InputConfig singleton.
+         */
+        void rebindControls();
 
         /**
          * @brief Runs the display loop for rendering graphics.

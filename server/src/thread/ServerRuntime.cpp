@@ -14,7 +14,9 @@ ServerRuntime::ServerRuntime(
     : _udpServer(UdpServer), _tcpServer(TcpServer)
 {
     if (!_udpServer)
-        throw ThreadError("{ServerRuntime::ServerRuntime} Invalid server pointer");
+        throw ThreadError("{ServerRuntime::ServerRuntime} Invalid UDP server pointer");
+    if (!_tcpServer)
+        throw ThreadError("{ServerRuntime::ServerRuntime} Invalid TCP server pointer");
     _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
     _roomManager =

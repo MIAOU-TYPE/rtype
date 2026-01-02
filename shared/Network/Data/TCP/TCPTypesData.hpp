@@ -33,12 +33,12 @@ namespace Net::Protocol::TCP
     /**
      * @brief Packet types for TCP communication from server to client.
      */
-    constexpr uint8_t WELCOME = 0x10;      ///> Server welcomes the client
-    constexpr uint8_t ERROR_MESSAGE = 0x11;        ///> Server notifies client of an error
-    constexpr uint8_t ROOMS_LIST = 0x12;   ///> Server sends the list of available rooms
-    constexpr uint8_t ROOM_CREATED = 0x13; ///> Server confirms room creation
-    constexpr uint8_t ROOM_JOINED = 0x14;  ///> Server confirms joining a room
-    constexpr uint8_t ROOM_LEFT = 0x15;    ///> Server confirms leaving a room
-    constexpr uint8_t ROOM_UPDATE = 0x16;  ///> Server sends an update about the room
-    constexpr uint8_t GAME_START = 0x17;   ///> Server notifies clients that the game is starting
+    constexpr uint8_t WELCOME = 0x10;       ///> Server welcomes the client
+    constexpr uint8_t ERROR_MESSAGE = 0x11; ///> Server notifies client of an error
+    constexpr uint8_t ROOMS_LIST = 0x12;    ///> Server sends the list of available rooms
+    constexpr uint8_t ROOM_CREATED = 0x13;  ///> Server confirms room creation
+    constexpr uint8_t ROOM_JOINED = 0x14;   ///> Server confirms joining a room
+    constexpr uint8_t ROOM_LEFT = 0x15;     ///> Server confirms leaving a room
+    constexpr uint8_t ROOM_UPDATE = 0x16;   ///> Server sends an update about the room
+    constexpr uint8_t GAME_START = 0x17;    ///> Server notifies clients that the game is starting
 } // namespace Net::Protocol::TCP

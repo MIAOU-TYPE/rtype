@@ -117,5 +117,11 @@ namespace Graphics
          * @param mode The colorblind mode to apply to all rendering.
          */
         virtual void setColorBlindMode(ColorBlindMode mode) = 0;
+
+        /**
+         * @brief Get the current colorblind filter mode.
+         * @return The current colorblind mode.
+         */
+        [[nodiscard]] virtual ColorBlindMode getColorBlindMode() const noexcept = 0;
     };
 } // namespace Graphics

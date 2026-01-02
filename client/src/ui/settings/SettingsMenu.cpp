@@ -7,6 +7,7 @@
 
 #include "SettingsMenu.hpp"
 #include <iostream>
+
 namespace
 {
     Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m)

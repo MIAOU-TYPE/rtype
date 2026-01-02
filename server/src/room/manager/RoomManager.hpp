@@ -37,12 +37,12 @@ namespace Engine
          * @brief Constructor for RoomManager
          * @param sessions shared pointer to the session manager
          * @param server shared pointer to the server
-         * @param UDPPacketFactory shared pointer to the packet factory
+         * @param udpPacketFactory shared pointer to the packet factory
          * @param levelPath path to the game level data
          */
         RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessions,
             std::shared_ptr<Net::Server::IServer> server,
-            std::shared_ptr<Net::Factory::UDPPacketFactory> UDPPacketFactory, std::string levelPath);
+            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath);
 
         /**
          * @brief Creates a new game room

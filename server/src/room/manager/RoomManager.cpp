@@ -10,9 +10,9 @@
 namespace Engine
 {
     RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> UDPPacketFactory,
+        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
         std::string levelPath)
-        : _sessions(std::move(sessions)), _server(std::move(server)), _udpPacketFactory(std::move(UDPPacketFactory)),
+        : _sessions(std::move(sessions)), _server(std::move(server)), _udpPacketFactory(std::move(udpPacketFactory)),
           _levelPath(std::move(levelPath))
     {
     }
@@ -61,7 +61,7 @@ namespace Engine
     bool RoomManager::start(const RoomId roomId) const noexcept
     {
         const auto room = getRoomById(roomId);
-        if (!room || room->getCurrentPlayers() < room->getMaxPlayers())
+        if (!room || room->getCurrentPlayers() == room->getMaxPlayers())
             return false;
         try {
             room->start();
@@ -158,7 +158,7 @@ namespace Engine
             room->gameServer().onPlayerInput(sessionId, input);
     }
 
-    void RoomManager::onPing(int sessionId) const noexcept
+    void RoomManager::onPing(const int sessionId) const noexcept
     {
         if (const auto room = getRoomOfPlayer(sessionId))
             room->gameServer().onPing(sessionId);
@@ -172,7 +172,7 @@ namespace Engine
         for (const auto &[id, room] : _rooms) {
             RoomEntry entry;
             entry.id = id;
-            entry.name = "room";
+            entry.name = room->getName();
             entry.currentPlayers = room->getCurrentPlayers();
             entry.maxPlayers = room->getMaxPlayers();
             roomsList.push_back(entry);

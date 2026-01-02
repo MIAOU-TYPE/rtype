@@ -30,11 +30,7 @@ namespace Net::Server
 
     TCPServer::~TCPServer()
     {
-        try {
-            TCPServer::stop();
-        } catch (...) {
-            std::cerr << "{TCPServer::~TCPServer} Exception during stop()" << std::endl;
-        }
+        TCPServer::stop();
     }
 
     void TCPServer::setNonBlocking(const bool nonBlocking)
@@ -85,6 +81,7 @@ namespace Net::Server
             throw;
         }
         AServer::setRunning(true);
+        std::cout << "{TCPServer::start} Server started on " << _ip << ":" << _port << std::endl;
     }
 
     void TCPServer::stop() noexcept
@@ -108,6 +105,7 @@ namespace Net::Server
 
             (void) _netWrapper->cleanupNetwork();
         } catch (...) {
+            std::cerr << "{TCPServer::~TCPServer} Exception during stop()" << std::endl;
         }
     }
 
@@ -201,7 +199,7 @@ namespace Net::Server
     }
 
     bool TCPServer::extractPayloads(
-        socketHandle clientFd, const uint8_t *data, size_t len, std::vector<PendingPayload> &out) noexcept
+        const socketHandle clientFd, const uint8_t *data, const size_t len, std::vector<PendingPayload> &out) noexcept
     {
         const auto it = _clients.find(clientFd);
         if (it == _clients.end())
@@ -237,20 +235,20 @@ namespace Net::Server
         return true;
     }
 
-    void TCPServer::enqueuePayloads(std::vector<PendingPayload> &payloads) noexcept
+    void TCPServer::enqueuePayloads(const std::vector<PendingPayload> &payloads) noexcept
     {
         std::scoped_lock lock(_queueMutex);
 
-        for (auto &p : payloads) {
+        for (const auto &[addr, bytes] : payloads) {
             auto pkt = _packet->newPacket();
-            pkt->setAddress(p.addr);
-            pkt->setSize(static_cast<uint32_t>(p.bytes.size()));
-            std::memcpy(pkt->buffer(), p.bytes.data(), p.bytes.size());
+            pkt->setAddress(addr);
+            pkt->setSize(static_cast<uint32_t>(bytes.size()));
+            std::memcpy(pkt->buffer(), bytes.data(), bytes.size());
             _queue.push(std::move(pkt));
         }
     }
 
-    bool TCPServer::onBytesReceived(socketHandle clientFd, const uint8_t *data, size_t len) noexcept
+    bool TCPServer::onBytesReceived(socketHandle clientFd, const uint8_t *data, const size_t len) noexcept
     {
         std::vector<PendingPayload> ready;
         ready.reserve(4);

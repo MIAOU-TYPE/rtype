@@ -117,7 +117,7 @@ namespace Net::Server
          * @brief Enqueue extracted payloads into the packet queue.
          * @param payloads Vector of PendingPayloads to enqueue.
          */
-        void enqueuePayloads(std::vector<PendingPayload> &payloads) noexcept;
+        void enqueuePayloads(const std::vector<PendingPayload> &payloads) noexcept;
 
         /**
          * @brief Extract complete payloads from received data.

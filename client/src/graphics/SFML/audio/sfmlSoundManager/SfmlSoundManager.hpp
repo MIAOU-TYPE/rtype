@@ -99,8 +99,8 @@ namespace Graphics
          * @brief Represents an active playing sound.
          */
         struct ActiveSound {
-            AudioHandle handle;
-            std::unique_ptr<SfmlSound> sound;
+            AudioHandle handle; ///< Handle to the audio resource.
+            std::unique_ptr<SfmlSound> sound; ///< Unique pointer to the SFML sound object.
         };
 
         /**

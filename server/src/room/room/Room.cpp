@@ -7,14 +7,17 @@
 
 #include "Room.hpp"
 
+#include <utility>
+
 namespace Engine
 {
     Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessions,
         const std::shared_ptr<Net::Server::IServer> &server,
-        const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory, const std::string &levelPath)
-
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
+        std::string name, const size_t maxPlayers)
+        : _maxPlayers(maxPlayers), _name(std::move(name))
     {
-        _gameServer = std::make_unique<Game::GameServer>(sessions, server, packetFactory, levelPath);
+        _gameServer = std::make_unique<Game::GameServer>(sessions, server, udpPacketFactory, levelPath);
     }
 
     Room::~Room()

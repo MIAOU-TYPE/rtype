@@ -7,8 +7,6 @@
 
 #include "Room.hpp"
 
-#include <utility>
-
 namespace Engine
 {
     Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessions,
@@ -63,6 +61,16 @@ namespace Engine
     Game::GameServer &Room::gameServer() const
     {
         return *_gameServer;
+    }
+
+    size_t Room::getCurrentPlayers() const noexcept
+    {
+        return _sessions.size();
+    }
+
+    size_t Room::getMaxPlayers() const noexcept
+    {
+        return _maxPlayers;
     }
 
     void Room::run() const

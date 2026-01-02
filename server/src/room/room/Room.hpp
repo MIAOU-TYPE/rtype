@@ -10,6 +10,7 @@
 #include <atomic>
 #include <memory>
 #include <thread>
+#include <utility>
 #include <unordered_set>
 
 #include "GameServer.hpp"
@@ -78,23 +79,25 @@ namespace Engine
          * @brief Gets the set of player session IDs in the room
          * @return A constant reference to the set of session IDs
          */
-        const std::unordered_set<int> &sessions() const;
+        [[nodiscard]] const std::unordered_set<int> &sessions() const;
 
         /**
          * @brief Gets a reference to the room's game server
          * @return A reference to the GameServer instance
          */
-        Game::GameServer &gameServer() const;
+        [[nodiscard]] Game::GameServer &gameServer() const;
 
-        size_t getCurrentPlayers() const noexcept
-        {
-            return _sessions.size();
-        }
+        /**
+         * @brief Gets the current number of players in the room
+         * @return The number of player sessions in the room
+         */
+        [[nodiscard]] size_t getCurrentPlayers() const noexcept;
 
-        size_t getMaxPlayers() const noexcept
-        {
-            return _maxPlayers;
-        }
+        /**
+         * @brief Gets the maximum number of players allowed in the room
+         * @return The maximum number of players
+         */
+        [[nodiscard]] size_t getMaxPlayers() const noexcept;
 
       private:
         /**

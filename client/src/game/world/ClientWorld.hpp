@@ -9,6 +9,8 @@
 #include <iostream>
 #include <memory>
 #include "AnimationSystem.hpp"
+#include "BackgroundSystem.hpp"
+#include "IRenderer.hpp"
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
@@ -27,8 +29,10 @@ namespace World
         /**
          * @brief Constructs a ClientWorld with the given SpriteRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
+         * @param renderer Shared pointer to the renderer for loading textures.
          */
-        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry);
+        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry,
+            std::shared_ptr<Graphics::IRenderer> renderer);
 
         /**
          * @brief Advances the world state by a given delta time.
@@ -68,9 +72,15 @@ namespace World
 
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const Engine::SpriteRegistry>
-            _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
+            _spriteRegistry;                            ///> Shared pointer to the SpriteRegistry for sprite management
+        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer for loading textures
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
+
+        /**
+         * @brief Initializes the scrolling background with two tiled sprites.
+         */
+        void initializeScrollingBackground();
 
         /**
          * @brief Applies a create entity command to the client world.

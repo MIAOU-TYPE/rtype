@@ -128,12 +128,6 @@ namespace Engine
         std::size_t _currentResolution = 1; ///> Index of the current screen resolution
         bool _resolutionChanged = false;    ///> Flag indicating if the resolution has been changed
 
-        /**
-         * @brief Get the next colorblind mode in sequence.
-         * @param m The current colorblind mode.
-         * @return The next colorblind mode.
-         */
-        static Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m);
         Graphics::ColorBlindMode _currentColorBlindMode = Graphics::ColorBlindMode::NONE; ///> Current colorblind mode
     };
 } // namespace Engine

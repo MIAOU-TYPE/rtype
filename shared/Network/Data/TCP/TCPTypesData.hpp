@@ -34,7 +34,7 @@ namespace Net::Protocol::TCP
      * @brief Packet types for TCP communication from server to client.
      */
     constexpr uint8_t WELCOME = 0x10;      ///> Server welcomes the client
-    constexpr uint8_t ERROR = 0x11;        ///> Server notifies client of an error
+    constexpr uint8_t ERROR_MESSAGE = 0x11;        ///> Server notifies client of an error
     constexpr uint8_t ROOMS_LIST = 0x12;   ///> Server sends the list of available rooms
     constexpr uint8_t ROOM_CREATED = 0x13; ///> Server confirms room creation
     constexpr uint8_t ROOM_JOINED = 0x14;  ///> Server confirms joining a room

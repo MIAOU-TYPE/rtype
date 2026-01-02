@@ -55,6 +55,6 @@ namespace Engine
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
 
         std::shared_ptr<RoomService> _roomService; ///> Lobby/room service shared across states.
-        std::unique_ptr<Menu> _menu; ///> Unique pointer to the menu.
+        std::unique_ptr<Menu> _menu;               ///> Unique pointer to the menu.
     };
 } // namespace Engine

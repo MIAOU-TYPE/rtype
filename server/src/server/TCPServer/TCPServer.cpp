@@ -201,7 +201,7 @@ namespace Net::Server
     }
 
     bool TCPServer::extractPayloads(
-        socketHandle clientFd, const uint8_t *data, size_t len, std::vector<PendingPayload> &out)
+        socketHandle clientFd, const uint8_t *data, size_t len, std::vector<PendingPayload> &out) noexcept
     {
         const auto it = _clients.find(clientFd);
         if (it == _clients.end())

@@ -117,7 +117,7 @@ namespace Net::Server
          * @brief Enqueue extracted payloads into the packet queue.
          * @param payloads Vector of PendingPayloads to enqueue.
          */
-        void enqueuePayloads(std::vector<PendingPayload> &payloads);
+        void enqueuePayloads(std::vector<PendingPayload> &payloads) noexcept;
 
         /**
          * @brief Extract complete payloads from received data.
@@ -149,13 +149,13 @@ namespace Net::Server
         /**
          * @brief Read data from connected clients.
          */
-        void readClients();
+        void readClients() noexcept;
 
         /**
          * @brief Flush pending writes to a client.
          * @param clientFd Socket handle of the client to flush writes to.
          */
-        void flushWrites(socketHandle clientFd);
+        void flushWrites(socketHandle clientFd) noexcept;
 
         /**
          * @brief Drop a client connection.

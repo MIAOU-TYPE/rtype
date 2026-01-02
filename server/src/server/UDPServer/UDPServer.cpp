@@ -46,7 +46,7 @@ void UDPServer::start()
     std::cout << "{UDPServer::start} UDP Server started on " << _ip << ":" << _port << std::endl;
 }
 
-void UDPServer::stop()
+void UDPServer::stop() noexcept
 {
     setRunning(false);
     if (_socketFd != kInvalidSocket) {
@@ -55,7 +55,7 @@ void UDPServer::stop()
         std::cout << "{UDPServer::stop} UDP Server stopped." << std::endl;
     }
     if (const auto result = _netWrapper.cleanupNetwork(); result != 0)
-        throw ServerError("{UDPServer::stop} Failed to cleanup network");
+        std::cerr << "{UDPServer::stop} Failed to cleanup network" << std::endl;
 }
 
 void UDPServer::setNonBlocking(const bool nonBlocking)
@@ -67,7 +67,7 @@ void UDPServer::setNonBlocking(const bool nonBlocking)
         throw ServerError("{UDPServer::setNonBlocking} Failed to set socket non-blocking mode");
 }
 
-void UDPServer::readPackets()
+void UDPServer::readPackets() noexcept
 {
     if (!isRunning() || _socketFd == kInvalidSocket)
         return;
@@ -87,14 +87,14 @@ void UDPServer::readPackets()
     }
 }
 
-bool UDPServer::sendPacket(const Net::IPacket &pkt)
+bool UDPServer::sendPacket(const Net::IPacket &pkt) noexcept
 {
     return _netWrapper.sendTo(_socketFd, pkt.buffer(), pkt.size(), 0, reinterpret_cast<const sockaddr *>(pkt.address()),
                sizeof(sockaddr_in))
         != -1;
 }
 
-bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt)
+bool UDPServer::popPacket(std::shared_ptr<Net::IPacket> &pkt) noexcept
 {
     std::scoped_lock lock(_rxMutex);
 

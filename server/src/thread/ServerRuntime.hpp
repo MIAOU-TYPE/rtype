@@ -60,11 +60,11 @@ namespace Net::Thread
       public:
         /**
          * @brief Construct a new Server Runtime object
-         * @param UdpServer A shared pointer to the UDP server instance
-         * @param TcpServer A shared pointer to the TCP server instance
+         * @param udpServer A shared pointer to the UDP server instance
+         * @param tcpServer A shared pointer to the TCP server instance
          */
         explicit ServerRuntime(
-            const std::shared_ptr<Server::IServer> &UdpServer, const std::shared_ptr<Server::IServer> &TcpServer);
+            const std::shared_ptr<Server::IServer> &udpServer, const std::shared_ptr<Server::IServer> &tcpServer);
 
         /**
          * @brief Destroy the Server Runtime object

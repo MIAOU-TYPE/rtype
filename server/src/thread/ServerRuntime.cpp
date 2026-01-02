@@ -10,8 +10,8 @@
 using namespace Net::Thread;
 
 ServerRuntime::ServerRuntime(
-    const std::shared_ptr<Server::IServer> &UdpServer, const std::shared_ptr<Server::IServer> &TcpServer)
-    : _udpServer(UdpServer), _tcpServer(TcpServer)
+    const std::shared_ptr<Server::IServer> &udpServer, const std::shared_ptr<Server::IServer> &tcpServer)
+    : _udpServer(udpServer), _tcpServer(tcpServer)
 {
     if (!_udpServer)
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid UDP server pointer");
@@ -144,7 +144,6 @@ void ServerRuntime::runTcp() const
     while (_tcpServer->isRunning()) {
         _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt)) {
-            std::cout << "Received TCP packet of size " << pkt->size() << std::endl;
             _tcpPacketRouter->handle(pkt);
         }
     }

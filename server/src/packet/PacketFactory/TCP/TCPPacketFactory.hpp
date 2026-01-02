@@ -7,8 +7,6 @@
 
 #pragma once
 
-// TCPPacketFactory.hpp
-#pragma once
 #include <memory>
 #include <vector>
 #include "IPacket.hpp"
@@ -16,22 +14,27 @@
 
 namespace Net::Factory
 {
+    /**
+     * @class TCPPacketFactory
+     * @brief Factory for creating TCP packets
+     */
     class TCPPacketFactory {
       public:
-        explicit TCPPacketFactory(const std::shared_ptr<IPacket> &proto) : _packet(proto)
-        {
-        }
+        /**
+         * @brief Constructor for TCPPacketFactory
+         * @param proto The prototype packet to use for creating new packets
+         */
+        explicit TCPPacketFactory(const std::shared_ptr<IPacket> &proto);
 
-        std::shared_ptr<IPacket> make(const sockaddr_in &addr, const std::vector<uint8_t> &payload) const
-        {
-            auto p = _packet->newPacket();
-            p->setAddress(addr);
-            std::memcpy(p->buffer(), payload.data(), payload.size());
-            p->setSize(static_cast<uint32_t>(payload.size()));
-            return p;
-        }
+        /**
+         * @brief Creates a new TCP packet
+         * @param addr The address of the packet
+         * @param payload The payload of the packet
+         * @return A shared pointer to the newly created packet
+         */
+        std::shared_ptr<IPacket> make(const sockaddr_in &addr, const std::vector<uint8_t> &payload) const;
 
       private:
-        std::shared_ptr<IPacket> _packet;
+        std::shared_ptr<IPacket> _packet; ///> Prototype packet for creating new packets
     };
 } // namespace Net::Factory

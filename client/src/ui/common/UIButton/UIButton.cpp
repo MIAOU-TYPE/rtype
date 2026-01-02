@@ -7,7 +7,7 @@
 
 #include "UIButton.hpp"
 
-namespace Engine
+namespace UI
 {
     UIButton::UIButton(
         const std::shared_ptr<Graphics::IRenderer> &renderer, const ButtonSize size, const std::string &label)
@@ -28,15 +28,11 @@ namespace Engine
         }
 
         _cmd.textureId = _released;
+        _cmd.frame = {0, 0, static_cast<int>(textures->getSize(_released).width),
+            static_cast<int>(textures->getSize(_released).height)};
 
-        const auto sizeTex = textures->getSize(_released);
-        _cmd.frame = {0, 0, static_cast<int>(sizeTex.width), static_cast<int>(sizeTex.height)};
-
-        _text = texts->createText();
-        _text->setFont(fonts->load("fonts/font.ttf"));
+        _text = _renderer->texts()->createText(size == ButtonSize::Large ? 42 : 28, {255, 255, 255, 255});
         _text->setString(label);
-        _text->setCharacterSize(size == ButtonSize::Large ? 42 : 28);
-        _text->setColor({255, 255, 255, 255});
     }
 
     void UIButton::setPosition(const float x, const float y)
@@ -57,10 +53,8 @@ namespace Engine
 
     void UIButton::update(const float mouseX, const float mouseY)
     {
-        const bool hovered = bounds().contains(mouseX, mouseY);
-
         if (_state != ButtonState::Pressed)
-            _state = hovered ? ButtonState::Hover : ButtonState::Released;
+            _state = bounds().contains(mouseX, mouseY) ? ButtonState::Hover : ButtonState::Released;
         switch (_state) {
             case ButtonState::Released: _cmd.textureId = _released; break;
             case ButtonState::Hover: _cmd.textureId = _hover; break;
@@ -86,13 +80,20 @@ namespace Engine
         return false;
     }
 
+    void UIButton::centerButtonLabel(float centerX, float y, Graphics::IText &label, float labelCenterX)
+    {
+        setPosition(centerX - bounds().w * 0.5f, y);
+        const auto b = bounds();
+        label.setPosition(labelCenterX - label.getWidth() * 0.5f, b.y + (b.h - label.getHeight()) * 0.5f);
+    }
+
     void UIButton::render() const
     {
         _renderer->draw(_cmd);
         _renderer->draw(*_text);
     }
 
-    FloatRect UIButton::bounds() const noexcept
+    Engine::FloatRect UIButton::bounds() const noexcept
     {
         return {_cmd.position.x, _cmd.position.y, static_cast<float>(_cmd.frame.w) * _cmd.scale.x,
             static_cast<float>(_cmd.frame.h) * _cmd.scale.y};
@@ -113,4 +114,4 @@ namespace Engine
     {
         _state = ButtonState::Released;
     }
-} // namespace Engine
+} // namespace UI

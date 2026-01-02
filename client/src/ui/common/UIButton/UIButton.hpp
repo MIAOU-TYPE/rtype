@@ -6,16 +6,12 @@
 */
 
 #pragma once
-
-#include <memory>
-#include <string>
 #include <utility>
 #include "IRenderer.hpp"
-#include "IText.hpp"
 #include "RenderCommand.hpp"
 #include "SfmlText.hpp"
 
-namespace Engine
+namespace UI
 {
     /** @enum ButtonSize
      * @brief Enum representing the size of a button.
@@ -93,6 +89,45 @@ namespace Engine
         bool onMousePressed(float x, float y);
 
         /**
+         * @brief Handle mouse release event.
+         * @param x X coordinate of the mouse.
+         * @param y Y coordinate of the mouse.
+         * @return True if the button was released, false otherwise.
+         */
+        [[nodiscard]] bool onMouseReleased(float x, float y);
+
+        /**
+         * @brief Handle click release event with a callback.
+         * @tparam Fn Type of the callback function.
+         * @param x X coordinate of the mouse.
+         * @param y Y coordinate of the mouse.
+         * @param fn Callback function to execute on click release.
+         * @return True if the button was clicked, false otherwise.
+         */
+        template <typename Fn>
+        bool onClickReleased(float x, float y, Fn &&fn);
+
+        /**
+         * @brief Handle click press event with a callback.
+         * @tparam Fn Type of the callback function.
+         * @param x X coordinate of the mouse.
+         * @param y Y coordinate of the mouse.
+         * @param fn Callback function to execute on click press.
+         * @return True if the button was clicked, false otherwise.
+         */
+        template <typename Fn>
+        bool onClickPressed(float x, float y, Fn &&fn);
+
+        /**
+         * @brief Center the button label.
+         * @param centerX X coordinate to center around.
+         * @param y Y coordinate of the label.
+         * @param label Text label to center.
+         * @param labelCenterX Center X coordinate of the label.
+         */
+        void centerButtonLabel(float centerX, float y, Graphics::IText &label, float labelCenterX);
+
+        /**
          * @brief Render the button.
          */
         void render() const;
@@ -101,15 +136,7 @@ namespace Engine
          * @brief Get the bounds of the button.
          * @return FloatRect representing the bounds.
          */
-        [[nodiscard]] FloatRect bounds() const noexcept;
-
-        /**
-         * @brief Handle mouse release event.
-         * @param x X coordinate of the mouse.
-         * @param y Y coordinate of the mouse.
-         * @return True if the button was released, false otherwise.
-         */
-        [[nodiscard]] bool onMouseReleased(float x, float y);
+        [[nodiscard]] Engine::FloatRect bounds() const noexcept;
 
         /**
          * @brief Set the label of the button.
@@ -132,11 +159,13 @@ namespace Engine
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer for drawing
         std::unique_ptr<Graphics::IText> _text;         ///> Text label of the button
 
-        RenderCommand _cmd;                         ///> Render command for the button
+        Engine::RenderCommand _cmd;                 ///> Render command for the button
         ButtonState _state = ButtonState::Released; ///> Current state of the button
 
         Graphics::TextureHandle _released; ///> Texture for released state
         Graphics::TextureHandle _hover;    ///> Texture for hover state
         Graphics::TextureHandle _pressed;  ///> Texture for pressed state
     };
-} // namespace Engine
+} // namespace UI
+
+#include "UIButton.tpp"

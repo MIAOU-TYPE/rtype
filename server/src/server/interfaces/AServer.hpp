@@ -53,13 +53,13 @@ namespace Net::Server
          * @note This method should gracefully shut down the server and release resources.
          * Derived classes must implement this method.
          */
-        void stop() override = 0;
+        void stop() noexcept override = 0;
 
         /**
          * @brief Sets the server's socket to non-blocking or blocking mode.
          * @param nonBlocking True to set the socket to non-blocking mode, false for blocking mode.
          */
-        void setNonBlocking(bool nonBlocking) override;
+        void setNonBlocking(bool nonBlocking) override = 0;
 
         /**
          * @brief Checks if the server is currently running.
@@ -76,14 +76,14 @@ namespace Net::Server
         /**
          * @brief reads packets from the server.
          */
-        void readPackets() override = 0;
+        void readPackets() noexcept override = 0;
 
         /**
          * @brief Sends a packet through the server.
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const IPacket &pkt) override = 0;
+        bool sendPacket(const IPacket &pkt) noexcept override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -102,7 +102,7 @@ namespace Net::Server
          * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(std::shared_ptr<IPacket> &pkt) override = 0;
+        bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept override = 0;
 
       protected:
         std::string _ip = "";                ///> IP address the server is bound to

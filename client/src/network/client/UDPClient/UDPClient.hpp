@@ -56,6 +56,12 @@ namespace Network
         void close() override;
 
         /**
+         * @brief Sets the socket to non-blocking or blocking mode.
+         * @param nonBlocking True to set non-blocking mode, false for blocking mode.
+         */
+        void setNonBlocking(bool nonBlocking) override;
+
+        /**
          * @brief Starts the network client.
          * @throws UDPClientError if an error occurs while starting the client.
          */

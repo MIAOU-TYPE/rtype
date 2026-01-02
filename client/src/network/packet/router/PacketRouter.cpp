@@ -34,12 +34,12 @@ namespace Ecs
         const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
-            case Net::Protocol::ACCEPT: handleAccept(); break;
-            case Net::Protocol::REJECT: handleReject(); break;
-            case Net::Protocol::GAME_OVER: handleGameOver(); break;
-            case Net::Protocol::PONG: handlePong(); break;
-            case Net::Protocol::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
-            case Net::Protocol::SCORE: handleScore(payload, payloadSize); break;
+            case Net::Protocol::UDP::ACCEPT: handleAccept(); break;
+            case Net::Protocol::UDP::REJECT: handleReject(); break;
+            case Net::Protocol::UDP::GAME_OVER: handleGameOver(); break;
+            case Net::Protocol::UDP::PONG: handlePong(); break;
+            case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
+            case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
                 std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';

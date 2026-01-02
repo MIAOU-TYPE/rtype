@@ -57,7 +57,7 @@ namespace Thread
             return;
         }
         _running = true;
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::CONNECT));
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::CONNECT));
         setupEventsRegistry();
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -70,7 +70,7 @@ namespace Thread
 
         _running = false;
         _cv.notify_all();
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::DISCONNECT));
+        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::DISCONNECT));
 
         if (_receiverThread.joinable())
             _receiverThread.join();

@@ -41,7 +41,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> ClientPacketFactory::makeInput(const PlayerInput &input) const noexcept
     {
         PlayerInputData packet{};
-        packet.header = makeHeader(Net::Protocol::INPUT, sizeof(PlayerInputData));
+        packet.header = makeHeader(Net::Protocol::UDP::INPUT, sizeof(PlayerInputData));
 
         packet.flags = 0;
         if (input.up)

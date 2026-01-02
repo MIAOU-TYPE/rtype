@@ -18,7 +18,7 @@
 #include "IPacket.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
-#include "TypesData.hpp"
+#include "UDPTypesData.hpp"
 
 namespace Ecs
 {

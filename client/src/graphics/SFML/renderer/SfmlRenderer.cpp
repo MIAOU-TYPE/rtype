@@ -37,10 +37,10 @@ namespace Graphics
     {
         if (_renderTextureManager && _renderTextureManager->isAvailable() && _colorBlindManager->isShaderAvailable()) {
             const auto windowSize = _window->getSize();
-            const auto textureSize = _renderTextureManager->getRenderTexture()->getSize();
 
-            if (windowSize != textureSize) {
-                _renderTextureManager->resize(windowSize.x, windowSize.y);
+            if (const auto textureSize = _renderTextureManager->getRenderTexture()->getSize();
+                windowSize != textureSize) {
+                (void) _renderTextureManager->resize(windowSize.x, windowSize.y);
             }
             _renderTextureManager->clear();
         }
@@ -50,7 +50,7 @@ namespace Graphics
     {
         if (_renderTextureManager && _renderTextureManager->isAvailable() && _colorBlindManager->isShaderAvailable()) {
             _renderTextureManager->display();
-            sf::Sprite sprite = _renderTextureManager->getSprite();
+            const auto sprite = _renderTextureManager->getSprite();
             _window->draw(sprite, _colorBlindManager->getShader());
         }
         _window->display();
@@ -120,7 +120,7 @@ namespace Graphics
         }
     }
 
-    void SfmlRenderer::setColorBlindMode(ColorBlindMode mode)
+    void SfmlRenderer::setColorBlindMode(const ColorBlindMode mode)
     {
         if (_colorBlindManager) {
             _colorBlindManager->setMode(mode);

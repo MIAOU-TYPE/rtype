@@ -34,7 +34,7 @@ namespace Thread
 
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _renderer);
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
@@ -253,9 +253,6 @@ namespace Thread
     {
         _writeRenderCommands->clear();
 
-        const auto viewportSize = _renderer->getViewportSize();
-        Engine::BackgroundSystem::render(
-            _world->registry(), *_writeRenderCommands, viewportSize.width, viewportSize.height);
         Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
 
         {

@@ -37,42 +37,37 @@ namespace Graphics
 
     void SfmlRenderer::beginFrame()
     {
-        const bool wantsPostProcess = (_colorBlindManager && _colorBlindManager->isShaderAvailable());
-        if (!wantsPostProcess) {
-            _window->clear();
-            return;
-        }
-        const auto windowSize = _window->getSize();
-        auto disablePostProcess = [&]() {
-            std::cerr << "{SfmlRenderer::beginFrame} RenderTexture unavailable, disabling colorblind shader"
-                      << std::endl;
-            _colorBlindManager->setMode(ColorBlindMode::NONE);
-            _renderTexture.reset();
-            _window->clear();
-        };
-        if (!_renderTexture) {
-            _renderTexture = std::make_unique<sf::RenderTexture>();
-            if (!_renderTexture->resize(windowSize)) {
-                disablePostProcess();
-                return;
+        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
+            const auto windowSize = _window->getSize();
+            const auto textureSize = _renderTexture->getSize();
+
+            if (windowSize.x != textureSize.x || windowSize.y != textureSize.y) {
+                if (!_renderTexture->resize(windowSize)) {
+                    std::cerr << "[SfmlRenderer] Failed to resize render texture, disabling shader" << std::endl;
+                    _renderTexture.reset();
+                }
             }
         }
-        const auto texSize = _renderTexture->getSize();
-        if (texSize != windowSize) {
-            if (!_renderTexture->resize(windowSize)) {
-                disablePostProcess();
-                return;
-            }
+
+        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
+            _renderTexture->clear();
+        } else {
+            _window->clear();
         }
-        _renderTexture->clear();
     }
 
     void SfmlRenderer::endFrame()
     {
-        if (_renderTexture) {
+        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
             _renderTexture->display();
             sf::Sprite sprite(_renderTexture->getTexture());
-            _window->draw(sprite, _colorBlindManager->getShader());
+            _window->clear();
+            if (!_colorBlindManager->isShaderAvailable()) {
+                std::cerr << "[SfmlRenderer] Colorblind shader not available during endFrame\n";
+                _window->draw(sprite);
+            } else {
+                _window->draw(sprite, _colorBlindManager->getShader());
+            }
         }
         _window->display();
     }

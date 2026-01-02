@@ -44,7 +44,6 @@ namespace Graphics
             }
             _renderTextureManager->clear();
         }
-        _window->clear();
     }
 
     void SfmlRenderer::endFrame()

@@ -15,6 +15,7 @@
 #include "RoomManager.hpp"
 #include "SessionManager.hpp"
 #include "SnapshotSystem.hpp"
+#include "TCPPacket.hpp"
 #include "TCPPacketFactory.hpp"
 #include "TCPPacketRouter.hpp"
 #include "UDPPacket.hpp"

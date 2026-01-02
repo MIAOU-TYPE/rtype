@@ -14,7 +14,9 @@
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"
+#include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"
+#include "SoundRegistry.hpp"
 #include "UIButton.hpp"
 
 namespace Engine
@@ -54,8 +56,11 @@ namespace Engine
          * @brief Construct a new Settings Menu object.
          *
          * @param renderer Shared pointer to the renderer used for rendering the settings menu.
+         * @param musicRegistry Shared pointer to the music registry.
+         * @param soundRegistry Shared pointer to the sound registry.
          */
-        explicit SettingsMenu(const std::shared_ptr<Graphics::IRenderer> &renderer);
+        explicit SettingsMenu(const std::shared_ptr<Graphics::IRenderer> &renderer,
+            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
 
         /**
          * @brief Update the settings menu state.
@@ -107,6 +112,8 @@ namespace Engine
         void handleInput(const InputFrame &frame);
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
+        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
+        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Sound registry
 
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
         RenderCommand _backgroundCmd;               ///> Render command for the background image

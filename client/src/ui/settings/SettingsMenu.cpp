@@ -145,7 +145,7 @@ namespace Engine
                 return;
             }
 
-            if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            if (_resolutionNext->onClickReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
                 const auto &res = _resolutions.at(_currentResolution);

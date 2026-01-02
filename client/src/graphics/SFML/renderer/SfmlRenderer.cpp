@@ -40,11 +40,7 @@ namespace Graphics
             const auto textureSize = _renderTextureManager->getRenderTexture()->getSize();
 
             if (windowSize != textureSize) {
-                if (!_renderTextureManager->resize(windowSize.x, windowSize.y)) {
-                    std::cerr << "{SfmlRenderer::beginFrame} Failed to resize render texture, disabling shader"
-                              << std::endl;
-                    _renderTextureManager->disable();
-                }
+                _renderTextureManager->resize(windowSize.x, windowSize.y);
             }
             _renderTextureManager->clear();
         }

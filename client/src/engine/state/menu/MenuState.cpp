@@ -22,12 +22,6 @@ namespace Engine
             _manager = &manager;
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
-
-            if (_musicRegistry) {
-                _menuMusicHandle = _renderer->musics()->load("sounds/menu_theme.flac");
-                if (_menuMusicHandle != Graphics::InvalidAudio)
-                    _musicRegistry->playMusic(_menuMusicHandle, true, 50.f);
-            }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
         }

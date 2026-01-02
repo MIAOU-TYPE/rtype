@@ -6,6 +6,20 @@
 */
 
 #include "SettingsMenu.hpp"
+#include <iostream>
+namespace
+{
+    Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m)
+    {
+        switch (m) {
+            case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
+            case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
+            case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
+            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
+            default: return Graphics::ColorBlindMode::NONE;
+        }
+    }
+} // namespace
 
 namespace Engine
 {
@@ -162,16 +176,5 @@ namespace Engine
         _resolution->render();
         _resolutionNext->render();
         _back->render();
-    }
-
-    Graphics::ColorBlindMode SettingsMenu::nextMode(Graphics::ColorBlindMode m)
-    {
-        switch (m) {
-            case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
-            case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
-            case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
-            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
-            default: return Graphics::ColorBlindMode::NONE;
-        }
     }
 } // namespace Engine

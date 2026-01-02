@@ -29,17 +29,17 @@ namespace Net::TCP
     void Writer::str16(const std::string_view s)
     {
         if (s.size() > 0xFFFFu)
-            throw std::length_error("{Net::TCP::Writer::str16} String size exceeds maximum length of 65535 characters");
+            throw WriterError("{Net::TCP::Writer::str16} String size exceeds maximum length of 65535 characters");
         u16(static_cast<uint16_t>(s.size()));
         _buf.insert(_buf.end(), s.begin(), s.end());
     }
 
-    std::vector<uint8_t> &Writer::bytes()
+    std::vector<uint8_t> &Writer::bytes() noexcept
     {
         return _buf;
     }
 
-    const std::vector<uint8_t> &Writer::bytes() const
+    const std::vector<uint8_t> &Writer::bytes() const noexcept
     {
         return _buf;
     }

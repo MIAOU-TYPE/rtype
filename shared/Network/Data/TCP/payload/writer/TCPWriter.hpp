@@ -8,15 +8,44 @@
 #pragma once
 #include <cstdint>
 #include <cstring>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <string_view>
+#include <exception>
 #include <iostream>
 #include <ostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+#include <string_view>
 
 namespace Net::TCP
 {
+    /**
+     * @class WriterError
+     * @brief Exception class for Writer errors
+     */
+    class WriterError : public std::exception {
+      public:
+        /**
+         * @brief Construct a new WriterError object
+         * @param message The error message
+         */
+        explicit WriterError(std::string message) : _message(std::move(message))
+        {
+        }
+
+        /**
+         * @brief Get the error message
+         * @return The error message
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     /**
      * @brief Writer class for serializing data into a byte buffer
      * Provides methods to write various data types into an internal byte vector.
@@ -53,13 +82,13 @@ namespace Net::TCP
          * @brief Get the internal byte buffer.
          * @return Reference to the byte vector.
          */
-        std::vector<uint8_t> &bytes();
+        std::vector<uint8_t> &bytes() noexcept;
 
         /**
          * @brief Get the internal byte buffer (const version).
          * @return Const reference to the byte vector.
          */
-        const std::vector<uint8_t> &bytes() const;
+        const std::vector<uint8_t> &bytes() const noexcept;
 
       private:
         /**

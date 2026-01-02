@@ -49,13 +49,9 @@ namespace Graphics
                     _renderTexture.reset();
                 }
             }
-        }
-
-        if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
             _renderTexture->clear();
-        } else {
-            _window->clear();
         }
+        _window->clear();
     }
 
     void SfmlRenderer::endFrame()
@@ -63,7 +59,6 @@ namespace Graphics
         if (_renderTexture && _colorBlindManager->isShaderAvailable()) {
             _renderTexture->display();
             sf::Sprite sprite(_renderTexture->getTexture());
-            _window->clear();
             if (!_colorBlindManager->isShaderAvailable()) {
                 std::cerr << "[SfmlRenderer] Colorblind shader not available during endFrame\n";
                 _window->draw(sprite);
@@ -150,5 +145,12 @@ namespace Graphics
                 }
             }
         }
+    }
+
+    ColorBlindMode SfmlRenderer::getColorBlindMode() const noexcept
+    {
+        if (_colorBlindManager)
+            return _colorBlindManager->getMode();
+        return ColorBlindMode::NONE;
     }
 } // namespace Graphics

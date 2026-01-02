@@ -168,6 +168,8 @@ namespace Net
 
         try {
             roomId = _rooms->removePlayer(sessionId);
+            if (roomId == 0)
+                return sendError(addr, req, 13, "not in a room");
         } catch (const std::exception &e) {
             return sendError(addr, req, 13, e.what());
         }
@@ -193,8 +195,11 @@ namespace Net
 
         const auto payload = TCP::buildPayload(Protocol::TCP::GAME_START, 0, b.bytes());
 
-        for (const auto &room = _rooms->getRoomById(roomId); const auto &member : room->sessions()) {
-            if (const auto memberAddr = _sessions->getAddress(member))
+        const auto &room = _rooms->getRoomById(roomId);
+        if (!room)
+            return;
+        for (const auto &session : room->sessions()) {
+            if (const auto memberAddr = _sessions->getAddress(session))
                 _tcp->sendPacket(*_packetFactory->make(*memberAddr, payload));
         }
     }

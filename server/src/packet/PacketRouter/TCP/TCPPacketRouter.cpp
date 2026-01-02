@@ -55,7 +55,7 @@ namespace Net
         TCP::Writer b;
         b.u16(code);
         b.str16(msg);
-        const auto payload = TCP::buildPayload(Protocol::TCP::ERROR, req, b.bytes());
+        const auto payload = TCP::buildPayload(Protocol::TCP::ERROR_MESSAGE, req, b.bytes());
         _tcp->sendPacket(*_packetFactory->make(addr, payload));
     }
 

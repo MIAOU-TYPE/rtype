@@ -6,6 +6,7 @@
 */
 
 #include "SettingsMenu.hpp"
+#include <iostream>
 
 namespace Engine
 {
@@ -22,6 +23,13 @@ namespace Engine
         _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
         _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        
+        const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
+        const auto presetName = Utils::InputConfig::getPresetName(preset);
+        std::cout << "Current preset: " << presetName << std::endl;
+        _controls = std::make_unique<UIButton>(_renderer, ButtonSize::Large, presetName);
+        _controlsNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        
         _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
     }
 
@@ -29,10 +37,13 @@ namespace Engine
     {
         _backRequested = false;
         _resolutionChanged = false;
+        _controlsChanged = false;
 
         _audio->reset();
         _resolution->reset();
         _resolutionNext->reset();
+        _controls->reset();
+        _controlsNext->reset();
         _back->reset();
 
         layout();
@@ -52,9 +63,13 @@ namespace Engine
         _backgroundCmd.position = {0.f, 0.f};
         _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
 
-        _audio->setPosition(cx - 400.f * scale, cy - 60.f * scale);
-        _resolution->setPosition(cx + 150.f * scale, cy - 60.f * scale);
-        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 60.f * scale);
+        _audio->setPosition(cx - 400.f * scale, cy - 150.f * scale);
+        _resolution->setPosition(cx + 150.f * scale, cy - 150.f * scale);
+        _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 150.f * scale);
+        
+        _controls->setPosition(cx + 150.f * scale, cy - 40.f * scale);
+        _controlsNext->setPosition(cx + (150.f + _controls->bounds().w + 250.f) * scale, cy - 40.f * scale);
+        
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
@@ -64,6 +79,8 @@ namespace Engine
         _audio->update(frame.mouseX, frame.mouseY);
         _resolution->update(frame.mouseX, frame.mouseY);
         _resolutionNext->update(frame.mouseX, frame.mouseY);
+        _controls->update(frame.mouseX, frame.mouseY);
+        _controlsNext->update(frame.mouseX, frame.mouseY);
         _back->update(frame.mouseX, frame.mouseY);
     }
 
@@ -87,6 +104,8 @@ namespace Engine
             _audio->onMousePressed(frame.mouseX, frame.mouseY);
             _resolution->onMousePressed(frame.mouseX, frame.mouseY);
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
+            _controls->onMousePressed(frame.mouseX, frame.mouseY);
+            _controlsNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
         }
         if (frame.mouseReleased) {
@@ -100,6 +119,18 @@ namespace Engine
                 _resolutionNext->reset();
                 return;
             }
+            
+            if (_controlsNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                auto &config = Utils::InputConfig::getInstance();
+                const auto current = config.getCurrentPreset();
+                const auto next = (current == Utils::KeyPreset::Arrows) ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
+                config.setPreset(next);
+                _controls->setLabel(Utils::InputConfig::getPresetName(next));
+                _controlsChanged = true;
+                _controlsNext->reset();
+                return;
+            }
+            
             if (_back->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _backRequested = true;
                 _back->reset();
@@ -129,12 +160,19 @@ namespace Engine
         return _resolutions.at(_currentResolution);
     }
 
+    bool SettingsMenu::controlsChanged() const noexcept
+    {
+        return _controlsChanged;
+    }
+
     void SettingsMenu::render() const
     {
         _renderer->draw(_backgroundCmd);
         _audio->render();
         _resolution->render();
         _resolutionNext->render();
+        _controls->render();
+        _controlsNext->render();
         _back->render();
     }
 } // namespace Engine

@@ -15,6 +15,7 @@
 #include "InputState.hpp"
 #include "RenderCommand.hpp"
 #include "UIButton.hpp"
+#include "InputConfig.hpp"
 
 namespace Engine
 {
@@ -94,6 +95,13 @@ namespace Engine
         Graphics::Extent2u currentResolution() const noexcept;
 
         /**
+         * @brief Check if the controls preset has been changed.
+         *
+         * @return true if the controls preset has been changed, false otherwise.
+         */
+        bool controlsChanged() const noexcept;
+
+        /**
          * @brief Handle resizing of the settings menu.
          */
         void layout();
@@ -116,8 +124,11 @@ namespace Engine
         std::unique_ptr<UIButton> _back;           ///> Back button
         std::unique_ptr<UIButton> _resolution;     ///> Current resolution display button
         std::unique_ptr<UIButton> _resolutionNext; ///> Next resolution button
+        std::unique_ptr<UIButton> _controls;       ///> Current controls preset display button
+        std::unique_ptr<UIButton> _controlsNext;   ///> Next controls preset button
 
-        bool _backRequested = false; ///> Flag indicating if the user wants to go back
+        bool _backRequested = false;    ///> Flag indicating if the user wants to go back
+        bool _controlsChanged = false;  ///> Flag indicating if the controls preset has been changed
 
         /**
          * @brief List of available screen resolutions.

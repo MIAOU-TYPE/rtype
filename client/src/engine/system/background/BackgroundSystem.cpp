@@ -25,9 +25,8 @@ namespace Engine
     {
         registry.view<Ecs::Position, Ecs::Render, Ecs::ScrollingBackground>(
             [&](Ecs::Entity, const Ecs::Position &pos, const Ecs::Render &render, const Ecs::ScrollingBackground &bg) {
-                // Scale to fit viewport height while maintaining aspect ratio
                 const float scaleY = static_cast<float>(viewportHeight) / bg.spriteHeight;
-                const float scaleX = scaleY; // Maintain aspect ratio
+                const float scaleX = scaleY;
 
                 out.push_back({.textureId = render.texture,
                     .frame = {0, 0, static_cast<int>(bg.spriteWidth), static_cast<int>(bg.spriteHeight)},

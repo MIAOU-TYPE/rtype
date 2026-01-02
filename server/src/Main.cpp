@@ -38,14 +38,14 @@ int main(const int argc, char **argv)
     const int port = parser.getPort();
     auto host = parser.getHost();
     try {
-        const auto UdpServer = std::make_shared<Net::Server::UDPServer>();
-        const auto TcpServer = std::make_shared<Net::Server::TCPServer>();
+        const auto udpServer = std::make_shared<Net::Server::UDPServer>();
+        const auto tcpServer = std::make_shared<Net::Server::TCPServer>();
 
-        Net::Thread::ServerRuntime runtime(UdpServer, TcpServer);
+        Net::Thread::ServerRuntime runtime(udpServer, tcpServer);
         const auto signalHandler = startSignalHandler(runtime);
 
-        TcpServer->configure(host, port);
-        UdpServer->configure(host, port + 1);
+        tcpServer->configure(host, port);
+        udpServer->configure(host, port + 1);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

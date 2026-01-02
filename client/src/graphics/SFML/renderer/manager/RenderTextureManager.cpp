@@ -36,21 +36,21 @@ namespace Graphics
         return true;
     }
 
-    void RenderTextureManager::clear()
+    void RenderTextureManager::clear() const
     {
         if (_renderTexture) {
             _renderTexture->clear();
         }
     }
 
-    void RenderTextureManager::display()
+    void RenderTextureManager::display() const
     {
         if (_renderTexture) {
             _renderTexture->display();
         }
     }
 
-    sf::RenderTexture *RenderTextureManager::getRenderTexture() noexcept
+    sf::RenderTexture *RenderTextureManager::getRenderTexture() const noexcept
     {
         return _renderTexture.get();
     }

@@ -17,7 +17,7 @@
 #include "HeaderData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
-#include "TypesData.hpp"
+#include "UDPTypesData.hpp"
 
 namespace Network
 {

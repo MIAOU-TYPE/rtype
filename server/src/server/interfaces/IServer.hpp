@@ -78,7 +78,7 @@ namespace Net::Server
          * @brief Stops the server.
          * @note This method should gracefully shut down the server and release resources.
          */
-        virtual void stop() = 0;
+        virtual void stop() noexcept = 0;
 
         /**
          * @brief Sets the server's socket to non-blocking or blocking mode.
@@ -101,14 +101,14 @@ namespace Net::Server
         /**
          * @brief reads packets from the server.
          */
-        virtual void readPackets() = 0;
+        virtual void readPackets() noexcept = 0;
 
         /**
          * @brief Sends a packet through the server.
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const IPacket &pkt) = 0;
+        virtual bool sendPacket(const IPacket &pkt) noexcept = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
@@ -127,6 +127,6 @@ namespace Net::Server
          * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        virtual bool popPacket(std::shared_ptr<IPacket> &pkt) = 0;
+        virtual bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept = 0;
     };
 } // namespace Net::Server

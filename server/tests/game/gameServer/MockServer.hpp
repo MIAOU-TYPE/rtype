@@ -30,7 +30,7 @@ class MockServer : public Net::Server::IServer {
         return true;
     }
 
-    bool sendPacket(const Net::IPacket &) override
+    bool sendPacket(const Net::IPacket &) noexcept override
     {
         sent = true;
         return true;
@@ -40,7 +40,7 @@ class MockServer : public Net::Server::IServer {
     {
     }
 
-    void stop() override
+    void stop() noexcept override
     {
     }
 
@@ -53,11 +53,11 @@ class MockServer : public Net::Server::IServer {
     {
     }
 
-    void readPackets() override
+    void readPackets() noexcept override
     {
     }
 
-    bool popPacket(std::shared_ptr<Net::IPacket> &) override
+    bool popPacket(std::shared_ptr<Net::IPacket> &) noexcept override
     {
         return false;
     }

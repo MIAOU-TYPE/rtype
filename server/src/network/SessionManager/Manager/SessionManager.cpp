@@ -9,16 +9,6 @@
 
 using namespace Net::Server;
 
-bool AddressKey::operator==(const AddressKey &other) const noexcept
-{
-    return ip == other.ip && port == other.port;
-}
-
-std::size_t AddressKeyHash::operator()(const AddressKey &k) const noexcept
-{
-    return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
-}
-
 int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};

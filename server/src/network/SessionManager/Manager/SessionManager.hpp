@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <mutex>
+#include "Endian.hpp"
 #include "ISessionManager.hpp"
 #include <shared_mutex>
 
@@ -24,28 +25,6 @@
  */
 namespace Net::Server
 {
-    struct AddressKey {
-        uint32_t ip;   ///> The IP address in network byte order.
-        uint16_t port; ///> The port number in network byte order.
-
-        /**
-         * @brief Equality operator for AddressKey.
-         */
-        bool operator==(const AddressKey &other) const noexcept;
-    };
-
-    /**
-     * @brief Hash function for AddressKey to be used in unordered_map.
-     */
-    struct AddressKeyHash {
-        /**
-         * @brief Hash function implementation.
-         * @param k The AddressKey to hash.
-         * @return The computed hash value.
-         */
-        std::size_t operator()(const AddressKey &k) const noexcept;
-    };
-
     /**
      * @brief Manages network sessions by mapping addresses to session IDs.
      * Provides thread-safe operations to create, retrieve, and remove sessions.

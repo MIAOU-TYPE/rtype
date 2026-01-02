@@ -71,10 +71,10 @@ void PacketRouter::dispatchPacket(
     const int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const
 {
     switch (header.type) {
-        case Protocol::CONNECT: handleConnect(sessionId); break;
-        case Protocol::INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case Protocol::PING: handlePing(sessionId); break;
-        case Protocol::DISCONNECT: handleDisconnect(sessionId); break;
+        case Protocol::UDP::CONNECT: handleConnect(sessionId); break;
+        case Protocol::UDP::INPUT: handleInput(sessionId, payload, payloadSize); break;
+        case Protocol::UDP::PING: handlePing(sessionId); break;
+        case Protocol::UDP::DISCONNECT: handleDisconnect(sessionId); break;
         default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }

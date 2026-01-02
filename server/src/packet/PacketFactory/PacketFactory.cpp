@@ -45,7 +45,7 @@ namespace Net::Factory
         const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
     {
         DamageData damageData;
-        damageData.header = makeHeader(Protocol::DAMAGE_EVENT, VERSION, sizeof(DamageData));
+        damageData.header = makeHeader(Protocol::UDP::DAMAGE_EVENT, VERSION, sizeof(DamageData));
         damageData.id = htonl(id);
         damageData.amount = htons(amount);
 
@@ -75,7 +75,7 @@ namespace Net::Factory
                 return nullptr;
             }
 
-            header.header = makeHeader(Protocol::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
+            header.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             header.count = htons(static_cast<uint16_t>(entities.size()));
 
             auto packet = _packet->newPacket();
@@ -114,7 +114,7 @@ namespace Net::Factory
     std::shared_ptr<IPacket> PacketFactory::createScorePacket(const sockaddr_in &addr, uint32_t score) const noexcept
     {
         ScoreData scoreData;
-        scoreData.header = makeHeader(Protocol::SCORE, VERSION, sizeof(ScoreData));
+        scoreData.header = makeHeader(Protocol::UDP::SCORE, VERSION, sizeof(ScoreData));
         scoreData.score = htonl(score);
         try {
             auto packet = makePacket<ScoreData>(addr, scoreData);

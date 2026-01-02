@@ -26,7 +26,7 @@ TEST(NetWrapperTests, LoadInvalidPluginThrows)
 TEST(NetWrapperTests, SocketCreationThroughWrapper)
 {
     NetWrapper wrapper("NetPluginLib", defaultPath);
-    wrapper.initNetwork();
+    (void) wrapper.initNetwork();
 
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     ASSERT_NE(s, kInvalidSocket);
@@ -37,7 +37,7 @@ TEST(NetWrapperTests, SocketCreationThroughWrapper)
 TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 {
     NetWrapper wrapper("NetPluginLib", defaultPath);
-    wrapper.initNetwork();
+    (void) wrapper.initNetwork();
     socketHandle s = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     ASSERT_NE(s, kInvalidSocket);
 
@@ -51,7 +51,7 @@ TEST(NetWrapperTests, SetSocketOptionThroughWrapper)
 TEST(NetWrapperTests, SendAndReceiveLocalUDP)
 {
     NetWrapper wrapper("NetPluginLib", defaultPath);
-    wrapper.initNetwork();
+    (void) wrapper.initNetwork();
 
     socketHandle s1 = wrapper.socket(AF_INET, SOCK_DGRAM, 0);
     socketHandle s2 = wrapper.socket(AF_INET, SOCK_DGRAM, 0);

@@ -103,7 +103,7 @@ namespace Thread
 
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
-            _stateManager->update(_input->consumeFrame());
+            // _stateManager->update(_input->consumeFrame());
 
             {
                 std::scoped_lock lock(_frameMutex);
@@ -114,7 +114,7 @@ namespace Thread
                 for (const auto &cmd : *localRenderCommands)
                     _renderer->draw(cmd);
             }
-            _stateManager->render();
+            // _stateManager->render();
             _renderer->endFrame();
             syncToNextTick(nextTick, Tick * 2);
         }

@@ -25,3 +25,8 @@ struct ConnectData {
 };
 
 #pragma pack(pop)
+
+struct ConnectInfo {
+    uint32_t sessionId; ///> Session identifier
+    uint64_t token;     ///> Full authentication token
+};

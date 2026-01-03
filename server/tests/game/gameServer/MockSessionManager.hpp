@@ -26,7 +26,7 @@ class MockSessionManager : public Net::Server::SessionManager {
         inet_pton(AF_INET, "127.0.0.1", &fakeAddr.sin_addr);
     }
 
-    const sockaddr_in *getAddress(int) const
+    const sockaddr_in *getAddress(int) const override
     {
         return &fakeAddr;
     }

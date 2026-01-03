@@ -121,7 +121,7 @@ namespace Graphics
         std::shared_ptr<SfmlTextureManager> _textureManager = nullptr; ///> Shared pointer to the SFML Texture Manager.
         std::shared_ptr<SfmlTextManager> _textManager = nullptr;       ///> Shared pointer to the SFML Text Manager.
         std::unique_ptr<ColorBlindManager> _colorBlindManager = nullptr; ///> Colorblind shader manager.
-        std::unique_ptr<RenderTextureManager> _renderTextureManager =
+        std::unique_ptr<IRenderTextureManager> _renderTextureManager =
             nullptr; ///> Manager for render texture post-processing.
     };
 } // namespace Graphics

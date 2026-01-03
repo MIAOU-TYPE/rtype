@@ -26,7 +26,8 @@ namespace Graphics
     bool RenderTextureManager::resize(unsigned int width, unsigned int height)
     {
         if (!_renderTexture) {
-            _renderTexture = std::make_unique<sf::RenderTexture>();
+            std::cerr << "{RenderTextureManager::resize} Render texture is not initialized" << std::endl;
+            return false;
         }
 
         if (!_renderTexture->resize({width, height})) {

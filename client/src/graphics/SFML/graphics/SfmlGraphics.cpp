@@ -94,6 +94,11 @@ namespace Graphics
         _window->setView(view);
     }
 
+    std::shared_ptr<Resources::IResourceManager> SfmlGraphics::resources() const noexcept
+    {
+        return _resourceManager;
+    }
+
     void SfmlGraphics::pollEvents(Engine::EventBus &bus)
     {
         while (const auto event = _window->pollEvent()) {

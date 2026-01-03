@@ -21,10 +21,10 @@
 #include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"
 #include "MovementSystem.hpp"
-#include "PacketFactory.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
+#include "UDPPacketFactory.hpp"
 
 namespace Game
 {
@@ -72,11 +72,12 @@ namespace Game
          *
          * @param sessions Shared SessionManager used to resolve player addresses.
          * @param server   Network backend used to send packets to clients.
-         * @param packetFactory Factory to build outgoing packets.
+         * @param udpPacketFactory Factory to build outgoing packets.
          * @param levelPath Path to the level configuration file.
          */
         explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
-            std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::PacketFactory> packetFactory,
+            std::shared_ptr<Net::Server::IServer> server,
+            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
             const std::string &levelPath = "levels/level1.json");
 
         /**
@@ -145,9 +146,9 @@ namespace Game
 
         LevelManager _levelManager; ///> Manages level progression.
 
-        std::shared_ptr<Net::Server::ISessionManager> _sessions;     ///> Manages player sessions.
-        std::shared_ptr<Net::Server::IServer> _server;               ///> Sends packets to clients.
-        std::shared_ptr<Net::Factory::PacketFactory> _packetFactory; ///> Builds outgoing packets.
+        std::shared_ptr<Net::Server::ISessionManager> _sessions;           ///> Manages player sessions.
+        std::shared_ptr<Net::Server::IServer> _server;                     ///> Sends packets to clients.
+        std::shared_ptr<Net::Factory::UDPPacketFactory> _udpPacketFactory; ///> Builds outgoing packets.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
         std::unordered_map<size_t, int> _entityToSession;      ///> Maps entities to sessions.

@@ -117,7 +117,7 @@ namespace Net::Server
          * @brief Enqueue extracted payloads into the packet queue.
          * @param payloads Vector of PendingPayloads to enqueue.
          */
-        void enqueuePayloads(std::vector<PendingPayload> &payloads) noexcept;
+        void enqueuePayloads(const std::vector<PendingPayload> &payloads) noexcept;
 
         /**
          * @brief Extract complete payloads from received data.
@@ -177,9 +177,9 @@ namespace Net::Server
         struct ClientState {
             /**
              * @brief Construct a new Client State object.
-             * @param addr The sockaddr_in address of the client.
+             * @param address The sockaddr_in address of the client.
              */
-            explicit ClientState(const sockaddr_in addr) : addr(addr), rx(MAXSIZE), tx(MAXSIZE)
+            explicit ClientState(const sockaddr_in address) : addr(address), rx(MAXSIZE), tx(MAXSIZE)
             {
             }
 

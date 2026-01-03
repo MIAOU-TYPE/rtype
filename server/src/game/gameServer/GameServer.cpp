@@ -14,9 +14,9 @@ namespace
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
         const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
     {
-        std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
-        std::weak_ptr<Net::Factory::UDPPacketFactory> wFactory = UDPPacketFactory;
-        std::weak_ptr<Net::Server::IServer> wServer = server;
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
 
         const auto *mapPtr = &entityToSession;
 
@@ -33,7 +33,7 @@ namespace
                     return;
 
                 const int sessionId = it->second;
-                const sockaddr_in *addr = sessionsL->getAddress(sessionId);
+                const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
                 if (!addr)
                     return;
 
@@ -71,7 +71,7 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
-        if (const auto *addr = _sessions->getAddress(sessionId)) {
+        if (const auto *addr = _sessions->getUdpAddress(sessionId)) {
             _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
         }
     }
@@ -161,7 +161,6 @@ namespace Game
                 const Ecs::Entity ent = it->second;
                 _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
-                _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
                 break;
             }
@@ -181,7 +180,7 @@ namespace Game
                 break;
             }
             case GameCommand::Type::Ping: {
-                if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
+                if (const auto *addr = _sessions->getUdpAddress(cmd.sessionId)) {
                     if (const auto pkt = _udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
                         _server->sendPacket(*pkt);
                 }

@@ -64,7 +64,7 @@ namespace Graphics
         return _shaderLoaded ? &_shader : nullptr;
     }
 
-    bool ColorBlindManager::isShaderAvailable() const
+    bool ColorBlindManager::isShaderAvailable() const noexcept
     {
         return _shaderLoaded && _mode != ColorBlindMode::NONE;
     }

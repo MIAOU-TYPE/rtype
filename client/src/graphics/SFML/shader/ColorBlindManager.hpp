@@ -44,19 +44,19 @@ namespace Graphics
          * @brief Get the current colorblind filter mode.
          * @return ColorBlindMode The current mode.
          */
-        ColorBlindMode getMode() const noexcept;
+        [[nodiscard]] ColorBlindMode getMode() const noexcept;
 
         /**
          * @brief Get the shader for applying to render targets.
          * @return const sf::Shader* Pointer to the shader, or nullptr if not loaded.
          */
-        const sf::Shader *getShader() const;
+        [[nodiscard]] const sf::Shader *getShader() const;
 
         /**
          * @brief Check if a shader is loaded and ready to use.
          * @return bool True if shader is loaded.
          */
-        bool isShaderAvailable() const;
+        [[nodiscard]] bool isShaderAvailable() const noexcept;
 
       private:
         ColorBlindMode _mode; ///> Current colorblind filter mode

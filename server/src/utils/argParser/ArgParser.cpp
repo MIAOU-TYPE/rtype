@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** ArgParser
+*/
+
 #include "ArgParser.hpp"
 
 using namespace Utils;
@@ -6,7 +13,7 @@ ArgParser::ArgParser(const int argc, char **argv) : _argc(argc), _argv(argv)
 {
 }
 
-ArgParseResult ArgParser::parse()
+ArgParseResult ArgParser::parse() noexcept
 {
     for (int i = 1; i < _argc; i++) {
         const std::string arg = _argv[i];
@@ -34,17 +41,17 @@ ArgParseResult ArgParser::parse()
     return ArgParseResult::Success;
 }
 
-int ArgParser::getPort() const
+int ArgParser::getPort() const noexcept
 {
     return _port;
 }
 
-const std::string &ArgParser::getHost() const
+const std::string &ArgParser::getHost() const noexcept
 {
     return _host;
 }
 
-void ArgParser::displayHelp() const
+void ArgParser::displayHelp() const noexcept
 {
     std::cout << "[USAGE]: " << _argv[0] << "\n\n"
               << "Options:\n"
@@ -53,13 +60,15 @@ void ArgParser::displayHelp() const
               << "  -h, --help      Display this help message\n";
 }
 
-bool ArgParser::parsePort(const std::string &value)
+bool ArgParser::parsePort(const std::string &value) noexcept
 {
     try {
         const int port = std::stoi(value);
 
-        if (port <= 0 || port > 65535)
-            throw ParserError("Invalid port range");
+        if (port <= 0 || port > 65535) {
+            std::cerr << "{ArgParser}: Port number must be between 1 and 65535." << std::endl;
+            return false;
+        }
         _port = port;
         return true;
     } catch (...) {
@@ -68,7 +77,7 @@ bool ArgParser::parsePort(const std::string &value)
     }
 }
 
-bool ArgParser::parseHost(const std::string &value)
+bool ArgParser::parseHost(const std::string &value) noexcept
 {
     if (value.empty()) {
         std::cerr << "{ArgParser}: Invalid host value." << std::endl;

@@ -67,7 +67,7 @@ namespace Engine
         _layoutDirty = true;
     }
 
-        void RoomMenu::layout()
+    void RoomMenu::layout()
     {
         const auto tex = _renderer->textures()->getSize(_backgroundTexture);
         auto centerX = [&](UI::UIButton &b, float x, float y) {
@@ -207,7 +207,9 @@ namespace Engine
         auto a = Action::None;
         bool refreshCatalog = false;
         auto pick = [&](const std::unique_ptr<UI::UIButton> &btn, const Action act) -> bool {
-            return btn && btn->onClickReleased(mx, my, [&] { a = act; });
+            return btn && btn->onClickReleased(mx, my, [&] {
+                a = act;
+            });
         };
 
         if (!(pick(_create.worldPrev, Action::WPrev) || pick(_create.worldNext, Action::WNext)
@@ -248,11 +250,8 @@ namespace Engine
                 if (_selectedMaxPlayers < 4)
                     ++_selectedMaxPlayers;
                 break;
-            case Action::Back:
-                _page = Page::Root;
-                break;
-            case Action::None:
-                break;
+            case Action::Back: _page = Page::Root; break;
+            case Action::None: break;
             default:;
         }
         if (refreshCatalog)
@@ -289,7 +288,8 @@ namespace Engine
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
         else
-            _create.worldLabel->setString("World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
+            _create.worldLabel->setString(
+                "World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
     }
 
     void RoomMenu::render() const

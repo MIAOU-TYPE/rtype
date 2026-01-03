@@ -29,16 +29,21 @@ namespace Engine
          * @brief Constructs a RoomMenuError with a given message.
          * @param message The error message.
          */
-        explicit RoomMenuError(const std::string &message) : _message("\n\t" + message) {}
+        explicit RoomMenuError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
 
         /**
          * @brief Returns the error message.
          * @return The error message as a C-style string.
          */
-        const char *what() const noexcept override { return _message.c_str(); }
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
 
       private:
-        std::string _message;   ///> The error message.
+        std::string _message; ///> The error message.
     };
 
     /**
@@ -197,24 +202,24 @@ namespace Engine
         void updateTextStrings() const;
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the graphics renderer.
-        std::shared_ptr<RoomManager> _roomManager;  ///> Shared pointer to the room manager.
+        std::shared_ptr<RoomManager> _roomManager;      ///> Shared pointer to the room manager.
 
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture handle.
-        RenderCommand _backgroundCmd; ///> Render command for the background.
+        RenderCommand _backgroundCmd;                                          ///> Render command for the background.
 
-        HeaderUI _header;   ///> Header UI elements.
-        RootUI _root;   ///> Root UI elements.
-        CreateUI _create;   ///> Create room UI elements.
-        Page _page = Page::Root;    ///> Current page of the room menu.
+        HeaderUI _header;        ///> Header UI elements.
+        RootUI _root;            ///> Root UI elements.
+        CreateUI _create;        ///> Create room UI elements.
+        Page _page = Page::Root; ///> Current page of the room menu.
 
-        std::vector<WorldEntry> _worlds;    ///> List of available worlds.
-        std::vector<LevelInfo> _levels; ///> List of levels for the selected world and difficulty.
+        std::vector<WorldEntry> _worlds; ///> List of available worlds.
+        std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
 
-        int _selectedWorld = 0; ///> Index of the selected world.
-        Difficulty _selectedDifficulty = Difficulty::Easy;  ///> Selected difficulty level.
-        std::uint8_t _selectedMaxPlayers = 4;   ///> Selected maximum number of players.
+        int _selectedWorld = 0;                            ///> Index of the selected world.
+        Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
+        std::uint8_t _selectedMaxPlayers = 4;              ///> Selected maximum number of players.
 
-        bool _backToMenu = false;   ///> Flag indicating if the user wants to go back to the main menu.
-        bool _layoutDirty = true;   ///> Flag indicating if the layout needs to be updated.
+        bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
+        bool _layoutDirty = true; ///> Flag indicating if the layout needs to be updated.
     };
 } // namespace Engine

@@ -34,8 +34,6 @@ ServerRuntime::~ServerRuntime()
     try {
         if (!_stopRequested.load())
             stop();
-        _udpServer = nullptr;
-        _tcpServer = nullptr;
     } catch (...) {
         std::cerr << "{ServerRuntime::~ServerRuntime} Exception during destruction" << std::endl;
     }
@@ -143,8 +141,7 @@ void ServerRuntime::runTcp() const
 {
     while (_tcpServer->isRunning()) {
         _tcpServer->readPackets();
-        if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt)) {
+        if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);
-        }
     }
 }

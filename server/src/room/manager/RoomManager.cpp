@@ -61,7 +61,7 @@ namespace Engine
     bool RoomManager::start(const RoomId roomId) const noexcept
     {
         const auto room = getRoomById(roomId);
-        if (!room || room->getCurrentPlayers() == room->getMaxPlayers())
+        if (!room || room->getCurrentPlayers() != room->getMaxPlayers())
             return false;
         try {
             room->start();
@@ -166,17 +166,22 @@ namespace Engine
 
     std::vector<RoomManager::RoomEntry> RoomManager::listRooms() const noexcept
     {
-        std::vector<RoomEntry> roomsList;
-        std::scoped_lock lock(_mutex);
+        try {
+            std::vector<RoomEntry> roomsList;
+            std::scoped_lock lock(_mutex);
 
-        for (const auto &[id, room] : _rooms) {
-            RoomEntry entry;
-            entry.id = id;
-            entry.name = room->getName();
-            entry.currentPlayers = room->getCurrentPlayers();
-            entry.maxPlayers = room->getMaxPlayers();
-            roomsList.push_back(entry);
+            for (const auto &[id, room] : _rooms) {
+                RoomEntry entry;
+                entry.id = id;
+                entry.name = room->getName();
+                entry.currentPlayers = room->getCurrentPlayers();
+                entry.maxPlayers = room->getMaxPlayers();
+                roomsList.push_back(entry);
+            }
+            return roomsList;
+        } catch (...) {
+            std::cerr << "{RoomManager::listRooms} failed to list rooms" << std::endl;
+            return {};
         }
-        return roomsList;
     }
 } // namespace Engine

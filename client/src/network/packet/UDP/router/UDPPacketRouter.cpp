@@ -2,18 +2,18 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketRouter
+** UDPPacketRouter
 */
 
-#include "PacketRouter.hpp"
+#include "UDPPacketRouter.hpp"
 
 namespace Ecs
 {
-    PacketRouter::PacketRouter(const std::shared_ptr<IClientMessageSink> &sink) : _sink(sink)
+    UDPPacketRouter::UDPPacketRouter(const std::shared_ptr<IClientMessageSink> &sink) : _sink(sink)
     {
     }
 
-    void PacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet) const
+    void UDPPacketRouter::handlePacket(const std::shared_ptr<Net::IPacket> &packet) const
     {
         if (!isPacketValid(packet))
             return;
@@ -30,7 +30,7 @@ namespace Ecs
         dispatchPacket(header, payload, payloadSize);
     }
 
-    void PacketRouter::dispatchPacket(
+    void UDPPacketRouter::dispatchPacket(
         const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
@@ -41,28 +41,29 @@ namespace Ecs
             case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
-                std::cerr << "{PacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
+                std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';
                 break;
         }
     }
 
-    bool PacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
+    bool UDPPacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
         if (packet.size() < sizeof(HeaderData)) {
-            std::cerr << "{PacketRouter::isHeaderValid} Dropped: packet too small\n";
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: packet too small\n";
             return false;
         }
 
         if (header.version != PROTOCOL_VERSION) {
-            std::cerr << "{PacketRouter::isHeaderValid} Dropped: wrong protocol version "
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: wrong protocol version "
                       << static_cast<int>(header.version) << " (expected " << static_cast<int>(1) << ")" << std::endl;
             return false;
         }
 
         if (const std::uint16_t declaredSize = ntohs(header.size);
             declaredSize != static_cast<std::uint16_t>(packet.size())) {
-            std::cerr << "{PacketRouter::isHeaderValid} Dropped: size mismatch (header=" + std::to_string(declaredSize)
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: size mismatch (header="
+                    + std::to_string(declaredSize)
                     + ", actual=" + std::to_string(static_cast<std::uint16_t>(packet.size())) + ")\n";
             return false;
         }
@@ -70,19 +71,19 @@ namespace Ecs
         return true;
     }
 
-    bool PacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) noexcept
+    bool UDPPacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) noexcept
     {
         if (!packet)
             return false;
 
         if (packet->size() < sizeof(HeaderData)) {
-            std::cerr << "{PacketRouter::isPacketValid} Dropped: packet too small\n";
+            std::cerr << "{UDPPacketRouter::isPacketValid} Dropped: packet too small\n";
             return false;
         }
         return true;
     }
 
-    bool PacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept
+    bool UDPPacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept
     {
         std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 
@@ -91,30 +92,30 @@ namespace Ecs
         return true;
     }
 
-    void PacketRouter::handleAccept() const
+    void UDPPacketRouter::handleAccept() const
     {
         _sink->onAccept();
     }
 
-    void PacketRouter::handleReject() const
+    void UDPPacketRouter::handleReject() const
     {
         _sink->onReject();
     }
 
-    void PacketRouter::handlePong() const
+    void UDPPacketRouter::handlePong() const
     {
         _sink->onPong();
     }
 
-    void PacketRouter::handleGameOver() const
+    void UDPPacketRouter::handleGameOver() const
     {
         _sink->onGameOver();
     }
 
-    void PacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
+    void UDPPacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
     {
         if (size < sizeof(SnapshotBatchHeader)) {
-            std::cerr << "{PacketRouter::handleSnapEntity} Snapshot batch too small\n";
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot batch too small\n";
             return;
         }
 
@@ -146,10 +147,10 @@ namespace Ecs
         _sink->onSnapshot(entities);
     }
 
-    void PacketRouter::handleScore(const uint8_t *payload, size_t size) const
+    void UDPPacketRouter::handleScore(const uint8_t *payload, size_t size) const
     {
         if (size < sizeof(ScoreData)) {
-            std::cerr << "{PacketRouter::handleScore} Score packet too small\n";
+            std::cerr << "{UDPPacketRouter::handleScore} Score packet too small\n";
             return;
         }
 

@@ -64,7 +64,7 @@ namespace Network
     void TCPClient::start()
     {
         try {
-            if (!isStoredIpCorrect() || !isStoredPortCorrect())
+            if (!ANetClient::isStoredIpCorrect() || !ANetClient::isStoredPortCorrect())
                 throw TCPClientError("{TCPClient::start} invalid IP/Port");
 
             if (_netWrapper->initNetwork() != 0)
@@ -84,7 +84,7 @@ namespace Network
 
             setNonBlocking(true);
 
-            setRunning(true);
+            ANetClient::setRunning(true);
         } catch (...) {
             close();
             throw;
@@ -166,7 +166,7 @@ namespace Network
         if (_socketFd == kInvalidSocket || !_isRunning.load())
             return false;
 
-        const std::uint32_t size = static_cast<std::uint32_t>(pkt.size());
+        const auto size = static_cast<std::uint32_t>(pkt.size());
         if (size == 0 || size > MAX_FRAME)
             return false;
 

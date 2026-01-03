@@ -52,10 +52,10 @@ namespace Engine
         void render() override;
 
       private:
-        std::shared_ptr<Graphics::IGraphics> _graphics;     ///> Shared pointer to the graphics interface.
+        std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the graphics renderer.
 
-        std::shared_ptr<RoomManager> _roomManager;  ///> Shared pointer to the room manager.
-        std::unique_ptr<RoomMenu> _menu;    ///> Unique pointer to the room menu.
+        std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.
+        std::unique_ptr<RoomMenu> _menu;           ///> Unique pointer to the room menu.
     };
 } // namespace Engine

@@ -10,6 +10,12 @@
 #include <exception>
 #include <string>
 
+namespace sf
+{
+    class RenderTexture;
+    class Sprite;
+} // namespace sf
+
 namespace Graphics
 {
     /**
@@ -18,7 +24,6 @@ namespace Graphics
      */
     class IRenderTextureManager {
       public:
-      
         /**
          * @brief Virtual destructor.
          */
@@ -36,7 +41,7 @@ namespace Graphics
          * @param height New height for the render texture.
          * @return True if resize was successful.
          */
-        virtual bool resize(unsigned int width, unsigned int height) = 0;
+        [[nodiscard]] virtual bool resize(unsigned int width, unsigned int height) = 0;
 
         /**
          * @brief Clear the render texture.
@@ -47,5 +52,17 @@ namespace Graphics
          * @brief Finalize rendering to texture and prepare for display.
          */
         virtual void display() = 0;
+
+        /**
+         * @brief Get the underlying SFML RenderTexture for drawing operations.
+         * @return Pointer to the SFML RenderTexture, or nullptr if not available.
+         */
+        [[nodiscard]] virtual sf::RenderTexture *getRenderTexture() noexcept = 0;
+
+        /**
+         * @brief Get the sprite representing the render texture for final display.
+         * @return Sprite containing the rendered texture.
+         */
+        [[nodiscard]] virtual sf::Sprite getSprite() const = 0;
     };
 } // namespace Graphics

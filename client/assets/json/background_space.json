@@ -1,0 +1,14 @@
+{
+  "sprite": "background_space",
+  "spriteId": 100,
+  "texture": "sprites/background_space.png",
+  "default_animation": "static",
+  "animations": {
+    "static": {
+      "loop": false,
+      "frames": [
+        { "x": 0, "y": 0, "w": 1140, "h": 207, "duration": 1.0 }
+      ]
+    }
+  }
+}

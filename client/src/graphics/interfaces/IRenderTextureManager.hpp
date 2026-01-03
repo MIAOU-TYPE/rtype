@@ -46,18 +46,18 @@ namespace Graphics
         /**
          * @brief Clear the render texture.
          */
-        virtual void clear() = 0;
+        virtual void clear() const = 0;
 
         /**
          * @brief Finalize rendering to texture and prepare for display.
          */
-        virtual void display() = 0;
+        virtual void display() const = 0;
 
         /**
          * @brief Get the underlying SFML RenderTexture for drawing operations.
          * @return Pointer to the SFML RenderTexture, or nullptr if not available.
          */
-        [[nodiscard]] virtual sf::RenderTexture *getRenderTexture() noexcept = 0;
+        [[nodiscard]] virtual sf::RenderTexture *getRenderTexture() const noexcept = 0;
 
         /**
          * @brief Get the sprite representing the render texture for final display.

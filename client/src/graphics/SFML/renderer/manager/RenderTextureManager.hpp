@@ -47,18 +47,18 @@ namespace Graphics
         /**
          * @brief Clear the render texture.
          */
-        void clear() override;
+        void clear() const override;
 
         /**
          * @brief Finalize rendering to texture and prepare for display.
          */
-        void display() override;
+        void display() const override;
 
         /**
          * @brief Get the underlying SFML RenderTexture for drawing operations.
          * @return Pointer to the SFML RenderTexture, or nullptr if not available.
          */
-        [[nodiscard]] sf::RenderTexture *getRenderTexture() noexcept override;
+        [[nodiscard]] sf::RenderTexture *getRenderTexture() const noexcept override;
 
         /**
          * @brief Get the sprite representing the render texture for final display.

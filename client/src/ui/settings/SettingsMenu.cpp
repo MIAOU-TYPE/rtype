@@ -15,7 +15,6 @@ namespace
             case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
             case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
             case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
-            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
             default: return Graphics::ColorBlindMode::NONE;
         }
     }
@@ -72,17 +71,17 @@ namespace Engine
 
     void SettingsMenu::layout()
     {
-        const auto vp = _renderer->getViewportSize();
-        const float w = static_cast<float>(vp.width);
-        const float h = static_cast<float>(vp.height);
+        const auto [widthSize, heightSize] = _renderer->getViewportSize();
+        const auto w = static_cast<float>(widthSize);
+        const auto h = static_cast<float>(heightSize);
         const float cx = w * 0.5f;
         const float cy = h * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
-        const auto texSize = _renderer->textures()->getSize(_backgroundTexture);
+        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
 
-        _backgroundCmd.frame = {0, 0, static_cast<int>(texSize.width), static_cast<int>(texSize.height)};
+        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
         _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
+        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
 
         _audio->setPosition(cx - 400.f * scale, cy - 120.f * scale);
         _colorBlindMode->setPosition(cx - 400.f * scale, cy + 40.f * scale);

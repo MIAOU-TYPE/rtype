@@ -111,6 +111,12 @@ namespace Graphics
         [[nodiscard]] ColorBlindMode getColorBlindMode() const noexcept override;
 
       private:
+        /**
+         * @brief Determines if post-processing effects should be used.
+         * @return True if post-processing is enabled, false otherwise.
+         */
+        [[nodiscard]] bool usePostProcess() const noexcept;
+
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.
 
         std::shared_ptr<Resources::IResourceManager> _resourceManager =

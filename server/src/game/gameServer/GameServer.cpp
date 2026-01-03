@@ -56,8 +56,10 @@ namespace Game
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
                 std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
-            else
+            else {
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
+                LevelSystem::initializeBackground(*_worldWrite, _levelManager.getCurrentLevel());
+            }
             _levelManager.reset();
         }
         _waitingClock.restart();
@@ -106,6 +108,8 @@ namespace Game
         if (_waitingClock.elapsed() > 5.0)
             LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
+        BackgroundSystem::update(*_worldWrite, dt);
+        BackgroundSystem::resetScroll(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);

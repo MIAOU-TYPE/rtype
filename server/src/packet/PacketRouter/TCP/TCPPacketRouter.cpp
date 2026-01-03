@@ -63,18 +63,27 @@ namespace Net
         const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
     {
         uint16_t ver = 0;
-        uint16_t udpPort = 0;
+        constexpr uint16_t _serverUdpPort = 8081;
+
         try {
             ver = r.u16();
-            udpPort = r.u16();
         } catch (...) {
             return sendError(addr, req, 3, "bad HELLO");
         }
 
+        std::random_device rd;
+        const uint64_t token =
+            (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd()) ^ (static_cast<uint64_t>(sessionId) << 1);
+
+        _sessions->setUdpToken(sessionId, token);
+
         TCP::Writer b;
         b.u16(ver);
         b.u32(static_cast<uint32_t>(sessionId));
-        b.u16(udpPort);
+        b.u16(_serverUdpPort);
+        b.u32(static_cast<uint32_t>(token >> 32));
+        b.u32(static_cast<uint32_t>(token & 0xFFFFFFFFu));
+
         const auto payload = TCP::buildPayload(Protocol::TCP::WELCOME, req, b.bytes());
         _tcp->sendPacket(*_packetFactory->make(addr, payload));
     }

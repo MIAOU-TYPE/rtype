@@ -7,14 +7,10 @@
 
 #pragma once
 
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <exception>
 #include <string>
-
-namespace sf
-{
-    class RenderTexture;
-    class Sprite;
-} // namespace sf
 
 namespace Graphics
 {

@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-
 #include <iostream>
 #include <memory>
 

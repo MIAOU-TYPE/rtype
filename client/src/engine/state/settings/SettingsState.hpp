@@ -9,7 +9,7 @@
 
 #include "InputState.hpp"
 #include "MenuState.hpp"
-#include "RoomService.hpp"
+#include "RoomManager.hpp"
 #include "SettingsMenu.hpp"
 
 namespace Engine
@@ -23,9 +23,10 @@ namespace Engine
          * @brief Construct a new Settings State object.
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
+         * @param roomManager Shared pointer to the room manager service.
          */
         explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
-            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<RoomService> roomService);
+            std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<RoomManager> roomManager);
         /**
          * @brief Destroy the Settings State object.
          */
@@ -46,7 +47,7 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
-        std::shared_ptr<RoomService> _roomService;      ///> Shared lobby/room service.
+        std::shared_ptr<RoomManager> _roomManager;      ///> Shared lobby/room service.
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
 
         bool _pendingResize = false;

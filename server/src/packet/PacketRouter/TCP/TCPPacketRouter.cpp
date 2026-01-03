@@ -7,6 +7,17 @@
 
 #include "TCPPacketRouter.hpp"
 
+namespace
+{
+    std::string malformedTcp(const char *stage, const std::size_t need, const std::size_t got)
+    {
+        std::string s = "TCP ";
+        s += stage;
+        s += ": malformed (need=" + std::to_string(need) + ", got=" + std::to_string(got) + ")";
+        return s;
+    }
+} // namespace
+
 namespace Net
 {
     TCPPacketRouter::TCPPacketRouter(std::shared_ptr<Server::ISessionManager> sessions,
@@ -20,20 +31,24 @@ namespace Net
     void TCPPacketRouter::handle(const std::shared_ptr<IPacket> &pkt) const
     {
         const auto addr = pkt->address();
-        if (!addr || pkt->size() < 5)
+        if (!addr)
             return;
 
-        const auto *payload = pkt->buffer();
         const size_t n = pkt->size();
+        const auto *payload = pkt->buffer();
 
-        TCP::Header h;
+        if (n < 5)
+            return sendError(*addr, 0, 1, malformedTcp("header", 5, n));
+
+        TCP::Header h{};
         TCP::Reader r(payload, n);
         try {
             h = TCP::parseHeader(payload, n);
             r = TCP::bodyReader(payload, n);
+        } catch (const std::exception &e) {
+            return sendError(*addr, 0, 1, std::string("TCP header: malformed cause=") + e.what());
         } catch (...) {
-            sendError(*addr, 0, 1, "malformed payload");
-            return;
+            return sendError(*addr, 0, 1, "TCP header: malformed cause=unknown");
         }
 
         const int sessionId = _sessions->getOrCreateSession(*addr);
@@ -62,19 +77,23 @@ namespace Net
     void TCPPacketRouter::onHello(
         const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
     {
+        if (r.remaining() < 2)
+            return sendError(addr, req, 3, malformedTcp("HELLO ver(u16)", 2, r.remaining()));
+
         uint16_t ver = 0;
-        uint16_t udpPort = 0;
         try {
             ver = r.u16();
-            udpPort = r.u16();
         } catch (...) {
-            return sendError(addr, req, 3, "bad HELLO");
+            return sendError(addr, req, 3, malformedTcp("HELLO ver(u16)", 2, r.remaining()));
         }
+
+        if (r.remaining() != 0)
+            return sendError(addr, req, 7, "HELLO: extra bytes");
 
         TCP::Writer b;
         b.u16(ver);
         b.u32(static_cast<uint32_t>(sessionId));
-        b.u16(udpPort);
+        b.u16(_serverUdpPort);
         const auto payload = TCP::buildPayload(Protocol::TCP::WELCOME, req, b.bytes());
         _tcp->sendPacket(*_packetFactory->make(addr, payload));
     }
@@ -85,7 +104,7 @@ namespace Net
         const auto rooms = _rooms->listRooms();
 
         if (rooms.size() > 0xFFFFu)
-            return;
+            return sendError(addr, req, 16, "too many rooms");
 
         b.u16(static_cast<uint16_t>(rooms.size()));
         for (const auto &[id, name, currentPlayers, maxPlayers] : rooms) {

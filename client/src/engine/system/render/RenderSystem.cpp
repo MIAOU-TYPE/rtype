@@ -28,9 +28,22 @@ namespace Engine
                 if (anim.frameIndex >= animation.frames.size())
                     return;
 
-                out.push_back({.textureId = render.texture,
-                    .frame = animation.frames[anim.frameIndex].rect,
-                    .position = {pos.x, pos.y}});
+                RenderCommand cmd;
+                cmd.textureId = render.texture;
+                cmd.frame = animation.frames[anim.frameIndex].rect;
+                cmd.position = {pos.x, pos.y};
+
+                // Special handling for background sprites (spriteId 100+)
+                if (drawable.spriteId >= 100 && drawable.spriteId < 200) {
+                    // Calculate scale to fit screen
+                    const float screenWidth = 900.f;
+                    const float screenHeight = 600.f;
+                    const float scaleX = screenWidth / static_cast<float>(cmd.frame.w);
+                    const float scaleY = screenHeight / static_cast<float>(cmd.frame.h);
+                    cmd.scale = {scaleX, scaleY};
+                }
+
+                out.push_back(cmd);
             });
     }
 } // namespace Engine

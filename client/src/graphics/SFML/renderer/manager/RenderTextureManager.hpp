@@ -58,13 +58,13 @@ namespace Graphics
          * @brief Get the underlying SFML RenderTexture for drawing operations.
          * @return Pointer to the SFML RenderTexture, or nullptr if not available.
          */
-        [[nodiscard]] sf::RenderTexture *getRenderTexture() noexcept;
+        [[nodiscard]] sf::RenderTexture *getRenderTexture() noexcept override;
 
         /**
          * @brief Get the sprite representing the render texture for final display.
          * @return Sprite containing the rendered texture.
          */
-        [[nodiscard]] sf::Sprite getSprite() const;
+        [[nodiscard]] sf::Sprite getSprite() const override;
 
       private:
         std::unique_ptr<sf::RenderTexture> _renderTexture = nullptr; ///> SFML render texture for post-processing

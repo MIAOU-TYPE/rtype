@@ -18,8 +18,8 @@
 #else
     #include <arpa/inet.h>
 #endif
-#include "reader/TCPReader.hpp"
-#include "writer/TCPWriter.hpp"
+#include "TCPReader.hpp"
+#include "TCPWriter.hpp"
 
 namespace Net::TCP
 {

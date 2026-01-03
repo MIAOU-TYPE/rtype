@@ -42,6 +42,8 @@ namespace Net::TCP
 
     std::string Reader::str16() noexcept
     {
+        if (!need(2))
+            return "";
         const uint16_t len = u16();
         if (!need(len))
             return "";

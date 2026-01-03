@@ -13,7 +13,7 @@ namespace
     {
         std::string s = "TCP ";
         s += stage;
-        s += ": malformed (need=" + std::to_string(need) + ", got=" + std::to_string(got) + ")";
+        s += ": truncated payload (need=" + std::to_string(need) + ", got=" + std::to_string(got) + ")";
         return s;
     }
 } // namespace
@@ -46,9 +46,9 @@ namespace Net
             h = TCP::parseHeader(payload, n);
             r = TCP::bodyReader(payload, n);
         } catch (const std::exception &e) {
-            return sendError(*addr, 0, 1, std::string("TCP header: malformed cause=") + e.what());
+            return sendError(*addr, 0, 1, std::string("TCP header: parse failed: ") + e.what());
         } catch (...) {
-            return sendError(*addr, 0, 1, "TCP header: malformed cause=unknown");
+            return sendError(*addr, 0, 1, "TCP header: parse failed: unknown error");
         }
 
         const int sessionId = _sessions->getOrCreateSession(*addr);
@@ -60,7 +60,7 @@ namespace Net
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::LEAVE_ROOM: onLeaveRoom(*addr, sessionId, h.requestId); break;
             case Protocol::TCP::START_GAME: onStartGame(*addr, sessionId); break;
-            default: sendError(*addr, h.requestId, 2, "unknown type"); break;
+            default: sendError(*addr, h.requestId, 2, "Unsupported TCP packet type"); break;
         }
     }
 
@@ -88,7 +88,7 @@ namespace Net
         }
 
         if (r.remaining() != 0)
-            return sendError(addr, req, 7, "HELLO: extra bytes");
+            return sendError(addr, req, 7, "HELLO: unexpected trailing bytes");
 
         TCP::Writer b;
         b.u16(ver);
@@ -104,7 +104,7 @@ namespace Net
         const auto rooms = _rooms->listRooms();
 
         if (rooms.size() > 0xFFFFu)
-            return sendError(addr, req, 16, "too many rooms");
+            return sendError(addr, req, 16, "LIST_ROOMS: too many rooms to fit in u16");
 
         b.u16(static_cast<uint16_t>(rooms.size()));
         for (const auto &[id, name, currentPlayers, maxPlayers] : rooms) {
@@ -127,17 +127,17 @@ namespace Net
             roomName = r.str16();
             maxPlayers = r.u8();
         } catch (...) {
-            return sendError(addr, req, 4, "bad CREATE_ROOM");
+            return sendError(addr, req, 4, "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8))");
         }
 
         if (roomName.empty() || roomName.size() > 32)
-            return sendError(addr, req, 6, "invalid roomName");
+            return sendError(addr, req, 6, "CREATE_ROOM: roomName must be 1..32 characters");
 
         if (maxPlayers < 1 || maxPlayers > 4)
-            return sendError(addr, req, 5, "invalid maxPlayers");
+            return sendError(addr, req, 5, "CREATE_ROOM: maxPlayers must be in range 1..4");
 
         if (r.remaining() != 0)
-            return sendError(addr, req, 7, "extra bytes");
+            return sendError(addr, req, 7, "CREATE_ROOM: unexpected trailing bytes");
 
         uint32_t roomId = 0;
         try {
@@ -147,7 +147,7 @@ namespace Net
         }
 
         if (roomId == 0)
-            return sendError(addr, req, 9, "createRoom failed");
+            return sendError(addr, req, 9, "CREATE_ROOM: failed to create room");
 
         TCP::Writer b;
         b.u32(roomId);
@@ -163,11 +163,11 @@ namespace Net
         try {
             roomId = r.u32();
         } catch (...) {
-            return sendError(addr, req, 10, "bad JOIN_ROOM");
+            return sendError(addr, req, 10, "JOIN_ROOM: malformed payload (expected roomId(u32))");
         }
 
         if (r.remaining() != 0)
-            return sendError(addr, req, 11, "extra bytes");
+            return sendError(addr, req, 11, "JOIN_ROOM: unexpected trailing bytes");
 
         try {
             _rooms->addPlayerToRoom(roomId, sessionId);
@@ -188,7 +188,7 @@ namespace Net
         try {
             roomId = _rooms->removePlayer(sessionId);
             if (roomId == 0)
-                return sendError(addr, req, 13, "not in a room");
+                return sendError(addr, req, 13, "LEAVE_ROOM: player is not in a room");
         } catch (const std::exception &e) {
             return sendError(addr, req, 13, e.what());
         }
@@ -204,10 +204,10 @@ namespace Net
     {
         const uint32_t roomId = _rooms->getRoomIdOfPlayer(sessionId);
         if (roomId == 0)
-            return sendError(addr, 0, 14, "not in a room");
+            return sendError(addr, 0, 14, "START_GAME: player is not in a room");
 
         if (!_rooms->start(roomId))
-            return sendError(addr, 0, 15, "cannot start game");
+            return sendError(addr, 0, 15, "START_GAME: room cannot be started (state/players)");
 
         TCP::Writer b;
         b.u32(roomId);

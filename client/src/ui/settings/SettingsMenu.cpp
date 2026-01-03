@@ -6,7 +6,6 @@
 */
 
 #include "SettingsMenu.hpp"
-#include <iostream>
 
 namespace
 {

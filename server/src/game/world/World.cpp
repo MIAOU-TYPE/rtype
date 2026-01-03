@@ -157,5 +157,12 @@ namespace Game
                 dst.emplaceComponent<Ecs::Velocity>(newEnt, v);
                 dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
             });
+
+        auto &srcBg = src.getComponents<Ecs::Background>();
+        for (const auto &[oldId, newEnt] : remap) {
+            if (const auto &bg = srcBg.at(oldId)) {
+                dst.emplaceComponent<Ecs::Background>(newEnt, *bg);
+            }
+        }
     }
 } // namespace Game

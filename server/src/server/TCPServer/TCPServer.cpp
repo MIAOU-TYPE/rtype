@@ -104,7 +104,7 @@ namespace Net::Server
 
             (void) _netWrapper->cleanupNetwork();
         } catch (...) {
-            std::cerr << "{TCPServer::~TCPServer} Exception during stop()" << std::endl;
+            std::cerr << "{TCPServer::stop} Exception during stop()" << std::endl;
         }
     }
 

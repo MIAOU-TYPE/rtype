@@ -8,6 +8,12 @@
 
 namespace Graphics
 {
+    bool SfmlRenderer::usePostProcess() const noexcept
+    {
+        return _renderTextureManager && _renderTextureManager->isAvailable() && _colorBlindManager
+            && _colorBlindManager->isShaderAvailable() && _colorBlindManager->getMode() != ColorBlindMode::NONE;
+    }
+
     SfmlRenderer::SfmlRenderer(
         const std::shared_ptr<sf::RenderWindow> &window, std::shared_ptr<Resources::IResourceManager> resourceManager)
         : _window(window), _resourceManager(std::move(resourceManager))
@@ -22,6 +28,10 @@ namespace Graphics
         _fontManager = std::make_shared<SfmlFontManager>(_resourceManager);
         _textureManager = std::make_shared<SfmlTextureManager>(_resourceManager);
         _textManager = std::make_shared<SfmlTextManager>(_fontManager);
+        _colorBlindManager = std::make_unique<ColorBlindManager>(_resourceManager);
+
+        const auto windowSize = _window->getSize();
+        _renderTextureManager = std::make_unique<RenderTextureManager>(windowSize.x, windowSize.y);
     }
 
     Extent2u SfmlRenderer::getViewportSize() const noexcept
@@ -32,11 +42,25 @@ namespace Graphics
 
     void SfmlRenderer::beginFrame()
     {
+        if (usePostProcess()) {
+            const auto windowSize = _window->getSize();
+
+            if (const auto textureSize = _renderTextureManager->getRenderTexture()->getSize();
+                windowSize != textureSize) {
+                (void) _renderTextureManager->resize(windowSize.x, windowSize.y);
+            }
+            _renderTextureManager->clear();
+        }
         _window->clear();
     }
 
     void SfmlRenderer::endFrame()
     {
+        if (usePostProcess()) {
+            _renderTextureManager->display();
+            const auto sprite = _renderTextureManager->getSprite();
+            _window->draw(sprite, _colorBlindManager->getShader());
+        }
         _window->display();
     }
 
@@ -75,7 +99,10 @@ namespace Graphics
             sprite.setPosition({cmd.position.x, cmd.position.y});
             sprite.setScale({cmd.scale.x, cmd.scale.y});
 
-            _window->draw(sprite);
+            if (usePostProcess())
+                _renderTextureManager->getRenderTexture()->draw(sprite);
+            else
+                _window->draw(sprite);
         } catch (const std::exception &e) {
             std::cerr << "{SfmlRenderer::draw}: " << e.what() << std::endl;
         }
@@ -85,11 +112,53 @@ namespace Graphics
     {
         try {
             const auto &sfText = dynamic_cast<const SfmlText &>(text);
-            _window->draw(sfText.get());
+
+            if (usePostProcess())
+                _renderTextureManager->getRenderTexture()->draw(sfText.get());
+            else
+                _window->draw(sfText.get());
         } catch (const std::bad_cast &) {
             std::cerr << "{SfmlRenderer::draw}: IText is not a SfmlText\n";
         } catch (const TextError &e) {
             std::cerr << "{SfmlRenderer::draw}: " << e.what() << '\n';
         }
+    }
+
+    void SfmlRenderer::setColorBlindMode(const ColorBlindMode mode)
+    {
+        if (!_colorBlindManager)
+            return;
+
+        _colorBlindManager->setMode(mode);
+
+        if (mode == ColorBlindMode::NONE)
+            return;
+
+        if (!_colorBlindManager->isShaderAvailable())
+            return;
+
+        const auto windowSize = _window->getSize();
+
+        if (!_renderTextureManager) {
+            _renderTextureManager = std::make_unique<RenderTextureManager>(windowSize.x, windowSize.y);
+            if (!_renderTextureManager->isAvailable()) {
+                std::cerr << "{SfmlRenderer::setColorBlindMode} Failed to create render texture" << std::endl;
+            }
+            return;
+        }
+
+        const bool needsResize =
+            !_renderTextureManager->isAvailable() || _renderTextureManager->getRenderTexture()->getSize() != windowSize;
+
+        if (needsResize && !_renderTextureManager->resize(windowSize.x, windowSize.y)) {
+            std::cerr << "{SfmlRenderer::setColorBlindMode} Failed to resize render texture" << std::endl;
+        }
+    }
+
+    ColorBlindMode SfmlRenderer::getColorBlindMode() const noexcept
+    {
+        if (_colorBlindManager)
+            return _colorBlindManager->getMode();
+        return ColorBlindMode::NONE;
     }
 } // namespace Graphics

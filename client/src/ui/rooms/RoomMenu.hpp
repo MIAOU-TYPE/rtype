@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <exception>
-
+#include <algorithm>
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"

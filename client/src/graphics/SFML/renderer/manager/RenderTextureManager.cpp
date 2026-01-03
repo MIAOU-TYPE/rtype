@@ -14,6 +14,7 @@ namespace Graphics
         _renderTexture = std::make_unique<sf::RenderTexture>();
         if (!_renderTexture->resize({initialWidth, initialHeight})) {
             std::cerr << "{RenderTextureManager::RenderTextureManager} Failed to create render texture" << std::endl;
+            return;
         }
     }
 
@@ -57,7 +58,8 @@ namespace Graphics
 
     sf::Sprite RenderTextureManager::getSprite() const
     {
-        if (!_renderTexture) {
+        if (!_renderTexture || _renderTexture->getTexture().getSize().x == 0
+            || _renderTexture->getTexture().getSize().y == 0) {
             std::cerr << "{RenderTextureManager::getSprite} Render texture is not available" << std::endl;
         }
         return sf::Sprite(_renderTexture->getTexture());

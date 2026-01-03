@@ -18,6 +18,8 @@
 #include <unordered_set>
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::json;    ///> Alias for nlohmann::json
+
 namespace Engine
 {
     /**

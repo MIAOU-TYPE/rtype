@@ -9,16 +9,6 @@
 
 namespace Engine
 {
-    using json = nlohmann::json;
-
-    namespace
-    {
-        constexpr bool starts_with(const std::string_view s, const std::string_view prefix) noexcept
-        {
-            return s.size() >= prefix.size() && s.starts_with(prefix);
-        }
-    } // namespace
-
     RoomManager::RoomManager(std::shared_ptr<Resources::IResourceManager> resources) : _resources(std::move(resources))
     {
         if (!_resources)
@@ -67,7 +57,7 @@ namespace Engine
 
         for (const auto &k : _resources->listResources()) {
             constexpr std::string_view prefix = "levels/";
-            if (!starts_with(k, prefix))
+            if (k.size() < prefix.size() || k.compare(0, prefix.size(), prefix) != 0)
                 continue;
             const auto rest = k.substr(prefix.size());
             const auto slash = rest.find('/');

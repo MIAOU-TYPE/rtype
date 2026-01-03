@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 #include "IPacket.hpp"
-#include "payload/TCPPayload.hpp"
+#include "TCPPayload.hpp"
 
 namespace Net::Factory
 {

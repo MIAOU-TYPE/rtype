@@ -28,10 +28,10 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
-         * @param roomService Shared pointer to the room service.
+         * @param roomManager Shared pointer to the room service.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-            std::shared_ptr<RoomService> roomService);
+            std::shared_ptr<RoomManager> roomManager);
 
         /**
          * @brief Destroy the Menu State object.
@@ -54,7 +54,7 @@ namespace Engine
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
 
-        std::shared_ptr<RoomService> _roomService; ///> Lobby/room service shared across states.
+        std::shared_ptr<RoomManager> _roomManager; ///> Lobby/room manager shared across states.
         std::unique_ptr<Menu> _menu;               ///> Unique pointer to the menu.
     };
 } // namespace Engine

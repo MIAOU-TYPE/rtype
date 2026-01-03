@@ -10,8 +10,8 @@
 namespace Engine
 {
     MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-        std::shared_ptr<RoomService> roomService)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _roomService(std::move(roomService))
+        std::shared_ptr<RoomManager> roomManager)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _roomManager(std::move(roomManager))
     {
     }
 
@@ -30,11 +30,11 @@ namespace Engine
         _menu->update(frame);
 
         if (_menu->wantsSettings()) {
-            manager.queueState(std::make_unique<SettingsState>(_graphics, _renderer, _roomService));
+            manager.queueState(std::make_unique<SettingsState>(_graphics, _renderer, _roomManager));
             return;
         }
         if (_menu->wantsToStart()) {
-            manager.queueState(std::make_unique<RoomState>(_graphics, _renderer, _roomService));
+            manager.queueState(std::make_unique<RoomState>(_graphics, _renderer, _roomManager));
             return;
         }
         if (_menu->wantsToQuit())

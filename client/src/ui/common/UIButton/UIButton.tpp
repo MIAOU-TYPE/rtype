@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** MenuState.hpp
+** UIButton.tpp
 ** File description:
 ** UIButton
 */

@@ -126,7 +126,7 @@ void ServerRuntime::runSnapshot() const
 
             if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities)) {
                 for (const int sessionId : room.sessions()) {
-                    if (const sockaddr_in *addr = _sessionManager->getAddress(sessionId)) {
+                    if (const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId)) {
                         basePacket->setAddress(*addr);
                         _udpServer->sendPacket(*basePacket);
                     }

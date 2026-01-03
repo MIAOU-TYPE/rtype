@@ -92,6 +92,26 @@ namespace
         return true;
     }
 
+    bool parseBackground(const json &j, Game::Level &level)
+    {
+        level.backgroundLayers.clear();
+
+        if (!j.contains("background") || !j.at("background").is_object())
+            return true; // Background is optional
+
+        const auto &bgNode = j.at("background");
+
+        Game::BackgroundLayer layer;
+        layer.spriteId = bgNode.value("spriteId", 0u);
+        layer.scrollSpeed = bgNode.value("scrollSpeed", -50.f);
+        layer.tileWidth = bgNode.value("tileWidth", 1920.f);
+        layer.tileHeight = bgNode.value("tileHeight", 1080.f);
+        layer.depth = bgNode.value("depth", 0);
+
+        level.backgroundLayers.push_back(layer);
+        return true;
+    }
+
     bool parseLevelJson(const json &j, Game::Level &level)
     {
         if (!j.contains("name") || !j.at("name").is_string())
@@ -100,6 +120,8 @@ namespace
         level.name = j.at("name").get<std::string>();
         level.duration = j.value("duration", 0.f);
 
+        if (!parseBackground(j, level))
+            return false;
         if (!parseEnemies(j, level))
             return false;
         if (!parseWaves(j, level))

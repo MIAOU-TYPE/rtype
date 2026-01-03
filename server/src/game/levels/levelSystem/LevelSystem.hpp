@@ -15,6 +15,7 @@
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
+#include "Background.hpp"
 #include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
@@ -42,6 +43,14 @@ namespace Game
          * @param spawned Vector tracking which waves have been spawned.
          */
         static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned);
+
+        /**
+         * @brief Initialize background entities from level data.
+         *
+         * @param world The game world to spawn background in.
+         * @param level The level containing background layer data.
+         */
+        static void initializeBackground(IGameWorld &world, const Level &level);
 
       private:
         /**

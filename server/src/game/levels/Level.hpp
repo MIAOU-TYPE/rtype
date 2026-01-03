@@ -55,11 +55,23 @@ namespace Game
     };
 
     /**
+     * @brief Definition of a background layer.
+     */
+    struct BackgroundLayer {
+        unsigned int spriteId; ///> Sprite asset identifier
+        float scrollSpeed;     ///> Scrolling speed of the layer
+        float tileWidth;       ///> Width of a single background tile
+        float tileHeight;      ///> Height of a single background tile
+        int depth = 0;         ///> Depth layer (0 = farthest)
+    };
+
+    /**
      * @brief Definition of a game level.
      */
     struct Level {
         std::string name;                                            ///> Level name
         float duration = 0.f;                                        ///> Level duration in seconds
+        std::vector<BackgroundLayer> backgroundLayers;               ///> Background layers
         std::unordered_map<std::string, EnemyDefinition> enemyTypes; ///> Catalog of enemy types
         std::vector<Wave> waves;                                     ///> Waves of enemies in the level
     };

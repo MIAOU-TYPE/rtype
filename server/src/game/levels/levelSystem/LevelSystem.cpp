@@ -92,4 +92,43 @@ namespace Game
         shoot.angles = def.shoot.angles;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
     }
+
+    void LevelSystem::initializeBackground(IGameWorld &world, const Level &level)
+    {
+        auto &reg = world.registry();
+
+        std::cout << "[LevelSystem] Initializing background with " << level.backgroundLayers.size() << " layers\n";
+
+        for (const auto &layer : level.backgroundLayers) {
+            std::cout << "[LevelSystem] Creating background layer: spriteId=" << layer.spriteId 
+                      << ", scrollSpeed=" << layer.scrollSpeed 
+                      << ", tileWidth=" << layer.tileWidth << "\n";
+
+            const float screenWidth = 900.f;  // Résolution par défaut
+            const float screenHeight = 600.f;
+
+            for (int i = 0; i < 2; i++) {
+                const Ecs::Entity bgEntity = reg.createEntity();
+
+                reg.emplaceComponent<Ecs::Position>(bgEntity, Ecs::Position{static_cast<float>(i) * screenWidth, 0.f});
+
+                reg.emplaceComponent<Ecs::Velocity>(bgEntity, Ecs::Velocity{0.f, 0.f});
+
+                reg.emplaceComponent<Ecs::Drawable>(bgEntity, Ecs::Drawable{layer.spriteId, true});
+
+                reg.emplaceComponent<Ecs::Background>(bgEntity, Ecs::Background{
+                    .scrollSpeed = layer.scrollSpeed,
+                    .tileWidth = layer.tileWidth,
+                    .tileHeight = layer.tileHeight,
+                    .screenWidth = screenWidth,
+                    .screenHeight = screenHeight,
+                    .depth = layer.depth,
+                    .tileIndex = i
+                });
+
+                std::cout << "[LevelSystem] Created background entity " << static_cast<size_t>(bgEntity) 
+                          << " at position x=" << static_cast<float>(i) * screenWidth << "\n";
+            }
+        }
+    }
 } // namespace Game

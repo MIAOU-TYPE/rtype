@@ -90,8 +90,9 @@ namespace Net
          * @brief Handles the START_GAME packet from a client
          * @param addr The address of the client
          * @param sessionId The session ID of the client
+         * @param req The request ID
          */
-        void onStartGame(const sockaddr_in &addr, int sessionId) const;
+        void onStartGame(const sockaddr_in &addr, int sessionId, uint32_t req) const;
 
         std::shared_ptr<Server::ISessionManager> _sessions = nullptr;        ///> Session manager
         std::shared_ptr<Engine::RoomManager> _rooms = nullptr;               ///> Room manager

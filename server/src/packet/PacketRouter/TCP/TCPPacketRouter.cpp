@@ -24,7 +24,7 @@ namespace Net
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
         std::shared_ptr<Factory::TCPPacketFactory> packetFactory)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory)), _serverUdpPort(8081)
+          _packetFactory(std::move(packetFactory)), _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 
@@ -74,7 +74,7 @@ namespace Net
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onHello(
@@ -102,11 +102,11 @@ namespace Net
             return;
 
         const auto out =
-            _packetFactory->makeWelcome(addr, req, ver, static_cast<uint32_t>(sessionId), _serverUdpPort, token);
+            _packetFactory->makeWelcome(addr, req, ver, static_cast<uint32_t>(sessionId), static_cast<uint16_t>(_serverUdpPort), token);
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onListRooms(const sockaddr_in &addr, const uint32_t req) const
@@ -134,7 +134,7 @@ namespace Net
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
@@ -175,7 +175,7 @@ namespace Net
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onJoinRoom(
@@ -205,7 +205,7 @@ namespace Net
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const
@@ -227,7 +227,7 @@ namespace Net
         if (!out)
             return;
 
-        _tcp->sendPacket(*out);
+        (void)_tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onStartGame(const sockaddr_in &addr, const int sessionId, const uint32_t req) const
@@ -246,7 +246,7 @@ namespace Net
         for (const auto &session : room->sessions()) {
             if (const auto memberAddr = _sessions->getAddress(session)) {
                 if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
-                    _tcp->sendPacket(*out);
+                    (void)_tcp->sendPacket(*out);
             }
         }
     }

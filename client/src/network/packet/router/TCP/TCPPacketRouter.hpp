@@ -43,7 +43,7 @@ namespace Network
          * @brief Retrieves the current message handler.
          * @return Shared pointer to the message handler.
          */
-        std::shared_ptr<IMessageHandler> sink() const noexcept;
+        [[nodiscard]] std::shared_ptr<IMessageHandler> sink() const noexcept;
 
       private:
         /**

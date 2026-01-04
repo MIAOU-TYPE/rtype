@@ -99,6 +99,6 @@ namespace Net
         std::shared_ptr<Server::IServer> _tcp = nullptr;                     ///> TCP server
         std::shared_ptr<Factory::TCPPacketFactory> _packetFactory = nullptr; ///> TCP packet factory
 
-        uint16_t _serverUdpPort = 0; ///> UDP port to send to clients
+        int32_t _serverUdpPort = 0; ///> UDP port to send to clients
     };
 } // namespace Net

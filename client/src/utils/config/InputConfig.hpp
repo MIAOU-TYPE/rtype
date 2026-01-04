@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "Key.hpp"
 #include <string>
+#include "Key.hpp"
 #include <unordered_map>
 
 namespace Utils
@@ -89,14 +89,14 @@ namespace Utils
         void clearRebindFlag() noexcept;
 
       private:
-        InputConfig();                                                 ///> Private constructor for singleton pattern
-        ~InputConfig() = default;                                      ///> Default destructor
-        InputConfig(const InputConfig &) = delete;                     ///> Delete copy constructor
-        InputConfig &operator=(const InputConfig &) = delete;          ///> Delete copy assignment operator
+        InputConfig();                                        ///> Private constructor for singleton pattern
+        ~InputConfig() = default;                             ///> Default destructor
+        InputConfig(const InputConfig &) = delete;            ///> Delete copy constructor
+        InputConfig &operator=(const InputConfig &) = delete; ///> Delete copy assignment operator
 
-        KeyPreset _currentPreset = KeyPreset::Arrows;                  ///> Current key preset
-        std::unordered_map<KeyPreset, MovementKeys> _presets;          ///> Map of presets to movement keys
-        mutable bool _needsRebind = false;                             ///> Flag indicating if rebinding is needed
+        KeyPreset _currentPreset = KeyPreset::Arrows;         ///> Current key preset
+        std::unordered_map<KeyPreset, MovementKeys> _presets; ///> Map of presets to movement keys
+        mutable bool _needsRebind = false;                    ///> Flag indicating if rebinding is needed
 
         static constexpr const char *CONFIG_FILE = "input_config.cfg"; ///> Configuration file path
     };

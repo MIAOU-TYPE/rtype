@@ -12,7 +12,6 @@
 #include "EventRegistry.hpp"
 #include "SfmlGraphics.hpp"
 #include "TCPClient.hpp"
-#include "TCPPacket.hpp"
 #include "UDPClient.hpp"
 
 namespace
@@ -53,23 +52,18 @@ int main(const int argc, char **argv)
         const auto udpClient = std::make_shared<Network::UDPClient>();
         const auto tcpClient = std::make_shared<Network::TCPClient>();
 
-        Thread::ClientRuntime clientRuntime(graphics, udpClient);
+        Thread::ClientRuntime clientRuntime(graphics, udpClient, tcpClient);
         const auto eventBus = clientRuntime.getEventBus();
         Engine::EventRegistry eventRegistry(eventBus);
 
         createEventHandler(eventRegistry, clientRuntime, eventBus);
-        std::cout << "Connecting to " << argParser.getHost() << ":" << argParser.getPort() << "..." << std::endl;
+
         tcpClient->configure(argParser.getHost(), argParser.getPort());
         udpClient->configure(argParser.getHost(), argParser.getPort() + 1);
         clientRuntime.start();
 
-        tcpClient->start();
-        // clientRuntime.runDisplay();
+        clientRuntime.runDisplay();
         clientRuntime.wait();
-
-        while (tcpClient->isRunning()) {
-            tcpClient->receivePackets();
-        }
         return 0;
     } catch (std::exception &e) {
         std::cerr << "{Main}: " << e.what() << std::endl;

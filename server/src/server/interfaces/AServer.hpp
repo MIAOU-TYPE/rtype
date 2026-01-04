@@ -104,6 +104,12 @@ namespace Net::Server
          */
         bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept override = 0;
 
+        /**
+         * @brief Retrieves the port number the server is listening on.
+         * @return The port number as a uint32_t.
+         */
+        [[nodiscard]] int32_t getPort() const noexcept override;
+
       protected:
         std::string _ip = "";                ///> IP address the server is bound to
         int32_t _port = 0;                   ///> Port number the server is listening on

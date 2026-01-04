@@ -39,3 +39,8 @@ bool AServer::isStoredPortCorrect() const noexcept
 {
     return _port > 0 && _port <= 65535;
 }
+
+int32_t AServer::getPort() const noexcept
+{
+    return _port;
+}

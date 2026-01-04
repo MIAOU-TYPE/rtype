@@ -90,10 +90,12 @@ namespace Net
             return sendError(addr, req, 3, malformedTcp("HELLO ver(u16)", 2, r.remaining()));
         }
 
-        std::random_device rd;
-        const uint64_t token =
-            (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd()) ^ (static_cast<uint64_t>(sessionId) << 1);
-
+        auto token = _sessions->getUdpToken(sessionId);
+        if (token == 0) {
+            std::random_device rd;
+            token = (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd())
+                ^ (static_cast<uint64_t>(sessionId) << 1);
+        }
         _sessions->setUdpToken(sessionId, token);
 
         if (!_packetFactory)

@@ -126,8 +126,8 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _back;           ///> Back button
         std::unique_ptr<UI::UIButton> _resolution;     ///> Current resolution display button
         std::unique_ptr<UI::UIButton> _resolutionNext; ///> Next resolution button
-        std::unique_ptr<UIButton> _controls;       ///> Current controls preset display button
-        std::unique_ptr<UIButton> _controlsNext;   ///> Next controls preset button
+        std::unique_ptr<UI::UIButton> _controls;       ///> Current controls preset display button
+        std::unique_ptr<UI::UIButton> _controlsNext;   ///> Next controls preset button
 
         bool _backRequested = false;    ///> Flag indicating if the user wants to go back
         bool _controlsChanged = false;  ///> Flag indicating if the controls preset has been changed

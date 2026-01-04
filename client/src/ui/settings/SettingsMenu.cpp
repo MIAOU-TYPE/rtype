@@ -6,7 +6,6 @@
 */
 
 #include "SettingsMenu.hpp"
-#include <iostream>
 
 namespace
 {
@@ -40,9 +39,8 @@ namespace Engine
         
         const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
         const auto presetName = Utils::InputConfig::getPresetName(preset);
-        std::cout << "Current preset: " << presetName << std::endl;
-        _controls = std::make_unique<UIButton>(_renderer, ButtonSize::Large, presetName);
-        _controlsNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
+        _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
         _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
@@ -105,6 +103,8 @@ namespace Engine
         _resolution->setPosition(cx - 400.f * scale, cy - 260.f * scale);
         _resolutionNext->setPosition(cx + (150.f + _resolution->bounds().w + 250.f) * scale, cy - 260.f * scale);
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
+        _controls->setPosition(cx - 400.f * scale, cy + 200.f * scale);
+        _controlsNext->setPosition(cx + (150.f + _controls->bounds().w + 250.f) * scale, cy + 200.f * scale);
     }
 
     void SettingsMenu::update(const InputFrame &frame)

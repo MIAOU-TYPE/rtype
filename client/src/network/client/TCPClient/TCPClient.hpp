@@ -14,7 +14,6 @@
 #include <queue>
 #include <stdexcept>
 #include <vector>
-#include <iostream>
 #include "ANetClient.hpp"
 #include "IPacket.hpp"
 #include "NetWrapper.hpp"
@@ -143,14 +142,14 @@ namespace Network
         std::shared_ptr<Net::NetWrapper> _netWrapper; ///> Network wrapper
 
         sockaddr_in _serverAddr{}; ///> Server address structure
-        bool _nonBlocking = true; ///> Non-blocking mode flag
+        bool _nonBlocking = true;  ///> Non-blocking mode flag
 
         Buffer::RingBuffer<uint8_t> _rx; ///> Receive buffer
 
-        std::mutex _txMutex; ///> Mutex for synchronizing access to the transmit buffer
+        std::mutex _txMutex;             ///> Mutex for synchronizing access to the transmit buffer
         Buffer::RingBuffer<uint8_t> _tx; ///> Receive buffer
 
-        std::mutex _queueMutex; ///> Mutex for synchronizing access to the packet queue
+        std::mutex _queueMutex;                           ///> Mutex for synchronizing access to the packet queue
         std::queue<std::shared_ptr<Net::IPacket>> _queue; ///> Queue of received packets
 
         static constexpr std::uint32_t MAX_FRAME = 64 * 1024; ///> Maximum frame size (64 KB)

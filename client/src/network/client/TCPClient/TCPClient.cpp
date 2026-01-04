@@ -16,15 +16,14 @@ namespace Network
 
         bool wouldBlock() noexcept
         {
-    #ifdef _WIN32
+#ifdef _WIN32
             const int e = WSAGetLastError();
             return e == WSAEWOULDBLOCK;
-    #else
+#else
             return errno == EWOULDBLOCK || errno == EAGAIN;
-    #endif
+#endif
         }
-    }
-
+    } // namespace
 
     TCPClient::TCPClient(std::shared_ptr<Net::NetWrapper> net)
         : _netWrapper(std::move(net)), _rx(RX_CAPACITY), _tx(TX_CAPACITY)
@@ -71,7 +70,8 @@ namespace Network
             if (::inet_pton(AF_INET, _ip.c_str(), &_serverAddr.sin_addr) != 1)
                 throw TCPClientError("{TCPClient::start} inet_pton failed");
 
-            if (_netWrapper->connect(_socketFd, reinterpret_cast<const sockaddr *>(&_serverAddr), sizeof(_serverAddr)) != 0)
+            if (_netWrapper->connect(_socketFd, reinterpret_cast<const sockaddr *>(&_serverAddr), sizeof(_serverAddr))
+                != 0)
                 throw TCPClientError("{TCPClient::start} connect failed");
 
             setNonBlocking(true);
@@ -135,11 +135,9 @@ namespace Network
                 return;
             }
 
-            const auto sent = _netWrapper->send(
-                _socketFd, reinterpret_cast<const char *>(tmp.data()), want, 0);
+            const auto sent = _netWrapper->send(_socketFd, reinterpret_cast<const char *>(tmp.data()), want, 0);
 
             if (sent > 0) {
-
                 const auto n = static_cast<std::size_t>(sent);
                 (void) _tx.read(tmp.data(), n);
                 continue;
@@ -172,10 +170,7 @@ namespace Network
         {
             std::scoped_lock lk(_txMutex);
 
-
             if (_tx.writable() < (4u + size)) {
-
-
             } else {
                 if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
                     return false;
@@ -185,7 +180,6 @@ namespace Network
                 goto flush;
             }
         }
-
 
         flushWrites();
 
@@ -286,4 +280,4 @@ namespace Network
             return;
         }
     }
-}
+} // namespace Network

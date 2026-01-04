@@ -36,12 +36,10 @@ namespace Engine
         _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-
         const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
         const auto presetName = Utils::InputConfig::getPresetName(preset);
         _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
         _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
         _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
         _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");

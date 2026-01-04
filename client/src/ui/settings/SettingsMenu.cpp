@@ -32,8 +32,8 @@ namespace Engine
         _backgroundCmd.textureId = _backgroundTexture;
 
         _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
-        _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, ButtonSize::Large, "NORMAL");
-        _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, ButtonSize::Small, "+");
+        _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
@@ -145,17 +145,17 @@ namespace Engine
                 return;
             }
 
-            if (_resolutionNext->onClickReleased(frame.mouseX, frame.mouseY)) {
+            if (_resolutionNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 _resolutionChanged = true;
                 const auto &res = _resolutions.at(_currentResolution);
                 _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
-            }))
-            return;
-
-        if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                _backRequested = true;
-            })) {}
+                return;
+            }
+            if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
+                    _backRequested = true;
+                })) {}
+        }
     }
 
     bool SettingsMenu::wantsBack() const noexcept

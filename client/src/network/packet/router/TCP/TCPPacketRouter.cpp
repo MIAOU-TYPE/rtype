@@ -30,8 +30,9 @@ namespace
 
 namespace Network
 {
-    TCPPacketRouter::TCPPacketRouter(std::shared_ptr<IMessageHandler> handler) : _sink(std::move(handler))
+    TCPPacketRouter::TCPPacketRouter()
     {
+        _sink = std::make_shared<TCPMessageSink>();
     }
 
     void TCPPacketRouter::protocolError(const std::uint32_t req, const std::string_view msg) const
@@ -82,6 +83,11 @@ namespace Network
         } catch (...) {
             protocolError(h.requestId, "TCP body: parse failed: unknown error");
         }
+    }
+
+    std::shared_ptr<IMessageHandler> TCPPacketRouter::sink() const noexcept
+    {
+        return _sink;
     }
 
     void TCPPacketRouter::onWelcome(const std::uint32_t req, Net::TCP::Reader &r) const

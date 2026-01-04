@@ -13,12 +13,12 @@
 #include <vector>
 #include <string_view>
 
-#include "IMessageHandler.hpp"
 #include "IPacket.hpp"
 #include "RoomData.hpp"
 #include "TCPPayload.hpp"
 #include "TCPReader.hpp"
 #include "TCPTypesData.hpp"
+#include "TCPMessageSink.hpp"
 
 namespace Network
 {
@@ -30,15 +30,20 @@ namespace Network
       public:
         /**
          * @brief Constructor for TCPPacketRouter.
-         * @param handler Shared pointer to the message handler that will process the routed messages.
          */
-        explicit TCPPacketRouter(std::shared_ptr<IMessageHandler> handler);
+        explicit TCPPacketRouter();
 
         /**
          * @brief Handles an incoming TCP packet by routing it to the appropriate message handler method.
          * @param pkt Shared pointer to the incoming TCP packet.
          */
         void handle(const std::shared_ptr<Net::IPacket> &pkt) const;
+
+        /**
+         * @brief Retrieves the current message handler.
+         * @return Shared pointer to the message handler.
+         */
+        std::shared_ptr<IMessageHandler> sink() const noexcept;
 
       private:
         /**
@@ -97,6 +102,6 @@ namespace Network
          */
         void onGameStart(std::uint32_t req, Net::TCP::Reader &r) const;
 
-        std::shared_ptr<IMessageHandler> _sink;
+        std::shared_ptr<IMessageHandler> _sink = nullptr; ///> Shared pointer to the message handler.
     };
 } // namespace Network

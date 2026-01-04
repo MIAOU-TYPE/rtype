@@ -24,8 +24,8 @@
 #include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
-#include "PacketRouter.hpp"
 #include "InputConfig.hpp"
+#include "PacketRouter.hpp"
 
 using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"

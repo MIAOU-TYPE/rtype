@@ -195,7 +195,7 @@ namespace Thread
     void ClientRuntime::setupEventsRegistry() const
     {
         const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
-        
+
         _eventRegistry->onKeyPressed(keys.up, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });

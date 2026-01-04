@@ -8,10 +8,10 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring>
 #include <memory>
 #include <vector>
 #include <string_view>
-#include <cstring>
 
 #include "IPacket.hpp"
 #include "TCPPayload.hpp"

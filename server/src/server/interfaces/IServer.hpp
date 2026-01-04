@@ -90,7 +90,7 @@ namespace Net::Server
          * @brief Checks if the server is currently running.
          * @return True if the server is running, false otherwise.
          */
-        virtual bool isRunning() const noexcept = 0;
+        [[nodiscard]] virtual bool isRunning() const noexcept = 0;
 
         /**
          * @brief Sets the running status of the server.
@@ -108,25 +108,31 @@ namespace Net::Server
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        virtual bool sendPacket(const IPacket &pkt) noexcept = 0;
+        [[nodiscard]] virtual bool sendPacket(const IPacket &pkt) noexcept = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
          * @return True if the stored IP address is valid, false otherwise.
          */
-        virtual bool isStoredIpCorrect() const noexcept = 0;
+        [[nodiscard]] virtual bool isStoredIpCorrect() const noexcept = 0;
 
         /**
          * @brief Checks if the stored port number is valid.
          * @return True if the stored port number is valid, false otherwise.
          */
-        virtual bool isStoredPortCorrect() const noexcept = 0;
+        [[nodiscard]] virtual bool isStoredPortCorrect() const noexcept = 0;
 
         /**
          * @brief Pops a received packet from the server's packet queue.
          * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        virtual bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept = 0;
+        [[nodiscard]] virtual bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept = 0;
+
+        /**
+         * @brief Retrieves the port number the server is listening on.
+         * @return The port number as a size_t.
+         */
+        [[nodiscard]] virtual int32_t getPort() const noexcept = 0;
     };
 } // namespace Net::Server

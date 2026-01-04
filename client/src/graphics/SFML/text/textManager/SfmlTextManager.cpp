@@ -16,14 +16,12 @@ namespace Graphics
 
     std::unique_ptr<IText> SfmlTextManager::createText(const unsigned int characterSize, const Color &color)
     {
-        auto text = std::make_unique<SfmlText>(InvalidFont, _fontManager);
-
+        FontHandle font = InvalidFont;
+        if (_fontManager)
+            font = _fontManager->load("fonts/font.ttf");
+        auto text = std::make_unique<SfmlText>(font, _fontManager);
         text->setCharacterSize(characterSize);
         text->setColor(color);
-        if (_fontManager) {
-            const FontHandle font = _fontManager->load("fonts/font.ttf");
-            text->setFont(font);
-        }
         return text;
     }
 

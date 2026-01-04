@@ -37,12 +37,12 @@ namespace Engine
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
-        _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
-        _colorBlindMode = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "NORMAL");
-        _colorBlindNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
-        _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
+        _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
+        _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
+        _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
     }
 
     void SettingsMenu::onEnter()

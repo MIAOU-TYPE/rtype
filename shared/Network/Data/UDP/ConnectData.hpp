@@ -29,4 +29,5 @@ struct ConnectData {
 struct ConnectInfo {
     uint32_t sessionId; ///> Session identifier
     uint64_t token;     ///> Full authentication token
+    uint32_t udpPort;
 };

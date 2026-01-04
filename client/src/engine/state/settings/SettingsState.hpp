@@ -17,7 +17,7 @@ namespace Engine
     /**
      * @brief Represents the settings state of the game.
      */
-    class SettingsState : public IGameState {
+    class SettingsState final : public IGameState {
       public:
         /**
          * @brief Construct a new Settings State object.
@@ -27,10 +27,11 @@ namespace Engine
          */
         explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
             std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<RoomManager> roomManager);
+
         /**
-         * @brief Destroy the Settings State object.
+         * @brief Called when entering the state.
          */
-        void onEnter(StateManager &manager) override;
+        void onEnter() override;
 
         /**
          * @brief Update the menu state.

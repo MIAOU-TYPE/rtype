@@ -15,7 +15,7 @@ namespace Engine
     {
     }
 
-    void MenuState::onEnter(StateManager &)
+    void MenuState::onEnter()
     {
         try {
             _menu = std::make_unique<Menu>(_renderer);

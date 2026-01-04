@@ -23,7 +23,7 @@ namespace Engine
      * @brief Game state for managing the room menu.
      * This state handles the room menu where players can create or join game rooms.
      */
-    class RoomState : public IGameState {
+    class RoomState final : public IGameState {
       public:
         /**
          * @brief Constructs a RoomState with the given graphics, renderer, and room manager.
@@ -36,12 +36,11 @@ namespace Engine
 
         /**
          * @brief Called when entering the state.
-         * @param manager Reference to the state manager.
          */
-        void onEnter(StateManager &manager) override;
+        void onEnter() override;
 
         /**
-         * @brief Called when exiting the state.
+         * @brief Updates the room state based on the input frame.
          * @param manager Reference to the state manager.
          * @param frame The last input frame.
          */

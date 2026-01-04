@@ -15,9 +15,8 @@ namespace Engine
     {
     }
 
-    void SettingsState::onEnter(StateManager &manager)
+    void SettingsState::onEnter()
     {
-        (void) manager;
         _menu = std::make_unique<SettingsMenu>(_renderer);
         _menu->onEnter();
     }

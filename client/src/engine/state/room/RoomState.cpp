@@ -15,7 +15,7 @@ namespace Engine
     {
     }
 
-    void RoomState::onEnter(StateManager &)
+    void RoomState::onEnter()
     {
         _menu = std::make_unique<RoomMenu>(_renderer, _roomManager);
         _menu->layout();

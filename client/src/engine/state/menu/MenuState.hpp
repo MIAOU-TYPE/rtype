@@ -28,15 +28,15 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
-         * @param roomManager Shared pointer to the room service.
+         * @param roomManager Shared pointer to the room manager.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
             std::shared_ptr<RoomManager> roomManager);
 
         /**
-         * @brief Destroy the Menu State object.
+         * @brief Called when entering the state.
          */
-        void onEnter(StateManager &manager) override;
+        void onEnter() override;
 
         /**
          * @brief Update the menu state.

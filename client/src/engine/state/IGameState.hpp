@@ -30,9 +30,8 @@ namespace Engine
 
         /**
          * @brief Called when entering the state.
-         * @param manager Reference to the StateManager managing this state.
          */
-        virtual void onEnter(StateManager &manager) = 0;
+        virtual void onEnter() = 0;
 
         /**
          * @brief Updates the state logic.

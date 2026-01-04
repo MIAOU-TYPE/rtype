@@ -44,7 +44,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeListRooms(const std::uint32_t req) const
     {
         try {
-            constexpr std::vector<std::uint8_t> empty{};
+            static const std::vector<std::uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LIST_ROOMS, req, empty);
             return make(payload);
         } catch (...) {
@@ -84,7 +84,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeLeaveRoom(const std::uint32_t req) const
     {
         try {
-            constexpr std::vector<std::uint8_t> empty{};
+            static const std::vector<std::uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LEAVE_ROOM, req, empty);
             return make(payload);
         } catch (...) {
@@ -95,7 +95,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeStartGame(const std::uint32_t req) const
     {
         try {
-            constexpr std::vector<std::uint8_t> empty{};
+            static const std::vector<std::uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::START_GAME, req, empty);
             return make(payload);
         } catch (...) {

@@ -15,10 +15,10 @@
 
 #include "IPacket.hpp"
 #include "RoomData.hpp"
+#include "TCPMessageSink.hpp"
 #include "TCPPayload.hpp"
 #include "TCPReader.hpp"
 #include "TCPTypesData.hpp"
-#include "TCPMessageSink.hpp"
 
 namespace Network
 {

@@ -15,4 +15,4 @@ namespace Network
         for (auto &cb : cbs)
             cb(std::forward<Args>(args)...);
     }
-}
+} // namespace Network

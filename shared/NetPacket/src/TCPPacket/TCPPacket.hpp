@@ -26,7 +26,7 @@ namespace Net
          * @brief Construct a new TCPPacket object with a specified capacity.
          * @param capacity The capacity of the packet buffer.
          */
-        explicit TCPPacket(size_t capacity);
+        explicit TCPPacket(size_t capacity = 64 * 1024);
 
         /**
          * @brief Retrieves the packet buffer.

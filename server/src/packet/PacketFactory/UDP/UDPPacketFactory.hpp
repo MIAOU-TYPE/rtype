@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketFactory
+** UDPPacketFactory
 */
 
 #pragma once
@@ -56,23 +56,23 @@ namespace Net::Factory
     };
 
     /**
-     * @class PacketFactory
+     * @class UDPPacketFactory
      * @brief Factory class for creating various types of network packets.
      * @details This class provides methods to create different types of packets
      * such as connect/disconnect, input, default, entity creation/destruction, and damage events.
      */
-    class PacketFactory {
+    class UDPPacketFactory {
       public:
         /**
-         * @brief Constructs a new PacketFactory object.
+         * @brief Constructs a new UDPPacketFactory object.
          * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit PacketFactory(const std::shared_ptr<Net::IPacket> &packet);
+        explicit UDPPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
-         * @brief Destructor for PacketFactory.
+         * @brief Destructor for UDPPacketFactory.
          */
-        ~PacketFactory() = default;
+        ~UDPPacketFactory() = default;
 
         /**
          * @brief Creates a default packet with the specified flag.
@@ -135,4 +135,4 @@ namespace Net::Factory
     };
 } // namespace Net::Factory
 
-#include "PacketFactory.tpp"
+#include "UDPPacketFactory.tpp"

@@ -12,12 +12,15 @@
 #include <thread>
 #include "GameServer.hpp"
 #include "IServer.hpp"
-#include "PacketFactory.hpp"
-#include "PacketRouter.hpp"
 #include "RoomManager.hpp"
 #include "SessionManager.hpp"
 #include "SnapshotSystem.hpp"
+#include "TCPPacket.hpp"
+#include "TCPPacketFactory.hpp"
+#include "TCPPacketRouter.hpp"
 #include "UDPPacket.hpp"
+#include "UDPPacketFactory.hpp"
+#include "UDPPacketRouter.hpp"
 #include <condition_variable>
 
 namespace Net::Thread
@@ -57,9 +60,11 @@ namespace Net::Thread
       public:
         /**
          * @brief Construct a new Server Runtime object
-         * @param server A shared pointer to the server instance
+         * @param udpServer A shared pointer to the UDP server instance
+         * @param tcpServer A shared pointer to the TCP server instance
          */
-        explicit ServerRuntime(const std::shared_ptr<Server::IServer> &server);
+        explicit ServerRuntime(
+            const std::shared_ptr<Server::IServer> &udpServer, const std::shared_ptr<Server::IServer> &tcpServer);
 
         /**
          * @brief Destroy the Server Runtime object
@@ -99,15 +104,26 @@ namespace Net::Thread
          */
         void runSnapshot() const;
 
-        std::shared_ptr<Server::IServer> _server;                 ///> The server instance
+        /**
+         * @brief Thread function to handle TCP connections and packets
+         */
+        void runTcp() const;
+
+        std::shared_ptr<Server::IServer> _udpServer;       ///> The server instance
+        std::shared_ptr<UDPPacketRouter> _udpPacketRouter; ///> Routes incoming packets to appropriate handlers
+        std::shared_ptr<Factory::UDPPacketFactory> _udpPacketFactory; ///> Builds outgoing packets.
+
+        std::shared_ptr<Server::IServer> _tcpServer;       ///> The TCP server instance
+        std::shared_ptr<TCPPacketRouter> _tcpPacketRouter; ///> Routes incoming TCP packets to appropriate handlers
+        std::shared_ptr<Factory::TCPPacketFactory> _tcpPacketFactory; ///> Builds outgoing TCP packets.
+
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
-        std::shared_ptr<PacketRouter> _packetRouter;              ///> Routes incoming packets to appropriate handlers
-        std::shared_ptr<Factory::PacketFactory> _packetFactory;   ///> Builds outgoing packets.
         std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets
         std::thread _snapshotThread;  ///> Thread for handling snapshots
+        std::thread _tcpThread;       ///> Thread for handling TCP packets
 
         std::mutex _mutex;                       ///> Mutex for synchronizing access
         std::condition_variable _cv;             ///> Condition variable for signaling

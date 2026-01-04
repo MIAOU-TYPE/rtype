@@ -118,12 +118,14 @@ namespace Engine
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
         RenderCommand _backgroundCmd;               ///> Render command for the background image
 
-        std::unique_ptr<UIButton> _audio;          ///> Audio settings button
-        std::unique_ptr<UIButton> _left;           ///> Decrease resolution button
-        std::unique_ptr<UIButton> _right;          ///> Increase resolution button
-        std::unique_ptr<UIButton> _back;           ///> Back button
-        std::unique_ptr<UIButton> _resolution;     ///> Current resolution display button
-        std::unique_ptr<UIButton> _resolutionNext; ///> Next resolution button
+        std::unique_ptr<UI::UIButton> _audio;          ///> Audio settings button
+        std::unique_ptr<UI::UIButton> _colorBlindMode; ///> Colorblind mode button
+        std::unique_ptr<UI::UIButton> _colorBlindNext; ///> Next colorblind mode button
+        std::unique_ptr<UI::UIButton> _left;           ///> Decrease resolution button
+        std::unique_ptr<UI::UIButton> _right;          ///> Increase resolution button
+        std::unique_ptr<UI::UIButton> _back;           ///> Back button
+        std::unique_ptr<UI::UIButton> _resolution;     ///> Current resolution display button
+        std::unique_ptr<UI::UIButton> _resolutionNext; ///> Next resolution button
         std::unique_ptr<UIButton> _controls;       ///> Current controls preset display button
         std::unique_ptr<UIButton> _controlsNext;   ///> Next controls preset button
 
@@ -136,5 +138,7 @@ namespace Engine
         std::vector<Graphics::Extent2u> _resolutions{{900, 600}, {1280, 720}, {1920, 1080}};
         std::size_t _currentResolution = 1; ///> Index of the current screen resolution
         bool _resolutionChanged = false;    ///> Flag indicating if the resolution has been changed
+
+        Graphics::ColorBlindMode _currentColorBlindMode = Graphics::ColorBlindMode::NONE; ///> Current colorblind mode
     };
 } // namespace Engine

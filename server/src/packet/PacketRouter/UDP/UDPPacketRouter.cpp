@@ -2,33 +2,33 @@
 ** EPITECH PROJECT, 2025
 ** RType
 ** File description:
-** PacketRouter
+** UDPPacketRouter
 */
 
-#include "PacketRouter.hpp"
+#include "UDPPacketRouter.hpp"
 using namespace Net;
 
-PacketRouter::PacketRouter(
+UDPPacketRouter::UDPPacketRouter(
     const std::shared_ptr<Server::ISessionManager> &sessions, const std::shared_ptr<Engine::RoomManager> &roomManager)
     : _sessions(sessions), _roomManager(roomManager)
 {
 }
 
-bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
+bool UDPPacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
 {
     if (pkt.size() < sizeof(HeaderData)) {
-        std::cerr << "{PacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
+        std::cerr << "{UDPPacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
         return false;
     }
 
     if (header.version != PROTOCOL_VERSION) {
-        std::cerr << "{PacketRouter} Dropped: wrong protocol version " << static_cast<int>(header.version)
+        std::cerr << "{UDPPacketRouter} Dropped: wrong protocol version " << static_cast<int>(header.version)
                   << " (expected " << static_cast<int>(PROTOCOL_VERSION) << ")" << std::endl;
         return false;
     }
 
     if (const std::uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
-        std::cerr << "{PacketRouter} Dropped: size mismatch "
+        std::cerr << "{UDPPacketRouter} Dropped: size mismatch "
                   << "(header=" << declaredSize << ", actual=" << pkt.size() << ")" << std::endl;
         return false;
     }
@@ -36,19 +36,19 @@ bool PacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
     return true;
 }
 
-bool PacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept
+bool UDPPacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept
 {
     if (!packet)
         return false;
 
     if (packet->size() < sizeof(HeaderData)) {
-        std::cerr << "{PacketRouter} Dropped: packet too small\n";
+        std::cerr << "{UDPPacketRouter} Dropped: packet too small\n";
         return false;
     }
     return true;
 }
 
-bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept
+bool UDPPacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept
 {
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
 
@@ -57,17 +57,17 @@ bool PacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) n
     return true;
 }
 
-int PacketRouter::resolveSession(const IPacket &packet) const
+int UDPPacketRouter::resolveSession(const IPacket &packet) const
 {
     const sockaddr_in *addr = packet.address();
     if (!addr) {
-        std::cerr << "{PacketRouter} Dropped: null address in packet\n";
+        std::cerr << "{UDPPacketRouter} Dropped: null address in packet\n";
         return -1;
     }
     return _sessions->getOrCreateSession(*addr);
 }
 
-void PacketRouter::dispatchPacket(
+void UDPPacketRouter::dispatchPacket(
     const int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const
 {
     switch (header.type) {
@@ -75,11 +75,11 @@ void PacketRouter::dispatchPacket(
         case Protocol::UDP::INPUT: handleInput(sessionId, payload, payloadSize); break;
         case Protocol::UDP::PING: handlePing(sessionId); break;
         case Protocol::UDP::DISCONNECT: handleDisconnect(sessionId); break;
-        default: std::cerr << "{PacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
+        default: std::cerr << "{UDPPacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }
 
-void PacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
+void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 {
     if (!isPacketValid(packet))
         return;
@@ -100,15 +100,15 @@ void PacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
     dispatchPacket(sessionId, header, payload, payloadSize);
 }
 
-void PacketRouter::handleConnect(const int sessionId) const
+void UDPPacketRouter::handleConnect(const int sessionId) const
 {
     _roomManager->onPlayerConnect(sessionId);
 }
 
-void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
+void UDPPacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
 {
     if (!payload || payloadSize < sizeof(uint8_t)) {
-        std::cerr << "{PacketRouter::handleInput} Dropped INPUT: missing payload" << std::endl;
+        std::cerr << "{UDPPacketRouter::handleInput} Dropped INPUT: missing payload" << std::endl;
         return;
     }
 
@@ -122,12 +122,12 @@ void PacketRouter::handleInput(const int sessionId, const std::uint8_t *payload,
     _roomManager->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
 }
 
-void PacketRouter::handlePing(const int sessionId) const
+void UDPPacketRouter::handlePing(const int sessionId) const
 {
     _roomManager->onPing(sessionId);
 }
 
-void PacketRouter::handleDisconnect(const int sessionId) const
+void UDPPacketRouter::handleDisconnect(const int sessionId) const
 {
     _roomManager->onPlayerDisconnect(sessionId);
     _sessions->removeSession(sessionId);

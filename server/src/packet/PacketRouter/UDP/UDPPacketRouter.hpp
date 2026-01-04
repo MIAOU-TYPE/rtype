@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** RType
 ** File description:
-** PacketRouter
+** UDPPacketRouter
 */
 
 #pragma once
@@ -14,9 +14,9 @@
 #include <iostream>
 #include "IPacket.hpp"
 #include "InputData.hpp"
-#include "PacketFactory.hpp"
 #include "RoomManager.hpp"
 #include "SessionManager.hpp"
+#include "UDPPacketFactory.hpp"
 
 #ifndef _WIN32
     #include <arpa/inet.h>
@@ -26,10 +26,10 @@
 #endif
 
 /**
- * @class PacketRouter
+ * @class UDPPacketRouter
  * @brief Routes incoming packets to appropriate handlers based on packet type.
  *
- * The PacketRouter class is responsible for processing incoming packets,
+ * The UDPPacketRouter class is responsible for processing incoming packets,
  * validating their headers, and routing them to the correct handler functions
  * based on the packet type. It interacts with a SessionManager to manage
  * player sessions and an IMessageSink to notify about various events such as
@@ -37,14 +37,14 @@
  */
 namespace Net
 {
-    class PacketRouter {
+    class UDPPacketRouter {
       public:
         /**
-         * @brief Constructs a PacketRouter with the given SessionManager and IMessageSink.
+         * @brief Constructs a UDPPacketRouter with the given SessionManager and IMessageSink.
          * @param sessions Shared pointer to the SessionManager for managing player sessions.
          * @param roomManager Shared pointer to the RoomManager for managing game rooms.
          */
-        PacketRouter(const std::shared_ptr<Server::ISessionManager> &sessions,
+        UDPPacketRouter(const std::shared_ptr<Server::ISessionManager> &sessions,
             const std::shared_ptr<Engine::RoomManager> &roomManager);
 
         /**

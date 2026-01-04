@@ -14,7 +14,7 @@ namespace Engine
         _current = std::move(state);
         try {
             if (_current)
-                _current->onEnter(*this);
+                _current->onEnter();
             else
                 _running = false;
         } catch (...) {
@@ -35,7 +35,7 @@ namespace Engine
     void StateManager::update(const InputFrame &frame)
     {
         if (_current)
-            _current->update(frame);
+            _current->update(*this, frame);
 
         if (_quitRequested) {
             _running = false;

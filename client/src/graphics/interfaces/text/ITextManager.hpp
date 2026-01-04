@@ -24,10 +24,12 @@ namespace Graphics
 
         /**
          * @brief Create a new text object.
-         * The returned text is independent and fully configurable
-         * through the IText interface.
+         *
+         * @param characterSize Font size.
+         * @param color Text color.
+         * @return A new IText instance with font/size/color already configured.
          */
-        virtual std::unique_ptr<IText> createText() = 0;
+        virtual std::unique_ptr<IText> createText(unsigned int characterSize, const Color &color) = 0;
 
         /**
          * @brief Destroy all texts managed by this manager.

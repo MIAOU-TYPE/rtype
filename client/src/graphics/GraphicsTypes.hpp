@@ -17,4 +17,15 @@ namespace Graphics
         unsigned int width;
         unsigned int height;
     };
+
+    /**
+     * @enum ColorBlindMode
+     * @brief Enumeration of available colorblind filter modes.
+     */
+    enum class ColorBlindMode {
+        NONE,         ///> No filter applied (normal vision)
+        DEUTERANOPIA, ///> Red-green color blindness (green deficiency)
+        PROTANOPIA,   ///> Red-green color blindness (red deficiency)
+        TRITANOPIA    ///> Blue-yellow color blindness
+    };
 } // namespace Graphics

@@ -9,6 +9,7 @@
 #include "ArgParser.hpp"
 #include "ServerRuntime.hpp"
 #include "SignalHandler.hpp"
+#include "TCPServer.hpp"
 #include "UDPServer.hpp"
 
 namespace
@@ -34,13 +35,17 @@ int main(const int argc, char **argv)
         std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;
         return 84;
     }
-    int port = parser.getPort();
+    const int port = parser.getPort();
+    auto host = parser.getHost();
     try {
-        const auto server = std::make_shared<Net::Server::UDPServer>();
-        Net::Thread::ServerRuntime runtime(server);
+        const auto udpServer = std::make_shared<Net::Server::UDPServer>();
+        const auto tcpServer = std::make_shared<Net::Server::TCPServer>();
+
+        Net::Thread::ServerRuntime runtime(udpServer, tcpServer);
         const auto signalHandler = startSignalHandler(runtime);
 
-        server->configure("127.0.0.1", port);
+        tcpServer->configure(host, port);
+        udpServer->configure(host, port + 1);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** testPacketFactory
+** testUDPPacketFactory
 */
 #include <cstring>
 #include <gtest/gtest.h>
@@ -15,7 +15,7 @@
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
-#include "PacketFactory.hpp"
+#include "UDPPacketFactory.hpp"
 #include "mockIPacket.hpp"
 
 static sockaddr_in makeAddr(uint32_t ip, uint16_t port)
@@ -27,21 +27,21 @@ static sockaddr_in makeAddr(uint32_t ip, uint16_t port)
     return a;
 }
 
-TEST(PacketFactory, ConstructorThrowsOnNull)
+TEST(UDPPacketFactory, ConstructorThrowsOnNull)
 {
-    EXPECT_THROW(Net::Factory::PacketFactory(nullptr), Net::Factory::FactoryError);
+    EXPECT_THROW(Net::Factory::UDPPacketFactory(nullptr), Net::Factory::FactoryError);
 }
 
-TEST(PacketFactory, ConstructorAcceptsValidPacket)
+TEST(UDPPacketFactory, ConstructorAcceptsValidPacket)
 {
     std::shared_ptr<Net::IPacket> pkt = std::make_shared<MockPacket>();
-    EXPECT_NO_THROW(Net::Factory::PacketFactory factory(pkt));
+    EXPECT_NO_THROW(Net::Factory::UDPPacketFactory factory(pkt));
 }
 
-TEST(PacketFactory, MakeDefaultPacket)
+TEST(UDPPacketFactory, MakeDefaultPacket)
 {
     auto pkt = std::make_shared<MockPacket>();
-    Net::Factory::PacketFactory f(pkt);
+    Net::Factory::UDPPacketFactory f(pkt);
 
     sockaddr_in addr = makeAddr(0x12345678, 5555);
     uint8_t flag = Net::Protocol::UDP::PING;
@@ -60,10 +60,10 @@ TEST(PacketFactory, MakeDefaultPacket)
     EXPECT_EQ(p->address()->sin_port, addr.sin_port);
 }
 
-TEST(PacketFactory, MakeDamagePacket)
+TEST(UDPPacketFactory, MakeDamagePacket)
 {
     auto pkt = std::make_shared<MockPacket>();
-    Net::Factory::PacketFactory f(pkt);
+    Net::Factory::UDPPacketFactory f(pkt);
 
     sockaddr_in addr = makeAddr(0xDEADBEEF, 7777);
     uint32_t id = 4242;

@@ -116,15 +116,15 @@ namespace Net
         if (rooms.size() > 0xFFFFu)
             return sendError(addr, req, 16, "LIST_ROOMS: too many rooms to fit in u16");
 
-        std::vector<Factory::TCPPacketFactory::RoomInfo> outRooms;
+        std::vector<RoomData> outRooms;
         outRooms.reserve(rooms.size());
 
         for (const auto &[id, name, currentPlayers, maxPlayers] : rooms) {
-            Factory::TCPPacketFactory::RoomInfo ri{};
-            ri.id = static_cast<uint32_t>(id);
-            ri.name = name;
-            ri.currentPlayers = static_cast<uint8_t>(currentPlayers);
-            ri.maxPlayers = static_cast<uint8_t>(maxPlayers);
+            RoomData ri{};
+            ri.roomId = static_cast<uint32_t>(id);
+            ri.roomName = name;
+            ri.currentPlayers = static_cast<size_t>(currentPlayers);
+            ri.maxPlayers = static_cast<size_t>(maxPlayers);
             outRooms.push_back(ri);
         }
 

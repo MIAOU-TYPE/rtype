@@ -164,16 +164,16 @@ namespace Engine
             room->gameServer().onPing(sessionId);
     }
 
-    std::vector<RoomManager::RoomEntry> RoomManager::listRooms() const noexcept
+    std::vector<RoomData> RoomManager::listRooms() const noexcept
     {
         try {
-            std::vector<RoomEntry> roomsList;
+            std::vector<RoomData> roomsList;
             std::scoped_lock lock(_mutex);
 
             for (const auto &[id, room] : _rooms) {
-                RoomEntry entry;
-                entry.id = id;
-                entry.name = room->getName();
+                RoomData entry;
+                entry.roomId = id;
+                entry.roomName = room->getName();
                 entry.currentPlayers = room->getCurrentPlayers();
                 entry.maxPlayers = room->getMaxPlayers();
                 roomsList.push_back(entry);

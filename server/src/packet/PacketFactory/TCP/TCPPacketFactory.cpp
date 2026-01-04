@@ -57,7 +57,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeRoomsList(
-        const sockaddr_in &addr, const uint32_t req, const std::vector<RoomInfo> &rooms) const
+        const sockaddr_in &addr, const uint32_t req, const std::vector<RoomData> &rooms) const
     {
         if (rooms.size() > 0xFFFFu)
             return makeError(addr, req, 16, "LIST_ROOMS: too many rooms to fit in u16");
@@ -65,11 +65,11 @@ namespace Net::Factory
         TCP::Writer b;
         b.u16(static_cast<uint16_t>(rooms.size()));
 
-        for (const auto &room : rooms) {
-            b.u32(room.id);
-            b.str16(room.name);
-            b.u8(room.currentPlayers);
-            b.u8(room.maxPlayers);
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+            b.u32(roomId);
+            b.str16(roomName);
+            b.u16(static_cast<uint16_t>(currentPlayers));
+            b.u16(static_cast<uint16_t>(maxPlayers));
         }
 
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOMS_LIST, req, b.bytes());

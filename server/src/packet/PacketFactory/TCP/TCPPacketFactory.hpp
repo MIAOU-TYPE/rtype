@@ -18,6 +18,7 @@
 #include <cstring>
 #include "TCPTypesData.hpp"
 #include "TCPWriter.hpp"
+#include "RoomData.hpp"
 
 namespace Net::Factory
 {
@@ -59,17 +60,6 @@ namespace Net::Factory
             uint16_t udpPort, uint64_t token) const;
 
         /**
-         * @brief Structure representing room information.
-         * @struct RoomInfo
-         */
-        struct RoomInfo {
-            uint32_t id;            ///> Room ID
-            std::string_view name;  ///> Room name
-            uint8_t currentPlayers; ///> Current number of players in the room
-            uint8_t maxPlayers;     ///> Maximum number of players allowed in the room
-        };
-
-        /**
          * @brief Creates a ROOMS_LIST packet.
          * @param addr The address of the client.
          * @param req The request ID.
@@ -77,7 +67,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         std::shared_ptr<IPacket> makeRoomsList(
-            const sockaddr_in &addr, ReqId req, const std::vector<RoomInfo> &rooms) const;
+            const sockaddr_in &addr, ReqId req, const std::vector<RoomData> &rooms) const;
 
         /**
          * @brief Creates a ROOM_CREATED packet.

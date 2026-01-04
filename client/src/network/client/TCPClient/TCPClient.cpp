@@ -158,43 +158,53 @@ namespace Network
 
     bool TCPClient::sendPacket(const Net::IPacket &pkt)
     {
-        if (_socketFd == kInvalidSocket || !_isRunning.load())
-            return false;
-
-        const auto size = static_cast<std::uint32_t>(pkt.size());
-        if (size == 0 || size > MAX_FRAME)
+        std::uint32_t size = 0;
+        if (!isSendable(pkt, size))
             return false;
 
         const std::uint32_t beSize = htonl(size);
 
-        {
-            std::scoped_lock lk(_txMutex);
-
-            if (_tx.writable() < (4u + size)) {
-            } else {
-                if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
-                    return false;
-                if (!_tx.write(pkt.buffer(), size))
-                    return false;
-
-                goto flush;
-            }
+        if (tryEnqueueFrame(beSize, pkt, size)) {
+            flushWrites();
+            return true;
         }
-
         flushWrites();
 
-        {
-            std::scoped_lock lk(_txMutex);
-            if (_tx.writable() < (4u + size))
-                return false;
-            if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
-                return false;
-            if (!_tx.write(pkt.buffer(), size))
-                return false;
-        }
+        if (!tryEnqueueFrame(beSize, pkt, size))
+            return false;
 
-    flush:
         flushWrites();
+        return true;
+    }
+
+    bool TCPClient::isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept
+    {
+        if (_socketFd == kInvalidSocket || !_isRunning.load())
+            return false;
+
+        outSize = static_cast<std::uint32_t>(pkt.size());
+        if (outSize == 0 || outSize > MAX_FRAME)
+            return false;
+        return true;
+    }
+
+    bool TCPClient::tryEnqueueFrame(const std::uint32_t beSize, const Net::IPacket &pkt, const std::uint32_t size)
+    {
+        std::scoped_lock lk(_txMutex);
+        return enqueueFrameLocked(beSize, pkt, size);
+    }
+
+    bool TCPClient::enqueueFrameLocked(const std::uint32_t beSize, const Net::IPacket &pkt, const std::uint32_t size)
+    {
+        if (_tx.writable() < (4u + size))
+            return false;
+
+        if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
+            return false;
+
+        if (!_tx.write(pkt.buffer(), size))
+            return false;
+
         return true;
     }
 

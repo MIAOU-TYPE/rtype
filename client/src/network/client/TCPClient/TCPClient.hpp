@@ -139,6 +139,32 @@ namespace Network
          */
         void resetState() noexcept;
 
+        /**
+         * @brief Enqueues a frame into the transmit buffer in a thread-safe manner.
+         * @param beSize The big-endian size of the packet to be enqueued.
+         * @param pkt The packet to be enqueued.
+         * @param size The size of the packet to be enqueued.
+         * @return True if the frame was successfully enqueued, false otherwise.
+         */
+        bool enqueueFrameLocked(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+
+        /**
+         * @brief Attempts to enqueue a frame into the transmit buffer.
+         * @param beSize The big-endian size of the packet to be enqueued.
+         * @param pkt The packet to be enqueued.
+         * @param size The size of the packet to be enqueued.
+         * @return True if the frame was successfully enqueued, false otherwise.
+         */
+        bool tryEnqueueFrame(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+
+        /**
+         * @brief Checks if a packet is sendable and retrieves its size.
+         * @param pkt The packet to be checked.
+         * @param outSize Reference to a variable where the size of the packet will be stored.
+         * @return True if the packet is sendable, false otherwise.
+         */
+        bool isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept;
+
         std::shared_ptr<Net::NetWrapper> _netWrapper; ///> Network wrapper
 
         sockaddr_in _serverAddr{}; ///> Server address structure

@@ -14,7 +14,7 @@ namespace Engine
         _current = std::move(state);
         try {
             if (_current)
-                _current->onEnter(*this);
+                _current->onEnter();
             else
                 _running = false;
         } catch (...) {

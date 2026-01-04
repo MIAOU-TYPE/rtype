@@ -91,7 +91,7 @@ void SessionManager::forEachSession(const std::function<void(int, const sockaddr
         std::shared_lock lock(_mutex);
         snapshot.reserve(_idToTcpAddress.size());
 
-        for (const auto &[id, addr] : _idToTcpAddress)
+        for (const auto &[id, addr] : _idToUdpAddress)
             snapshot.emplace_back(id, addr);
     }
 

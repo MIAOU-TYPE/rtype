@@ -18,8 +18,7 @@ namespace
     Utils::ArgParseResult parseArgs(Utils::ArgParser &argParser)
     {
         try {
-            const auto status = argParser.parse();
-            return status;
+            return argParser.parse();
         } catch (std::exception &e) {
             std::cerr << "{Main}: " << e.what() << std::endl;
             return Utils::ArgParseResult::Error;

@@ -15,6 +15,7 @@ file(GLOB_RECURSE ASSET_FILES
     "${CLIENT_ASSETS_DIR}/sounds/*.wav"
     "${CLIENT_ASSETS_DIR}/sounds/*.flac"
     "${CLIENT_ASSETS_DIR}/shaders/*.frag"
+    "${CLIENT_ASSETS_DIR}/levels/*/*.json"
 )
 
 foreach(asset_file ${ASSET_FILES})
@@ -22,15 +23,15 @@ foreach(asset_file ${ASSET_FILES})
         get_filename_component(asset_name "${asset_file}" NAME)
         string(REPLACE "." "_" safe_name "${asset_name}")
         string(REPLACE "-" "_" safe_name "${safe_name}")
-        
+
         set(output_file "${EMBEDDED_RESOURCES_DIR}/${safe_name}.cpp")
-        
+
         message(STATUS "Generating ${safe_name}.cpp from ${asset_name}")
         execute_process(
             COMMAND python3 "${PYTHON_SCRIPT}" "${asset_file}" "${output_file}"
             RESULT_VARIABLE result
         )
-        
+
         if(NOT result EQUAL 0)
             message(FATAL_ERROR "Failed to generate ${output_file}")
         endif()

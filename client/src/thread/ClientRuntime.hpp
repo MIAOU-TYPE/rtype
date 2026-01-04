@@ -32,6 +32,7 @@ using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"
+#include "RoomManager.hpp"
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 #include "StateManager.hpp"
@@ -130,6 +131,7 @@ namespace Thread
         std::unique_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
+        std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
         std::shared_ptr<Engine::MusicRegistry> _musicRegistry = nullptr;   ///> Music registry for managing music

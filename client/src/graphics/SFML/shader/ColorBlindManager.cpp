@@ -10,7 +10,7 @@
 namespace Graphics
 {
 
-    ColorBlindManager::ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> resourceManager)
+    ColorBlindManager::ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> &resourceManager)
         : _mode(ColorBlindMode::NONE), _shaderLoaded(false)
     {
         if (!sf::Shader::isAvailable()) {
@@ -54,7 +54,7 @@ namespace Graphics
         _shader.setUniform("mode", shaderMode);
     }
 
-    ColorBlindMode ColorBlindManager::getMode() const
+    ColorBlindMode ColorBlindManager::getMode() const noexcept
     {
         return _mode;
     }
@@ -64,7 +64,7 @@ namespace Graphics
         return _shaderLoaded ? &_shader : nullptr;
     }
 
-    bool ColorBlindManager::isShaderAvailable() const
+    bool ColorBlindManager::isShaderAvailable() const noexcept
     {
         return _shaderLoaded && _mode != ColorBlindMode::NONE;
     }

@@ -17,6 +17,7 @@
 #include "ColorBlindManager.hpp"
 #include "EmbeddedResourceManager.hpp"
 #include "IRenderer.hpp"
+#include "RenderTextureManager.hpp"
 #include "SfmlFontManager.hpp"
 #include "SfmlMusicManager.hpp"
 #include "SfmlSoundManager.hpp"
@@ -110,6 +111,12 @@ namespace Graphics
         [[nodiscard]] ColorBlindMode getColorBlindMode() const noexcept override;
 
       private:
+        /**
+         * @brief Determines if post-processing effects should be used.
+         * @return True if post-processing is enabled, false otherwise.
+         */
+        [[nodiscard]] bool usePostProcess() const noexcept;
+
         std::shared_ptr<sf::RenderWindow> _window = nullptr; ///> Shared pointer to the SFML RenderWindow.
 
         std::shared_ptr<Resources::IResourceManager> _resourceManager =
@@ -120,6 +127,7 @@ namespace Graphics
         std::shared_ptr<SfmlTextureManager> _textureManager = nullptr; ///> Shared pointer to the SFML Texture Manager.
         std::shared_ptr<SfmlTextManager> _textManager = nullptr;       ///> Shared pointer to the SFML Text Manager.
         std::unique_ptr<ColorBlindManager> _colorBlindManager = nullptr; ///> Colorblind shader manager.
-        std::unique_ptr<sf::RenderTexture> _renderTexture = nullptr;     ///> Render texture for shader post-processing.
+        std::unique_ptr<IRenderTextureManager> _renderTextureManager =
+            nullptr; ///> Manager for render texture post-processing.
     };
 } // namespace Graphics

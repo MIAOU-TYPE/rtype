@@ -6,7 +6,6 @@
 */
 
 #include "SettingsMenu.hpp"
-#include <iostream>
 
 namespace
 {
@@ -16,7 +15,6 @@ namespace
             case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
             case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
             case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
-            case Graphics::ColorBlindMode::TRITANOPIA: return Graphics::ColorBlindMode::NONE;
             default: return Graphics::ColorBlindMode::NONE;
         }
     }
@@ -33,22 +31,21 @@ namespace Engine
         _backgroundTexture = textures->load("sprites/bg-preview.png");
         if (_backgroundTexture == Graphics::InvalidTexture)
             throw SettingsMenuError("SettingsMenu: failed to load background texture");
-
         _backgroundCmd.textureId = _backgroundTexture;
 
-        _colorBlindMode = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "NORMAL");
-        _colorBlindNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
-        _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
-        _musicVolLabel = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "50");
-        _musicVolUp = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _musicVolDown = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "-");
-        _sfxVolLabel = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "50");
-        _sfxVolUp = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
-        _sfxVolDown = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "-");
-        _muteMusic = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "OFF MUSIC");
-        _muteSFX = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "OFF SFX");
+        _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
+        _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+        _musicVolLabel = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "50");
+        _musicVolUp = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _musicVolDown = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
+        _sfxVolLabel = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "50");
+        _sfxVolUp = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        _sfxVolDown = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
+        _muteMusic = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF MUSIC");
+        _muteSFX = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF SFX");
     }
 
     void SettingsMenu::onEnter()
@@ -94,12 +91,11 @@ namespace Engine
 
     void SettingsMenu::layout()
     {
-        const auto vp = _renderer->getViewportSize();
-        const float w = static_cast<float>(vp.width);
-        const float h = static_cast<float>(vp.height);
+        const auto [widthSize, heightSize] = _renderer->getViewportSize();
+        const auto w = static_cast<float>(widthSize);
+        const auto h = static_cast<float>(heightSize);
         const float cx = w * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
-        const auto texSize = _renderer->textures()->getSize(_backgroundTexture);
         const float leftColX = w * 0.25f;
         const float rightColX = w * 0.75f;
         const float audioYStart = h * 0.2f;
@@ -111,10 +107,11 @@ namespace Engine
         const float sfxLabelHalfWidth = _sfxVolLabel->bounds().w * 0.5f;
         const float videoButtonOffset = _colorBlindMode->bounds().w * 0.5f + labelMargin;
         const float videoButtonSpacing = w * 0.05f;
+        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
 
-        _backgroundCmd.frame = {0, 0, static_cast<int>(texSize.width), static_cast<int>(texSize.height)};
+        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
         _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(texSize.width), h / static_cast<float>(texSize.height)};
+        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
 
         _musicVolLabel->setPosition(leftColX - musicLabelHalfWidth, audioYStart);
         _musicVolDown->setPosition(
@@ -210,7 +207,6 @@ namespace Engine
                 _resolutionChanged = true;
                 const auto &res = _resolutions.at(_currentResolution);
                 _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
-                _resolutionNext->reset();
                 return;
             }
             if (_back->onMouseReleased(frame.mouseX, frame.mouseY)) {
@@ -266,6 +262,9 @@ namespace Engine
                 _muteSFX->reset();
                 return;
             }
+            if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
+                    _backRequested = true;
+                })) {}
         }
     }
 

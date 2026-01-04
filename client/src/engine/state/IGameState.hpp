@@ -30,14 +30,15 @@ namespace Engine
 
         /**
          * @brief Called when entering the state.
-         * @param manager Reference to the StateManager managing this state.
          */
-        virtual void onEnter(StateManager &manager) = 0;
+        virtual void onEnter() = 0;
 
         /**
          * @brief Updates the state logic.
+         * @param manager Reference to the StateManager managing this state.
+         * @param frame The current input frame.
          */
-        virtual void update(const InputFrame &frame) = 0;
+        virtual void update(StateManager &manager, const InputFrame &frame) = 0;
 
         /**
          * @brief Renders the state.

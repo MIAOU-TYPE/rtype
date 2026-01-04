@@ -30,9 +30,11 @@ namespace Graphics
 
         /**
          * @brief Creates a new text object.
-         * @return Unique pointer to the created IText object.
+         * @param characterSize Font size.
+         * @param color Text color.
+         * @return A new IText instance with font/size/color already configured.
          */
-        std::unique_ptr<IText> createText() override;
+        std::unique_ptr<IText> createText(unsigned int characterSize, const Color &color) override;
 
         /**
          * @brief Clears all managed text resources.

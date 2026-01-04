@@ -13,6 +13,7 @@
 #include "IRenderer.hpp"
 #include "Menu.hpp"
 #include "MusicRegistry.hpp"
+#include "RoomState.hpp"
 #include "SettingsState.hpp"
 #include "SoundRegistry.hpp"
 #include "StateManager.hpp"
@@ -29,22 +30,22 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
-         * @param musicRegistry Shared pointer to the music registry.
-         * @param soundRegistry Shared pointer to the sound registry.
+         * @param roomManager Shared pointer to the room manager.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
+            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager);
 
         /**
-         * @brief Destroy the Menu State object.
+         * @brief Called when entering the state.
          */
-        void onEnter(StateManager &manager) override;
+        void onEnter() override;
 
         /**
          * @brief Update the menu state.
+         * @param manager Reference to the state manager.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame) override;
+        void update(StateManager &manager, const InputFrame &frame) override;
 
         /**
          * @brief Render the menu state.
@@ -57,7 +58,7 @@ namespace Engine
         std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Shared pointer to the music registry.
         std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
 
-        std::unique_ptr<Menu> _menu;      ///> Unique pointer to the menu.
-        StateManager *_manager = nullptr; ///> Pointer to the state manager.
+        std::shared_ptr<RoomManager> _roomManager; ///> Lobby/room manager shared across states.
+        std::unique_ptr<Menu> _menu;               ///> Unique pointer to the menu.
     };
 } // namespace Engine

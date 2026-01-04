@@ -58,6 +58,13 @@ namespace Graphics
         void setResolution(Extent2u size) override;
 
         /**
+         * @brief Get the resource manager.
+         * @return Shared pointer to the resource manager.
+         */
+        [[nodiscard]]
+        std::shared_ptr<Resources::IResourceManager> resources() const noexcept override;
+
+        /**
          * @brief Poll for window events.
          */
         void pollEvents(Engine::EventBus &bus) override;

@@ -118,13 +118,13 @@ namespace Engine
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
         RenderCommand _backgroundCmd;               ///> Render command for the background image
 
-        std::unique_ptr<UIButton> _colorBlindMode; ///> Colorblind mode button
-        std::unique_ptr<UIButton> _colorBlindNext; ///> Next colorblind mode button
-        std::unique_ptr<UIButton> _left;           ///> Decrease resolution button
-        std::unique_ptr<UIButton> _right;          ///> Increase resolution button
-        std::unique_ptr<UIButton> _back;           ///> Back button
-        std::unique_ptr<UIButton> _resolution;     ///> Current resolution display button
-        std::unique_ptr<UIButton> _resolutionNext; ///> Next resolution button
+        std::unique_ptr<UI::UIButton> _colorBlindMode; ///> Colorblind mode button
+        std::unique_ptr<UI::UIButton> _colorBlindNext; ///> Next colorblind mode button
+        std::unique_ptr<UI::UIButton> _left;           ///> Decrease resolution button
+        std::unique_ptr<UI::UIButton> _right;          ///> Increase resolution button
+        std::unique_ptr<UI::UIButton> _back;           ///> Back button
+        std::unique_ptr<UI::UIButton> _resolution;     ///> Current resolution display button
+        std::unique_ptr<UI::UIButton> _resolutionNext; ///> Next resolution button
 
         int _musicVolume = 50;    ///> Music volume level (0-100)
         int _sfxVolume = 50;      ///> SFX volume level (0-100)

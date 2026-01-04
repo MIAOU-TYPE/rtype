@@ -27,7 +27,7 @@ namespace Graphics
          * @brief Construct a new ColorBlindManager.
          * @param resourceManager Shared pointer to the resource manager for loading shaders.
          */
-        explicit ColorBlindManager(std::shared_ptr<Resources::IResourceManager> resourceManager);
+        explicit ColorBlindManager(const std::shared_ptr<Resources::IResourceManager> &resourceManager);
 
         /**
          * @brief Destroy the ColorBlindManager.
@@ -44,24 +44,24 @@ namespace Graphics
          * @brief Get the current colorblind filter mode.
          * @return ColorBlindMode The current mode.
          */
-        ColorBlindMode getMode() const;
+        [[nodiscard]] ColorBlindMode getMode() const noexcept;
 
         /**
          * @brief Get the shader for applying to render targets.
          * @return const sf::Shader* Pointer to the shader, or nullptr if not loaded.
          */
-        const sf::Shader *getShader() const;
+        [[nodiscard]] const sf::Shader *getShader() const;
 
         /**
          * @brief Check if a shader is loaded and ready to use.
          * @return bool True if shader is loaded.
          */
-        bool isShaderAvailable() const;
+        [[nodiscard]] bool isShaderAvailable() const noexcept;
 
       private:
-        ColorBlindMode _mode; ///> Current colorblind filter mode
-        sf::Shader _shader;   ///> GLSL shader for colorblind filters
-        bool _shaderLoaded;   ///> Whether the shader loaded successfully
+        ColorBlindMode _mode;       ///> Current colorblind filter mode
+        sf::Shader _shader;         ///> GLSL shader for colorblind filters
+        bool _shaderLoaded = false; ///> Whether the shader loaded successfully
     };
 
 } // namespace Graphics

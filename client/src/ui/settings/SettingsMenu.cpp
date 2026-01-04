@@ -101,6 +101,7 @@ namespace Engine
         const float videoYStart = h * 0.3f;
         const float spacingY = h * 0.12f;
         const float labelMargin = w * 0.02f;
+        const float rightMargin = w * 0.05f;
         const float musicLabelHalfWidth = _musicVolLabel->bounds().w * 0.5f;
         const float buttonHalfWidth = _musicVolDown->bounds().w * 0.5f;
         const float sfxLabelHalfWidth = _sfxVolLabel->bounds().w * 0.5f;
@@ -128,10 +129,14 @@ namespace Engine
         _muteSFX->setPosition(leftColX - _muteSFX->bounds().w * 0.5f, audioYStart + 3 * spacingY);
 
         _colorBlindMode->setPosition(rightColX - videoButtonOffset, videoYStart);
-        _colorBlindNext->setPosition(rightColX + videoButtonOffset + videoButtonSpacing, videoYStart);
+        const float nextButtonX = std::min(rightColX + videoButtonOffset + videoButtonSpacing, 
+                                            w - _colorBlindNext->bounds().w - rightMargin);
+        _colorBlindNext->setPosition(nextButtonX, videoYStart);
 
         _resolution->setPosition(rightColX - videoButtonOffset, videoYStart + spacingY);
-        _resolutionNext->setPosition(rightColX + videoButtonOffset + videoButtonSpacing, videoYStart + spacingY);
+        const float resNextButtonX = std::min(rightColX + videoButtonOffset + videoButtonSpacing,
+                                               w - _resolutionNext->bounds().w - rightMargin);
+        _resolutionNext->setPosition(resNextButtonX, videoYStart + spacingY);
 
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }

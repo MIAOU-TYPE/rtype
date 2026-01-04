@@ -105,7 +105,7 @@ namespace UI
          * @return True if the button was clicked, false otherwise.
          */
         template <typename Fn>
-        bool onClickReleased(float x, float y, Fn &&fn);
+        [[nodiscard]] bool onClickReleased(float x, float y, Fn &&fn);
 
         /**
          * @brief Handle click press event with a callback.
@@ -116,7 +116,7 @@ namespace UI
          * @return True if the button was clicked, false otherwise.
          */
         template <typename Fn>
-        bool onClickPressed(float x, float y, Fn &&fn);
+        [[nodiscard]] bool onClickPressed(float x, float y, Fn &&fn);
 
         /**
          * @brief Center the button label.
@@ -125,7 +125,7 @@ namespace UI
          * @param label Text label to center.
          * @param labelCenterX Center X coordinate of the label.
          */
-        void centerButtonLabel(float centerX, float y, Graphics::IText &label, float labelCenterX);
+        void centerButtonLabel(float centerX, float y, Graphics::IText &label, float labelCenterX) noexcept;
 
         /**
          * @brief Render the button.

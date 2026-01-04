@@ -16,9 +16,9 @@
 #include "TCPPayload.hpp"
 
 #include <cstring>
+#include "RoomData.hpp"
 #include "TCPTypesData.hpp"
 #include "TCPWriter.hpp"
-#include "RoomData.hpp"
 
 namespace Net::Factory
 {

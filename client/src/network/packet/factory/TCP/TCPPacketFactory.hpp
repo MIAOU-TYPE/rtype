@@ -18,7 +18,7 @@
 #include "TCPTypesData.hpp"
 #include "TCPWriter.hpp"
 
-namespace Network::Factory
+namespace Network
 {
     /**
      * @class TCPPacketFactory
@@ -32,7 +32,7 @@ namespace Network::Factory
          * @brief Constructor for TCPPacketFactory.
          * @param proto A shared pointer to a prototype IPacket used for creating new packets.
          */
-        explicit TCPPacketFactory(const std::shared_ptr<Net::IPacket> &proto);
+        explicit TCPPacketFactory(std::shared_ptr<Net::IPacket> proto);
 
         /**
          * @brief Create a TCP packet with the given payload.
@@ -91,4 +91,4 @@ namespace Network::Factory
       private:
         std::shared_ptr<Net::IPacket> _packet; ///> Prototype packet for creating new packets
     };
-} // namespace Network::Factory
+} // namespace Network

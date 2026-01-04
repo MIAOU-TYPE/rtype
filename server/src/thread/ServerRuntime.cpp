@@ -126,7 +126,7 @@ void ServerRuntime::runSnapshot() const
                 for (const int sessionId : room.sessions()) {
                     if (const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId)) {
                         basePacket->setAddress(*addr);
-                        (void)_udpServer->sendPacket(*basePacket);
+                        (void) _udpServer->sendPacket(*basePacket);
                     }
                 }
             }

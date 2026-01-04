@@ -74,7 +74,7 @@ namespace Net
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onHello(
@@ -101,12 +101,12 @@ namespace Net
         if (!_packetFactory)
             return;
 
-        const auto out =
-            _packetFactory->makeWelcome(addr, req, ver, static_cast<uint32_t>(sessionId), static_cast<uint16_t>(_serverUdpPort), token);
+        const auto out = _packetFactory->makeWelcome(
+            addr, req, ver, static_cast<uint32_t>(sessionId), static_cast<uint16_t>(_serverUdpPort), token);
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onListRooms(const sockaddr_in &addr, const uint32_t req) const
@@ -134,7 +134,7 @@ namespace Net
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
@@ -175,7 +175,7 @@ namespace Net
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onJoinRoom(
@@ -205,7 +205,7 @@ namespace Net
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const
@@ -227,7 +227,7 @@ namespace Net
         if (!out)
             return;
 
-        (void)_tcp->sendPacket(*out);
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onStartGame(const sockaddr_in &addr, const int sessionId, const uint32_t req) const
@@ -246,7 +246,7 @@ namespace Net
         for (const auto &session : room->sessions()) {
             if (const auto memberAddr = _sessions->getAddress(session)) {
                 if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
-                    (void)_tcp->sendPacket(*out);
+                    (void) _tcp->sendPacket(*out);
             }
         }
     }

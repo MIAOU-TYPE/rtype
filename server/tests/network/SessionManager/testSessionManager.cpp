@@ -156,9 +156,9 @@ TEST(SessionManagerTests, TestApplyFunctionToMultipleSessions)
     const int id2 = sm.getOrCreateSession(addr2);
     const int id3 = sm.getOrCreateSession(addr3);
 
-    (void)sm.bindUdp(id1, addr1);
-    (void)sm.bindUdp(id2, addr2);
-    (void)sm.bindUdp(id3, addr3);
+    (void) sm.bindUdp(id1, addr1);
+    (void) sm.bindUdp(id2, addr2);
+    (void) sm.bindUdp(id3, addr3);
 
     std::vector<int> collectedIds;
     sm.forEachSession([&](int sessionId, const sockaddr_in &) {

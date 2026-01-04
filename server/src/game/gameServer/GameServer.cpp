@@ -39,7 +39,7 @@ namespace
 
                 const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
                 if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
-                    (void)serverL->sendPacket(*pkt);
+                    (void) serverL->sendPacket(*pkt);
             });
     }
 } // namespace
@@ -70,7 +70,7 @@ namespace Game
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
         if (const auto *addr = _sessions->getUdpAddress(sessionId)) {
-            (void)_server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
+            (void) _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
         }
     }
 
@@ -179,7 +179,7 @@ namespace Game
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getUdpAddress(cmd.sessionId)) {
                     if (const auto pkt = _udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
-                        (void)_server->sendPacket(*pkt);
+                        (void) _server->sendPacket(*pkt);
                 }
                 break;
             }

@@ -23,9 +23,9 @@ namespace Engine
             _backgroundCmd.textureId = _backgroundTexture;
             _logoCmd.textureId = _logoTexture;
 
-            _play = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "PLAY");
-            _settings = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "SETTINGS");
-            _quit = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "QUIT");
+            _play = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "PLAY");
+            _settings = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SETTINGS");
+            _quit = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "QUIT");
         } catch (const std::exception &e) {
             throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
         }
@@ -104,20 +104,18 @@ namespace Engine
             _settings->onMousePressed(frame.mouseX, frame.mouseY);
             _quit->onMousePressed(frame.mouseX, frame.mouseY);
         }
-        if (frame.mouseReleased) {
-            if (_play->onMouseReleased(frame.mouseX, frame.mouseY)) {
+
+        if (_play->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                 _startRequested = true;
-                _play->reset();
-            }
-            if (_settings->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            }))
+            return;
+        if (_settings->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                 _settingsRequested = true;
-                _settings->reset();
-            }
-            if (_quit->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            }))
+            return;
+        if (_quit->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                 _quitRequested = true;
-                _quit->reset();
-            }
-        }
+            })) {}
     }
 
     bool Menu::wantsToStart() const noexcept

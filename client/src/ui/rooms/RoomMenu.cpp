@@ -194,11 +194,13 @@ namespace Engine
             if (_root.join->onClickReleased(mx, my, [&] {
                 }))
                 return;
-            _root.back->onClickReleased(mx, my, [&] {
-                _backToMenu = true;
-            });
-        } else
-            handleCreateReleased(mx, my);
+            if (_root.back->onClickReleased(mx, my, [&] {
+                    _backToMenu = true;
+                }))
+                return;
+            return;
+        }
+        handleCreateReleased(mx, my);
     }
 
     void RoomMenu::handleCreateReleased(const float mx, const float my)

@@ -60,8 +60,6 @@ namespace Game
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
-        _waitingClock.restart();
-
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
@@ -103,8 +101,7 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        if (_waitingClock.elapsed() > 5.0)
-            LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
+        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
         AIShootSystem::update(*_worldWrite, dt);
 

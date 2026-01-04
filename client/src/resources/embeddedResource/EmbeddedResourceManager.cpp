@@ -137,12 +137,9 @@ void EmbeddedResourceManager::registerResources()
     _resources["sounds/powerup.wav"] = {EmbeddedResources::powerup_wav, EmbeddedResources::powerup_wav_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::shoot_wav, EmbeddedResources::shoot_wav_size};
 
-    _resources["levels/space/easy.json"] = {
-        EmbeddedResources::easy_json, EmbeddedResources::easy_json_size};
-    _resources["levels/space/medium.json"] = {
-        EmbeddedResources::medium_json, EmbeddedResources::medium_json_size};
-    _resources["levels/space/hard.json"] = {
-        EmbeddedResources::hard_json, EmbeddedResources::hard_json_size};
+    _resources["levels/space/easy.json"] = {EmbeddedResources::easy_json, EmbeddedResources::easy_json_size};
+    _resources["levels/space/medium.json"] = {EmbeddedResources::medium_json, EmbeddedResources::medium_json_size};
+    _resources["levels/space/hard.json"] = {EmbeddedResources::hard_json, EmbeddedResources::hard_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

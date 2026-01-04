@@ -52,7 +52,7 @@ namespace Graphics
         }
     }
 
-    sf::RenderTexture *RenderTextureManager::getRenderTexture() const noexcept
+    sf::RenderTexture *RenderTextureManager::getRenderTexture() noexcept
     {
         return _renderTexture.get();
     }

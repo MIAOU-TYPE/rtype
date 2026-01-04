@@ -277,6 +277,7 @@ namespace Thread
 
         _tcpPacketRouter->sink()->onRoomCreatedSubscribe([&](const uint32_t req, const uint32_t roomId) {
             _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req + 1, roomId));
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(1));
         });
 
         _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](const uint32_t, const uint32_t) {
@@ -288,8 +289,10 @@ namespace Thread
             auto pkt = _tcpClient->getTemplatedPacket();
             while (_tcpClient->popPacket(pkt))
                 _tcpPacketRouter->handle(pkt);
-            if (!_tcpPacketRouter->sink()->isConnected())
+            if (!_tcpPacketRouter->sink()->isConnected()) {
                 _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
+                _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(1, "R-Type Room", 1));
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }

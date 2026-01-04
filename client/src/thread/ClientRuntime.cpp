@@ -55,7 +55,7 @@ namespace Thread
         try {
             _tcpClient->start();
             _udpClient->start();
-        } catch (const std::exception &e) {
+        } catch (...) {
             stop();
             throw;
         }

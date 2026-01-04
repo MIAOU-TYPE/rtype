@@ -33,7 +33,7 @@ namespace Thread
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
         _udpPacketRouter =
             std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
-        _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>(std::make_shared<Network::TCPMessageSink>());
+        _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
@@ -53,6 +53,7 @@ namespace Thread
     {
         try {
             _tcpClient->start();
+            _udpClient->start();
         } catch (const std::exception &e) {
             stop();
             throw;
@@ -269,18 +270,27 @@ namespace Thread
 
     void ClientRuntime::runTcp() const
     {
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(1, "TestRoom", 1));
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(2));
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(3, 1));
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeStartGame(4));
+        _tcpPacketRouter->sink()->onWelcomeSubscribe(
+            [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
+                _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
+            });
+
+        _tcpPacketRouter->sink()->onRoomCreatedSubscribe([&](const uint32_t req, const uint32_t roomId) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req + 1, roomId));
+        });
+
+        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](const uint32_t, const uint32_t) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeStartGame(3));
+        });
+
         while (_running) {
             _tcpClient->receivePackets();
             auto pkt = _tcpClient->getTemplatedPacket();
-            while (_tcpClient->popPacket(pkt)) {
+            while (_tcpClient->popPacket(pkt))
                 _tcpPacketRouter->handle(pkt);
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            if (!_tcpPacketRouter->sink()->isConnected())
+                _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
 

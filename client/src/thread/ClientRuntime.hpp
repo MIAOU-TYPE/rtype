@@ -34,7 +34,6 @@
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 #include "StateManager.hpp"
-#include "TCPMessageSink.hpp"
 #include "TCPPacketRouter.hpp"
 
 #include <condition_variable>

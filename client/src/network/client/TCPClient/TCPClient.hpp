@@ -14,7 +14,6 @@
 #include <queue>
 #include <stdexcept>
 #include <vector>
-
 #include <iostream>
 #include "ANetClient.hpp"
 #include "IPacket.hpp"

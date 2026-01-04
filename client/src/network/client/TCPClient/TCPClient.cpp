@@ -7,37 +7,30 @@
 
 #include "TCPClient.hpp"
 
-#include <iostream>
-#include "TCPPacket.hpp"
-
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-#else
-    #include <arpa/inet.h>
-    #include <errno.h>
-    #include <unistd.h>
-#endif
-
 namespace Network
 {
-    bool TCPClient::wouldBlock() noexcept
+    namespace
     {
-#ifdef _WIN32
-        const int e = WSAGetLastError();
-        return e == WSAEWOULDBLOCK;
-#else
-        return errno == EWOULDBLOCK || errno == EAGAIN;
-#endif
+        constexpr std::size_t RX_CAPACITY = 256 * 1024;
+        constexpr std::size_t TX_CAPACITY = 256 * 1024;
+
+        bool wouldBlock() noexcept
+        {
+    #ifdef _WIN32
+            const int e = WSAGetLastError();
+            return e == WSAEWOULDBLOCK;
+    #else
+            return errno == EWOULDBLOCK || errno == EAGAIN;
+    #endif
+        }
     }
 
+
     TCPClient::TCPClient(std::shared_ptr<Net::NetWrapper> net)
-        : _netWrapper(std::move(net)), _packetProto(std::make_shared<Net::TCPPacket>())
+        : _netWrapper(std::move(net)), _rx(RX_CAPACITY), _tx(TX_CAPACITY)
     {
         if (!_netWrapper)
             throw TCPClientError("{TCPClient} NetWrapper is null");
-        if (!_packetProto)
-            throw TCPClientError("{TCPClient} packet proto is null");
     }
 
     TCPClient::~TCPClient()
@@ -48,16 +41,15 @@ namespace Network
     void TCPClient::resetState() noexcept
     {
         _rx.clear();
-        _rxPos = 0;
 
-        std::scoped_lock lk(_txMutex);
-        _tx.clear();
-        _txPos = 0;
+        {
+            std::scoped_lock lk(_txMutex);
+            _tx.clear();
+        }
 
         {
             std::scoped_lock qlk(_queueMutex);
-            while (!_queue.empty())
-                _queue.pop();
+            _queue = {};
         }
     }
 
@@ -79,7 +71,7 @@ namespace Network
             if (::inet_pton(AF_INET, _ip.c_str(), &_serverAddr.sin_addr) != 1)
                 throw TCPClientError("{TCPClient::start} inet_pton failed");
 
-            if (::connect(_socketFd, reinterpret_cast<const sockaddr *>(&_serverAddr), sizeof(_serverAddr)) != 0)
+            if (_netWrapper->connect(_socketFd, reinterpret_cast<const sockaddr *>(&_serverAddr), sizeof(_serverAddr)) != 0)
                 throw TCPClientError("{TCPClient::start} connect failed");
 
             setNonBlocking(true);
@@ -116,7 +108,7 @@ namespace Network
 
     std::shared_ptr<Net::IPacket> TCPClient::getTemplatedPacket() const noexcept
     {
-        return _packetProto;
+        return std::make_shared<Net::TCPPacket>();
     }
 
     bool TCPClient::popPacket(std::shared_ptr<Net::IPacket> &pkt)
@@ -133,13 +125,23 @@ namespace Network
     {
         std::scoped_lock lk(_txMutex);
 
-        while (_txPos < _tx.size()) {
-            const auto *ptr = reinterpret_cast<const char *>(_tx.data() + _txPos);
-            const std::size_t remaining = _tx.size() - _txPos;
+        std::array<std::uint8_t, 4096> tmp{};
 
-            const auto sent = _netWrapper->send(_socketFd, ptr, remaining, 0);
+        while (_tx.readable() > 0) {
+            const std::size_t want = std::min<std::size_t>(_tx.readable(), tmp.size());
+
+            if (!_tx.peek(tmp.data(), want)) {
+                close();
+                return;
+            }
+
+            const auto sent = _netWrapper->send(
+                _socketFd, reinterpret_cast<const char *>(tmp.data()), want, 0);
+
             if (sent > 0) {
-                _txPos += static_cast<std::size_t>(sent);
+
+                const auto n = static_cast<std::size_t>(sent);
+                (void) _tx.read(tmp.data(), n);
                 continue;
             }
 
@@ -154,11 +156,6 @@ namespace Network
             close();
             return;
         }
-
-        if (_txPos == _tx.size()) {
-            _tx.clear();
-            _txPos = 0;
-        }
     }
 
     bool TCPClient::sendPacket(const Net::IPacket &pkt)
@@ -172,29 +169,52 @@ namespace Network
 
         const std::uint32_t beSize = htonl(size);
 
-        std::scoped_lock lk(_txMutex);
+        {
+            std::scoped_lock lk(_txMutex);
 
-        const std::size_t old = _tx.size();
-        _tx.resize(old + 4 + size);
 
-        std::memcpy(_tx.data() + old, &beSize, 4);
-        std::memcpy(_tx.data() + old + 4, pkt.buffer(), size);
+            if (_tx.writable() < (4u + size)) {
 
-        lk.~scoped_lock();
+
+            } else {
+                if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
+                    return false;
+                if (!_tx.write(pkt.buffer(), size))
+                    return false;
+
+                goto flush;
+            }
+        }
+
+
+        flushWrites();
+
+        {
+            std::scoped_lock lk(_txMutex);
+            if (_tx.writable() < (4u + size))
+                return false;
+            if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
+                return false;
+            if (!_tx.write(pkt.buffer(), size))
+                return false;
+        }
+
+    flush:
         flushWrites();
         return true;
     }
 
     void TCPClient::parseFrames() noexcept
     {
-        if (_rxPos > 0 && _rxPos > _rx.size() / 2) {
-            _rx.erase(_rx.begin(), _rx.begin() + static_cast<std::ptrdiff_t>(_rxPos));
-            _rxPos = 0;
-        }
+        while (_rx.readable() >= 4u) {
+            std::uint8_t hdr[4]{};
+            if (!_rx.peek(hdr, 4)) {
+                close();
+                return;
+            }
 
-        while ((_rx.size() - _rxPos) >= 4) {
             std::uint32_t beSize = 0;
-            std::memcpy(&beSize, _rx.data() + _rxPos, 4);
+            std::memcpy(&beSize, hdr, 4);
 
             const std::uint32_t size = ntohl(beSize);
             if (size == 0 || size > MAX_FRAME) {
@@ -202,12 +222,13 @@ namespace Network
                 return;
             }
 
-            if ((_rx.size() - _rxPos) < (4u + size))
+            if (_rx.readable() < (4u + size))
                 return;
 
-            const std::uint8_t *payload = _rx.data() + _rxPos + 4;
+            std::uint8_t throwAway[4]{};
+            (void) _rx.read(throwAway, 4);
 
-            auto p = _packetProto->newPacket();
+            auto p = getTemplatedPacket();
             if (!p || size > p->capacity()) {
                 close();
                 return;
@@ -215,14 +236,16 @@ namespace Network
 
             p->setAddress(_serverAddr);
             p->setSize(size);
-            std::memcpy(p->buffer(), payload, size);
+
+            if (!_rx.read(p->buffer(), size)) {
+                close();
+                return;
+            }
 
             {
                 std::scoped_lock qlk(_queueMutex);
                 _queue.push(std::move(p));
             }
-
-            _rxPos += (4u + size);
         }
     }
 
@@ -231,7 +254,6 @@ namespace Network
         if (_socketFd == kInvalidSocket || !_isRunning.load())
             return;
 
-        // flush TX opportuniste
         flushWrites();
 
         std::array<std::uint8_t, 4096> tmp{};
@@ -240,11 +262,12 @@ namespace Network
             const auto r = _netWrapper->recv(_socketFd, tmp.data(), tmp.size(), 0);
 
             if (r > 0) {
-                const auto old = _rx.size();
-                _rx.resize(old + static_cast<std::size_t>(r));
-                std::memcpy(_rx.data() + old, tmp.data(), static_cast<std::size_t>(r));
+                if (const auto n = static_cast<std::size_t>(r); !_rx.write(tmp.data(), n)) {
+                    close();
+                    return;
+                }
+
                 parseFrames();
-                std::cout << "TCPClient: Received " << r << " bytes." << std::endl;
 
                 if (!_nonBlocking)
                     break;
@@ -263,4 +286,4 @@ namespace Network
             return;
         }
     }
-} // namespace Network
+}

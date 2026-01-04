@@ -73,12 +73,6 @@ namespace Engine
         void forEachRoom(Func &&func);
 
         /**
-         * @brief Handles player connection
-         * @param sessionId The session ID of the connected player
-         */
-        void onPlayerConnect(int sessionId) noexcept;
-
-        /**
          * @brief Handles player disconnection
          * @param sessionId The session ID of the disconnected player
          */

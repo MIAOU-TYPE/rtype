@@ -130,21 +130,6 @@ namespace Engine
         return getRoomById(roomId);
     }
 
-    void RoomManager::onPlayerConnect(const int sessionId) noexcept
-    {
-        if (const auto room = getRoomOfPlayer(sessionId)) {
-            room->gameServer().onPlayerConnect(sessionId);
-            return;
-        }
-        const auto id = createRoom("basic", 4);
-        if (id == InvalidRoomId)
-            return;
-        addPlayerToRoom(id, sessionId);
-        if (const auto room = getRoomById(id)) {
-            room->start();
-        }
-    }
-
     void RoomManager::onPlayerDisconnect(const int sessionId) noexcept
     {
         if (const auto room = getRoomOfPlayer(sessionId))

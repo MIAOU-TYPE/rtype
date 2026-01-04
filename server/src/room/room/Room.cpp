@@ -25,6 +25,8 @@ namespace Engine
 
     void Room::start()
     {
+        if (_thread.joinable())
+            return;
         _running = true;
         _thread = std::thread(&Room::run, this);
     }

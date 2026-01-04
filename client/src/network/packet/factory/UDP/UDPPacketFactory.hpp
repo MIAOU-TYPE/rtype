@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** UDPClientPacketFactory
+** UDPPacketFactory
 */
 
 #pragma once
@@ -50,23 +50,23 @@ namespace Network
     };
 
     /**
-     * @class UDPClientPacketFactory
+     * @class UDPPacketFactory
      * @brief Factory class for creating and serializing client packets.
      * @details This class provides methods to create different types of packets
      * (connect, disconnect, input, ping) with proper endianness conversion and serialization.
      */
-    class UDPClientPacketFactory {
+    class UDPPacketFactory {
       public:
         /**
-         * @brief Construct a new UDPClientPacketFactory object
+         * @brief Construct a new UDPPacketFactory object
          * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit UDPClientPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
+        explicit UDPPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
-         * @brief Destroy the UDPClientPacketFactory object
+         * @brief Destroy the UDPPacketFactory object
          */
-        ~UDPClientPacketFactory() = default;
+        ~UDPPacketFactory() = default;
 
         /**
          * @brief Creates a base packet
@@ -113,4 +113,4 @@ namespace Network
 
 } // namespace Network
 
-#include "UDPClientPacketFactory.tpp"
+#include "UDPPacketFactory.tpp"

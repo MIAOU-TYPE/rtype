@@ -7,9 +7,9 @@
 
 #include "TCPPacketFactory.hpp"
 
-namespace Network::Factory
+namespace Network
 {
-    TCPPacketFactory::TCPPacketFactory(const std::shared_ptr<Net::IPacket> &proto) : _packet(proto)
+    TCPPacketFactory::TCPPacketFactory(std::shared_ptr<Net::IPacket> proto) : _packet(std::move(proto))
     {
     }
 
@@ -102,4 +102,4 @@ namespace Network::Factory
             return nullptr;
         }
     }
-} // namespace Network::Factory
+} // namespace Network

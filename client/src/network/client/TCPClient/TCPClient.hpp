@@ -105,20 +105,20 @@ namespace Network
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const Net::IPacket &pkt) override;
+        [[nodiscard]] bool sendPacket(const Net::IPacket &pkt) override;
 
         /**
          * @brief Pops a received packet from the internal queue.
          * @param pkt Reference to a shared pointer where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
+        [[nodiscard]] bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override;
 
         /**
          * @brief Retrieves a templated packet for serialization.
          * @return A shared pointer to the templated IPacket.
          */
-        std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override;
 
       private:
         /**
@@ -146,7 +146,7 @@ namespace Network
          * @param size The size of the packet to be enqueued.
          * @return True if the frame was successfully enqueued, false otherwise.
          */
-        bool enqueueFrameLocked(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+        [[nodiscard]] bool enqueueFrameLocked(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
 
         /**
          * @brief Attempts to enqueue a frame into the transmit buffer.
@@ -155,7 +155,7 @@ namespace Network
          * @param size The size of the packet to be enqueued.
          * @return True if the frame was successfully enqueued, false otherwise.
          */
-        bool tryEnqueueFrame(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+        [[nodiscard]] bool tryEnqueueFrame(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
 
         /**
          * @brief Checks if a packet is sendable and retrieves its size.
@@ -163,7 +163,7 @@ namespace Network
          * @param outSize Reference to a variable where the size of the packet will be stored.
          * @return True if the packet is sendable, false otherwise.
          */
-        bool isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept;
+        [[nodiscard]] bool isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept;
 
         std::shared_ptr<Net::NetWrapper> _netWrapper; ///> Network wrapper
 
@@ -179,5 +179,8 @@ namespace Network
         std::queue<std::shared_ptr<Net::IPacket>> _queue; ///> Queue of received packets
 
         static constexpr std::uint32_t MAX_FRAME = 64 * 1024; ///> Maximum frame size (64 KB)
+
+        static constexpr int RX_CAPACITY = 256 * 1024; ///> Receive buffer capacity (256 KB)
+        static constexpr int TX_CAPACITY = 256 * 1024; ///> Transmit buffer capacity (256 KB)
     };
 } // namespace Network

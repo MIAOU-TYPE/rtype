@@ -11,9 +11,6 @@ namespace Network
 {
     namespace
     {
-        constexpr std::size_t RX_CAPACITY = 256 * 1024;
-        constexpr std::size_t TX_CAPACITY = 256 * 1024;
-
         bool wouldBlock() noexcept
         {
 #ifdef _WIN32
@@ -75,7 +72,6 @@ namespace Network
                 throw TCPClientError("{TCPClient::start} connect failed");
 
             setNonBlocking(true);
-
             ANetClient::setRunning(true);
         } catch (...) {
             close();
@@ -89,16 +85,14 @@ namespace Network
             return;
 
         resetState();
-
         if (_socketFd != kInvalidSocket) {
             _netWrapper->closeSocket(_socketFd);
             _socketFd = kInvalidSocket;
         }
-
         (void) _netWrapper->cleanupNetwork();
     }
 
-    void TCPClient::setNonBlocking(bool nonBlocking)
+    void TCPClient::setNonBlocking(const bool nonBlocking)
     {
         _nonBlocking = nonBlocking;
         if (_socketFd == kInvalidSocket)
@@ -147,7 +141,6 @@ namespace Network
                 close();
                 return;
             }
-
             if (wouldBlock())
                 break;
 
@@ -212,19 +205,15 @@ namespace Network
     {
         while (_rx.readable() >= 4u) {
             std::uint8_t hdr[4]{};
-            if (!_rx.peek(hdr, 4)) {
-                close();
-                return;
-            }
+            if (!_rx.peek(hdr, 4))
+                return close();
 
             std::uint32_t beSize = 0;
             std::memcpy(&beSize, hdr, 4);
 
             const std::uint32_t size = ntohl(beSize);
-            if (size == 0 || size > MAX_FRAME) {
-                close();
-                return;
-            }
+            if (size == 0 || size > MAX_FRAME)
+                return close();
 
             if (_rx.readable() < (4u + size))
                 return;
@@ -233,18 +222,14 @@ namespace Network
             (void) _rx.read(throwAway, 4);
 
             auto p = getTemplatedPacket();
-            if (!p || size > p->capacity()) {
-                close();
-                return;
-            }
+            if (!p || size > p->capacity())
+                return close();
 
             p->setAddress(_serverAddr);
             p->setSize(size);
 
-            if (!_rx.read(p->buffer(), size)) {
-                close();
-                return;
-            }
+            if (!_rx.read(p->buffer(), size))
+                return close();
 
             {
                 std::scoped_lock qlk(_queueMutex);
@@ -259,35 +244,24 @@ namespace Network
             return;
 
         flushWrites();
-
         std::array<std::uint8_t, 4096> tmp{};
 
         while (true) {
             const auto r = _netWrapper->recv(_socketFd, tmp.data(), tmp.size(), 0);
 
             if (r > 0) {
-                if (const auto n = static_cast<std::size_t>(r); !_rx.write(tmp.data(), n)) {
-                    close();
-                    return;
-                }
-
+                if (const auto n = static_cast<std::size_t>(r); !_rx.write(tmp.data(), n))
+                    return close();
                 parseFrames();
-
                 if (!_nonBlocking)
                     break;
                 continue;
             }
-
-            if (r == 0) {
-                close();
-                return;
-            }
-
+            if (r == 0)
+                return close();
             if (wouldBlock())
                 break;
-
-            close();
-            return;
+            return close();
         }
     }
 } // namespace Network

@@ -35,7 +35,7 @@ namespace Engine
             _pendingResize = true;
         }
         if (_menu->wantsBack())
-            _manager.queueState(std::make_unique<MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
+            manager.queueState(std::make_unique<MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
     }
 
     void SettingsState::render()

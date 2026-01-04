@@ -6,19 +6,19 @@
 */
 
 #pragma once
+#include <algorithm>
+#include <array>
+#include <nlohmann/json.hpp>
 #include <optional>
+#include <stdexcept>
+#include <utility>
 #include "IResourceManager.hpp"
 #include "RoomTypes.hpp"
 #include <string_view>
 #include <unordered_map>
-#include <algorithm>
-#include <array>
-#include <stdexcept>
-#include <utility>
 #include <unordered_set>
-#include <nlohmann/json.hpp>
 
-using json = nlohmann::json;    ///> Alias for nlohmann::json
+using json = nlohmann::json; ///> Alias for nlohmann::json
 
 namespace Engine
 {

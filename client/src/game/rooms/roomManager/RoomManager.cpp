@@ -39,7 +39,7 @@ namespace Engine
         return wl.easy;
     }
 
-    std::string RoomManager::makePath(std::string_view worldId, std::string_view fileName)
+    std::string RoomManager::makePath(const std::string_view worldId, const std::string_view fileName)
     {
         std::string p;
         p.reserve(std::string_view("levels/").size() + worldId.size() + 1 + fileName.size());
@@ -57,7 +57,7 @@ namespace Engine
 
         for (const auto &k : _resources->listResources()) {
             constexpr std::string_view prefix = "levels/";
-            if (k.size() < prefix.size() || k.compare(0, prefix.size(), prefix) != 0)
+            if (k.size() < prefix.size() || !k.starts_with(prefix))
                 continue;
             const auto rest = k.substr(prefix.size());
             const auto slash = rest.find('/');
@@ -79,14 +79,14 @@ namespace Engine
         if (!_resources->hasResource(key))
             return std::nullopt;
 
-        const Resources::ResourceData data = _resources->loadResource(key);
-        if (!data.data || data.size == 0)
+        const auto [data, size] = _resources->loadResource(key);
+        if (!data || size == 0)
             return std::nullopt;
 
-        return std::string(reinterpret_cast<const char *>(data.data), data.size);
+        return std::string(reinterpret_cast<const char *>(data), size);
     }
 
-    std::vector<LevelInfo> RoomManager::parseLevelsListJson(std::string_view jsonText)
+    std::vector<LevelInfo> RoomManager::parseLevelsListJson(const std::string_view jsonText)
     {
         json j;
         try {

@@ -37,6 +37,12 @@ namespace Engine
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+        _audio = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "AUDIO");
+        _colorBlindMode = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "NORMAL");
+        _colorBlindNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        _resolution = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "1280x720");
+        _resolutionNext = std::make_unique<UIButton>(_renderer, ButtonSize::Small, "+");
+        _back = std::make_unique<UIButton>(_renderer, ButtonSize::Large, "BACK");
     }
 
     void SettingsMenu::onEnter()
@@ -70,9 +76,9 @@ namespace Engine
 
     void SettingsMenu::layout()
     {
-        const auto vp = _renderer->getViewportSize();
-        const auto w = static_cast<float>(vp.width);
-        const auto h = static_cast<float>(vp.height);
+        const auto [widthSize, heightSize] = _renderer->getViewportSize();
+        const auto w = static_cast<float>(widthSize);
+        const auto h = static_cast<float>(heightSize);
         const float cx = w * 0.5f;
         const float cy = h * 0.5f;
         const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);

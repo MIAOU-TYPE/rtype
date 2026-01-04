@@ -129,13 +129,13 @@ namespace Engine
         _muteSFX->setPosition(leftColX - _muteSFX->bounds().w * 0.5f, audioYStart + 3 * spacingY);
 
         _colorBlindMode->setPosition(rightColX - videoButtonOffset, videoYStart);
-        const float nextButtonX = std::min(rightColX + videoButtonOffset + videoButtonSpacing, 
-                                            w - _colorBlindNext->bounds().w - rightMargin);
+        const float nextButtonX =
+            std::min(rightColX + videoButtonOffset + videoButtonSpacing, w - _colorBlindNext->bounds().w - rightMargin);
         _colorBlindNext->setPosition(nextButtonX, videoYStart);
 
         _resolution->setPosition(rightColX - videoButtonOffset, videoYStart + spacingY);
-        const float resNextButtonX = std::min(rightColX + videoButtonOffset + videoButtonSpacing,
-                                               w - _resolutionNext->bounds().w - rightMargin);
+        const float resNextButtonX =
+            std::min(rightColX + videoButtonOffset + videoButtonSpacing, w - _resolutionNext->bounds().w - rightMargin);
         _resolutionNext->setPosition(resNextButtonX, videoYStart + spacingY);
 
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);

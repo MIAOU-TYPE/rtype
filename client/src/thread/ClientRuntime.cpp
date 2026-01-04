@@ -45,7 +45,8 @@ namespace Thread
             _musicRegistry->playMusic(menuMusicHandle, true, 50.f);
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
+        _stateManager->changeState(
+            std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 

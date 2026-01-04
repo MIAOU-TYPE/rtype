@@ -27,7 +27,8 @@ namespace Engine
     {
         _menu->update(frame);
         if (_menu->wantsBackToMenu())
-            manager.queueState(std::make_unique<MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
+            manager.queueState(
+                std::make_unique<MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
     }
 
     void RoomState::render()

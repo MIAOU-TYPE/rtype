@@ -33,7 +33,8 @@ namespace Engine
          * @param roomManager Shared pointer to the room manager.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager);
+            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
+            std::shared_ptr<RoomManager> roomManager);
 
         /**
          * @brief Called when entering the state.

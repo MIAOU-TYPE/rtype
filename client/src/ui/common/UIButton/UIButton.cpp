@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** MenuState.hpp
+** UIButton.cpp
 ** File description:
 ** UIButton
 */
@@ -80,7 +80,8 @@ namespace UI
         return false;
     }
 
-    void UIButton::centerButtonLabel(float centerX, float y, Graphics::IText &label, float labelCenterX)
+    void UIButton::centerButtonLabel(
+        const float centerX, const float y, Graphics::IText &label, const float labelCenterX) noexcept
     {
         setPosition(centerX - bounds().w * 0.5f, y);
         const auto b = bounds();

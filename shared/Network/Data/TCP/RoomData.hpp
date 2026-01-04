@@ -6,8 +6,6 @@
 */
 
 #pragma once
-
-#pragma pack(push, 1)
 #include <cstdint>
 #include <string>
 
@@ -21,5 +19,3 @@ struct RoomData {
     size_t currentPlayers; ///> Current number of players in the room
     size_t maxPlayers;     ///> Maximum number of players allowed in the room
 };
-
-#pragma pack(pop)

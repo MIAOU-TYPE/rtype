@@ -58,6 +58,7 @@ namespace Thread
         }
         _running = true;
         _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::CONNECT));
+        setupGlobalEventHandlers();
         setupEventsRegistry();
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -93,7 +94,7 @@ namespace Thread
 
     void ClientRuntime::rebindControls()
     {
-        _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
+        _eventRegistry->clear();
         setupEventsRegistry();
     }
 
@@ -213,7 +214,10 @@ namespace Thread
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
+    }
 
+    void ClientRuntime::setupGlobalEventHandlers()
+    {
         _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
             _input->setKeyPressed(e.key);
         });

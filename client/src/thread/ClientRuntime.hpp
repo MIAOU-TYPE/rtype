@@ -179,6 +179,13 @@ namespace Thread
         void setupEventsRegistry() const;
 
         /**
+         * @brief Sets up the global event handlers that never change.
+         * @details This method registers handlers for generic input events (mouse, keyboard)
+         * that feed the InputState. Should only be called once at startup.
+         */
+        void setupGlobalEventHandlers();
+
+        /**
          * @brief Processes incoming network packets up to a specified deadline and maximum count.
          * @param deadline The time point by which to stop processing packets.
          * @param maxPackets The maximum number of packets to process.

@@ -43,6 +43,7 @@ namespace Engine
         /**
          * @brief Called when exiting the state.
          * @param manager Reference to the state manager.
+         * @param frame The last input frame.
          */
         void update(StateManager &manager, const InputFrame &frame) override;
 

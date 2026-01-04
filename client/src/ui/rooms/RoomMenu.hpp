@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <exception>
-#include <algorithm>
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"
@@ -102,8 +102,8 @@ namespace Engine
         /**
          * @struct HeaderUI
          * @brief Struct representing the header UI elements.
-         * @param title Pointer to the title text element.
-         * @param subtitle Pointer to the subtitle text element.
+         * @brief title Pointer to the title text element.
+         * @brief subtitle Pointer to the subtitle text element.
          */
         struct HeaderUI {
             std::unique_ptr<Graphics::IText> title;
@@ -113,9 +113,9 @@ namespace Engine
         /**
          * @struct RootUI
          * @brief Struct representing the root UI elements.
-         * @param create Pointer to the create button.
-         * @param join Pointer to the join button.
-         * @param back Pointer to the back button.
+         * @brief create Pointer to the create button.
+         * @brief join Pointer to the join button.
+         * @brief back Pointer to the back button.
          */
         struct RootUI {
             std::unique_ptr<UI::UIButton> create;
@@ -126,18 +126,18 @@ namespace Engine
         /**
          * @struct CreateUI
          * @brief Struct representing the create room UI elements.
-         * @param worldPrev Pointer to the previous world button.
-         * @param worldNext Pointer to the next world button.
-         * @param difficultyPrev Pointer to the previous difficulty button.
-         * @param difficultyNext Pointer to the next difficulty button.
-         * @param playersPrev Pointer to the previous players button.
-         * @param playersNext Pointer to the next players button.
-         * @param confirm Pointer to the confirm button.
-         * @param back Pointer to the back button.
-         * @param levelName Pointer to the level name text element.
-         * @param worldLabel Pointer to the world label text element.
-         * @param difficultyLabel Pointer to the difficulty label text element.
-         * @param playersLabel Pointer to the players label text element.
+         * @brief worldPrev Pointer to the previous world button.
+         * @brief worldNext Pointer to the next world button.
+         * @brief difficultyPrev Pointer to the previous difficulty button.
+         * @brief difficultyNext Pointer to the next difficulty button.
+         * @brief playersPrev Pointer to the previous players button.
+         * @brief playersNext Pointer to the next players button.
+         * @brief confirm Pointer to the confirm button.
+         * @brief back Pointer to the back button.
+         * @brief levelName Pointer to the level name text element.
+         * @brief worldLabel Pointer to the world label text element.
+         * @brief difficultyLabel Pointer to the difficulty label text element.
+         * @brief playersLabel Pointer to the players label text element.
          */
         struct CreateUI {
             std::unique_ptr<UI::UIButton> worldPrev;

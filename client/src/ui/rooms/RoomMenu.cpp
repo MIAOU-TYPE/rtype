@@ -38,7 +38,7 @@ namespace Engine
         const auto textures = _renderer->textures();
         _backgroundTexture = textures->load("sprites/bg-preview.png");
         if (_backgroundTexture == Graphics::InvalidTexture)
-            throw RoomMenuError("{RoomMenu::RoomMenu} failed to load sprite/bg-preview.png texture");
+            throw RoomMenuError("{RoomMenu::RoomMenu} failed to load sprites/bg-preview.png texture");
         _backgroundCmd.textureId = _backgroundTexture;
 
         _header.title = _renderer->texts()->createText(64, {255, 255, 255, 255});

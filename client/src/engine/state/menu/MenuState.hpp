@@ -12,8 +12,10 @@
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
 #include "Menu.hpp"
+#include "MusicRegistry.hpp"
 #include "RoomState.hpp"
 #include "SettingsState.hpp"
+#include "SoundRegistry.hpp"
 #include "StateManager.hpp"
 
 namespace Engine
@@ -31,6 +33,7 @@ namespace Engine
          * @param roomManager Shared pointer to the room manager.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
             std::shared_ptr<RoomManager> roomManager);
 
         /**
@@ -53,6 +56,8 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
+        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Shared pointer to the music registry.
+        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
 
         std::shared_ptr<RoomManager> _roomManager; ///> Lobby/room manager shared across states.
         std::unique_ptr<Menu> _menu;               ///> Unique pointer to the menu.

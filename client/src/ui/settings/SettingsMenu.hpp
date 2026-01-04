@@ -8,12 +8,15 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"
+#include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"
+#include "SoundRegistry.hpp"
 #include "UIButton.hpp"
 
 namespace Engine
@@ -53,8 +56,11 @@ namespace Engine
          * @brief Construct a new Settings Menu object.
          *
          * @param renderer Shared pointer to the renderer used for rendering the settings menu.
+         * @param musicRegistry Shared pointer to the music registry.
+         * @param soundRegistry Shared pointer to the sound registry.
          */
-        explicit SettingsMenu(const std::shared_ptr<Graphics::IRenderer> &renderer);
+        explicit SettingsMenu(const std::shared_ptr<Graphics::IRenderer> &renderer,
+            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
 
         /**
          * @brief Update the settings menu state.
@@ -106,11 +112,12 @@ namespace Engine
         void handleInput(const InputFrame &frame);
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
+        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
+        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Sound registry
 
         Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
         RenderCommand _backgroundCmd;               ///> Render command for the background image
 
-        std::unique_ptr<UI::UIButton> _audio;          ///> Audio settings button
         std::unique_ptr<UI::UIButton> _colorBlindMode; ///> Colorblind mode button
         std::unique_ptr<UI::UIButton> _colorBlindNext; ///> Next colorblind mode button
         std::unique_ptr<UI::UIButton> _left;           ///> Decrease resolution button
@@ -118,6 +125,20 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _back;           ///> Back button
         std::unique_ptr<UI::UIButton> _resolution;     ///> Current resolution display button
         std::unique_ptr<UI::UIButton> _resolutionNext; ///> Next resolution button
+
+        int _musicVolume = 50;    ///> Music volume level (0-100)
+        int _sfxVolume = 50;      ///> SFX volume level (0-100)
+        bool _musicMuted = false; ///> Music mute state
+        bool _sfxMuted = false;   ///> SFX mute state
+
+        std::unique_ptr<UI::UIButton> _musicVolLabel; ///> Music volume display
+        std::unique_ptr<UI::UIButton> _musicVolUp;    ///> Increase music volume
+        std::unique_ptr<UI::UIButton> _musicVolDown;  ///> Decrease music volume
+        std::unique_ptr<UI::UIButton> _sfxVolLabel;   ///> SFX volume display
+        std::unique_ptr<UI::UIButton> _sfxVolUp;      ///> Increase SFX volume
+        std::unique_ptr<UI::UIButton> _sfxVolDown;    ///> Decrease SFX volume
+        std::unique_ptr<UI::UIButton> _muteMusic;     ///> Mute/unmute music
+        std::unique_ptr<UI::UIButton> _muteSFX;       ///> Mute/unmute SFX
 
         bool _backRequested = false; ///> Flag indicating if the user wants to go back
 

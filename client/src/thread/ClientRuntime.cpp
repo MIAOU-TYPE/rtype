@@ -36,8 +36,17 @@ namespace Thread
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
+
+        _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
+        _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
+
+        auto menuMusicHandle = _renderer->musics()->load("sounds/menu_theme.flac");
+        if (menuMusicHandle != Graphics::InvalidAudio)
+            _musicRegistry->playMusic(menuMusicHandle, true, 50.f);
+
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _roomManager));
+        _stateManager->changeState(
+            std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 

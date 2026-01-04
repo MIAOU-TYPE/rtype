@@ -10,9 +10,9 @@
 #include <memory>
 #include <mutex>
 #include <utility>
-#include <unordered_map>
-#include "RoomData.hpp"
 #include "Room.hpp"
+#include "RoomData.hpp"
+#include <unordered_map>
 
 namespace Engine
 {

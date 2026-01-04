@@ -12,10 +12,10 @@
 #include <stdexcept>
 #include "IRenderer.hpp"
 #include "IText.hpp"
+#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "RenderCommand.hpp"
 #include "UIButton.hpp"
-#include "InputConfig.hpp"
 
 namespace Engine
 {
@@ -129,8 +129,8 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _controls;       ///> Current controls preset display button
         std::unique_ptr<UI::UIButton> _controlsNext;   ///> Next controls preset button
 
-        bool _backRequested = false;    ///> Flag indicating if the user wants to go back
-        bool _controlsChanged = false;  ///> Flag indicating if the controls preset has been changed
+        bool _backRequested = false;   ///> Flag indicating if the user wants to go back
+        bool _controlsChanged = false; ///> Flag indicating if the controls preset has been changed
 
         /**
          * @brief List of available screen resolutions.

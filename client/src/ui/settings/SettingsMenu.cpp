@@ -36,12 +36,12 @@ namespace Engine
         _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        
+
         const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
         const auto presetName = Utils::InputConfig::getPresetName(preset);
         _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
         _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        
+
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
         _audio = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "AUDIO");
         _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
@@ -173,18 +173,19 @@ namespace Engine
                 _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
                 return;
             }
-            
+
             if (_controlsNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 auto &config = Utils::InputConfig::getInstance();
                 const auto current = config.getCurrentPreset();
-                const auto next = (current == Utils::KeyPreset::Arrows) ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
+                const auto next =
+                    (current == Utils::KeyPreset::Arrows) ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
                 config.setPreset(next);
                 _controls->setLabel(Utils::InputConfig::getPresetName(next));
                 _controlsChanged = true;
                 _controlsNext->reset();
                 return;
             }
-            
+
             if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                     _backRequested = true;
                 })) {}

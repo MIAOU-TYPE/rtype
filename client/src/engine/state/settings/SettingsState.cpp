@@ -9,20 +9,19 @@
 
 namespace Engine
 {
-    SettingsState::SettingsState(StateManager &manager, std::shared_ptr<Graphics::IGraphics> graphics,
-        std::shared_ptr<Graphics::IRenderer> renderer)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _manager(manager)
+    SettingsState::SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
+        std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<RoomManager> roomManager)
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _roomManager(std::move(roomManager))
     {
     }
 
-    void SettingsState::onEnter(StateManager &manager)
+    void SettingsState::onEnter()
     {
-        (void) manager;
         _menu = std::make_unique<SettingsMenu>(_renderer);
         _menu->onEnter();
     }
 
-    void SettingsState::update(const InputFrame &frame)
+    void SettingsState::update(StateManager &manager, const InputFrame &frame)
     {
         if (_pendingResize) {
             _menu->layout();
@@ -34,7 +33,7 @@ namespace Engine
             _pendingResize = true;
         }
         if (_menu->wantsBack())
-            _manager.queueState(std::make_unique<MenuState>(_graphics, _renderer));
+            manager.queueState(std::make_unique<MenuState>(_graphics, _renderer, _roomManager));
     }
 
     void SettingsState::render()

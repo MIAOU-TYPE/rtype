@@ -36,7 +36,8 @@ namespace Thread
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer));
+        _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
+        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _roomManager));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 

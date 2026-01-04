@@ -10,6 +10,7 @@
 #include <string>
 #include "EventBus.hpp"
 #include "IRenderer.hpp"
+#include "IResourceManager.hpp"
 
 namespace Graphics
 {
@@ -83,6 +84,13 @@ namespace Graphics
          * @return Shared pointer to the created IRenderer instance.
          */
         virtual std::shared_ptr<IRenderer> createRenderer() const noexcept = 0;
+
+        /**
+         * @brief Get the resource manager associated with the graphics system.
+         * @return Shared pointer to the IResourceManager instance.
+         */
+        [[nodiscard]]
+        virtual std::shared_ptr<Resources::IResourceManager> resources() const noexcept = 0;
 
         /**
          * @brief Poll for window events.

@@ -31,12 +31,6 @@ namespace EmbeddedResources
     extern const unsigned int button_l_released_png_size;
     extern const unsigned char button_l_hover_png[];
     extern const unsigned int button_l_hover_png_size;
-    extern const unsigned char play_bt_png[];
-    extern const unsigned int play_bt_png_size;
-    extern const unsigned char play_bt_hold_png[];
-    extern const unsigned int play_bt_hold_png_size;
-    extern const unsigned char play_bt_press_png[];
-    extern const unsigned int play_bt_press_png_size;
     extern const unsigned char player_png[];
     extern const unsigned int player_png_size;
     extern const unsigned char player2_png[];
@@ -80,6 +74,13 @@ namespace EmbeddedResources
     extern const unsigned int powerup_wav_size;
     extern const unsigned char shoot_wav[];
     extern const unsigned int shoot_wav_size;
+
+    extern const unsigned char easy_json[];
+    extern const unsigned int easy_json_size;
+    extern const unsigned char medium_json[];
+    extern const unsigned int medium_json_size;
+    extern const unsigned char hard_json[];
+    extern const unsigned int hard_json_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -108,11 +109,6 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::button_l_released_png, EmbeddedResources::button_l_released_png_size};
     _resources["sprites/button_l_hover.png"] = {
         EmbeddedResources::button_l_hover_png, EmbeddedResources::button_l_hover_png_size};
-    _resources["sprites/play_bt.png"] = {EmbeddedResources::play_bt_png, EmbeddedResources::play_bt_png_size};
-    _resources["sprites/play_bt_hold.png"] = {
-        EmbeddedResources::play_bt_hold_png, EmbeddedResources::play_bt_hold_png_size};
-    _resources["sprites/play_bt_press.png"] = {
-        EmbeddedResources::play_bt_press_png, EmbeddedResources::play_bt_press_png_size};
     _resources["sprites/player.png"] = {EmbeddedResources::player_png, EmbeddedResources::player_png_size};
     _resources["sprites/player2.png"] = {EmbeddedResources::player2_png, EmbeddedResources::player2_png_size};
     _resources["sprites/player3.png"] = {EmbeddedResources::player3_png, EmbeddedResources::player3_png_size};
@@ -140,6 +136,10 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::menu_theme_flac, EmbeddedResources::menu_theme_flac_size};
     _resources["sounds/powerup.wav"] = {EmbeddedResources::powerup_wav, EmbeddedResources::powerup_wav_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::shoot_wav, EmbeddedResources::shoot_wav_size};
+
+    _resources["levels/space/easy.json"] = {EmbeddedResources::easy_json, EmbeddedResources::easy_json_size};
+    _resources["levels/space/medium.json"] = {EmbeddedResources::medium_json, EmbeddedResources::medium_json_size};
+    _resources["levels/space/hard.json"] = {EmbeddedResources::hard_json, EmbeddedResources::hard_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

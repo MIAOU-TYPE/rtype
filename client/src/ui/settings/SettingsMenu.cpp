@@ -95,7 +95,6 @@ namespace Engine
         const auto w = static_cast<float>(widthSize);
         const auto h = static_cast<float>(heightSize);
         const float cx = w * 0.5f;
-        const float scale = std::min(w / REF_WIDTH, h / REF_HEIGHT);
         const float leftColX = w * 0.25f;
         const float rightColX = w * 0.75f;
         const float audioYStart = h * 0.2f;

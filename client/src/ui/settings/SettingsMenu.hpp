@@ -131,14 +131,14 @@ namespace Engine
         bool _musicMuted = false; ///> Music mute state
         bool _sfxMuted = false;   ///> SFX mute state
 
-        std::unique_ptr<UIButton> _musicVolLabel; ///> Music volume display
-        std::unique_ptr<UIButton> _musicVolUp;    ///> Increase music volume
-        std::unique_ptr<UIButton> _musicVolDown;  ///> Decrease music volume
-        std::unique_ptr<UIButton> _sfxVolLabel;   ///> SFX volume display
-        std::unique_ptr<UIButton> _sfxVolUp;      ///> Increase SFX volume
-        std::unique_ptr<UIButton> _sfxVolDown;    ///> Decrease SFX volume
-        std::unique_ptr<UIButton> _muteMusic;     ///> Mute/unmute music
-        std::unique_ptr<UIButton> _muteSFX;       ///> Mute/unmute SFX
+        std::unique_ptr<UI::UIButton> _musicVolLabel; ///> Music volume display
+        std::unique_ptr<UI::UIButton> _musicVolUp;    ///> Increase music volume
+        std::unique_ptr<UI::UIButton> _musicVolDown;  ///> Decrease music volume
+        std::unique_ptr<UI::UIButton> _sfxVolLabel;   ///> SFX volume display
+        std::unique_ptr<UI::UIButton> _sfxVolUp;      ///> Increase SFX volume
+        std::unique_ptr<UI::UIButton> _sfxVolDown;    ///> Decrease SFX volume
+        std::unique_ptr<UI::UIButton> _muteMusic;     ///> Mute/unmute music
+        std::unique_ptr<UI::UIButton> _muteSFX;       ///> Mute/unmute SFX
 
         bool _backRequested = false; ///> Flag indicating if the user wants to go back
 

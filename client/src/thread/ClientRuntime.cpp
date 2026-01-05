@@ -42,10 +42,6 @@ namespace Thread
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
 
-        auto menuMusicHandle = _renderer->musics()->load("sounds/menu_theme.flac");
-        if (menuMusicHandle != Graphics::InvalidAudio)
-            _musicRegistry->playMusic(menuMusicHandle, true, 50.f);
-
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(
             std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));

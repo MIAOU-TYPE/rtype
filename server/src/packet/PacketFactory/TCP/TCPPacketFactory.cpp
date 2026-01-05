@@ -19,10 +19,7 @@ namespace Net::Factory
             return nullptr;
 
         auto p = _packet->newPacket();
-        if (!p)
-            return nullptr;
-
-        if (payload.size() > p->capacity())
+        if (!p || payload.size() > p->capacity())
             return nullptr;
 
         p->setAddress(addr);
@@ -32,7 +29,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeError(
-        const sockaddr_in &addr, const uint32_t req, const uint16_t code, const std::string_view msg) const
+        const sockaddr_in &addr, const ReqId req, const uint16_t code, const std::string_view msg) const
     {
         TCP::Writer b;
         b.u16(code);
@@ -42,8 +39,8 @@ namespace Net::Factory
         return make(addr, payload);
     }
 
-    std::shared_ptr<IPacket> TCPPacketFactory::makeWelcome(const sockaddr_in &addr, const uint32_t req,
-        const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token) const
+    std::shared_ptr<IPacket> TCPPacketFactory::makeWelcome(const sockaddr_in &addr, const ReqId req, const uint16_t ver,
+        const SessionId sessionId, const uint16_t udpPort, const uint64_t token) const
     {
         TCP::Writer b;
         b.u16(ver);
@@ -57,7 +54,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeRoomsList(
-        const sockaddr_in &addr, const uint32_t req, const std::vector<RoomData> &rooms) const
+        const sockaddr_in &addr, const ReqId req, const std::vector<RoomData> &rooms) const
     {
         if (rooms.size() > 0xFFFFu)
             return makeError(addr, req, 16, "LIST_ROOMS: too many rooms to fit in u16");
@@ -77,7 +74,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeRoomCreated(
-        const sockaddr_in &addr, const uint32_t req, const uint32_t roomId) const
+        const sockaddr_in &addr, const ReqId req, const RoomId roomId) const
     {
         TCP::Writer b;
         b.u32(roomId);
@@ -87,7 +84,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeRoomJoined(
-        const sockaddr_in &addr, const uint32_t req, const uint32_t roomId) const
+        const sockaddr_in &addr, const ReqId req, const RoomId roomId) const
     {
         TCP::Writer b;
         b.u32(roomId);
@@ -97,7 +94,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeRoomLeft(
-        const sockaddr_in &addr, const uint32_t req, const uint32_t roomId) const
+        const sockaddr_in &addr, const ReqId req, const RoomId roomId) const
     {
         TCP::Writer b;
         b.u32(roomId);
@@ -107,7 +104,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeGameStart(
-        const sockaddr_in &addr, const uint32_t req, const uint32_t roomId) const
+        const sockaddr_in &addr, const ReqId req, const RoomId roomId) const
     {
         TCP::Writer b;
         b.u32(roomId);

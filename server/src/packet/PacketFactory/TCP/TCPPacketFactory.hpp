@@ -41,6 +41,12 @@ namespace Net::Factory
         using RoomId = std::uint32_t;
 
         /**
+         * @brief Type alias for session ID.
+         * @typedef SessionId
+         */
+        using SessionId = std::uint32_t;
+
+        /**
          * @brief Constructor for TCPPacketFactory.
          * @param proto A shared pointer to an IPacket used as a template for creating packets.
          */
@@ -56,8 +62,8 @@ namespace Net::Factory
          * @param token The authentication token.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeWelcome(const sockaddr_in &addr, uint32_t req, uint16_t ver, uint32_t sessionId,
-            uint16_t udpPort, uint64_t token) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeWelcome(const sockaddr_in &addr, ReqId req, uint16_t ver,
+            SessionId sessionId, uint16_t udpPort, uint64_t token) const;
 
         /**
          * @brief Creates a ROOMS_LIST packet.
@@ -66,7 +72,7 @@ namespace Net::Factory
          * @param rooms A vector of RoomInfo structures representing the rooms.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeRoomsList(
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomsList(
             const sockaddr_in &addr, ReqId req, const std::vector<RoomData> &rooms) const;
 
         /**
@@ -76,7 +82,7 @@ namespace Net::Factory
          * @param roomId The ID of the created room.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeRoomCreated(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomCreated(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
 
         /**
          * @brief Creates a ROOM_JOINED packet.
@@ -85,7 +91,7 @@ namespace Net::Factory
          * @param roomId The ID of the joined room.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeRoomJoined(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomJoined(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
 
         /**
          * @brief Creates a ROOM_LEFT packet.
@@ -94,7 +100,7 @@ namespace Net::Factory
          * @param roomId The ID of the left room.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeRoomLeft(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomLeft(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
 
         /**
          * @brief Creates a GAME_START packet.
@@ -103,7 +109,7 @@ namespace Net::Factory
          * @param roomId The ID of the room where the game is starting.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeGameStart(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeGameStart(const sockaddr_in &addr, ReqId req, RoomId roomId) const;
 
         /**
          * @brief Creates an ERROR_MESSAGE packet.
@@ -113,7 +119,7 @@ namespace Net::Factory
          * @param msg The error message.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> makeError(
+        [[nodiscard]] std::shared_ptr<IPacket> makeError(
             const sockaddr_in &addr, ReqId req, std::uint16_t code, std::string_view msg) const;
 
       private:
@@ -123,7 +129,8 @@ namespace Net::Factory
          * @param payload The payload data for the packet.
          * @return A shared pointer to the created IPacket.
          */
-        std::shared_ptr<IPacket> make(const sockaddr_in &addr, const std::vector<std::uint8_t> &payload) const;
+        [[nodiscard]] std::shared_ptr<IPacket> make(
+            const sockaddr_in &addr, const std::vector<std::uint8_t> &payload) const;
 
         std::shared_ptr<IPacket> _packet = nullptr; ///> Template packet for creating new packets
     };

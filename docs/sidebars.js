@@ -11,7 +11,9 @@ module.exports = {
         'technical-docs/client/engine/client_architecture',
         'technical-docs/client/graphic/graphic_doc',
         'technical-docs/client/resources/assets_and_levels',
+        'technical-docs/client/resources/level_system',
         'technical-docs/client/ui/menus_and_navigation',
+        'technical-docs/client/events/events_doc',
       ],
     },
     {

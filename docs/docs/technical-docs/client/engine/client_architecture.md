@@ -52,18 +52,3 @@ If you go multi-threaded on the client, keep cross-thread communication simple:
 
 * One producer/consumer queue for incoming messages.
 * No SFML rendering calls outside the main thread.
-
-## Interfaces to keep
-
-You already introduced interface-based abstractions for rendering and input. Keep the same idea for:
-
-* `INetworkClient` (send/receive, connect/disconnect)
-* `IClock` / `ITimer` (for deterministic updates)
-* `IAudio` (if you add audio later)
-
-This gives you a stable API surface while the internals evolve.
-
-## Related documentation
-
-* Networking packet creation (PacketFactory): `../network/client_network_doc.md`
-* SFML renderer + input wrapper: `../graphic/graphic_doc.md`

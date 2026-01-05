@@ -88,7 +88,7 @@ namespace Net
          * @param packet Shared pointer to the incoming IPacket to validate.
          * @return True if the packet is valid, false otherwise.
          */
-        static bool isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept;
+        [[nodiscard]] static bool isPacketValid(const std::shared_ptr<IPacket> &packet) noexcept;
 
         /**
          * @brief Extracts the header from the incoming packet.
@@ -96,7 +96,7 @@ namespace Net
          * @param outHeader Reference to the HeaderData to populate with extracted data.
          * @return True if the header was successfully extracted and validated, false otherwise.
          */
-        static bool extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept;
+        [[nodiscard]] static bool extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept;
 
         /**
          * @brief Dispatches the packet to the appropriate handler based on its type.

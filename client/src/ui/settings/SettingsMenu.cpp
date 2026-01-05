@@ -219,7 +219,7 @@ namespace Engine
                 return;
             }
             if (_musicVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
-                _musicVolume = std::min(100, _musicVolume + 10);
+                _musicVolume = std::min(size_t{100}, _musicVolume + 10);
                 _musicVolLabel->setLabel(std::to_string(_musicVolume));
                 if (_musicRegistry && !_musicMuted)
                     _musicRegistry->setMusicVolume(static_cast<float>(_musicVolume));
@@ -227,7 +227,7 @@ namespace Engine
                 return;
             }
             if (_musicVolDown->onMouseReleased(frame.mouseX, frame.mouseY)) {
-                _musicVolume = std::max(0, _musicVolume - 10);
+                _musicVolume = std::max(size_t{0}, _musicVolume - 10);
                 _musicVolLabel->setLabel(std::to_string(_musicVolume));
                 if (_musicRegistry && !_musicMuted)
                     _musicRegistry->setMusicVolume(static_cast<float>(_musicVolume));
@@ -235,7 +235,7 @@ namespace Engine
                 return;
             }
             if (_sfxVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
-                _sfxVolume = std::min(100, _sfxVolume + 10);
+                _sfxVolume = std::min(size_t{100}, _sfxVolume + 10);
                 _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
                 if (_soundRegistry && !_sfxMuted)
                     _soundRegistry->setSoundVolume(static_cast<float>(_sfxVolume));
@@ -243,7 +243,7 @@ namespace Engine
                 return;
             }
             if (_sfxVolDown->onMouseReleased(frame.mouseX, frame.mouseY)) {
-                _sfxVolume = std::max(0, _sfxVolume - 10);
+                _sfxVolume = std::max(size_t{0}, _sfxVolume - 10);
                 _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
                 if (_soundRegistry && !_sfxMuted)
                     _soundRegistry->setSoundVolume(static_cast<float>(_sfxVolume));

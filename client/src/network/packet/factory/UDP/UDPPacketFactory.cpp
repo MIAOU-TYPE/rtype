@@ -33,7 +33,7 @@ namespace Network
         try {
             return makePacket<DefaultData>(basePacket);
         } catch (const FactoryError &e) {
-            std::cerr << "{UDPPacketFactory::makePing} " << e.what() << std::endl;
+            std::cerr << "{UDPPacketFactory::makeBase} " << e.what() << std::endl;
             return nullptr;
         }
     }

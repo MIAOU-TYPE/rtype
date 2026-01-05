@@ -15,7 +15,7 @@ It is responsible for:
 - Dispatching updates to gameplay systems  
 - Producing server-side responses (e.g., PONG packets)
 
-It implements the `IMessageSink` interface, making it the endpoint for all gameplay-relevant messages parsed by the `PacketRouter`.
+It implements the `IMessageSink` interface, making it the endpoint for all gameplay-relevant messages parsed by the `UDPPacketRouter`.
 
 ---
 
@@ -53,7 +53,7 @@ std::unordered_map<int, Ecs::Entity> _sessionToEntity;
 
 ### 3. Input Handling
 
-The server receives decoded input from the `PacketRouter` and updates the appropriate `InputComponent`:
+The server receives decoded input from the `UDPPacketRouter` and updates the appropriate `InputComponent`:
 
 ```cpp
 _world->registry()
@@ -98,7 +98,7 @@ This keeps latency detection inside the server loop but retains a clean separati
 ## Interaction Diagram
 
 ```
-PacketRouter → GameServer → IGameWorld → ECS → Systems
+UDPPacketRouter → GameServer → IGameWorld → ECS → Systems
                      ↑
                      │
                   Network

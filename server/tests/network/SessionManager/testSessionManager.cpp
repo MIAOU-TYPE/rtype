@@ -148,16 +148,20 @@ TEST(SessionManagerTests, TestApplyFunctionToMultipleSessions)
 {
     SessionManager sm;
 
-    sockaddr_in addr1 = makeAddr(0xAAAAAAAA, 2000);
-    sockaddr_in addr2 = makeAddr(0xBBBBBBBB, 2001);
-    sockaddr_in addr3 = makeAddr(0xCCCCCCCC, 2002);
+    const sockaddr_in addr1 = makeAddr(0xAAAAAAAA, 2000);
+    const sockaddr_in addr2 = makeAddr(0xBBBBBBBB, 2001);
+    const sockaddr_in addr3 = makeAddr(0xCCCCCCCC, 2002);
 
-    int id1 = sm.getOrCreateSession(addr1);
-    int id2 = sm.getOrCreateSession(addr2);
-    int id3 = sm.getOrCreateSession(addr3);
+    const int id1 = sm.getOrCreateSession(addr1);
+    const int id2 = sm.getOrCreateSession(addr2);
+    const int id3 = sm.getOrCreateSession(addr3);
+
+    (void) sm.bindUdp(id1, addr1);
+    (void) sm.bindUdp(id2, addr2);
+    (void) sm.bindUdp(id3, addr3);
 
     std::vector<int> collectedIds;
-    sm.forEachSession([&](int sessionId, const sockaddr_in &addr) {
+    sm.forEachSession([&](int sessionId, const sockaddr_in &) {
         collectedIds.push_back(sessionId);
     });
 

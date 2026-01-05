@@ -114,9 +114,9 @@ namespace Engine
         RenderCommand _backgroundCmd; ///> Render command for the background.
         RenderCommand _logoCmd;       ///> Render command for the logo.
 
-        std::unique_ptr<UIButton> _play;     ///> Button to start the game.
-        std::unique_ptr<UIButton> _settings; ///> Button to access settings.
-        std::unique_ptr<UIButton> _quit;     ///> Button to quit the game.
+        std::unique_ptr<UI::UIButton> _play;     ///> Button to start the game.
+        std::unique_ptr<UI::UIButton> _settings; ///> Button to access settings.
+        std::unique_ptr<UI::UIButton> _quit;     ///> Button to quit the game.
 
         bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
         bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.

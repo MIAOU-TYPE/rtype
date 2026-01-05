@@ -30,7 +30,7 @@ namespace Network
      * @class UDPClient
      * @brief Network client for handling UDP communication with the server.
      */
-    class UDPClient : public ANetClient {
+    class UDPClient final : public ANetClient {
       public:
         /**
          * @brief Constructor for UDPClient.

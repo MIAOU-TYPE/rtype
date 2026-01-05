@@ -1,0 +1,29 @@
+{
+  "name": "Space - Tutorial Drift",
+  "duration": 60.0,
+  "enemies": {
+    "drone": {
+      "hp": 30,
+      "speed": -90.0,
+      "size": { "w": 28.0, "h": 22.0 },
+      "spriteId": 10,
+      "killScore": 10,
+      "shoot": { "type": "straight", "cooldown": 1.6, "damage": 5, "projectileSpeed": 260.0, "muzzle": { "x": -12.0, "y": 0.0 } }
+    },
+    "shooter": {
+      "hp": 45,
+      "speed": -70.0,
+      "size": { "w": 30.0, "h": 26.0 },
+      "spriteId": 11,
+      "killScore": 20,
+      "shoot": { "type": "diagonal", "cooldown": 2.2, "damage": 7, "projectileSpeed": 240.0, "angles": [ -20.0, 20.0 ], "muzzle": { "x": -12.0, "y": 0.0 } }
+    }
+  },
+  "waves": [
+    { "time": 6.0,  "enemies": { "drone": 4 } },
+    { "time": 12.0, "enemies": { "drone": 6 } },
+    { "time": 20.0, "enemies": { "drone": 4, "shooter": 1 } },
+    { "time": 28.0, "enemies": { "drone": 6, "shooter": 2 } },
+    { "time": 40.0, "enemies": { "shooter": 3 } }
+  ]
+}

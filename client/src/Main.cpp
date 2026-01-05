@@ -11,6 +11,7 @@
 #include "EventBus.hpp"
 #include "EventRegistry.hpp"
 #include "SfmlGraphics.hpp"
+#include "TCPClient.hpp"
 #include "UDPClient.hpp"
 
 namespace
@@ -18,8 +19,7 @@ namespace
     Utils::ArgParseResult parseArgs(Utils::ArgParser &argParser)
     {
         try {
-            const auto status = argParser.parse();
-            return status;
+            return argParser.parse();
         } catch (std::exception &e) {
             std::cerr << "{Main}: " << e.what() << std::endl;
             return Utils::ArgParseResult::Error;
@@ -48,20 +48,21 @@ int main(const int argc, char **argv)
             return result == Utils::ArgParseResult::HelpDisplayed ? 0 : 84;
 
         const auto graphics = std::make_shared<Graphics::SfmlGraphics>();
-        const auto client = std::make_shared<Network::UDPClient>();
+        const auto udpClient = std::make_shared<Network::UDPClient>();
+        const auto tcpClient = std::make_shared<Network::TCPClient>();
 
-        Thread::ClientRuntime clientRuntime(graphics, client);
+        Thread::ClientRuntime clientRuntime(graphics, udpClient, tcpClient);
         const auto eventBus = clientRuntime.getEventBus();
         Engine::EventRegistry eventRegistry(eventBus);
 
         createEventHandler(eventRegistry, clientRuntime, eventBus);
-        std::cout << "Connecting to " << argParser.getHost() << ":" << argParser.getPort() << "..." << std::endl;
-        client->configure(argParser.getHost(), argParser.getPort());
 
+        tcpClient->configure(argParser.getHost(), argParser.getPort());
+        udpClient->configure(argParser.getHost(), argParser.getPort() + 1);
         clientRuntime.start();
+
         clientRuntime.runDisplay();
         clientRuntime.wait();
-
         return 0;
     } catch (std::exception &e) {
         std::cerr << "{Main}: " << e.what() << std::endl;

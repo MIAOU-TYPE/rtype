@@ -10,6 +10,7 @@
 #include <atomic>
 #include <memory>
 #include <thread>
+#include <utility>
 #include <unordered_set>
 
 #include "GameServer.hpp"
@@ -31,12 +32,15 @@ namespace Engine
          * @brief Constructor for Room
          * @param sessions shared pointer to the session manager
          * @param server shared pointer to the server
-         * @param packetFactory shared pointer to the packet factory
+         * @param udpPacketFactory shared pointer to the packet factory
          * @param levelPath path to the game level data
+         * @param name name of the room
+         * @param maxPlayers maximum number of players allowed in the room
          */
         explicit Room(const std::shared_ptr<Net::Server::ISessionManager> &sessions,
             const std::shared_ptr<Net::Server::IServer> &server,
-            const std::shared_ptr<Net::Factory::PacketFactory> &packetFactory, const std::string &levelPath);
+            const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
+            std::string name = "room", size_t maxPlayers = 4);
 
         /**
          * @brief Destructor for Room
@@ -75,13 +79,31 @@ namespace Engine
          * @brief Gets the set of player session IDs in the room
          * @return A constant reference to the set of session IDs
          */
-        const std::unordered_set<int> &sessions() const;
+        [[nodiscard]] const std::unordered_set<int> &sessions() const;
 
         /**
          * @brief Gets a reference to the room's game server
          * @return A reference to the GameServer instance
          */
-        Game::GameServer &gameServer() const;
+        [[nodiscard]] Game::GameServer &gameServer() const;
+
+        /**
+         * @brief Gets the current number of players in the room
+         * @return The number of player sessions in the room
+         */
+        [[nodiscard]] size_t getCurrentPlayers() const noexcept;
+
+        /**
+         * @brief Gets the maximum number of players allowed in the room
+         * @return The maximum number of players
+         */
+        [[nodiscard]] size_t getMaxPlayers() const noexcept;
+
+        /**
+         * @brief Gets the name of the room
+         * @return The name of the room
+         */
+        [[nodiscard]] std::string getName() const noexcept;
 
       private:
         /**
@@ -95,5 +117,7 @@ namespace Engine
 
         std::atomic<bool> _running{false}; ///> Atomic flag indicating if the room is running
         std::thread _thread;               ///> Thread for the room's game server loop
+        size_t _maxPlayers = 0;            ///> Maximum number of players allowed in the room
+        std::string _name = "";            ///> Name of the room
     };
 } // namespace Engine

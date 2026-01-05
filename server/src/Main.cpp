@@ -9,6 +9,7 @@
 #include "ArgParser.hpp"
 #include "ServerRuntime.hpp"
 #include "SignalHandler.hpp"
+#include "TCPServer.hpp"
 #include "UDPServer.hpp"
 
 namespace
@@ -27,20 +28,24 @@ namespace
 
 int main(const int argc, char **argv)
 {
-    Utils::ArgParser parser(argc, argv);
-    if (const Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
-        return 0;
-    } else if (result == Utils::ArgParseResult::Error) {
-        std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;
-        return 84;
-    }
-    int port = parser.getPort();
     try {
-        const auto server = std::make_shared<Net::Server::UDPServer>();
-        Net::Thread::ServerRuntime runtime(server);
+        Utils::ArgParser parser(argc, argv);
+        if (const Utils::ArgParseResult result = parser.parse(); result == Utils::ArgParseResult::HelpDisplayed) {
+            return 0;
+        } else if (result == Utils::ArgParseResult::Error) {
+            std::cerr << "{main}: Error parsing arguments. Use --help for usage information." << std::endl;
+            return 84;
+        }
+        const int port = parser.getPort();
+        auto host = parser.getHost();
+        const auto udpServer = std::make_shared<Net::Server::UDPServer>();
+        const auto tcpServer = std::make_shared<Net::Server::TCPServer>();
+
+        Net::Thread::ServerRuntime runtime(udpServer, tcpServer);
         const auto signalHandler = startSignalHandler(runtime);
 
-        server->configure("127.0.0.1", port);
+        tcpServer->configure(host, port);
+        udpServer->configure(host, port + 1);
         runtime.start();
         runtime.wait();
         signalHandler->stop();

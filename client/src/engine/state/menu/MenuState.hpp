@@ -12,6 +12,7 @@
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
 #include "Menu.hpp"
+#include "RoomState.hpp"
 #include "SettingsState.hpp"
 #include "StateManager.hpp"
 
@@ -27,20 +28,22 @@ namespace Engine
          *
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
+         * @param roomManager Shared pointer to the room manager.
          */
-        explicit MenuState(
-            std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer);
+        explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+            std::shared_ptr<RoomManager> roomManager);
 
         /**
-         * @brief Destroy the Menu State object.
+         * @brief Called when entering the state.
          */
-        void onEnter(StateManager &manager) override;
+        void onEnter() override;
 
         /**
          * @brief Update the menu state.
+         * @param manager Reference to the state manager.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame) override;
+        void update(StateManager &manager, const InputFrame &frame) override;
 
         /**
          * @brief Render the menu state.
@@ -51,7 +54,7 @@ namespace Engine
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
 
-        std::unique_ptr<Menu> _menu;      ///> Unique pointer to the menu.
-        StateManager *_manager = nullptr; ///> Pointer to the state manager.
+        std::shared_ptr<RoomManager> _roomManager; ///> Lobby/room manager shared across states.
+        std::unique_ptr<Menu> _menu;               ///> Unique pointer to the menu.
     };
 } // namespace Engine

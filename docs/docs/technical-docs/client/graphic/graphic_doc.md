@@ -276,39 +276,3 @@ auto enemySprite = textureManager->createSprite("assets/sprites/enemy.png");
 * FPS counters
 * Render time metrics
 * Texture memory usage reports
-
----
-
-## **Configuration & Settings**
-
-### **Window Options**
-
-* Resolution (configurable)
-* Fullscreen toggle
-* VSync option
-
-### **Rendering Options**
-
-* Anti-aliasing
-* Texture filtering: Linear / Nearest
-* RGBA 32-bit support
-
----
-
-## **Debugging & Development Tools**
-
-### **Debug Info**
-
-* Render counters
-* List of loaded textures
-* Input event logging
-
-### **Helpful Tools**
-
-* SFML Inspector
-* Performance overlay
-* Texture viewer
-
----
-
-This modular SFML architecture ensures a clean separation of responsibilities while delivering the flexibility and performance required for a fast-paced game like R-Type.

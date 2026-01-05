@@ -77,8 +77,10 @@ namespace Thread
 
         _running = false;
         _cv.notify_all();
-        _tcpClient->sendPacket(*_tcpPacketFactory.makeLeaveRoom(11));
-        _udpClient->sendPacket(*_udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT));
+        if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(11))
+            _tcpClient->sendPacket(*leavePkt);
+        if (const auto discoPkt = _udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT))
+            _udpClient->sendPacket(*discoPkt);
 
         if (_tcpThread.joinable())
             _tcpThread.join();

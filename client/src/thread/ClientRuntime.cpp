@@ -45,9 +45,13 @@ namespace Thread
 
     ClientRuntime::~ClientRuntime()
     {
-        stop();
-        _udpClient.reset();
-        _graphics.reset();
+        try {
+            stop();
+            _udpClient.reset();
+            _graphics.reset();
+        } catch (...) {
+            std::cerr << "{ClientRuntime::~ClientRuntime} Exception during destruction" << std::endl;
+        }
     }
 
     void ClientRuntime::start()

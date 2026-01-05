@@ -1,5 +1,5 @@
 ---
-id: audio
+id: audio_doc
 title: Audio System
 sidebar_label: Audio System
 ---

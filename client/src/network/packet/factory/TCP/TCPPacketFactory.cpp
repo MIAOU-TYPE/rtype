@@ -23,7 +23,8 @@ namespace Network
         if (!p || payload.size() > p->capacity())
             return nullptr;
 
-        std::memcpy(p->buffer(), payload.data(), payload.size());
+        if (!payload.empty())
+            std::memcpy(p->buffer(), payload.data(), payload.size());
         p->setSize(static_cast<std::uint32_t>(payload.size()));
         return p;
     }
@@ -37,6 +38,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::HELLO, req, b.bytes());
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeHello} error creating packet" << std::endl;
             return nullptr;
         }
     }
@@ -48,6 +50,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LIST_ROOMS, req, empty);
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeListRooms} error creating packet" << std::endl;
             return nullptr;
         }
     }
@@ -63,6 +66,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::CREATE_ROOM, req, b.bytes());
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeCreateRoom} error creating packet" << std::endl;
             return nullptr;
         }
     }
@@ -77,6 +81,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::JOIN_ROOM, req, b.bytes());
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeJoinRoom} error creating packet" << std::endl;
             return nullptr;
         }
     }
@@ -88,6 +93,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LEAVE_ROOM, req, empty);
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeLeaveRoom} error creating packet" << std::endl;
             return nullptr;
         }
     }
@@ -99,6 +105,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::START_GAME, req, empty);
             return make(payload);
         } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeStartGame} error creating packet" << std::endl;
             return nullptr;
         }
     }

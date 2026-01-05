@@ -14,9 +14,9 @@ namespace
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
         const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
     {
-        std::weak_ptr<Net::Server::ISessionManager> wSessions = sessions;
-        std::weak_ptr<Net::Factory::UDPPacketFactory> wFactory = UDPPacketFactory;
-        std::weak_ptr<Net::Server::IServer> wServer = server;
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
 
         const auto *mapPtr = &entityToSession;
 
@@ -33,13 +33,13 @@ namespace
                     return;
 
                 const int sessionId = it->second;
-                const sockaddr_in *addr = sessionsL->getAddress(sessionId);
+                const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
                 if (!addr)
                     return;
 
                 const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
                 if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
-                    serverL->sendPacket(*pkt);
+                    (void) serverL->sendPacket(*pkt);
             });
     }
 } // namespace
@@ -60,8 +60,6 @@ namespace Game
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
-        _waitingClock.restart();
-
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
@@ -71,8 +69,8 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
-        if (const auto *addr = _sessions->getAddress(sessionId)) {
-            _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
+        if (const auto *addr = _sessions->getUdpAddress(sessionId)) {
+            (void) _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
         }
     }
 
@@ -103,8 +101,7 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        if (_waitingClock.elapsed() > 5.0)
-            LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
+        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
         AIShootSystem::update(*_worldWrite, dt);
 
@@ -161,7 +158,6 @@ namespace Game
                 const Ecs::Entity ent = it->second;
                 _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
-                _sessions->removeSession(cmd.sessionId);
                 _worldWrite->destroyEntity(ent);
                 break;
             }
@@ -181,9 +177,9 @@ namespace Game
                 break;
             }
             case GameCommand::Type::Ping: {
-                if (const auto *addr = _sessions->getAddress(cmd.sessionId)) {
+                if (const auto *addr = _sessions->getUdpAddress(cmd.sessionId)) {
                     if (const auto pkt = _udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
-                        _server->sendPacket(*pkt);
+                        (void) _server->sendPacket(*pkt);
                 }
                 break;
             }

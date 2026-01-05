@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** ClientPacketFactory
+** UDPPacketFactory
 */
 
 #pragma once
@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "ConnectData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
@@ -49,23 +50,23 @@ namespace Network
     };
 
     /**
-     * @class ClientPacketFactory
+     * @class UDPPacketFactory
      * @brief Factory class for creating and serializing client packets.
      * @details This class provides methods to create different types of packets
      * (connect, disconnect, input, ping) with proper endianness conversion and serialization.
      */
-    class ClientPacketFactory {
+    class UDPPacketFactory {
       public:
         /**
-         * @brief Construct a new ClientPacketFactory object
+         * @brief Construct a new UDPPacketFactory object
          * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit ClientPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
+        explicit UDPPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
 
         /**
-         * @brief Destroy the ClientPacketFactory object
+         * @brief Destroy the UDPPacketFactory object
          */
-        ~ClientPacketFactory() = default;
+        ~UDPPacketFactory() = default;
 
         /**
          * @brief Creates a base packet
@@ -80,6 +81,13 @@ namespace Network
          * @return A shared pointer to the created packet
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeInput(const PlayerInput &input) const noexcept;
+
+        /**
+         * @brief Creates a connect packet
+         * @param connect The ConnectInfo structure containing connection information
+         * @return A shared pointer to the created packet
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeConnect(const ConnectInfo &connect) const noexcept;
 
       private:
         /**
@@ -105,4 +113,4 @@ namespace Network
 
 } // namespace Network
 
-#include "ClientPacketFactory.tpp"
+#include "UDPPacketFactory.tpp"

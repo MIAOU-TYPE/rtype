@@ -24,7 +24,7 @@ namespace Net
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
         std::shared_ptr<Factory::TCPPacketFactory> packetFactory)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory))
+          _packetFactory(std::move(packetFactory)), _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 
@@ -59,7 +59,7 @@ namespace Net
             case Protocol::TCP::CREATE_ROOM: onCreateRoom(*addr, h.requestId, r); break;
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::LEAVE_ROOM: onLeaveRoom(*addr, sessionId, h.requestId); break;
-            case Protocol::TCP::START_GAME: onStartGame(*addr, sessionId); break;
+            case Protocol::TCP::START_GAME: onStartGame(*addr, sessionId, h.requestId); break;
             default: sendError(*addr, h.requestId, 2, "Unsupported TCP packet type"); break;
         }
     }
@@ -67,11 +67,14 @@ namespace Net
     void TCPPacketRouter::sendError(
         const sockaddr_in &addr, const uint32_t req, const uint16_t code, const std::string_view msg) const
     {
-        TCP::Writer b;
-        b.u16(code);
-        b.str16(msg);
-        const auto payload = TCP::buildPayload(Protocol::TCP::ERROR_MESSAGE, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        if (!_packetFactory)
+            return;
+
+        const auto out = _packetFactory->makeError(addr, req, code, msg);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onHello(
@@ -87,35 +90,51 @@ namespace Net
             return sendError(addr, req, 3, malformedTcp("HELLO ver(u16)", 2, r.remaining()));
         }
 
-        if (r.remaining() != 0)
-            return sendError(addr, req, 7, "HELLO: unexpected trailing bytes");
+        auto token = _sessions->getUdpToken(sessionId);
+        if (token == 0) {
+            std::random_device rd;
+            token = (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd())
+                ^ (static_cast<uint64_t>(sessionId) << 1);
+        }
+        _sessions->setUdpToken(sessionId, token);
 
-        TCP::Writer b;
-        b.u16(ver);
-        b.u32(static_cast<uint32_t>(sessionId));
-        b.u16(_serverUdpPort);
-        const auto payload = TCP::buildPayload(Protocol::TCP::WELCOME, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        if (!_packetFactory)
+            return;
+
+        const auto out = _packetFactory->makeWelcome(
+            addr, req, ver, static_cast<uint32_t>(sessionId), static_cast<uint16_t>(_serverUdpPort), token);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onListRooms(const sockaddr_in &addr, const uint32_t req) const
     {
-        TCP::Writer b;
-        const auto rooms = _rooms->listRooms();
+        if (!_packetFactory)
+            return;
 
+        const auto rooms = _rooms->listRooms();
         if (rooms.size() > 0xFFFFu)
             return sendError(addr, req, 16, "LIST_ROOMS: too many rooms to fit in u16");
 
-        b.u16(static_cast<uint16_t>(rooms.size()));
+        std::vector<RoomData> outRooms;
+        outRooms.reserve(rooms.size());
+
         for (const auto &[id, name, currentPlayers, maxPlayers] : rooms) {
-            b.u32(id);
-            b.str16(name);
-            b.u8(static_cast<uint8_t>(currentPlayers));
-            b.u8(static_cast<uint8_t>(maxPlayers));
+            RoomData ri{};
+            ri.roomId = static_cast<uint32_t>(id);
+            ri.roomName = name;
+            ri.currentPlayers = static_cast<size_t>(currentPlayers);
+            ri.maxPlayers = static_cast<size_t>(maxPlayers);
+            outRooms.push_back(ri);
         }
 
-        const auto payload = TCP::buildPayload(Protocol::TCP::ROOMS_LIST, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        const auto out = _packetFactory->makeRoomsList(addr, req, outRooms);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
@@ -149,10 +168,14 @@ namespace Net
         if (roomId == 0)
             return sendError(addr, req, 9, "CREATE_ROOM: failed to create room");
 
-        TCP::Writer b;
-        b.u32(roomId);
-        const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_CREATED, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        if (!_packetFactory)
+            return;
+
+        const auto out = _packetFactory->makeRoomCreated(addr, req, roomId);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onJoinRoom(
@@ -175,10 +198,14 @@ namespace Net
             return sendError(addr, req, 12, e.what());
         }
 
-        TCP::Writer b;
-        b.u32(roomId);
-        const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_JOINED, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        if (!_packetFactory)
+            return;
+
+        const auto out = _packetFactory->makeRoomJoined(addr, req, roomId);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const
@@ -193,33 +220,34 @@ namespace Net
             return sendError(addr, req, 13, e.what());
         }
 
-        TCP::Writer b;
-        b.u32(roomId);
+        if (!_packetFactory)
+            return;
 
-        const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_LEFT, req, b.bytes());
-        _tcp->sendPacket(*_packetFactory->make(addr, payload));
+        const auto out = _packetFactory->makeRoomLeft(addr, req, roomId);
+        if (!out)
+            return;
+
+        (void) _tcp->sendPacket(*out);
     }
 
-    void TCPPacketRouter::onStartGame(const sockaddr_in &addr, const int sessionId) const
+    void TCPPacketRouter::onStartGame(const sockaddr_in &addr, const int sessionId, const uint32_t req) const
     {
         const uint32_t roomId = _rooms->getRoomIdOfPlayer(sessionId);
         if (roomId == 0)
-            return sendError(addr, 0, 14, "START_GAME: player is not in a room");
+            return sendError(addr, req, 14, "START_GAME: player is not in a room");
 
         if (!_rooms->start(roomId))
-            return sendError(addr, 0, 15, "START_GAME: room cannot be started (state/players)");
-
-        TCP::Writer b;
-        b.u32(roomId);
-
-        const auto payload = TCP::buildPayload(Protocol::TCP::GAME_START, 0, b.bytes());
+            return sendError(addr, req, 15, "START_GAME: room cannot be started (state/players)");
 
         const auto &room = _rooms->getRoomById(roomId);
-        if (!room)
+        if (!room || !_packetFactory)
             return;
+
         for (const auto &session : room->sessions()) {
-            if (const auto memberAddr = _sessions->getAddress(session))
-                _tcp->sendPacket(*_packetFactory->make(*memberAddr, payload));
+            if (const auto memberAddr = _sessions->getAddress(session)) {
+                if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
+                    (void) _tcp->sendPacket(*out);
+            }
         }
     }
 } // namespace Net

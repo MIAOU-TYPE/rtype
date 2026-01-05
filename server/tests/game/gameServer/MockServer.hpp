@@ -61,4 +61,9 @@ class MockServer : public Net::Server::IServer {
     {
         return false;
     }
+
+    int32_t getPort() const noexcept override
+    {
+        return 0;
+    }
 };

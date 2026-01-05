@@ -18,7 +18,6 @@
 
 #include "AssetLoader.hpp"
 #include "ClientController.hpp"
-#include "ClientPacketFactory.hpp"
 #include "ClientWorld.hpp"
 #include "CommandBuffer.hpp"
 #include "EventRegistry.hpp"
@@ -27,8 +26,11 @@
 #include "MusicRegistry.hpp"
 #include "PacketRouter.hpp"
 #include "SoundRegistry.hpp"
+#include "TCPClient.hpp"
+#include "TCPPacketFactory.hpp"
+#include "UDPPacketFactory.hpp"
+#include "UDPPacketRouter.hpp"
 
-using steadyClock = std::chrono::steady_clock;
 #include "IRenderer.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"
@@ -36,6 +38,8 @@ using steadyClock = std::chrono::steady_clock;
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 #include "StateManager.hpp"
+#include "TCPPacketRouter.hpp"
+
 #include <condition_variable>
 
 /**
@@ -44,6 +48,11 @@ using steadyClock = std::chrono::steady_clock;
  */
 namespace Thread
 {
+    /**
+     * @brief Alias for steady clock from the chrono library.
+     */
+    using steadyClock = std::chrono::steady_clock;
+
     /**
      * @brief The ClientRuntime class is responsible for managing the client's runtime operations,
      * including starting, stopping, and handling incoming packets.
@@ -59,7 +68,7 @@ namespace Thread
         }
 
         /**
-         * @brief Override of the what() method from std::exception.
+         * @brief Override of what() method from std::exception.
          * @return The error message as a C-style string.
          */
         const char *what() const noexcept override
@@ -76,10 +85,12 @@ namespace Thread
         /**
          * @brief Constructor for ClientRuntime.
          * @param graphics Shared pointer to the graphics interface.
-         * @param client Shared pointer to the network client interface.
+         * @param udpClient Shared pointer to the network client interface.
+         * @param tcpClient Shared pointer to the TCP network client interface.
          */
-        explicit ClientRuntime(
-            const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client);
+        explicit ClientRuntime(const std::shared_ptr<Graphics::IGraphics> &graphics,
+            const std::shared_ptr<Network::INetClient> &udpClient,
+            const std::shared_ptr<Network::INetClient> &tcpClient);
 
         /**
          * @brief Destructor for ClientRuntime.
@@ -124,8 +135,6 @@ namespace Thread
         std::shared_ptr<Engine::EventBus> _eventBus = nullptr;           ///> Event bus for handling events
         std::unique_ptr<Engine::EventRegistry> _eventRegistry = nullptr; ///> Event registry for managing events
 
-        std::shared_ptr<Network::INetClient> _client = nullptr; ///> Network client interface
-
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr;      ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
         std::unique_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
@@ -137,9 +146,14 @@ namespace Thread
         std::shared_ptr<Engine::MusicRegistry> _musicRegistry = nullptr;   ///> Music registry for managing music
         std::shared_ptr<Engine::SoundRegistry> _soundRegistry = nullptr; ///> Sound registry for managing sound effects
 
-        Network::ClientPacketFactory _packetFactory; ///> Packet factory for creating network packets
+        std::shared_ptr<Network::INetClient> _udpClient = nullptr; ///> Network client interface
+        Network::UDPPacketFactory _udpPacketFactory;               ///> Packet factory for creating network packets
+        std::unique_ptr<Ecs::UDPPacketRouter> _udpPacketRouter =
+            nullptr; ///> Packet router for handling incoming packets
 
-        std::unique_ptr<Ecs::PacketRouter> _packetRouter = nullptr;
+        std::shared_ptr<Network::INetClient> _tcpClient = nullptr; ///> TCP Network client interface
+        Network::TCPPacketFactory _tcpPacketFactory;
+        std::unique_ptr<Network::TCPPacketRouter> _tcpPacketRouter = nullptr;
 
         Command::CommandBuffer<World::WorldCommand> _commandBuffer; ///> Command buffer for storing commands
 
@@ -149,6 +163,7 @@ namespace Thread
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state
+        std::thread _tcpThread;      ///> Thread for TCP packet handling
 
         std::mutex _mutex;                       ///> Mutex for synchronizing access
         std::condition_variable _cv;             ///> Condition variable for signaling
@@ -201,6 +216,13 @@ namespace Thread
          * and swaps them for rendering.
          */
         void buildAndSwapRenderCommands();
+
+        /**
+         * @brief Method for running the TCP receiver thread.
+         * @details This method continuously receives TCP packets from the TCP client
+         * and routes them for processing.
+         */
+        void runTcp() const;
     };
 
 } // namespace Thread

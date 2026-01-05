@@ -65,7 +65,7 @@ namespace Network
          * @brief Checks if the NetClient is currently running.
          * @return True if the NetClient is running, false otherwise.
          */
-        bool isRunning() const noexcept override;
+        [[nodiscard]] bool isRunning() const noexcept override;
 
         /**
          * @brief Sets the running status of the NetClient.
@@ -83,32 +83,32 @@ namespace Network
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const Net::IPacket &pkt) override = 0;
+        [[nodiscard]] bool sendPacket(const Net::IPacket &pkt) override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
          * @return True if the stored IP address is valid, false otherwise.
          */
-        bool isStoredIpCorrect() const noexcept override;
+        [[nodiscard]] bool isStoredIpCorrect() const noexcept override;
 
         /**
          * @brief Checks if the stored port number is valid.
          * @return True if the stored port number is valid, false otherwise.
          */
-        bool isStoredPortCorrect() const noexcept override;
+        [[nodiscard]] bool isStoredPortCorrect() const noexcept override;
 
         /**
          * @brief Pops a received packet from the NetClient's packet queue.
          * @param pkt Reference to a Network::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override = 0;
+        [[nodiscard]] bool popPacket(std::shared_ptr<Net::IPacket> &pkt) override = 0;
 
         /**
          * @brief Retrieves a templated packet for serialization.
          * @return A shared pointer to the templated IPacket.
          */
-        std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override = 0;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> getTemplatedPacket() const noexcept override = 0;
 
       protected:
         std::string _ip = "";                ///> IP address the NetClient is bound to

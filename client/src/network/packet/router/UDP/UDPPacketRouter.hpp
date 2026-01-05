@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PacketRouter
+** UDPPacketRouter
 */
 
 #pragma once
@@ -48,13 +48,13 @@ namespace Ecs
     /**
      * @brief Routes incoming packets to appropriate handlers based on packet type.
      */
-    class PacketRouter {
+    class UDPPacketRouter {
       public:
         /**
-         * @brief Constructs a PacketRouter with the given IClientMessageSink.
+         * @brief Constructs a UDPPacketRouter with the given IClientMessageSink.
          * @param sink Shared pointer to the IClientMessageSink for handling routed messages.
          */
-        explicit PacketRouter(const std::shared_ptr<IClientMessageSink> &sink);
+        explicit UDPPacketRouter(const std::shared_ptr<IClientMessageSink> &sink);
 
         /**
          * @brief Handles an incoming packet by routing it to the appropriate handler.

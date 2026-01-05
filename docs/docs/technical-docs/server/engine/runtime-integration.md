@@ -18,7 +18,7 @@ Two threads participate in gameplay processing:
 
 ````
 
-UdpServer → PacketRouter → GameServer → World → Systems
+UdpServer → UDPPacketRouter → GameServer → World → Systems
 
 ````
 
@@ -27,8 +27,8 @@ UdpServer → PacketRouter → GameServer → World → Systems
 1. `UdpServer` receives a UDP packet  
 2. Packet is wrapped in an `IServerPacket` and queued  
 3. `ServerRuntime::runProcessor()` pops the packet  
-4. `PacketRouter` validates and interprets the data  
-5. `PacketRouter` calls the appropriate `IMessageSink` method  
+4. `UDPPacketRouter` validates and interprets the data  
+5. `UDPPacketRouter` calls the appropriate `IMessageSink` method  
 6. `GameServer` updates world state  
 7. `GameServer.update(dt)` runs gameplay systems  
 

@@ -50,7 +50,7 @@ This page explains the **public interface**, the **lifecycle**, and the **intern
 │               IPacket                                     │
 │                   │                                       │
 │   ┌───────────────┴─────────────┐     ┌─────────────────┐ │
-│   │        PacketRouter         │     │ SessionManager  │ │
+│   │        UDPPacketRouter         │     │ SessionManager  │ │
 │   │ - reads PacketHeader        │     │ - sockaddr → id │ │
 │   │ - validates (size/version)  │     │ - id → sockaddr │ │
 │   │ - getOrCreateSession(addr)  │     └─────────────────┘ │

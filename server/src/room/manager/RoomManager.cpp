@@ -61,7 +61,7 @@ namespace Engine
     bool RoomManager::start(const RoomId roomId) const noexcept
     {
         const auto room = getRoomById(roomId);
-        if (!room || room->getCurrentPlayers() == room->getMaxPlayers())
+        if (!room || room->getCurrentPlayers() != room->getMaxPlayers())
             return false;
         try {
             room->start();
@@ -130,21 +130,6 @@ namespace Engine
         return getRoomById(roomId);
     }
 
-    void RoomManager::onPlayerConnect(const int sessionId) noexcept
-    {
-        if (const auto room = getRoomOfPlayer(sessionId)) {
-            room->gameServer().onPlayerConnect(sessionId);
-            return;
-        }
-        const auto id = createRoom("basic", 4);
-        if (id == InvalidRoomId)
-            return;
-        addPlayerToRoom(id, sessionId);
-        if (const auto room = getRoomById(id)) {
-            room->start();
-        }
-    }
-
     void RoomManager::onPlayerDisconnect(const int sessionId) noexcept
     {
         if (const auto room = getRoomOfPlayer(sessionId))
@@ -164,19 +149,24 @@ namespace Engine
             room->gameServer().onPing(sessionId);
     }
 
-    std::vector<RoomManager::RoomEntry> RoomManager::listRooms() const noexcept
+    std::vector<RoomData> RoomManager::listRooms() const noexcept
     {
-        std::vector<RoomEntry> roomsList;
-        std::scoped_lock lock(_mutex);
+        try {
+            std::vector<RoomData> roomsList;
+            std::scoped_lock lock(_mutex);
 
-        for (const auto &[id, room] : _rooms) {
-            RoomEntry entry;
-            entry.id = id;
-            entry.name = room->getName();
-            entry.currentPlayers = room->getCurrentPlayers();
-            entry.maxPlayers = room->getMaxPlayers();
-            roomsList.push_back(entry);
+            for (const auto &[id, room] : _rooms) {
+                RoomData entry;
+                entry.roomId = id;
+                entry.roomName = room->getName();
+                entry.currentPlayers = room->getCurrentPlayers();
+                entry.maxPlayers = room->getMaxPlayers();
+                roomsList.push_back(entry);
+            }
+            return roomsList;
+        } catch (...) {
+            std::cerr << "{RoomManager::listRooms} failed to list rooms" << std::endl;
+            return {};
         }
-        return roomsList;
     }
 } // namespace Engine

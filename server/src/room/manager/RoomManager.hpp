@@ -10,9 +10,9 @@
 #include <memory>
 #include <mutex>
 #include <utility>
-#include <unordered_map>
-
 #include "Room.hpp"
+#include "RoomData.hpp"
+#include <unordered_map>
 
 namespace Engine
 {
@@ -22,17 +22,6 @@ namespace Engine
      */
     class RoomManager {
       public:
-        /**
-         * @struct RoomEntry
-         * @brief Represents a summary of a game room
-         */
-        struct RoomEntry {
-            RoomId id;             ///> Unique identifier for the room
-            std::string name;      ///> Name of the room
-            size_t currentPlayers; ///> Current number of players in the room
-            size_t maxPlayers;     ///> Maximum number of players allowed in the room
-        };
-
         /**
          * @brief Constructor for RoomManager
          * @param sessions shared pointer to the session manager
@@ -84,12 +73,6 @@ namespace Engine
         void forEachRoom(Func &&func);
 
         /**
-         * @brief Handles player connection
-         * @param sessionId The session ID of the connected player
-         */
-        void onPlayerConnect(int sessionId) noexcept;
-
-        /**
          * @brief Handles player disconnection
          * @param sessionId The session ID of the disconnected player
          */
@@ -110,9 +93,9 @@ namespace Engine
 
         /**
          * @brief Lists all game rooms with their details
-         * @return A vector of RoomEntry structures representing the rooms
+         * @return A vector of RoomData structures representing the rooms
          */
-        [[nodiscard]] std::vector<RoomEntry> listRooms() const noexcept;
+        [[nodiscard]] std::vector<RoomData> listRooms() const noexcept;
 
         /**
          * @brief Gets the room ID of the room a player is assigned to

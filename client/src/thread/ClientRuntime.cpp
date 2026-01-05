@@ -22,16 +22,18 @@ namespace
 
 namespace Thread
 {
-    ClientRuntime::ClientRuntime(
-        const std::shared_ptr<Graphics::IGraphics> &graphics, const std::shared_ptr<Network::INetClient> &client)
-        : _client(client), _graphics(graphics), _packetFactory(client->getTemplatedPacket())
+    ClientRuntime::ClientRuntime(const std::shared_ptr<Graphics::IGraphics> &graphics,
+        const std::shared_ptr<Network::INetClient> &udpClient, const std::shared_ptr<Network::INetClient> &tcpClient)
+        : _graphics(graphics), _udpClient(udpClient), _udpPacketFactory(udpClient->getTemplatedPacket()),
+          _tcpClient(tcpClient), _tcpPacketFactory(tcpClient->getTemplatedPacket())
     {
         _graphics->create(Graphics::Extent2u{1280, 720}, "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
-        _packetRouter = std::make_unique<Ecs::PacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
-
+        _udpPacketRouter =
+            std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
+        _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
@@ -43,24 +45,28 @@ namespace Thread
 
     ClientRuntime::~ClientRuntime()
     {
-        stop();
-        _client.reset();
-        _graphics.reset();
+        try {
+            stop();
+            _udpClient.reset();
+            _graphics.reset();
+        } catch (...) {
+            std::cerr << "{ClientRuntime::~ClientRuntime} Exception during destruction" << std::endl;
+        }
     }
 
     void ClientRuntime::start()
     {
         try {
-            _client->start();
-        } catch (const std::exception &e) {
+            _tcpClient->start();
+            _udpClient->start();
+        } catch (...) {
             stop();
-            std::cerr << "Failed to start client: " << e.what() << std::endl;
-            return;
+            throw;
         }
         _running = true;
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::CONNECT));
         setupGlobalEventHandlers();
         setupEventsRegistry();
+        _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
     }
@@ -72,12 +78,19 @@ namespace Thread
 
         _running = false;
         _cv.notify_all();
-        _client->sendPacket(*_packetFactory.makeBase(Net::Protocol::UDP::DISCONNECT));
+        if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(11))
+            _tcpClient->sendPacket(*leavePkt);
+        if (const auto discoPkt = _udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT))
+            _udpClient->sendPacket(*discoPkt);
 
+        if (_tcpThread.joinable())
+            _tcpThread.join();
         if (_receiverThread.joinable())
             _receiverThread.join();
         if (_updaterThread.joinable())
             _updaterThread.join();
+        _tcpClient->close();
+        _udpClient->close();
     }
 
     void ClientRuntime::wait()
@@ -138,7 +151,7 @@ namespace Thread
     void ClientRuntime::runReceiver() const
     {
         while (_running) {
-            _client->receivePackets();
+            _udpClient->receivePackets();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
@@ -197,23 +210,23 @@ namespace Thread
         const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(keys.up, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{true, false, false, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.down, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, true, false, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.left, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, true, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.right, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, true, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
-            _client->sendPacket(*_packetFactory.makeInput(PlayerInput{false, false, false, false, true}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }
 
@@ -248,10 +261,10 @@ namespace Thread
 
         while (processedPacket < maxPackets && clock::now() < deadline) {
             std::shared_ptr<Net::IPacket> pkt;
-            if (!_client->popPacket(pkt))
+            if (!_udpClient->popPacket(pkt))
                 break;
 
-            _packetRouter->handlePacket(pkt);
+            _udpPacketRouter->handlePacket(pkt);
             processedPacket++;
         }
     }
@@ -276,6 +289,35 @@ namespace Thread
         {
             std::scoped_lock lock(_frameMutex);
             _readRenderCommands = _writeRenderCommands;
+        }
+    }
+
+    void ClientRuntime::runTcp() const
+    {
+        _tcpPacketRouter->sink()->onWelcomeSubscribe(
+            [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
+                _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
+            });
+
+        _tcpPacketRouter->sink()->onRoomCreatedSubscribe([&](const uint32_t req, const uint32_t roomId) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req + 1, roomId));
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(1));
+        });
+
+        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](const uint32_t, const uint32_t) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeStartGame(3));
+        });
+
+        while (_running) {
+            _tcpClient->receivePackets();
+            auto pkt = _tcpClient->getTemplatedPacket();
+            while (_tcpClient->popPacket(pkt))
+                _tcpPacketRouter->handle(pkt);
+            if (!_tcpPacketRouter->sink()->isConnected()) {
+                _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
+                _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(1, "R-Type Room", 1));
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
 

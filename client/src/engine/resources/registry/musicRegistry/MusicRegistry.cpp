@@ -46,4 +46,14 @@ namespace Engine
 
         _musicManager->setVolume(_currentMusicHandle, volume);
     }
+
+    bool MusicRegistry::loadAndPlayMusic(const std::string &path, bool loop, float volume) noexcept
+    {
+        auto handle = _musicManager->load(path);
+        if (handle == InvalidAudio)
+            return false;
+
+        playMusic(handle, loop, volume);
+        return true;
+    }
 } // namespace Engine

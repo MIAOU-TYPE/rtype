@@ -10,8 +10,10 @@
 namespace Engine
 {
     MenuState::MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
+        std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
         std::shared_ptr<RoomManager> roomManager)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _roomManager(std::move(roomManager))
+        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
+          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager))
     {
     }
 
@@ -20,6 +22,9 @@ namespace Engine
         try {
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
+
+            if (_musicRegistry)
+                (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, 50.f);
         } catch (const std::exception &e) {
             throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
         }
@@ -30,11 +35,13 @@ namespace Engine
         _menu->update(frame);
 
         if (_menu->wantsSettings()) {
-            manager.queueState(std::make_unique<SettingsState>(_graphics, _renderer, _roomManager));
+            manager.queueState(
+                std::make_unique<SettingsState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
             return;
         }
         if (_menu->wantsToStart()) {
-            manager.queueState(std::make_unique<RoomState>(_graphics, _renderer, _roomManager));
+            manager.queueState(
+                std::make_unique<RoomState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
             return;
         }
         if (_menu->wantsToQuit())

@@ -101,6 +101,6 @@ namespace Engine
         std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr; ///> Music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
-        float _globalMusicVolume = 50.f; ///> Global music volume
+        float _globalMusicVolume = 50.f;                          ///> Global music volume
     };
 } // namespace Engine

@@ -126,12 +126,12 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _resolution;     ///> Current resolution display button
         std::unique_ptr<UI::UIButton> _resolutionNext; ///> Next resolution button
 
-        std::size_t _musicVolume = 50;       ///> Music volume level (0-100)
-        std::size_t _sfxVolume = 50;         ///> SFX volume level (0-100)
+        std::size_t _musicVolume = 50;           ///> Music volume level (0-100)
+        std::size_t _sfxVolume = 50;             ///> SFX volume level (0-100)
         std::size_t _musicVolumeBeforeMute = 50; ///> Music volume before mute
         std::size_t _sfxVolumeBeforeMute = 50;   ///> SFX volume before mute
-        bool _musicMuted = false;        ///> Music mute state
-        bool _sfxMuted = false;          ///> SFX mute state
+        bool _musicMuted = false;                ///> Music mute state
+        bool _sfxMuted = false;                  ///> SFX mute state
 
         std::unique_ptr<UI::UIButton> _musicVolLabel; ///> Music volume display
         std::unique_ptr<UI::UIButton> _musicVolUp;    ///> Increase music volume

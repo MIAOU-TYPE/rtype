@@ -146,6 +146,8 @@ namespace Engine
         _resolutionNext->setPosition(resNextButtonX, videoYStart + spacingY);
 
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
+        const float cy = h * 0.5f;
+        const float scale = 1.0f;
         _controls->setPosition(cx - 400.f * scale, cy + 200.f * scale);
         _controlsNext->setPosition(cx + (150.f + _controls->bounds().w + 250.f) * scale, cy + 200.f * scale);
     }

@@ -23,6 +23,8 @@
 #include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
+#include "MusicRegistry.hpp"
+#include "SoundRegistry.hpp"
 #include "InputConfig.hpp"
 #include "TCPClient.hpp"
 #include "TCPPacketFactory.hpp"
@@ -148,6 +150,8 @@ namespace Thread
         std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
+        std::shared_ptr<Engine::MusicRegistry> _musicRegistry = nullptr;   ///> Music registry for managing music
+        std::shared_ptr<Engine::SoundRegistry> _soundRegistry = nullptr; ///> Sound registry for managing sound effects
 
         std::shared_ptr<Network::INetClient> _udpClient = nullptr; ///> Network client interface
         Network::UDPPacketFactory _udpPacketFactory;               ///> Packet factory for creating network packets

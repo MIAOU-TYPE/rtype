@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <fstream>
+#include <iostream>
 #include <string>
 #include "Key.hpp"
 #include <unordered_map>
@@ -23,10 +25,10 @@ namespace Utils
      * @brief Structure holding movement key bindings
      */
     struct MovementKeys {
-        Engine::Key up;     ///> Key for moving up
-        Engine::Key down;   ///> Key for moving down
-        Engine::Key left;   ///> Key for moving left
-        Engine::Key right;  ///> Key for moving right
+        Engine::Key up;    ///> Key for moving up
+        Engine::Key down;  ///> Key for moving down
+        Engine::Key left;  ///> Key for moving left
+        Engine::Key right; ///> Key for moving right
     };
 
     /**

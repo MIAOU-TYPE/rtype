@@ -6,8 +6,6 @@
 */
 
 #include "InputConfig.hpp"
-#include <fstream>
-#include <iostream>
 
 namespace Utils
 {

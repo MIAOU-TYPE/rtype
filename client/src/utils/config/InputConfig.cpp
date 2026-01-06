@@ -30,7 +30,7 @@ namespace Utils
         return _currentPreset;
     }
 
-    void InputConfig::setPreset(const KeyPreset preset)
+    void InputConfig::setPreset(KeyPreset preset)
     {
         _currentPreset = preset;
         _needsRebind = true;
@@ -45,7 +45,7 @@ namespace Utils
         return _presets.at(KeyPreset::Arrows);
     }
 
-    std::string InputConfig::getPresetName(const KeyPreset preset)
+    std::string InputConfig::getPresetName(KeyPreset preset)
     {
         switch (preset) {
             case KeyPreset::Arrows: return "Arrow Keys";

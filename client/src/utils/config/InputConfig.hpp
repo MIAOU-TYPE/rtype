@@ -23,10 +23,10 @@ namespace Utils
      * @brief Structure holding movement key bindings
      */
     struct MovementKeys {
-        Engine::Key up;
-        Engine::Key down;
-        Engine::Key left;
-        Engine::Key right;
+        Engine::Key up;     ///> Key for moving up
+        Engine::Key down;   ///> Key for moving down
+        Engine::Key left;   ///> Key for moving left
+        Engine::Key right;  ///> Key for moving right
     };
 
     /**
@@ -69,13 +69,13 @@ namespace Utils
          * @brief Load configuration from file
          * @return true if successful, false otherwise
          */
-        bool load();
+        [[nodiscard]] bool load();
 
         /**
          * @brief Save configuration to file
          * @return true if successful, false otherwise
          */
-        bool save() const;
+        [[nodiscard]] bool save() const;
 
         /**
          * @brief Check if controls need to be rebound

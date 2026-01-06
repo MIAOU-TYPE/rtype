@@ -67,6 +67,29 @@ namespace Engine
         _muteMusic->reset();
         _muteSFX->reset();
 
+        if (_musicRegistry) {
+            const float musicVol = _musicRegistry->getMusicVolume();
+            if (musicVol == 0.f && _musicVolumeBeforeMute > 0) {
+                _musicMuted = true;
+                _musicVolume = _musicVolumeBeforeMute;
+            } else {
+                _musicMuted = false;
+                _musicVolume = static_cast<size_t>(musicVol);
+                _musicVolumeBeforeMute = _musicVolume;
+            }
+        }
+        if (_soundRegistry) {
+            const float sfxVol = _soundRegistry->getSoundVolume();
+            if (sfxVol == 0.f && _sfxVolumeBeforeMute > 0) {
+                _sfxMuted = true;
+                _sfxVolume = _sfxVolumeBeforeMute;
+            } else {
+                _sfxMuted = false;
+                _sfxVolume = static_cast<size_t>(sfxVol);
+                _sfxVolumeBeforeMute = _sfxVolume;
+            }
+        }
+
         _musicVolLabel->setLabel(std::to_string(_musicVolume));
         _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
         _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
@@ -259,16 +282,28 @@ namespace Engine
             if (_muteMusic->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _musicMuted = !_musicMuted;
                 _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
-                if (_musicRegistry)
-                    _musicRegistry->setMusicVolume(_musicMuted ? 0.f : static_cast<float>(_musicVolume));
+                if (_musicRegistry) {
+                    if (_musicMuted) {
+                        _musicVolumeBeforeMute = _musicVolume;
+                        _musicRegistry->setMusicVolume(0.f);
+                    } else {
+                        _musicRegistry->setMusicVolume(static_cast<float>(_musicVolume));
+                    }
+                }
                 _muteMusic->reset();
                 return;
             }
             if (_muteSFX->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _sfxMuted = !_sfxMuted;
                 _muteSFX->setLabel(_sfxMuted ? "ON SFX" : "OFF SFX");
-                if (_soundRegistry)
-                    _soundRegistry->setSoundVolume(_sfxMuted ? 0.f : static_cast<float>(_sfxVolume));
+                if (_soundRegistry) {
+                    if (_sfxMuted) {
+                        _sfxVolumeBeforeMute = _sfxVolume;
+                        _soundRegistry->setSoundVolume(0.f);
+                    } else {
+                        _soundRegistry->setSoundVolume(static_cast<float>(_sfxVolume));
+                    }
+                }
                 _muteSFX->reset();
                 return;
             }

@@ -31,4 +31,9 @@ namespace Engine
         _globalSoundVolume = volume;
         _soundManager->setGlobalVolume(volume / 100.f);
     }
+
+    float SoundRegistry::getSoundVolume() const noexcept
+    {
+        return _globalSoundVolume;
+    }
 } // namespace Engine

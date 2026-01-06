@@ -72,6 +72,12 @@ namespace Engine
          */
         void setSoundVolume(float volume);
 
+        /**
+         * @brief Get the current sound volume.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getSoundVolume() const noexcept;
+
       private:
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr; ///> Sound manager
 

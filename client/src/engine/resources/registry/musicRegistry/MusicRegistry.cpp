@@ -41,10 +41,16 @@ namespace Engine
 
     void MusicRegistry::setMusicVolume(float volume)
     {
+        _globalMusicVolume = volume;
         if (_currentMusicHandle == InvalidAudio)
             return;
 
         _musicManager->setVolume(_currentMusicHandle, volume);
+    }
+
+    float MusicRegistry::getMusicVolume() const noexcept
+    {
+        return _globalMusicVolume;
     }
 
     bool MusicRegistry::loadAndPlayMusic(const std::string &path, bool loop, float volume) noexcept

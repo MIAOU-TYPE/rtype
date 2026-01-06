@@ -23,8 +23,10 @@ namespace Engine
             _menu = std::make_unique<Menu>(_renderer);
             _menu->onEnter();
 
-            if (_musicRegistry)
-                (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, 50.f);
+            if (_musicRegistry) {
+                const float currentVolume = _musicRegistry->getMusicVolume();
+                (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, currentVolume);
+            }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{MenuState::onEnter} ") + e.what());
         }

@@ -83,6 +83,12 @@ namespace Engine
         void setMusicVolume(float volume);
 
         /**
+         * @brief Get the current music volume.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getMusicVolume() const noexcept;
+
+        /**
          * @brief Load and play a music track from file.
          * @param path Path to the music file.
          * @param loop Whether the music should loop.
@@ -95,5 +101,6 @@ namespace Engine
         std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr; ///> Music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
+        float _globalMusicVolume = 50.f; ///> Global music volume
     };
 } // namespace Engine

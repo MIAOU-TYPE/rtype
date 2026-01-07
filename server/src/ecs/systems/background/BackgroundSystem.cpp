@@ -13,7 +13,7 @@ namespace Game
     {
         auto &registry = world.registry();
 
-        registry.view<Ecs::Background, Ecs::Position>([&](Ecs::Entity entity, Ecs::Background &bg, Ecs::Position &pos) {
+        registry.view<Ecs::Background, Ecs::Position>([&](Ecs::Entity, Ecs::Background &bg, Ecs::Position &pos) {
             pos.x += bg.scrollSpeed * deltaTime;
         });
     }
@@ -22,7 +22,7 @@ namespace Game
     {
         auto &registry = world.registry();
 
-        registry.view<Ecs::Background, Ecs::Position>([&](Ecs::Entity entity, Ecs::Background &bg, Ecs::Position &pos) {
+        registry.view<Ecs::Background, Ecs::Position>([&](Ecs::Entity, Ecs::Background &bg, Ecs::Position &pos) {
             if (pos.x + bg.tileWidth <= 0) {
                 pos.x += bg.tileWidth * 2.0f;
             }

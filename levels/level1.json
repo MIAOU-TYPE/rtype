@@ -1,7 +1,6 @@
 {
   "name": "Level 1",
   "background": {
-    "sprite": "background_space",
     "spriteId": 100,
     "scrollSpeed": -50.0,
     "tileWidth": 1140.0,

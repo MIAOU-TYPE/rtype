@@ -192,8 +192,8 @@ namespace Engine
                 }))
                 return;
             if (_root.join->onClickReleased(mx, my, [&] {
+                    _joinRoom = true;
                 })) {
-                _joinRoom = true;
                 return;
             }
             if (_root.back->onClickReleased(mx, my, [&] {

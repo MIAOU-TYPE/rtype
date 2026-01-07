@@ -92,6 +92,18 @@ namespace Engine
          */
         [[nodiscard]] bool wantsBackToMenu() const noexcept;
 
+        /**
+         * @brief Checks if the user wants to create a room.
+         * @return True if the user wants to create a room, false otherwise.
+         */
+        [[nodiscard]] bool &wantsCreateRoom() noexcept;
+
+        /**
+         * @brief Checks if the user wants to join a room.
+         * @return True if the user wants to join a room, false otherwise.
+         */
+        [[nodiscard]] bool &wantsJoinRoom() noexcept;
+
       private:
         /**
          * @enum Page
@@ -220,6 +232,8 @@ namespace Engine
         std::uint8_t _selectedMaxPlayers = 4;              ///> Selected maximum number of players.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
+        bool _createRoom = false; ///> Flag indicating if the user wants to create a room.
+        bool _joinRoom = false;   ///> Flag indicating if the user wants to join a room.
         bool _layoutDirty = true; ///> Flag indicating if the layout needs to be updated.
     };
 } // namespace Engine

@@ -97,9 +97,7 @@ namespace Game
     {
         if (level.backgroundLayers.empty())
             return;
-
-        auto &reg = world.registry();
-
+        
         constexpr float REFERENCE_VIEWPORT_WIDTH = 1280.0f;
         constexpr float REFERENCE_VIEWPORT_HEIGHT = 720.0f;
 

@@ -11,9 +11,10 @@ namespace Engine
 {
     SettingsState::SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
         std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<MusicRegistry> musicRegistry,
-        std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager)
+        std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager,
+        std::shared_ptr<EventBus> eventBus)
         : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
-          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager))
+          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)), _eventBus(std::move(eventBus))
     {
     }
 
@@ -35,8 +36,8 @@ namespace Engine
             _pendingResize = true;
         }
         if (_menu->wantsBack())
-            manager.queueState(
-                std::make_unique<MenuState>(_graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager));
+            manager.queueState(std::make_unique<MenuState>(
+                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
     }
 
     void SettingsState::render()

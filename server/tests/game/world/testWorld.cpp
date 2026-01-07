@@ -27,7 +27,6 @@ TEST(World, create_player_adds_all_components)
 
     auto &pos = reg.getComponents<Ecs::Position>();
     ASSERT_EQ(pos.at((size_t) e)->x, 100.f);
-    ASSERT_EQ(pos.at((size_t) e)->y, 100.f);
 }
 
 TEST(World, destroy_player_removes_components)

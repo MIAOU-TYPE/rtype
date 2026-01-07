@@ -120,7 +120,7 @@ namespace Game
     {
         const Ecs::Entity ent = _registry.createEntity();
 
-        _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, 100.f});
+        _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng)});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{100, 100});
         _registry.emplaceComponent<InputComponent>(ent);

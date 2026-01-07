@@ -38,8 +38,13 @@ namespace Thread
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
+
+        _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
+        _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
+
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
-        _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _roomManager));
+        _stateManager->changeState(std::make_unique<Engine::MenuState>(
+            _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -236,6 +241,14 @@ namespace Thread
             _input->setMouse(static_cast<float>(e.posX), static_cast<float>(e.posY));
             _input->setMouseReleased();
         });
+
+        _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(11, e.roomName, e.maxPlayers));
+        });
+
+        _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(11, e.roomId));
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
@@ -283,13 +296,8 @@ namespace Thread
                 _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
             });
 
-        _tcpPacketRouter->sink()->onRoomCreatedSubscribe([&](const uint32_t req, const uint32_t roomId) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req + 1, roomId));
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(1));
-        });
-
-        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](const uint32_t, const uint32_t) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeStartGame(3));
+        _tcpPacketRouter->sink()->onGameStartSubscribe([&](const uint32_t, const uint32_t) {
+            _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
         });
 
         while (_running) {
@@ -297,10 +305,8 @@ namespace Thread
             auto pkt = _tcpClient->getTemplatedPacket();
             while (_tcpClient->popPacket(pkt))
                 _tcpPacketRouter->handle(pkt);
-            if (!_tcpPacketRouter->sink()->isConnected()) {
+            if (!_tcpPacketRouter->sink()->isConnected())
                 _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
-                _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(1, "R-Type Room", 1));
-            }
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }

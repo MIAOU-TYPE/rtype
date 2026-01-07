@@ -22,6 +22,7 @@
 #include "Lifetime.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"
+#include "Rand.hpp"
 #include "Score.hpp"
 #include "Velocity.hpp"
 

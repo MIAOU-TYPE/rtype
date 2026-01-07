@@ -40,7 +40,7 @@ namespace Net
         if (n < 5)
             return sendError(*addr, 0, 1, malformedTcp("header", 5, n));
 
-        TCP::Header h{};
+        TCP::Header h;
         TCP::Reader r(payload, n);
         try {
             h = TCP::parseHeader(payload, n);
@@ -193,6 +193,8 @@ namespace Net
             return sendError(addr, req, 11, "JOIN_ROOM: unexpected trailing bytes");
 
         try {
+            // TODO: FU uniquement rejoindre la room envoyé par le client
+            roomId = static_cast<uint32_t>(_rooms->listRooms().size());
             _rooms->addPlayerToRoom(roomId, sessionId);
         } catch (const std::exception &e) {
             return sendError(addr, req, 12, e.what());
@@ -205,7 +207,19 @@ namespace Net
         if (!out)
             return;
 
+        // TODO: alerter les joueurs que quand on appuie sur start pas automatique comme la pour le FU
         (void) _tcp->sendPacket(*out);
+        _rooms->forEachRoom([&](Engine::Room &room) {
+            if (room.getCurrentPlayers() == room.getMaxPlayers()) {
+                room.start();
+                for (const auto session : room.sessions()) {
+                    if (const auto memberAddr = _sessions->getAddress(session)) {
+                        if (auto packet = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
+                            (void) _tcp->sendPacket(*packet);
+                    }
+                }
+            }
+        });
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const

@@ -267,7 +267,8 @@ namespace Thread
     {
         _writeRenderCommands->clear();
 
-        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
+        const auto viewportSize = _renderer->getViewportSize();
+        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, viewportSize, *_writeRenderCommands);
 
         {
             std::scoped_lock lock(_frameMutex);

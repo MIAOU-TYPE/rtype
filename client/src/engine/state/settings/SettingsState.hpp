@@ -62,6 +62,6 @@ namespace Engine
 
         std::shared_ptr<EventBus> _eventBus; ///> Event bus
 
-        bool _pendingResize = false;
+        bool _pendingResize = false; ///> Flag indicating if a resize is pending
     };
 } // namespace Engine

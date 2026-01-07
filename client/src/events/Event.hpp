@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <cstdint>
 #include "Key.hpp"
 
 namespace Engine

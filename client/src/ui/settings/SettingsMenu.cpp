@@ -168,6 +168,32 @@ namespace Engine
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
+    void SettingsMenu::applyMusicVolumeChange(size_t volume, bool isMuted)
+    {
+        if (!_musicRegistry)
+            return;
+
+        if (isMuted) {
+            _musicVolumeBeforeMute = volume;
+            _musicRegistry->setVolumeBeforeMute(static_cast<float>(volume));
+        } else {
+            _musicRegistry->setMusicVolume(static_cast<float>(volume));
+        }
+    }
+
+    void SettingsMenu::applySoundVolumeChange(size_t volume, bool isMuted)
+    {
+        if (!_soundRegistry)
+            return;
+
+        if (isMuted) {
+            _sfxVolumeBeforeMute = volume;
+            _soundRegistry->setVolumeBeforeMute(static_cast<float>(volume));
+        } else {
+            _soundRegistry->setSoundVolume(static_cast<float>(volume));
+        }
+    }
+
     void SettingsMenu::update(const InputFrame &frame)
     {
         handleInput(frame);
@@ -248,14 +274,7 @@ namespace Engine
             if (_musicVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _musicVolume = std::min(size_t{100}, _musicVolume + 10);
                 _musicVolLabel->setLabel(std::to_string(_musicVolume));
-                if (_musicRegistry) {
-                    if (_musicMuted) {
-                        _musicVolumeBeforeMute = _musicVolume;
-                        _musicRegistry->setVolumeBeforeMute(static_cast<float>(_musicVolume));
-                    } else {
-                        _musicRegistry->setMusicVolume(static_cast<float>(_musicVolume));
-                    }
-                }
+                applyMusicVolumeChange(_musicVolume, _musicMuted);
                 _musicVolUp->reset();
                 return;
             }
@@ -265,28 +284,14 @@ namespace Engine
                 else
                     _musicVolume = 0;
                 _musicVolLabel->setLabel(std::to_string(_musicVolume));
-                if (_musicRegistry) {
-                    if (_musicMuted) {
-                        _musicVolumeBeforeMute = _musicVolume;
-                        _musicRegistry->setVolumeBeforeMute(static_cast<float>(_musicVolume));
-                    } else {
-                        _musicRegistry->setMusicVolume(static_cast<float>(_musicVolume));
-                    }
-                }
+                applyMusicVolumeChange(_musicVolume, _musicMuted);
                 _musicVolDown->reset();
                 return;
             }
             if (_sfxVolUp->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _sfxVolume = std::min(size_t{100}, _sfxVolume + 10);
                 _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
-                if (_soundRegistry) {
-                    if (_sfxMuted) {
-                        _sfxVolumeBeforeMute = _sfxVolume;
-                        _soundRegistry->setVolumeBeforeMute(static_cast<float>(_sfxVolume));
-                    } else {
-                        _soundRegistry->setSoundVolume(static_cast<float>(_sfxVolume));
-                    }
-                }
+                applySoundVolumeChange(_sfxVolume, _sfxMuted);
                 _sfxVolUp->reset();
                 return;
             }
@@ -296,14 +301,7 @@ namespace Engine
                 else
                     _sfxVolume = 0;
                 _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
-                if (_soundRegistry) {
-                    if (_sfxMuted) {
-                        _sfxVolumeBeforeMute = _sfxVolume;
-                        _soundRegistry->setVolumeBeforeMute(static_cast<float>(_sfxVolume));
-                    } else {
-                        _soundRegistry->setSoundVolume(static_cast<float>(_sfxVolume));
-                    }
-                }
+                applySoundVolumeChange(_sfxVolume, _sfxMuted);
                 _sfxVolDown->reset();
                 return;
             }

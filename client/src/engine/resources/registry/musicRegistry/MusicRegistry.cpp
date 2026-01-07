@@ -24,6 +24,7 @@ namespace Engine
         if (_currentMusicHandle != InvalidAudio && _currentMusicHandle != handle)
             stopMusic();
 
+        _globalMusicVolume = volume;
         _musicManager->setLooping(handle, loop);
         _musicManager->setVolume(handle, volume);
         _musicManager->play(handle);
@@ -39,12 +40,33 @@ namespace Engine
         _currentMusicHandle = InvalidAudio;
     }
 
+    bool MusicRegistry::isMusicPlaying() const noexcept
+    {
+        return _currentMusicHandle != InvalidAudio;
+    }
+
     void MusicRegistry::setMusicVolume(float volume)
     {
+        _globalMusicVolume = volume;
         if (_currentMusicHandle == InvalidAudio)
             return;
 
         _musicManager->setVolume(_currentMusicHandle, volume);
+    }
+
+    float MusicRegistry::getMusicVolume() const noexcept
+    {
+        return _globalMusicVolume;
+    }
+
+    void MusicRegistry::setVolumeBeforeMute(float volume)
+    {
+        _volumeBeforeMute = volume;
+    }
+
+    float MusicRegistry::getVolumeBeforeMute() const noexcept
+    {
+        return _volumeBeforeMute;
     }
 
     bool MusicRegistry::loadAndPlayMusic(const std::string &path, bool loop, float volume) noexcept

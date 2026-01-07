@@ -116,14 +116,14 @@ namespace Engine
          * @param volume The new volume value.
          * @param isMuted Whether the audio is currently muted.
          */
-        void applyMusicVolumeChange(size_t volume, bool isMuted);
+        [[noexcept]] void applyMusicVolumeChange(size_t volume, bool isMuted);
 
         /**
          * @brief Apply volume change to sound registry, handling mute state.
          * @param volume The new volume value.
          * @param isMuted Whether the audio is currently muted.
          */
-        void applySoundVolumeChange(size_t volume, bool isMuted);
+        [[noexcept]] void applySoundVolumeChange(size_t volume, bool isMuted);
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
         std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry

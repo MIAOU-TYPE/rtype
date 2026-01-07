@@ -8,6 +8,7 @@
 #pragma once
 
 #include "AIShootSystem.hpp"
+#include "BackgroundSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
@@ -24,7 +25,6 @@
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
-#include "BackgroundSystem.hpp"
 #include "UDPPacketFactory.hpp"
 
 namespace Game

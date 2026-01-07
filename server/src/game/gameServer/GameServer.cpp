@@ -58,7 +58,7 @@ namespace Game
                 std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
             else {
                 std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
-                LevelSystem::initializeBackground(*_worldWrite, _levelManager.getCurrentLevel());
+                LevelSystem::spawnBackgrounds(*_worldWrite, _levelManager.getCurrentLevel());
             }
             _levelManager.reset();
         }

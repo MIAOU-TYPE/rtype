@@ -50,7 +50,7 @@ namespace Game
         const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity mob = reg.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{900.f, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});

@@ -31,6 +31,17 @@ namespace
         const auto &projectile = reg.getComponents<Ecs::Projectile>().at(projectileIdx);
         return projectile && projectile->shooter == targetIdx;
     }
+
+    [[nodiscard]] bool shootFromAiToAi(Ecs::Registry &reg, const size_t projectileIdx, const size_t targetIdx)
+    {
+        if (const auto targetIsAi = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(targetIdx)); !targetIsAi)
+            return false;
+        const auto &projectile = reg.getComponents<Ecs::Projectile>().at(projectileIdx);
+        if (!projectile)
+            return false;
+        const auto shooterIdx = projectile->shooter;
+        return reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(shooterIdx));
+    }
 } // namespace
 
 namespace Game
@@ -61,6 +72,8 @@ namespace Game
                 if (projectileHitsShooter(reg, i, j) || projectileHitsShooter(reg, j, i))
                     continue;
                 if (sameShooter(reg, i, j))
+                    continue;
+                if (shootFromAiToAi(reg, i, j) || shootFromAiToAi(reg, j, i))
                     continue;
                 world.events().emit(CollisionEvent{i, j});
             }

@@ -9,10 +9,8 @@
 
 namespace Engine
 {
-    GameState::GameState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-        std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
-        : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
-          _soundRegistry(std::move(soundRegistry))
+    GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
+        : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
     {
     }
 

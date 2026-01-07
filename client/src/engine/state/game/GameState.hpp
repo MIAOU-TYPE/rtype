@@ -23,13 +23,10 @@ namespace Engine
       public:
         /**
          * @brief Construct a new Game State object.
-         * @param graphics Shared pointer to the graphics interface.
-         * @param renderer Shared pointer to the renderer interface.
          * @param musicRegistry Shared pointer to the music registry.
          * @param soundRegistry Shared pointer to the sound registry.
          */
-        explicit GameState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
-            std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
+        explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
 
         /**
          * @brief Called when entering the state.

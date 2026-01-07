@@ -117,4 +117,37 @@ namespace Engine
         std::uint32_t width;  ///> The new width of the window.
         std::uint32_t height; ///> The new height of the window.
     };
+
+    /**
+     * @brief Event triggered when a request to create a room is made.
+     */
+    struct CreateRoomRequested : Event {
+        /**
+         * @brief Constructor for CreateRoomRequested event.
+         * @param name The name of the new room.
+         * @param maxP The maximum number of players allowed in the room.
+         */
+        explicit CreateRoomRequested(const std::string &name, const std::uint8_t maxP)
+            : roomName(name), maxPlayers(maxP)
+        {
+        }
+
+        std::string roomName;    ///> The name of the new room.
+        std::uint8_t maxPlayers; ///> The maximum number of players allowed in the room.
+    };
+
+    /**
+     * @brief Event triggered when a request to join a room is made.
+     */
+    struct JoinRoomRequested : Event {
+        /**
+         * @brief Constructor for JoinRoomRequested event.
+         * @param id The ID of the room to join.
+         */
+        explicit JoinRoomRequested(const std::uint32_t id) : roomId(id)
+        {
+        }
+
+        std::uint32_t roomId; ///> The ID of the room to join.
+    };
 } // namespace Engine

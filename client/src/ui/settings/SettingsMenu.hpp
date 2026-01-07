@@ -105,7 +105,7 @@ namespace Engine
          *
          * @return true if the controls preset has been changed, false otherwise.
          */
-        bool controlsChanged() const noexcept;
+        [[nodiscard]] bool controlsChanged() const noexcept;
 
         /**
          * @brief Handle resizing of the settings menu.

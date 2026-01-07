@@ -144,19 +144,25 @@ namespace Game
         dst.clear();
 
         std::unordered_map<size_t, Ecs::Entity> remap;
-        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](const Ecs::Entity e, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
-                const Ecs::Entity newEnt = dst.createEntity();
-                remap[static_cast<size_t>(e)] = newEnt;
-            });
 
-        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](const Ecs::Entity e, const Ecs::Position &p, const Ecs::Velocity &v, const Ecs::Drawable &d) {
+        src.view<Ecs::Position, Ecs::Drawable>([&](const Ecs::Entity e, const Ecs::Position &, const Ecs::Drawable &) {
+            const Ecs::Entity newEnt = dst.createEntity();
+            remap[static_cast<size_t>(e)] = newEnt;
+        });
+
+        src.view<Ecs::Position, Ecs::Drawable>(
+            [&](const Ecs::Entity e, const Ecs::Position &p, const Ecs::Drawable &d) {
                 const Ecs::Entity newEnt = remap[static_cast<size_t>(e)];
                 dst.emplaceComponent<Ecs::Position>(newEnt, p);
-                dst.emplaceComponent<Ecs::Velocity>(newEnt, v);
                 dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
             });
+
+        auto &srcVel = src.getComponents<Ecs::Velocity>();
+        for (const auto &[oldId, newEnt] : remap) {
+            if (const auto &v = srcVel.at(oldId)) {
+                dst.emplaceComponent<Ecs::Velocity>(newEnt, *v);
+            }
+        }
 
         auto &srcBg = src.getComponents<Ecs::Background>();
         for (const auto &[oldId, newEnt] : remap) {

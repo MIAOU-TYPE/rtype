@@ -46,9 +46,7 @@ namespace Engine
         void render() override;
 
       private:
-        std::shared_ptr<Graphics::IGraphics> _graphics; ///> Shared pointer to the graphics interface.
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer interface.
-        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Shared pointer to the music registry.
-        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
+        std::shared_ptr<MusicRegistry> _musicRegistry; ///> Shared pointer to the music registry.
+        std::shared_ptr<SoundRegistry> _soundRegistry; ///> Shared pointer to the sound registry.
     };
 } // namespace Engine

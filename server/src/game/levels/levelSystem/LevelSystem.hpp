@@ -12,10 +12,10 @@
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Attack.hpp"
+#include "Background.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
-#include "Background.hpp"
 #include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
@@ -45,12 +45,12 @@ namespace Game
         static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned);
 
         /**
-         * @brief Initialize background entities from level data.
+         * @brief Spawn background layers for the level (creates 2 tiles for seamless scrolling).
          *
-         * @param world The game world to spawn background in.
-         * @param level The level containing background layer data.
+         * @param world The game world to spawn backgrounds in.
+         * @param level The current level data containing background definitions.
          */
-        static void initializeBackground(IGameWorld &world, const Level &level);
+        static void spawnBackgrounds(IGameWorld &world, const Level &level);
 
       private:
         /**

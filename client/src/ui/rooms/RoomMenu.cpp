@@ -69,7 +69,7 @@ namespace Engine
 
     void RoomMenu::layout()
     {
-        const auto tex = _renderer->textures()->getSize(_backgroundTexture);
+        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
         auto centerX = [&](UI::UIButton &b, float x, float y) {
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
@@ -81,9 +81,9 @@ namespace Engine
         updateTextStrings();
         if (_backgroundTexture == Graphics::InvalidTexture)
             return;
-        _backgroundCmd.frame = {0, 0, static_cast<int>(tex.width), static_cast<int>(tex.height)};
+        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
         _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(tex.width), h / static_cast<float>(tex.height)};
+        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
         _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, h * 0.07f);
         _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, h * 0.16f);
 
@@ -192,8 +192,10 @@ namespace Engine
                 }))
                 return;
             if (_root.join->onClickReleased(mx, my, [&] {
-                }))
+                    _joinRoom = true;
+                })) {
                 return;
+            }
             if (_root.back->onClickReleased(mx, my, [&] {
                     _backToMenu = true;
                 }))
@@ -254,6 +256,7 @@ namespace Engine
                 break;
             case Action::Back: _page = Page::Root; break;
             case Action::None: break;
+            case Action::Confirm: _createRoom = true; break;
             default:;
         }
         if (refreshCatalog)
@@ -323,4 +326,25 @@ namespace Engine
     {
         return _backToMenu;
     }
+
+    bool RoomMenu::wantsCreateRoom() const noexcept
+    {
+        return _createRoom;
+    }
+
+    bool RoomMenu::wantsJoinRoom() const noexcept
+    {
+        return _joinRoom;
+    }
+
+    void RoomMenu::consumeCreateRoomState() noexcept
+    {
+        _createRoom = false;
+    }
+
+    void RoomMenu::consumeJoinRoomState() noexcept
+    {
+        _joinRoom = false;
+    }
+
 } // namespace Engine

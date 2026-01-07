@@ -31,6 +31,7 @@
 #include "UDPPacketFactory.hpp"
 #include "UDPPacketRouter.hpp"
 
+#include "GameState.hpp"
 #include "IRenderer.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"

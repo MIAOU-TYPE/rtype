@@ -13,5 +13,5 @@ namespace Rand
 
     std::uniform_real_distribution<float> patrolVelX(-10.f, 10.f);
     std::uniform_real_distribution<float> patrolVelY(-25.f, 25.f);
-    std::uniform_real_distribution<float> enemyY(50.f, 450.f);
+    std::uniform_real_distribution<float> enemyY(30.f, 700.f);
 } // namespace Rand

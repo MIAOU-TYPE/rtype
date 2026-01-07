@@ -89,6 +89,18 @@ namespace Engine
         [[nodiscard]] float getMusicVolume() const noexcept;
 
         /**
+         * @brief Set the volume before mute.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        void setVolumeBeforeMute(float volume);
+
+        /**
+         * @brief Get the volume before mute.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getVolumeBeforeMute() const noexcept;
+
+        /**
          * @brief Load and play a music track from file.
          * @param path Path to the music file.
          * @param loop Whether the music should loop.
@@ -102,5 +114,6 @@ namespace Engine
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
         float _globalMusicVolume = 50.f;                          ///> Global music volume
+        float _volumeBeforeMute = 50.f;                           ///> Volume before mute
     };
 } // namespace Engine

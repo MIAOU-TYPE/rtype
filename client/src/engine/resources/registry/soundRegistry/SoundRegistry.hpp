@@ -78,9 +78,22 @@ namespace Engine
          */
         [[nodiscard]] float getSoundVolume() const noexcept;
 
+        /**
+         * @brief Set the volume before mute.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        void setVolumeBeforeMute(float volume);
+
+        /**
+         * @brief Get the volume before mute.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getVolumeBeforeMute() const noexcept;
+
       private:
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr; ///> Sound manager
 
         float _globalSoundVolume = 100.f; ///> Global sound volume
+        float _volumeBeforeMute = 100.f;  ///> Volume before mute
     };
 } // namespace Engine

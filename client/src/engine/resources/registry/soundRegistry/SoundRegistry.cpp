@@ -36,4 +36,14 @@ namespace Engine
     {
         return _globalSoundVolume;
     }
+
+    void SoundRegistry::setVolumeBeforeMute(float volume)
+    {
+        _volumeBeforeMute = volume;
+    }
+
+    float SoundRegistry::getVolumeBeforeMute() const noexcept
+    {
+        return _volumeBeforeMute;
+    }
 } // namespace Engine

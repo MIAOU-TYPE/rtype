@@ -296,8 +296,7 @@ namespace Thread
             });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([&](const uint32_t, const uint32_t) {
-            _stateManager->changeState(
-                std::make_unique<Engine::GameState>(_graphics, _renderer, _musicRegistry, _soundRegistry));
+            _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
         });
 
         while (_running) {

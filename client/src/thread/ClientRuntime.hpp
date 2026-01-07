@@ -222,7 +222,13 @@ namespace Thread
          * @details This method continuously receives TCP packets from the TCP client
          * and routes them for processing.
          */
-        void runTcp() const;
+        void runTcp();
+
+        /**
+         * @brief Atomic flag to indicate if a game start has been requested.
+         */
+        std::atomic_bool _pendingGameStart{false};
+
     };
 
 } // namespace Thread

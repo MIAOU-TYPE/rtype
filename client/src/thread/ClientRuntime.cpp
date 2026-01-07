@@ -302,9 +302,9 @@ namespace Thread
                 _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
             });
 
-            _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
-                _pendingGameStart.store(true, std::memory_order_release);
-            });
+        _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
+            _pendingGameStart.store(true, std::memory_order_release);
+        });
 
         while (_running) {
             _tcpClient->receivePackets();

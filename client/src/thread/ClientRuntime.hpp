@@ -228,7 +228,6 @@ namespace Thread
          * @brief Atomic flag to indicate if a game start has been requested.
          */
         std::atomic_bool _pendingGameStart{false};
-
     };
 
 } // namespace Thread

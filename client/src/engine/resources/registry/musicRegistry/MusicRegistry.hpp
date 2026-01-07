@@ -77,6 +77,12 @@ namespace Engine
         void stopMusic();
 
         /**
+         * @brief Check if music is currently playing.
+         * @return true if music is playing, false otherwise.
+         */
+        [[nodiscard]] bool isMusicPlaying() const noexcept;
+
+        /**
          * @brief Set the volume of the currently playing music.
          * @param volume Volume level (0.0 to 100.0).
          */

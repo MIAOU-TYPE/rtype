@@ -40,6 +40,11 @@ namespace Engine
         _currentMusicHandle = InvalidAudio;
     }
 
+    bool MusicRegistry::isMusicPlaying() const noexcept
+    {
+        return _currentMusicHandle != InvalidAudio;
+    }
+
     void MusicRegistry::setMusicVolume(float volume)
     {
         _globalMusicVolume = volume;

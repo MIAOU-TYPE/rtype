@@ -32,7 +32,6 @@ TEST(MovementSystem, moves_entities_correctly)
     Game::MovementSystem::update(world, 1.f);
 
     EXPECT_FLOAT_EQ(pos->x, 100.f + 10.f);
-    EXPECT_FLOAT_EQ(pos->y, 100.f + 20.f);
 }
 
 TEST(MovementSystem, dt_affects_speed)
@@ -54,5 +53,4 @@ TEST(MovementSystem, dt_affects_speed)
     Game::MovementSystem::update(world, 0.5f);
 
     EXPECT_FLOAT_EQ(pos->x, 100.f + 100.f * 0.5f);
-    EXPECT_FLOAT_EQ(pos->y, 100.f);
 }

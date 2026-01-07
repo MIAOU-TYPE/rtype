@@ -23,11 +23,8 @@ namespace Game
         auto &registry = world.registry();
 
         registry.view<Ecs::Background, Ecs::Position>([&](Ecs::Entity entity, Ecs::Background &bg, Ecs::Position &pos) {
-            // Si la tuile est complètement sortie à gauche de l'écran
-            if (pos.x + bg.screenWidth < 0) {
-                std::cout << "[BackgroundSystem] Tile at x=" << pos.x 
-                          << " went offscreen, repositioning to x=" << (pos.x + bg.screenWidth * 2) << "\n";
-                pos.x += bg.screenWidth * 2;
+            if (pos.x + bg.tileWidth <= 0) {
+                pos.x += bg.tileWidth * 2.0f;
             }
         });
     }

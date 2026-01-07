@@ -97,7 +97,7 @@ namespace
         level.backgroundLayers.clear();
 
         if (!j.contains("background") || !j.at("background").is_object())
-            return true; // Background is optional
+            return true;
 
         const auto &bgNode = j.at("background");
 

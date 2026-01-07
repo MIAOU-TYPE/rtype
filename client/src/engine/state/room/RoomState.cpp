@@ -29,12 +29,13 @@ namespace Engine
         if (_menu->wantsBackToMenu())
             manager.queueState(std::make_unique<MenuState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
-        if (auto &create = _menu->wantsCreateRoom()) {
-            create = false;
+        if (_menu->wantsCreateRoom()) {
+            _menu->consumeCreateRoomState();
             _eventBus->emit<CreateRoomRequested>(CreateRoomRequested("default", 2));
+            _eventBus->emit<JoinRoomRequested>(JoinRoomRequested(1));
         }
-        if (auto &join = _menu->wantsJoinRoom()) {
-            join = false;
+        if (_menu->wantsJoinRoom()) {
+            _menu->consumeJoinRoomState();
             _eventBus->emit<JoinRoomRequested>(JoinRoomRequested(1));
         }
     }

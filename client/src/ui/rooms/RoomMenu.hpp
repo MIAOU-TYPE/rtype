@@ -96,13 +96,23 @@ namespace Engine
          * @brief Checks if the user wants to create a room.
          * @return True if the user wants to create a room, false otherwise.
          */
-        [[nodiscard]] bool &wantsCreateRoom() noexcept;
+        [[nodiscard]] bool wantsCreateRoom() const noexcept;
 
         /**
          * @brief Checks if the user wants to join a room.
          * @return True if the user wants to join a room, false otherwise.
          */
-        [[nodiscard]] bool &wantsJoinRoom() noexcept;
+        [[nodiscard]] bool wantsJoinRoom() const noexcept;
+
+        /**
+         * @brief Consumes the create room state.
+         */
+        void consumeCreateRoomState() noexcept;
+
+        /**
+         * @brief Consumes the join room state.
+         */
+        void consumeJoinRoomState() noexcept;
 
       private:
         /**

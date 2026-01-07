@@ -327,13 +327,24 @@ namespace Engine
         return _backToMenu;
     }
 
-    bool &RoomMenu::wantsCreateRoom() noexcept
+    bool RoomMenu::wantsCreateRoom() const noexcept
     {
         return _createRoom;
     }
 
-    bool &RoomMenu::wantsJoinRoom() noexcept
+    bool RoomMenu::wantsJoinRoom() const noexcept
     {
         return _joinRoom;
     }
+
+    void RoomMenu::consumeCreateRoomState() noexcept
+    {
+        _createRoom = false;
+    }
+
+    void RoomMenu::consumeJoinRoomState() noexcept
+    {
+        _joinRoom = false;
+    }
+
 } // namespace Engine

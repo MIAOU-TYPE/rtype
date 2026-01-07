@@ -26,12 +26,14 @@ namespace Engine
          * @param graphics Shared pointer to the graphics interface.
          * @param renderer Shared pointer to the renderer interface.
          * @param roomManager Shared pointer to the room manager service.
+         * @param eventBus Shared pointer to the event bus.
          * @param musicRegistry Shared pointer to the music registry.
          * @param soundRegistry Shared pointer to the sound registry.
          */
         explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
             std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<MusicRegistry> musicRegistry,
-            std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager);
+            std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager,
+            std::shared_ptr<EventBus> eventBus);
 
         /**
          * @brief Called when entering the state.
@@ -58,6 +60,8 @@ namespace Engine
         std::shared_ptr<RoomManager> _roomManager;      ///> Shared lobby/room service.
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
 
-        bool _pendingResize = false;
+        std::shared_ptr<EventBus> _eventBus; ///> Event bus
+
+        bool _pendingResize = false; ///> Flag indicating if a resize is pending
     };
 } // namespace Engine

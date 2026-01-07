@@ -70,7 +70,7 @@ namespace Engine
         if (_musicRegistry) {
             const float musicVol = _musicRegistry->getMusicVolume();
             const float volumeBeforeMute = _musicRegistry->getVolumeBeforeMute();
-            if (musicVol == 0.f && volumeBeforeMute > 0) {
+            if (musicVol < 0.01f && volumeBeforeMute > 0.01f) {
                 _musicMuted = true;
                 _musicVolume = static_cast<size_t>(volumeBeforeMute);
                 _musicVolumeBeforeMute = static_cast<size_t>(volumeBeforeMute);
@@ -83,7 +83,7 @@ namespace Engine
         if (_soundRegistry) {
             const float sfxVol = _soundRegistry->getSoundVolume();
             const float volumeBeforeMute = _soundRegistry->getVolumeBeforeMute();
-            if (sfxVol == 0.f && volumeBeforeMute > 0) {
+            if (sfxVol < 0.01f && volumeBeforeMute > 0.01f) {
                 _sfxMuted = true;
                 _sfxVolume = static_cast<size_t>(volumeBeforeMute);
                 _sfxVolumeBeforeMute = static_cast<size_t>(volumeBeforeMute);

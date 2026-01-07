@@ -93,7 +93,7 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IAudioManager> _soundManager = nullptr; ///> Sound manager
 
-        float _globalSoundVolume = 100.f; ///> Global sound volume
-        float _volumeBeforeMute = 100.f;  ///> Volume before mute
+        float _globalSoundVolume = 50.f; ///> Global sound volume
+        float _volumeBeforeMute = 50.f;  ///> Volume before mute
     };
 } // namespace Engine

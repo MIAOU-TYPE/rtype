@@ -14,7 +14,9 @@ namespace Utils
         _presets[KeyPreset::Arrows] = {Engine::Key::Up, Engine::Key::Down, Engine::Key::Left, Engine::Key::Right};
         _presets[KeyPreset::ZQSD] = {Engine::Key::Z, Engine::Key::S, Engine::Key::Q, Engine::Key::D};
 
-        load();
+        if (!load()) {
+            std::cerr << "Warning: Failed to load input configuration" << std::endl;
+        }
     }
 
     InputConfig &InputConfig::getInstance()
@@ -32,7 +34,9 @@ namespace Utils
     {
         _currentPreset = preset;
         _needsRebind = true;
-        save();
+        if (!save()) {
+            std::cerr << "Warning: Failed to save input configuration" << std::endl;
+        }
     }
 
     MovementKeys InputConfig::getMovementKeys() const noexcept

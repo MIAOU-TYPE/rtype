@@ -16,11 +16,12 @@ namespace Engine
 
     void HUD::initialize()
     {
-        _fontHandle = _renderer->fonts()->load("fonts/r-type.otf");
+        _fontHandle = _renderer->fonts()->load("fonts/font.ttf");
         if (!_renderer->fonts()->isValid(_fontHandle)) {
-            throw HUDError("Failed to load font 'fonts/r-type.otf' for HUD");
+            throw HUDError("Failed to load font 'fonts/font.ttf' for HUD");
         }
         _scoreText = _renderer->texts()->createText(24, {255, 255, 255, 255});
+        _scoreText->setFont(_fontHandle);
         _scoreText->setPosition(10.f, 10.f);
         _scoreText->setString("Score: 0");
     }

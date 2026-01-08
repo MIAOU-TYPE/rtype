@@ -16,6 +16,32 @@
 namespace Engine
 {
     /**
+     * @brief Exception class for HUD errors.
+     */
+    class HUDError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for HUDError.
+         * @param message The error message.
+         */
+        explicit HUDError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
+    /**
      * @brief Handles the rendering of the Heads-Up Display (HUD) in the game.
      */
     class HUD {

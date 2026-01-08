@@ -64,20 +64,20 @@ namespace Net::Factory
         try {
             if (entities.size() > (std::numeric_limits<std::size_t>::max() - sizeof(SnapshotBatchHeader))
                     / sizeof(SnapshotEntityData)) {
-                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Too many entities in snapshot\n";
+                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Too many entities in snapshot" << std::endl;
                 return nullptr;
             }
 
             const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
 
             if (totalSize > std::numeric_limits<std::uint16_t>::max()) {
-                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Snapshot packet size exceeds limit\n";
+                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Snapshot packet size exceeds limit" << std::endl;
                 return nullptr;
             }
 
             auto packet = _packet->newPacket();
             if (!packet) {
-                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Failed to create new packet\n";
+                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Failed to create new packet" << std::endl;
                 return nullptr;
             }
 

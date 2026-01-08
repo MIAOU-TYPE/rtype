@@ -28,31 +28,32 @@ namespace Ecs
         dispatchPacket(header, raw, total);
     }
 
-    void UDPPacketRouter::dispatchPacket(const HeaderData &header, const std::uint8_t *data, std::size_t size) const
+    void UDPPacketRouter::dispatchPacket(
+        const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT:
-                if (size != sizeof(DefaultData))
+                if (payloadSize != sizeof(DefaultData))
                     break;
                 handleAccept();
                 break;
             case Net::Protocol::UDP::REJECT:
-                if (size != sizeof(DefaultData))
+                if (payloadSize != sizeof(DefaultData))
                     break;
                 handleReject();
                 break;
             case Net::Protocol::UDP::GAME_OVER:
-                if (size != sizeof(DefaultData))
+                if (payloadSize != sizeof(DefaultData))
                     break;
                 handleGameOver();
                 break;
             case Net::Protocol::UDP::PONG:
-                if (size != sizeof(DefaultData))
+                if (payloadSize != sizeof(DefaultData))
                     break;
                 handlePong();
                 break;
-            case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(data, size); break;
-            case Net::Protocol::UDP::SCORE: handleScore(data, size); break;
+            case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
+            case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << int(header.type) << '\n';
                 break;

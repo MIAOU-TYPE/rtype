@@ -32,27 +32,27 @@ namespace Ecs
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT:
-                if (size != sizeof(DefaultData)) break;
+                if (size != sizeof(DefaultData))
+                    break;
                 handleAccept();
                 break;
             case Net::Protocol::UDP::REJECT:
-                if (size != sizeof(DefaultData)) break;
+                if (size != sizeof(DefaultData))
+                    break;
                 handleReject();
                 break;
             case Net::Protocol::UDP::GAME_OVER:
-                if (size != sizeof(DefaultData)) break;
+                if (size != sizeof(DefaultData))
+                    break;
                 handleGameOver();
                 break;
             case Net::Protocol::UDP::PONG:
-                if (size != sizeof(DefaultData)) break;
+                if (size != sizeof(DefaultData))
+                    break;
                 handlePong();
                 break;
-            case Net::Protocol::UDP::SNAPSHOT:
-                handleSnapEntity(data, size);
-                break;
-            case Net::Protocol::UDP::SCORE:
-                handleScore(data, size);
-                break;
+            case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(data, size); break;
+            case Net::Protocol::UDP::SCORE: handleScore(data, size); break;
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << int(header.type) << '\n';
                 break;

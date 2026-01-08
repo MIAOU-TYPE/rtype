@@ -10,6 +10,7 @@
 #include <array>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <mutex>
 #include <queue>
 #include <stdexcept>
@@ -19,6 +20,7 @@
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
 #include "TCPPacket.hpp"
+
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>

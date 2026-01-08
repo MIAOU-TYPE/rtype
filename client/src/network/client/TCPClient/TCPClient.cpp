@@ -90,6 +90,7 @@ namespace Network
             _socketFd = kInvalidSocket;
         }
         (void) _netWrapper->cleanupNetwork();
+        std::cout << "{TCPClient::close} TCP Client stopped.\n";
     }
 
     void TCPClient::setNonBlocking(const bool nonBlocking)

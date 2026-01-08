@@ -77,10 +77,34 @@ namespace Engine
         void stopMusic();
 
         /**
+         * @brief Check if music is currently playing.
+         * @return true if music is playing, false otherwise.
+         */
+        [[nodiscard]] bool isMusicPlaying() const noexcept;
+
+        /**
          * @brief Set the volume of the currently playing music.
          * @param volume Volume level (0.0 to 100.0).
          */
         void setMusicVolume(float volume);
+
+        /**
+         * @brief Get the current music volume.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getMusicVolume() const noexcept;
+
+        /**
+         * @brief Set the volume before mute.
+         * @param volume Volume level (0.0 to 100.0).
+         */
+        void setVolumeBeforeMute(float volume);
+
+        /**
+         * @brief Get the volume before mute.
+         * @return Volume level (0.0 to 100.0).
+         */
+        [[nodiscard]] float getVolumeBeforeMute() const noexcept;
 
         /**
          * @brief Load and play a music track from file.
@@ -95,5 +119,7 @@ namespace Engine
         std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr; ///> Music manager
 
         AudioHandle _currentMusicHandle = Graphics::InvalidAudio; ///> Currently playing music handle
+        float _globalMusicVolume = 50.f;                          ///> Global music volume
+        float _volumeBeforeMute = 50.f;                           ///> Volume before mute
     };
 } // namespace Engine

@@ -17,8 +17,10 @@ namespace Engine
     void GameState::onEnter()
     {
         try {
-            if (_musicRegistry)
-                (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, 50.f);
+            if (_musicRegistry && !_musicRegistry->isMusicPlaying()) {
+                const float currentVolume = _musicRegistry->getMusicVolume();
+                (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, currentVolume);
+            }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{GameState::onEnter} ") + e.what());
         }

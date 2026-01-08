@@ -132,6 +132,18 @@ namespace Thread
                 Utils::InputConfig::getInstance().clearRebindFlag();
             }
 
+            if (Utils::InputConfig::getInstance().needsRebind()) {
+                rebindControls();
+                Utils::InputConfig::getInstance().clearRebindFlag();
+            }
+
+            if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
+                try {
+                    _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
+                } catch (...) {
+                    std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
+                }
+            }
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
             _stateManager->update(_input->consumeFrame());
@@ -305,15 +317,15 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::runTcp() const
+    void ClientRuntime::runTcp()
     {
         _tcpPacketRouter->sink()->onWelcomeSubscribe(
             [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
                 _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
             });
 
-        _tcpPacketRouter->sink()->onGameStartSubscribe([&](const uint32_t, const uint32_t) {
-            _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
+        _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
+            _pendingGameStart.store(true, std::memory_order_release);
         });
 
         while (_running) {

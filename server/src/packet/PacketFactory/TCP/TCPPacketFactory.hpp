@@ -129,8 +129,7 @@ namespace Net::Factory
          * @param payload The payload data for the packet.
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> make(
-            const sockaddr_in &addr, const std::vector<uint8_t> &payload) const;
+        [[nodiscard]] std::shared_ptr<IPacket> make(const sockaddr_in &addr, const std::vector<uint8_t> &payload) const;
 
         std::shared_ptr<IPacket> _packet = nullptr; ///> Template packet for creating new packets
     };

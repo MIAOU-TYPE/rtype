@@ -49,8 +49,8 @@ namespace Network
         _protocolErrorCbs.emplace_back(std::move(cb));
     }
 
-    void TCPMessageSink::onWelcome(const uint32_t req, const uint16_t ver, const uint32_t sessionId,
-        const uint16_t udpPort, const uint64_t token)
+    void TCPMessageSink::onWelcome(
+        const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
         _isConnected = true;
         _connectData = {sessionId, token, udpPort};

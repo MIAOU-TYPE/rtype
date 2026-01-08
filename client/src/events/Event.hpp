@@ -129,13 +129,12 @@ namespace Engine
          * @param name The name of the new room.
          * @param maxP The maximum number of players allowed in the room.
          */
-        explicit CreateRoomRequested(std::string name, const uint8_t maxP)
-            : roomName(std::move(name)), maxPlayers(maxP)
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP) : roomName(std::move(name)), maxPlayers(maxP)
         {
         }
 
-        std::string roomName;    ///> The name of the new room.
-        uint8_t maxPlayers; ///> The maximum number of players allowed in the room.
+        std::string roomName; ///> The name of the new room.
+        uint8_t maxPlayers;   ///> The maximum number of players allowed in the room.
     };
 
     /**

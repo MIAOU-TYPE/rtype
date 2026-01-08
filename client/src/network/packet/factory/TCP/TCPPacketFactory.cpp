@@ -71,8 +71,7 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeJoinRoom(
-        const uint32_t req, const uint32_t roomId) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeJoinRoom(const uint32_t req, const uint32_t roomId) const
     {
         try {
             Net::TCP::Writer b;

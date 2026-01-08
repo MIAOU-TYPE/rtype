@@ -88,8 +88,7 @@ namespace Network
          * @param udpPort The UDP port assigned to the client.
          * @param token The authentication token.
          */
-        void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort,
-            uint64_t token) override;
+        void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort, uint64_t token) override;
 
         /**
          * @brief Event handler for error messages.

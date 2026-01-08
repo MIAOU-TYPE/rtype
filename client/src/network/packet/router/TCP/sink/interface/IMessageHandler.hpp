@@ -34,8 +34,7 @@ namespace Network
          * @param udpPort The UDP port assigned to the client.
          * @param token The authentication token.
          */
-        virtual void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort,
-            uint64_t token) = 0;
+        virtual void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort, uint64_t token) = 0;
 
         /**
          * @brief onError is called when an error message is received.
@@ -89,11 +88,10 @@ namespace Network
 
         using WelcomeCb = std::function<void(uint32_t, uint16_t, uint32_t, uint16_t,
             uint64_t)>; ///> Callback type for welcome messages
-        using ErrorCb =
-            std::function<void(uint32_t, uint16_t, std::string_view)>; ///> Callback type for error messages
-        using RoomsListCb = std::function<void(
-            uint32_t, const std::vector<RoomData> &)>;                 ///> Callback type for rooms list messages
-        using RoomIdCb = std::function<void(uint32_t, uint32_t)>; ///> Callback type for room ID messages
+        using ErrorCb = std::function<void(uint32_t, uint16_t, std::string_view)>; ///> Callback type for error messages
+        using RoomsListCb =
+            std::function<void(uint32_t, const std::vector<RoomData> &)>; ///> Callback type for rooms list messages
+        using RoomIdCb = std::function<void(uint32_t, uint32_t)>;         ///> Callback type for room ID messages
         using ProtoErrCb =
             std::function<void(uint32_t, std::string_view)>; ///> Callback type for protocol error messages
 

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include "HUD.hpp"
 #include "IGameState.hpp"
 #include "MusicRegistry.hpp"
@@ -50,10 +51,10 @@ namespace Engine
          * @param musicRegistry Shared pointer to the music registry.
          * @param soundRegistry Shared pointer to the sound registry.
          * @param renderer Shared pointer to the renderer.
-         * @param world Reference to the client world.
+         * @param getScore Function to get the current score.
          */
         explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-            std::shared_ptr<Graphics::IRenderer> renderer, World::ClientWorld &world);
+            std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
 
         /**
          * @brief Called when entering the state.

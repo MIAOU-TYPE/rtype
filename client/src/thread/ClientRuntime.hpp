@@ -137,7 +137,7 @@ namespace Thread
 
         std::shared_ptr<Graphics::IGraphics> _graphics = nullptr;      ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
-        std::unique_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
+        std::shared_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
 
         std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache

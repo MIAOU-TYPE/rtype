@@ -26,7 +26,7 @@ namespace Engine
 
             _hud->initialize();
         } catch (const std::exception &e) {
-            throw std::runtime_error(std::string("{GameState::onEnter} ") + e.what());
+            throw GameStateError(std::string("{GameState::onEnter} ") + e.what());
         }
     }
 

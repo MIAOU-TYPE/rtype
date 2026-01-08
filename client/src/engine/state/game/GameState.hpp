@@ -15,6 +15,32 @@
 namespace Engine
 {
     /**
+     * @brief Exception class for GameState errors.
+     */
+    class GameStateError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for GameStateError.
+         * @param message The error message.
+         */
+        explicit GameStateError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
+    /**
      * @brief Represents the Game state of the game.
      */
     class GameState : public IGameState {

@@ -73,7 +73,7 @@ inline uint64_t be64toh(uint64_t x)
  * @param x The 64-bit integer in network byte order.
  * @return The 64-bit integer in host byte order.
  */
-static inline std::uint64_t ntohll(std::uint64_t x)
+static inline uint64_t ntohll(uint64_t x)
 {
     return be64toh(x);
 }
@@ -83,7 +83,7 @@ static inline std::uint64_t ntohll(std::uint64_t x)
  * @param x The 64-bit integer in host byte order.
  * @return The 64-bit integer in network byte order.
  */
-static inline std::uint64_t htonll(std::uint64_t x)
+static inline uint64_t htonll(uint64_t x)
 {
     return htobe64(x);
 }

@@ -21,4 +21,4 @@ struct ScoreData {
 
 #pragma pack(pop)
 
-static_assert(sizeof(ScoreData) == 8, "ScoreData layout mismatch");
+static_assert(sizeof(ScoreData) == 12, "ScoreData layout mismatch");

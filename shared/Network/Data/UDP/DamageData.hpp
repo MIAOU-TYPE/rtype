@@ -23,4 +23,4 @@ struct DamageData {
 
 #pragma pack(pop)
 
-static_assert(sizeof(DamageData) == 10, "DamageData layout mismatch");
+static_assert(sizeof(DamageData) == 14, "DamageData layout mismatch");

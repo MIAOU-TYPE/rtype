@@ -297,10 +297,9 @@ namespace Thread
 
     void ClientRuntime::runTcp()
     {
-        _tcpPacketRouter->sink()->onWelcomeSubscribe(
-            [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
-                _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
-            });
+        _tcpPacketRouter->sink()->onWelcomeSubscribe([&](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
+            _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
+        });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
             _pendingGameStart.store(true, std::memory_order_release);

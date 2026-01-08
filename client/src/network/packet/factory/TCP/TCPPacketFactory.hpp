@@ -39,7 +39,7 @@ namespace Network
          * @param payload The payload data for the packet.
          * @return A shared pointer to the created TCP packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> make(const std::vector<std::uint8_t> &payload) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> make(const std::vector<uint8_t> &payload) const;
 
         /**
          * @brief Create a Hello packet.
@@ -47,14 +47,14 @@ namespace Network
          * @param ver The version number for the Hello packet.
          * @return A shared pointer to the created Hello packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeHello(std::uint32_t req, std::uint16_t ver) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeHello(uint32_t req, uint16_t ver) const;
 
         /**
          * @brief Create a ListRooms packet.
          * @param req The request ID for the ListRooms packet.
          * @return A shared pointer to the created ListRooms packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeListRooms(std::uint32_t req) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeListRooms(uint32_t req) const;
 
         /**
          * @brief Create a CreateRoom packet.
@@ -64,7 +64,7 @@ namespace Network
          * @return A shared pointer to the created CreateRoom packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(
-            std::uint32_t req, std::string_view roomName, std::uint8_t maxPlayers) const;
+            uint32_t req, std::string_view roomName, uint8_t maxPlayers) const;
 
         /**
          * @brief Create a JoinRoom packet.
@@ -72,21 +72,21 @@ namespace Network
          * @param roomId The ID of the room to join.
          * @return A shared pointer to the created JoinRoom packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeJoinRoom(std::uint32_t req, std::uint32_t roomId) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeJoinRoom(uint32_t req, uint32_t roomId) const;
 
         /**
          * @brief Create a LeaveRoom packet.
          * @param req The request ID for the LeaveRoom packet.
          * @return A shared pointer to the created LeaveRoom packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeLeaveRoom(std::uint32_t req) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeLeaveRoom(uint32_t req) const;
 
         /**
          * @brief Create a StartGame packet.
          * @param req The request ID for the StartGame packet.
          * @return A shared pointer to the created StartGame packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeStartGame(std::uint32_t req) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeStartGame(uint32_t req) const;
 
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets

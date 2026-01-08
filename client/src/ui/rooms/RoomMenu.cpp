@@ -273,7 +273,7 @@ namespace Engine
             return;
         }
         _selectedWorld = std::clamp(_selectedWorld, 0, static_cast<int>(_worlds.size()) - 1);
-        _selectedMaxPlayers = static_cast<std::uint8_t>(std::clamp(static_cast<int>(_selectedMaxPlayers), 1, 4));
+        _selectedMaxPlayers = static_cast<uint8_t>(std::clamp(static_cast<int>(_selectedMaxPlayers), 1, 4));
         _levels.clear();
         try {
             const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;

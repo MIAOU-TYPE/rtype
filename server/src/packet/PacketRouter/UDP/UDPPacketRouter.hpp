@@ -69,7 +69,7 @@ namespace Net
          * @param payload Pointer to the payload data of the input packet.
          * @param payloadSize Size of the payload data.
          */
-        void handleInput(int sessionId, const std::uint8_t *payload, std::size_t payloadSize) const;
+        void handleInput(int sessionId, const uint8_t *payload, std::size_t payloadSize) const;
 
         /**
          * @brief Handler for player ping packets.
@@ -112,6 +112,6 @@ namespace Net
             _sessions; ///> Pointer to the SessionManager for managing player sessions.
         std::shared_ptr<Engine::RoomManager> _roomManager; ///> Pointer to the RoomManager for managing game rooms.
 
-        static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
+        static constexpr uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
     };
 } // namespace Net

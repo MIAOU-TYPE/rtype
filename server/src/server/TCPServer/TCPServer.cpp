@@ -86,9 +86,6 @@ namespace Net::Server
     void TCPServer::stop() noexcept
     {
         try {
-            if (!_isRunning.exchange(false))
-                return;
-
             {
                 std::scoped_lock lock(_mutex);
                 for (const auto &sock : _clients | std::views::keys)
@@ -100,6 +97,7 @@ namespace Net::Server
             if (_listenFd != kInvalidSocket) {
                 _netWrapper->closeSocket(_listenFd);
                 _listenFd = kInvalidSocket;
+                std::cout << "{TCPServer::stop} TCP Server Stopped." << std::endl;
             }
 
             (void) _netWrapper->cleanupNetwork();

@@ -20,7 +20,7 @@ namespace Engine
     /**
      * @brief room identifier type
      */
-    using RoomId = std::uint32_t;
+    using RoomId = uint32_t;
 
     /**
      * @class Room

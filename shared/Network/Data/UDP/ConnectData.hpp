@@ -24,6 +24,8 @@ struct ConnectData {
     uint32_t tokenLo;   ///> Low part of the authentication token
 };
 
+static_assert(sizeof(ConnectData) == 20, "ConnectData layout mismatch");
+
 #pragma pack(pop)
 
 struct ConnectInfo {

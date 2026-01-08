@@ -19,8 +19,8 @@ namespace Net::Factory
 
     HeaderData UDPPacketFactory::makeHeader(const uint8_t type, const uint8_t version, uint16_t size) noexcept
     {
-        HeaderData header;
-
+        HeaderData header{};
+        std::memcpy(header.magic, kPacketMagic, sizeof(kPacketMagic));
         header.type = type;
         header.version = version;
         header.size = htons(size);
@@ -62,21 +62,18 @@ namespace Net::Factory
         const std::vector<SnapshotEntity> &entities) const noexcept
     {
         try {
-            SnapshotBatchHeader header{};
-            if (entities.size()
-                > (std::numeric_limits<size_t>::max() - sizeof(SnapshotBatchHeader)) / sizeof(SnapshotEntityData)) {
+            if (entities.size() > (std::numeric_limits<std::size_t>::max() - sizeof(SnapshotBatchHeader))
+                    / sizeof(SnapshotEntityData)) {
                 std::cerr << "{UDPPacketFactory::createSnapshotPacket} Too many entities in snapshot" << std::endl;
                 return nullptr;
             }
 
             const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
+
             if (totalSize > std::numeric_limits<uint16_t>::max()) {
                 std::cerr << "{UDPPacketFactory::createSnapshotPacket} Snapshot packet size exceeds limit" << std::endl;
                 return nullptr;
             }
-
-            header.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
-            header.count = htons(static_cast<uint16_t>(entities.size()));
 
             auto packet = _packet->newPacket();
             if (!packet) {
@@ -84,13 +81,19 @@ namespace Net::Factory
                 return nullptr;
             }
 
-            uint8_t *buf = packet->buffer();
-
             if (totalSize > packet->capacity())
                 throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Snapshot too large");
 
-            std::memcpy(buf, &header, sizeof(header));
-            size_t offset = sizeof(header);
+            uint8_t *buf = packet->buffer();
+            if (!buf)
+                throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Null buffer");
+
+            SnapshotBatchHeader hdr{};
+            hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
+            hdr.count = htons(static_cast<uint16_t>(entities.size()));
+
+            std::memcpy(buf, &hdr, sizeof(hdr));
+            std::size_t offset = sizeof(hdr);
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};

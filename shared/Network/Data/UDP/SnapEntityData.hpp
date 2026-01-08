@@ -31,7 +31,7 @@ struct SnapshotBatchHeader {
 };
 
 #pragma pack(pop)
-static_assert(sizeof(SnapshotBatchHeader) == 6, "SnapshotBatchHeader layout mismatch");
+static_assert(sizeof(SnapshotBatchHeader) == 10, "SnapshotBatchHeader layout mismatch");
 
 #pragma pack(push, 1)
 

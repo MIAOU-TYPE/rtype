@@ -168,7 +168,7 @@ namespace Engine
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
-    void SettingsMenu::applyMusicVolumeChange(size_t volume, bool isMuted)
+    void SettingsMenu::applyMusicVolumeChange(const size_t volume, const bool isMuted) noexcept
     {
         if (!_musicRegistry)
             return;
@@ -181,7 +181,7 @@ namespace Engine
         }
     }
 
-    void SettingsMenu::applySoundVolumeChange(size_t volume, bool isMuted)
+    void SettingsMenu::applySoundVolumeChange(const size_t volume, const bool isMuted) noexcept
     {
         if (!_soundRegistry)
             return;

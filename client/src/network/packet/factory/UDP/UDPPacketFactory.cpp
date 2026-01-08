@@ -20,7 +20,7 @@ namespace Network
     {
         HeaderData header{};
 
-        std::memcpy(header.magic, kPacketMagic, 4);
+        std::memcpy(header.magic, kPacketMagic, sizeof(header.magic));
         header.type = type;
         header.version = VERSION;
         header.size = htons(size);

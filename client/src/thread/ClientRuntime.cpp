@@ -122,7 +122,8 @@ namespace Thread
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
-                    _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
+                    _stateManager->changeState(
+                        std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, *_world));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }

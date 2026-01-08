@@ -1,16 +1,11 @@
-/*
-** EPITECH PROJECT, 2025
-** R-Type
-** File description:
-** GameState
-*/
-
 #include "GameState.hpp"
 
 namespace Engine
 {
-    GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
-        : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
+    GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
+        std::shared_ptr<Graphics::IRenderer> renderer, World::ClientWorld &world)
+        : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry)),
+          _hud(std::make_unique<HUD>(renderer, world))
     {
     }
 
@@ -21,8 +16,10 @@ namespace Engine
                 const float currentVolume = _musicRegistry->getMusicVolume();
                 (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, currentVolume);
             }
+
+            _hud->initialize();
         } catch (const std::exception &e) {
-            throw MenuError(std::string("{GameState::onEnter} ") + e.what());
+            throw std::runtime_error(std::string("{GameState::onEnter} ") + e.what());
         }
     }
 
@@ -34,5 +31,6 @@ namespace Engine
 
     void GameState::render()
     {
+        _hud->render();
     }
 } // namespace Engine

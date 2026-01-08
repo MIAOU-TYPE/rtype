@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** GameState
+*/
+
 #include "GameState.hpp"
 
 namespace Engine

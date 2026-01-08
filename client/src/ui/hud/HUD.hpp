@@ -7,8 +7,8 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
-#include "ClientWorld.hpp"
 #include "IFontManager.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
@@ -47,11 +47,11 @@ namespace Engine
     class HUD {
       public:
         /**
-         * @brief Constructs a HUD with the given renderer and world.
+         * @brief Constructs a HUD with the given renderer and score getter.
          * @param renderer Shared pointer to the renderer.
-         * @param world Reference to the client world.
+         * @param getScore Function to get the current score.
          */
-        explicit HUD(std::shared_ptr<Graphics::IRenderer> renderer, World::ClientWorld &world);
+        explicit HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
 
         /**
          * @brief Initializes the HUD, loading fonts and creating text objects.
@@ -65,7 +65,7 @@ namespace Engine
 
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
-        World::ClientWorld &_world;                     ///> Reference to the client world.
+        std::function<int()> _getScore;                 ///> Function to get the current score.
         Graphics::FontHandle _fontHandle;               ///> Handle to the font for HUD text.
         std::unique_ptr<Graphics::IText> _scoreText;    ///> Text object for displaying the score.
     };

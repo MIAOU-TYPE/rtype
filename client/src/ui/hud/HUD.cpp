@@ -9,8 +9,8 @@
 
 namespace Engine
 {
-    HUD::HUD(std::shared_ptr<Graphics::IRenderer> renderer, World::ClientWorld &world)
-        : _renderer(std::move(renderer)), _world(world)
+    HUD::HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore)
+        : _renderer(std::move(renderer)), _getScore(getScore)
     {
     }
 
@@ -29,7 +29,7 @@ namespace Engine
     void HUD::render()
     {
         if (_scoreText) {
-            _scoreText->setString("Score: " + std::to_string(_world.getScore()));
+            _scoreText->setString("Score: " + std::to_string(_getScore()));
             _renderer->draw(*_scoreText);
         }
     }

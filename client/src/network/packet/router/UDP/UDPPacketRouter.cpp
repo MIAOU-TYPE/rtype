@@ -55,7 +55,8 @@ namespace Ecs
             case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
-                std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << int(header.type) << '\n';
+                std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
+                          << '\n';
                 break;
         }
     }

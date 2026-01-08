@@ -32,7 +32,7 @@ bool UDPPacketRouter::validateHeader(const IPacket &pkt, const HeaderData &heade
         return false;
     }
 
-    if (const std::uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
+    if (const uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
         std::cerr << "{UDPPacketRouter} Dropped: size mismatch "
                   << "(header=" << declaredSize << ", actual=" << pkt.size() << ")" << std::endl;
         return false;
@@ -104,7 +104,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
     if (!extractHeader(*packet, header))
         return;
 
-    const std::uint8_t *raw = packet->buffer();
+    const uint8_t *raw = packet->buffer();
     const std::size_t total = packet->size();
 
     if (header.type == Protocol::UDP::CONNECT) {
@@ -120,7 +120,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 
         const uint32_t sid = ntohl(cd.sessionId);
         const uint64_t token =
-            (static_cast<uint64_t>(ntohl(cd.tokenHi)) << 32) | static_cast<std::uint64_t>(ntohl(cd.tokenLo));
+            (static_cast<uint64_t>(ntohl(cd.tokenHi)) << 32) | static_cast<uint64_t>(ntohl(cd.tokenLo));
 
         if (_sessions->getUdpToken(static_cast<int>(sid)) != token) {
             std::cerr << "{UDPPacketRouter} Dropped CONNECT: bad token\n";
@@ -137,7 +137,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
     dispatchPacket(sessionId, header, raw, total);
 }
 
-void UDPPacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
+void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, const std::size_t payloadSize) const
 {
     if (!payload || payloadSize != sizeof(PlayerInputData)) {
         std::cerr << "{UDPPacketRouter::handleInput} Dropped INPUT: bad size\n";
@@ -147,7 +147,7 @@ void UDPPacketRouter::handleInput(const int sessionId, const std::uint8_t *paylo
     PlayerInputData pkt{};
     std::memcpy(&pkt, payload, sizeof(pkt));
 
-    const std::uint8_t flags = pkt.flags;
+    const uint8_t flags = pkt.flags;
     const bool up = (flags & 0x01u) != 0;
     const bool down = (flags & 0x02u) != 0;
     const bool left = (flags & 0x04u) != 0;

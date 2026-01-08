@@ -13,7 +13,7 @@ namespace Network
     {
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::make(const std::vector<std::uint8_t> &payload) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::make(const std::vector<uint8_t> &payload) const
     {
         if (!_packet)
             return nullptr;
@@ -25,11 +25,11 @@ namespace Network
 
         if (!payload.empty())
             std::memcpy(p->buffer(), payload.data(), payload.size());
-        p->setSize(static_cast<std::uint32_t>(payload.size()));
+        p->setSize(static_cast<uint32_t>(payload.size()));
         return p;
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeHello(const std::uint32_t req, const std::uint16_t ver) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeHello(const uint32_t req, const uint16_t ver) const
     {
         try {
             Net::TCP::Writer b;
@@ -43,10 +43,10 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeListRooms(const std::uint32_t req) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeListRooms(const uint32_t req) const
     {
         try {
-            static const std::vector<std::uint8_t> empty{};
+            static const std::vector<uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LIST_ROOMS, req, empty);
             return make(payload);
         } catch (...) {
@@ -56,7 +56,7 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(
-        const std::uint32_t req, const std::string_view roomName, const std::uint8_t maxPlayers) const
+        const uint32_t req, const std::string_view roomName, const uint8_t maxPlayers) const
     {
         try {
             Net::TCP::Writer b;
@@ -72,7 +72,7 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeJoinRoom(
-        const std::uint32_t req, const std::uint32_t roomId) const
+        const uint32_t req, const uint32_t roomId) const
     {
         try {
             Net::TCP::Writer b;
@@ -86,10 +86,10 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeLeaveRoom(const std::uint32_t req) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeLeaveRoom(const uint32_t req) const
     {
         try {
-            static const std::vector<std::uint8_t> empty{};
+            static const std::vector<uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LEAVE_ROOM, req, empty);
             return make(payload);
         } catch (...) {
@@ -98,10 +98,10 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeStartGame(const std::uint32_t req) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeStartGame(const uint32_t req) const
     {
         try {
-            static const std::vector<std::uint8_t> empty{};
+            static const std::vector<uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::START_GAME, req, empty);
             return make(payload);
         } catch (...) {

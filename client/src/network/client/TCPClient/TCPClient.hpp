@@ -148,7 +148,7 @@ namespace Network
          * @param size The size of the packet to be enqueued.
          * @return True if the frame was successfully enqueued, false otherwise.
          */
-        [[nodiscard]] bool enqueueFrameLocked(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+        [[nodiscard]] bool enqueueFrameLocked(uint32_t beSize, const Net::IPacket &pkt, uint32_t size);
 
         /**
          * @brief Attempts to enqueue a frame into the transmit buffer.
@@ -157,7 +157,7 @@ namespace Network
          * @param size The size of the packet to be enqueued.
          * @return True if the frame was successfully enqueued, false otherwise.
          */
-        [[nodiscard]] bool tryEnqueueFrame(std::uint32_t beSize, const Net::IPacket &pkt, std::uint32_t size);
+        [[nodiscard]] bool tryEnqueueFrame(uint32_t beSize, const Net::IPacket &pkt, uint32_t size);
 
         /**
          * @brief Checks if a packet is sendable and retrieves its size.
@@ -165,7 +165,7 @@ namespace Network
          * @param outSize Reference to a variable where the size of the packet will be stored.
          * @return True if the packet is sendable, false otherwise.
          */
-        [[nodiscard]] bool isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept;
+        [[nodiscard]] bool isSendable(const Net::IPacket &pkt, uint32_t &outSize) const noexcept;
 
         std::shared_ptr<Net::NetWrapper> _netWrapper; ///> Network wrapper
 
@@ -180,7 +180,7 @@ namespace Network
         std::mutex _queueMutex;                           ///> Mutex for synchronizing access to the packet queue
         std::queue<std::shared_ptr<Net::IPacket>> _queue; ///> Queue of received packets
 
-        static constexpr std::uint32_t MAX_FRAME = 64 * 1024; ///> Maximum frame size (64 KB)
+        static constexpr uint32_t MAX_FRAME = 64 * 1024; ///> Maximum frame size (64 KB)
 
         static constexpr int RX_CAPACITY = 256 * 1024; ///> Receive buffer capacity (256 KB)
         static constexpr int TX_CAPACITY = 256 * 1024; ///> Transmit buffer capacity (256 KB)

@@ -32,19 +32,19 @@ namespace Net::Factory
          * @brief Type alias for request ID.
          * @typedef ReqId
          */
-        using ReqId = std::uint32_t;
+        using ReqId = uint32_t;
 
         /**
          * @brief Type alias for room ID.
          * @typedef RoomId
          */
-        using RoomId = std::uint32_t;
+        using RoomId = uint32_t;
 
         /**
          * @brief Type alias for session ID.
          * @typedef SessionId
          */
-        using SessionId = std::uint32_t;
+        using SessionId = uint32_t;
 
         /**
          * @brief Constructor for TCPPacketFactory.
@@ -120,7 +120,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeError(
-            const sockaddr_in &addr, ReqId req, std::uint16_t code, std::string_view msg) const;
+            const sockaddr_in &addr, ReqId req, uint16_t code, std::string_view msg) const;
 
       private:
         /**
@@ -130,7 +130,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> make(
-            const sockaddr_in &addr, const std::vector<std::uint8_t> &payload) const;
+            const sockaddr_in &addr, const std::vector<uint8_t> &payload) const;
 
         std::shared_ptr<IPacket> _packet = nullptr; ///> Template packet for creating new packets
     };

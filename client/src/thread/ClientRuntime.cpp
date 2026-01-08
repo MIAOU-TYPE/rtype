@@ -298,7 +298,7 @@ namespace Thread
     void ClientRuntime::runTcp()
     {
         _tcpPacketRouter->sink()->onWelcomeSubscribe(
-            [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
+            [&](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
                 _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
             });
 

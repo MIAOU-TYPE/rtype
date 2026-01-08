@@ -22,14 +22,14 @@ namespace Ecs
         if (!extractHeader(*packet, header))
             return;
 
-        const std::uint8_t *raw = packet->buffer();
+        const uint8_t *raw = packet->buffer();
         const std::size_t total = packet->size();
 
         dispatchPacket(header, raw, total);
     }
 
     void UDPPacketRouter::dispatchPacket(
-        const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
+        const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT:
@@ -79,7 +79,7 @@ namespace Ecs
                       << ")\n";
             return false;
         }
-        if (const std::uint16_t declaredSize = header.size; declaredSize != static_cast<std::uint16_t>(packet.size())) {
+        if (const uint16_t declaredSize = header.size; declaredSize != static_cast<uint16_t>(packet.size())) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: size mismatch (header=" << declaredSize
                       << ", actual=" << packet.size() << ")\n";
             return false;

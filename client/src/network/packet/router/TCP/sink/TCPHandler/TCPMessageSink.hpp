@@ -88,8 +88,8 @@ namespace Network
          * @param udpPort The UDP port assigned to the client.
          * @param token The authentication token.
          */
-        void onWelcome(std::uint32_t req, std::uint16_t ver, std::uint32_t sessionId, std::uint16_t udpPort,
-            std::uint64_t token) override;
+        void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort,
+            uint64_t token) override;
 
         /**
          * @brief Event handler for error messages.
@@ -97,49 +97,49 @@ namespace Network
          * @param code The error code.
          * @param msg The error message.
          */
-        void onError(std::uint32_t req, std::uint16_t code, std::string_view msg) override;
+        void onError(uint32_t req, uint16_t code, std::string_view msg) override;
 
         /**
          * @brief Event handler for rooms list messages.
          * @param req The request ID associated with the message.
          * @param rooms The list of available rooms.
          */
-        void onRoomsList(std::uint32_t req, const std::vector<RoomData> &rooms) override;
+        void onRoomsList(uint32_t req, const std::vector<RoomData> &rooms) override;
 
         /**
          * @brief Event handler for room created messages.
          * @param req The request ID associated with the message.
          * @param roomId The ID of the created room.
          */
-        void onRoomCreated(std::uint32_t req, std::uint32_t roomId) override;
+        void onRoomCreated(uint32_t req, uint32_t roomId) override;
 
         /**
          * @brief Event handler for room joined messages.
          * @param req The request ID associated with the message.
          * @param roomId The ID of the joined room.
          */
-        void onRoomJoined(std::uint32_t req, std::uint32_t roomId) override;
+        void onRoomJoined(uint32_t req, uint32_t roomId) override;
 
         /**
          * @brief Event handler for room left messages.
          * @param req The request ID associated with the message.
          * @param roomId The ID of the left room.
          */
-        void onRoomLeft(std::uint32_t req, std::uint32_t roomId) override;
+        void onRoomLeft(uint32_t req, uint32_t roomId) override;
 
         /**
          * @brief Event handler for game start messages.
          * @param req The request ID associated with the message.
          * @param roomId The ID of the room where the game starts.
          */
-        void onGameStart(std::uint32_t req, std::uint32_t roomId) override;
+        void onGameStart(uint32_t req, uint32_t roomId) override;
 
         /**
          * @brief Event handler for protocol error messages.
          * @param req The request ID associated with the error.
          * @param msg The error message.
          */
-        void onProtocolError(std::uint32_t req, std::string_view msg) override;
+        void onProtocolError(uint32_t req, std::string_view msg) override;
 
         /**
          * @brief Retrieves the current connection information.

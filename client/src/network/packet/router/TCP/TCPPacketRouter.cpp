@@ -17,7 +17,7 @@ namespace
         return s;
     }
 
-    bool readRoomId(Net::TCP::Reader &r, std::uint32_t &roomId) noexcept
+    bool readRoomId(Net::TCP::Reader &r, uint32_t &roomId) noexcept
     {
         try {
             roomId = r.u32();
@@ -35,7 +35,7 @@ namespace Network
         _sink = std::make_shared<TCPMessageSink>();
     }
 
-    void TCPPacketRouter::protocolError(const std::uint32_t req, const std::string_view msg) const
+    void TCPPacketRouter::protocolError(const uint32_t req, const std::string_view msg) const
     {
         if (_sink)
             _sink->onProtocolError(req, msg);
@@ -90,16 +90,16 @@ namespace Network
         return _sink;
     }
 
-    void TCPPacketRouter::onWelcome(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onWelcome(const uint32_t req, Net::TCP::Reader &r) const
     {
         if (r.remaining() < (2u + 4u + 2u + 4u + 4u))
             return protocolError(req, malformedTcp("WELCOME", 16, r.remaining()));
 
-        std::uint16_t ver = 0;
-        std::uint32_t sessionId = 0;
-        std::uint16_t udpPort = 0;
-        std::uint32_t tokenHi = 0;
-        std::uint32_t tokenLo = 0;
+        uint16_t ver = 0;
+        uint32_t sessionId = 0;
+        uint16_t udpPort = 0;
+        uint32_t tokenHi = 0;
+        uint32_t tokenLo = 0;
 
         try {
             ver = r.u16();
@@ -115,17 +115,17 @@ namespace Network
         if (r.remaining() != 0)
             return protocolError(req, "WELCOME: unexpected trailing bytes");
 
-        const std::uint64_t token = (static_cast<std::uint64_t>(tokenHi) << 32) | static_cast<std::uint64_t>(tokenLo);
+        const uint64_t token = (static_cast<uint64_t>(tokenHi) << 32) | static_cast<uint64_t>(tokenLo);
 
         _sink->onWelcome(req, ver, sessionId, udpPort, token);
     }
 
-    void TCPPacketRouter::onError(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onError(const uint32_t req, Net::TCP::Reader &r) const
     {
         if (r.remaining() < 2u)
             return protocolError(req, malformedTcp("ERROR_MESSAGE code(u16)", 2, r.remaining()));
 
-        std::uint16_t code = 0;
+        uint16_t code = 0;
         std::string msg;
 
         try {
@@ -141,12 +141,12 @@ namespace Network
         _sink->onError(req, code, msg);
     }
 
-    void TCPPacketRouter::onRoomsList(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onRoomsList(const uint32_t req, Net::TCP::Reader &r) const
     {
         if (r.remaining() < 2u)
             return protocolError(req, malformedTcp("ROOMS_LIST count(u16)", 2, r.remaining()));
 
-        std::uint16_t count = 0;
+        uint16_t count = 0;
         try {
             count = r.u16();
         } catch (...) {
@@ -156,7 +156,7 @@ namespace Network
         std::vector<RoomData> rooms;
         rooms.reserve(count);
 
-        for (std::uint16_t i = 0; i < count; ++i) {
+        for (uint16_t i = 0; i < count; ++i) {
             RoomData info{};
             try {
                 info.roomId = r.u32();
@@ -176,9 +176,9 @@ namespace Network
         _sink->onRoomsList(req, rooms);
     }
 
-    void TCPPacketRouter::onRoomCreated(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onRoomCreated(const uint32_t req, Net::TCP::Reader &r) const
     {
-        std::uint32_t roomId = 0;
+        uint32_t roomId = 0;
         if (!readRoomId(r, roomId))
             return protocolError(req, "ROOM_CREATED: malformed payload (expected roomId(u32))");
         if (r.remaining() != 0)
@@ -186,9 +186,9 @@ namespace Network
         _sink->onRoomCreated(req, roomId);
     }
 
-    void TCPPacketRouter::onRoomJoined(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onRoomJoined(const uint32_t req, Net::TCP::Reader &r) const
     {
-        std::uint32_t roomId = 0;
+        uint32_t roomId = 0;
         if (!readRoomId(r, roomId))
             return protocolError(req, "ROOM_JOINED: malformed payload (expected roomId(u32))");
         if (r.remaining() != 0)
@@ -196,9 +196,9 @@ namespace Network
         _sink->onRoomJoined(req, roomId);
     }
 
-    void TCPPacketRouter::onRoomLeft(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onRoomLeft(const uint32_t req, Net::TCP::Reader &r) const
     {
-        std::uint32_t roomId = 0;
+        uint32_t roomId = 0;
         if (!readRoomId(r, roomId))
             return protocolError(req, "ROOM_LEFT: malformed payload (expected roomId(u32))");
         if (r.remaining() != 0)
@@ -206,9 +206,9 @@ namespace Network
         _sink->onRoomLeft(req, roomId);
     }
 
-    void TCPPacketRouter::onGameStart(const std::uint32_t req, Net::TCP::Reader &r) const
+    void TCPPacketRouter::onGameStart(const uint32_t req, Net::TCP::Reader &r) const
     {
-        std::uint32_t roomId = 0;
+        uint32_t roomId = 0;
         if (!readRoomId(r, roomId))
             return protocolError(req, "GAME_START: malformed payload (expected roomId(u32))");
         if (r.remaining() != 0)

@@ -239,7 +239,7 @@ namespace Engine
 
         int _selectedWorld = 0;                            ///> Index of the selected world.
         Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
-        std::uint8_t _selectedMaxPlayers = 4;              ///> Selected maximum number of players.
+        uint8_t _selectedMaxPlayers = 4;              ///> Selected maximum number of players.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.

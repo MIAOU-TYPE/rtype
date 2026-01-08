@@ -70,7 +70,7 @@ namespace Net::Factory
 
             const auto totalSize = sizeof(SnapshotBatchHeader) + entities.size() * sizeof(SnapshotEntityData);
 
-            if (totalSize > std::numeric_limits<std::uint16_t>::max()) {
+            if (totalSize > std::numeric_limits<uint16_t>::max()) {
                 std::cerr << "{UDPPacketFactory::createSnapshotPacket} Snapshot packet size exceeds limit" << std::endl;
                 return nullptr;
             }
@@ -84,13 +84,13 @@ namespace Net::Factory
             if (totalSize > packet->capacity())
                 throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Snapshot too large");
 
-            std::uint8_t *buf = packet->buffer();
+            uint8_t *buf = packet->buffer();
             if (!buf)
                 throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Null buffer");
 
             SnapshotBatchHeader hdr{};
-            hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<std::uint16_t>(totalSize));
-            hdr.count = htons(static_cast<std::uint16_t>(entities.size()));
+            hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
+            hdr.count = htons(static_cast<uint16_t>(entities.size()));
 
             std::memcpy(buf, &hdr, sizeof(hdr));
             std::size_t offset = sizeof(hdr);

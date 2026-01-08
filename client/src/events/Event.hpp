@@ -7,6 +7,7 @@
 
 #pragma once
 #include <string>
+#include <utility>
 #include "Key.hpp"
 
 namespace Engine
@@ -115,8 +116,8 @@ namespace Engine
      * @brief Event triggered when the window is resized.
      */
     struct WindowResized {
-        std::uint32_t width;  ///> The new width of the window.
-        std::uint32_t height; ///> The new height of the window.
+        uint32_t width;  ///> The new width of the window.
+        uint32_t height; ///> The new height of the window.
     };
 
     /**
@@ -128,13 +129,13 @@ namespace Engine
          * @param name The name of the new room.
          * @param maxP The maximum number of players allowed in the room.
          */
-        explicit CreateRoomRequested(const std::string &name, const std::uint8_t maxP)
-            : roomName(name), maxPlayers(maxP)
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP)
+            : roomName(std::move(name)), maxPlayers(maxP)
         {
         }
 
         std::string roomName;    ///> The name of the new room.
-        std::uint8_t maxPlayers; ///> The maximum number of players allowed in the room.
+        uint8_t maxPlayers; ///> The maximum number of players allowed in the room.
     };
 
     /**
@@ -145,10 +146,10 @@ namespace Engine
          * @brief Constructor for JoinRoomRequested event.
          * @param id The ID of the room to join.
          */
-        explicit JoinRoomRequested(const std::uint32_t id) : roomId(id)
+        explicit JoinRoomRequested(const uint32_t id) : roomId(id)
         {
         }
 
-        std::uint32_t roomId; ///> The ID of the room to join.
+        uint32_t roomId; ///> The ID of the room to join.
     };
 } // namespace Engine

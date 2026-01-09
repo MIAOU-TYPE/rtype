@@ -72,6 +72,8 @@ namespace World
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
 
+        uint32_t _lastSequence = 0; ///> Last processed snapshot sequence number
+
         /**
          * @brief Applies a create entity command to the client world.
          * @param data The data for the entity to be created.

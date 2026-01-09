@@ -17,12 +17,13 @@ inline constexpr uint8_t kPacketMagic[4] = {'R', 'T', 'Y', 'P'};
  * @details This structure contains the type, version, and size of the packet.
  */
 struct HeaderData {
-    uint8_t magic[4]; ///> Magic number to identify the packet (should be 'RTYP').
-    uint8_t type;     ///> The type of the packet (e.g., CONNECT, DISCONNECT, INPUT, etc.).
-    uint8_t version;  ///> The version of the packet format.
-    uint16_t size;    ///> The size of the entire packet, including the header.
+    uint8_t magic[4];  ///> Magic number to identify the packet (should be 'RTYP').
+    uint8_t type;      ///> The type of the packet (e.g., CONNECT, DISCONNECT, INPUT, etc.).
+    uint8_t version;   ///> The version of the packet format.
+    uint16_t size;     ///> The size of the entire packet, including the header.
+    uint32_t sequence; ///> Sequence number of the snapshot
 };
 
 #pragma pack(pop)
 
-static_assert(sizeof(HeaderData) == 8, "HeaderData layout mismatch");
+static_assert(sizeof(HeaderData) == 12, "HeaderData layout mismatch");

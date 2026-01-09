@@ -7,6 +7,14 @@
 
 #include "UDPPacketRouter.hpp"
 
+namespace
+{
+    [[nodiscard]] bool isRecent(uint32_t a, uint32_t b) noexcept
+    {
+        return static_cast<int32_t>(a - b) > 0;
+    }
+} // namespace
+
 namespace Ecs
 {
     UDPPacketRouter::UDPPacketRouter(const std::shared_ptr<IClientMessageSink> &sink) : _sink(sink)
@@ -74,7 +82,7 @@ namespace Ecs
             return false;
         }
 
-        if (header.sequence <= lastSequence) {
+        if (!isRecent(lastSequence, header.sequence)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
                       << ", last=" << lastSequence << ")\n";
             return false;
@@ -91,6 +99,7 @@ namespace Ecs
                       << ", actual=" << packet.size() << ")\n";
             return false;
         }
+        lastSequence = header.sequence;
         return true;
     }
 
@@ -164,7 +173,7 @@ namespace Ecs
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
             SnapshotEntity entity{};
-            entity.id = htonl(entityData.id);
+            entity.id = ntohl(entityData.id);
             entity.x = ntohs(entityData.x);
             entity.y = ntohs(entityData.y);
             entity.spriteId = entityData.spriteId;

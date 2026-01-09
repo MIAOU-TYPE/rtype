@@ -33,9 +33,9 @@ namespace Ecs
         std::cout << "onGameOver" << std::endl;
     }
 
-    void ClientController::onSnapshot(const std::vector<SnapshotEntity> &data)
+    void ClientController::onSnapshot(const std::vector<SnapshotEntity> &data, const uint32_t sequence)
     {
-        _commandBuffer.get().push({World::WorldCommand::Type::Snapshot, data});
+        _commandBuffer.get().push({World::WorldCommand::Type::Snapshot, data, sequence});
     }
 
     void ClientController::onScore(const uint32_t score)

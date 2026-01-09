@@ -100,11 +100,15 @@ namespace Ecs
 
         /**
          * @brief Handler for SNAP_ENTITY packets.
+         * @param payload Pointer to the payload data of the SNAP_ENTITY packet.
+         * @param size Size of the payload data.
          */
         void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for SCORE packets.
+         * @param payload Pointer to the payload data of the SCORE packet.
+         * @param size Size of the payload data.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
 

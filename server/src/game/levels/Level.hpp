@@ -23,6 +23,7 @@ namespace Game
         float projectileSpeed = 0.f;    ///> Speed of the projectile
         std::vector<float> angles;      ///> Shooting angles in degrees
         std::pair<float, float> muzzle; ///> Muzzle offset (x, y)
+        unsigned int projectileSpriteId = 9; ///> Sprite ID for the projectiles
     };
 
     /**

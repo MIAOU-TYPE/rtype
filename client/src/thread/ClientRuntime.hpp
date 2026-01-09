@@ -204,7 +204,7 @@ namespace Thread
          * @details This method registers handlers for generic input events (mouse, keyboard)
          * that feed the InputState. Should only be called once at startup.
          */
-        void setupGlobalEventHandlers();
+        void setupGlobalEventHandlers() const;
 
         /**
          * @brief Processes incoming network packets up to a specified deadline and maximum count.

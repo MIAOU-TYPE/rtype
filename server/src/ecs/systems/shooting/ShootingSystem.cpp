@@ -6,7 +6,6 @@
 */
 
 #include "ShootingSystem.hpp"
-#include "WeaponConfig.hpp"
 
 namespace Game
 {

@@ -6,7 +6,6 @@
 */
 
 #include "LevelSystem.hpp"
-#include "WeaponConfig.hpp"
 
 namespace Game
 {

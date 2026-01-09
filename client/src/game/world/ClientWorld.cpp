@@ -32,12 +32,7 @@ namespace World
 
     {
         switch (cmd.type) {
-            case WorldCommand::Type::Snapshot:
-                if (_lastSequence >= cmd.sequence)
-                    break;
-                _lastSequence = cmd.sequence;
-                applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload));
-                break;
+            case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
             default: break;
         }
     }

@@ -53,8 +53,10 @@ namespace Ecs
 
         /**
          * @brief Called when a SNAPSHOT message is received.
+         * @param data Vector of SnapshotEntity representing the game state.
+         * @param sequence The sequence number of the snapshot.
          */
-        void onSnapshot(const std::vector<SnapshotEntity> &data) override;
+        void onSnapshot(const std::vector<SnapshotEntity> &data, uint32_t sequence) override;
 
         /**
          * @brief Called when a SCORE message is received.

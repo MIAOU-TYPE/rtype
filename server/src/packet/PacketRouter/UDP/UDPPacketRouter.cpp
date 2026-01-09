@@ -32,12 +32,11 @@ bool UDPPacketRouter::validateHeader(const IPacket &pkt, const HeaderData &heade
         return false;
     }
 
-    if (const uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
+    if (const uint16_t declaredSize = header.size; declaredSize != pkt.size()) {
         std::cerr << "{UDPPacketRouter} Dropped: size mismatch "
                   << "(header=" << declaredSize << ", actual=" << pkt.size() << ")" << std::endl;
         return false;
     }
-
     return true;
 }
 
@@ -61,6 +60,8 @@ bool UDPPacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader
         return false;
 
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
+    outHeader.size = ntohs(outHeader.size);
+    outHeader.sequence = ntohl(outHeader.sequence);
     return validateHeader(packet, outHeader);
 }
 
@@ -107,14 +108,30 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
     const uint8_t *raw = packet->buffer();
     const std::size_t total = packet->size();
 
+    if (handleConnect(header, raw, total, from))
+        return;
+
+    const int sessionId = _sessions->getSessionIdFromUdp(*from);
+    if (sessionId < 0)
+        return;
+    if (!_sessions->isSequenceValid(sessionId, header.sequence)) {
+        std::cerr << "{UDPPacketRouter} Dropped: invalid sequence number from session " << sessionId << std::endl;
+        return;
+    }
+    dispatchPacket(sessionId, header, raw, total);
+}
+
+bool UDPPacketRouter::handleConnect(
+    const HeaderData &header, const uint8_t *raw, const std::size_t total, const sockaddr_in *from) const
+{
     if (header.type == Protocol::UDP::CONNECT) {
         if (total != sizeof(ConnectData)) {
             std::cerr << "{UDPPacketRouter} Dropped CONNECT: bad size\n";
-            return;
+            return true;
         }
 
         if (!raw)
-            return;
+            return true;
         ConnectData cd{};
         std::memcpy(&cd, raw, sizeof(cd));
 
@@ -124,17 +141,14 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 
         if (_sessions->getUdpToken(static_cast<int>(sid)) != token) {
             std::cerr << "{UDPPacketRouter} Dropped CONNECT: bad token\n";
-            return;
+            return true;
         }
 
         if (!_sessions->bindUdp(static_cast<int>(sid), *from))
             std::cerr << "{UDPPacketRouter} CONNECT: bindUdp failed (unknown session?)\n";
-        return;
+        return true;
     }
-    const int sessionId = _sessions->getSessionIdFromUdp(*from);
-    if (sessionId < 0)
-        return;
-    dispatchPacket(sessionId, header, raw, total);
+    return false;
 }
 
 void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, const std::size_t payloadSize) const

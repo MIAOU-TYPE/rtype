@@ -54,6 +54,17 @@ namespace Net
          */
         void handlePacket(const std::shared_ptr<IPacket> &packet) const;
 
+        /**
+         * @brief Handles a connection request packet.
+         * @param header The HeaderData of the incoming packet.
+         * @param raw Pointer to the raw packet data.
+         * @param total Total size of the packet data.
+         * @param from Pointer to the sockaddr_in structure representing the sender's address.
+         * @return True if the packet was a connection request and was handled, false otherwise.
+         */
+        [[nodiscard]] bool handleConnect(
+            const HeaderData &header, const uint8_t *raw, size_t total, const sockaddr_in *from) const;
+
       private:
         /**
          * @brief Validates the header of an incoming packet.

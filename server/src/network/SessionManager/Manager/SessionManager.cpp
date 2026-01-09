@@ -7,6 +7,14 @@
 
 #include "SessionManager.hpp"
 
+namespace
+{
+    [[nodiscard]] bool isRecent(const uint32_t a, const uint32_t b)
+    {
+        return static_cast<int32_t>(a - b) > 0;
+    }
+} // namespace
+
 using namespace Net::Server;
 
 int SessionManager::getOrCreateSession(const sockaddr_in &address)
@@ -152,4 +160,19 @@ int SessionManager::getSessionIdFromUdp(const sockaddr_in &udpAddr) const
         return it->second;
 
     return -1;
+}
+
+bool SessionManager::isSequenceValid(const int sessionId, const uint32_t sequence) const noexcept
+{
+    std::unique_lock lock(_mutex);
+    const auto it = _lastSequenceById.find(sessionId);
+    if (it == _lastSequenceById.end()) {
+        _lastSequenceById[sessionId] = sequence;
+        return true;
+    }
+    if (isRecent(sequence, it->second)) {
+        it->second = sequence;
+        return true;
+    }
+    return false;
 }

@@ -7,6 +7,14 @@
 
 #include "UDPPacketRouter.hpp"
 
+namespace
+{
+    [[nodiscard]] bool isRecent(uint32_t a, uint32_t b) noexcept
+    {
+        return static_cast<int32_t>(a - b) > 0;
+    }
+} // namespace
+
 namespace Ecs
 {
     UDPPacketRouter::UDPPacketRouter(const std::shared_ptr<IClientMessageSink> &sink) : _sink(sink)
@@ -63,6 +71,7 @@ namespace Ecs
 
     bool UDPPacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
+        static uint32_t lastSequence = 0;
         if (packet.size() < sizeof(HeaderData)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: packet too small\n";
             return false;
@@ -70,6 +79,12 @@ namespace Ecs
 
         if (std::memcmp(header.magic, kPacketMagic, 4) != 0) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: bad magic\n";
+            return false;
+        }
+
+        if (!isRecent(header.sequence, lastSequence)) {
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
+                      << ", last=" << lastSequence << ")\n";
             return false;
         }
 
@@ -84,6 +99,7 @@ namespace Ecs
                       << ", actual=" << packet.size() << ")\n";
             return false;
         }
+        lastSequence = header.sequence;
         return true;
     }
 
@@ -108,6 +124,7 @@ namespace Ecs
 
         std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
         outHeader.size = ntohs(outHeader.size);
+        outHeader.sequence = ntohl(outHeader.sequence);
 
         return isHeaderValid(packet, outHeader);
     }
@@ -156,10 +173,10 @@ namespace Ecs
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
             SnapshotEntity entity{};
-            entity.id = be64toh(entityData.id);
-            entity.x = ntohf(entityData.x);
-            entity.y = ntohf(entityData.y);
-            entity.spriteId = ntohl(entityData.spriteId);
+            entity.id = ntohl(entityData.id);
+            entity.x = ntohs(entityData.x);
+            entity.y = ntohs(entityData.y);
+            entity.spriteId = entityData.spriteId;
 
             entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
@@ -176,7 +193,7 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohl(scoreData.score);
+        const uint32_t score = ntohs(scoreData.score);
 
         _sink->onScore(score);
     }

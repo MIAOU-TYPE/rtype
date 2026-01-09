@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "WeaponConfig.hpp"
 #include "World.hpp"
 
 namespace Game

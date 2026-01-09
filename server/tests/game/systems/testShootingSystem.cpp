@@ -40,6 +40,7 @@ TEST_F(ShootingSystemTests, DoesNotEmit_WhenShootIsFalse)
     const Ecs::Entity e = reg.createEntity();
     reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
+    reg.emplaceComponent<Ecs::WeaponConfig>(e, Ecs::WeaponConfig{6});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
@@ -57,6 +58,7 @@ TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
     const Ecs::Entity e = reg.createEntity();
     reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
+    reg.emplaceComponent<Ecs::WeaponConfig>(e, Ecs::WeaponConfig{6});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
@@ -69,7 +71,7 @@ TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
     ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
     EXPECT_FALSE(inputArr.at(static_cast<size_t>(e))->shoot);
 
-    const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime] = shoots.at(0);
+    const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime, spriteId] = shoots.at(0);
 
     EXPECT_FLOAT_EQ(x, 130.f);
     EXPECT_FLOAT_EQ(y, 50.f);
@@ -82,6 +84,7 @@ TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
     EXPECT_FLOAT_EQ(bounds.second, 8.f);
 
     EXPECT_FLOAT_EQ(lifetime, 5.f);
+    EXPECT_EQ(spriteId, 6u);
 }
 
 TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue)
@@ -91,10 +94,12 @@ TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue
     const Ecs::Entity e1 = reg.createEntity();
     reg.emplaceComponent<Game::InputComponent>(e1, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.f, 10.f});
+    reg.emplaceComponent<Ecs::WeaponConfig>(e1, Ecs::WeaponConfig{6});
 
     const Ecs::Entity e2 = reg.createEntity();
     reg.emplaceComponent<Game::InputComponent>(e2, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{20.f, 20.f});
+    reg.emplaceComponent<Ecs::WeaponConfig>(e2, Ecs::WeaponConfig{12});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     inputArr.at(static_cast<size_t>(e1))->shoot = true;
@@ -103,9 +108,11 @@ TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue
     run();
 
     ASSERT_EQ(shoots.size(), 1u);
-    EXPECT_EQ(shoots.at(0).shooter, static_cast<size_t>(e1));
-    EXPECT_FLOAT_EQ(shoots.at(0).x, 40.f);
-    EXPECT_FLOAT_EQ(shoots.at(0).y, 10.f);
+    const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime, spriteId] = shoots.at(0);
+    EXPECT_EQ(shooter, static_cast<size_t>(e1));
+    EXPECT_FLOAT_EQ(x, 40.f);
+    EXPECT_FLOAT_EQ(y, 10.f);
+    EXPECT_EQ(spriteId, 6u);
 
     EXPECT_FALSE(inputArr.at(static_cast<size_t>(e1))->shoot);
     EXPECT_FALSE(inputArr.at(static_cast<size_t>(e2))->shoot);

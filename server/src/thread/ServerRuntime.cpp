@@ -99,9 +99,10 @@ void ServerRuntime::runReceiver() const
 void ServerRuntime::runProcessor() const
 {
     while (_running.load(std::memory_order_relaxed)) {
-        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt)) {
+        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt))
             _udpPacketRouter->handlePacket(pkt);
-        }
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

@@ -64,8 +64,7 @@ namespace
             w->registry().emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{event.damage});
             w->registry().emplaceComponent<Ecs::Damageable>(proj);
             w->registry().emplaceComponent<Ecs::Collision>(proj, Ecs::Collision{8.f, 8.f});
-            w->registry().emplaceComponent<Ecs::Drawable>(
-                proj, Ecs::Drawable{static_cast<unsigned int>(event.spriteId), true});
+            w->registry().emplaceComponent<Ecs::Drawable>(proj, Ecs::Drawable{event.spriteId, true});
             w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{1, 1});
             w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});

@@ -53,6 +53,7 @@ namespace Ecs
 
         /**
          * @brief Called when a SNAPSHOT message is received.
+         * @param data Vector of SnapshotEntity representing the game state.
          */
         void onSnapshot(const std::vector<SnapshotEntity> &data) override;
 

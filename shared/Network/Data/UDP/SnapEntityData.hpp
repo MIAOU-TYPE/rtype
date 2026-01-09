@@ -31,7 +31,7 @@ struct SnapshotBatchHeader {
 };
 
 #pragma pack(pop)
-static_assert(sizeof(SnapshotBatchHeader) == 6, "SnapshotBatchHeader layout mismatch");
+static_assert(sizeof(SnapshotBatchHeader) == 14, "SnapshotBatchHeader layout mismatch");
 
 #pragma pack(push, 1)
 
@@ -39,12 +39,12 @@ static_assert(sizeof(SnapshotBatchHeader) == 6, "SnapshotBatchHeader layout mism
  * @brief Serialized snapshot entity data.
  */
 struct SnapshotEntityData {
-    uint64_t id;       ///> Entity ID
-    uint32_t x;        ///> X position
-    uint32_t y;        ///> Y position
-    uint32_t spriteId; ///> Sprite identifier
+    uint32_t id;      ///> Entity ID
+    uint16_t x;       ///> X position
+    uint16_t y;       ///> Y position
+    uint8_t spriteId; ///> Sprite identifier
 };
 
 #pragma pack(pop)
 
-static_assert(sizeof(SnapshotEntityData) == 20, "SnapshotEntityData layout mismatch");
+static_assert(sizeof(SnapshotEntityData) == 9, "SnapshotEntityData layout mismatch");

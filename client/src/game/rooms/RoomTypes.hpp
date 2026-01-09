@@ -40,7 +40,7 @@ namespace Engine
     /**
      * @brief Types of worlds
      */
-    enum class Difficulty : std::uint8_t {
+    enum class Difficulty : uint8_t {
         Easy = 0,   ///> Easy difficulty
         Medium = 1, ///> Medium difficulty
         Hard = 2,   ///> Hard difficulty

@@ -29,16 +29,6 @@ ServerRuntime::ServerRuntime(
     _stopRequested.store(false);
 }
 
-ServerRuntime::~ServerRuntime()
-{
-    try {
-        if (!_stopRequested.load())
-            stop();
-    } catch (...) {
-        std::cerr << "{ServerRuntime::~ServerRuntime} Exception during destruction" << std::endl;
-    }
-}
-
 void ServerRuntime::wait()
 {
     std::unique_lock lock(_mutex);
@@ -52,30 +42,40 @@ void ServerRuntime::start()
     try {
         _udpServer->start();
         _tcpServer->start();
-    } catch (std::exception &e) {
-        throw ThreadError(std::string("{ServerRuntime::start} Failed to start server: ") + e.what());
+        _stopRequested.store(false);
+        _running.store(true);
+
+        _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
+        _processorThread = std::thread(&ServerRuntime::runProcessor, this);
+        _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
+        _tcpThread = std::thread(&ServerRuntime::runTcp, this);
+    } catch (...) {
+        std::cerr << "{ServerRuntime::start} Exception during start()" << std::endl;
+        requestStop();
+        throw;
     }
-    _running = true;
-    _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
-    _processorThread = std::thread(&ServerRuntime::runProcessor, this);
-    _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);
-    _tcpThread = std::thread(&ServerRuntime::runTcp, this);
 }
 
-void ServerRuntime::stop()
+void ServerRuntime::requestStop() noexcept
 {
-    {
-        std::scoped_lock lock(_mutex);
-        _stopRequested.store(true);
-        _running.store(false);
-    }
+    if (bool expected = false; !_stopRequested.compare_exchange_strong(expected, true, std::memory_order_relaxed))
+        return;
+
+    _running.store(false, std::memory_order_relaxed);
     _cv.notify_all();
 
     _udpServer->setRunning(false);
     _tcpServer->setRunning(false);
+}
+
+void ServerRuntime::stop()
+{
+    requestStop();
+
     _roomManager->forEachRoom([](Engine::Room &room) {
         room.stop();
     });
+
     if (_snapshotThread.joinable())
         _snapshotThread.join();
     if (_receiverThread.joinable())
@@ -84,23 +84,25 @@ void ServerRuntime::stop()
         _processorThread.join();
     if (_tcpThread.joinable())
         _tcpThread.join();
+
     _tcpServer->stop();
     _udpServer->stop();
 }
 
 void ServerRuntime::runReceiver() const
 {
-    while (_udpServer->isRunning()) {
+    while (_running.load(std::memory_order_relaxed)) {
         _udpServer->readPackets();
     }
 }
 
 void ServerRuntime::runProcessor() const
 {
-    while (_udpServer->isRunning()) {
-        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt)) {
+    while (_running.load(std::memory_order_relaxed)) {
+        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt))
             _udpPacketRouter->handlePacket(pkt);
-        }
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
@@ -111,7 +113,7 @@ void ServerRuntime::runSnapshot() const
     auto nextTick = clock::now();
     std::vector<SnapshotEntity> entities;
 
-    while (_running) {
+    while (_running.load(std::memory_order_relaxed)) {
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
 
@@ -139,7 +141,7 @@ void ServerRuntime::runSnapshot() const
 
 void ServerRuntime::runTcp() const
 {
-    while (_tcpServer->isRunning()) {
+    while (_running.load(std::memory_order_relaxed)) {
         _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);

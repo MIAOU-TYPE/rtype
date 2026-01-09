@@ -20,4 +20,4 @@ struct DefaultData {
 
 #pragma pack(pop)
 
-static_assert(sizeof(DefaultData) == 4, "DefaultData layout mismatch");
+static_assert(sizeof(DefaultData) == sizeof(HeaderData), "DefaultData layout mismatch");

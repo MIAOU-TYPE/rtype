@@ -69,6 +69,7 @@ namespace Thread
             throw;
         }
         _running = true;
+        setupGlobalEventHandlers();
         setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
@@ -110,6 +111,12 @@ namespace Thread
         return _eventBus;
     }
 
+    void ClientRuntime::rebindControls()
+    {
+        _eventRegistry->clear();
+        setupEventsRegistry();
+    }
+
     void ClientRuntime::runDisplay()
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
@@ -119,6 +126,16 @@ namespace Thread
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
+
+            if (Utils::InputConfig::getInstance().needsRebind()) {
+                rebindControls();
+                Utils::InputConfig::getInstance().clearRebindFlag();
+            }
+
+            if (Utils::InputConfig::getInstance().needsRebind()) {
+                rebindControls();
+                Utils::InputConfig::getInstance().clearRebindFlag();
+            }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
@@ -207,26 +224,31 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        _eventRegistry->onKeyPressed(Engine::Key::Up, [this]() {
+        const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
+
+        _eventRegistry->onKeyPressed(keys.up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Down, [this]() {
+        _eventRegistry->onKeyPressed(keys.down, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Left, [this]() {
+        _eventRegistry->onKeyPressed(keys.left, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Right, [this]() {
+        _eventRegistry->onKeyPressed(keys.right, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
         _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
+    }
 
+    void ClientRuntime::setupGlobalEventHandlers()
+    {
         _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
             _input->setKeyPressed(e.key);
         });
@@ -297,10 +319,9 @@ namespace Thread
 
     void ClientRuntime::runTcp()
     {
-        _tcpPacketRouter->sink()->onWelcomeSubscribe(
-            [&](std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t, std::uint64_t) {
-                _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
-            });
+        _tcpPacketRouter->sink()->onWelcomeSubscribe([&](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
+            _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
+        });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
             _pendingGameStart.store(true, std::memory_order_release);

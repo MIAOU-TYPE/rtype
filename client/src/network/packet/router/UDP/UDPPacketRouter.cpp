@@ -7,6 +7,14 @@
 
 #include "UDPPacketRouter.hpp"
 
+namespace
+{
+    [[nodiscard]] bool isRecent(uint32_t a, uint32_t b) noexcept
+    {
+        return static_cast<int32_t>(a - b) > 0;
+    }
+} // namespace
+
 namespace Ecs
 {
     UDPPacketRouter::UDPPacketRouter(const std::shared_ptr<IClientMessageSink> &sink) : _sink(sink)
@@ -22,22 +30,36 @@ namespace Ecs
         if (!extractHeader(*packet, header))
             return;
 
-        const std::uint8_t *raw = packet->buffer();
+        const uint8_t *raw = packet->buffer();
         const std::size_t total = packet->size();
-        const std::uint8_t *payload = raw;
-        const std::size_t payloadSize = total;
 
-        dispatchPacket(header, payload, payloadSize);
+        dispatchPacket(header, raw, total);
     }
 
     void UDPPacketRouter::dispatchPacket(
-        const HeaderData &header, const std::uint8_t *payload, const std::size_t payloadSize) const
+        const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
-            case Net::Protocol::UDP::ACCEPT: handleAccept(); break;
-            case Net::Protocol::UDP::REJECT: handleReject(); break;
-            case Net::Protocol::UDP::GAME_OVER: handleGameOver(); break;
-            case Net::Protocol::UDP::PONG: handlePong(); break;
+            case Net::Protocol::UDP::ACCEPT:
+                if (payloadSize != sizeof(DefaultData))
+                    break;
+                handleAccept();
+                break;
+            case Net::Protocol::UDP::REJECT:
+                if (payloadSize != sizeof(DefaultData))
+                    break;
+                handleReject();
+                break;
+            case Net::Protocol::UDP::GAME_OVER:
+                if (payloadSize != sizeof(DefaultData))
+                    break;
+                handleGameOver();
+                break;
+            case Net::Protocol::UDP::PONG:
+                if (payloadSize != sizeof(DefaultData))
+                    break;
+                handlePong();
+                break;
             case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
@@ -49,25 +71,35 @@ namespace Ecs
 
     bool UDPPacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
+        static uint32_t lastSequence = 0;
         if (packet.size() < sizeof(HeaderData)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: packet too small\n";
             return false;
         }
 
+        if (std::memcmp(header.magic, kPacketMagic, 4) != 0) {
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: bad magic\n";
+            return false;
+        }
+
+        if (!isRecent(header.sequence, lastSequence)) {
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
+                      << ", last=" << lastSequence << ")\n";
+            return false;
+        }
+
         if (header.version != PROTOCOL_VERSION) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: wrong protocol version "
-                      << static_cast<int>(header.version) << " (expected " << static_cast<int>(1) << ")" << std::endl;
+                      << static_cast<int>(header.version) << " (expected " << static_cast<int>(PROTOCOL_VERSION)
+                      << ")\n";
             return false;
         }
-
-        if (const std::uint16_t declaredSize = ntohs(header.size);
-            declaredSize != static_cast<std::uint16_t>(packet.size())) {
-            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: size mismatch (header="
-                    + std::to_string(declaredSize)
-                    + ", actual=" + std::to_string(static_cast<std::uint16_t>(packet.size())) + ")\n";
+        if (const uint16_t declaredSize = header.size; declaredSize != static_cast<uint16_t>(packet.size())) {
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: size mismatch (header=" << declaredSize
+                      << ", actual=" << packet.size() << ")\n";
             return false;
         }
-
+        lastSequence = header.sequence;
         return true;
     }
 
@@ -85,11 +117,16 @@ namespace Ecs
 
     bool UDPPacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept
     {
-        std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
-
-        if (!isHeaderValid(packet, outHeader))
+        if (!packet.buffer())
             return false;
-        return true;
+        if (packet.size() < sizeof(HeaderData))
+            return false;
+
+        std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
+        outHeader.size = ntohs(outHeader.size);
+        outHeader.sequence = ntohl(outHeader.sequence);
+
+        return isHeaderValid(packet, outHeader);
     }
 
     void UDPPacketRouter::handleAccept() const
@@ -114,7 +151,7 @@ namespace Ecs
 
     void UDPPacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
     {
-        if (size < sizeof(SnapshotBatchHeader)) {
+        if (!payload || size < sizeof(SnapshotBatchHeader)) {
             std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot batch too small\n";
             return;
         }
@@ -136,10 +173,10 @@ namespace Ecs
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
             SnapshotEntity entity{};
-            entity.id = be64toh(entityData.id);
-            entity.x = ntohf(entityData.x);
-            entity.y = ntohf(entityData.y);
-            entity.spriteId = ntohl(entityData.spriteId);
+            entity.id = ntohl(entityData.id);
+            entity.x = ntohs(entityData.x);
+            entity.y = ntohs(entityData.y);
+            entity.spriteId = entityData.spriteId;
 
             entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
@@ -147,16 +184,16 @@ namespace Ecs
         _sink->onSnapshot(entities);
     }
 
-    void UDPPacketRouter::handleScore(const uint8_t *payload, size_t size) const
+    void UDPPacketRouter::handleScore(const uint8_t *payload, const size_t size) const
     {
-        if (size < sizeof(ScoreData)) {
-            std::cerr << "{UDPPacketRouter::handleScore} Score packet too small\n";
+        if (!payload || size != sizeof(ScoreData)) {
+            std::cerr << "{UDPPacketRouter::handleScore} Dropped SCORE: bad size\n";
             return;
         }
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohl(scoreData.score);
+        const uint32_t score = ntohs(scoreData.score);
 
         _sink->onScore(score);
     }

@@ -44,6 +44,12 @@ namespace Engine
          */
         void onKeyReleased(Key key, std::function<void()> fn);
 
+        /**
+         * @brief Clear all registered key handlers.
+         * @details This method removes all key press and release handlers from the registry.
+         */
+        void clear();
+
       private:
         std::shared_ptr<EventBus> _bus; ///> Shared pointer to the EventBus instance
 

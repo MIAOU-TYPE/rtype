@@ -143,6 +143,7 @@ namespace Ecs
         std::memcpy(&batch, payload, sizeof(batch));
 
         const uint16_t count = ntohs(batch.count);
+        const uint32_t sequence = ntohl(batch.sequence);
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
 
         std::vector<SnapshotEntity> entities;
@@ -156,15 +157,15 @@ namespace Ecs
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
             SnapshotEntity entity{};
-            entity.id = be64toh(entityData.id);
-            entity.x = ntohf(entityData.x);
-            entity.y = ntohf(entityData.y);
-            entity.spriteId = ntohl(entityData.spriteId);
+            entity.id = htonl(entityData.id);
+            entity.x = ntohs(entityData.x);
+            entity.y = ntohs(entityData.y);
+            entity.spriteId = entityData.spriteId;
 
             entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
         }
-        _sink->onSnapshot(entities);
+        _sink->onSnapshot(entities, sequence);
     }
 
     void UDPPacketRouter::handleScore(const uint8_t *payload, const size_t size) const
@@ -176,7 +177,7 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohl(scoreData.score);
+        const uint32_t score = ntohs(scoreData.score);
 
         _sink->onScore(score);
     }

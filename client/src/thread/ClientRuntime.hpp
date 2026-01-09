@@ -166,7 +166,7 @@ namespace Thread
         Command::CommandBuffer<World::WorldCommand> _commandBuffer; ///> Command buffer for storing commands
 
         std::mutex _frameMutex;
-        std::shared_ptr<const std::vector<Engine::RenderCommand>> _readRenderCommands;
+        std::shared_ptr<std::vector<Engine::RenderCommand>> _readRenderCommands;
         std::shared_ptr<std::vector<Engine::RenderCommand>> _writeRenderCommands;
 
         std::thread _receiverThread; ///> Thread for receiving packets

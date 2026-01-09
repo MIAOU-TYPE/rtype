@@ -128,6 +128,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
+        _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
         return ent;
     }
 

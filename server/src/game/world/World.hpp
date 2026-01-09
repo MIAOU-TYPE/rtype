@@ -24,6 +24,7 @@
 #include "Rand.hpp"
 #include "Score.hpp"
 #include "Velocity.hpp"
+#include "WeaponConfig.hpp"
 
 namespace Game
 {

@@ -23,8 +23,6 @@ namespace Engine
                 const float currentVolume = _musicRegistry->getMusicVolume();
                 (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, currentVolume);
             }
-
-            _hud->initialize();
         } catch (const std::exception &e) {
             throw GameStateError(std::string("{GameState::onEnter} ") + e.what());
         }

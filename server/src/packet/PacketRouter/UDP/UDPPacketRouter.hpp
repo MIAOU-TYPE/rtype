@@ -63,7 +63,7 @@ namespace Net
          * @return True if the packet was a connection request and was handled, false otherwise.
          */
         [[nodiscard]] bool handleConnect(
-            HeaderData header, const uint8_t *raw, size_t total, const sockaddr_in *from) const;
+            const HeaderData &header, const uint8_t *raw, size_t total, const sockaddr_in *from) const;
 
       private:
         /**

@@ -61,7 +61,7 @@ bool UDPPacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader
 
     std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
     outHeader.size = ntohs(outHeader.size);
-    outHeader.sequence = htonl(outHeader.sequence);
+    outHeader.sequence = ntohl(outHeader.sequence);
     return validateHeader(packet, outHeader);
 }
 
@@ -122,7 +122,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 }
 
 bool UDPPacketRouter::handleConnect(
-    const HeaderData header, const uint8_t *raw, const std::size_t total, const sockaddr_in *from) const
+    const HeaderData &header, const uint8_t *raw, const std::size_t total, const sockaddr_in *from) const
 {
     if (header.type == Protocol::UDP::CONNECT) {
         if (total != sizeof(ConnectData)) {

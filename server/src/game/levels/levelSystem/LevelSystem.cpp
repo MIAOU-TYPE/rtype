@@ -91,5 +91,9 @@ namespace Game
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
+
+        Ecs::WeaponConfig weapon;
+        weapon.projectileSpriteId = def.shoot.projectileSpriteId;
+        reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
     }
 } // namespace Game

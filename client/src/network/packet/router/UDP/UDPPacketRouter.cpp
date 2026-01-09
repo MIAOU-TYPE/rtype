@@ -63,6 +63,7 @@ namespace Ecs
 
     bool UDPPacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
+        static uint32_t lastSequence = 0;
         if (packet.size() < sizeof(HeaderData)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: packet too small\n";
             return false;
@@ -70,6 +71,12 @@ namespace Ecs
 
         if (std::memcmp(header.magic, kPacketMagic, 4) != 0) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: bad magic\n";
+            return false;
+        }
+
+        if (header.sequence <= lastSequence) {
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
+                      << ", last=" << lastSequence << ")\n";
             return false;
         }
 
@@ -108,6 +115,7 @@ namespace Ecs
 
         std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
         outHeader.size = ntohs(outHeader.size);
+        outHeader.sequence = ntohl(outHeader.sequence);
 
         return isHeaderValid(packet, outHeader);
     }
@@ -143,7 +151,6 @@ namespace Ecs
         std::memcpy(&batch, payload, sizeof(batch));
 
         const uint16_t count = ntohs(batch.count);
-        const uint32_t sequence = ntohl(batch.sequence);
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
 
         std::vector<SnapshotEntity> entities;
@@ -165,7 +172,7 @@ namespace Ecs
             entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
         }
-        _sink->onSnapshot(entities, sequence);
+        _sink->onSnapshot(entities);
     }
 
     void UDPPacketRouter::handleScore(const uint8_t *payload, const size_t size) const

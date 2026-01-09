@@ -132,8 +132,6 @@ namespace Net::Factory
         std::shared_ptr<IPacket> _packet = nullptr; ///> Pointer to the template IPacket used for creating packets.
 
         static constexpr uint8_t VERSION = 1; ///> The version of the packet factory.
-
-        mutable uint32_t _sequenceCounter = 1; ///> Counter for packet sequences.
     };
 } // namespace Net::Factory
 

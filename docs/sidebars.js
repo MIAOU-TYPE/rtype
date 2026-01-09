@@ -58,5 +58,6 @@ module.exports = {
     'contributing/overview',
     'contributing/guidelines',
     'contributing/pull-requests',
+    'contributing/add-missile-sprite',
   ],
 };

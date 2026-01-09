@@ -82,7 +82,7 @@ namespace Ecs
             return false;
         }
 
-        if (!isRecent(lastSequence, header.sequence)) {
+        if (!isRecent(header.sequence, lastSequence)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
                       << ", last=" << lastSequence << ")\n";
             return false;

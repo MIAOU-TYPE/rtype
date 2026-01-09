@@ -1,0 +1,21 @@
+{
+  "sprite": "missile_enemy2",
+  "spriteId": 12,
+  "texture": "sprites/missile_enemy2.png",
+  "default_animation": "fly",
+  "animations": {
+    "fly": {
+      "loop": true,
+      "frames": [
+        { "x": 0,  "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 19, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 38, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 56, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 64, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 72, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 84, "y": 0, "w": 16, "h": 14, "duration": 0.3 },
+        { "x": 96, "y": 0, "w": 16, "h": 14, "duration": 0.3 }
+      ]
+    }
+  }
+}

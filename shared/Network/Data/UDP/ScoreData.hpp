@@ -16,9 +16,9 @@
  */
 struct ScoreData {
     HeaderData header; ///> The header of the score packet.
-    uint32_t score;    ///> The new score of the player.
+    uint16_t score;    ///> The new score of the player.
 };
 
 #pragma pack(pop)
 
-static_assert(sizeof(ScoreData) == 12, "ScoreData layout mismatch");
+static_assert(sizeof(ScoreData) == 10, "ScoreData layout mismatch");

@@ -91,16 +91,18 @@ namespace Net::Factory
             SnapshotBatchHeader hdr{};
             hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             hdr.count = htons(static_cast<uint16_t>(entities.size()));
+            hdr.sequence = htonl(_sequenceCounter);
 
+            _sequenceCounter++;
             std::memcpy(buf, &hdr, sizeof(hdr));
             std::size_t offset = sizeof(hdr);
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
-                packed.id = htonll(id);
-                packed.x = htonf(x);
-                packed.y = htonf(y);
-                packed.spriteId = htonl(spriteId);
+                packed.id = htonl(id);
+                packed.x = htons(x);
+                packed.y = htons(y);
+                packed.spriteId = static_cast<uint8_t>(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
                 offset += sizeof(packed);
@@ -118,7 +120,7 @@ namespace Net::Factory
     {
         ScoreData scoreData;
         scoreData.header = makeHeader(Protocol::UDP::SCORE, VERSION, sizeof(ScoreData));
-        scoreData.score = htonl(score);
+        scoreData.score = htons(score);
         try {
             auto packet = makePacket<ScoreData>(addr, scoreData);
             return packet;

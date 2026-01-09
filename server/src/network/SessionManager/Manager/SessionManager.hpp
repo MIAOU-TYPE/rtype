@@ -107,7 +107,8 @@ namespace Net::Server
         [[nodiscard]] int getSessionIdFromUdp(const sockaddr_in &udpAddr) const override;
 
         /**
-         * @brief Check if the given sequence number is valid for the session.
+         * @brief Check if the given sequence number is valid for the session and, if so, update the last seen sequence
+         * number.
          * @param sessionId The ID of the session.
          * @param sequence The sequence number to set.
          */

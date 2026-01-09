@@ -45,6 +45,8 @@ namespace Thread
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
             _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
+        _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
+        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -132,11 +134,6 @@ namespace Thread
                 Utils::InputConfig::getInstance().clearRebindFlag();
             }
 
-            if (Utils::InputConfig::getInstance().needsRebind()) {
-                rebindControls();
-                Utils::InputConfig::getInstance().clearRebindFlag();
-            }
-
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
@@ -183,8 +180,6 @@ namespace Thread
         auto nextTick = clock::now();
         auto last = nextTick;
         float accumulator = 0.f;
-
-        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
 
         while (_running) {
             nextTick += Tick;
@@ -247,7 +242,7 @@ namespace Thread
         });
     }
 
-    void ClientRuntime::setupGlobalEventHandlers()
+    void ClientRuntime::setupGlobalEventHandlers() const
     {
         _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
             _input->setKeyPressed(e.key);
@@ -308,12 +303,11 @@ namespace Thread
     void ClientRuntime::buildAndSwapRenderCommands()
     {
         _writeRenderCommands->clear();
-
         Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
 
         {
             std::scoped_lock lock(_frameMutex);
-            _readRenderCommands = _writeRenderCommands;
+            std::swap(_readRenderCommands, _writeRenderCommands);
         }
     }
 

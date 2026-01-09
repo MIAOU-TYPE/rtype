@@ -27,7 +27,6 @@ struct SnapshotEntity {
  */
 struct SnapshotBatchHeader {
     HeaderData header; ///> Common header data
-    uint32_t sequence; ///> Sequence number of the snapshot
     uint16_t count;    ///> Number of entities in the batch
 };
 

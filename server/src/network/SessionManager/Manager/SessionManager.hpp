@@ -106,6 +106,13 @@ namespace Net::Server
          */
         [[nodiscard]] int getSessionIdFromUdp(const sockaddr_in &udpAddr) const override;
 
+        /**
+         * @brief Check if the given sequence number is valid for the session.
+         * @param sessionId The ID of the session.
+         * @param sequence The sequence number to set.
+         */
+        [[nodiscard]] bool isSequenceValid(int sessionId, uint32_t sequence) const noexcept override;
+
       private:
         mutable std::shared_mutex _mutex{}; ///> Mutex for thread-safe access
 
@@ -115,7 +122,8 @@ namespace Net::Server
         std::unordered_map<AddressKey, int, AddressKeyHash> _udpAddressToId{}; ///> UDP binding
         std::unordered_map<int, sockaddr_in> _idToUdpAddress{};                ///> UDP binding
 
-        std::unordered_map<int, uint64_t> _udpTokenById{}; ///> UDP token storage
+        std::unordered_map<int, uint64_t> _udpTokenById{};             ///> UDP token storage
+        mutable std::unordered_map<int, uint32_t> _lastSequenceById{}; ///> Last UDP sequence storage
 
         int _nextId = 1; ///> Next available session ID
     };

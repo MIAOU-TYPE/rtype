@@ -27,5 +27,6 @@ namespace World
 
         Type type;                                                         ///> Type of the command
         std::variant<std::monostate, std::vector<SnapshotEntity>> payload; ///> Command payload
+        uint32_t sequence = 0;                                             ///> Sequence number for snapshots
     };
 } // namespace World

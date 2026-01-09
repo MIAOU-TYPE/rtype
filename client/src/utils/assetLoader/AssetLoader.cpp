@@ -7,7 +7,7 @@
 
 #include "AssetLoader.hpp"
 #include "SpriteLoader.hpp"
-
+#include <iostream>
 namespace Utils
 {
     void AssetLoader::load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
@@ -30,8 +30,12 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/player3.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/player4.json", *spriteRegistry);
 
-        spriteRegistry->forEach([&](const unsigned int, Engine::SpriteDefinition &def) {
+        spriteRegistry->forEach([&](const unsigned int spriteId, Engine::SpriteDefinition &def) {
             def.textureHandle = textureManager->load(def.texturePath);
+            if (def.textureHandle == Graphics::InvalidTexture) {
+                std::cerr << "[AssetLoader] Failed to load texture for sprite " << spriteId << ": " << def.texturePath
+                          << std::endl;
+            }
         });
     }
 } // namespace Utils

@@ -5,6 +5,7 @@
 ** SfmlTextureManager
 */
 #include "SfmlTextureManager.hpp"
+#include <iostream>
 
 namespace Graphics
 {
@@ -21,12 +22,18 @@ namespace Graphics
         }
 
         auto [data, size] = _resources->loadResource(resourcePath);
-        if (!data || size == 0)
+        if (!data || size == 0) {
+            std::cerr << "{SfmlTextureManager::load} Failed to load resource: " << resourcePath
+                      << " (data=" << (data ? "valid" : "null") << ", size=" << size << ")" << std::endl;
             return InvalidTexture;
+        }
 
         sf::Texture texture;
-        if (!texture.loadFromMemory(data, size))
+        if (!texture.loadFromMemory(data, size)) {
+            std::cerr << "{SfmlTextureManager::load} Failed to create texture from memory: " << resourcePath
+                      << std::endl;
             return InvalidTexture;
+        }
 
         TextureHandle handle = _nextHandle++;
 

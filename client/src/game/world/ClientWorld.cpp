@@ -6,6 +6,7 @@
 */
 
 #include "ClientWorld.hpp"
+#include <iostream>
 
 namespace World
 {
@@ -72,6 +73,11 @@ namespace World
             _registry.emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
+
+            if (sprite.textureHandle == Graphics::InvalidTexture) {
+                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                          << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
+            }
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
             _registry.emplaceComponent<Ecs::AnimationState>(entity,

@@ -6,7 +6,6 @@
 */
 
 #include "AIShootSystem.hpp"
-#include "WeaponConfig.hpp"
 
 namespace Game
 {

@@ -34,8 +34,7 @@ namespace Network
          * @param udpPort The UDP port assigned to the client.
          * @param token The authentication token.
          */
-        virtual void onWelcome(std::uint32_t req, std::uint16_t ver, std::uint32_t sessionId, std::uint16_t udpPort,
-            std::uint64_t token) = 0;
+        virtual void onWelcome(uint32_t req, uint16_t ver, uint32_t sessionId, uint16_t udpPort, uint64_t token) = 0;
 
         /**
          * @brief onError is called when an error message is received.
@@ -43,59 +42,58 @@ namespace Network
          * @param code The error code.
          * @param msg The error message.
          */
-        virtual void onError(std::uint32_t req, std::uint16_t code, std::string_view msg) = 0;
+        virtual void onError(uint32_t req, uint16_t code, std::string_view msg) = 0;
 
         /**
          * @brief onRoomsList is called when a list of rooms is received.
          * @param req The request ID.
          * @param rooms The list of rooms.
          */
-        virtual void onRoomsList(std::uint32_t req, const std::vector<RoomData> &rooms) = 0;
+        virtual void onRoomsList(uint32_t req, const std::vector<RoomData> &rooms) = 0;
 
         /**
          * @brief onRoomCreated is called when a room is created.
          * @param req The request ID.
          * @param roomId The ID of the created room.
          */
-        virtual void onRoomCreated(std::uint32_t req, std::uint32_t roomId) = 0;
+        virtual void onRoomCreated(uint32_t req, uint32_t roomId) = 0;
 
         /**
          * @brief onRoomJoined is called when a room is joined.
          * @param req The request ID.
          * @param roomId The ID of the joined room.
          */
-        virtual void onRoomJoined(std::uint32_t req, std::uint32_t roomId) = 0;
+        virtual void onRoomJoined(uint32_t req, uint32_t roomId) = 0;
 
         /**
          * @brief onRoomLeft is called when a room is left.
          * @param req The request ID.
          * @param roomId The ID of the left room.
          */
-        virtual void onRoomLeft(std::uint32_t req, std::uint32_t roomId) = 0;
+        virtual void onRoomLeft(uint32_t req, uint32_t roomId) = 0;
 
         /**
          * @brief onGameStart is called when a game starts.
          * @param req The request ID.
          * @param roomId The ID of the room where the game starts.
          */
-        virtual void onGameStart(std::uint32_t req, std::uint32_t roomId) = 0;
+        virtual void onGameStart(uint32_t req, uint32_t roomId) = 0;
 
         /**
          * @brief onProtocolError is called when a protocol error occurs.
          * @param req The request ID.
          * @param msg The error message.
          */
-        virtual void onProtocolError(std::uint32_t req, std::string_view msg) = 0;
+        virtual void onProtocolError(uint32_t req, std::string_view msg) = 0;
 
-        using WelcomeCb = std::function<void(std::uint32_t, std::uint16_t, std::uint32_t, std::uint16_t,
-            std::uint64_t)>; ///> Callback type for welcome messages
-        using ErrorCb =
-            std::function<void(std::uint32_t, std::uint16_t, std::string_view)>; ///> Callback type for error messages
-        using RoomsListCb = std::function<void(
-            std::uint32_t, const std::vector<RoomData> &)>;                 ///> Callback type for rooms list messages
-        using RoomIdCb = std::function<void(std::uint32_t, std::uint32_t)>; ///> Callback type for room ID messages
+        using WelcomeCb = std::function<void(uint32_t, uint16_t, uint32_t, uint16_t,
+            uint64_t)>; ///> Callback type for welcome messages
+        using ErrorCb = std::function<void(uint32_t, uint16_t, std::string_view)>; ///> Callback type for error messages
+        using RoomsListCb =
+            std::function<void(uint32_t, const std::vector<RoomData> &)>; ///> Callback type for rooms list messages
+        using RoomIdCb = std::function<void(uint32_t, uint32_t)>;         ///> Callback type for room ID messages
         using ProtoErrCb =
-            std::function<void(std::uint32_t, std::string_view)>; ///> Callback type for protocol error messages
+            std::function<void(uint32_t, std::string_view)>; ///> Callback type for protocol error messages
 
         /**
          * @brief Subscribe to welcome message events.

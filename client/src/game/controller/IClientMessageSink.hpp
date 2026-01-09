@@ -44,6 +44,7 @@ namespace Ecs
 
         /**
          * @brief Called when a SNAPSHOT message is received.
+         * @param entity Vector of SnapshotEntity representing the game state.
          */
         virtual void onSnapshot(const std::vector<SnapshotEntity> &entity) = 0;
 

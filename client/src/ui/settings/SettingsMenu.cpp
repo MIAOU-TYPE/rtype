@@ -37,6 +37,10 @@ namespace Engine
         _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
+        const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
+        const auto presetName = Utils::InputConfig::getPresetName(preset);
+        _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
+        _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
         _musicVolLabel = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "50");
         _musicVolUp = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
@@ -52,11 +56,14 @@ namespace Engine
     {
         _backRequested = false;
         _resolutionChanged = false;
+        _controlsChanged = false;
 
         _colorBlindMode->reset();
         _colorBlindNext->reset();
         _resolution->reset();
         _resolutionNext->reset();
+        _controls->reset();
+        _controlsNext->reset();
         _back->reset();
         _musicVolLabel->reset();
         _musicVolUp->reset();
@@ -165,10 +172,15 @@ namespace Engine
             std::min(rightColX + videoButtonOffset + videoButtonSpacing, w - _resolutionNext->bounds().w - rightMargin);
         _resolutionNext->setPosition(resNextButtonX, videoYStart + spacingY);
 
+        _controls->setPosition(rightColX - videoButtonOffset, videoYStart + 2 * spacingY);
+        const float controlsNextButtonX =
+            std::min(rightColX + videoButtonOffset + videoButtonSpacing, w - _controlsNext->bounds().w - rightMargin);
+        _controlsNext->setPosition(controlsNextButtonX, videoYStart + 2 * spacingY);
+
         _back->setPosition(cx - _back->bounds().w * 0.5f, h * 0.8f);
     }
 
-    void SettingsMenu::applyMusicVolumeChange(size_t volume, bool isMuted)
+    void SettingsMenu::applyMusicVolumeChange(const size_t volume, const bool isMuted) noexcept
     {
         if (!_musicRegistry)
             return;
@@ -181,7 +193,7 @@ namespace Engine
         }
     }
 
-    void SettingsMenu::applySoundVolumeChange(size_t volume, bool isMuted)
+    void SettingsMenu::applySoundVolumeChange(const size_t volume, const bool isMuted) noexcept
     {
         if (!_soundRegistry)
             return;
@@ -201,6 +213,8 @@ namespace Engine
         _colorBlindNext->update(frame.mouseX, frame.mouseY);
         _resolution->update(frame.mouseX, frame.mouseY);
         _resolutionNext->update(frame.mouseX, frame.mouseY);
+        _controls->update(frame.mouseX, frame.mouseY);
+        _controlsNext->update(frame.mouseX, frame.mouseY);
         _back->update(frame.mouseX, frame.mouseY);
         _musicVolLabel->update(frame.mouseX, frame.mouseY);
         _musicVolUp->update(frame.mouseX, frame.mouseY);
@@ -233,6 +247,8 @@ namespace Engine
             _colorBlindNext->onMousePressed(frame.mouseX, frame.mouseY);
             _resolution->onMousePressed(frame.mouseX, frame.mouseY);
             _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
+            _controls->onMousePressed(frame.mouseX, frame.mouseY);
+            _controlsNext->onMousePressed(frame.mouseX, frame.mouseY);
             _back->onMousePressed(frame.mouseX, frame.mouseY);
             _musicVolUp->onMousePressed(frame.mouseX, frame.mouseY);
             _musicVolDown->onMousePressed(frame.mouseX, frame.mouseY);
@@ -335,6 +351,19 @@ namespace Engine
                 _muteSFX->reset();
                 return;
             }
+
+            if (_controlsNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                auto &config = Utils::InputConfig::getInstance();
+                const auto current = config.getCurrentPreset();
+                const auto next =
+                    (current == Utils::KeyPreset::Arrows) ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
+                config.setPreset(next);
+                _controls->setLabel(Utils::InputConfig::getPresetName(next));
+                _controlsChanged = true;
+                _controlsNext->reset();
+                return;
+            }
+
             if (_back->onClickReleased(frame.mouseX, frame.mouseY, [&] {
                     _backRequested = true;
                 })) {}
@@ -363,6 +392,11 @@ namespace Engine
         return _resolutions.at(_currentResolution);
     }
 
+    bool SettingsMenu::controlsChanged() const noexcept
+    {
+        return _controlsChanged;
+    }
+
     void SettingsMenu::render() const
     {
         _renderer->draw(_backgroundCmd);
@@ -370,6 +404,8 @@ namespace Engine
         _colorBlindNext->render();
         _resolution->render();
         _resolutionNext->render();
+        _controls->render();
+        _controlsNext->render();
         _back->render();
         _musicVolLabel->render();
         _musicVolUp->render();

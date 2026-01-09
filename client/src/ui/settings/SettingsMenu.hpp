@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include "IRenderer.hpp"
 #include "IText.hpp"
+#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"
@@ -83,21 +84,28 @@ namespace Engine
          *
          * @return true if the user wants to go back, false otherwise.
          */
-        bool wantsBack() const noexcept;
+        [[nodiscard]] bool wantsBack() const noexcept;
 
         /**
          * @brief Check if the screen resolution has been changed.
          *
          * @return true if the resolution has been changed, false otherwise.
          */
-        bool resolutionChanged() noexcept;
+        [[nodiscard]] bool resolutionChanged() noexcept;
 
         /**
          * @brief Get the current screen resolution.
          *
          * @return The current screen resolution.
          */
-        Graphics::Extent2u currentResolution() const noexcept;
+        [[nodiscard]] Graphics::Extent2u currentResolution() const noexcept;
+
+        /**
+         * @brief Check if the controls preset has been changed.
+         *
+         * @return true if the controls preset has been changed, false otherwise.
+         */
+        [[nodiscard]] bool controlsChanged() const noexcept;
 
         /**
          * @brief Handle resizing of the settings menu.
@@ -116,14 +124,14 @@ namespace Engine
          * @param volume The new volume value.
          * @param isMuted Whether the audio is currently muted.
          */
-        [[noexcept]] void applyMusicVolumeChange(size_t volume, bool isMuted);
+        void applyMusicVolumeChange(size_t volume, bool isMuted) noexcept;
 
         /**
          * @brief Apply volume change to sound registry, handling mute state.
          * @param volume The new volume value.
          * @param isMuted Whether the audio is currently muted.
          */
-        [[noexcept]] void applySoundVolumeChange(size_t volume, bool isMuted);
+        void applySoundVolumeChange(size_t volume, bool isMuted) noexcept;
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
         std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
@@ -155,8 +163,11 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _sfxVolDown;    ///> Decrease SFX volume
         std::unique_ptr<UI::UIButton> _muteMusic;     ///> Mute/unmute music
         std::unique_ptr<UI::UIButton> _muteSFX;       ///> Mute/unmute SFX
+        std::unique_ptr<UI::UIButton> _controls;      ///> Current controls preset display button
+        std::unique_ptr<UI::UIButton> _controlsNext;  ///> Next controls preset button
 
-        bool _backRequested = false; ///> Flag indicating if the user wants to go back
+        bool _backRequested = false;   ///> Flag indicating if the user wants to go back
+        bool _controlsChanged = false; ///> Flag indicating if the controls preset has been changed
 
         /**
          * @brief List of available screen resolutions.

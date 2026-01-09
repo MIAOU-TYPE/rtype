@@ -23,6 +23,7 @@
 #include "EventRegistry.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
+#include "InputConfig.hpp"
 #include "MusicRegistry.hpp"
 #include "SoundRegistry.hpp"
 #include "TCPClient.hpp"
@@ -125,6 +126,13 @@ namespace Thread
         [[nodiscard]] std::shared_ptr<Engine::EventBus> getEventBus() const noexcept;
 
         /**
+         * @brief Rebinds control inputs based on the current configuration.
+         * @details This method recreates the event registry with updated key bindings
+         * from the InputConfig singleton.
+         */
+        void rebindControls();
+
+        /**
          * @brief Runs the display loop for rendering graphics.
          * @details This method handles the rendering of graphics and user input.
          * It should be called from the main thread.
@@ -190,6 +198,13 @@ namespace Thread
          * input packets to the server.
          */
         void setupEventsRegistry() const;
+
+        /**
+         * @brief Sets up the global event handlers that never change.
+         * @details This method registers handlers for generic input events (mouse, keyboard)
+         * that feed the InputState. Should only be called once at startup.
+         */
+        void setupGlobalEventHandlers();
 
         /**
          * @brief Processes incoming network packets up to a specified deadline and maximum count.

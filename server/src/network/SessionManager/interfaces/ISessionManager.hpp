@@ -109,5 +109,13 @@ namespace Net::Server
          * @return The session ID, or -1 if not found.
          */
         [[nodiscard]] virtual int getSessionIdFromUdp(const sockaddr_in &udpAddr) const = 0;
+
+        /**
+         * @brief Check if the given sequence number is valid for the session and, if so, update the last seen sequence
+         * number.
+         * @param sessionId The ID of the session.
+         * @param sequence The sequence number to set.
+         */
+        [[nodiscard]] virtual bool isSequenceValid(int sessionId, uint32_t sequence) const noexcept = 0;
     };
 } // namespace Net::Server

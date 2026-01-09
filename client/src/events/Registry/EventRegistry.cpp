@@ -39,4 +39,10 @@ namespace Engine
     {
         _keyReleased[key].push_back(std::move(fn));
     }
+
+    void EventRegistry::clear()
+    {
+        _keyPressed.clear();
+        _keyReleased.clear();
+    }
 } // namespace Engine

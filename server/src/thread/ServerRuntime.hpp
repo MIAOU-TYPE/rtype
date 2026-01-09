@@ -69,7 +69,7 @@ namespace Net::Thread
         /**
          * @brief Destroy the Server Runtime object
          */
-        ~ServerRuntime();
+        ~ServerRuntime() = default;
 
         /**
          * @brief Wait for the server to stop
@@ -81,6 +81,12 @@ namespace Net::Thread
          * Launches threads for receiving and processing packets
          */
         void start();
+
+        /**
+         * @brief Request to stop the server runtime
+         * Sets the stop requested flag to true
+         */
+        void requestStop() noexcept;
 
         /**
          * @brief Stop the server runtime

@@ -54,11 +54,6 @@ namespace Engine
         explicit HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
 
         /**
-         * @brief Initializes the HUD, loading fonts and creating text objects.
-         */
-        void initialize();
-
-        /**
          * @brief Renders the HUD elements.
          */
         void render();
@@ -66,7 +61,6 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
         std::function<int()> _getScore;                 ///> Function to get the current score.
-        Graphics::FontHandle _fontHandle;               ///> Handle to the font for HUD text.
         std::unique_ptr<Graphics::IText> _scoreText;    ///> Text object for displaying the score.
     };
 } // namespace Engine

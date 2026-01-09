@@ -12,16 +12,12 @@ namespace Engine
     HUD::HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore)
         : _renderer(std::move(renderer)), _getScore(getScore)
     {
-    }
-
-    void HUD::initialize()
-    {
-        _fontHandle = _renderer->fonts()->load("fonts/font.ttf");
-        if (!_renderer->fonts()->isValid(_fontHandle)) {
+        auto fontHandle = _renderer->fonts()->load("fonts/font.ttf");
+        if (!_renderer->fonts()->isValid(fontHandle)) {
             throw HUDError("Failed to load font 'fonts/font.ttf' for HUD");
         }
         _scoreText = _renderer->texts()->createText(24, {255, 255, 255, 255});
-        _scoreText->setFont(_fontHandle);
+        _scoreText->setFont(fontHandle);
         _scoreText->setPosition(10.f, 10.f);
         _scoreText->setString("Score: 0");
     }

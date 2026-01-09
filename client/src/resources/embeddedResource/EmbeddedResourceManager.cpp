@@ -121,8 +121,10 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/enemy2.png"] = {EmbeddedResources::enemy2_png, EmbeddedResources::enemy2_png_size};
     _resources["sprites/enemy3.png"] = {EmbeddedResources::enemy3_png, EmbeddedResources::enemy3_png_size};
     _resources["sprites/missile.png"] = {EmbeddedResources::missile_png, EmbeddedResources::missile_png_size};
-    _resources["sprites/missile_enemy.png"] = {EmbeddedResources::missile_enemy_png, EmbeddedResources::missile_enemy_png_size};
-    _resources["sprites/missile_enemy2.png"] = {EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
+    _resources["sprites/missile_enemy.png"] = {
+        EmbeddedResources::missile_enemy_png, EmbeddedResources::missile_enemy_png_size};
+    _resources["sprites/missile_enemy2.png"] = {
+        EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
 

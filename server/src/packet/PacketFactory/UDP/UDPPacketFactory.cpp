@@ -19,11 +19,15 @@ namespace Net::Factory
 
     HeaderData UDPPacketFactory::makeHeader(const uint8_t type, const uint8_t version, uint16_t size) noexcept
     {
+        static uint32_t sequenceCounter = 1;
+
         HeaderData header{};
         std::memcpy(header.magic, kPacketMagic, sizeof(kPacketMagic));
         header.type = type;
         header.version = version;
         header.size = htons(size);
+        header.sequence = htonl(sequenceCounter);
+        sequenceCounter++;
         return header;
     }
 
@@ -91,9 +95,7 @@ namespace Net::Factory
             SnapshotBatchHeader hdr{};
             hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             hdr.count = htons(static_cast<uint16_t>(entities.size()));
-            hdr.sequence = htonl(_sequenceCounter);
 
-            _sequenceCounter++;
             std::memcpy(buf, &hdr, sizeof(hdr));
             std::size_t offset = sizeof(hdr);
 

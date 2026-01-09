@@ -18,7 +18,7 @@ namespace Network
 
     HeaderData UDPPacketFactory::makeHeader(const uint8_t type, const uint16_t size) noexcept
     {
-        static uint32_t sequenceCounter = 0;
+        static uint32_t sequenceCounter = 1;
         HeaderData header{};
 
         std::memcpy(header.magic, kPacketMagic, sizeof(header.magic));

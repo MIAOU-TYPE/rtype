@@ -6,6 +6,7 @@
 */
 
 #include "AIShootSystem.hpp"
+#include "WeaponConfig.hpp"
 
 namespace Game
 {
@@ -13,8 +14,8 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<Ecs::AIBrain, Ecs::AIShoot, Ecs::Position>(
-            [&](const Ecs::Entity ent, Ecs::AIBrain &, Ecs::AIShoot &shoot, const Ecs::Position &pos) {
+        reg.view<Ecs::AIBrain, Ecs::AIShoot, Ecs::Position, Ecs::WeaponConfig>(
+            [&](const Ecs::Entity ent, Ecs::AIBrain &, Ecs::AIShoot &shoot, const Ecs::Position &pos, const Ecs::WeaponConfig &weapon) {
                 shoot.timer += dt;
                 if (shoot.timer < shoot.cooldown)
                     return;
@@ -29,7 +30,7 @@ namespace Game
                     constexpr float vy = 0.f;
 
                     world.events().emit(
-                        ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), {8.f, 8.f}, 5.f, 9));
+                        ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
                     return;
                 }
 
@@ -39,7 +40,7 @@ namespace Game
                     const float vy = -shoot.projectileSpeed * std::sin(angleRad);
 
                     world.events().emit(
-                        ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), {8.f, 8.f}, 5.f, 9));
+                        ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent), {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
                 }
             });
     }

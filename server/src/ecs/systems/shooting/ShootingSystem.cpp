@@ -6,6 +6,7 @@
 */
 
 #include "ShootingSystem.hpp"
+#include "WeaponConfig.hpp"
 
 namespace Game
 {
@@ -13,14 +14,13 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<InputComponent, Ecs::Position>(
-            [&](const Ecs::Entity entity, InputComponent &input, const Ecs::Position &pos) {
+        reg.view<InputComponent, Ecs::Position, Ecs::WeaponConfig>(
+            [&](const Ecs::Entity entity, InputComponent &input, const Ecs::Position &pos, const Ecs::WeaponConfig &weapon) {
                 if (!input.shoot)
                     return;
                 input.shoot = false;
-                size_t spriteId = reg.hasComponent<Ecs::AIBrain>(entity) ? 9 : 6;
                 world.events().emit<ShootEvent>(ShootEvent{
-                    pos.x + 30, pos.y, 100.f, 0.f, 20, static_cast<size_t>(entity), {8.f, 8.f}, 5.f, spriteId});
+                    pos.x + 30, pos.y, 100.f, 0.f, 20, static_cast<size_t>(entity), {8.f, 8.f}, 5.f, weapon.projectileSpriteId});
             });
     }
 } // namespace Game

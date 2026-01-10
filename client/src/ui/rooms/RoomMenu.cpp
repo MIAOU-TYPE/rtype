@@ -33,13 +33,9 @@ namespace Engine
 
     RoomMenu::RoomMenu(
         const std::shared_ptr<Graphics::IRenderer> &renderer, const std::shared_ptr<RoomManager> &roomManager)
-        : _renderer(renderer), _roomManager(roomManager)
+        : AMenu(renderer), _roomManager(roomManager)
     {
-        const auto textures = _renderer->textures();
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            throw RoomMenuError("{RoomMenu::RoomMenu} failed to load sprites/bg-preview.png texture");
-        _backgroundCmd.textureId = _backgroundTexture;
+        loadBackground("sprites/bg-preview.png");
 
         _header.title = _renderer->texts()->createText(64, {255, 255, 255, 255});
         _header.title->setString("ROOMS");
@@ -69,7 +65,6 @@ namespace Engine
 
     void RoomMenu::layout()
     {
-        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
         auto centerX = [&](UI::UIButton &b, float x, float y) {
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
@@ -79,11 +74,7 @@ namespace Engine
         const float cx = w * 0.5f;
 
         updateTextStrings();
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            return;
-        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
-        _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
+        layoutBackground();
         _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, h * 0.07f);
         _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, h * 0.16f);
 
@@ -299,7 +290,7 @@ namespace Engine
 
     void RoomMenu::render() const
     {
-        _renderer->draw(_backgroundCmd);
+        renderBackground();
         _renderer->draw(*_header.title);
         _renderer->draw(*_header.subtitle);
         if (_page == Page::Root) {

@@ -152,7 +152,6 @@ namespace Thread
                 }
             }
             if (_pendingAuthOk.exchange(false, std::memory_order_acq_rel)) {
-                std::cout << "{ClientRuntime::runDisplay} Authenticated successfully\n";
                 try {
                     _stateManager->changeState(std::make_unique<Engine::MenuState>(
                         _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));

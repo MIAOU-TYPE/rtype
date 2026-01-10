@@ -40,6 +40,8 @@ namespace Engine
 
     void Room::join(const int sessionId)
     {
+        if (_sessions.contains(sessionId))
+            return;
         _sessions.insert(sessionId);
         _gameServer->onPlayerConnect(sessionId);
     }

@@ -6,6 +6,15 @@
 */
 
 #include "RoomMenu.hpp"
+#include <iostream>
+
+namespace
+{
+    [[nodiscard]] bool isVisible(const Engine::FloatRect &rect, const float top, const float bottom) noexcept
+    {
+        return !(rect.y + rect.h < top || rect.y > bottom);
+    }
+} // namespace
 
 namespace Engine
 {
@@ -63,6 +72,7 @@ namespace Engine
         _create.difficultyLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.playersLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
 
+        _list.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
         refreshCreateCatalog();
         _layoutDirty = true;
     }
@@ -93,7 +103,10 @@ namespace Engine
             centerX(*_root.back, cx, h * 0.67f);
             return;
         }
-        layoutCreate(w, h, cx);
+        if (_page == Page::Create)
+            layoutCreate(w, h, cx);
+        if (_page == Page::List)
+            layoutList(h, cx);
     }
 
     void RoomMenu::layoutCreate(const float w, const float h, const float cx) const
@@ -128,6 +141,28 @@ namespace Engine
             _layoutDirty = false;
         }
         updateHover(frame.mouseX, frame.mouseY);
+        if (_page == Page::List) {
+            const auto now = std::chrono::steady_clock::now();
+            if (_list.lastRefresh.time_since_epoch().count() == 0)
+                _list.lastRefresh = now;
+
+            if (now - _list.lastRefresh >= _list.refreshPeriod) {
+                updateListRooms();
+                _layoutDirty = true;
+                _list.lastRefresh = now;
+            }
+
+            if (frame.keyPressed) {
+                if (frame.key == Key::Up) {
+                    _list.scroll -= _list.scrollStep;
+                    _layoutDirty = true;
+                }
+                if (frame.key == Key::Down) {
+                    _list.scroll += _list.scrollStep;
+                    _layoutDirty = true;
+                }
+            }
+        }
     }
 
     void RoomMenu::updateHover(const float mx, const float my) const
@@ -137,7 +172,7 @@ namespace Engine
                 fn(*_root.create);
                 fn(*_root.join);
                 fn(*_root.back);
-            } else {
+            } else if (_page == Page::Create) {
                 fn(*_create.worldPrev);
                 fn(*_create.worldNext);
                 fn(*_create.difficultyPrev);
@@ -146,6 +181,12 @@ namespace Engine
                 fn(*_create.playersNext);
                 fn(*_create.confirm);
                 fn(*_create.back);
+            } else if (_page == Page::List) {
+                fn(*_list.back);
+                for (const auto &btn : _list.roomButtons | std::views::values) {
+                    if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
+                        fn(*btn);
+                }
             }
         };
         each([&](UI::UIButton &b) {
@@ -172,14 +213,22 @@ namespace Engine
             press(*_root.back);
             return;
         }
-        press(*_create.worldPrev);
-        press(*_create.worldNext);
-        press(*_create.difficultyPrev);
-        press(*_create.difficultyNext);
-        press(*_create.playersPrev);
-        press(*_create.playersNext);
-        press(*_create.confirm);
-        press(*_create.back);
+        if (_page == Page::Create) {
+            press(*_create.worldPrev);
+            press(*_create.worldNext);
+            press(*_create.difficultyPrev);
+            press(*_create.difficultyNext);
+            press(*_create.playersPrev);
+            press(*_create.playersNext);
+            press(*_create.confirm);
+            press(*_create.back);
+        } else {
+            press(*_list.back);
+            for (const auto &btn : _list.roomButtons | std::views::values) {
+                if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
+                    press(*btn);
+            }
+        }
     }
 
     void RoomMenu::handleMouseReleased(const float mx, const float my)
@@ -192,7 +241,12 @@ namespace Engine
                 }))
                 return;
             if (_root.join->onClickReleased(mx, my, [&] {
-                    _joinRoom = true;
+                    _page = Page::List;
+                    _listRooms = true;
+                    _list.scroll = 0.f;
+                    _list.lastRefresh = {};
+                    updateListRooms();
+                    _layoutDirty = true;
                 })) {
                 return;
             }
@@ -202,7 +256,10 @@ namespace Engine
                 return;
             return;
         }
-        handleCreateReleased(mx, my);
+        if (_page == Page::Create)
+            handleCreateReleased(mx, my);
+        if (_page == Page::List)
+            handleJoinReleased(mx, my);
     }
 
     void RoomMenu::handleCreateReleased(const float mx, const float my)
@@ -264,6 +321,26 @@ namespace Engine
         _layoutDirty = true;
     }
 
+    void RoomMenu::handleJoinReleased(const float mx, const float my)
+    {
+        for (const auto &[roomId, btn] : _list.roomButtons) {
+            if (!isVisible(btn->bounds(), _list.listTop, _list.listBottom))
+                continue;
+
+            if (const std::uint32_t id = roomId; btn->onClickReleased(mx, my, [this, id] {
+                    _joinRoom = true;
+                    _joinRoomId = id;
+                })) {
+                return;
+            }
+        }
+
+        if (_list.back->onClickReleased(mx, my, [&] {
+                _page = Page::Root;
+                _layoutDirty = true;
+            })) {}
+    }
+
     void RoomMenu::refreshCreateCatalog()
     {
         _worlds = _roomManager ? _roomManager->worlds() : std::vector<WorldEntry>{};
@@ -286,7 +363,7 @@ namespace Engine
 
     void RoomMenu::updateTextStrings() const
     {
-        _header.subtitle->setString(_page == Page::Root ? "Create a room" : "Room settings");
+        _header.subtitle->setString(_page == Page::Root ? "" : _page == Page::Create ? "Create a room" : "Join a room");
         _create.levelName->setString(_levels.empty() ? "(no level)" : _levels.front().displayName);
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
@@ -308,18 +385,84 @@ namespace Engine
             _root.back->render();
             return;
         }
-        _create.worldPrev->render();
-        _create.worldNext->render();
-        _create.difficultyPrev->render();
-        _create.difficultyNext->render();
-        _create.playersPrev->render();
-        _create.playersNext->render();
-        _renderer->draw(*_create.levelName);
-        _renderer->draw(*_create.worldLabel);
-        _renderer->draw(*_create.difficultyLabel);
-        _renderer->draw(*_create.playersLabel);
-        _create.confirm->render();
-        _create.back->render();
+        if (_page == Page::Create) {
+            _create.worldPrev->render();
+            _create.worldNext->render();
+            _create.difficultyPrev->render();
+            _create.difficultyNext->render();
+            _create.playersPrev->render();
+            _create.playersNext->render();
+            _renderer->draw(*_create.levelName);
+            _renderer->draw(*_create.worldLabel);
+            _renderer->draw(*_create.difficultyLabel);
+            _renderer->draw(*_create.playersLabel);
+            _create.confirm->render();
+            _create.back->render();
+        }
+        if (_page == Page::List) {
+            for (const auto &btn : _list.roomButtons | std::views::values) {
+                if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
+                    btn->render();
+            }
+            _list.back->render();
+        }
+    }
+
+    void RoomMenu::updateListRooms()
+    {
+        if (!_roomManager)
+            return;
+
+        const auto rooms = _roomManager->rooms();
+
+        std::unordered_set<std::uint32_t> seen;
+        seen.reserve(rooms.size());
+
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+            seen.insert(roomId);
+
+            const std::string label =
+                roomName + " (" + std::to_string(currentPlayers) + "/" + std::to_string(maxPlayers) + ")";
+
+            if (auto it = _list.roomButtons.find(roomId); it == _list.roomButtons.end()) {
+                auto btn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, label);
+                _list.roomButtons.emplace(roomId, std::move(btn));
+            } else {
+                it->second->setLabel(label);
+            }
+        }
+
+        for (auto it = _list.roomButtons.begin(); it != _list.roomButtons.end();) {
+            if (!seen.contains(it->first))
+                it = _list.roomButtons.erase(it);
+            else
+                ++it;
+        }
+    }
+
+    void RoomMenu::layoutList(const float h, const float cx)
+    {
+        _list.listTop = h * 0.22f;
+        _list.listBottom = h * 0.78f;
+        const float listH = _list.listBottom - _list.listTop;
+
+        float rowH = 80.f;
+        if (!_list.roomButtons.empty()) {
+            const auto &first = _list.roomButtons.begin()->second;
+            rowH = first->bounds().h * 1.5f;
+        }
+
+        const float contentH = rowH * static_cast<float>(_list.roomButtons.size());
+        _list.maxScroll = std::max(0.f, contentH - listH);
+        _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
+
+        float y = _list.listTop - _list.scroll;
+        for (const auto &btn : _list.roomButtons | std::views::values) {
+            btn->setPosition(cx - btn->bounds().w * 0.5f, y);
+            y += rowH;
+        }
+
+        _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, h * 0.85f);
     }
 
     bool RoomMenu::wantsBackToMenu() const noexcept
@@ -337,6 +480,11 @@ namespace Engine
         return _joinRoom;
     }
 
+    bool RoomMenu::wantsListRooms() const noexcept
+    {
+        return _listRooms;
+    }
+
     void RoomMenu::consumeCreateRoomState() noexcept
     {
         _createRoom = false;
@@ -345,6 +493,21 @@ namespace Engine
     void RoomMenu::consumeJoinRoomState() noexcept
     {
         _joinRoom = false;
+    }
+
+    void RoomMenu::consumeListRoomsRequest() noexcept
+    {
+        _listRooms = false;
+    }
+
+    uint8_t RoomMenu::maxPlayerSelected() const noexcept
+    {
+        return _selectedMaxPlayers;
+    }
+
+    uint32_t RoomMenu::roomIdSelected() const noexcept
+    {
+        return _joinRoomId;
     }
 
 } // namespace Engine

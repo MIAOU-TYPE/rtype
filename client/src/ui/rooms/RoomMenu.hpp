@@ -68,14 +68,6 @@ namespace Engine
         void layout();
 
         /**
-         * @brief Lays out the creation room UI elements.
-         * @param w Width of the layout area.
-         * @param h Height of the layout area.
-         * @param cx Center x-coordinate of the layout area.
-         */
-        void layoutCreate(float w, float h, float cx) const;
-
-        /**
          * @brief Updates the room menu based on input.
          * @param frame The current input frame.
          */
@@ -105,6 +97,12 @@ namespace Engine
         [[nodiscard]] bool wantsJoinRoom() const noexcept;
 
         /**
+         * @brief Checks if the user wants to list available rooms.
+         * @return True if the user wants to list rooms, false otherwise.
+         */
+        [[nodiscard]] bool wantsListRooms() const noexcept;
+
+        /**
          * @brief Consumes the create room state.
          */
         void consumeCreateRoomState() noexcept;
@@ -114,12 +112,49 @@ namespace Engine
          */
         void consumeJoinRoomState() noexcept;
 
+        /**
+         * @brief Consumes the list rooms request state.
+         */
+        void consumeListRoomsRequest() noexcept;
+
+        /**
+         * @brief Gets the maximum number of players selected for room creation.
+         * @return The maximum number of players.
+         */
+        [[nodiscard]] uint8_t maxPlayerSelected() const noexcept;
+
+        /**
+         * @brief Gets the ID of the room selected for joining.
+         * @return The room ID.
+         */
+        [[nodiscard]] std::uint32_t roomIdSelected() const noexcept;
+
       private:
+        /**
+         * @brief Lays out the creation room UI elements.
+         * @param w Width of the layout area.
+         * @param h Height of the layout area.
+         * @param cx Center x-coordinate of the layout area.
+         */
+        void layoutCreate(float w, float h, float cx) const;
+
+        /**
+         * @brief Lays out the list rooms UI elements.
+         * @param h Height of the layout area.
+         * @param cx Center x-coordinate of the layout area.
+         */
+        void layoutList(float h, float cx);
+
+        /**
+         * @brief Update the list of available rooms from the room manager.
+         */
+        void updateListRooms();
+
         /**
          * @enum Page
          * @brief Enum representing the current page of the room menu.
          */
-        enum class Page { Root, Create };
+        enum class Page { Root, Create, List };
 
         /**
          * @struct HeaderUI
@@ -148,36 +183,44 @@ namespace Engine
         /**
          * @struct CreateUI
          * @brief Struct representing the create room UI elements.
-         * @brief worldPrev Pointer to the previous world button.
-         * @brief worldNext Pointer to the next world button.
-         * @brief difficultyPrev Pointer to the previous difficulty button.
-         * @brief difficultyNext Pointer to the next difficulty button.
-         * @brief playersPrev Pointer to the previous players button.
-         * @brief playersNext Pointer to the next players button.
-         * @brief confirm Pointer to the confirm button.
-         * @brief back Pointer to the back button.
-         * @brief levelName Pointer to the level name text element.
-         * @brief worldLabel Pointer to the world label text element.
-         * @brief difficultyLabel Pointer to the difficulty label text element.
-         * @brief playersLabel Pointer to the players label text element.
          */
         struct CreateUI {
-            std::unique_ptr<UI::UIButton> worldPrev;
-            std::unique_ptr<UI::UIButton> worldNext;
+            std::unique_ptr<UI::UIButton> worldPrev; ///> Previous world button.
+            std::unique_ptr<UI::UIButton> worldNext; ///> Next world button.
 
-            std::unique_ptr<UI::UIButton> difficultyPrev;
-            std::unique_ptr<UI::UIButton> difficultyNext;
+            std::unique_ptr<UI::UIButton> difficultyPrev; ///> Previous difficulty button.
+            std::unique_ptr<UI::UIButton> difficultyNext; ///> Next difficulty button.
 
-            std::unique_ptr<UI::UIButton> playersPrev;
-            std::unique_ptr<UI::UIButton> playersNext;
+            std::unique_ptr<UI::UIButton> playersPrev; ///> Previous players button.
+            std::unique_ptr<UI::UIButton> playersNext; ///> Next players button.
 
-            std::unique_ptr<UI::UIButton> confirm;
-            std::unique_ptr<UI::UIButton> back;
+            std::unique_ptr<UI::UIButton> confirm; ///> Confirm button.
+            std::unique_ptr<UI::UIButton> back;    ///> Back button.
 
-            std::unique_ptr<Graphics::IText> levelName;
-            std::unique_ptr<Graphics::IText> worldLabel;
-            std::unique_ptr<Graphics::IText> difficultyLabel;
-            std::unique_ptr<Graphics::IText> playersLabel;
+            std::unique_ptr<Graphics::IText> levelName;       ///> Level name text.
+            std::unique_ptr<Graphics::IText> worldLabel;      ///> World label text.
+            std::unique_ptr<Graphics::IText> difficultyLabel; ///> Difficulty label text.
+            std::unique_ptr<Graphics::IText> playersLabel;    ///> Players label text.
+        };
+
+        /**
+         * @struct ListUI
+         * @brief Struct representing the list room UI elements.
+         */
+        struct ListUI {
+            std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>>
+                roomButtons;                    ///> Map of room ID to room button.
+            std::unique_ptr<UI::UIButton> back; ///> Back button.
+
+            float listTop = 0.f;    ///> Top boundary of the room list.
+            float listBottom = 0.f; ///> Bottom boundary of the room list.
+
+            float scroll = 0.f;      ///> Current scroll position.
+            float maxScroll = 0.f;   ///> Maximum scroll position.
+            float scrollStep = 60.f; ///> Scroll step size.
+
+            std::chrono::steady_clock::time_point lastRefresh{};                  ///> Last refresh time point.
+            static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
         };
 
         /**
@@ -207,6 +250,13 @@ namespace Engine
         void handleCreateReleased(float mx, float my);
 
         /**
+         * @brief Handles mouse release events on the join room page.
+         * @param mx The x-coordinate of the mouse.
+         * @param my The y-coordinate of the mouse.
+         */
+        void handleJoinReleased(float mx, float my);
+
+        /**
          * @brief Updates hover states for UI elements.
          * @param mx The x-coordinate of the mouse.
          * @param my The y-coordinate of the mouse.
@@ -229,9 +279,11 @@ namespace Engine
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture handle.
         RenderCommand _backgroundCmd;                                          ///> Render command for the background.
 
-        HeaderUI _header;        ///> Header UI elements.
-        RootUI _root;            ///> Root UI elements.
-        CreateUI _create;        ///> Create room UI elements.
+        HeaderUI _header; ///> Header UI elements.
+        RootUI _root;     ///> Root UI elements.
+        CreateUI _create; ///> Create room UI elements.
+        ListUI _list;     ///> List room UI elements.
+
         Page _page = Page::Root; ///> Current page of the room menu.
 
         std::vector<WorldEntry> _worlds; ///> List of available worlds.
@@ -243,7 +295,11 @@ namespace Engine
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.
+        bool _listRooms = false;  ///> Flag indicating if the user wants to list available rooms.
+
         bool _joinRoom = false;   ///> Flag indicating if the user wants to join a room.
+        uint32_t _joinRoomId = 0; ///> ID of the room to join.
+
         bool _layoutDirty = true; ///> Flag indicating if the layout needs to be updated.
     };
 } // namespace Engine

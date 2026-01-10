@@ -18,6 +18,22 @@
 #include "RoomManager.hpp"
 #include "UIButton.hpp"
 
+/**
+ * @struct ListMetrics
+ * @brief Struct to hold metrics for the room list UI.
+ */
+struct ListMetrics {
+    float listTop = 0.f;    ///> Top boundary of the room list.
+    float listBottom = 0.f; ///> Bottom boundary of the room list.
+    float listH = 0.f;      ///> Height of the room list.
+
+    float rowH = 0.f;     ///> Height of each row in the room list.
+    float contentH = 0.f; ///> Total height of the content in the room list.
+
+    float maxScroll = 0.f;  ///> Maximum scroll position.
+    float scrollStep = 0.f; ///> Scroll step size.
+};
+
 namespace Engine
 {
     /**

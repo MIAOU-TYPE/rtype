@@ -32,6 +32,93 @@ namespace
     {
         return rect.y >= top && (rect.y + rect.h) <= bottom;
     }
+
+    [[nodiscard]] ListMetrics computeListMetrics(
+        const float h, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    {
+        ListMetrics m{};
+        m.listTop = h * 0.22f;
+        m.listBottom = h * 0.78f;
+        m.listH = m.listBottom - m.listTop;
+
+        float rowH = 80.f;
+        if (!buttons.empty()) {
+            const auto &first = buttons.begin()->second;
+            rowH = first->bounds().h * 1.2f;
+        }
+        m.rowH = rowH;
+        m.scrollStep = rowH;
+
+        m.contentH = m.rowH * static_cast<float>(buttons.size());
+        m.maxScroll = std::max(0.f, m.contentH - m.listH);
+        return m;
+    }
+
+    [[nodiscard]] float snapScroll(float scroll, const float step, const float maxScroll)
+    {
+        scroll = std::clamp(scroll, 0.f, maxScroll);
+        if (step > 0.f) {
+            scroll = std::round(scroll / step) * step;
+            scroll = std::clamp(scroll, 0.f, maxScroll);
+        }
+        return scroll;
+    }
+
+    void placeButtons(const float cx, const float yStart, const float rowH,
+        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    {
+        float y = yStart;
+        for (const auto &btn : buttons | std::views::values) {
+            const auto b = btn->bounds();
+            btn->setPosition(cx - b.w * 0.5f, y);
+            y += rowH;
+        }
+    }
+
+    [[nodiscard]] float computeVisibleBlockOffset(const float listTop, const float listBottom, const float listH,
+        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    {
+        float visTop = 0.f;
+        float visBottom = 0.f;
+        bool hasVisible = false;
+
+        for (const auto &btn : buttons | std::views::values) {
+            const auto b = btn->bounds();
+            const float top = b.y;
+            const float btm = top + b.h;
+            if (top < listTop || btm > listBottom)
+                continue;
+
+            if (!hasVisible) {
+                visTop = top;
+                visBottom = btm;
+                hasVisible = true;
+            } else {
+                visTop = std::min(visTop, top);
+                visBottom = std::max(visBottom, btm);
+            }
+        }
+
+        if (!hasVisible)
+            return 0.f;
+
+        const float visH = visBottom - visTop;
+        const float targetTop = listTop + (listH - visH) * 0.5f;
+        return targetTop - visTop;
+    }
+
+    void applyYOffset(
+        const float offset, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    {
+        if (offset == 0.f)
+            return;
+
+        for (const auto &btn : buttons | std::views::values) {
+            const auto b = btn->bounds();
+            btn->setPosition(b.x, b.y + offset);
+        }
+    }
+
 } // namespace
 
 namespace Engine
@@ -441,67 +528,20 @@ namespace Engine
 
     void RoomMenu::layoutList(const float h, const float cx)
     {
-        _list.listTop = h * 0.22f;
-        _list.listBottom = h * 0.78f;
-        const float listTop = _list.listTop;
-        const float listBottom = _list.listBottom;
-        const float listH = listBottom - listTop;
+        const auto m = computeListMetrics(h, _list.roomButtons);
 
-        float rowH = 80.f;
-        if (!_list.roomButtons.empty()) {
-            const auto &first = _list.roomButtons.begin()->second;
-            rowH = first->bounds().h * 1.2f;
-        }
+        _list.listTop = m.listTop;
+        _list.listBottom = m.listBottom;
+        _list.scrollStep = m.scrollStep;
+        _list.maxScroll = m.maxScroll;
 
-        _list.scrollStep = rowH;
+        _list.scroll = snapScroll(_list.scroll, _list.scrollStep, _list.maxScroll);
 
-        const float contentH = rowH * static_cast<float>(_list.roomButtons.size());
-        _list.maxScroll = std::max(0.f, contentH - listH);
+        placeButtons(cx, m.listTop - _list.scroll, m.rowH, _list.roomButtons);
 
-        _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
-        if (_list.scrollStep > 0.f) {
-            _list.scroll = std::round(_list.scroll / _list.scrollStep) * _list.scrollStep;
-            _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
-        }
+        const float offset = computeVisibleBlockOffset(m.listTop, m.listBottom, m.listH, _list.roomButtons);
+        applyYOffset(offset, _list.roomButtons);
 
-        float y = listTop - _list.scroll;
-        for (const auto &btn : _list.roomButtons | std::views::values) {
-            btn->setPosition(cx - btn->bounds().w * 0.5f, y);
-            y += rowH;
-        }
-
-        float visTop = 0.f;
-        float visBottom = 0.f;
-        bool hasVisible = false;
-
-        for (const auto &btn : _list.roomButtons | std::views::values) {
-            const auto b = btn->bounds();
-
-            const float top = b.y;
-            const float btm = top + b.h;
-            if (top < listTop || btm > listBottom)
-                continue;
-
-            if (!hasVisible) {
-                visTop = top;
-                visBottom = btm;
-                hasVisible = true;
-            } else {
-                visTop = std::min(visTop, top);
-                visBottom = std::max(visBottom, btm);
-            }
-        }
-
-        if (hasVisible) {
-            const float visH = visBottom - visTop;
-            const float targetTop = listTop + (listH - visH) * 0.5f;
-            const float offset = targetTop - visTop;
-
-            for (const auto &btn : _list.roomButtons | std::views::values) {
-                const auto b = btn->bounds();
-                btn->setPosition(b.x, b.y + offset);
-            }
-        }
         _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, h * 0.85f);
     }
 

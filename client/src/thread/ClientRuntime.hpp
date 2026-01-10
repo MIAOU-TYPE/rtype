@@ -150,6 +150,9 @@ namespace Thread
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
         std::shared_ptr<Engine::AuthContext> _authCtx;                 ///> Authentication context
 
+        // Request id of the latest auth (login/register) request, to attach server errors to the menu.
+        std::atomic_uint32_t _lastAuthReq{0};
+
         std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
         std::shared_ptr<Engine::SpriteRegistry> _spriteRegistry = nullptr; ///> Sprite registry for managing sprites
@@ -209,7 +212,7 @@ namespace Thread
          * @details This method registers handlers for generic input events (mouse, keyboard)
          * that feed the InputState. Should only be called once at startup.
          */
-        void setupGlobalEventHandlers() const;
+        void setupGlobalEventHandlers();
 
         /**
          * @brief Processes incoming network packets up to a specified deadline and maximum count.

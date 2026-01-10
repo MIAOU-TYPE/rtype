@@ -152,6 +152,9 @@ namespace Engine
         uint32_t roomId; ///> The ID of the room to join.
     };
 
+    /**
+     * @brief Event triggered when a request to list available rooms is made.
+     */
     struct ListRoomRequested : Event {
         /**
          * @brief Constructor for ListRoomRequested event.

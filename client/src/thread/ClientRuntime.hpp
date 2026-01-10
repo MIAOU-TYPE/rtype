@@ -162,14 +162,17 @@ namespace Thread
             nullptr; ///> Packet router for handling incoming packets
 
         std::shared_ptr<Network::INetClient> _tcpClient = nullptr; ///> TCP Network client interface
-        Network::TCPPacketFactory _tcpPacketFactory;    ///> Packet factory for creating TCP packets
-        std::unique_ptr<Network::TCPPacketRouter> _tcpPacketRouter = nullptr;   ///> TCP Packet router for handling incoming TCP packets
+        Network::TCPPacketFactory _tcpPacketFactory;               ///> Packet factory for creating TCP packets
+        std::unique_ptr<Network::TCPPacketRouter> _tcpPacketRouter =
+            nullptr; ///> TCP Packet router for handling incoming TCP packets
 
         Command::CommandBuffer<World::WorldCommand> _commandBuffer; ///> Command buffer for storing commands
 
         std::mutex _frameMutex; ///> Mutex for synchronizing frame access
-        std::shared_ptr<std::vector<Engine::RenderCommand>> _readRenderCommands;  ///> Render commands for the current frame
-        std::shared_ptr<std::vector<Engine::RenderCommand>> _writeRenderCommands;   ///> Render commands for the current frame
+        std::shared_ptr<std::vector<Engine::RenderCommand>>
+            _readRenderCommands; ///> Render commands for the current frame
+        std::shared_ptr<std::vector<Engine::RenderCommand>>
+            _writeRenderCommands; ///> Render commands for the current frame
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state

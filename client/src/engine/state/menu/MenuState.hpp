@@ -67,9 +67,9 @@ namespace Engine
         std::shared_ptr<RoomManager> _roomManager;      ///> Lobby/room manager shared across states.
         std::unique_ptr<Menu> _menu;                    ///> Unique pointer to the menu.
 
-        std::shared_ptr<EventBus> _eventBus; ///> Shared pointer to the event bus.
-        std::shared_ptr<AuthContext> _authCtx;  ///> Shared pointer to the auth context.
+        std::shared_ptr<EventBus> _eventBus;   ///> Shared pointer to the event bus.
+        std::shared_ptr<AuthContext> _authCtx; ///> Shared pointer to the auth context.
 
-        bool _lastAuthed = false;  ///> Tracks the last authentication status.
+        bool _lastAuthed = false; ///> Tracks the last authentication status.
     };
 } // namespace Engine

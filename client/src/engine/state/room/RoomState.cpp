@@ -11,9 +11,11 @@ namespace Engine
 {
     RoomState::RoomState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
         std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-        std::shared_ptr<RoomManager> roomManager, std::shared_ptr<EventBus> eventBus)
+        std::shared_ptr<RoomManager> roomManager, std::shared_ptr<EventBus> eventBus,
+        std::shared_ptr<AuthContext> authCtx)
         : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
-          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)), _eventBus(std::move(eventBus))
+          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)),
+          _eventBus(std::move(eventBus)), _authCtx(std::move(authCtx))
     {
     }
 
@@ -26,9 +28,11 @@ namespace Engine
     void RoomState::update(StateManager &manager, const InputFrame &frame)
     {
         _menu->update(frame);
-        if (_menu->wantsBackToMenu())
+        if (_menu->wantsBackToMenu()) {
             manager.queueState(std::make_unique<MenuState>(
-                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
+                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+            return;
+        }
         if (_menu->wantsCreateRoom()) {
             _menu->consumeCreateRoomState();
             _eventBus->emit<CreateRoomRequested>(CreateRoomRequested("default", 2));

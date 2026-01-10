@@ -1,6 +1,14 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** ArgParser
+*/
+
 #pragma once
 
 #include <string>
+#include <iostream>
 
 namespace Utils
 {

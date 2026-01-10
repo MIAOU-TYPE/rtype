@@ -391,7 +391,7 @@ namespace Thread
                 lastHello = now;
                 if (const auto hello = _tcpPacketFactory.makeHello(nextReqId(), 1))
                     _tcpClient->sendPacket(*hello);
-                }
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }

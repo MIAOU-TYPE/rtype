@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <exception>
+#include <iostream>
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"

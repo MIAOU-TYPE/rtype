@@ -9,36 +9,33 @@
 
 namespace
 {
+    Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
+    {
+        int v = static_cast<int>(d);
+        v = (v + step) % 3;
+        if (v < 0)
+            v += 3;
+        return static_cast<Engine::Difficulty>(v);
+    }
+
+    std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
+    {
+        switch (d) {
+            case Engine::Difficulty::Easy: return "easy";
+            case Engine::Difficulty::Medium: return "medium";
+            case Engine::Difficulty::Hard: return "hard";
+        }
+        return "unknown";
+    }
+
     [[nodiscard]] bool isVisible(const Engine::FloatRect &rect, const float top, const float bottom) noexcept
     {
-        return !(rect.y + rect.h < top || rect.y > bottom);
+        return rect.y >= top && (rect.y + rect.h) <= bottom;
     }
 } // namespace
 
 namespace Engine
 {
-    namespace
-    {
-        Difficulty shiftDifficulty(Difficulty d, const int step) noexcept
-        {
-            int v = static_cast<int>(d);
-            v = (v + step) % 3;
-            if (v < 0)
-                v += 3;
-            return static_cast<Difficulty>(v);
-        }
-
-        std::string_view difficultyToStringUI(Difficulty d) noexcept
-        {
-            switch (d) {
-                case Difficulty::Easy: return "easy";
-                case Difficulty::Medium: return "medium";
-                case Difficulty::Hard: return "hard";
-            }
-            return "unknown";
-        }
-    } // namespace
-
     RoomMenu::RoomMenu(
         const std::shared_ptr<Graphics::IRenderer> &renderer, const std::shared_ptr<RoomManager> &roomManager)
         : _renderer(renderer), _roomManager(roomManager)
@@ -140,27 +137,28 @@ namespace Engine
             _layoutDirty = false;
         }
         updateHover(frame.mouseX, frame.mouseY);
-        if (_page == Page::List) {
-            const auto now = std::chrono::steady_clock::now();
-            if (_list.lastRefresh.time_since_epoch().count() == 0)
-                _list.lastRefresh = now;
 
-            if (now - _list.lastRefresh >= _list.refreshPeriod) {
-                _listRooms = true;
-                updateListRooms();
+        if (_page != Page::List)
+            return;
+
+        const auto now = std::chrono::steady_clock::now();
+        if (_list.lastRefresh.time_since_epoch().count() == 0)
+            _list.lastRefresh = now;
+
+        if (now - _list.lastRefresh >= _list.refreshPeriod) {
+            _listRooms = true;
+            updateListRooms();
+            _layoutDirty = true;
+            _list.lastRefresh = now;
+        }
+
+        if (frame.keyPressed) {
+            if (frame.key == Key::Up) {
+                _list.scroll -= _list.scrollStep;
                 _layoutDirty = true;
-                _list.lastRefresh = now;
-            }
-
-            if (frame.keyPressed) {
-                if (frame.key == Key::Up) {
-                    _list.scroll -= _list.scrollStep;
-                    _layoutDirty = true;
-                }
-                if (frame.key == Key::Down) {
-                    _list.scroll += _list.scrollStep;
-                    _layoutDirty = true;
-                }
+            } else if (frame.key == Key::Down) {
+                _list.scroll += _list.scrollStep;
+                _layoutDirty = true;
             }
         }
     }
@@ -354,7 +352,7 @@ namespace Engine
         _levels.clear();
         try {
             const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;
-            const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty); // retourne une ref
+            const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty);
             _levels.assign(ref.begin(), ref.end());
         } catch (const std::exception &) {
             _levels.clear();
@@ -426,6 +424,7 @@ namespace Engine
 
             if (auto it = _list.roomButtons.find(roomId); it == _list.roomButtons.end()) {
                 auto btn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, label);
+                btn->setScale(2.f, 1.f);
                 _list.roomButtons.emplace(roomId, std::move(btn));
             } else {
                 it->second->setLabel(label);
@@ -444,24 +443,65 @@ namespace Engine
     {
         _list.listTop = h * 0.22f;
         _list.listBottom = h * 0.78f;
-        const float listH = _list.listBottom - _list.listTop;
+        const float listTop = _list.listTop;
+        const float listBottom = _list.listBottom;
+        const float listH = listBottom - listTop;
 
         float rowH = 80.f;
         if (!_list.roomButtons.empty()) {
             const auto &first = _list.roomButtons.begin()->second;
-            rowH = first->bounds().h * 1.5f;
+            rowH = first->bounds().h * 1.2f;
         }
+
+        _list.scrollStep = rowH;
 
         const float contentH = rowH * static_cast<float>(_list.roomButtons.size());
         _list.maxScroll = std::max(0.f, contentH - listH);
-        _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
 
-        float y = _list.listTop - _list.scroll;
+        _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
+        if (_list.scrollStep > 0.f) {
+            _list.scroll = std::round(_list.scroll / _list.scrollStep) * _list.scrollStep;
+            _list.scroll = std::clamp(_list.scroll, 0.f, _list.maxScroll);
+        }
+
+        float y = listTop - _list.scroll;
         for (const auto &btn : _list.roomButtons | std::views::values) {
             btn->setPosition(cx - btn->bounds().w * 0.5f, y);
             y += rowH;
         }
 
+        float visTop = 0.f;
+        float visBottom = 0.f;
+        bool hasVisible = false;
+
+        for (const auto &btn : _list.roomButtons | std::views::values) {
+            const auto b = btn->bounds();
+
+            const float top = b.y;
+            const float btm = top + b.h;
+            if (top < listTop || btm > listBottom)
+                continue;
+
+            if (!hasVisible) {
+                visTop = top;
+                visBottom = btm;
+                hasVisible = true;
+            } else {
+                visTop = std::min(visTop, top);
+                visBottom = std::max(visBottom, btm);
+            }
+        }
+
+        if (hasVisible) {
+            const float visH = visBottom - visTop;
+            const float targetTop = listTop + (listH - visH) * 0.5f;
+            const float offset = targetTop - visTop;
+
+            for (const auto &btn : _list.roomButtons | std::views::values) {
+                const auto b = btn->bounds();
+                btn->setPosition(b.x, b.y + offset);
+            }
+        }
         _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, h * 0.85f);
     }
 

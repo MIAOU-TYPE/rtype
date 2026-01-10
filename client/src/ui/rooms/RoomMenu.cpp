@@ -341,21 +341,14 @@ namespace Engine
     void RoomMenu::handleCreateReleased(const float mx, const float my)
     {
         enum class Action { None, WPrev, WNext, DPrev, DNext, PPrev, PNext, Confirm, Back };
-        auto a = Action::None;
-        bool refreshCatalog = false;
-        auto pick = [&](const std::unique_ptr<UI::UIButton> &btn, const Action act) -> bool {
-            return btn && btn->onClickReleased(mx, my, [&] {
-                a = act;
-            });
-        };
-
-        if (!(pick(_create.worldPrev, Action::WPrev) || pick(_create.worldNext, Action::WNext)
-                || pick(_create.difficultyPrev, Action::DPrev) || pick(_create.difficultyNext, Action::DNext)
-                || pick(_create.playersPrev, Action::PPrev) || pick(_create.playersNext, Action::PNext)
-                || pick(_create.confirm, Action::Confirm) || pick(_create.back, Action::Back))) {
+        const auto a = pickAction<Action>(mx, my,
+            {{_create.worldPrev.get(), Action::WPrev}, {_create.worldNext.get(), Action::WNext},
+                {_create.difficultyPrev.get(), Action::DPrev}, {_create.difficultyNext.get(), Action::DNext},
+                {_create.playersPrev.get(), Action::PPrev}, {_create.playersNext.get(), Action::PNext},
+                {_create.confirm.get(), Action::Confirm}, {_create.back.get(), Action::Back}});
+        if (a == Action::None)
             return;
-        }
-
+        bool refreshCatalog = false;
         switch (a) {
             case Action::WPrev: {
                 if (const int wc = static_cast<int>(_worlds.size())) {
@@ -388,7 +381,6 @@ namespace Engine
                     ++_selectedMaxPlayers;
                 break;
             case Action::Back: _page = Page::Root; break;
-            case Action::None: break;
             case Action::Confirm: _createRoom = true; break;
             default:;
         }

@@ -81,6 +81,11 @@ namespace Game
             const std::string &levelPath = "levels/level1.json");
 
         /**
+         * @brief Reset the game server to its initial state.
+         */
+        void reset();
+
+        /**
          * @brief Called when a new player connects.
          *
          * Creates a new entity in the world and associates it with the session ID.

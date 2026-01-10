@@ -92,10 +92,11 @@ namespace Network
             if (_socketFd != kInvalidSocket)
                 _netWrapper.closeSocket(_socketFd);
             _socketFd = kInvalidSocket;
-            throw NetClientError(std::string("{UDPClient::start} ") + e.what());
+            throw;
         }
 
         setRunning(true);
+        std::cout << "{UDPClient::start} UDP Client started on " << _ip << ":" << _port << std::endl;
     }
 
     bool UDPClient::sendPacket(const Net::IPacket &pkt)

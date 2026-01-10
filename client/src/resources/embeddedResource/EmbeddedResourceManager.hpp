@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <ranges>
 #include <string>
 #include <vector>
 #include "IResourceManager.hpp"

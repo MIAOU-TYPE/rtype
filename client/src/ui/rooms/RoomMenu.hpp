@@ -86,14 +86,6 @@ namespace Engine
         void layout() override;
 
         /**
-         * @brief Lays out the creation room UI elements.
-         * @param w Width of the layout area.
-         * @param h Height of the layout area.
-         * @param cx Center x-coordinate of the layout area.
-         */
-        void layoutCreate(float w, float h, float cx) const;
-
-        /**
          * @brief Updates the room menu based on input.
          * @param frame The current input frame.
          */
@@ -299,18 +291,13 @@ namespace Engine
          */
         void updateTextStrings() const;
 
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the graphics renderer.
         std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.
 
-        Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture handle.
-        RenderCommand _backgroundCmd;                                          ///> Render command for the background.
-
-        HeaderUI _header; ///> Header UI elements.
-        RootUI _root;     ///> Root UI elements.
-        CreateUI _create; ///> Create room UI elements.
-        ListUI _list;     ///> List room UI elements.
-
+        HeaderUI _header;        ///> Header UI elements.
+        RootUI _root;            ///> Root UI elements.
+        CreateUI _create;        ///> Create room UI elements.
         Page _page = Page::Root; ///> Current page of the room menu.
+        ListUI _list;            ///> List room UI elements.
 
         std::vector<WorldEntry> _worlds; ///> List of available worlds.
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
@@ -318,14 +305,12 @@ namespace Engine
         int _selectedWorld = 0;                            ///> Index of the selected world.
         Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
         uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
+        uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.
         bool _listRooms = false;  ///> Flag indicating if the user wants to list available rooms.
-
         bool _joinRoom = false;   ///> Flag indicating if the user wants to join a room.
-        uint32_t _joinRoomId = 0; ///> ID of the room to join.
-
         bool _layoutDirty = true; ///> Flag indicating if the layout needs to be updated.
     };
 } // namespace Engine

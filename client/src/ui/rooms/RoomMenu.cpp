@@ -147,6 +147,7 @@ namespace Engine
                 _list.lastRefresh = now;
 
             if (now - _list.lastRefresh >= _list.refreshPeriod) {
+                _listRooms = true;
                 updateListRooms();
                 _layoutDirty = true;
                 _list.lastRefresh = now;

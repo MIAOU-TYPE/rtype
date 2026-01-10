@@ -70,7 +70,7 @@ namespace Engine
         std::shared_ptr<EventBus> _eventBus;   ///> Shared pointer to the event bus.
         std::shared_ptr<AuthContext> _authCtx; ///> Shared pointer to the auth context.
 
-        bool _lastAuthed = false; ///> Tracks the last authentication status.
-        std::uint32_t _lastAuthErrorVersion = 0;    ///> Tracks the last authentication error version.
+        bool _lastAuthed = false;                ///> Tracks the last authentication status.
+        std::uint32_t _lastAuthErrorVersion = 0; ///> Tracks the last authentication error version.
     };
 } // namespace Engine

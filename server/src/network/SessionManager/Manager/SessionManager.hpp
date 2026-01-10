@@ -144,8 +144,8 @@ namespace Net::Server
         [[nodiscard]] bool isAuthed(int sessionId) const override;
 
       private:
-        mutable std::shared_mutex _mutex{}; ///> Mutex for thread-safe access
-        using Clock = std::chrono::steady_clock;
+        mutable std::shared_mutex _mutex{};      ///> Mutex for thread-safe access
+        using Clock = std::chrono::steady_clock; ///> Clock type for time management
 
         void clearAuthLocked(int sessionId);       ///> Clear authentication data for a session ID
         bool isExpiredLocked(int sessionId) const; ///> Check if the authentication for a session ID has expired

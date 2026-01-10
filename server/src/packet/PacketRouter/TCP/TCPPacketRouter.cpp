@@ -17,15 +17,15 @@ namespace
         return s;
     }
 
-    std::uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
+    uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
     {
         auto token = sessions.getUdpToken(sessionId);
         if (token != 0)
             return token;
 
         std::random_device rd;
-        token = (static_cast<std::uint64_t>(rd()) << 32) ^ static_cast<std::uint64_t>(rd())
-            ^ (static_cast<std::uint64_t>(sessionId) << 1);
+        token =
+            (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd()) ^ (static_cast<uint64_t>(sessionId) << 1);
         sessions.setUdpToken(sessionId, token);
         return token;
     }
@@ -131,7 +131,7 @@ namespace Net
     }
 
     void TCPPacketRouter::onAuthRegister(
-        const sockaddr_in &addr, const int sessionId, const std::uint32_t req, TCP::Reader &r) const
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
     {
         if (!_auth || !_packetFactory)
             return sendError(addr, req, 500, "AUTH_REGISTER: service unavailable");
@@ -161,15 +161,15 @@ namespace Net
             return sendError(addr, req, 500, "Server error");
         }
 
-        constexpr std::uint32_t ttlSec = 24u * 60u * 60u;
+        constexpr uint32_t ttlSec = 24u * 60u * 60u;
         _sessions->setIdentity(sessionId, Auth::Identity{ok.userId, ok.username}, std::chrono::seconds(ttlSec));
-        const std::uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
+        const uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
         if (const auto out = _packetFactory->makeAuthOk(addr, req, ok.userId, ok.username, udpToken, ttlSec))
             (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onAuthLogin(
-        const sockaddr_in &addr, const int sessionId, const std::uint32_t req, TCP::Reader &r) const
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
     {
         if (!_auth || !_packetFactory)
             return sendError(addr, req, 500, "AUTH_LOGIN: service unavailable");
@@ -199,9 +199,9 @@ namespace Net
             return sendError(addr, req, 500, "Server error");
         }
 
-        constexpr std::uint32_t ttlSec = 24u * 60u * 60u;
+        constexpr uint32_t ttlSec = 24u * 60u * 60u;
         _sessions->setIdentity(sessionId, Auth::Identity{ok.userId, ok.username}, std::chrono::seconds(ttlSec));
-        const std::uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
+        const uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
         if (const auto out = _packetFactory->makeAuthOk(addr, req, ok.userId, ok.username, udpToken, ttlSec))
             (void) _tcp->sendPacket(*out);
     }

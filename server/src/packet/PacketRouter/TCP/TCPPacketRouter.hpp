@@ -104,7 +104,7 @@ namespace Net
          * @param req The request ID
          * @param r The TCP reader for the packet body
          */
-        void onAuthRegister(const sockaddr_in &addr, int sessionId, std::uint32_t req, TCP::Reader &r) const;
+        void onAuthRegister(const sockaddr_in &addr, int sessionId, uint32_t req, TCP::Reader &r) const;
 
         /**
          * @brief Handles the AUTH_LOGIN packet from a client
@@ -113,7 +113,7 @@ namespace Net
          * @param req The request ID
          * @param r The TCP reader for the packet body
          */
-        void onAuthLogin(const sockaddr_in &addr, int sessionId, std::uint32_t req, TCP::Reader &r) const;
+        void onAuthLogin(const sockaddr_in &addr, int sessionId, uint32_t req, TCP::Reader &r) const;
 
         std::shared_ptr<Server::ISessionManager> _sessions = nullptr;        ///> Session manager
         std::shared_ptr<Engine::RoomManager> _rooms = nullptr;               ///> Room manager

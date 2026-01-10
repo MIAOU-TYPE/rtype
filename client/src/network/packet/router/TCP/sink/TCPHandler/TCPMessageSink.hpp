@@ -155,8 +155,8 @@ namespace Network
          * @param token The authentication token.
          * @param ttlSec The time-to-live in seconds for the authentication token.
          */
-        void onAuthOk(std::uint32_t req, std::uint32_t userId, std::string_view username, std::uint64_t token,
-            std::uint32_t ttlSec) override;
+        void onAuthOk(
+            uint32_t req, uint32_t userId, std::string_view username, uint64_t token, uint32_t ttlSec) override;
 
         /**
          * @brief Retrieves the current connection information.
@@ -199,7 +199,7 @@ namespace Network
          * @brief Structure representing the identity of the authenticated user.
          */
         struct Identity {
-            std::uint32_t userId = 0; ///> User ID
+            uint32_t userId = 0; ///> User ID
             std::string username;
         };
 

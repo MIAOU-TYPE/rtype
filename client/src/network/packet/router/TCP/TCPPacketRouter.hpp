@@ -107,7 +107,7 @@ namespace Network
          * @param req The request ID.
          * @param r Reader for parsing the message payload.
          */
-        void onAuthOk(std::uint32_t req, Net::TCP::Reader &r) const;
+        void onAuthOk(uint32_t req, Net::TCP::Reader &r) const;
 
         std::shared_ptr<IMessageHandler> _sink = nullptr; ///> Shared pointer to the message handler.
     };

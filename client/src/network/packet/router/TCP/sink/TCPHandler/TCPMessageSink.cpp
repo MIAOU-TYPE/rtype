@@ -103,8 +103,8 @@ namespace Network
         emit(_protocolErrorCbs, req, msg);
     }
 
-    void TCPMessageSink::onAuthOk(const std::uint32_t req, const std::uint32_t userId, const std::string_view username,
-        const std::uint64_t token, const std::uint32_t ttlSec)
+    void TCPMessageSink::onAuthOk(const uint32_t req, const uint32_t userId, const std::string_view username,
+        const uint64_t token, const uint32_t ttlSec)
     {
         if (!_isConnected) {
             emit(_protocolErrorCbs, req, "AUTH_OK received while not connected");

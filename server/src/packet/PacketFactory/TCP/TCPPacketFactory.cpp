@@ -114,14 +114,13 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> TCPPacketFactory::makeAuthOk(const sockaddr_in &addr, const ReqId req,
-        const std::uint32_t userId, const std::string_view username, const std::uint64_t token,
-        const std::uint32_t ttlSec) const
+        const uint32_t userId, const std::string_view username, const uint64_t token, const uint32_t ttlSec) const
     {
         TCP::Writer b;
         b.u32(userId);
         b.str16(username);
-        b.u32(static_cast<std::uint32_t>(token >> 32));
-        b.u32(static_cast<std::uint32_t>(token & 0xFFFFFFFFu));
+        b.u32(static_cast<uint32_t>(token >> 32));
+        b.u32(static_cast<uint32_t>(token & 0xFFFFFFFFu));
         b.u32(ttlSec);
 
         const auto payload = TCP::buildPayload(Protocol::TCP::AUTH_OK, req, b.bytes());

@@ -14,31 +14,31 @@ namespace Auth
 {
     namespace
     {
-        constexpr std::uint64_t kN = 1ull << 15;
-        constexpr std::uint64_t kr = 8;
-        constexpr std::uint64_t kp = 1;
-        constexpr std::uint64_t kMaxMem = 64ull * 1024ull * 1024ull;
+        constexpr uint64_t kN = 1ull << 15;
+        constexpr uint64_t kr = 8;
+        constexpr uint64_t kp = 1;
+        constexpr uint64_t kMaxMem = 64ull * 1024ull * 1024ull;
 
         constexpr std::size_t kSaltLen = 16;
         constexpr std::size_t kDkLen = 32;
 
-        constexpr std::uint64_t kMinN = 1ull << 14;
-        constexpr std::uint64_t kMaxN = 1ull << 18;
-        constexpr std::uint64_t kMinR = 1;
-        constexpr std::uint64_t kMaxR = 16;
-        constexpr std::uint64_t kMinP = 1;
-        constexpr std::uint64_t kMaxP = 4;
+        constexpr uint64_t kMinN = 1ull << 14;
+        constexpr uint64_t kMaxN = 1ull << 18;
+        constexpr uint64_t kMinR = 1;
+        constexpr uint64_t kMaxR = 16;
+        constexpr uint64_t kMinP = 1;
+        constexpr uint64_t kMaxP = 4;
 
-        [[nodiscard]] bool isPowerOfTwo(const std::uint64_t x) noexcept
+        [[nodiscard]] bool isPowerOfTwo(const uint64_t x) noexcept
         {
             return x != 0 && ((x & (x - 1)) == 0);
         }
 
-        [[nodiscard]] bool parseU64(const std::string_view s, std::uint64_t &out) noexcept
+        [[nodiscard]] bool parseU64(const std::string_view s, uint64_t &out) noexcept
         {
             if (s.empty())
                 return false;
-            std::uint64_t v = 0;
+            uint64_t v = 0;
             const auto *b = s.data();
             const auto *e = s.data() + s.size();
             if (const auto [ptr, ec] = std::from_chars(b, e, v); ec != std::errc{} || ptr != e)
@@ -47,12 +47,12 @@ namespace Auth
             return true;
         }
 
-        [[nodiscard]] bool validateParams(const std::uint64_t N, const std::uint64_t r, const std::uint64_t p) noexcept
+        [[nodiscard]] bool validateParams(const uint64_t N, const uint64_t r, const uint64_t p) noexcept
         {
             if (!isPowerOfTwo(N) || N < kMinN || N > kMaxN || r < kMinR || r > kMaxR || p < kMinP || p > kMaxP
                 || (r != 0 && N > UINT64_MAX / r) || r * N > UINT64_MAX / 128)
                 return false;
-            const std::uint64_t mem = 128 * r * N;
+            const uint64_t mem = 128 * r * N;
             return mem <= kMaxMem;
         }
 
@@ -71,14 +71,13 @@ namespace Auth
         }
 
         [[nodiscard]] bool scryptDerive(const std::string_view password, const unsigned char *salt, std::size_t saltLen,
-            const std::uint64_t N, const std::uint64_t r, const std::uint64_t p, unsigned char *out,
-            std::size_t outLen) noexcept
+            const uint64_t N, const uint64_t r, const uint64_t p, unsigned char *out, std::size_t outLen) noexcept
         {
             return EVP_PBE_scrypt(password.data(), password.size(), salt, saltLen, N, r, p, kMaxMem, out, outLen) == 1;
         }
 
-        std::string encode(std::uint64_t N, std::uint64_t r, std::uint64_t p,
-            const std::array<unsigned char, kSaltLen> &salt, const std::array<unsigned char, kDkLen> &dk)
+        std::string encode(uint64_t N, uint64_t r, uint64_t p, const std::array<unsigned char, kSaltLen> &salt,
+            const std::array<unsigned char, kDkLen> &dk)
         {
             std::string out;
             out.reserve(7 + 3 * 20 + (kSaltLen + kDkLen) * 2 + 5);
@@ -112,7 +111,7 @@ namespace Auth
         std::string_view sN, sr, sp, saltHex, dkHex;
         if (std::string_view tag; !split6(encoded, tag, sN, sr, sp, saltHex, dkHex) || tag != "scrypt")
             return false;
-        std::uint64_t N = 0, r = 0, p = 0;
+        uint64_t N = 0, r = 0, p = 0;
         if (!parseU64(sN, N) || !parseU64(sr, r) || !parseU64(sp, p) || !validateParams(N, r, p))
             return false;
         std::array<unsigned char, kSaltLen> salt{};

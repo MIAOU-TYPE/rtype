@@ -7,8 +7,6 @@
 
 #include "Menu.hpp"
 
-#include <iostream>
-
 namespace Engine
 {
     Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : AMenu(renderer)

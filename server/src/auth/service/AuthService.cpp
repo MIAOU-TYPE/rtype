@@ -49,7 +49,7 @@ namespace Auth
         }
 
         try {
-            const std::uint32_t id = _repo->insertUser(username, hashPassword(password));
+            const uint32_t id = _repo->insertUser(username, hashPassword(password));
             if (id == 0)
                 throw AuthServiceError("username_taken", "Username already exists");
             return AuthOk{id, username};

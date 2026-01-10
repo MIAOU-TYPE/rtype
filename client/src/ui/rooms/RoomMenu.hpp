@@ -145,7 +145,7 @@ namespace Engine
          * @brief Gets the ID of the room selected for joining.
          * @return The room ID.
          */
-        [[nodiscard]] std::uint32_t roomIdSelected() const noexcept;
+        [[nodiscard]] uint32_t roomIdSelected() const noexcept;
 
       private:
         /**
@@ -226,9 +226,8 @@ namespace Engine
          * @brief Struct representing the list room UI elements.
          */
         struct ListUI {
-            std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>>
-                roomButtons;                    ///> Map of room ID to room button.
-            std::unique_ptr<UI::UIButton> back; ///> Back button.
+            std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> roomButtons; ///> Map of room ID to room button.
+            std::unique_ptr<UI::UIButton> back;                                      ///> Back button.
 
             float listTop = 0.f;    ///> Top boundary of the room list.
             float listBottom = 0.f; ///> Bottom boundary of the room list.

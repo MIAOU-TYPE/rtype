@@ -65,8 +65,8 @@ namespace Auth
      * @brief Structure representing a successful authentication result.
      */
     struct AuthOk {
-        std::uint32_t userId = 0; ///> User ID
-        std::string username;     ///> Username
+        uint32_t userId = 0;  ///> User ID
+        std::string username; ///> Username
     };
 
     /**

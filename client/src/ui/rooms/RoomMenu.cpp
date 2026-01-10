@@ -34,7 +34,7 @@ namespace
     }
 
     [[nodiscard]] ListMetrics computeListMetrics(
-        const float h, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const float h, const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         ListMetrics m{};
         m.listTop = h * 0.22f;
@@ -65,7 +65,7 @@ namespace
     }
 
     void placeButtons(const float cx, const float yStart, const float rowH,
-        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         float y = yStart;
         for (const auto &btn : buttons | std::views::values) {
@@ -76,7 +76,7 @@ namespace
     }
 
     [[nodiscard]] float computeVisibleBlockOffset(const float listTop, const float listBottom, const float listH,
-        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         float visTop = 0.f;
         float visBottom = 0.f;
@@ -107,8 +107,7 @@ namespace
         return targetTop - visTop;
     }
 
-    void applyYOffset(
-        const float offset, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    void applyYOffset(const float offset, const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         if (offset == 0.f)
             return;
@@ -395,7 +394,7 @@ namespace Engine
             if (!isVisible(btn->bounds(), _list.listTop, _list.listBottom))
                 continue;
 
-            if (const std::uint32_t id = roomId; btn->onClickReleased(mx, my, [this, id] {
+            if (const uint32_t id = roomId; btn->onClickReleased(mx, my, [this, id] {
                     _joinRoom = true;
                     _joinRoomId = id;
                 })) {
@@ -483,7 +482,7 @@ namespace Engine
 
         const auto rooms = _roomManager->rooms();
 
-        std::unordered_set<std::uint32_t> seen;
+        std::unordered_set<uint32_t> seen;
         seen.reserve(rooms.size());
 
         for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {

@@ -96,7 +96,7 @@ namespace Network
          * @return A shared pointer to the created AuthRegister packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeAuthRegister(
-            std::uint32_t req, std::string_view username, std::string_view password) const;
+            uint32_t req, std::string_view username, std::string_view password) const;
 
         /**
          * @brief Create an AuthLogin packet.
@@ -106,7 +106,7 @@ namespace Network
          * @return A shared pointer to the created AuthLogin packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeAuthLogin(
-            std::uint32_t req, std::string_view username, std::string_view password) const;
+            uint32_t req, std::string_view username, std::string_view password) const;
 
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets

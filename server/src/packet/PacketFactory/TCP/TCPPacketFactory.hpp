@@ -132,8 +132,8 @@ namespace Net::Factory
          * @param ttlSec
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> makeAuthOk(const sockaddr_in &addr, ReqId req, std::uint32_t userId,
-            std::string_view username, std::uint64_t token, std::uint32_t ttlSec) const;
+        [[nodiscard]] std::shared_ptr<IPacket> makeAuthOk(const sockaddr_in &addr, ReqId req, uint32_t userId,
+            std::string_view username, uint64_t token, uint32_t ttlSec) const;
 
       private:
         /**

@@ -44,8 +44,8 @@ namespace Auth
     };
 
     struct Identity {
-        std::uint32_t userId = 0; ///> The user ID.
-        std::string username;     ///> The username.
+        uint32_t userId = 0;  ///> The user ID.
+        std::string username; ///> The username.
     };
 
     /**
@@ -91,7 +91,7 @@ namespace Auth
          * @return The ID of the newly inserted user.
          * @throws UserStorageError on database errors.
          */
-        std::uint32_t insertUser(const std::string &username, const std::string &passwordScrypt) const;
+        uint32_t insertUser(const std::string &username, const std::string &passwordScrypt) const;
 
       private:
         std::shared_ptr<SqliteDb> _db; ///> The database connection.

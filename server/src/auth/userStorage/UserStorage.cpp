@@ -56,7 +56,7 @@ namespace Auth
         UserRow user{
             .identity =
                 Identity{
-                    .userId = static_cast<std::uint32_t>(sqlite3_column_int(st.raw(), 0)),
+                    .userId = static_cast<uint32_t>(sqlite3_column_int(st.raw(), 0)),
                     .username = dbUsername,
                 },
             .passwordScrypt = dbPassword,
@@ -64,7 +64,7 @@ namespace Auth
         return user;
     }
 
-    std::uint32_t UserStorage::insertUser(const std::string &username, const std::string &passwordScrypt) const
+    uint32_t UserStorage::insertUser(const std::string &username, const std::string &passwordScrypt) const
     {
         std::scoped_lock lk(_db->mutex());
 
@@ -77,7 +77,7 @@ namespace Auth
                 return 0;
             throw UserStorageError("insertUser: step failed");
         }
-        return static_cast<std::uint32_t>(sqlite3_last_insert_rowid(_db->raw()));
+        return static_cast<uint32_t>(sqlite3_last_insert_rowid(_db->raw()));
     }
 
 } // namespace Auth

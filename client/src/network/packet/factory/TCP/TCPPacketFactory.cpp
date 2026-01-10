@@ -110,7 +110,7 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeAuthRegister(
-        const std::uint32_t req, const std::string_view username, const std::string_view password) const
+        const uint32_t req, const std::string_view username, const std::string_view password) const
     {
         try {
             Net::TCP::Writer b;
@@ -126,7 +126,7 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeAuthLogin(
-        const std::uint32_t req, const std::string_view username, const std::string_view password) const
+        const uint32_t req, const std::string_view username, const std::string_view password) const
     {
         try {
             Net::TCP::Writer b;

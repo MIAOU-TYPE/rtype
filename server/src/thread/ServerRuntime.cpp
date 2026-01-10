@@ -117,6 +117,8 @@ void ServerRuntime::runSnapshot() const
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
 
+        const uint32_t tick = _serverTick.fetch_add(1, std::memory_order_relaxed);
+
         _roomManager->forEachRoom([&](const Engine::Room &room) {
             entities.clear();
             room.gameServer().buildSnapshot(entities);
@@ -124,7 +126,7 @@ void ServerRuntime::runSnapshot() const
             if (entities.empty())
                 return;
 
-            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities)) {
+            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities, tick)) {
                 for (const int sessionId : room.sessions()) {
                     if (const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId)) {
                         auto pkt = basePacket->clone();

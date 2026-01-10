@@ -135,5 +135,6 @@ namespace Net::Thread
         std::condition_variable _cv;             ///> Condition variable for signaling
         std::atomic<bool> _stopRequested{false}; ///> Flag to indicate if a stop has been requested
         std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the server is running
+        mutable std::atomic<uint32_t> _serverTick{0};
     };
 } // namespace Net::Thread

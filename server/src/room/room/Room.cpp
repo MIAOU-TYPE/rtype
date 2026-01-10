@@ -84,6 +84,7 @@ namespace Engine
 
     void Room::run() const
     {
+        std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::seconds(1));
         constexpr auto Tick = std::chrono::milliseconds(16);
         auto next = std::chrono::steady_clock::now();
 

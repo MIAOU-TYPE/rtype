@@ -130,7 +130,7 @@ namespace Thread
          * @details This method recreates the event registry with updated key bindings
          * from the InputConfig singleton.
          */
-        void rebindControls();
+        void rebindControls() const;
 
         /**
          * @brief Runs the display loop for rendering graphics.

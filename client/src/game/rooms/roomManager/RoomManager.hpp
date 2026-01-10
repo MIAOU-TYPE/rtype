@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <utility>
 #include "IResourceManager.hpp"
+#include "RoomData.hpp"
 #include "RoomTypes.hpp"
 #include <string_view>
 #include <unordered_map>
@@ -77,6 +78,12 @@ namespace Engine
          */
         [[nodiscard]] const std::vector<LevelInfo> &levelsFor(std::string_view worldId, Difficulty difficulty) const;
 
+        /**
+         * @brief Retrieves the list of available rooms.
+         * @return A reference to the vector of RoomData objects.
+         */
+        [[nodiscard]] std::vector<RoomData> &rooms() noexcept;
+
       private:
         /**
          * @brief Loads worlds and levels from embedded resources.
@@ -123,5 +130,7 @@ namespace Engine
         std::vector<WorldEntry> _worlds;                         ///> List of available worlds.
         std::unordered_map<std::string, WorldLevels>
             _levelsByWorldId; ///> Map of world IDs to their corresponding levels.
+
+        std::vector<RoomData> _rooms; ///> List of available rooms.
     };
 } // namespace Engine

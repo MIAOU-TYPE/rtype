@@ -1,5 +1,11 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** ArgParser
+*/
+
 #include "ArgParser.hpp"
-#include <iostream>
 
 using namespace Utils;
 

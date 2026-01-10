@@ -6,7 +6,6 @@
 */
 
 #include "SoundRegistry.hpp"
-#include <algorithm>
 
 namespace Engine
 {

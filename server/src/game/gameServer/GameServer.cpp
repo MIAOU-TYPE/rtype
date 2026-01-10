@@ -63,6 +63,13 @@ namespace Game
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
+    void GameServer::reset()
+    {
+        _levelManager.reset();
+        _accumulator = 0.0;
+        _clock = GameClock();
+    }
+
     void GameServer::onPlayerConnect(const int sessionId)
     {
         GameCommand cmd;

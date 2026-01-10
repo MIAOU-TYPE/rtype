@@ -193,8 +193,6 @@ namespace Net
             return sendError(addr, req, 11, "JOIN_ROOM: unexpected trailing bytes");
 
         try {
-            // TODO: FU uniquement rejoindre la room envoyé par le client
-            roomId = static_cast<uint32_t>(_rooms->listRooms().size());
             _rooms->addPlayerToRoom(roomId, sessionId);
         } catch (const std::exception &e) {
             return sendError(addr, req, 12, e.what());
@@ -207,17 +205,17 @@ namespace Net
         if (!out)
             return;
 
-        // TODO: alerter les joueurs que quand on appuie sur start pas automatique comme la pour le FU
         (void) _tcp->sendPacket(*out);
+        // TODO: alerter les joueurs que quand on appuie sur start pas automatique comme la pour le FU
         _rooms->forEachRoom([&](Engine::Room &room) {
             if (room.getCurrentPlayers() == room.getMaxPlayers()) {
-                room.start();
                 for (const auto session : room.sessions()) {
                     if (const auto memberAddr = _sessions->getAddress(session)) {
                         if (auto packet = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
                             (void) _tcp->sendPacket(*packet);
                     }
                 }
+                room.start();
             }
         });
     }

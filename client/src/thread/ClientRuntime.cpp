@@ -113,7 +113,7 @@ namespace Thread
         return _eventBus;
     }
 
-    void ClientRuntime::rebindControls()
+    void ClientRuntime::rebindControls() const
     {
         _eventRegistry->clear();
         setupEventsRegistry();
@@ -273,6 +273,10 @@ namespace Thread
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
             _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(11, e.roomId));
         });
+
+        _eventBus->on<Engine::ListRoomRequested>([this](const Engine::ListRoomRequested &) {
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(11));
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
@@ -319,6 +323,10 @@ namespace Thread
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
             _pendingGameStart.store(true, std::memory_order_release);
+        });
+
+        _tcpPacketRouter->sink()->onRoomsListSubscribe([&](uint32_t, const std::vector<RoomData> &rooms) {
+            _roomManager->rooms() = rooms;
         });
 
         while (_running) {

@@ -277,7 +277,7 @@ namespace Engine
         _levels.clear();
         try {
             const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;
-            const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty); // retourne une ref
+            const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty);
             _levels.assign(ref.begin(), ref.end());
         } catch (const std::exception &) {
             _levels.clear();

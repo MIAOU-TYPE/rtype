@@ -150,7 +150,15 @@ namespace Net
         try {
             ok = _auth->registerUser(username, password);
         } catch (const Auth::AuthServiceError &e) {
-            return sendError(addr, req, 409, e.what());
+            if (e.kind() == "invalid_input")
+                return sendError(addr, req, 400, e.message());
+            if (e.kind() == "username_taken")
+                return sendError(addr, req, 409, e.message());
+            if (e.kind() == "db_error")
+                return sendError(addr, req, 500, "Server error (database)");
+            if (e.kind() == "crypto_error")
+                return sendError(addr, req, 500, "Server error (crypto)");
+            return sendError(addr, req, 500, "Server error");
         }
 
         constexpr std::uint32_t ttlSec = 24u * 60u * 60u;
@@ -181,12 +189,14 @@ namespace Net
             ok = _auth->login(username, password);
         } catch (const Auth::AuthServiceError &e) {
             if (e.kind() == "invalid_input")
-                return sendError(addr, req, 400, "INVALID_INPUT");
+                return sendError(addr, req, 400, e.message());
             if (e.kind() == "invalid_credentials")
-                return sendError(addr, req, 401, "INVALID_CREDENTIALS");
+                return sendError(addr, req, 401, "Invalid username or password");
             if (e.kind() == "db_error")
-                return sendError(addr, req, 500, "DB_ERROR");
-            return sendError(addr, req, 500, "INTERNAL_ERROR");
+                return sendError(addr, req, 500, "Server error (database)");
+            if (e.kind() == "crypto_error")
+                return sendError(addr, req, 500, "Server error (crypto)");
+            return sendError(addr, req, 500, "Server error");
         }
 
         constexpr std::uint32_t ttlSec = 24u * 60u * 60u;

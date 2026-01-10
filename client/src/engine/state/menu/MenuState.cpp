@@ -23,6 +23,13 @@ namespace Engine
     {
         try {
             _menu = std::make_unique<Menu>(_renderer);
+            if (_authCtx) {
+                {
+                    std::scoped_lock lk(_authCtx->m);
+                    _authCtx->authError.clear();
+                }
+                _lastAuthErrorVersion = _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release) + 1;
+            }
             const bool authedNow = _authCtx && _authCtx->authed.load(std::memory_order_acquire);
             _lastAuthed = authedNow;
             _menu->setAuthed(authedNow);
@@ -50,6 +57,22 @@ namespace Engine
 
         _menu->update(frame);
 
+        if (_authCtx) {
+            const auto ver = _authCtx->authErrorVersion.load(std::memory_order_acquire);
+            if (ver != _lastAuthErrorVersion) {
+                std::string msg;
+                {
+                    std::lock_guard lk(_authCtx->m);
+                    msg = _authCtx->authError;
+                }
+                if (msg.empty())
+                    _menu->clearAuthError();
+                else
+                    _menu->setAuthError(std::move(msg));
+                _lastAuthErrorVersion = ver;
+            }
+        }
+
         if (_menu->wantsSettings()) {
             manager.queueState(std::make_unique<SettingsState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
@@ -66,6 +89,14 @@ namespace Engine
             const auto &u = _menu->submittedUsername();
             const auto &p = _menu->submittedPassword();
 
+            _menu->clearAuthError();
+            if (_authCtx) {
+                {
+                    std::scoped_lock lk(_authCtx->m);
+                    _authCtx->authError.clear();
+                }
+                _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release);
+            }
             if (mode == Menu::AuthMode::Login) {
                 _eventBus->emit<AuthLoginRequested>(AuthLoginRequested(u, p));
             } else if (mode == Menu::AuthMode::Register) {

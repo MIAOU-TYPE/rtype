@@ -22,10 +22,10 @@ namespace UI
      * @brief A simple rectangle structure for hit detection.
      */
     struct Rect {
-        float x;    ///> The x-coordinate of the rectangle's top-left corner.
-        float y;    ///> The y-coordinate of the rectangle's top-left corner.
-        float w;    ///> The width of the rectangle.
-        float h;    ///> The height of the rectangle.
+        float x; ///> The x-coordinate of the rectangle's top-left corner.
+        float y; ///> The y-coordinate of the rectangle's top-left corner.
+        float w; ///> The width of the rectangle.
+        float h; ///> The height of the rectangle.
 
         /**
          * @brief Check if a point is inside the rectangle.
@@ -137,13 +137,13 @@ namespace UI
         std::string _label; ///> The label string.
         std::string _value; ///> The current value string.
 
-        float _x = 0.f; ///> The x-coordinate of the text field.
-        float _y = 0.f; ///> The y-coordinate of the text field.
-        float _w = 420.f;   ///> The width of the text field.
-        float _h = 40.f;    ///> The height of the text field.
+        float _x = 0.f;   ///> The x-coordinate of the text field.
+        float _y = 0.f;   ///> The y-coordinate of the text field.
+        float _w = 420.f; ///> The width of the text field.
+        float _h = 40.f;  ///> The height of the text field.
 
-        bool _focused = false;  ///> Whether the text field is focused.
-        bool _password = false; ///> Whether the text field is for password input.
-        std::size_t _maxLen = 32;   ///> The maximum length of the input value.
+        bool _focused = false;    ///> Whether the text field is focused.
+        bool _password = false;   ///> Whether the text field is for password input.
+        std::size_t _maxLen = 32; ///> The maximum length of the input value.
     };
 } // namespace UI

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
+#include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "ITextureManager.hpp"
@@ -49,7 +50,7 @@ namespace Engine
     /**
      * @brief Class representing the main menu of the game.
      */
-    class Menu {
+    class Menu : public AMenu {
       public:
         enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm };
         enum class AuthMode { None, Login, Register };
@@ -64,25 +65,65 @@ namespace Engine
          * @brief Update the menu state.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame);
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Render the menu.
          */
-        void render() const;
+        void render() const override;
 
         /**
          * @brief Called when entering the menu state.
          */
         void onEnter();
 
+        /**
+         * @brief Set the authentication status of the user.
+         *
+         * @param v true if the user is authenticated, false otherwise.
+         */
         void setAuthed(bool v) noexcept;
+
+        /**
+         * @brief Check if the user is authenticated.
+         *
+         * @return true if the user is authenticated, false otherwise.
+         */
+        [[nodiscard]]
         bool isAuthed() const noexcept;
 
+        /**
+         * @brief Check if there is an authentication submission.
+         *
+         * @return true if there is an authentication submission, false otherwise.
+         */
+        [[nodiscard]]
         bool hasAuthSubmission() const noexcept;
+
+        /**
+         * @brief Consume the authentication submission.
+         */
         void consumeAuthSubmission() noexcept;
+
+        /**
+         * @brief Get the submitted authentication mode.
+         *
+         * @return The submitted authentication mode.
+         */
         AuthMode submittedMode() const noexcept;
+
+        /**
+         * @brief Get the submitted username.
+         *
+         * @return The submitted username.
+         */
         const std::string &submittedUsername() const noexcept;
+
+        /**
+         * @brief Get the submitted password.
+         *
+         * @return The submitted password.
+         */
         const std::string &submittedPassword() const noexcept;
 
         /**
@@ -109,7 +150,7 @@ namespace Engine
         /**
          * @brief Handle resizing of the menu.
          */
-        void layout();
+        void layout() override;
 
       private:
         /**
@@ -126,13 +167,9 @@ namespace Engine
         void backToRoot();
         void submit();
 
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
+        Graphics::TextureHandle _logoTexture = Graphics::InvalidTexture; ///> Handle to the logo texture.
 
-        Graphics::TextureHandle _backgroundTexture; ///> Handle to the background texture.
-        Graphics::TextureHandle _logoTexture;       ///> Handle to the logo texture.
-
-        RenderCommand _backgroundCmd; ///> Render command for the background.
-        RenderCommand _logoCmd;       ///> Render command for the logo.
+        RenderCommand _logoCmd; ///> Render command for the logo.
 
         Page _page = Page::UnauthedRoot;
         bool _authed = false;

@@ -11,18 +11,14 @@
 
 namespace Engine
 {
-    Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : _renderer(renderer)
+    Menu::Menu(const std::shared_ptr<Graphics::IRenderer> &renderer) : AMenu(renderer)
     {
         try {
-            const auto textures = renderer->textures();
-            _backgroundTexture = textures->load("sprites/bg-preview.png");
+            const auto textures = _renderer->textures();
+            loadBackground("sprites/bg-preview.png");
             _logoTexture = textures->load("sprites/menu_logo.png");
-            if (_backgroundTexture == Graphics::InvalidTexture)
-                throw MenuError("{Menu::Menu} failed to load sprites/bg-preview.png texture");
             if (_logoTexture == Graphics::InvalidTexture)
                 throw MenuError("{Menu::Menu} failed to load sprites/menu_logo.png texture");
-
-            _backgroundCmd.textureId = _backgroundTexture;
             _logoCmd.textureId = _logoTexture;
 
             _login = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "LOGIN");
@@ -51,20 +47,8 @@ namespace Engine
         _submittedUser.clear();
         _submittedPass.clear();
 
-        if (_login)
-            _login->reset();
-        if (_register)
-            _register->reset();
-        if (_play)
-            _play->reset();
-        if (_settings)
-            _settings->reset();
-        if (_quit)
-            _quit->reset();
-        if (_submitBtn)
-            _submitBtn->reset();
-        if (_backBtn)
-            _backBtn->reset();
+        resetButtons(
+            _login.get(), _register.get(), _play.get(), _settings.get(), _quit.get(), _submitBtn.get(), _backBtn.get());
 
         if (_userField) {
             _userField->clear();
@@ -109,16 +93,10 @@ namespace Engine
 
     void Menu::layout()
     {
-        const auto vp = _renderer->getViewportSize();
-        const auto w = static_cast<float>(vp.width);
-        const auto h = static_cast<float>(vp.height);
-        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
-
-        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
-        _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {static_cast<float>(vp.width) / static_cast<float>(width),
-            static_cast<float>(vp.height) / static_cast<float>(height)};
-
+        const auto [width, height] = _renderer->getViewportSize();
+        const auto w = static_cast<float>(width);
+        const auto h = static_cast<float>(height);
+        layoutBackground();
         const auto logoSize = _renderer->textures()->getSize(_logoTexture);
 
         _logoCmd.frame = {0, 0, static_cast<int>(logoSize.width), static_cast<int>(logoSize.height)};
@@ -163,23 +141,17 @@ namespace Engine
         handleInput(frame);
 
         if (_page == Page::UnauthedRoot) {
-            _login->update(frame.mouseX, frame.mouseY);
-            _register->update(frame.mouseX, frame.mouseY);
-            _settings->update(frame.mouseX, frame.mouseY);
-            _quit->update(frame.mouseX, frame.mouseY);
+            updateButtons(frame.mouseX, frame.mouseY, _login.get(), _register.get(), _settings.get(), _quit.get());
         } else if (_page == Page::AuthedRoot) {
-            _play->update(frame.mouseX, frame.mouseY);
-            _settings->update(frame.mouseX, frame.mouseY);
-            _quit->update(frame.mouseX, frame.mouseY);
+            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
         } else {
-            _submitBtn->update(frame.mouseX, frame.mouseY);
-            _backBtn->update(frame.mouseX, frame.mouseY);
+            updateButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
         }
     }
 
     void Menu::render() const
     {
-        _renderer->draw(_backgroundCmd);
+        renderBackground();
         _renderer->draw(_logoCmd);
         if (_page == Page::UnauthedRoot) {
             _login->render();
@@ -213,20 +185,14 @@ namespace Engine
     void Menu::handleMousePressed(const InputFrame &frame) const
     {
         if (_page == Page::UnauthedRoot) {
-            _login->onMousePressed(frame.mouseX, frame.mouseY);
-            _register->onMousePressed(frame.mouseX, frame.mouseY);
-            _settings->onMousePressed(frame.mouseX, frame.mouseY);
-            _quit->onMousePressed(frame.mouseX, frame.mouseY);
+            pressButtons(frame.mouseX, frame.mouseY, _login.get(), _register.get(), _settings.get(), _quit.get());
             return;
         }
         if (_page == Page::AuthedRoot) {
-            _play->onMousePressed(frame.mouseX, frame.mouseY);
-            _settings->onMousePressed(frame.mouseX, frame.mouseY);
-            _quit->onMousePressed(frame.mouseX, frame.mouseY);
+            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
             return;
         }
-        _submitBtn->onMousePressed(frame.mouseX, frame.mouseY);
-        _backBtn->onMousePressed(frame.mouseX, frame.mouseY);
+        pressButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
         _userField->onMousePressed(frame.mouseX, frame.mouseY);
         _passField->onMousePressed(frame.mouseX, frame.mouseY);
         if (_userField->isFocused())

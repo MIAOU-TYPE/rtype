@@ -19,6 +19,15 @@
     #include <dlfcn.h>
 #endif
 
+#ifdef _WIN32
+    #include <filesystem>
+    #define LOAD_LIBRARY(path)   LoadLibraryA(path.c_str())
+    #define FREE_LIBRARY(handle) FreeLibrary(static_cast<HMODULE>(handle))
+#else
+    #define LOAD_LIBRARY(path)   dlopen(path.c_str(), RTLD_LAZY)
+    #define FREE_LIBRARY(handle) dlclose(handle)
+#endif
+
 namespace Library
 {
 

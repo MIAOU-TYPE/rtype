@@ -83,7 +83,7 @@ namespace Graphics
          * @brief Create and return a renderer instance.
          * @return Shared pointer to the created IRenderer instance.
          */
-        virtual std::shared_ptr<IRenderer> createRenderer() const noexcept = 0;
+        [[nodiscard]] virtual std::shared_ptr<IRenderer> createRenderer() const noexcept = 0;
 
         /**
          * @brief Get the resource manager associated with the graphics system.

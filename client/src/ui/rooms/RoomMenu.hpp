@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <exception>
 #include <iostream>
+#include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"
@@ -69,7 +70,7 @@ namespace Engine
      * This class handles the layout, input, and rendering of the room menu,
      * allowing users to create or join game rooms.
      */
-    class RoomMenu {
+    class RoomMenu : public AMenu {
       public:
         /**
          * @brief Constructs a RoomMenu with the given renderer and room manager.
@@ -82,18 +83,26 @@ namespace Engine
         /**
          * @brief Lays out the room menu UI elements.
          */
-        void layout();
+        void layout() override;
+
+        /**
+         * @brief Lays out the creation room UI elements.
+         * @param w Width of the layout area.
+         * @param h Height of the layout area.
+         * @param cx Center x-coordinate of the layout area.
+         */
+        void layoutCreate(float w, float h, float cx) const;
 
         /**
          * @brief Updates the room menu based on input.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame);
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Renders the room menu UI elements.
          */
-        void render() const;
+        void render() const override;
 
         /**
          * @brief Checks if the user wants to go back to the main menu.
@@ -291,7 +300,7 @@ namespace Engine
         void updateTextStrings() const;
 
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the graphics renderer.
-        std::shared_ptr<RoomManager> _roomManager;      ///> Shared pointer to the room manager.
+        std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.
 
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture handle.
         RenderCommand _backgroundCmd;                                          ///> Render command for the background.

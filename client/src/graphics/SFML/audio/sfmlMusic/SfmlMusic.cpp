@@ -9,7 +9,7 @@
 
 namespace Graphics
 {
-    SfmlMusic::SfmlMusic(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath)
+    SfmlMusic::SfmlMusic(const std::shared_ptr<Resources::IResourceManager>& resources, const std::string &resourcePath)
     {
         auto [data, size] = resources->loadResource(resourcePath);
         if (!data || size == 0)
@@ -20,12 +20,12 @@ namespace Graphics
             throw AudioError("SfmlMusic: failed to open music from memory");
     }
 
-    void SfmlMusic::play()
+    void SfmlMusic::play() const
     {
         _music->play();
     }
 
-    void SfmlMusic::stop()
+    void SfmlMusic::stop() const
     {
         _music->stop();
     }
@@ -35,7 +35,7 @@ namespace Graphics
         return _music->getStatus() == sf::Music::Status::Playing;
     }
 
-    void SfmlMusic::setVolume(float volume)
+    void SfmlMusic::setVolume(const float volume) const
     {
         _music->setVolume(volume);
     }
@@ -45,7 +45,7 @@ namespace Graphics
         return _music->getVolume();
     }
 
-    void SfmlMusic::setLooping(bool loop)
+    void SfmlMusic::setLooping(const bool loop) const
     {
         _music->setLooping(loop);
     }

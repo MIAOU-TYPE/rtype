@@ -151,4 +151,11 @@ namespace Engine
 
         uint32_t roomId; ///> The ID of the room to join.
     };
+
+    struct ListRoomRequested : Event {
+        /**
+         * @brief Constructor for ListRoomRequested event.
+         */
+        ListRoomRequested() = default;
+    };
 } // namespace Engine

@@ -32,6 +32,9 @@ namespace Engine
             _passField = std::make_unique<UI::UITextField>(_renderer, "Password", true);
             _submitBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SUBMIT");
             _backBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+
+            _authErrorText = _renderer->texts()->createText(22, {255, 80, 80, 255});
+            _authErrorText->setString("");
         } catch (const std::exception &e) {
             throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
         }
@@ -47,6 +50,10 @@ namespace Engine
         _submittedUser.clear();
         _submittedPass.clear();
 
+        _authErrorMessage.clear();
+        if (_authErrorText)
+            _authErrorText->setString("");
+        clearAuthError();
         resetButtons(
             _login.get(), _register.get(), _play.get(), _settings.get(), _quit.get(), _submitBtn.get(), _backBtn.get());
 
@@ -75,6 +82,14 @@ namespace Engine
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
         _submittedPass.clear();
+        _authErrorMessage.clear();
+        if (_authErrorText)
+            _authErrorText->setString("");
+
+        _authErrorMessage.clear();
+        if (_authErrorText)
+            _authErrorText->setString("");
+        clearAuthError();
         if (_userField) {
             _userField->clear();
             _userField->setFocused(false);
@@ -89,6 +104,24 @@ namespace Engine
     bool Menu::isAuthed() const noexcept
     {
         return _authed;
+    }
+
+    void Menu::setAuthError(std::string message)
+    {
+        _authErrorMessage = std::move(message);
+        if (_authErrorText)
+            _authErrorText->setString(_authErrorMessage);
+        layout();
+    }
+
+    void Menu::clearAuthError()
+    {
+        if (_authErrorMessage.empty())
+            return;
+        _authErrorMessage.clear();
+        if (_authErrorText)
+            _authErrorText->setString("");
+        layout();
     }
 
     void Menu::layout()
@@ -128,6 +161,8 @@ namespace Engine
         _passField->setPosition(fieldX, h * 0.55f);
         _passField->setWidth(fieldW);
 
+        if (_authErrorText && !_authErrorMessage.empty())
+            _authErrorText->setPosition(vp.cx - _authErrorText->getWidth() * 0.5f, h * 0.32f);
         placeCentered(*_submitBtn, vp.cx, h * 0.73f);
         placeCentered(*_backBtn, vp.cx, h * 0.87f);
     }
@@ -162,6 +197,8 @@ namespace Engine
             _quit->render();
             return;
         }
+        if (_authErrorText && !_authErrorMessage.empty())
+            _renderer->draw(*_authErrorText);
         _userField->render();
         _passField->render();
         _submitBtn->render();
@@ -265,6 +302,7 @@ namespace Engine
     void Menu::enterForm(const Page p)
     {
         _page = p;
+        clearAuthError();
         _userField->setFocused(true);
         _passField->setFocused(false);
         layout();
@@ -273,6 +311,7 @@ namespace Engine
     void Menu::backToRoot()
     {
         _page = _authed ? Page::AuthedRoot : Page::UnauthedRoot;
+        clearAuthError();
         _userField->clear();
         _passField->clear();
         _userField->setFocused(false);

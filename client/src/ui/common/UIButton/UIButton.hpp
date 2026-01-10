@@ -142,7 +142,7 @@ namespace UI
          * @brief Set the label of the button.
          * @param text New text label.
          */
-        void setLabel(const std::string &text) const;
+        void setLabel(const std::string &text);
 
         /**
          * @brief Set the scale of the button.

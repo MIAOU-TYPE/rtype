@@ -121,6 +121,56 @@ namespace Engine
         void handleInput(const InputFrame &frame);
 
         /**
+         * @brief Handle mouse pressed events.
+         * @param frame The current input frame.
+         */
+        void handleMousePressed(const InputFrame &frame) const;
+
+        /**
+         * @brief Handle mouse released events.
+         * @param frame The current input frame.
+         */
+        void handleMouseReleased(const InputFrame &frame);
+
+        /**
+         * @brief Handle key pressed events.
+         * @param frame The current input frame.
+         */
+        void handleKeyPressed(const InputFrame &frame);
+
+        /**
+         * @brief Handle video settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a video settings button was released, false otherwise.
+         */
+        bool handleVideoReleased(float mx, float my);
+
+        /**
+         * @brief Handle controls settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a controls settings button was released, false otherwise.
+         */
+        bool handleControlsReleased(float mx, float my);
+
+        /**
+         * @brief Handle audio settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if an audio settings button was released, false otherwise.
+         */
+        bool handleAudioReleased(float mx, float my);
+
+        /**
+         * @brief Handle navigation button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a navigation button was released, false otherwise.
+         */
+        bool handleNavigationReleased(float mx, float my);
+
+        /**
          * @brief Apply volume change to music registry, handling mute state.
          * @param volume The new volume value.
          * @param isMuted Whether the audio is currently muted.

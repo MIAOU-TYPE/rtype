@@ -19,7 +19,7 @@ namespace
             nextTick = now;
     }
 
-    std::uint32_t nextReqId()
+    uint32_t nextReqId()
     {
         static std::atomic_uint32_t g{1};
         return g.fetch_add(1, std::memory_order_relaxed);
@@ -262,7 +262,7 @@ namespace Thread
         });
     }
 
-    void ClientRuntime::setupGlobalEventHandlers() const
+    void ClientRuntime::setupGlobalEventHandlers()
     {
         _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
             _input->setKeyPressed(e.key);
@@ -287,11 +287,13 @@ namespace Thread
         });
 
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(11, e.roomName, e.maxPlayers));
+            const auto req = nextReqId();
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(11, e.roomId));
+            const auto req = nextReqId();
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req, e.roomId));
         });
 
         _eventBus->on<Engine::ListRoomRequested>([this](const Engine::ListRoomRequested &) {
@@ -299,11 +301,15 @@ namespace Thread
         });
 
         _eventBus->on<Engine::AuthRegisterRequested>([this](const Engine::AuthRegisterRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthRegister(11, e.username, e.password));
+            const auto req = nextReqId();
+            _lastAuthReq.store(req, std::memory_order_release);
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthRegister(req, e.username, e.password));
         });
 
         _eventBus->on<Engine::AuthLoginRequested>([this](const Engine::AuthLoginRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthLogin(11, e.username, e.password));
+            const auto req = nextReqId();
+            _lastAuthReq.store(req, std::memory_order_release);
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthLogin(req, e.username, e.password));
         });
     }
 
@@ -365,20 +371,32 @@ namespace Thread
         });
 
         _tcpPacketRouter->sink()->onAuthOkSubscribe(
-            [this](std::uint32_t, std::uint32_t userId, std::string_view username, std::uint64_t token,
-                std::uint32_t ttl) {
+            [this](uint32_t, const uint32_t userId, const std::string_view username, const uint64_t token,
+                const uint32_t ttl) {
                 if (_authCtx) {
                     {
-                        std::lock_guard lk(_authCtx->m);
+                        std::scoped_lock lk(_authCtx->m);
                         _authCtx->userId = userId;
                         _authCtx->token = token;
                         _authCtx->ttlSec = ttl;
                         _authCtx->username = std::string(username);
+                        _authCtx->authError.clear();
                     }
+                    _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release);
                     _authCtx->authed.store(true, std::memory_order_release);
                 }
                 _pendingAuthOk.store(true, std::memory_order_release);
             });
+
+        _tcpPacketRouter->sink()->onErrorSubscribe([this](const uint32_t req, uint16_t, const std::string_view msg) {
+            if (const auto last = _lastAuthReq.load(std::memory_order_acquire); !last || req != last || !_authCtx)
+                return;
+            {
+                std::scoped_lock lk(_authCtx->m);
+                _authCtx->authError = std::string(msg);
+            }
+            _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release);
+        });
 
         auto lastHello = clock::now() - std::chrono::seconds(10);
         while (_running) {

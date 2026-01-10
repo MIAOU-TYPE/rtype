@@ -16,6 +16,7 @@
 #include "InputState.hpp"
 #include "RenderCommand.hpp"
 #include "UIButton.hpp"
+#include "UITextField.hpp"
 
 namespace Engine
 {
@@ -50,6 +51,8 @@ namespace Engine
      */
     class Menu {
       public:
+        enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm };
+        enum class AuthMode { None, Login, Register };
         /**
          * @brief Construct a new Menu object.
          *
@@ -72,6 +75,15 @@ namespace Engine
          * @brief Called when entering the menu state.
          */
         void onEnter();
+
+        void setAuthed(bool v) noexcept;
+        bool isAuthed() const noexcept;
+
+        bool hasAuthSubmission() const noexcept;
+        void consumeAuthSubmission() noexcept;
+        AuthMode submittedMode() const noexcept;
+        const std::string &submittedUsername() const noexcept;
+        const std::string &submittedPassword() const noexcept;
 
         /**
          * @brief Check if the user wants to start the game.
@@ -106,6 +118,14 @@ namespace Engine
          */
         void handleInput(const InputFrame &frame);
 
+        void handleMousePressed(const InputFrame &frame) const;
+        void handleMouseReleased(const InputFrame &frame);
+        void handleKeyPressed(const InputFrame &frame);
+
+        void enterForm(Page p);
+        void backToRoot();
+        void submit();
+
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
 
         Graphics::TextureHandle _backgroundTexture; ///> Handle to the background texture.
@@ -114,12 +134,28 @@ namespace Engine
         RenderCommand _backgroundCmd; ///> Render command for the background.
         RenderCommand _logoCmd;       ///> Render command for the logo.
 
+        Page _page = Page::UnauthedRoot;
+        bool _authed = false;
+
+        std::unique_ptr<UI::UIButton> _login;
+        std::unique_ptr<UI::UIButton> _register;
+
         std::unique_ptr<UI::UIButton> _play;     ///> Button to start the game.
         std::unique_ptr<UI::UIButton> _settings; ///> Button to access settings.
         std::unique_ptr<UI::UIButton> _quit;     ///> Button to quit the game.
 
+        std::unique_ptr<UI::UIButton> _submitBtn;
+        std::unique_ptr<UI::UIButton> _backBtn;
+        std::unique_ptr<UI::UITextField> _userField;
+        std::unique_ptr<UI::UITextField> _passField;
+
         bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
         bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.
         bool _settingsRequested = false; ///> Flag indicating if the user requested to access settings.
+
+        bool _submitted = false;
+        AuthMode _submittedMode = AuthMode::None;
+        std::string _submittedUser;
+        std::string _submittedPass;
     };
 } // namespace Engine

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <csignal>
 #include <iostream>
 
 #ifdef _WIN32

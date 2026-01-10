@@ -9,8 +9,6 @@
 
     #include "WinHandler.hpp"
 
-    #include <csignal>
-
 using namespace Signal;
 
 WinHandler *WinHandler::instance = nullptr;

@@ -63,7 +63,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> UDPPacketFactory::createSnapshotPacket(
-        const std::vector<SnapshotEntity> &entities) const noexcept
+        const std::vector<SnapshotEntity> &entities, uint32_t serverTick) const noexcept
     {
         try {
             if (entities.size() > (std::numeric_limits<std::size_t>::max() - sizeof(SnapshotBatchHeader))
@@ -95,6 +95,7 @@ namespace Net::Factory
             SnapshotBatchHeader hdr{};
             hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             hdr.count = htons(static_cast<uint16_t>(entities.size()));
+            hdr.serverTick = htonl(serverTick);
 
             std::memcpy(buf, &hdr, sizeof(hdr));
             std::size_t offset = sizeof(hdr);

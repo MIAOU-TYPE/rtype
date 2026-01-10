@@ -77,6 +77,10 @@ namespace Engine
          */
         void onEnter();
 
+        // Sets/clears the message shown above the login/register fields.
+        void setAuthError(std::string message);
+        void clearAuthError();
+
         /**
          * @brief Set the authentication status of the user.
          *
@@ -185,6 +189,9 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _backBtn;
         std::unique_ptr<UI::UITextField> _userField;
         std::unique_ptr<UI::UITextField> _passField;
+
+        std::unique_ptr<Graphics::IText> _authErrorText;
+        std::string _authErrorMessage;
 
         bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
         bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.

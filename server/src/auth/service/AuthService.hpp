@@ -89,7 +89,7 @@ namespace Auth
          * @return AuthOk structure containing the user ID and username.
          * @throws AuthServiceError on validation or database errors.
          */
-        AuthOk registerUser(const std::string &username, const std::string &password) const;
+        [[nodiscard]] AuthOk registerUser(const std::string &username, const std::string &password) const;
 
         /**
          * @brief Logs in a user with the given username and password.
@@ -98,7 +98,7 @@ namespace Auth
          * @return AuthOk structure containing the user ID and username.
          * @throws AuthServiceError on validation or database errors.
          */
-        AuthOk login(const std::string &username, const std::string &password) const;
+        [[nodiscard]] AuthOk login(const std::string &username, const std::string &password) const;
 
       private:
         std::shared_ptr<UserStorage> _repo; ///> UserStorage repository

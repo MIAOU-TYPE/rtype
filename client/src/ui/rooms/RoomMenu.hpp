@@ -218,7 +218,7 @@ namespace Engine
 
             float scroll = 0.f;      ///> Current scroll position.
             float maxScroll = 0.f;   ///> Maximum scroll position.
-            float scrollStep = 60.f; ///> Scroll step size.
+            float scrollStep = 80.f; ///> Scroll step size.
 
             std::chrono::steady_clock::time_point lastRefresh{};                  ///> Last refresh time point.
             static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.

@@ -106,9 +106,9 @@ namespace UI
             _text->setString(text);
     }
 
-    void UIButton::setScale(const float scale)
+    void UIButton::setScale(const float scaleX, const float scaleY)
     {
-        _cmd.scale = {scale, scale};
+        _cmd.scale = {scaleX, scaleY};
     }
 
     void UIButton::reset()

@@ -146,9 +146,10 @@ namespace UI
 
         /**
          * @brief Set the scale of the button.
-         * @param scale Scale factor.
+         * @param scaleX Scale factor for X axis.
+         * @param scaleY Scale factor for Y axis.
          */
-        void setScale(float scale);
+        void setScale(float scaleX, float scaleY);
 
         /**
          * @brief Reset the clicked state of the button.

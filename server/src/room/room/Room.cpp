@@ -28,6 +28,7 @@ namespace Engine
         if (_thread.joinable())
             return;
         _running = true;
+        _gameServer->reset();
         _thread = std::thread(&Room::run, this);
     }
 
@@ -84,7 +85,6 @@ namespace Engine
 
     void Room::run() const
     {
-        std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::seconds(1));
         constexpr auto Tick = std::chrono::milliseconds(16);
         auto next = std::chrono::steady_clock::now();
 

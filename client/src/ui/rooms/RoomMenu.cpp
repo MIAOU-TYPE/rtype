@@ -6,7 +6,6 @@
 */
 
 #include "RoomMenu.hpp"
-#include <iostream>
 
 namespace
 {

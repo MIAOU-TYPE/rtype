@@ -27,7 +27,8 @@ namespace Graphics
          * @param resources Shared pointer to the resource manager.
          * @param resourcePath Path to the music resource.
          */
-        explicit SfmlMusic(const std::shared_ptr<Resources::IResourceManager> &resources, const std::string &resourcePath);
+        explicit SfmlMusic(
+            const std::shared_ptr<Resources::IResourceManager> &resources, const std::string &resourcePath);
 
         /**
          * @brief Play the music.

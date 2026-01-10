@@ -9,7 +9,7 @@
 
 namespace Graphics
 {
-    SfmlMusic::SfmlMusic(const std::shared_ptr<Resources::IResourceManager>& resources, const std::string &resourcePath)
+    SfmlMusic::SfmlMusic(const std::shared_ptr<Resources::IResourceManager> &resources, const std::string &resourcePath)
     {
         auto [data, size] = resources->loadResource(resourcePath);
         if (!data || size == 0)

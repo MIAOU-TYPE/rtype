@@ -160,6 +160,8 @@ namespace Ecs
         std::memcpy(&batch, payload, sizeof(batch));
 
         const uint16_t count = ntohs(batch.count);
+        const uint32_t serverTick = ntohl(batch.serverTick);
+
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
 
         std::vector<SnapshotEntity> entities;

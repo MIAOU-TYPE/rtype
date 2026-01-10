@@ -31,12 +31,16 @@ namespace Engine
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
         if (_menu->wantsCreateRoom()) {
             _menu->consumeCreateRoomState();
-            _eventBus->emit<CreateRoomRequested>(CreateRoomRequested("default", 2));
-            _eventBus->emit<JoinRoomRequested>(JoinRoomRequested(1));
+            _eventBus->emit<CreateRoomRequested>(CreateRoomRequested("default", _menu->maxPlayerSelected()));
+        }
+        if (_menu->wantsListRooms()) {
+            _menu->consumeListRoomsRequest();
+            _eventBus->emit<ListRoomRequested>(ListRoomRequested());
         }
         if (_menu->wantsJoinRoom()) {
             _menu->consumeJoinRoomState();
-            _eventBus->emit<JoinRoomRequested>(JoinRoomRequested(1));
+            const auto id = _menu->roomIdSelected();
+            _eventBus->emit<JoinRoomRequested>(JoinRoomRequested(id));
         }
     }
 

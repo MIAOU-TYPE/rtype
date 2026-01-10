@@ -81,6 +81,12 @@ namespace Network
         void onProtocolErrorSubscribe(ProtoErrCb cb) override;
 
         /**
+         * @brief Subscribe to authentication success message events.
+         * @param cb The callback function to be invoked on authentication success messages.
+         */
+        void onAuthOkSubscribe(AuthOkCb cb) override;
+
+        /**
          * @brief Event handler methods for various TCP messages.
          * @param req The request ID associated with the message.
          * @param ver The protocol version.
@@ -141,6 +147,17 @@ namespace Network
         void onProtocolError(uint32_t req, std::string_view msg) override;
 
         /**
+         * @brief Event handler for authentication success messages.
+         * @param req The request ID associated with the message.
+         * @param userId The authenticated user's ID.
+         * @param username The authenticated user's username.
+         * @param token The authentication token.
+         * @param ttlSec The time-to-live in seconds for the authentication token.
+         */
+        void onAuthOk(std::uint32_t req, std::uint32_t userId, std::string_view username, std::uint64_t token,
+            std::uint32_t ttlSec) override;
+
+        /**
          * @brief Retrieves the current connection information.
          * @return A ConnectInfo structure containing session ID, token, and UDP port.
          */
@@ -171,10 +188,18 @@ namespace Network
         std::vector<RoomIdCb> _roomLeftCbs;        ///> Callbacks for room left events
         std::vector<RoomIdCb> _gameStartCbs;       ///> Callbacks for game start events
         std::vector<ProtoErrCb> _protocolErrorCbs; ///> Callbacks for protocol error events
+        std::vector<AuthOkCb> _authOkCbs;
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information
         std::vector<RoomData> _rooms; ///> List of available rooms
+
+        struct Identity {
+            std::uint32_t userId = 0;
+            std::string username;
+        };
+
+        std::optional<Identity> _identity{};
     };
 } // namespace Network
 

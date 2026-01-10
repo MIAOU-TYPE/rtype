@@ -10,7 +10,7 @@
 namespace Graphics
 {
     SfmlSound::SfmlSound(
-        std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath, float volume)
+        const std::shared_ptr<Resources::IResourceManager>& resources, const std::string &resourcePath, float volume)
         : _buffer(std::make_unique<sf::SoundBuffer>()), _sound(*_buffer)
     {
         auto [data, size] = resources->loadResource(resourcePath);
@@ -48,7 +48,7 @@ namespace Graphics
         return _sound.getVolume();
     }
 
-    void SfmlSound::setLooping(bool loop)
+    void SfmlSound::setLooping(const bool loop)
     {
         _sound.setLooping(loop);
     }

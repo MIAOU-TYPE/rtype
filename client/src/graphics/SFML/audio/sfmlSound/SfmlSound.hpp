@@ -28,7 +28,7 @@ namespace Graphics
          * @param resourcePath Path to the sound resource.
          * @param volume Volume level (0.0 to 100.0).
          */
-        explicit SfmlSound(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath,
+        explicit SfmlSound(const std::shared_ptr<Resources::IResourceManager> &resources, const std::string &resourcePath,
             float volume = 100.f);
 
         /**

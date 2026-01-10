@@ -11,6 +11,7 @@
 #include <fstream>
 #include <memory>
 #include <stdexcept>
+#include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputConfig.hpp"
@@ -51,7 +52,7 @@ namespace Engine
     /**
      * @brief Class representing the settings menu of the game.
      */
-    class SettingsMenu {
+    class SettingsMenu : public AMenu {
       public:
         /**
          * @brief Construct a new Settings Menu object.
@@ -67,12 +68,12 @@ namespace Engine
          * @brief Update the settings menu state.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame);
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Render the settings menu.
          */
-        void render() const;
+        void render() const override;
 
         /**
          * @brief Called when entering the settings menu.
@@ -110,7 +111,7 @@ namespace Engine
         /**
          * @brief Handle resizing of the settings menu.
          */
-        void layout();
+        void layout() override;
 
       private:
         /**
@@ -133,12 +134,8 @@ namespace Engine
          */
         void applySoundVolumeChange(size_t volume, bool isMuted) noexcept;
 
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
-        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
-        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Sound registry
-
-        Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
-        RenderCommand _backgroundCmd;               ///> Render command for the background image
+        std::shared_ptr<MusicRegistry> _musicRegistry; ///> Music registry
+        std::shared_ptr<SoundRegistry> _soundRegistry; ///> Sound registry
 
         std::unique_ptr<UI::UIButton> _colorBlindMode; ///> Colorblind mode button
         std::unique_ptr<UI::UIButton> _colorBlindNext; ///> Next colorblind mode button

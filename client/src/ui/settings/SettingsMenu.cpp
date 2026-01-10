@@ -24,14 +24,9 @@ namespace Engine
 {
     SettingsMenu::SettingsMenu(const std::shared_ptr<Graphics::IRenderer> &renderer,
         std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
-        : _renderer(renderer), _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
+        : AMenu(renderer), _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
     {
-        const auto textures = renderer->textures();
-
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            throw SettingsMenuError("SettingsMenu: failed to load background texture");
-        _backgroundCmd.textureId = _backgroundTexture;
+        loadBackground("sprites/bg-preview.png");
 
         _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
         _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
@@ -58,21 +53,10 @@ namespace Engine
         _resolutionChanged = false;
         _controlsChanged = false;
 
-        _colorBlindMode->reset();
-        _colorBlindNext->reset();
-        _resolution->reset();
-        _resolutionNext->reset();
-        _controls->reset();
-        _controlsNext->reset();
-        _back->reset();
-        _musicVolLabel->reset();
-        _musicVolUp->reset();
-        _musicVolDown->reset();
-        _sfxVolLabel->reset();
-        _sfxVolUp->reset();
-        _sfxVolDown->reset();
-        _muteMusic->reset();
-        _muteSFX->reset();
+        resetButtons(_colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(), _resolutionNext.get(),
+            _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(), _musicVolUp.get(),
+            _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(),
+            _muteSFX.get());
 
         if (_musicRegistry) {
             const float musicVol = _musicRegistry->getMusicVolume();
@@ -141,11 +125,8 @@ namespace Engine
         const float sfxLabelHalfWidth = _sfxVolLabel->bounds().w * 0.5f;
         const float videoButtonOffset = _colorBlindMode->bounds().w * 0.5f + labelMargin;
         const float videoButtonSpacing = w * 0.05f;
-        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
 
-        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
-        _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
+        layoutBackground();
 
         _musicVolLabel->setPosition(leftColX - musicLabelHalfWidth, audioYStart);
         _musicVolDown->setPosition(
@@ -209,21 +190,10 @@ namespace Engine
     void SettingsMenu::update(const InputFrame &frame)
     {
         handleInput(frame);
-        _colorBlindMode->update(frame.mouseX, frame.mouseY);
-        _colorBlindNext->update(frame.mouseX, frame.mouseY);
-        _resolution->update(frame.mouseX, frame.mouseY);
-        _resolutionNext->update(frame.mouseX, frame.mouseY);
-        _controls->update(frame.mouseX, frame.mouseY);
-        _controlsNext->update(frame.mouseX, frame.mouseY);
-        _back->update(frame.mouseX, frame.mouseY);
-        _musicVolLabel->update(frame.mouseX, frame.mouseY);
-        _musicVolUp->update(frame.mouseX, frame.mouseY);
-        _musicVolDown->update(frame.mouseX, frame.mouseY);
-        _sfxVolLabel->update(frame.mouseX, frame.mouseY);
-        _sfxVolUp->update(frame.mouseX, frame.mouseY);
-        _sfxVolDown->update(frame.mouseX, frame.mouseY);
-        _muteMusic->update(frame.mouseX, frame.mouseY);
-        _muteSFX->update(frame.mouseX, frame.mouseY);
+        updateButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
+            _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(),
+            _musicVolUp.get(), _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(),
+            _muteMusic.get(), _muteSFX.get());
     }
 
     void SettingsMenu::handleInput(const InputFrame &frame)
@@ -242,21 +212,10 @@ namespace Engine
             }
         }
 
-        if (frame.mousePressed) {
-            _colorBlindMode->onMousePressed(frame.mouseX, frame.mouseY);
-            _colorBlindNext->onMousePressed(frame.mouseX, frame.mouseY);
-            _resolution->onMousePressed(frame.mouseX, frame.mouseY);
-            _resolutionNext->onMousePressed(frame.mouseX, frame.mouseY);
-            _controls->onMousePressed(frame.mouseX, frame.mouseY);
-            _controlsNext->onMousePressed(frame.mouseX, frame.mouseY);
-            _back->onMousePressed(frame.mouseX, frame.mouseY);
-            _musicVolUp->onMousePressed(frame.mouseX, frame.mouseY);
-            _musicVolDown->onMousePressed(frame.mouseX, frame.mouseY);
-            _sfxVolUp->onMousePressed(frame.mouseX, frame.mouseY);
-            _sfxVolDown->onMousePressed(frame.mouseX, frame.mouseY);
-            _muteMusic->onMousePressed(frame.mouseX, frame.mouseY);
-            _muteSFX->onMousePressed(frame.mouseX, frame.mouseY);
-        }
+        if (frame.mousePressed)
+            pressButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
+                _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolUp.get(),
+                _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get());
         if (frame.mouseReleased) {
             if (_colorBlindNext->onMouseReleased(frame.mouseX, frame.mouseY)) {
                 _currentColorBlindMode = nextMode(_currentColorBlindMode);
@@ -399,7 +358,7 @@ namespace Engine
 
     void SettingsMenu::render() const
     {
-        _renderer->draw(_backgroundCmd);
+        renderBackground();
         _colorBlindMode->render();
         _colorBlindNext->render();
         _resolution->render();

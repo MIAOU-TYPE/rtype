@@ -95,10 +95,11 @@ namespace Net::Factory
         /**
          * @brief Creates a snapshot packet from the given SnapshotEntity.
          * @param entities The SnapshotEntity containing the snapshot data.
+         * @param serverTick The server tick at which the snapshot was taken.
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> createSnapshotPacket(
-            const std::vector<SnapshotEntity> &entities) const noexcept;
+            const std::vector<SnapshotEntity> &entities, uint32_t serverTick) const noexcept;
 
         /**
          * @brief Creates a score packet with the specified address and score.

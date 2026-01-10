@@ -8,6 +8,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <functional>
 #include <iostream>
 #include <utility>
@@ -194,12 +195,15 @@ namespace Network
         ConnectInfo _connectData{};   ///> Connection information
         std::vector<RoomData> _rooms; ///> List of available rooms
 
+        /**
+         * @brief Structure representing the identity of the authenticated user.
+         */
         struct Identity {
-            std::uint32_t userId = 0;
+            std::uint32_t userId = 0;   ///> User ID
             std::string username;
         };
 
-        std::optional<Identity> _identity{};
+        std::optional<Identity> _identity{};    ///> Authenticated user identity
     };
 } // namespace Network
 

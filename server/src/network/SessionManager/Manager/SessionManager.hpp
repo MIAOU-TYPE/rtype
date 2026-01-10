@@ -147,11 +147,11 @@ namespace Net::Server
         mutable std::shared_mutex _mutex{}; ///> Mutex for thread-safe access
         using Clock = std::chrono::steady_clock;
 
-        void clearAuthLocked(int sessionId);    ///> Clear authentication data for a session ID
-        bool isExpiredLocked(int sessionId) const;  ///> Check if the authentication for a session ID has expired
+        void clearAuthLocked(int sessionId);       ///> Clear authentication data for a session ID
+        bool isExpiredLocked(int sessionId) const; ///> Check if the authentication for a session ID has expired
 
-        std::unordered_map<int, Auth::Identity> _identityById{};    ///> Identity storage
-        std::unordered_map<int, Clock::time_point> _authExpiryById{};   ///> Authentication expiry storage
+        std::unordered_map<int, Auth::Identity> _identityById{};      ///> Identity storage
+        std::unordered_map<int, Clock::time_point> _authExpiryById{}; ///> Authentication expiry storage
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _tcpAddressToId{}; ///> TCP legacy binding
         std::unordered_map<int, sockaddr_in> _idToTcpAddress{};                ///> TCP legacy binding

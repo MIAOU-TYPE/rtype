@@ -204,7 +204,8 @@ namespace Engine
     {
         if (frame.mousePressed)
             handleMousePressed(frame);
-        handleMouseReleased(frame);
+        if (frame.mouseReleased)
+            handleMouseReleased(frame);
         if (frame.keyPressed)
             handleKeyPressed(frame);
     }

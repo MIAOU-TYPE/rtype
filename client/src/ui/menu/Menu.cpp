@@ -93,9 +93,9 @@ namespace Engine
 
     void Menu::layout()
     {
-        const auto [width, height] = _renderer->getViewportSize();
-        const auto w = static_cast<float>(width);
-        const auto h = static_cast<float>(height);
+        const auto vp = viewportF();
+        const float w = vp.w;
+        const float h = vp.h;
         layoutBackground();
         const auto logoSize = _renderer->textures()->getSize(_logoTexture);
 
@@ -106,19 +106,16 @@ namespace Engine
         _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         if (_page == Page::UnauthedRoot) {
-            const float x = (w - _login->bounds().w) / 2.f;
-            _login->setPosition(x * 0.80f, h * 0.63f);
-            _register->setPosition(x * 1.20f, h * 0.63f);
-            _settings->setPosition(x, h * 0.76f);
-            _quit->setPosition(x, h * 0.89f);
+            layoutRowCentered(*_login, *_register, vp.cx, h * 0.63f, w * 0.05f);
+            placeCentered(*_settings, vp.cx, h * 0.76f);
+            placeCentered(*_quit, vp.cx, h * 0.89f);
             return;
         }
 
         if (_page == Page::AuthedRoot) {
-            const float x = (w - _play->bounds().w) / 2.f;
-            _play->setPosition(x, h * 0.63f);
-            _settings->setPosition(x, h * 0.76f);
-            _quit->setPosition(x, h * 0.89f);
+            placeCentered(*_play, vp.cx, h * 0.63f);
+            placeCentered(*_settings, vp.cx, h * 0.76f);
+            placeCentered(*_quit, vp.cx, h * 0.89f);
             return;
         }
 
@@ -131,9 +128,8 @@ namespace Engine
         _passField->setPosition(fieldX, h * 0.55f);
         _passField->setWidth(fieldW);
 
-        const float btnX = (w - _submitBtn->bounds().w) / 2.f;
-        _submitBtn->setPosition(btnX, h * 0.73f);
-        _backBtn->setPosition(btnX, h * 0.87f);
+        placeCentered(*_submitBtn, vp.cx, h * 0.73f);
+        placeCentered(*_backBtn, vp.cx, h * 0.87f);
     }
 
     void Menu::update(const InputFrame &frame)
@@ -203,45 +199,33 @@ namespace Engine
 
     void Menu::handleMouseReleased(const InputFrame &frame)
     {
-        if (_page == Page::UnauthedRoot) {
-            if (_login->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                    enterForm(Page::LoginForm);
-                }))
-                return;
-            if (_register->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                    enterForm(Page::RegisterForm);
-                }))
-                return;
-            if (_settings->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                    _settingsRequested = true;
-                }))
-                return;
-            (void) _quit->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                _quitRequested = true;
-            });
+        enum class Action { None, Login, Register, Play, Settings, Quit, Submit, Back };
+        auto a = Action::None;
+
+        if (_page == Page::UnauthedRoot)
+            a = pickAction<Action>(frame.mouseX, frame.mouseY,
+                {{_login.get(), Action::Login}, {_register.get(), Action::Register},
+                    {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+        else if (_page == Page::AuthedRoot)
+            a = pickAction<Action>(frame.mouseX, frame.mouseY,
+                {{_play.get(), Action::Play}, {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+        else
+            a = pickAction<Action>(
+                frame.mouseX, frame.mouseY, {{_submitBtn.get(), Action::Submit}, {_backBtn.get(), Action::Back}});
+
+        if (a == Action::None)
             return;
+        switch (a) {
+            case Action::Login: enterForm(Page::LoginForm); break;
+            case Action::Register: enterForm(Page::RegisterForm); break;
+            case Action::Play: _startRequested = true; break;
+            case Action::Settings: _settingsRequested = true; break;
+            case Action::Quit: _quitRequested = true; break;
+            case Action::Submit: submit(); break;
+            case Action::Back: backToRoot(); break;
+            case Action::None:
+            default: break;
         }
-        if (_page == Page::AuthedRoot) {
-            if (_play->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                    _startRequested = true;
-                }))
-                return;
-            if (_settings->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                    _settingsRequested = true;
-                }))
-                return;
-            (void) _quit->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                _quitRequested = true;
-            });
-            return;
-        }
-        if (_submitBtn->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-                submit();
-            }))
-            return;
-        (void) _backBtn->onClickReleased(frame.mouseX, frame.mouseY, [&] {
-            backToRoot();
-        });
     }
 
     void Menu::handleKeyPressed(const InputFrame &frame)
@@ -298,7 +282,6 @@ namespace Engine
 
     void Menu::submit()
     {
-        std::cout << "Submitting form..." << std::endl;
         if (_userField->value().empty() || _passField->value().empty())
             return;
         _submitted = true;

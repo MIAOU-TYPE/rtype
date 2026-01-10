@@ -175,9 +175,7 @@ namespace Engine
     void SettingsMenu::handleKeyPressed(const InputFrame &frame)
     {
         switch (frame.key) {
-            case Key::B:
-                _backRequested = true;
-                break;
+            case Key::B: _backRequested = true; break;
             case Key::Backspace: {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
                 const auto &res = _resolutions.at(_currentResolution);
@@ -185,28 +183,25 @@ namespace Engine
                 _resolutionChanged = true;
                 break;
             }
-            default:
-                break;
+            default: break;
         }
     }
 
     void SettingsMenu::handleMousePressed(const InputFrame &frame) const
     {
-        pressButtons(frame.mouseX, frame.mouseY,
-            _colorBlindMode.get(), _colorBlindNext.get(),
-            _resolution.get(), _resolutionNext.get(),
-            _controls.get(), _controlsNext.get(),
-            _back.get(),
-            _musicVolUp.get(), _musicVolDown.get(),
-            _sfxVolUp.get(), _sfxVolDown.get(),
-            _muteMusic.get(), _muteSFX.get());
+        pressButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
+            _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolUp.get(),
+            _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get());
     }
 
     void SettingsMenu::handleMouseReleased(const InputFrame &frame)
     {
-        if (handleVideoReleased(frame.mouseX, frame.mouseY)) return;
-        if (handleControlsReleased(frame.mouseX, frame.mouseY)) return;
-        if (handleAudioReleased(frame.mouseX, frame.mouseY)) return;
+        if (handleVideoReleased(frame.mouseX, frame.mouseY))
+            return;
+        if (handleControlsReleased(frame.mouseX, frame.mouseY))
+            return;
+        if (handleAudioReleased(frame.mouseX, frame.mouseY))
+            return;
         handleNavigationReleased(frame.mouseX, frame.mouseY);
     }
 
@@ -241,10 +236,7 @@ namespace Engine
             return false;
         auto &config = Utils::InputConfig::getInstance();
         const auto current = config.getCurrentPreset();
-        const auto next =
-            current == Utils::KeyPreset::Arrows
-                ? Utils::KeyPreset::ZQSD
-                : Utils::KeyPreset::Arrows;
+        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
         config.setPreset(next);
         _controls->setLabel(Utils::InputConfig::getPresetName(next));
         _controlsChanged = true;

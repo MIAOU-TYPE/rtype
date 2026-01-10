@@ -8,9 +8,9 @@
 #pragma once
 
 #include <cstdint>
-#include <optional>
 #include <functional>
 #include <iostream>
+#include <optional>
 #include <utility>
 #include <vector>
 #include "ConnectData.hpp"
@@ -199,11 +199,11 @@ namespace Network
          * @brief Structure representing the identity of the authenticated user.
          */
         struct Identity {
-            std::uint32_t userId = 0;   ///> User ID
+            std::uint32_t userId = 0; ///> User ID
             std::string username;
         };
 
-        std::optional<Identity> _identity{};    ///> Authenticated user identity
+        std::optional<Identity> _identity{}; ///> Authenticated user identity
     };
 } // namespace Network
 

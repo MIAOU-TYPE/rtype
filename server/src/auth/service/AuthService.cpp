@@ -7,8 +7,6 @@
 
 #include "AuthService.hpp"
 
-#include <utility>
-
 namespace Auth
 {
     AuthService::AuthService(std::shared_ptr<UserStorage> repo) : _repo(std::move(repo))
@@ -37,16 +35,13 @@ namespace Auth
 
     AuthOk AuthService::registerUser(const std::string &username, const std::string &password) const
     {
-        if (!validUsername(username)) {
+        if (!validUsername(username))
             throw AuthServiceError(
                 "invalid_input", "Username must be 3-24 characters and use only letters, digits, '_' or '-'");
-        }
-        if (password.size() < 6) {
+        if (password.size() < 6)
             throw AuthServiceError("invalid_input", "Password must be at least 6 characters");
-        }
-        if (password.size() > 256) {
+        if (password.size() > 256)
             throw AuthServiceError("invalid_input", "Password is too long (max 256 characters)");
-        }
 
         try {
             const uint32_t id = _repo->insertUser(username, hashPassword(password));
@@ -66,16 +61,13 @@ namespace Auth
 
     AuthOk AuthService::login(const std::string &username, const std::string &password) const
     {
-        if (!validUsername(username)) {
+        if (!validUsername(username))
             throw AuthServiceError(
                 "invalid_input", "Username must be 3-24 characters and use only letters, digits, '_' or '-'");
-        }
-        if (password.size() < 6) {
+        if (password.size() < 6)
             throw AuthServiceError("invalid_input", "Password must be at least 6 characters");
-        }
-        if (password.size() > 256) {
+        if (password.size() > 256)
             throw AuthServiceError("invalid_input", "Password is too long (max 256 characters)");
-        }
 
         try {
             const auto row = _repo->findByUsername(username);

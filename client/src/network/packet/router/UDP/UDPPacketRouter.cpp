@@ -199,4 +199,18 @@ namespace Ecs
 
         _sink->onScore(score);
     }
+
+    void UDPPacketRouter::handleDestroy(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(DestroyData)) {
+            std::cerr << "{UDPPacketRouter::handleDestroy} Dropped DESTROY: bad size\n";
+            return;
+        }
+
+        DestroyData destroyData{};
+        std::memcpy(&destroyData, payload, sizeof(destroyData));
+        const uint32_t entityId = ntohl(destroyData.id);
+
+        _sink->onDestroy(entityId);
+    }
 } // namespace Ecs

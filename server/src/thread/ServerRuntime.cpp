@@ -91,18 +91,31 @@ void ServerRuntime::stop()
 
 void ServerRuntime::runReceiver() const
 {
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(16);
+    auto nextTick = clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
         _udpServer->readPackets();
+        if (auto now = clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }
 
 void ServerRuntime::runProcessor() const
 {
+    constexpr auto Tick = std::chrono::milliseconds(16);
+    auto nextTick = std::chrono::steady_clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
-        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt))
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
+        for (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt);)
             _udpPacketRouter->handlePacket(pkt);
-        else
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if (auto now = std::chrono::steady_clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }
 
@@ -144,9 +157,17 @@ void ServerRuntime::runSnapshot() const
 
 void ServerRuntime::runTcp() const
 {
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(50);
+    auto nextTick = clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
         _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);
+        else if (auto now = clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }

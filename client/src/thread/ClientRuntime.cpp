@@ -211,6 +211,8 @@ namespace Thread
             processNetworkPackets(deadline, 256);
             applyWorldCommands(deadline, 500);
 
+            _world->updateInterpolatedPositions();
+
             int steps = 0;
             while (accumulator >= FixedDt && steps < MaxStepsPerTick && clock::now() < deadline) {
                 _world->step(FixedDt);
@@ -234,21 +236,21 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right] = Utils::InputConfig::getInstance().getMovementKeys();
 
-        _eventRegistry->onKeyPressed(keys.up, [this]() {
+        _eventRegistry->onKeyPressed(up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(keys.down, [this]() {
+        _eventRegistry->onKeyPressed(down, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(keys.left, [this]() {
+        _eventRegistry->onKeyPressed(left, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(keys.right, [this]() {
+        _eventRegistry->onKeyPressed(right, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 

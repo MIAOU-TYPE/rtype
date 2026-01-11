@@ -202,7 +202,7 @@ namespace Engine
             return;
         if (handleAudioReleased(frame.mouseX, frame.mouseY))
             return;
-        handleNavigationReleased(frame.mouseX, frame.mouseY);
+        (void) handleNavigationReleased(frame.mouseX, frame.mouseY);
     }
 
     bool SettingsMenu::handleVideoReleased(const float mx, const float my)

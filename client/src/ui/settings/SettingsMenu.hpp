@@ -52,7 +52,7 @@ namespace Engine
     /**
      * @brief Class representing the settings menu of the game.
      */
-    class SettingsMenu : public AMenu {
+    class SettingsMenu final : public AMenu {
       public:
         /**
          * @brief Construct a new Settings Menu object.
@@ -144,7 +144,7 @@ namespace Engine
          * @param my Mouse y-coordinate.
          * @return true if a video settings button was released, false otherwise.
          */
-        bool handleVideoReleased(float mx, float my);
+        [[nodiscard]] bool handleVideoReleased(float mx, float my);
 
         /**
          * @brief Handle controls settings button releases.
@@ -152,7 +152,7 @@ namespace Engine
          * @param my Mouse y-coordinate.
          * @return true if a controls settings button was released, false otherwise.
          */
-        bool handleControlsReleased(float mx, float my);
+        [[nodiscard]] bool handleControlsReleased(float mx, float my);
 
         /**
          * @brief Handle audio settings button releases.
@@ -160,7 +160,7 @@ namespace Engine
          * @param my Mouse y-coordinate.
          * @return true if an audio settings button was released, false otherwise.
          */
-        bool handleAudioReleased(float mx, float my);
+        [[nodiscard]] bool handleAudioReleased(float mx, float my);
 
         /**
          * @brief Handle navigation button releases.
@@ -168,7 +168,7 @@ namespace Engine
          * @param my Mouse y-coordinate.
          * @return true if a navigation button was released, false otherwise.
          */
-        bool handleNavigationReleased(float mx, float my);
+        [[nodiscard]] bool handleNavigationReleased(float mx, float my);
 
         /**
          * @brief Apply volume change to music registry, handling mute state.

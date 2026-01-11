@@ -29,7 +29,7 @@ namespace Graphics
 
     void SfmlMusicManager::unload(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
+        const auto it = _musics.find(handle);
         if (it == _musics.end())
             return;
 
@@ -59,8 +59,7 @@ namespace Graphics
 
     bool SfmlMusicManager::play(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->play();
             return true;
         }
@@ -69,24 +68,21 @@ namespace Graphics
 
     void SfmlMusicManager::stop(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->stop();
         }
     }
 
     void SfmlMusicManager::setVolume(const AudioHandle handle, const float volume)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->setVolume(volume);
         }
     }
 
     void SfmlMusicManager::setLooping(const AudioHandle handle, const bool loop)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->setLooping(loop);
         }
     }

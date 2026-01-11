@@ -19,7 +19,7 @@
  */
 struct DestroyData {
     HeaderData header; ///> The packet header containing type, version, and size.
-    uint32_t id; ///> The ID of the entity to be destroyed.
+    uint32_t id;       ///> The ID of the entity to be destroyed.
 };
 
 #pragma pack(pop)

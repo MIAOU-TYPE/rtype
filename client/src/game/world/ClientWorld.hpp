@@ -7,6 +7,8 @@
 
 #pragma once
 #include <chrono>
+#include <cstdint>
+#include <deque>
 #include <iostream>
 #include <memory>
 #include "AnimationSystem.hpp"
@@ -14,6 +16,7 @@
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
+#include <unordered_set>
 #include <unordered_map>
 
 namespace World
@@ -51,9 +54,9 @@ namespace World
 
         /**
          * @brief Applies a snapshot of entities to the client world.
-         * @param entities Vector of snapshot entities to apply.
+         * @param batch The snapshot batch containing entity data.
          */
-        void applySnapshot(const std::vector<SnapshotEntity> &entities);
+        void applySnapshot(const SnapshotBatch &batch);
 
         /**
          * @brief Applies a destroy entity command to the client world.
@@ -61,7 +64,13 @@ namespace World
          */
         void applyDestroy(size_t entityId);
 
+
       private:
+        /**
+         * @brief Updates interpolated positions of entities for smooth rendering.
+         */
+        void updateInterpolatedPositions();
+
         /**
          * @struct EntityCreate
          * @brief Data structure for creating a new entity in the client world.
@@ -93,5 +102,30 @@ namespace World
 
         std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
             _entityLastSeen; ///> Tracks the last seen time for each entity
+
+        /**
+         * @struct NetState
+         * @brief Represents the network state of an entity for interpolation.
+         */
+        struct NetState {
+            float x; ///> X position
+            float y; ///> Y position
+            uint32_t spriteId; ///> Sprite identifier
+        };
+
+        struct TickSnapshot {
+            uint32_t tick; ///> Server tick number
+            std::unordered_map<size_t, NetState> entities; ///> Map of entity IDs to their network states
+        };
+
+        std::deque<TickSnapshot> _snapshots; ///> Deque of snapshots for interpolation
+
+        static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
+        static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
+        static constexpr uint32_t InterpDelayTicks = (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
+
+        size_t _maxSnapshots = 64; ///> Maximum number of snapshots to store
+
+        std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
     };
 } // namespace World

@@ -58,7 +58,7 @@ namespace
         auto *w = &world;
 
         world.events().subscribe<ShootEvent>([w](const ShootEvent &event) {
-            const Ecs::Entity proj = w->registry().createEntity();
+            const Ecs::Entity proj = w->createEntity();
             w->registry().emplaceComponent<Ecs::Position>(proj, Ecs::Position{event.x, event.y});
             w->registry().emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{event.vx, event.vy});
             w->registry().emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{event.damage});
@@ -118,7 +118,7 @@ namespace Game
 
     Ecs::Entity World::createPlayer()
     {
-        const Ecs::Entity ent = _registry.createEntity();
+        const Ecs::Entity ent = World::createEntity();
 
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng)});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
@@ -134,7 +134,20 @@ namespace Game
 
     void World::destroyEntity(const Ecs::Entity ent)
     {
-        _registry.destroyEntity(ent);
+        const auto it = _netToEntity.find(static_cast<size_t>(ent));
+        if (it == _netToEntity.end())
+            return;
+        _registry.destroyEntity(it->second);
+        _netToEntity.erase(it);
+    }
+
+    Ecs::Entity World::createEntity()
+    {
+        const Ecs::Entity ent = _registry.createEntity();
+        const size_t id = _nextId++;
+        _registry.emplaceComponent<Ecs::Id>(ent, Ecs::Id{id});
+        _netToEntity[id] = ent;
+        return ent;
     }
 
     void World::copyFrom(IGameWorld &other)
@@ -143,20 +156,31 @@ namespace Game
         auto &dst = this->registry();
 
         dst.clear();
+        _netToEntity.clear();
+        _nextId = 1;
 
         std::unordered_map<size_t, Ecs::Entity> remap;
-        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](const Ecs::Entity e, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
+
+        src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
+            [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &, const Ecs::Velocity &,
+                const Ecs::Drawable &) {
                 const Ecs::Entity newEnt = dst.createEntity();
-                remap[static_cast<size_t>(e)] = newEnt;
+                remap.emplace(nid.id, newEnt);
             });
 
-        src.view<Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](const Ecs::Entity e, const Ecs::Position &p, const Ecs::Velocity &v, const Ecs::Drawable &d) {
-                const Ecs::Entity newEnt = remap[static_cast<size_t>(e)];
+        src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
+            [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &p, const Ecs::Velocity &v,
+                const Ecs::Drawable &d) {
+                const Ecs::Entity newEnt = remap.at(nid.id);
+
+                dst.emplaceComponent<Ecs::Id>(newEnt, nid);
                 dst.emplaceComponent<Ecs::Position>(newEnt, p);
                 dst.emplaceComponent<Ecs::Velocity>(newEnt, v);
                 dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
+
+                _netToEntity[nid.id] = newEnt;
+                if (nid.id >= _nextId)
+                    _nextId = nid.id + 1;
             });
     }
 } // namespace Game

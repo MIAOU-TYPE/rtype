@@ -26,22 +26,31 @@ namespace Engine
      * @class Room
      * @brief Represents a game room managing player sessions and game state
      */
-    class Room {
+    class Room : public std::enable_shared_from_this<Room> {
       public:
         /**
          * @brief Constructor for Room
-         * @param sessions shared pointer to the session manager
-         * @param server shared pointer to the server
+         * @param sessionManager shared pointer to the session manager
+         * @param udpServer shared pointer to the server
          * @param udpPacketFactory shared pointer to the packet factory
          * @param levelPath path to the game level data
          * @param name name of the room
          * @param maxPlayers maximum number of players allowed in the room
          */
-        explicit Room(const std::shared_ptr<Net::Server::ISessionManager> &sessions,
-            const std::shared_ptr<Net::Server::IServer> &server,
+        explicit Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
+            const std::shared_ptr<Net::Server::IServer> &udpServer,
             const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
             std::string name = "room", size_t maxPlayers = 4);
 
+        /**
+         * @brief Initializes the Room with necessary components
+         * @param sessionManager shared pointer to the session manager
+         * @param udpServer shared pointer to the server
+         * @param udpPacketFactory shared pointer to the packet factory
+         */
+        void init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
+            const std::shared_ptr<Net::Server::IServer> &udpServer,
+            const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory);
         /**
          * @brief Destructor for Room
          */
@@ -105,17 +114,24 @@ namespace Engine
          */
         [[nodiscard]] std::string getName() const noexcept;
 
+        /**
+         * @brief Gets the mutex used for synchronizing access to the room
+         * @return A reference to the mutex
+         */
+        std::mutex &getSessionMutex();
+
       private:
         /**
          * @brief Main loop for the room's game server
          */
         void run() const;
 
+        std::mutex _sessionsMutex;
+
         std::unordered_set<int> _sessions; ///> Set of player session IDs in the room
 
-        std::unique_ptr<Game::GameServer> _gameServer = nullptr; ///> Unique pointer to the room's game server
+        std::unique_ptr<Game::GameServer> _gameServer = nullptr;        ///> Unique pointer to the room's game server
         std::shared_ptr<Net::Server::ISessionManager> _sessionsManager; ///> Shared pointer to the session manager
-        
 
         std::atomic<bool> _running{false}; ///> Atomic flag indicating if the room is running
         std::thread _thread;               ///> Thread for the room's game server loop

@@ -92,7 +92,7 @@ namespace Network
             if (_socketFd != kInvalidSocket)
                 _netWrapper.closeSocket(_socketFd);
             _socketFd = kInvalidSocket;
-            throw;
+            throw NetClientError(std::string("{UDPClient::start} ") + e.what());
         }
 
         setRunning(true);

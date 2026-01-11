@@ -25,7 +25,6 @@
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
-#include "Events.hpp"
 
 namespace Game
 {

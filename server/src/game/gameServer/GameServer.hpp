@@ -147,7 +147,7 @@ namespace Game
          * @brief Access the event registry.
          * @return Reference to the event registry.
          */
-        Ecs::EventsRegistry &events() const noexcept;
+        [[nodiscard]] Ecs::EventsRegistry &events() const noexcept;
 
       private:
         mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.

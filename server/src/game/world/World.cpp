@@ -162,10 +162,9 @@ namespace Game
         std::unordered_map<size_t, Ecs::Entity> remap;
 
         src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &, const Ecs::Velocity &,
-                const Ecs::Drawable &) {
+            [&](Ecs::Entity, const Ecs::Id &id, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
                 const Ecs::Entity newEnt = dst.createEntity();
-                remap.emplace(nid.id, newEnt);
+                remap.emplace(id.id, newEnt);
             });
 
         src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(

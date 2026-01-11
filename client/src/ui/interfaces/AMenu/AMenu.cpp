@@ -12,7 +12,7 @@ namespace Engine
     AMenu::AMenu(std::shared_ptr<Graphics::IRenderer> renderer) : _renderer(std::move(renderer))
     {
         if (!_renderer)
-            throw std::runtime_error("{AMenu} null renderer");
+            throw AMenuError("{AMenu} renderer is null");
     }
 
     AMenu::ViewportF AMenu::viewportF() const noexcept
@@ -28,7 +28,7 @@ namespace Engine
         const auto textures = _renderer->textures();
         _backgroundTexture = textures->load(path);
         if (_backgroundTexture == Graphics::InvalidTexture)
-            throw std::runtime_error("{AMenu} failed to load background: " + path);
+            throw AMenuError("{AMenu} failed to load background texture: " + path);
         _backgroundCmd.textureId = _backgroundTexture;
     }
 

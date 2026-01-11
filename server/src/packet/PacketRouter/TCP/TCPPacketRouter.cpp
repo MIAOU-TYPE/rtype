@@ -16,15 +16,28 @@ namespace
         s += ": truncated payload (need=" + std::to_string(need) + ", got=" + std::to_string(got) + ")";
         return s;
     }
+
+    uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
+    {
+        auto token = sessions.getUdpToken(sessionId);
+        if (token != 0)
+            return token;
+
+        std::random_device rd;
+        token =
+            (static_cast<uint64_t>(rd()) << 32) ^ static_cast<uint64_t>(rd()) ^ (static_cast<uint64_t>(sessionId) << 1);
+        sessions.setUdpToken(sessionId, token);
+        return token;
+    }
 } // namespace
 
 namespace Net
 {
     TCPPacketRouter::TCPPacketRouter(std::shared_ptr<Server::ISessionManager> sessions,
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
-        std::shared_ptr<Factory::TCPPacketFactory> packetFactory)
+        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory)), _serverUdpPort(_tcp->getPort() + 1)
+          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 
@@ -53,8 +66,16 @@ namespace Net
 
         const int sessionId = _sessions->getOrCreateSession(*addr);
 
+        const bool authFree = h.type == Protocol::TCP::HELLO || h.type == Protocol::TCP::AUTH_REGISTER
+            || h.type == Protocol::TCP::AUTH_LOGIN;
+
+        if (!authFree && !_sessions->isAuthed(sessionId))
+            return sendError(*addr, h.requestId, 401, "AUTH_REQUIRED");
+
         switch (h.type) {
             case Protocol::TCP::HELLO: onHello(*addr, sessionId, h.requestId, r); break;
+            case Protocol::TCP::AUTH_REGISTER: onAuthRegister(*addr, sessionId, h.requestId, r); break;
+            case Protocol::TCP::AUTH_LOGIN: onAuthLogin(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::LIST_ROOMS: onListRooms(*addr, h.requestId); break;
             case Protocol::TCP::CREATE_ROOM: onCreateRoom(*addr, h.requestId, r); break;
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
@@ -107,6 +128,82 @@ namespace Net
             return;
 
         (void) _tcp->sendPacket(*out);
+    }
+
+    void TCPPacketRouter::onAuthRegister(
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
+    {
+        if (!_auth || !_packetFactory)
+            return sendError(addr, req, 500, "AUTH_REGISTER: service unavailable");
+
+        std::string username, password;
+        try {
+            username = r.str16();
+            password = r.str16();
+        } catch (...) {
+            return sendError(addr, req, 400, "AUTH_REGISTER: malformed payload (username str16 + password str16)");
+        }
+        if (r.remaining() != 0)
+            return sendError(addr, req, 400, "AUTH_REGISTER: unexpected trailing bytes");
+
+        Auth::AuthOk ok{};
+        try {
+            ok = _auth->registerUser(username, password);
+        } catch (const Auth::AuthServiceError &e) {
+            if (e.kind() == "invalid_input")
+                return sendError(addr, req, 400, e.message());
+            if (e.kind() == "username_taken")
+                return sendError(addr, req, 409, e.message());
+            if (e.kind() == "db_error")
+                return sendError(addr, req, 500, "Server error (database)");
+            if (e.kind() == "crypto_error")
+                return sendError(addr, req, 500, "Server error (crypto)");
+            return sendError(addr, req, 500, "Server error");
+        }
+
+        constexpr uint32_t ttlSec = 24u * 60u * 60u;
+        _sessions->setIdentity(sessionId, Auth::Identity{ok.userId, ok.username}, std::chrono::seconds(ttlSec));
+        const uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
+        if (const auto out = _packetFactory->makeAuthOk(addr, req, ok.userId, ok.username, udpToken, ttlSec))
+            (void) _tcp->sendPacket(*out);
+    }
+
+    void TCPPacketRouter::onAuthLogin(
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
+    {
+        if (!_auth || !_packetFactory)
+            return sendError(addr, req, 500, "AUTH_LOGIN: service unavailable");
+
+        std::string username, password;
+        try {
+            username = r.str16();
+            password = r.str16();
+        } catch (...) {
+            return sendError(addr, req, 400, "AUTH_LOGIN: malformed payload (username str16 + password str16)");
+        }
+        if (r.remaining() != 0)
+            return sendError(addr, req, 400, "AUTH_LOGIN: unexpected trailing bytes");
+
+        Auth::AuthOk ok{};
+        try {
+            ok = _auth->login(username, password);
+        } catch (const Auth::AuthServiceError &e) {
+            if (e.kind() == "invalid_input")
+                return sendError(addr, req, 400, e.message());
+            if (e.kind() == "invalid_credentials")
+                return sendError(addr, req, 401, "Invalid username or password");
+            if (e.kind() == "db_error")
+                return sendError(addr, req, 500, "Server error (database)");
+            if (e.kind() == "crypto_error")
+                return sendError(addr, req, 500, "Server error (crypto)");
+            return sendError(addr, req, 500, "Server error");
+        }
+
+        constexpr uint32_t ttlSec = 24u * 60u * 60u;
+        _sessions->setIdentity(sessionId, Auth::Identity{ok.userId, ok.username}, std::chrono::seconds(ttlSec));
+        const uint64_t udpToken = ensureUdpToken(*_sessions, sessionId);
+        if (const auto out = _packetFactory->makeAuthOk(addr, req, ok.userId, ok.username, udpToken, ttlSec))
+            (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onListRooms(const sockaddr_in &addr, const uint32_t req) const

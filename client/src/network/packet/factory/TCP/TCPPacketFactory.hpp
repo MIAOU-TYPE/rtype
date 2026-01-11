@@ -88,6 +88,26 @@ namespace Network
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeStartGame(uint32_t req) const;
 
+        /**
+         * @brief Create an AuthRegister packet.
+         * @param req The request ID for the AuthRegister packet.
+         * @param username The username for registration.
+         * @param password The password for registration.
+         * @return A shared pointer to the created AuthRegister packet.
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeAuthRegister(
+            uint32_t req, std::string_view username, std::string_view password) const;
+
+        /**
+         * @brief Create an AuthLogin packet.
+         * @param req The request ID for the AuthLogin packet.
+         * @param username The username for login.
+         * @param password The password for login.
+         * @return A shared pointer to the created AuthLogin packet.
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeAuthLogin(
+            uint32_t req, std::string_view username, std::string_view password) const;
+
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets
     };

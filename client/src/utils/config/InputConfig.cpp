@@ -30,7 +30,7 @@ namespace Utils
         return _currentPreset;
     }
 
-    void InputConfig::setPreset(KeyPreset preset)
+    void InputConfig::setPreset(const KeyPreset preset)
     {
         _currentPreset = preset;
         _needsRebind = true;
@@ -41,8 +41,7 @@ namespace Utils
 
     MovementKeys InputConfig::getMovementKeys() const noexcept
     {
-        const auto it = _presets.find(_currentPreset);
-        if (it != _presets.end())
+        if (const auto it = _presets.find(_currentPreset); it != _presets.end())
             return it->second;
         return _presets.at(KeyPreset::Arrows);
     }
@@ -64,9 +63,8 @@ namespace Utils
 
         std::string line;
         while (std::getline(file, line)) {
-            if (line.find("preset=") == 0) {
-                const std::string value = line.substr(7);
-                if (value == "arrows")
+            if (line.starts_with("preset=")) {
+                if (const std::string value = line.substr(7); value == "arrows")
                     _currentPreset = KeyPreset::Arrows;
                 else if (value == "zqsd")
                     _currentPreset = KeyPreset::ZQSD;
@@ -97,7 +95,7 @@ namespace Utils
         return _needsRebind;
     }
 
-    void InputConfig::clearRebindFlag() noexcept
+    void InputConfig::clearRebindFlag() const noexcept
     {
         _needsRebind = false;
     }

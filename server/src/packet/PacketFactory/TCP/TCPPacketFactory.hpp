@@ -122,6 +122,19 @@ namespace Net::Factory
         [[nodiscard]] std::shared_ptr<IPacket> makeError(
             const sockaddr_in &addr, ReqId req, uint16_t code, std::string_view msg) const;
 
+        /**
+         * @brief Creates an AUTH_OK packet.
+         * @param addr The address of the client.
+         * @param req The request ID.
+         * @param userId The user ID.
+         * @param username The username of the authenticated user.
+         * @param token
+         * @param ttlSec
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> makeAuthOk(const sockaddr_in &addr, ReqId req, uint32_t userId,
+            std::string_view username, uint64_t token, uint32_t ttlSec) const;
+
       private:
         /**
          * @brief Helper method to create a packet with the given address and payload.

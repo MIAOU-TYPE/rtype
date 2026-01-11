@@ -133,4 +133,29 @@ namespace Net::Factory
         }
     }
 
+    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(const uint32_t entityId) const noexcept
+    {
+        try {
+            auto packet = _packet->newPacket();
+            if (!packet) {
+                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Failed to create new packet" << std::endl;
+                return nullptr;
+            }
+
+            uint8_t *buf = packet->buffer();
+            if (!buf)
+                throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Null buffer");
+
+            DestroyData destroyData;
+            destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));
+            destroyData.id = htonl(entityId);
+            std::memcpy(buf, &destroyData, sizeof(DestroyData));
+            packet->setSize(sizeof(DestroyData));
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::createDestroyEntityPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
 } // namespace Net::Factory

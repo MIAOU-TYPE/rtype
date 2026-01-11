@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "DefaultData.hpp"
+#include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
 #include "IClientMessageSink.hpp"
@@ -19,7 +20,6 @@
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
-#include "DestroyData.hpp"
 
 namespace Ecs
 {
@@ -119,7 +119,6 @@ namespace Ecs
          * @param size Size of the payload data.
          */
         void handleDestroy(const uint8_t *payload, size_t size) const;
-
 
         /**
          * @brief Extracts the header from the incoming packet.

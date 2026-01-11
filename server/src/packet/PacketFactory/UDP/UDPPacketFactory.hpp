@@ -15,13 +15,13 @@
 #include <vector>
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
+#include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
-#include "DestroyData.hpp"
 
 /**
  * @namespace Net
@@ -117,6 +117,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(uint32_t entityId) const noexcept;
+
       private:
         /**
          * @brief Creates a HeaderData with the specified parameters.

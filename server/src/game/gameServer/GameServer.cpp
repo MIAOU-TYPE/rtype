@@ -163,7 +163,9 @@ namespace Game
                 const Ecs::Entity ent = it->second;
                 _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
-                _worldWrite->events().emit(DestroyEvent(static_cast<size_t>(ent)));
+                if (const auto id = _worldWrite->registry().getComponents<Ecs::Id>().at(static_cast<size_t>(ent));
+                    id.has_value())
+                    _worldWrite->events().emit(DestroyEvent(id->id));
                 break;
             }
             case GameCommand::Type::PlayerInput: {

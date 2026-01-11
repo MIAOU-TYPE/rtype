@@ -126,7 +126,7 @@ namespace Engine
          */
         void run() const;
 
-        std::mutex _sessionsMutex;
+        std::mutex _sessionsMutex; ///> Mutex for synchronizing access to the sessions set
 
         std::unordered_set<int> _sessions; ///> Set of player session IDs in the room
 

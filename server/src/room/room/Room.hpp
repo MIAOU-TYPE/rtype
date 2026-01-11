@@ -118,7 +118,7 @@ namespace Engine
          * @brief Gets the mutex used for synchronizing access to the room
          * @return A reference to the mutex
          */
-        std::mutex &getSessionMutex();
+        [[nodiscard]] std::mutex &getSessionMutex();
 
       private:
         /**

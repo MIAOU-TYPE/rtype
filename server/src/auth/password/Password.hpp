@@ -10,6 +10,7 @@
 #include <array>
 #include <cctype>
 #include <charconv>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <exception>
@@ -19,7 +20,6 @@
 #include <string>
 #include <utility>
 #include <string_view>
-#include <cstddef>
 
 namespace Auth
 {

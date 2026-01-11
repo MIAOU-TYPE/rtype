@@ -80,9 +80,6 @@ namespace Engine
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
         _submittedPass.clear();
-        _authErrorMessage.clear();
-        if (_authErrorText)
-            _authErrorText->setString("");
 
         _authErrorMessage.clear();
         if (_authErrorText)

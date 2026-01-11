@@ -9,10 +9,10 @@
 
 namespace Game
 {
-    void SnapshotSystem::update(IGameWorld &world, std::vector<SnapshotEntity> &snapshot)
+    void SnapshotSystem::update(IGameWorld &world, std::vector<SnapshotEntity> &out)
     {
         auto &reg = world.registry();
-        snapshot.clear();
+        out.clear();
 
         reg.view<Ecs::Drawable, Ecs::Position, Ecs::Id>(
             [&](const Ecs::Entity &, const Ecs::Drawable &draw, const Ecs::Position &pos, const Ecs::Id id) {
@@ -22,7 +22,7 @@ namespace Game
                 s.y = pos.y;
                 s.spriteId = draw.spriteId;
 
-                snapshot.push_back(s);
+                out.push_back(s);
             });
     }
 } // namespace Game

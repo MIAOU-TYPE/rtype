@@ -1,7 +1,5 @@
 module.exports = {
   technicalSidebar: [
-    'technical-docs/server/overview',
-    'technical-docs/server/network-protocol',
     {
       type: 'category',
       label: 'Client',
@@ -85,18 +83,14 @@ module.exports = {
       type: 'category',
       label: 'Server',
       items: [
+        'technical-docs/server/overview',
         {
           type: 'category',
-          label: 'Engine',
+          label: 'Architecture',
           items: [
-            'technical-docs/server/engine/overview',
-            'technical-docs/server/engine/ecs',
-            'technical-docs/server/engine/rendering',
-            'technical-docs/server/engine/audio',
-            'technical-docs/server/engine/game-server',
-            'technical-docs/server/engine/systems',
-            'technical-docs/server/engine/world',
-            'technical-docs/server/engine/runtime-integration',
+            'technical-docs/server/architecture/overview',
+            'technical-docs/server/architecture/runtime',
+            'technical-docs/server/architecture/game-loop',
           ],
         },
         {
@@ -104,8 +98,8 @@ module.exports = {
           label: 'Network',
           items: [
             'technical-docs/server/network/overview',
-            'technical-docs/server/network/udp-server',
-            'technical-docs/server/network/netwrapper-and-sockets',
+            'technical-docs/server/network/tcp',
+            'technical-docs/server/network/udp',
             'technical-docs/server/network/protocol',
           ],
         },
@@ -113,11 +107,40 @@ module.exports = {
           type: 'category',
           label: 'Auth',
           items: [
-            'technical-docs/server/auth/auth-database',
             'technical-docs/server/auth/auth-overview',
+            'technical-docs/server/auth/auth-database',
             'technical-docs/server/auth/auth-password-hashing',
             'technical-docs/server/auth/auth-sessions-udp',
             'technical-docs/server/auth/auth-tcp-api',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Resources',
+          items: [
+            'technical-docs/server/resources/overview',
+            'technical-docs/server/resources/config',
+            'technical-docs/server/resources/persistence',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Events',
+          items: [
+            'technical-docs/server/events/overview',
+            'technical-docs/server/events/event-bus',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Engine',
+          items: [
+            'technical-docs/server/engine/overview',
+            'technical-docs/server/engine/ecs',
+            'technical-docs/server/engine/systems',
+            'technical-docs/server/engine/world',
+            'technical-docs/server/engine/game-server',
+            'technical-docs/server/engine/runtime-integration',
           ],
         },
       ],

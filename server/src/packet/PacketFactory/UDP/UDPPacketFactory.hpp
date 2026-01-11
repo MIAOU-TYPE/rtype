@@ -116,7 +116,7 @@ namespace Net::Factory
          * @param entityId The ID of the entity to be destroyed.
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(uint32_t entityId) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(size_t entityId) const noexcept;
 
       private:
         /**

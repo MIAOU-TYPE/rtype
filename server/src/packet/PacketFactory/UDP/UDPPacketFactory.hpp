@@ -21,6 +21,7 @@
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
+#include "DestroyData.hpp"
 
 /**
  * @namespace Net
@@ -110,6 +111,12 @@ namespace Net::Factory
         [[nodiscard]] std::shared_ptr<IPacket> createScorePacket(
             const sockaddr_in &addr, uint32_t score) const noexcept;
 
+        /**
+         * @brief Creates a destroy entity packet with the specified address and entity ID.
+         * @param entityId The ID of the entity to be destroyed.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(uint32_t entityId) const noexcept;
       private:
         /**
          * @brief Creates a HeaderData with the specified parameters.

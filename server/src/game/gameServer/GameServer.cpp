@@ -56,8 +56,6 @@ namespace Game
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
                 std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
-            else
-                std::cout << "{GameServer::GameServer} Loaded level: " << _levelManager.getCurrentLevel().name << "\n";
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
@@ -165,7 +163,7 @@ namespace Game
                 const Ecs::Entity ent = it->second;
                 _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
-                _worldWrite->destroyEntity(ent);
+                _worldWrite->events().emit(DestroyEvent(static_cast<size_t>(ent)));
                 break;
             }
             case GameCommand::Type::PlayerInput: {
@@ -192,5 +190,10 @@ namespace Game
             }
             default: break;
         }
+    }
+
+    Ecs::EventsRegistry &GameServer::events() const noexcept
+    {
+        return _worldWrite->events();
     }
 } // namespace Game

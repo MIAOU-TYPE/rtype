@@ -25,6 +25,7 @@
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
+#include "Events.hpp"
 
 namespace Game
 {
@@ -142,6 +143,12 @@ namespace Game
          * @param out Vector to populate with snapshot entities.
          */
         void buildSnapshot(std::vector<SnapshotEntity> &out) const;
+
+        /**
+         * @brief Access the event registry.
+         * @return Reference to the event registry.
+         */
+        Ecs::EventsRegistry &events() const noexcept;
 
       private:
         mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.

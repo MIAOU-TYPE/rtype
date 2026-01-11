@@ -6,6 +6,7 @@
 */
 
 #include "MovementSystem.hpp"
+#include "Id.hpp"
 
 namespace Game
 {
@@ -13,13 +14,13 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<Ecs::Position, Ecs::Velocity>(
-            [&](const Ecs::Entity entity, Ecs::Position &pos, const Ecs::Velocity &vel) {
+        reg.view<Ecs::Position, Ecs::Velocity, Ecs::Id>(
+            [&](const Ecs::Entity, Ecs::Position &pos, const Ecs::Velocity &vel, const Ecs::Id &id) {
                 pos.x += vel.vx * dt;
                 pos.y += vel.vy * dt;
 
                 if (pos.x < 0 || pos.y < 0)
-                    world.events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(entity)});
+                    world.events().emit<DestroyEvent>(DestroyEvent{id.id});
             });
     }
 } // namespace Game

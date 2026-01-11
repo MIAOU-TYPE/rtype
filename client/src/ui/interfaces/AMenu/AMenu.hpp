@@ -7,11 +7,40 @@
 
 #pragma once
 #include <algorithm>
+#include <exception>
 #include <utility>
 #include "IMenu.hpp"
 
 namespace Engine
 {
+    /**
+     * @brief Exception class for menu-related errors.
+     */
+    class AMenuError : public std::exception {
+      public:
+        /**
+         * @brief Construct a new AMenuError object with a message.
+         *
+         * @param msg The error message.
+         */
+        explicit AMenuError(const std::string &msg) : _message(msg)
+        {
+        }
+
+        /**
+         * @brief Get the error message.
+         *
+         * @return const char* The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     /**
      * @brief Abstract base class for menus in the game.
      * This class provides common functionality for all menus, such as background rendering

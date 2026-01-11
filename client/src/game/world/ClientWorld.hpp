@@ -89,5 +89,8 @@ namespace World
          * @param entity The snapshot entity data to apply.
          */
         void applySingleSnapshot(const SnapshotEntity &entity);
+
+        std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
+            _entityLastSeen; ///> Tracks the last seen time for each entity
     };
 } // namespace World

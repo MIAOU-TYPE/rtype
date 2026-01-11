@@ -40,9 +40,24 @@ namespace World
 
     void ClientWorld::applySnapshot(const std::vector<SnapshotEntity> &entities)
     {
-        for (const auto &entity : entities)
-            applySingleSnapshot(entity);
+        static constexpr auto maxTime = std::chrono::milliseconds(500);
+        std::vector<size_t> toDestroy;
 
+        const auto time = std::chrono::steady_clock::now();
+        for (const auto &entity : entities) {
+            _entityLastSeen[entity.id] = time;
+            applySingleSnapshot(entity);
+        }
+
+        for (const auto &[id, lastSeen] : _entityLastSeen) {
+            if ((time - lastSeen) > maxTime)
+                toDestroy.push_back(id);
+        }
+
+        for (auto id : toDestroy) {
+            applyDestroy(id);
+            _entityLastSeen.erase(id);
+        }
     }
 
     void ClientWorld::applyDestroy(const size_t entityId)
@@ -53,6 +68,7 @@ namespace World
 
         _registry.destroyEntity(it->second);
         _entityMap.erase(it);
+        _entityLastSeen.erase(entityId);
     }
 
     void ClientWorld::applyCreate(const EntityCreate &data)

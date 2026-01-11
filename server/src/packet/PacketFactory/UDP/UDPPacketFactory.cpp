@@ -102,9 +102,9 @@ namespace Net::Factory
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
-                packed.id = htonl(id);
-                packed.x = htons(x);
-                packed.y = htons(y);
+                packed.id = htonl(static_cast<uint32_t>(id));
+                packed.x = htons(static_cast<uint16_t>(x));
+                packed.y = htons(static_cast<uint16_t>(y));
                 packed.spriteId = static_cast<uint8_t>(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
@@ -123,7 +123,7 @@ namespace Net::Factory
     {
         ScoreData scoreData;
         scoreData.header = makeHeader(Protocol::UDP::SCORE, VERSION, sizeof(ScoreData));
-        scoreData.score = htons(score);
+        scoreData.score = htons(static_cast<uint16_t>(score));
         try {
             auto packet = makePacket<ScoreData>(addr, scoreData);
             return packet;
@@ -148,7 +148,7 @@ namespace Net::Factory
 
             DestroyData destroyData;
             destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));
-            destroyData.id = htonl(entityId);
+            destroyData.id = htonl(static_cast<uint32_t>(entityId));
             std::memcpy(buf, &destroyData, sizeof(DestroyData));
             packet->setSize(sizeof(DestroyData));
             return packet;

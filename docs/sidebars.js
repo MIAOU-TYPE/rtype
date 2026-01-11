@@ -6,14 +6,79 @@ module.exports = {
       type: 'category',
       label: 'Client',
       items: [
-        'technical-docs/client/audio/audio_doc',
-        'technical-docs/client/engine/game_loop',
-        'technical-docs/client/engine/client_architecture',
-        'technical-docs/client/graphic/graphic_doc',
-        'technical-docs/client/resources/assets_and_levels',
-        'technical-docs/client/resources/level_system',
-        'technical-docs/client/ui/menus_and_navigation',
-        'technical-docs/client/events/events_doc',
+        'technical-docs/client/overview',
+        {
+          type: 'category',
+          label: 'Architecture',
+          items: [
+            'technical-docs/client/architecture/overview',
+            'technical-docs/client/architecture/game-loop',
+            'technical-docs/client/architecture/client-runtime',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Network',
+          items: [
+            'technical-docs/client/network/overview',
+            'technical-docs/client/network/tcp',
+            'technical-docs/client/network/udp',
+            'technical-docs/client/network/state-sync',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Auth',
+          items: [
+            'technical-docs/client/auth/overview',
+            'technical-docs/client/auth/flows',
+            'technical-docs/client/auth/tcp-protocol',
+            'technical-docs/client/auth/udp-bind',
+            'technical-docs/client/auth/persistence',
+            'technical-docs/client/auth/ui-events',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'UI',
+          items: [
+            'technical-docs/client/ui/overview',
+            'technical-docs/client/ui/menus-and-navigation',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Graphics',
+          items: [
+            'technical-docs/client/graphics/overview',
+            'technical-docs/client/graphics/rendering',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Audio',
+          items: [
+            'technical-docs/client/audio/overview',
+            'technical-docs/client/audio/audio',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Resources',
+          items: [
+            'technical-docs/client/resources/overview',
+            'technical-docs/client/resources/assets',
+            'technical-docs/client/resources/levels',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Events',
+          items: [
+            'technical-docs/client/events/overview',
+            'technical-docs/client/events/event-bus',
+          ],
+        },
       ],
     },
     {
@@ -36,7 +101,7 @@ module.exports = {
         },
         {
           type: 'category',
-          label: 'Networking',
+          label: 'Network',
           items: [
             'technical-docs/server/network/overview',
             'technical-docs/server/network/udp-server',
@@ -44,7 +109,17 @@ module.exports = {
             'technical-docs/server/network/protocol',
           ],
         },
-        'technical-docs/server/gameplay',
+        {
+          type: 'category',
+          label: 'Auth',
+          items: [
+            'technical-docs/server/auth/auth-database',
+            'technical-docs/server/auth/auth-overview',
+            'technical-docs/server/auth/auth-password-hashing',
+            'technical-docs/server/auth/auth-sessions-udp',
+            'technical-docs/server/auth/auth-tcp-api',
+          ],
+        },
       ],
     },
   ],
@@ -53,6 +128,7 @@ module.exports = {
     'user-guide/installation',
     'user-guide/usage',
     'user-guide/tips',
+    'user-guide/mechanics_and_roles',
   ],
   contributingSidebar: [
     'contributing/overview',

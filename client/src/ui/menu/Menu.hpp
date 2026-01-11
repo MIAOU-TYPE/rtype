@@ -52,7 +52,21 @@ namespace Engine
      */
     class Menu final : public AMenu {
       public:
+        /**
+         * @brief Enumeration of the different pages in the menu.
+         * UnauthedRoot: The root page for unauthenticated users.
+         * AuthedRoot: The root page for authenticated users.
+         * LoginForm: The login form page.
+         * RegisterForm: The registration form page.
+         */
         enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm };
+
+        /**
+         * @brief Enumeration of authentication modes.
+         * None: No authentication mode.
+         * Login: Login mode.
+         * Register: Registration mode.
+         */
         enum class AuthMode { None, Login, Register };
         /**
          * @brief Construct a new Menu object.
@@ -77,8 +91,15 @@ namespace Engine
          */
         void onEnter();
 
-        // Sets/clears the message shown above the login/register fields.
+        /**
+         * @brief Set an authentication error message.
+         * @param message The error message to set.
+         */
         void setAuthError(std::string message);
+
+        /**
+         * @brief Clear the authentication error message.
+         */
         void clearAuthError();
 
         /**
@@ -114,21 +135,21 @@ namespace Engine
          *
          * @return The submitted authentication mode.
          */
-        AuthMode submittedMode() const noexcept;
+        [[nodiscard]] AuthMode submittedMode() const noexcept;
 
         /**
          * @brief Get the submitted username.
          *
          * @return The submitted username.
          */
-        const std::string &submittedUsername() const noexcept;
+        [[nodiscard]] const std::string &submittedUsername() const noexcept;
 
         /**
          * @brief Get the submitted password.
          *
          * @return The submitted password.
          */
-        const std::string &submittedPassword() const noexcept;
+        [[nodiscard]] const std::string &submittedPassword() const noexcept;
 
         /**
          * @brief Check if the user wants to start the game.
@@ -163,43 +184,68 @@ namespace Engine
          */
         void handleInput(const InputFrame &frame);
 
+        /**
+         * @brief Handle mouse movement input.
+         * @param frame The current input frame.
+         */
         void handleMousePressed(const InputFrame &frame) const;
+
+        /**
+         * @brief Handle mouse release input.
+         * @param frame The current input frame.
+         */
         void handleMouseReleased(const InputFrame &frame);
+
+        /**
+         * @brief Handle key press input.
+         * @param frame The current input frame.
+         */
         void handleKeyPressed(const InputFrame &frame);
 
+        /**
+         * @brief Enter the specified form page.
+         * @param p The page to enter (LoginForm or RegisterForm).
+         */
         void enterForm(Page p);
+
+        /**
+         * @brief Return to the root page.
+         */
         void backToRoot();
+
+        /**
+         * @brief Submit the authentication form.
+         */
         void submit();
 
         Graphics::TextureHandle _logoTexture = Graphics::InvalidTexture; ///> Handle to the logo texture.
+        RenderCommand _logoCmd;                                          ///> Render command for the logo.
 
-        RenderCommand _logoCmd; ///> Render command for the logo.
+        Page _page = Page::UnauthedRoot; ///> Current page in the menu.
+        bool _authed = false;            ///> Flag indicating if the user is authenticated.
 
-        Page _page = Page::UnauthedRoot;
-        bool _authed = false;
-
-        std::unique_ptr<UI::UIButton> _login;
-        std::unique_ptr<UI::UIButton> _register;
+        std::unique_ptr<UI::UIButton> _login;    ///> Button to access the login form.
+        std::unique_ptr<UI::UIButton> _register; ///> Button to access the registration form.
 
         std::unique_ptr<UI::UIButton> _play;     ///> Button to start the game.
         std::unique_ptr<UI::UIButton> _settings; ///> Button to access settings.
         std::unique_ptr<UI::UIButton> _quit;     ///> Button to quit the game.
 
-        std::unique_ptr<UI::UIButton> _submitBtn;
-        std::unique_ptr<UI::UIButton> _backBtn;
-        std::unique_ptr<UI::UITextField> _userField;
-        std::unique_ptr<UI::UITextField> _passField;
+        std::unique_ptr<UI::UIButton> _submitBtn;    ///> Button to submit the authentication form.
+        std::unique_ptr<UI::UIButton> _backBtn;      ///> Button to go back to the root page.
+        std::unique_ptr<UI::UITextField> _userField; ///> Text field for entering the username.
+        std::unique_ptr<UI::UITextField> _passField; ///> Text field for entering the password.
 
-        std::unique_ptr<Graphics::IText> _authErrorText;
-        std::string _authErrorMessage;
+        std::unique_ptr<Graphics::IText> _authErrorText; ///> Text object for displaying authentication error messages.
+        std::string _authErrorMessage;                   ///> Authentication error message.
 
         bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
         bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.
         bool _settingsRequested = false; ///> Flag indicating if the user requested to access settings.
 
-        bool _submitted = false;
-        AuthMode _submittedMode = AuthMode::None;
-        std::string _submittedUser;
-        std::string _submittedPass;
+        bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
+        AuthMode _submittedMode = AuthMode::None; ///> Submitted authentication mode.
+        std::string _submittedUser;               ///> Submitted username.
+        std::string _submittedPass;               ///> Submitted password.
     };
 } // namespace Engine

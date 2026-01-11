@@ -97,7 +97,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 # SQLite3
 # ------------------------------
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
-target_link_libraries(r-type_server PRIVATE unofficial::sqlite3::sqlite3)
+target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::sqlite3::sqlite3)
 
 # ------------------------------
 # OpenSSL

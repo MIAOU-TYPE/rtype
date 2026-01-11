@@ -144,7 +144,7 @@ namespace Net::Factory
 
             uint8_t *buf = packet->buffer();
             if (!buf)
-                throw FactoryError("{UDPPacketFactory::createSnapshotPacket} Null buffer");
+                throw FactoryError("{UDPPacketFactory::createDestroyEntityPacket} Null buffer");
 
             DestroyData destroyData;
             destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));

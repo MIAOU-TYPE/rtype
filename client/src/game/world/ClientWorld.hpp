@@ -65,11 +65,11 @@ namespace World
         void applyDestroy(size_t entityId);
 
 
-      private:
         /**
          * @brief Updates interpolated positions of entities for smooth rendering.
          */
         void updateInterpolatedPositions();
+      private:
 
         /**
          * @struct EntityCreate

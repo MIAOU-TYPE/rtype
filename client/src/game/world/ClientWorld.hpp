@@ -16,8 +16,8 @@
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace World
 {
@@ -64,13 +64,12 @@ namespace World
          */
         void applyDestroy(size_t entityId);
 
-
         /**
          * @brief Updates interpolated positions of entities for smooth rendering.
          */
         void updateInterpolatedPositions();
-      private:
 
+      private:
         /**
          * @struct EntityCreate
          * @brief Data structure for creating a new entity in the client world.
@@ -108,13 +107,13 @@ namespace World
          * @brief Represents the network state of an entity for interpolation.
          */
         struct NetState {
-            float x; ///> X position
-            float y; ///> Y position
+            float x;           ///> X position
+            float y;           ///> Y position
             uint32_t spriteId; ///> Sprite identifier
         };
 
         struct TickSnapshot {
-            uint32_t tick; ///> Server tick number
+            uint32_t tick;                                 ///> Server tick number
             std::unordered_map<size_t, NetState> entities; ///> Map of entity IDs to their network states
         };
 
@@ -122,7 +121,8 @@ namespace World
 
         static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
         static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
-        static constexpr uint32_t InterpDelayTicks = (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
+        static constexpr uint32_t InterpDelayTicks =
+            (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
 
         size_t _maxSnapshots = 64; ///> Maximum number of snapshots to store
 

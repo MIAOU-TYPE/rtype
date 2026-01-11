@@ -139,11 +139,6 @@ namespace Thread
                 Utils::InputConfig::getInstance().clearRebindFlag();
             }
 
-            if (Utils::InputConfig::getInstance().needsRebind()) {
-                rebindControls();
-                Utils::InputConfig::getInstance().clearRebindFlag();
-            }
-
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));

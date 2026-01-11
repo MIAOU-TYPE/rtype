@@ -34,7 +34,7 @@ namespace
     }
 
     [[nodiscard]] ListMetrics computeListMetrics(
-        const float h, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const float h, const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         ListMetrics m{};
         m.listTop = h * 0.22f;
@@ -65,7 +65,7 @@ namespace
     }
 
     void placeButtons(const float cx, const float yStart, const float rowH,
-        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         float y = yStart;
         for (const auto &btn : buttons | std::views::values) {
@@ -76,7 +76,7 @@ namespace
     }
 
     [[nodiscard]] float computeVisibleBlockOffset(const float listTop, const float listBottom, const float listH,
-        const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+        const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         float visTop = 0.f;
         float visBottom = 0.f;
@@ -107,8 +107,7 @@ namespace
         return targetTop - visTop;
     }
 
-    void applyYOffset(
-        const float offset, const std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    void applyYOffset(const float offset, const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         if (offset == 0.f)
             return;
@@ -125,13 +124,9 @@ namespace Engine
 {
     RoomMenu::RoomMenu(
         const std::shared_ptr<Graphics::IRenderer> &renderer, const std::shared_ptr<RoomManager> &roomManager)
-        : _renderer(renderer), _roomManager(roomManager)
+        : AMenu(renderer), _roomManager(roomManager)
     {
-        const auto textures = _renderer->textures();
-        _backgroundTexture = textures->load("sprites/bg-preview.png");
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            throw RoomMenuError("{RoomMenu::RoomMenu} failed to load sprites/bg-preview.png texture");
-        _backgroundCmd.textureId = _backgroundTexture;
+        loadBackground("sprites/bg-preview.png");
 
         _header.title = _renderer->texts()->createText(64, {255, 255, 255, 255});
         _header.title->setString("ROOMS");
@@ -162,7 +157,6 @@ namespace Engine
 
     void RoomMenu::layout()
     {
-        const auto [width, height] = _renderer->textures()->getSize(_backgroundTexture);
         auto centerX = [&](UI::UIButton &b, float x, float y) {
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
@@ -172,11 +166,7 @@ namespace Engine
         const float cx = w * 0.5f;
 
         updateTextStrings();
-        if (_backgroundTexture == Graphics::InvalidTexture)
-            return;
-        _backgroundCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
-        _backgroundCmd.position = {0.f, 0.f};
-        _backgroundCmd.scale = {w / static_cast<float>(width), h / static_cast<float>(height)};
+        layoutBackground();
         _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, h * 0.07f);
         _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, h * 0.16f);
 
@@ -350,21 +340,14 @@ namespace Engine
     void RoomMenu::handleCreateReleased(const float mx, const float my)
     {
         enum class Action { None, WPrev, WNext, DPrev, DNext, PPrev, PNext, Confirm, Back };
-        auto a = Action::None;
-        bool refreshCatalog = false;
-        auto pick = [&](const std::unique_ptr<UI::UIButton> &btn, const Action act) -> bool {
-            return btn && btn->onClickReleased(mx, my, [&] {
-                a = act;
-            });
-        };
-
-        if (!(pick(_create.worldPrev, Action::WPrev) || pick(_create.worldNext, Action::WNext)
-                || pick(_create.difficultyPrev, Action::DPrev) || pick(_create.difficultyNext, Action::DNext)
-                || pick(_create.playersPrev, Action::PPrev) || pick(_create.playersNext, Action::PNext)
-                || pick(_create.confirm, Action::Confirm) || pick(_create.back, Action::Back))) {
+        const auto a = pickAction<Action>(mx, my,
+            {{_create.worldPrev.get(), Action::WPrev}, {_create.worldNext.get(), Action::WNext},
+                {_create.difficultyPrev.get(), Action::DPrev}, {_create.difficultyNext.get(), Action::DNext},
+                {_create.playersPrev.get(), Action::PPrev}, {_create.playersNext.get(), Action::PNext},
+                {_create.confirm.get(), Action::Confirm}, {_create.back.get(), Action::Back}});
+        if (a == Action::None)
             return;
-        }
-
+        bool refreshCatalog = false;
         switch (a) {
             case Action::WPrev: {
                 if (const int wc = static_cast<int>(_worlds.size())) {
@@ -397,7 +380,6 @@ namespace Engine
                     ++_selectedMaxPlayers;
                 break;
             case Action::Back: _page = Page::Root; break;
-            case Action::None: break;
             case Action::Confirm: _createRoom = true; break;
             default:;
         }
@@ -412,7 +394,7 @@ namespace Engine
             if (!isVisible(btn->bounds(), _list.listTop, _list.listBottom))
                 continue;
 
-            if (const std::uint32_t id = roomId; btn->onClickReleased(mx, my, [this, id] {
+            if (const uint32_t id = roomId; btn->onClickReleased(mx, my, [this, id] {
                     _joinRoom = true;
                     _joinRoomId = id;
                 })) {
@@ -461,7 +443,7 @@ namespace Engine
 
     void RoomMenu::render() const
     {
-        _renderer->draw(_backgroundCmd);
+        renderBackground();
         _renderer->draw(*_header.title);
         _renderer->draw(*_header.subtitle);
         if (_page == Page::Root) {
@@ -500,7 +482,7 @@ namespace Engine
 
         const auto rooms = _roomManager->rooms();
 
-        std::unordered_set<std::uint32_t> seen;
+        std::unordered_set<uint32_t> seen;
         seen.reserve(rooms.size());
 
         for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {

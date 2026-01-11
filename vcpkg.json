@@ -4,6 +4,8 @@
   "dependencies": [
     "gtest",
     "sfml",
+    "sqlite3",
+    "openssl",
     "nlohmann-json"
   ]
 }

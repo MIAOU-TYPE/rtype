@@ -108,4 +108,36 @@ namespace Network
             return nullptr;
         }
     }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeAuthRegister(
+        const uint32_t req, const std::string_view username, const std::string_view password) const
+    {
+        try {
+            Net::TCP::Writer b;
+            b.str16(username);
+            b.str16(password);
+
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::AUTH_REGISTER, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeAuthRegister} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeAuthLogin(
+        const uint32_t req, const std::string_view username, const std::string_view password) const
+    {
+        try {
+            Net::TCP::Writer b;
+            b.str16(username);
+            b.str16(password);
+
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::AUTH_LOGIN, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeAuthLogin} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Network

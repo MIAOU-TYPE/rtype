@@ -35,6 +35,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE NetPacketLib)
 target_link_libraries(${PROJECT_NAME} PRIVATE NetProtocol)
 target_link_libraries(${PROJECT_NAME} PRIVATE Ecs)
 
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto)
+
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::sqlite3::sqlite3)
+
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )

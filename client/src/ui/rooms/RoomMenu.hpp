@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <exception>
 #include <iostream>
+#include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
 #include "InputState.hpp"
@@ -69,7 +70,7 @@ namespace Engine
      * This class handles the layout, input, and rendering of the room menu,
      * allowing users to create or join game rooms.
      */
-    class RoomMenu {
+    class RoomMenu final : public AMenu {
       public:
         /**
          * @brief Constructs a RoomMenu with the given renderer and room manager.
@@ -82,18 +83,18 @@ namespace Engine
         /**
          * @brief Lays out the room menu UI elements.
          */
-        void layout();
+        void layout() override;
 
         /**
          * @brief Updates the room menu based on input.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame);
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Renders the room menu UI elements.
          */
-        void render() const;
+        void render() const override;
 
         /**
          * @brief Checks if the user wants to go back to the main menu.
@@ -144,7 +145,7 @@ namespace Engine
          * @brief Gets the ID of the room selected for joining.
          * @return The room ID.
          */
-        [[nodiscard]] std::uint32_t roomIdSelected() const noexcept;
+        [[nodiscard]] uint32_t roomIdSelected() const noexcept;
 
       private:
         /**
@@ -225,9 +226,8 @@ namespace Engine
          * @brief Struct representing the list room UI elements.
          */
         struct ListUI {
-            std::unordered_map<std::uint32_t, std::unique_ptr<UI::UIButton>>
-                roomButtons;                    ///> Map of room ID to room button.
-            std::unique_ptr<UI::UIButton> back; ///> Back button.
+            std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> roomButtons; ///> Map of room ID to room button.
+            std::unique_ptr<UI::UIButton> back;                                      ///> Back button.
 
             float listTop = 0.f;    ///> Top boundary of the room list.
             float listBottom = 0.f; ///> Bottom boundary of the room list.
@@ -290,18 +290,13 @@ namespace Engine
          */
         void updateTextStrings() const;
 
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the graphics renderer.
-        std::shared_ptr<RoomManager> _roomManager;      ///> Shared pointer to the room manager.
+        std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.
 
-        Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture handle.
-        RenderCommand _backgroundCmd;                                          ///> Render command for the background.
-
-        HeaderUI _header; ///> Header UI elements.
-        RootUI _root;     ///> Root UI elements.
-        CreateUI _create; ///> Create room UI elements.
-        ListUI _list;     ///> List room UI elements.
-
+        HeaderUI _header;        ///> Header UI elements.
+        RootUI _root;            ///> Root UI elements.
+        CreateUI _create;        ///> Create room UI elements.
         Page _page = Page::Root; ///> Current page of the room menu.
+        ListUI _list;            ///> List room UI elements.
 
         std::vector<WorldEntry> _worlds; ///> List of available worlds.
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
@@ -309,14 +304,12 @@ namespace Engine
         int _selectedWorld = 0;                            ///> Index of the selected world.
         Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
         uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
+        uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.
         bool _listRooms = false;  ///> Flag indicating if the user wants to list available rooms.
-
         bool _joinRoom = false;   ///> Flag indicating if the user wants to join a room.
-        uint32_t _joinRoomId = 0; ///> ID of the room to join.
-
         bool _layoutDirty = true; ///> Flag indicating if the layout needs to be updated.
     };
 } // namespace Engine

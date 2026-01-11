@@ -17,6 +17,20 @@ ServerRuntime::ServerRuntime(
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid UDP server pointer");
     if (!_tcpServer)
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid TCP server pointer");
+
+    try {
+        std::error_code ec;
+        std::filesystem::create_directories("data", ec);
+        if (ec)
+            throw ThreadError(std::string("{ServerRuntime} create_directories failed: ") + ec.message());
+        _authDb = std::make_shared<Auth::SqliteDb>("data/users.sqlite3");
+        _userRepo = std::make_shared<Auth::UserStorage>(_authDb);
+        _userRepo->initSchema();
+        _authService = std::make_shared<Auth::AuthService>(_userRepo);
+    } catch (const std::exception &e) {
+        throw ThreadError(std::string("{ServerRuntime} auth init failed: ") + e.what());
+    }
+
     _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
     _roomManager =
@@ -25,7 +39,8 @@ ServerRuntime::ServerRuntime(
     _udpPacketRouter = std::make_shared<UDPPacketRouter>(_sessionManager, _roomManager);
 
     _tcpPacketFactory = std::make_shared<Factory::TCPPacketFactory>(std::make_shared<TCPPacket>());
-    _tcpPacketRouter = std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory);
+    _tcpPacketRouter =
+        std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory, _authService);
     _stopRequested.store(false);
 }
 

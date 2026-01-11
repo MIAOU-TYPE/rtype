@@ -18,6 +18,12 @@ namespace
         if (const auto now = clock::now(); now > nextTick + maxDrift)
             nextTick = now;
     }
+
+    uint32_t nextReqId()
+    {
+        static std::atomic_uint32_t g{1};
+        return g.fetch_add(1, std::memory_order_relaxed);
+    }
 } // namespace
 
 namespace Thread
@@ -38,13 +44,14 @@ namespace Thread
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
+        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
-            _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus));
+            _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
         _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
@@ -85,10 +92,10 @@ namespace Thread
 
         _running = false;
         _cv.notify_all();
-        if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(11))
-            _tcpClient->sendPacket(*leavePkt);
+        if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(nextReqId()))
+            (void) _tcpClient->sendPacket(*leavePkt);
         if (const auto discoPkt = _udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT))
-            _udpClient->sendPacket(*discoPkt);
+            (void) _udpClient->sendPacket(*discoPkt);
 
         if (_tcpThread.joinable())
             _tcpThread.join();
@@ -139,6 +146,14 @@ namespace Thread
                     _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
+                }
+            }
+            if (_pendingAuthOk.exchange(false, std::memory_order_acq_rel)) {
+                try {
+                    _stateManager->changeState(std::make_unique<Engine::MenuState>(
+                        _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+                } catch (...) {
+                    std::cerr << "{ClientRuntime::runDisplay} state change failed\n";
                 }
             }
             _graphics->pollEvents(*_eventBus);
@@ -242,7 +257,7 @@ namespace Thread
         });
     }
 
-    void ClientRuntime::setupGlobalEventHandlers() const
+    void ClientRuntime::setupGlobalEventHandlers()
     {
         _eventBus->on<Engine::KeyPressed>([this](const Engine::KeyPressed &e) {
             _input->setKeyPressed(e.key);
@@ -267,15 +282,29 @@ namespace Thread
         });
 
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(11, e.roomName, e.maxPlayers));
+            const auto req = nextReqId();
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(11, e.roomId));
+            const auto req = nextReqId();
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req, e.roomId));
         });
 
         _eventBus->on<Engine::ListRoomRequested>([this](const Engine::ListRoomRequested &) {
             _tcpClient->sendPacket(*_tcpPacketFactory.makeListRooms(11));
+        });
+
+        _eventBus->on<Engine::AuthRegisterRequested>([this](const Engine::AuthRegisterRequested &e) {
+            const auto req = nextReqId();
+            _lastAuthReq.store(req, std::memory_order_release);
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthRegister(req, e.username, e.password));
+        });
+
+        _eventBus->on<Engine::AuthLoginRequested>([this](const Engine::AuthLoginRequested &e) {
+            const auto req = nextReqId();
+            _lastAuthReq.store(req, std::memory_order_release);
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthLogin(req, e.username, e.password));
         });
     }
 
@@ -317,8 +346,11 @@ namespace Thread
 
     void ClientRuntime::runTcp()
     {
-        _tcpPacketRouter->sink()->onWelcomeSubscribe([&](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
-            _udpClient->sendPacket(*_udpPacketFactory.makeConnect(_tcpPacketRouter->sink()->getConnectInfo()));
+        _tcpPacketRouter->sink()->onWelcomeSubscribe([this](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
+            const auto ci = _tcpPacketRouter->sink()->getConnectInfo();
+            if (const auto pkt = _udpPacketFactory.makeConnect(ci)) {
+                _udpClient->sendPacket(*pkt);
+            }
         });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
@@ -329,15 +361,47 @@ namespace Thread
             _roomManager->rooms() = rooms;
         });
 
+        _tcpPacketRouter->sink()->onAuthOkSubscribe(
+            [this](uint32_t, const uint32_t userId, const std::string_view username, const uint64_t token,
+                const uint32_t ttl) {
+                if (_authCtx) {
+                    {
+                        std::scoped_lock lk(_authCtx->m);
+                        _authCtx->userId = userId;
+                        _authCtx->token = token;
+                        _authCtx->ttlSec = ttl;
+                        _authCtx->username = std::string(username);
+                        _authCtx->authError.clear();
+                    }
+                    _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release);
+                    _authCtx->authed.store(true, std::memory_order_release);
+                }
+                _pendingAuthOk.store(true, std::memory_order_release);
+            });
+
+        _tcpPacketRouter->sink()->onErrorSubscribe([this](const uint32_t req, uint16_t, const std::string_view msg) {
+            if (const auto last = _lastAuthReq.load(std::memory_order_acquire); !last || req != last || !_authCtx)
+                return;
+            {
+                std::scoped_lock lk(_authCtx->m);
+                _authCtx->authError = std::string(msg);
+            }
+            _authCtx->authErrorVersion.fetch_add(1, std::memory_order_release);
+        });
+
+        auto lastHello = clock::now() - std::chrono::seconds(10);
         while (_running) {
             _tcpClient->receivePackets();
-            auto pkt = _tcpClient->getTemplatedPacket();
+            std::shared_ptr<Net::IPacket> pkt;
             while (_tcpClient->popPacket(pkt))
                 _tcpPacketRouter->handle(pkt);
-            if (!_tcpPacketRouter->sink()->isConnected())
-                _tcpClient->sendPacket(*_tcpPacketFactory.makeHello(0, 1));
+            if (const auto now = clock::now();
+                !_tcpPacketRouter->sink()->isConnected() && (now - lastHello) > std::chrono::milliseconds(500)) {
+                lastHello = now;
+                if (const auto hello = _tcpPacketFactory.makeHello(nextReqId(), 1))
+                    _tcpClient->sendPacket(*hello);
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
-
 } // namespace Thread

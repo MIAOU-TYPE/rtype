@@ -53,9 +53,10 @@ namespace Ecs
 
         /**
          * @brief Called when a SNAPSHOT message is received.
+         * @param serverTick The server tick at which the snapshot was taken.
          * @param data Vector of SnapshotEntity representing the game state.
          */
-        void onSnapshot(const std::vector<SnapshotEntity> &data) override;
+        void onSnapshot(uint32_t serverTick, const std::vector<SnapshotEntity> &data) override;
 
         /**
          * @brief Called when a SCORE message is received.

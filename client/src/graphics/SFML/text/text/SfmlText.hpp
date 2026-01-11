@@ -64,19 +64,19 @@ namespace Graphics
          * @brief Gets the width of the text.
          * @return The width of the text.
          */
-        float getWidth() const override;
+        [[nodiscard]] float getWidth() const override;
 
         /**
          * @brief Gets the height of the text.
          * @return The height of the text.
          */
-        float getHeight() const override;
+        [[nodiscard]] float getHeight() const override;
 
         /**
          * @brief Gets the underlying SFML text object.
          * @return Constant reference to the sf::Text object.
          */
-        const sf::Text &get() const;
+        [[nodiscard]] const sf::Text &get() const;
 
       private:
         std::shared_ptr<SfmlFontManager> _fontManager; ///> Shared pointer to the font manager

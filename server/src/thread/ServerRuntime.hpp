@@ -137,9 +137,10 @@ namespace Net::Thread
         std::thread _snapshotThread;  ///> Thread for handling snapshots
         std::thread _tcpThread;       ///> Thread for handling TCP packets
 
-        std::mutex _mutex;                       ///> Mutex for synchronizing access
-        std::condition_variable _cv;             ///> Condition variable for signaling
-        std::atomic<bool> _stopRequested{false}; ///> Flag to indicate if a stop has been requested
-        std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the server is running
+        std::mutex _mutex;                            ///> Mutex for synchronizing access
+        std::condition_variable _cv;                  ///> Condition variable for signaling
+        std::atomic<bool> _stopRequested{false};      ///> Flag to indicate if a stop has been requested
+        std::atomic<bool> _running{false};            ///> Atomic flag to indicate if the server is running
+        mutable std::atomic<uint32_t> _serverTick{0}; ///> Atomic counter for server ticks
     };
 } // namespace Net::Thread

@@ -9,6 +9,7 @@
 
 #include <SFML/Audio.hpp>
 #include <memory>
+#include <ranges>
 #include <string>
 #include <unordered_map>
 
@@ -65,7 +66,7 @@ namespace Graphics
          * @brief Play the music.
          * @param handle The audio handle.
          */
-        bool play(AudioHandle handle) override;
+        [[nodiscard]] bool play(AudioHandle handle) override;
 
         /**
          * @brief Stop the music.

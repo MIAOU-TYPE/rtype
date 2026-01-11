@@ -24,13 +24,13 @@ namespace Engine
       public:
         /**
          * @brief Constructor for RoomManager
-         * @param sessions shared pointer to the session manager
-         * @param server shared pointer to the server
+         * @param sessionManager shared pointer to the session manager
+         * @param UDPServer shared pointer to the server
          * @param udpPacketFactory shared pointer to the packet factory
          * @param levelPath path to the game level data
          */
-        RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessions,
-            std::shared_ptr<Net::Server::IServer> server,
+        explicit RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
+            std::shared_ptr<Net::Server::IServer> UDPServer,
             std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath);
 
         /**
@@ -126,8 +126,8 @@ namespace Engine
         RoomId _nextRoomId = 1;                    ///> Counter for generating unique room IDs
         static constexpr RoomId InvalidRoomId = 0; ///> Constant representing an invalid room ID
 
-        std::shared_ptr<Net::Server::ISessionManager> _sessions; ///> Session manager for handling player sessions
-        std::shared_ptr<Net::Server::IServer> _server;           ///> Server instance for network communication
+        std::shared_ptr<Net::Server::ISessionManager> _sessionManager; ///> Session manager for handling player sessions
+        std::shared_ptr<Net::Server::IServer> _udpServer;              ///> Server instance for network communication
         std::shared_ptr<Net::Factory::UDPPacketFactory>
             _udpPacketFactory;  ///> Packet factory for creating network packets
         std::string _levelPath; ///> Path to the game level data

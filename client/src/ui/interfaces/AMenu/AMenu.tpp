@@ -11,8 +11,8 @@ namespace Engine
 {
 
     template <typename Action>
-    Action AMenu::pickAction(const float mx, const float my,
-        std::initializer_list<std::pair<UI::UIButton *, Action>> items) noexcept
+    Action AMenu::pickAction(
+        const float mx, const float my, std::initializer_list<std::pair<UI::UIButton *, Action>> items) noexcept
     {
         for (const auto &it : items) {
             if (!it.first)
@@ -45,6 +45,6 @@ namespace Engine
     template <typename... B>
     void AMenu::pressButtons(const float mx, const float my, B *...b) noexcept
     {
-        ((b ? (void)b->onMousePressed(mx, my) : void()), ...);
+        ((b ? (void) b->onMousePressed(mx, my) : void()), ...);
     }
 } // namespace Engine

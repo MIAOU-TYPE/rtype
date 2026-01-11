@@ -16,13 +16,13 @@ namespace Engine
             throw SoundRegistryError("SoundRegistry: soundManager cannot be null");
     }
 
-    void SoundRegistry::playSound(AudioHandle handle, float volume)
+    void SoundRegistry::playSound(const AudioHandle handle, const float volume) const
     {
         if (!_soundManager->isValid(handle))
             return;
 
         _soundManager->setVolume(handle, volume * (_globalSoundVolume / 100.f));
-        _soundManager->play(handle);
+        (void) _soundManager->play(handle);
     }
 
     void SoundRegistry::setSoundVolume(float volume)
@@ -36,7 +36,7 @@ namespace Engine
         return _globalSoundVolume;
     }
 
-    void SoundRegistry::setVolumeBeforeMute(float volume)
+    void SoundRegistry::setVolumeBeforeMute(const float volume)
     {
         _volumeBeforeMute = volume;
     }

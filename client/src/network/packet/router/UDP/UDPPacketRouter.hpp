@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "DefaultData.hpp"
+#include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
 #include "IClientMessageSink.hpp"
@@ -111,6 +112,13 @@ namespace Ecs
          * @param size Size of the payload data.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
+
+        /**
+         * @brief Handler for DESTROY packets.
+         * @param payload Pointer to the payload data of the DESTROY packet.
+         * @param size Size of the payload data.
+         */
+        void handleDestroy(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

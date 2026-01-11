@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include "AnimationSystem.hpp"
@@ -13,7 +14,7 @@
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
-#include <unordered_set>
+#include <unordered_map>
 
 namespace World
 {
@@ -54,6 +55,12 @@ namespace World
          */
         void applySnapshot(const std::vector<SnapshotEntity> &entities);
 
+        /**
+         * @brief Applies a destroy entity command to the client world.
+         * @param entityId The ID of the entity to be destroyed.
+         */
+        void applyDestroy(size_t entityId);
+
       private:
         /**
          * @struct EntityCreate
@@ -83,5 +90,8 @@ namespace World
          * @param entity The snapshot entity data to apply.
          */
         void applySingleSnapshot(const SnapshotEntity &entity);
+
+        std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
+            _entityLastSeen; ///> Tracks the last seen time for each entity
     };
 } // namespace World

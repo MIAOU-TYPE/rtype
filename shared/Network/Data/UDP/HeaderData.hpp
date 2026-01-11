@@ -21,7 +21,7 @@ struct HeaderData {
     uint8_t type;      ///> The type of the packet (e.g., CONNECT, DISCONNECT, INPUT, etc.).
     uint8_t version;   ///> The version of the packet format.
     uint16_t size;     ///> The size of the entire packet, including the header.
-    uint32_t sequence; ///> Sequence number of the snapshot
+    uint32_t sequence; ///> Sequence number of the packet for ordering.
 };
 
 #pragma pack(pop)

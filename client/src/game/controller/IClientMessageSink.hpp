@@ -53,5 +53,11 @@ namespace Ecs
          * @param score The score received from the server.
          */
         virtual void onScore(uint32_t score) = 0;
+
+        /**
+         * @brief Called when a DESTROY message is received.
+         * @param entityId The ID of the entity to be destroyed.
+         */
+        virtual void onDestroy(size_t entityId) = 0;
     };
 } // namespace Ecs

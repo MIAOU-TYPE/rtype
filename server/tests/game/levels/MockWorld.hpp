@@ -29,6 +29,11 @@ class MockWorld final : public Game::IGameWorld {
         _world.destroyEntity(ent);
     }
 
+    Ecs::Entity createEntity() override
+    {
+        return _world.createEntity();
+    }
+
     void copyFrom(IGameWorld &other) override
     {
         _world.copyFrom(static_cast<Game::World &>(other));

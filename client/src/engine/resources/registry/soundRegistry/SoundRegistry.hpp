@@ -65,7 +65,7 @@ namespace Engine
          * @param handle Handle to the sound to play.
          * @param volume Volume level (0.0 to 100.0).
          */
-        void playSound(AudioHandle handle, float volume = 100.f);
+        void playSound(AudioHandle handle, float volume = 100.f) const;
 
         /**
          * @brief Set the global volume for all sound effects.

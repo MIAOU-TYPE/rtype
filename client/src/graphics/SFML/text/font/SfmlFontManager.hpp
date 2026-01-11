@@ -40,7 +40,7 @@ namespace Graphics
          * @param resourcePath Path or identifier of the font resource.
          * @return FontHandle Handle to the font, or InvalidFont on failure.
          */
-        FontHandle load(const std::string &resourcePath) noexcept override;
+        [[nodiscard]] FontHandle load(const std::string &resourcePath) noexcept override;
 
         /**
          * @brief Unload a font.
@@ -65,7 +65,7 @@ namespace Graphics
          * @param handle The font handle.
          * @return Reference to the SFML font.
          */
-        const sf::Font &get(FontHandle handle) const;
+        [[nodiscard]] const sf::Font &get(FontHandle handle) const;
 
       private:
         /**

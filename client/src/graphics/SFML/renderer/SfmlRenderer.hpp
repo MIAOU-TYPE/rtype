@@ -60,13 +60,13 @@ namespace Graphics
          * @brief Provides access to the font manager.
          * @return Reference to the font manager.
          */
-        std::shared_ptr<IFontManager> fonts() const noexcept override;
+        [[nodiscard]] std::shared_ptr<IFontManager> fonts() const noexcept override;
 
         /**
          * @brief Provides access to the texture manager.
          * @return Reference to the texture manager.
          */
-        std::shared_ptr<ITextureManager> textures() const noexcept override;
+        [[nodiscard]] std::shared_ptr<ITextureManager> textures() const noexcept override;
 
         /**
          * @brief Provides access to the text manager.
@@ -78,13 +78,13 @@ namespace Graphics
          * @brief Provides access to the sound manager.
          * @return Reference to the sound manager.
          */
-        std::shared_ptr<IAudioManager> sounds() const noexcept override;
+        [[nodiscard]] std::shared_ptr<IAudioManager> sounds() const noexcept override;
 
         /**
          * @brief Provides access to the music manager.
          * @return Reference to the music manager.
          */
-        std::shared_ptr<IAudioManager> musics() const noexcept override;
+        [[nodiscard]] std::shared_ptr<IAudioManager> musics() const noexcept override;
 
         /**
          * @brief Draws a render command.

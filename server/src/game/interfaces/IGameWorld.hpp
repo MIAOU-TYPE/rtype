@@ -57,6 +57,11 @@ namespace Game
         virtual void destroyEntity(Ecs::Entity ent) = 0;
 
         /**
+         * @brief Create a new generic entity with network ID.
+         */
+        [[nodiscard]] virtual Ecs::Entity createEntity() = 0;
+
+        /**
          * @brief Copy the state from another IGameWorld instance.
          * @param other The other IGameWorld to copy from.
          */

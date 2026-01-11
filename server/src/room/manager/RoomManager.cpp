@@ -9,18 +9,20 @@
 
 namespace Engine
 {
-    RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessions,
-        std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-        std::string levelPath)
-        : _sessions(std::move(sessions)), _server(std::move(server)), _udpPacketFactory(std::move(udpPacketFactory)),
-          _levelPath(std::move(levelPath))
+    RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
+        std::shared_ptr<Net::Server::IServer> UDPServer,
+        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath)
+        : _sessionManager(std::move(sessionManager)), _udpServer(std::move(UDPServer)),
+          _udpPacketFactory(std::move(udpPacketFactory)), _levelPath(std::move(levelPath))
     {
     }
 
     RoomId RoomManager::createRoom(const std::string &name, size_t maxPlayers) noexcept
     {
         try {
-            auto room = std::make_shared<Room>(_sessions, _server, _udpPacketFactory, _levelPath, name, maxPlayers);
+            auto room =
+                std::make_shared<Room>(_sessionManager, _udpServer, _udpPacketFactory, _levelPath, name, maxPlayers);
+            room->init(_sessionManager, _udpServer, _udpPacketFactory);
             std::scoped_lock lock(_mutex);
             auto id = _nextRoomId++;
             _rooms.emplace(id, room);

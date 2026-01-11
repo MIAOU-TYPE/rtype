@@ -143,6 +143,12 @@ namespace Game
          */
         void buildSnapshot(std::vector<SnapshotEntity> &out) const;
 
+        /**
+         * @brief Access the event registry.
+         * @return Reference to the event registry.
+         */
+        [[nodiscard]] Ecs::EventsRegistry &events() const noexcept;
+
       private:
         mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.
         std::unique_ptr<IGameWorld> _worldWrite; ///> The authoritative game world

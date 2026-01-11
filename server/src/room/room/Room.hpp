@@ -114,6 +114,8 @@ namespace Engine
         std::unordered_set<int> _sessions; ///> Set of player session IDs in the room
 
         std::unique_ptr<Game::GameServer> _gameServer = nullptr; ///> Unique pointer to the room's game server
+        std::shared_ptr<Net::Server::ISessionManager> _sessionsManager; ///> Shared pointer to the session manager
+        
 
         std::atomic<bool> _running{false}; ///> Atomic flag indicating if the room is running
         std::thread _thread;               ///> Thread for the room's game server loop

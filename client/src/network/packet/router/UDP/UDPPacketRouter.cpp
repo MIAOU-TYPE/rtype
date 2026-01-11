@@ -184,7 +184,7 @@ namespace Ecs
             entities.push_back(entity);
             cursor += sizeof(SnapshotEntityData);
         }
-        _sink->onSnapshot(entities);
+        _sink->onSnapshot(serverTick, entities);
     }
 
     void UDPPacketRouter::handleScore(const uint8_t *payload, const size_t size) const

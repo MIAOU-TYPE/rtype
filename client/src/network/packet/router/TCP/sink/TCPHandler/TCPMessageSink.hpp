@@ -189,7 +189,7 @@ namespace Network
         std::vector<RoomIdCb> _roomLeftCbs;        ///> Callbacks for room left events
         std::vector<RoomIdCb> _gameStartCbs;       ///> Callbacks for game start events
         std::vector<ProtoErrCb> _protocolErrorCbs; ///> Callbacks for protocol error events
-        std::vector<AuthOkCb> _authOkCbs;
+        std::vector<AuthOkCb> _authOkCbs;   ///> Callbacks for authentication success events
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information
@@ -200,7 +200,7 @@ namespace Network
          */
         struct Identity {
             uint32_t userId = 0; ///> User ID
-            std::string username;
+            std::string username;   ///> Username
         };
 
         std::optional<Identity> _identity{}; ///> Authenticated user identity

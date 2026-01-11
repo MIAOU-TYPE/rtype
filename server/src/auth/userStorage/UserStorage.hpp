@@ -53,7 +53,7 @@ namespace Auth
      * @brief Represents a user record in the database.
      */
     struct UserRow {
-        Identity identity;
+        Identity identity;  ///> The user's identity information.
         std::string passwordScrypt; ///> The hashed password.
     };
 
@@ -82,7 +82,7 @@ namespace Auth
          * @return An optional UserRow containing the user data if found, or std::nullopt if not found.
          * @throws UserStorageError on database errors.
          */
-        std::optional<UserRow> findByUsername(const std::string &username) const;
+        [[nodiscard]] std::optional<UserRow> findByUsername(const std::string &username) const;
 
         /**
          * @brief Inserts a new user into the database.
@@ -91,7 +91,7 @@ namespace Auth
          * @return The ID of the newly inserted user.
          * @throws UserStorageError on database errors.
          */
-        uint32_t insertUser(const std::string &username, const std::string &passwordScrypt) const;
+        [[nodiscard]] uint32_t insertUser(const std::string &username, const std::string &passwordScrypt) const;
 
       private:
         std::shared_ptr<SqliteDb> _db; ///> The database connection.

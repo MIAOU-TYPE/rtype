@@ -16,6 +16,7 @@
 #include "EventsRegistry.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
+#include "Id.hpp"
 #include "InputComponent.hpp"
 #include "KillScore.hpp"
 #include "Lifetime.hpp"
@@ -25,7 +26,6 @@
 #include "Score.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
-#include "Id.hpp"
 
 namespace Game
 {
@@ -91,9 +91,9 @@ namespace Game
         void copyFrom(IGameWorld &other) override;
 
       private:
-        Ecs::Registry _registry;     ///> The ECS registry (component storage).
-        Ecs::EventsRegistry _events; ///> Event bus for ECS events.
-        size_t _nextId = 1;          ///> Counter for generating unique entity IDs.
+        Ecs::Registry _registry;                              ///> The ECS registry (component storage).
+        Ecs::EventsRegistry _events;                          ///> Event bus for ECS events.
+        size_t _nextId = 1;                                   ///> Counter for generating unique entity IDs.
         std::unordered_map<size_t, Ecs::Entity> _netToEntity; ///> Map network IDs to ECS entities.
     };
 } // namespace Game

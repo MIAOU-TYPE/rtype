@@ -53,7 +53,7 @@ namespace Auth
      * @brief Represents a user record in the database.
      */
     struct UserRow {
-        Identity identity;  ///> The user's identity information.
+        Identity identity;          ///> The user's identity information.
         std::string passwordScrypt; ///> The hashed password.
     };
 

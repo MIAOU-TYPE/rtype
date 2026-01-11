@@ -77,7 +77,7 @@ namespace Network
             close();
             throw;
         }
-        std::cout << "{TCPClient::start} TCP Server started on " << _ip << ":" << _port << std::endl;
+        std::cout << "{TCPClient::start} TCP Client connect on " << _ip << ":" << _port << std::endl;
     }
 
     void TCPClient::close()

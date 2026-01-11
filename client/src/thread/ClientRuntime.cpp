@@ -52,6 +52,8 @@ namespace Thread
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
             _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+        _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
+        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
     }
 
@@ -194,7 +196,6 @@ namespace Thread
         auto last = nextTick;
         float accumulator = 0.f;
 
-        _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         while (_running) {
             nextTick += Tick;
 
@@ -339,7 +340,7 @@ namespace Thread
 
         {
             std::scoped_lock lock(_frameMutex);
-            _readRenderCommands = _writeRenderCommands;
+            std::swap(_readRenderCommands, _writeRenderCommands);
         }
     }
 
@@ -354,10 +355,6 @@ namespace Thread
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
             _pendingGameStart.store(true, std::memory_order_release);
-        });
-
-        _tcpPacketRouter->sink()->onRoomsListSubscribe([&](uint32_t, const std::vector<RoomData> &rooms) {
-            _roomManager->rooms() = rooms;
         });
 
         _tcpPacketRouter->sink()->onRoomsListSubscribe([&](uint32_t, const std::vector<RoomData> &rooms) {

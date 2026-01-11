@@ -19,6 +19,7 @@
 #include <string>
 #include <utility>
 #include <string_view>
+#include <cstddef>
 
 namespace Auth
 {

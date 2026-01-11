@@ -6,11 +6,6 @@
 */
 
 #pragma once
-#include <array>
-#include <cctype>
-#include <cstddef>
-#include <string>
-#include <string_view>
 
 namespace Auth
 {
@@ -24,7 +19,7 @@ namespace Auth
     }
 
     template <std::size_t N>
-    bool hexDecodeFixed(const std::string_view hex, std::array<unsigned char, N> &out) noexcept
+    [[nodiscard]] bool hexDecodeFixed(const std::string_view hex, std::array<unsigned char, N> &out) noexcept
     {
         if (hex.size() != N * 2)
             return false;
@@ -39,7 +34,7 @@ namespace Auth
     }
 
     template <std::size_t N>
-    std::string hexEncodeFixed(const std::array<unsigned char, N> &buf)
+    [[nodiscard]] std::string hexEncodeFixed(const std::array<unsigned char, N> &buf)
     {
         static constexpr char kHex[] = "0123456789abcdef";
 

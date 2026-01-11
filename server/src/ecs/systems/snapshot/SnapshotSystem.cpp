@@ -14,10 +14,10 @@ namespace Game
         auto &reg = world.registry();
         snapshot.clear();
 
-        reg.view<Ecs::Drawable, Ecs::Position>(
-            [&](const Ecs::Entity &entity, const Ecs::Drawable &draw, const Ecs::Position &pos) {
+        reg.view<Ecs::Drawable, Ecs::Position, Ecs::Id>(
+            [&](const Ecs::Entity &, const Ecs::Drawable &draw, const Ecs::Position &pos, const Ecs::Id id) {
                 SnapshotEntity s{};
-                s.id = static_cast<size_t>(entity);
+                s.id = id.id;
                 s.x = pos.x;
                 s.y = pos.y;
                 s.spriteId = draw.spriteId;

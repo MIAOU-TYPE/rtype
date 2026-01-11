@@ -11,6 +11,7 @@
 #include "Position.hpp"
 #include "SnapEntityData.hpp"
 #include "World.hpp"
+#include "Id.hpp"
 
 namespace Game
 {

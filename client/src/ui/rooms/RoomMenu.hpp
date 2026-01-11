@@ -70,7 +70,7 @@ namespace Engine
      * This class handles the layout, input, and rendering of the room menu,
      * allowing users to create or join game rooms.
      */
-    class RoomMenu : public AMenu {
+    class RoomMenu final : public AMenu {
       public:
         /**
          * @brief Constructs a RoomMenu with the given renderer and room manager.

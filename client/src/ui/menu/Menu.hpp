@@ -50,7 +50,7 @@ namespace Engine
     /**
      * @brief Class representing the main menu of the game.
      */
-    class Menu : public AMenu {
+    class Menu final : public AMenu {
       public:
         enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm };
         enum class AuthMode { None, Login, Register };

@@ -68,6 +68,7 @@ namespace Ecs
          * @param entityId The ID of the entity to be destroyed.
          */
         void onDestroy(size_t entityId) override;
+
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
             _commandBuffer; ///> Reference to the world command buffer

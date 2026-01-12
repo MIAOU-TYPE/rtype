@@ -9,13 +9,37 @@
 
 namespace Engine
 {
-    Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessions,
-        const std::shared_ptr<Net::Server::IServer> &server,
+    Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
+        const std::shared_ptr<Net::Server::IServer> &udpServer,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
         std::string name, const size_t maxPlayers)
         : _maxPlayers(maxPlayers), _name(std::move(name))
     {
-        _gameServer = std::make_unique<Game::GameServer>(sessions, server, udpPacketFactory, levelPath);
+        _gameServer = std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath);
+    }
+
+    void Room::init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
+        const std::shared_ptr<Net::Server::IServer> &udpServer,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory)
+    {
+        auto self = weak_from_this();
+
+        _gameServer->events().subscribe<DestroyEvent>(
+            [udpPacketFactory, sessionManager, udpServer, self](const DestroyEvent &data) {
+                if (const auto room = self.lock()) {
+                    std::scoped_lock lock(room->_sessionsMutex);
+                    const auto out = udpPacketFactory->createDestroyEntityPacket(data.entityId);
+                    if (!out)
+                        return;
+                    for (const auto &player : room->_sessions) {
+                        if (const auto addr = sessionManager->getUdpAddress(player)) {
+                            auto clone = out->clone();
+                            clone->setAddress(*addr);
+                            (void) udpServer->sendPacket(*clone);
+                        }
+                    }
+                }
+            });
     }
 
     Room::~Room()
@@ -28,6 +52,7 @@ namespace Engine
         if (_thread.joinable())
             return;
         _running = true;
+        _gameServer->reset();
         _thread = std::thread(&Room::run, this);
     }
 
@@ -40,6 +65,8 @@ namespace Engine
 
     void Room::join(const int sessionId)
     {
+        if (_sessions.contains(sessionId))
+            return;
         _sessions.insert(sessionId);
         _gameServer->onPlayerConnect(sessionId);
     }
@@ -78,6 +105,11 @@ namespace Engine
     std::string Room::getName() const noexcept
     {
         return _name;
+    }
+
+    std::mutex &Room::getSessionMutex()
+    {
+        return _sessionsMutex;
     }
 
     void Room::run() const

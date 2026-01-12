@@ -16,6 +16,7 @@
 #include "EventsRegistry.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
+#include "Id.hpp"
 #include "InputComponent.hpp"
 #include "KillScore.hpp"
 #include "Lifetime.hpp"
@@ -73,10 +74,15 @@ namespace Game
 
         /**
          * @brief Destroy an entity and all its components.
-         *
          * @param ent The entity to remove from the ECS.
          */
         void destroyEntity(Ecs::Entity ent) override;
+
+        /**
+         * @brief Create a new generic entity with network ID.
+         * @return The newly created ECS entity.
+         */
+        [[nodiscard]] Ecs::Entity createEntity() override;
 
         /**
          * @brief Copy the state from another IGameWorld instance.
@@ -85,7 +91,9 @@ namespace Game
         void copyFrom(IGameWorld &other) override;
 
       private:
-        Ecs::Registry _registry;     ///> The ECS registry (component storage).
-        Ecs::EventsRegistry _events; ///> Event bus for ECS events.
+        Ecs::Registry _registry;                              ///> The ECS registry (component storage).
+        Ecs::EventsRegistry _events;                          ///> Event bus for ECS events.
+        size_t _nextId = 1;                                   ///> Counter for generating unique entity IDs.
+        std::unordered_map<size_t, Ecs::Entity> _netToEntity; ///> Map network IDs to ECS entities.
     };
 } // namespace Game

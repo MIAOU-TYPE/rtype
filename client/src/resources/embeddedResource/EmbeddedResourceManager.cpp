@@ -7,8 +7,6 @@
 
 #include "EmbeddedResourceManager.hpp"
 
-#include <ranges>
-
 namespace EmbeddedResources
 {
     extern const unsigned char bg_preview_png[];

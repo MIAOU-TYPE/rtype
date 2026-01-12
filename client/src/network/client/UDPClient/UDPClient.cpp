@@ -96,6 +96,7 @@ namespace Network
         }
 
         setRunning(true);
+        std::cout << "{UDPClient::start} UDP Client connect on " << _ip << ":" << _port << std::endl;
     }
 
     bool UDPClient::sendPacket(const Net::IPacket &pkt)

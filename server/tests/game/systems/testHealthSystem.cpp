@@ -52,7 +52,7 @@ TEST_F(HealthSystemTests, DoesNotEmitDestroy_WhenHpPositive)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(e, Ecs::Health{10, 10});
 
     run();
@@ -64,7 +64,7 @@ TEST_F(HealthSystemTests, EmitsDestroy_WhenHpZero)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(e, Ecs::Health{0, 10});
 
     run();
@@ -78,7 +78,7 @@ TEST_F(HealthSystemTests, EmitsDestroy_WhenHpNegative)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(e, Ecs::Health{-5, 10});
 
     run();
@@ -91,13 +91,13 @@ TEST_F(HealthSystemTests, EmitsDestroy_ForEachEntityWithHpNonPositive)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity alive = reg.createEntity();
+    const Ecs::Entity alive = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(alive, Ecs::Health{3, 10});
 
-    const Ecs::Entity dead1 = reg.createEntity();
+    const Ecs::Entity dead1 = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(dead1, Ecs::Health{0, 10});
 
-    const Ecs::Entity dead2 = reg.createEntity();
+    const Ecs::Entity dead2 = world.createEntity();
     reg.emplaceComponent<Ecs::Health>(dead2, Ecs::Health{-1, 10});
 
     run();

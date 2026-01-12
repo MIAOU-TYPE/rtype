@@ -70,6 +70,12 @@ namespace Ecs
          */
         void onDamage(uint32_t targetId, uint16_t amount) override;
 
+        /**
+         * @brief Called when a DESTROY message is received.
+         * @param entityId The ID of the entity to be destroyed.
+         */
+        void onDestroy(size_t entityId) override;
+
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
             _commandBuffer; ///> Reference to the world command buffer

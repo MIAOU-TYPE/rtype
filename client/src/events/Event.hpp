@@ -151,4 +151,48 @@ namespace Engine
 
         uint32_t roomId; ///> The ID of the room to join.
     };
+
+    /**
+     * @brief Event triggered when a request to list available rooms is made.
+     */
+    struct ListRoomRequested : Event {
+        /**
+         * @brief Constructor for ListRoomRequested event.
+         */
+        ListRoomRequested() = default;
+    };
+
+    /**
+     * @brief Event triggered when a request to register a new user is made.
+     */
+    struct AuthRegisterRequested : Event {
+        /**
+         * @brief Constructor for AuthRegisterRequested event.
+         * @param u The username for registration.
+         * @param p The password for registration.
+         */
+        explicit AuthRegisterRequested(std::string u, std::string p) : username(std::move(u)), password(std::move(p))
+        {
+        }
+
+        std::string username; ///> The username for registration.
+        std::string password; ///> The password for registration.
+    };
+
+    /**
+     * @brief Event triggered when a request to login is made.
+     */
+    struct AuthLoginRequested : Event {
+        /**
+         * @brief Constructor for AuthLoginRequested event.
+         * @param u The username for login.
+         * @param p The password for login.
+         */
+        explicit AuthLoginRequested(std::string u, std::string p) : username(std::move(u)), password(std::move(p))
+        {
+        }
+
+        std::string username; ///> The username for login.
+        std::string password; ///> The password for login.
+    };
 } // namespace Engine

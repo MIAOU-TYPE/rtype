@@ -49,6 +49,11 @@ namespace Network
         _protocolErrorCbs.emplace_back(std::move(cb));
     }
 
+    void TCPMessageSink::onAuthOkSubscribe(AuthOkCb cb)
+    {
+        _authOkCbs.emplace_back(std::move(cb));
+    }
+
     void TCPMessageSink::onWelcome(
         const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
@@ -96,6 +101,22 @@ namespace Network
     void TCPMessageSink::onProtocolError(const uint32_t req, const std::string_view msg)
     {
         emit(_protocolErrorCbs, req, msg);
+    }
+
+    void TCPMessageSink::onAuthOk(const uint32_t req, const uint32_t userId, const std::string_view username,
+        const uint64_t token, const uint32_t ttlSec)
+    {
+        if (!_isConnected) {
+            emit(_protocolErrorCbs, req, "AUTH_OK received while not connected");
+            return;
+        }
+        if (token == 0) {
+            emit(_protocolErrorCbs, req, "AUTH_OK token == 0");
+            return;
+        }
+        _identity = Identity{userId, std::string(username)};
+        _connectData.token = token;
+        emit(_authOkCbs, req, userId, _identity->username, token, ttlSec);
     }
 
     ConnectInfo TCPMessageSink::getConnectInfo() const noexcept

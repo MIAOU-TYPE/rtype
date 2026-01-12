@@ -8,7 +8,6 @@
 #ifndef _WIN32
 
     #include "PosixHandler.hpp"
-    #include <iostream>
 
 using namespace Signal;
 

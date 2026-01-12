@@ -27,17 +27,18 @@ namespace Graphics
          * @param resources Shared pointer to the resource manager.
          * @param resourcePath Path to the music resource.
          */
-        explicit SfmlMusic(std::shared_ptr<Resources::IResourceManager> resources, const std::string &resourcePath);
+        explicit SfmlMusic(
+            const std::shared_ptr<Resources::IResourceManager> &resources, const std::string &resourcePath);
 
         /**
          * @brief Play the music.
          */
-        void play();
+        void play() const;
 
         /**
          * @brief Stop the music.
          */
-        void stop();
+        void stop() const;
 
         /**
          * @brief Check if the music is currently playing.
@@ -49,7 +50,7 @@ namespace Graphics
          * @brief Set the volume of the music.
          * @param volume Volume level (0.0 to 100.0).
          */
-        void setVolume(float volume);
+        void setVolume(float volume) const;
 
         /**
          * @brief Get the current volume of the music.
@@ -61,7 +62,7 @@ namespace Graphics
          * @brief Set whether the music should loop.
          * @param loop True to loop, false otherwise.
          */
-        void setLooping(bool loop);
+        void setLooping(bool loop) const;
 
       private:
         std::unique_ptr<sf::Music> _music; ///> SFML music object

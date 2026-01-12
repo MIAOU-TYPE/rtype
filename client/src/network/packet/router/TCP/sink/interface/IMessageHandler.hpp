@@ -80,6 +80,17 @@ namespace Network
         virtual void onGameStart(uint32_t req, uint32_t roomId) = 0;
 
         /**
+         * @brief onAuthOk is called when authentication is successful.
+         * @param req The request ID.
+         * @param userId The user ID.
+         * @param username The username.
+         * @param token The authentication token.
+         * @param ttlSec The time-to-live in seconds.
+         */
+        virtual void onAuthOk(
+            uint32_t req, uint32_t userId, std::string_view username, uint64_t token, uint32_t ttlSec) = 0;
+
+        /**
          * @brief onProtocolError is called when a protocol error occurs.
          * @param req The request ID.
          * @param msg The error message.
@@ -94,6 +105,8 @@ namespace Network
         using RoomIdCb = std::function<void(uint32_t, uint32_t)>;         ///> Callback type for room ID messages
         using ProtoErrCb =
             std::function<void(uint32_t, std::string_view)>; ///> Callback type for protocol error messages
+        using AuthOkCb = std::function<void(uint32_t, uint32_t, std::string_view, uint64_t,
+            uint32_t)>; ///> Callback type for authentication success messages
 
         /**
          * @brief Subscribe to welcome message events.
@@ -142,6 +155,12 @@ namespace Network
          * @param cb The callback function to be invoked on protocol error messages.
          */
         virtual void onProtocolErrorSubscribe(ProtoErrCb cb) = 0;
+
+        /**
+         * @brief Subscribe to authentication success message events.
+         * @param cb The callback function to be invoked on authentication success messages.
+         */
+        virtual void onAuthOkSubscribe(AuthOkCb cb) = 0;
 
         /**
          * @brief Get the connection information.

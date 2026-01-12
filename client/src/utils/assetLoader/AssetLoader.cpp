@@ -6,8 +6,6 @@
 */
 
 #include "AssetLoader.hpp"
-#include "SpriteLoader.hpp"
-#include <iostream>
 
 namespace Utils
 {

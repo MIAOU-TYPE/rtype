@@ -63,7 +63,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> UDPPacketFactory::createSnapshotPacket(
-        const std::vector<SnapshotEntity> &entities) const noexcept
+        const std::vector<SnapshotEntity> &entities, uint32_t serverTick) const noexcept
     {
         try {
             if (entities.size() > (std::numeric_limits<std::size_t>::max() - sizeof(SnapshotBatchHeader))
@@ -95,15 +95,16 @@ namespace Net::Factory
             SnapshotBatchHeader hdr{};
             hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
             hdr.count = htons(static_cast<uint16_t>(entities.size()));
+            hdr.serverTick = htonl(serverTick);
 
             std::memcpy(buf, &hdr, sizeof(hdr));
             std::size_t offset = sizeof(hdr);
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
-                packed.id = htonl(id);
-                packed.x = htons(x);
-                packed.y = htons(y);
+                packed.id = htonl(static_cast<uint32_t>(id));
+                packed.x = htons(static_cast<uint16_t>(x));
+                packed.y = htons(static_cast<uint16_t>(y));
                 packed.spriteId = static_cast<uint8_t>(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));
@@ -122,12 +123,37 @@ namespace Net::Factory
     {
         ScoreData scoreData;
         scoreData.header = makeHeader(Protocol::UDP::SCORE, VERSION, sizeof(ScoreData));
-        scoreData.score = htons(score);
+        scoreData.score = htons(static_cast<uint16_t>(score));
         try {
             auto packet = makePacket<ScoreData>(addr, scoreData);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{UDPPacketFactory::createScorePacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(const size_t entityId) const noexcept
+    {
+        try {
+            auto packet = _packet->newPacket();
+            if (!packet) {
+                std::cerr << "{UDPPacketFactory::createSnapshotPacket} Failed to create new packet" << std::endl;
+                return nullptr;
+            }
+
+            uint8_t *buf = packet->buffer();
+            if (!buf)
+                throw FactoryError("{UDPPacketFactory::createDestroyEntityPacket} Null buffer");
+
+            DestroyData destroyData;
+            destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));
+            destroyData.id = htonl(static_cast<uint32_t>(entityId));
+            std::memcpy(buf, &destroyData, sizeof(DestroyData));
+            packet->setSize(sizeof(DestroyData));
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::createDestroyEntityPacket} " << e.what() << std::endl;
             return nullptr;
         }
     }

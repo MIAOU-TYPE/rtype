@@ -39,6 +39,11 @@ namespace Engine
         return wl.easy;
     }
 
+    std::vector<RoomData> &RoomManager::rooms() noexcept
+    {
+        return _rooms;
+    }
+
     std::string RoomManager::makePath(const std::string_view worldId, const std::string_view fileName)
     {
         std::string p;

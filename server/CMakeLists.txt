@@ -86,8 +86,24 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
 )
 
+# External libraries
+# ------------------------------
+# JSON
+# ------------------------------
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+
+# ------------------------------
+# SQLite3
+# ------------------------------
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::sqlite3::sqlite3)
+
+# ------------------------------
+# OpenSSL
+# ------------------------------
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto)
 
 # ------------------------------
 # OUTPUT LOCATION

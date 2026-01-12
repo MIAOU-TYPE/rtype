@@ -60,9 +60,10 @@ namespace Ecs
                     break;
                 handlePong();
                 break;
-            case Net::Protocol::UDP::DAMAGE_EVENT: handleDamageEvent(payload, payloadSize); break;
+            case Net::Protocol::UDP::DAMAGE_EVENT: handleDamage(payload, payloadSize); break;
             case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
+            case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';
@@ -161,6 +162,8 @@ namespace Ecs
         std::memcpy(&batch, payload, sizeof(batch));
 
         const uint16_t count = ntohs(batch.count);
+        const uint32_t serverTick = ntohl(batch.serverTick);
+
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
 
         std::vector<SnapshotEntity> entities;
@@ -199,10 +202,10 @@ namespace Ecs
         _sink->onScore(score);
     }
 
-    void UDPPacketRouter::handleDamageEvent(const uint8_t *payload, const size_t size) const
+    void UDPPacketRouter::handleDamage(const uint8_t *payload, const size_t size) const
     {
         if (!payload || size != sizeof(DamageData)) {
-            std::cerr << "{UDPPacketRouter::handleDamageEvent} Dropped DAMAGE_EVENT: bad size\n";
+            std::cerr << "{UDPPacketRouter::handleDamage} Dropped DAMAGE_EVENT: bad size\n";
             return;
         }
 
@@ -212,5 +215,19 @@ namespace Ecs
         const uint16_t amount = ntohs(damageData.amount);
 
         _sink->onDamage(targetId, amount);
+    }
+
+    void UDPPacketRouter::handleDestroy(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(DestroyData)) {
+            std::cerr << "{UDPPacketRouter::handleDestroy} Dropped DESTROY: bad size\n";
+            return;
+        }
+
+        DestroyData destroyData{};
+        std::memcpy(&destroyData, payload, sizeof(destroyData));
+        const uint32_t entityId = ntohl(destroyData.id);
+
+        _sink->onDestroy(entityId);
     }
 } // namespace Ecs

@@ -63,7 +63,7 @@ namespace Graphics
          * @param handle The texture handle.
          * @return Reference to the SFML texture.
          */
-        const sf::Texture &get(TextureHandle handle) const;
+        [[nodiscard]] const sf::Texture &get(TextureHandle handle) const;
 
       private:
         /**

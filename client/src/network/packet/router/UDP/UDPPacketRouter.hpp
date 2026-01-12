@@ -13,6 +13,7 @@
 
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
+#include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
 #include "IClientMessageSink.hpp"
@@ -101,18 +102,30 @@ namespace Ecs
 
         /**
          * @brief Handler for SNAP_ENTITY packets.
+         * @param payload Pointer to the payload data of the SNAP_ENTITY packet.
+         * @param size Size of the payload data.
          */
         void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for SCORE packets.
+         * @param payload Pointer to the payload data of the SCORE packet.
+         * @param size Size of the payload data.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for DAMAGE_EVENT packets.
+         * @param payload Pointer to the payload data of the DAMAGE_EVENT packet.
+         * @param size Size of the payload data.
          */
-        void handleDamageEvent(const uint8_t *payload, size_t size) const;
+        void handleDamage(const uint8_t *payload, size_t size) const;
+
+         * @brief Handler for DESTROY packets.
+         * @param payload Pointer to the payload data of the DESTROY packet.
+         * @param size Size of the payload data.
+         */
+        void handleDestroy(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

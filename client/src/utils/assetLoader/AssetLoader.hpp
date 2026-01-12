@@ -8,6 +8,7 @@
 #pragma once
 #include "IAudioManager.hpp"
 #include "ITextureManager.hpp"
+#include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 
 namespace Utils

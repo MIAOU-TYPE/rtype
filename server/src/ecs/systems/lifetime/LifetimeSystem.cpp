@@ -6,7 +6,6 @@
 */
 
 #include "LifetimeSystem.hpp"
-#include "Lifetime.hpp"
 
 namespace Game
 {
@@ -14,10 +13,10 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<Ecs::Lifetime>([&](const Ecs::Entity e, Ecs::Lifetime &life) {
+        reg.view<Ecs::Lifetime, Ecs::Id>([&](const Ecs::Entity, Ecs::Lifetime &life, const Ecs::Id &id) {
             life.remaining -= dt;
             if (life.remaining <= 0.f)
-                world.events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(e)});
+                world.events().emit<DestroyEvent>(DestroyEvent{id.id});
         });
     }
 } // namespace Game

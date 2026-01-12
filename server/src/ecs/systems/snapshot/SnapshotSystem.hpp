@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Drawable.hpp"
+#include "Id.hpp"
 #include "Position.hpp"
 #include "SnapEntityData.hpp"
 #include "World.hpp"

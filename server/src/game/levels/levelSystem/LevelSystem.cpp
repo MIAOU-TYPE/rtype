@@ -48,7 +48,7 @@ namespace Game
     {
         auto &reg = world.registry();
         const float y = Rand::enemyY(Rand::rng);
-        const Ecs::Entity mob = reg.createEntity();
+        const Ecs::Entity mob = world.createEntity();
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});

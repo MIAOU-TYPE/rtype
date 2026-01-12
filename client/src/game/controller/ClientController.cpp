@@ -47,4 +47,9 @@ namespace Ecs
     {
         _commandBuffer.get().push({World::WorldCommand::Type::Damage, World::DamageInfo{targetId, amount}});
     }
+
+    void ClientController::onDestroy(const size_t entityId)
+    {
+        _commandBuffer.get().push({World::WorldCommand::Type::Destroy, entityId});
+    }
 }; // namespace Ecs

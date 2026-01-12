@@ -24,16 +24,16 @@ namespace Graphics
         if (!data || size == 0)
             return InvalidAudio;
 
-        AudioHandle handle = _nextHandle++;
-        _sounds.emplace(handle, SoundEntry{resourcePath});
-        _soundPathToHandle.emplace(resourcePath, handle);
+        AudioHandle audioHandle = _nextHandle++;
+        _sounds.emplace(audioHandle, SoundEntry{resourcePath});
+        _soundPathToHandle.emplace(resourcePath, audioHandle);
 
-        return handle;
+        return audioHandle;
     }
 
-    void SfmlSoundManager::unload(const AudioHandle handle)
+    void SfmlSoundManager::unload(const AudioHandle audioHandle)
     {
-        auto it = _sounds.find(handle);
+        const auto it = _sounds.find(audioHandle);
         if (it == _sounds.end())
             return;
 
@@ -41,9 +41,9 @@ namespace Graphics
         _sounds.erase(it);
     }
 
-    bool SfmlSoundManager::isValid(const AudioHandle handle) const noexcept
+    bool SfmlSoundManager::isValid(const AudioHandle audioHandle) const noexcept
     {
-        return _sounds.contains(handle);
+        return _sounds.contains(audioHandle);
     }
 
     void SfmlSoundManager::clear()
@@ -54,16 +54,16 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    bool SfmlSoundManager::play(AudioHandle handle)
+    bool SfmlSoundManager::play(const AudioHandle audioHandle)
     {
-        auto it = _sounds.find(handle);
+        const auto it = _sounds.find(audioHandle);
         if (it == _sounds.end())
             return false;
 
         try {
             auto sound = std::make_unique<SfmlSound>(_resources, it->second.resourcePath, it->second.volume);
             sound->play();
-            _activeSounds.push_back({handle, std::move(sound)});
+            _activeSounds.push_back({audioHandle, std::move(sound)});
             return true;
         } catch (const std::exception &e) {
             return false;
@@ -72,10 +72,10 @@ namespace Graphics
         }
     }
 
-    void SfmlSoundManager::stop(AudioHandle handle)
+    void SfmlSoundManager::stop(const AudioHandle audioHandle)
     {
         for (auto it = _activeSounds.begin(); it != _activeSounds.end();) {
-            if (it->handle == handle) {
+            if (it->handle == audioHandle) {
                 it->sound->stop();
                 it = _activeSounds.erase(it);
             } else {
@@ -84,33 +84,33 @@ namespace Graphics
         }
     }
 
-    void SfmlSoundManager::setVolume(AudioHandle handle, float volume)
+    void SfmlSoundManager::setVolume(const AudioHandle audioHandle, const float volume)
     {
-        auto soundIt = _sounds.find(handle);
+        auto soundIt = _sounds.find(audioHandle);
         if (soundIt != _sounds.end()) {
             soundIt->second.volume = volume;
         }
         
         for (auto &active : _activeSounds) {
-            if (active.handle == handle) {
+            if (active.handle == audioHandle) {
                 active.sound->setVolume(volume);
             }
         }
     }
 
-    void SfmlSoundManager::setLooping(AudioHandle handle, bool loop)
+    void SfmlSoundManager::setLooping(const AudioHandle audioHandle, const bool loop)
     {
-        for (auto &active : _activeSounds) {
-            if (active.handle == handle) {
-                active.sound->setLooping(loop);
+        for (auto &[handle, sound] : _activeSounds) {
+            if (handle == audioHandle) {
+                sound->setLooping(loop);
             }
         }
     }
 
-    void SfmlSoundManager::setGlobalVolume(float multiplier)
+    void SfmlSoundManager::setGlobalVolume(const float multiplier)
     {
-        for (auto &active : _activeSounds) {
-            active.sound->setVolume(active.sound->getVolume() * multiplier);
+        for (auto &[audioHandle, sound] : _activeSounds) {
+            sound->setVolume(sound->getVolume() * multiplier);
         }
     }
 } // namespace Graphics

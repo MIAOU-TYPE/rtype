@@ -18,6 +18,7 @@ namespace
         shootDef.cooldown = j.value("cooldown", 1.f);
         shootDef.damage = j.value("damage", 10);
         shootDef.projectileSpeed = j.value("projectileSpeed", 200.f);
+        shootDef.projectileSpriteId = j.value("projectileSpriteId", 9u);
         if (j.contains("angles") && j.at("angles").is_array()) {
             for (const auto &angleValue : j.at("angles"))
                 shootDef.angles.push_back(angleValue.get<float>());

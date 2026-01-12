@@ -1,0 +1,17 @@
+{
+  "sprite": "missile_enemy",
+  "spriteId": 9,
+  "texture": "sprites/missile_enemy.png",
+  "default_animation": "fly",
+  "animations": {
+    "fly": {
+      "loop": true,
+      "frames": [
+        { "x": 0,  "y": 0, "w": 7, "h": 6, "duration": 0.1 },
+        { "x": 8, "y": 0, "w": 7, "h": 6, "duration": 0.1 },
+        { "x": 16, "y": 0, "w": 7, "h": 6, "duration": 0.1 },
+        { "x": 24, "y": 0, "w": 7, "h": 6, "duration": 0.1 }
+      ]
+    }
+  }
+}

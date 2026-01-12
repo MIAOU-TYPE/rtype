@@ -44,7 +44,7 @@ class LifetimeSystemTests : public ::testing::Test {
         });
     }
 
-    void run(float dt)
+    void run(const float dt)
     {
         Game::LifetimeSystem::update(world, dt);
         world.events().process();
@@ -55,7 +55,7 @@ TEST_F(LifetimeSystemTests, DecreasesRemainingTime_WhenDtIsPositive)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(e, Ecs::Lifetime{1.0f});
 
     run(0.25f);
@@ -70,7 +70,7 @@ TEST_F(LifetimeSystemTests, DoesNotEmitDestroy_WhenStillAlive)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(e, Ecs::Lifetime{2.0f});
 
     run(0.5f);
@@ -82,7 +82,7 @@ TEST_F(LifetimeSystemTests, EmitsDestroy_WhenExactlyExpiresToZero)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(e, Ecs::Lifetime{1.0f});
 
     run(1.0f);
@@ -95,7 +95,7 @@ TEST_F(LifetimeSystemTests, EmitsDestroy_WhenBecomesNegative)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity e = reg.createEntity();
+    const Ecs::Entity e = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(e, Ecs::Lifetime{0.1f});
 
     run(0.5f);
@@ -112,14 +112,17 @@ TEST_F(LifetimeSystemTests, EmitsDestroy_ForEachExpiredEntityOnly)
 {
     auto &reg = world.registry();
 
-    const Ecs::Entity alive = reg.createEntity();
+    const Ecs::Entity alive = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(alive, Ecs::Lifetime{10.0f});
+    reg.emplaceComponent<Ecs::Id>(alive, Ecs::Id{static_cast<size_t>(alive)});
 
-    const Ecs::Entity dead1 = reg.createEntity();
+    const Ecs::Entity dead1 = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(dead1, Ecs::Lifetime{0.5f});
+    reg.emplaceComponent<Ecs::Id>(dead1, Ecs::Id{static_cast<size_t>(dead1)});
 
-    const Ecs::Entity dead2 = reg.createEntity();
+    const Ecs::Entity dead2 = world.createEntity();
     reg.emplaceComponent<Ecs::Lifetime>(dead2, Ecs::Lifetime{0.1f});
+    reg.emplaceComponent<Ecs::Id>(dead2, Ecs::Id{static_cast<size_t>(dead2)});
 
     run(1.0f);
 

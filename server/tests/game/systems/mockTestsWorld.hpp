@@ -24,7 +24,14 @@ namespace Test
 
         Ecs::Entity createPlayer() override
         {
-            return Ecs::Entity{};
+            return _reg.createEntity();
+        }
+
+        Ecs::Entity createEntity() override
+        {
+            const auto ent = _reg.createEntity();
+            _reg.emplaceComponent<Ecs::Id>(ent, Ecs::Id{static_cast<size_t>(ent)});
+            return ent;
         }
 
         void destroyEntity(const Ecs::Entity) override

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Id.hpp"
 #include "World.hpp"
 
 namespace Game

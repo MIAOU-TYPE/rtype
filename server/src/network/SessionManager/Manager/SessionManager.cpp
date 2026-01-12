@@ -17,6 +17,22 @@ namespace
 
 using namespace Net::Server;
 
+static constexpr std::chrono::seconds kDefaultAuthTtl{24 * 60 * 60};
+
+bool SessionManager::isExpiredLocked(const int sessionId) const
+{
+    const auto it = _authExpiryById.find(sessionId);
+    if (it == _authExpiryById.end())
+        return true;
+    return Clock::now() >= it->second;
+}
+
+void SessionManager::clearAuthLocked(const int sessionId)
+{
+    _identityById.erase(sessionId);
+    _authExpiryById.erase(sessionId);
+}
+
 int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};
@@ -61,6 +77,7 @@ void SessionManager::removeSession(const int sessionId)
         return;
     }
 
+    clearAuthLocked(sessionId);
     if (const auto itUdp = _idToUdpAddress.find(sessionId); itUdp != _idToUdpAddress.end()) {
         const AddressKey udpKey{itUdp->second.sin_addr.s_addr, itUdp->second.sin_port};
         _idToUdpAddress.erase(itUdp);
@@ -160,6 +177,47 @@ int SessionManager::getSessionIdFromUdp(const sockaddr_in &udpAddr) const
         return it->second;
 
     return -1;
+}
+
+void SessionManager::setIdentity(const int sessionId, Auth::Identity id, std::chrono::seconds ttl)
+{
+    if (ttl.count() <= 0)
+        ttl = kDefaultAuthTtl;
+
+    std::unique_lock lock(_mutex);
+    _identityById[sessionId] = std::move(id);
+    _authExpiryById[sessionId] = Clock::now() + ttl;
+}
+
+std::optional<Auth::Identity> SessionManager::getIdentity(const int sessionId) const
+{
+    std::shared_lock lock(_mutex);
+
+    if (const auto itExp = _authExpiryById.find(sessionId);
+        itExp == _authExpiryById.end() || Clock::now() >= itExp->second)
+        return std::nullopt;
+    const auto it = _identityById.find(sessionId);
+    if (it == _identityById.end())
+        return std::nullopt;
+
+    return it->second;
+}
+
+bool SessionManager::isAuthed(const int sessionId) const
+{
+    std::shared_lock lock(_mutex);
+
+    if (const auto itExp = _authExpiryById.find(sessionId);
+        itExp == _authExpiryById.end() || Clock::now() >= itExp->second)
+        return false;
+
+    return _identityById.contains(sessionId);
+}
+
+void SessionManager::clearIdentity(const int sessionId)
+{
+    std::unique_lock lock(_mutex);
+    clearAuthLocked(sessionId);
 }
 
 bool SessionManager::isSequenceValid(const int sessionId, const uint32_t sequence) const noexcept

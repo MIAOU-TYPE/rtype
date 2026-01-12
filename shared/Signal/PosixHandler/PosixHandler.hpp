@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <iostream>
 
 #ifndef _WIN32
 

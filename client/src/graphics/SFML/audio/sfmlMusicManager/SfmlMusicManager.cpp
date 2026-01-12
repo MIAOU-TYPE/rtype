@@ -29,7 +29,7 @@ namespace Graphics
 
     void SfmlMusicManager::unload(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
+        const auto it = _musics.find(handle);
         if (it == _musics.end())
             return;
 
@@ -47,9 +47,9 @@ namespace Graphics
 
     void SfmlMusicManager::clear()
     {
-        for (auto &[handle, entry] : _musics) {
-            if (entry.music && entry.music->isPlaying()) {
-                entry.music->stop();
+        for (auto &[music, resourcePath] : _musics | std::views::values) {
+            if (music && music->isPlaying()) {
+                music->stop();
             }
         }
         _musics.clear();
@@ -57,45 +57,41 @@ namespace Graphics
         _nextHandle = 1;
     }
 
-    bool SfmlMusicManager::play(AudioHandle handle)
+    bool SfmlMusicManager::play(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->play();
             return true;
         }
         return false;
     }
 
-    void SfmlMusicManager::stop(AudioHandle handle)
+    void SfmlMusicManager::stop(const AudioHandle handle)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->stop();
         }
     }
 
-    void SfmlMusicManager::setVolume(AudioHandle handle, float volume)
+    void SfmlMusicManager::setVolume(const AudioHandle handle, const float volume)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->setVolume(volume);
         }
     }
 
-    void SfmlMusicManager::setLooping(AudioHandle handle, bool loop)
+    void SfmlMusicManager::setLooping(const AudioHandle handle, const bool loop)
     {
-        auto it = _musics.find(handle);
-        if (it != _musics.end()) {
+        if (const auto it = _musics.find(handle); it != _musics.end()) {
             it->second.music->setLooping(loop);
         }
     }
 
-    void SfmlMusicManager::setGlobalVolume(float multiplier)
+    void SfmlMusicManager::setGlobalVolume(const float multiplier)
     {
-        for (auto &[handle, entry] : _musics) {
-            if (entry.music->isPlaying()) {
-                entry.music->setVolume(entry.music->getVolume() * multiplier);
+        for (auto &[music, resourcePath] : _musics | std::views::values) {
+            if (music->isPlaying()) {
+                music->setVolume(music->getVolume() * multiplier);
             }
         }
     }

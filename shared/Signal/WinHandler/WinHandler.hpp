@@ -1,4 +1,14 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** WinHandler
+*/
+
 #pragma once
+
+#include <csignal>
+#include <iostream>
 
 #ifdef _WIN32
 

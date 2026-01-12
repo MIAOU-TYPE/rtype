@@ -42,4 +42,9 @@ namespace Ecs
     {
         std::cout << "onScore: " << score << std::endl;
     }
+
+    void ClientController::onDestroy(const size_t entityId)
+    {
+        _commandBuffer.get().push({World::WorldCommand::Type::Destroy, entityId});
+    }
 }; // namespace Ecs

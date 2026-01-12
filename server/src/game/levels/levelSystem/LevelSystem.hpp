@@ -24,6 +24,7 @@
 #include "Rand.hpp"
 #include "Target.hpp"
 #include "Velocity.hpp"
+#include "WeaponConfig.hpp"
 #include <unordered_map>
 
 namespace Game

@@ -26,12 +26,13 @@ struct SnapshotEntity {
  * @brief Header for a batch of snapshot entities.
  */
 struct SnapshotBatchHeader {
-    HeaderData header; ///> Common header data
-    uint16_t count;    ///> Number of entities in the batch
+    HeaderData header;   ///> Common header data
+    uint16_t count;      ///> Number of entities in the batch
+    uint32_t serverTick; ///> Server tick at which the snapshot was taken
 };
 
 #pragma pack(pop)
-static_assert(sizeof(SnapshotBatchHeader) == 14, "SnapshotBatchHeader layout mismatch");
+static_assert(sizeof(SnapshotBatchHeader) == 18, "SnapshotBatchHeader layout mismatch");
 
 #pragma pack(push, 1)
 

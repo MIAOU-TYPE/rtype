@@ -90,7 +90,7 @@ namespace Graphics
          * @brief Play the audio resource.
          * @param handle The audio handle.
          */
-        virtual bool play(AudioHandle handle) = 0;
+        [[nodiscard]] virtual bool play(AudioHandle handle) = 0;
 
         /**
          * @brief Stop the audio resource.

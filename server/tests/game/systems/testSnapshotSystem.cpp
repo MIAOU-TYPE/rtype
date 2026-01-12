@@ -36,7 +36,7 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
 {
     auto &reg = world->registry();
 
-    auto e = reg.createEntity();
+    const auto e = world->createEntity();
     reg.registerComponent<Ecs::Drawable>();
     reg.registerComponent<Ecs::Position>();
 
@@ -46,12 +46,12 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
     SnapshotSystem::update(*world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 1u);
-    const auto &s = snapshot.front();
+    const auto &[id, x, y, spriteId] = snapshot.front();
 
-    EXPECT_EQ(s.id, static_cast<std::size_t>(e));
-    EXPECT_FLOAT_EQ(s.x, 42.0f);
-    EXPECT_FLOAT_EQ(s.y, 84.0f);
-    EXPECT_EQ(s.spriteId, 10);
+    EXPECT_EQ(id, static_cast<std::size_t>(1));
+    EXPECT_FLOAT_EQ(x, 42.0f);
+    EXPECT_FLOAT_EQ(y, 84.0f);
+    EXPECT_EQ(spriteId, 10);
 }
 
 TEST_F(SnapshotSystemTest, EntityWithoutDrawableIsIgnored)
@@ -61,7 +61,7 @@ TEST_F(SnapshotSystemTest, EntityWithoutDrawableIsIgnored)
     reg.registerComponent<Ecs::Drawable>();
     reg.registerComponent<Ecs::Position>();
 
-    auto e1 = reg.createEntity();
+    const auto e1 = world->createEntity();
     reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.0f, 20.0f});
 
     SnapshotSystem::update(*world, snapshot);
@@ -75,7 +75,7 @@ TEST_F(SnapshotSystemTest, EntityWithoutPositionIsIgnored)
     reg.registerComponent<Ecs::Drawable>();
     reg.registerComponent<Ecs::Position>();
 
-    auto e1 = reg.createEntity();
+    const auto e1 = world->createEntity();
     reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{10});
 
     SnapshotSystem::update(*world, snapshot);
@@ -89,15 +89,15 @@ TEST_F(SnapshotSystemTest, MultipleEntitiesSnapshotCorrectly)
     reg.registerComponent<Ecs::Drawable>();
     reg.registerComponent<Ecs::Position>();
 
-    auto e1 = reg.createEntity();
+    const auto e1 = world->createEntity();
     reg.emplaceComponent<Ecs::Drawable>(e1, Ecs::Drawable{10});
     reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.0f, 20.0f});
 
-    auto e2 = reg.createEntity();
+    auto e2 = world->createEntity();
     reg.emplaceComponent<Ecs::Drawable>(e2, Ecs::Drawable{13});
     reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{50.0f, 60.0f});
 
-    auto e3 = reg.createEntity();
+    auto e3 = world->createEntity();
     reg.emplaceComponent<Ecs::Position>(e3, Ecs::Position{0.0f, 0.0f});
 
     SnapshotSystem::update(*world, snapshot);

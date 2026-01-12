@@ -105,7 +105,7 @@ namespace Game
     void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y)
     {
         auto &reg = world.registry();
-        const Ecs::Entity mob = reg.createEntity();
+        const Ecs::Entity mob = world.createEntity();
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
@@ -148,5 +148,9 @@ namespace Game
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
+
+        Ecs::WeaponConfig weapon;
+        weapon.projectileSpriteId = def.shoot.projectileSpriteId;
+        reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
     }
 } // namespace Game

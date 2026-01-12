@@ -7,6 +7,7 @@
 
 #pragma once
 #include "ITextureManager.hpp"
+#include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 
 namespace Utils

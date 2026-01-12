@@ -41,6 +41,7 @@ struct ShootEvent {
     size_t shooter;                 ///> ID of the entity that fired the projectile
     std::pair<float, float> bounds; ///> Width and height of the projectile
     float lifetime;                 ///> Lifetime of the projectile in seconds
+    unsigned int spriteId;          ///> Sprite ID for rendering the projectile
 };
 
 /**

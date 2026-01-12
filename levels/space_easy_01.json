@@ -8,7 +8,7 @@
       "size": { "w": 28.0, "h": 22.0 },
       "spriteId": 10,
       "killScore": 10,
-      "shoot": { "type": "straight", "cooldown": 1.6, "damage": 5, "projectileSpeed": 260.0, "muzzle": { "x": -12.0, "y": 0.0 } }
+      "shoot": { "type": "straight", "cooldown": 1.6, "damage": 5, "projectileSpeed": 260.0, "muzzle": { "x": -12.0, "y": 0.0 }, "projectileSpriteId": 9 }
     },
     "shooter": {
       "hp": 45,
@@ -16,7 +16,7 @@
       "size": { "w": 30.0, "h": 26.0 },
       "spriteId": 11,
       "killScore": 20,
-      "shoot": { "type": "diagonal", "cooldown": 2.2, "damage": 7, "projectileSpeed": 240.0, "angles": [ -20.0, 20.0 ], "muzzle": { "x": -12.0, "y": 0.0 } }
+      "shoot": { "type": "diagonal", "cooldown": 2.2, "damage": 7, "projectileSpeed": 240.0, "angles": [ -20.0, 20.0 ], "muzzle": { "x": -12.0, "y": 0.0 }, "projectileSpriteId": 12 }
     }
   },
   "waves": [

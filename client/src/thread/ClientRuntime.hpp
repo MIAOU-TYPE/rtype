@@ -17,29 +17,29 @@
 #include <condition_variable>
 
 #include "AssetLoader.hpp"
+#include "AuthContext.hpp"
 #include "ClientController.hpp"
 #include "ClientWorld.hpp"
 #include "CommandBuffer.hpp"
 #include "EventRegistry.hpp"
+#include "GameState.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
-#include "InputConfig.hpp"
-#include "MusicRegistry.hpp"
-#include "SoundRegistry.hpp"
-#include "TCPClient.hpp"
-#include "TCPPacketFactory.hpp"
-#include "UDPPacketFactory.hpp"
-#include "UDPPacketRouter.hpp"
-
-#include "GameState.hpp"
 #include "IRenderer.hpp"
+#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"
+#include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
+#include "SoundRegistry.hpp"
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
 #include "StateManager.hpp"
+#include "TCPClient.hpp"
+#include "TCPPacketFactory.hpp"
 #include "TCPPacketRouter.hpp"
+#include "UDPPacketFactory.hpp"
+#include "UDPPacketRouter.hpp"
 
 #include <condition_variable>
 
@@ -130,7 +130,7 @@ namespace Thread
          * @details This method recreates the event registry with updated key bindings
          * from the InputConfig singleton.
          */
-        void rebindControls();
+        void rebindControls() const;
 
         /**
          * @brief Runs the display loop for rendering graphics.
@@ -147,6 +147,10 @@ namespace Thread
         std::shared_ptr<Graphics::IRenderer> _renderer = nullptr;      ///> Renderer for graphics
         std::unique_ptr<World::ClientWorld> _world = nullptr;          ///> Client world for managing game state
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
+        std::shared_ptr<Engine::AuthContext> _authCtx;                 ///> Authentication context
+
+        // Request id of the latest auth (login/register) request, to attach server errors to the menu.
+        std::atomic_uint32_t _lastAuthReq{0};
 
         std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
@@ -160,14 +164,17 @@ namespace Thread
             nullptr; ///> Packet router for handling incoming packets
 
         std::shared_ptr<Network::INetClient> _tcpClient = nullptr; ///> TCP Network client interface
-        Network::TCPPacketFactory _tcpPacketFactory;
-        std::unique_ptr<Network::TCPPacketRouter> _tcpPacketRouter = nullptr;
+        Network::TCPPacketFactory _tcpPacketFactory;               ///> Packet factory for creating TCP packets
+        std::unique_ptr<Network::TCPPacketRouter> _tcpPacketRouter =
+            nullptr; ///> TCP Packet router for handling incoming TCP packets
 
         Command::CommandBuffer<World::WorldCommand> _commandBuffer; ///> Command buffer for storing commands
 
-        std::mutex _frameMutex;
-        std::shared_ptr<const std::vector<Engine::RenderCommand>> _readRenderCommands;
-        std::shared_ptr<std::vector<Engine::RenderCommand>> _writeRenderCommands;
+        std::mutex _frameMutex; ///> Mutex for synchronizing frame access
+        std::shared_ptr<std::vector<Engine::RenderCommand>>
+            _readRenderCommands; ///> Render commands for the current frame
+        std::shared_ptr<std::vector<Engine::RenderCommand>>
+            _writeRenderCommands; ///> Render commands for the current frame
 
         std::thread _receiverThread; ///> Thread for receiving packets
         std::thread _updaterThread;  ///> Thread for updating game state
@@ -243,6 +250,7 @@ namespace Thread
          * @brief Atomic flag to indicate if a game start has been requested.
          */
         std::atomic_bool _pendingGameStart{false};
+        std::atomic_bool _pendingAuthOk{false};
     };
 
 } // namespace Thread

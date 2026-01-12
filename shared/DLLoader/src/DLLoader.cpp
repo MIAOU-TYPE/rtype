@@ -8,15 +8,6 @@
 #include "DLLoader.hpp"
 using namespace Library;
 
-#ifdef _WIN32
-    #include <filesystem>
-    #define LOAD_LIBRARY(path)   LoadLibraryA(path.c_str())
-    #define FREE_LIBRARY(handle) FreeLibrary(static_cast<HMODULE>(handle))
-#else
-    #define LOAD_LIBRARY(path)   dlopen(path.c_str(), RTLD_LAZY)
-    #define FREE_LIBRARY(handle) dlclose(handle)
-#endif
-
 DLLoader::DLLoader(const std::string &libName, const std::string &baseDir) : _path(getLibraryPath(libName, baseDir))
 {
 #ifdef __linux__

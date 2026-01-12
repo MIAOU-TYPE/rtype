@@ -121,7 +121,7 @@ namespace Game
         const float scaledWidth, const int tileIndex)
     {
         auto &reg = world.registry();
-        const Ecs::Entity bg = reg.createEntity();
+        const Ecs::Entity bg = world.createEntity();
 
         reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f});
 

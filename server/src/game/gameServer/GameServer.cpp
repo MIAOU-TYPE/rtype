@@ -55,7 +55,7 @@ namespace Game
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
-                std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
+                std::cerr << "[GameServer] ERROR: Failed to load level file: " << levelPath << std::endl;
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
@@ -113,6 +113,7 @@ namespace Game
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
 
+        MovementPatternSystem::update(*_worldWrite, dt);
         MovementSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);

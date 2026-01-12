@@ -20,6 +20,7 @@
 #include "LevelManager.hpp"
 #include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"
+#include "MovementPatternSystem.hpp"
 #include "MovementSystem.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"

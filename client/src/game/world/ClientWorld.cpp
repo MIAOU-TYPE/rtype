@@ -52,10 +52,10 @@ namespace World
         snap.tick = batch.serverTick;
 
         snap.entities.reserve(batch.entities.size());
-        for (const auto &e : batch.entities) {
-            _destroyed.erase(static_cast<uint32_t>(e.id));
-            snap.entities[e.id] = NetState{e.x, e.y, e.spriteId};
-            _entityLastSeen[e.id] = std::chrono::steady_clock::now();
+        for (const auto &[id, x, y, spriteId] : batch.entities) {
+            _destroyed.erase(static_cast<uint32_t>(id));
+            snap.entities[id] = NetState{x, y, spriteId};
+            _entityLastSeen[id] = std::chrono::steady_clock::now();
         }
 
         if (!_snapshots.empty() && snap.tick <= _snapshots.back().tick) {
@@ -73,6 +73,7 @@ namespace World
 
         while (_snapshots.size() > _maxSnapshots)
             _snapshots.pop_front();
+        purgeStaleEntities(std::chrono::milliseconds(500));
     }
 
     void ClientWorld::applyDestroy(const size_t entityId)
@@ -156,10 +157,8 @@ namespace World
         const uint32_t latestTick = _snapshots.back().tick;
         const uint32_t targetTick = (latestTick > InterpDelayTicks) ? (latestTick - InterpDelayTicks) : 0;
 
-        // Clamp au démarrage ou si targetTick est plus vieux que le plus vieux snapshot
         if (_snapshots.size() == 1 || targetTick < _snapshots.front().tick) {
-            const auto &S = _snapshots.front();
-            for (const auto &[netId, st] : S.entities) {
+            for (const auto &[tick, entities] = _snapshots.front(); const auto &[netId, st] : entities) {
                 if (_destroyed.contains(static_cast<uint32_t>(netId)))
                     continue;
 
@@ -176,7 +175,6 @@ namespace World
             return;
         }
 
-        // Avancer tant que [0..1] est encore "avant" targetTick
         while (_snapshots.size() >= 2 && _snapshots.at(1).tick <= targetTick)
             _snapshots.pop_front();
 
@@ -229,6 +227,24 @@ namespace World
                     }
                 }
             }
+        }
+    }
+
+    void ClientWorld::purgeStaleEntities(const std::chrono::milliseconds maxAge)
+    {
+        const auto now = std::chrono::steady_clock::now();
+
+        std::vector<size_t> toDestroy;
+        toDestroy.reserve(_entityLastSeen.size());
+
+        for (const auto &[id, lastSeen] : _entityLastSeen) {
+            if ((now - lastSeen) > maxAge) {
+                toDestroy.push_back(id);
+            }
+        }
+
+        for (const auto id : toDestroy) {
+            applyDestroy(id);
         }
     }
 

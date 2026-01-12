@@ -213,8 +213,9 @@ namespace Ecs
         std::memcpy(&damageData, payload, sizeof(damageData));
         const uint32_t targetId = ntohl(damageData.id);
         const uint16_t amount = ntohs(damageData.amount);
+        const bool wasKilled = damageData.wasKilled != 0;
 
-        _sink->onDamage(targetId, amount);
+        _sink->onDamage(targetId, amount, wasKilled);
     }
 
     void UDPPacketRouter::handleDestroy(const uint8_t *payload, const size_t size) const
@@ -227,7 +228,8 @@ namespace Ecs
         DestroyData destroyData{};
         std::memcpy(&destroyData, payload, sizeof(destroyData));
         const uint32_t entityId = ntohl(destroyData.id);
+        const bool wasKilled = destroyData.wasKilled != 0;
 
-        _sink->onDestroy(entityId);
+        _sink->onDestroy(entityId, wasKilled);
     }
 } // namespace Ecs

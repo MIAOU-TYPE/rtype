@@ -23,6 +23,13 @@ namespace Engine
         def.texturePath = j.at("texture").get<std::string>();
         def.defaultAnimation = j.at("default_animation").get<std::string>();
 
+        if (j.contains("shootSound"))
+            def.shootSoundPath = j.at("shootSound").get<std::string>();
+        if (j.contains("hitSound"))
+            def.hitSoundPath = j.at("hitSound").get<std::string>();
+        if (j.contains("destroySound"))
+            def.destroySoundPath = j.at("destroySound").get<std::string>();
+
         for (const auto &[name, animJson] : j.at("animations").items()) {
             Animation anim;
             anim.name = name;

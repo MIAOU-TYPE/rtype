@@ -56,13 +56,13 @@ struct SnapshotEntityData {
  * @brief Header for a compressed batch of snapshot entities.
  */
 struct SnapshotCompressedHeader {
-    HeaderData header; ///> Common header data
-    uint16_t count; ///> Number of entities in the batch
+    HeaderData header;   ///> Common header data
+    uint16_t count;      ///> Number of entities in the batch
     uint32_t serverTick; ///> Server tick at which the snapshot was taken
     uint16_t chunkIndex; ///> Index of the current chunk
     uint16_t chunkCount; ///> Total number of chunks
 
-    uint16_t rawSize; ///> Size of the uncompressed data
+    uint16_t rawSize;  ///> Size of the uncompressed data
     uint16_t compSize; ///> Size of the compressed data
 };
 

@@ -344,7 +344,7 @@ namespace Ecs
         const int decoded =
             LZ4_decompress_safe(comp, outRaw.data(), static_cast<int>(compSize), static_cast<int>(rawSize));
 
-        return std::cmp_equal(decoded ,rawSize);
+        return std::cmp_equal(decoded, rawSize);
     }
 
 } // namespace Ecs

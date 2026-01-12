@@ -25,7 +25,6 @@
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
 #include <unordered_map>
-#include <utility>
 
 namespace Ecs
 {
@@ -183,7 +182,8 @@ namespace Ecs
          * @param now The current time point used for timestamping.
          * @return Reference to the PendingSnapshot accumulator.
          */
-        [[nodiscard]] PendingSnapshot &getOrResetAcc(uint32_t serverTick, uint16_t chunkCount, std::chrono::steady_clock::time_point now) const;
+        [[nodiscard]] PendingSnapshot &getOrResetAcc(
+            uint32_t serverTick, uint16_t chunkCount, std::chrono::steady_clock::time_point now) const;
 
         /**
          * @brief Accepts a chunk for the given PendingSnapshot accumulator.

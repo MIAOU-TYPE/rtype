@@ -54,6 +54,12 @@ namespace World
         void applyCommand(const WorldCommand &cmd);
 
         /**
+         * @brief Gets the current score.
+         * @return The current score.
+         */
+        uint32_t getScore() const;
+
+        /**
          * @brief Applies a snapshot of entities to the client world.
          * @param entities Vector of snapshot entities to apply.
          */
@@ -91,6 +97,8 @@ namespace World
             _soundRegistry; ///> Shared pointer to the SoundRegistry for sound management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
+
+        uint32_t _score = 0; ///> Current player score
 
         /**
          * @brief Applies a create entity command to the client world.

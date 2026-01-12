@@ -30,7 +30,6 @@ namespace World
     }
 
     void ClientWorld::applyCommand(const WorldCommand &cmd)
-
     {
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
@@ -40,8 +39,14 @@ namespace World
                 applyDestroy(destroyInfo.entityId, destroyInfo.wasKilled);
                 break;
             }
+            case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
             default: break;
         }
+    }
+
+    uint32_t ClientWorld::getScore() const
+    {
+        return _score;
     }
 
     void ClientWorld::applySnapshot(const std::vector<SnapshotEntity> &entities)

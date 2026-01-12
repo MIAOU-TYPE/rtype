@@ -44,9 +44,10 @@ namespace World
             Snapshot, ///> Snapshot of the world state
             Damage,   ///> Damage event
             Destroy,  ///> Destroy an entity
+            Score,    ///> Score update
         };
 
-        Type type; ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, DestroyInfo> payload; ///> Command payload
+        Type type;                                                                           ///> Type of the command
+        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, DestroyInfo, uint32_t> payload; ///> Command payload
     };
 } // namespace World

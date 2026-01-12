@@ -41,8 +41,8 @@ static_assert(sizeof(SnapshotBatchHeader) == 18, "SnapshotBatchHeader layout mis
  */
 struct SnapshotEntityData {
     uint32_t id;      ///> Entity ID
-    uint16_t x;       ///> X position
-    uint16_t y;       ///> Y position
+    int16_t x;       ///> X position
+    int16_t y;       ///> Y position
     uint8_t spriteId; ///> Sprite identifier
 };
 

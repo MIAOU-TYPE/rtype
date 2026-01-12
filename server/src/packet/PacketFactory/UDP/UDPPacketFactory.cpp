@@ -102,15 +102,10 @@ namespace Net::Factory
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
+                
                 packed.id = htonl(static_cast<uint32_t>(id));
-
-                const int16_t signedX = static_cast<int16_t>(x);
-                const int16_t signedY = static_cast<int16_t>(y);
-                std::memcpy(&packed.x, &signedX, sizeof(int16_t));
-                std::memcpy(&packed.y, &signedY, sizeof(int16_t));
-                packed.x = htons(packed.x);
-                packed.y = htons(packed.y);
-
+                packed.x = htons(static_cast<int16_t>(x));
+                packed.y = htons(static_cast<int16_t>(y));
                 packed.spriteId = static_cast<uint8_t>(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));

@@ -14,6 +14,8 @@
 #include "Damageable.hpp"
 #include "Drawable.hpp"
 #include "EventsRegistry.hpp"
+#include "GravityAffected.hpp"
+#include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "Id.hpp"

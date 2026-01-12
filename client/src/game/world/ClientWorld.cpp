@@ -35,7 +35,11 @@ namespace World
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
             case WorldCommand::Type::Damage: applyDamage(std::get<DamageInfo>(cmd.payload)); break;
-            case WorldCommand::Type::Destroy: applyDestroy(std::get<size_t>(cmd.payload)); break;
+            case WorldCommand::Type::Destroy: {
+                const auto &destroyInfo = std::get<DestroyInfo>(cmd.payload);
+                applyDestroy(destroyInfo.entityId, destroyInfo.wasKilled);
+                break;
+            }
             default: break;
         }
     }
@@ -53,39 +57,8 @@ namespace World
             applySingleSnapshot(entity);
         }
 
-        if (_soundRegistry) {
-            for (const auto entityId : _recentlyDamagedEntities) {
-                if (receivedIds.contains(entityId)) {
-                    const auto it = _entityMap.find(entityId);
-                    if (it != _entityMap.end()) {
-                        const auto entityIndex = static_cast<size_t>(it->second);
-                        if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
-                            if (_spriteRegistry->exists(drawable->spriteId)) {
-                                const auto &sprite = _spriteRegistry->get(drawable->spriteId);
-                                if (sprite.hitSoundHandle != Graphics::InvalidAudio) {
-                                    _soundRegistry->playSound(sprite.hitSoundHandle);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        _recentlyDamagedEntities.clear();
-
         for (auto it = _entityMap.begin(); it != _entityMap.end();) {
             if (!receivedIds.contains(it->first)) {
-                if (_soundRegistry) {
-                    const auto entityIndex = static_cast<size_t>(it->second);
-                    if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
-                        if (_spriteRegistry->exists(drawable->spriteId)) {
-                            const auto &sprite = _spriteRegistry->get(drawable->spriteId);
-                            if (sprite.destroySoundHandle != Graphics::InvalidAudio) {
-                                _soundRegistry->playSound(sprite.destroySoundHandle);
-                            }
-                        }
-                    }
-                }
                 _registry.destroyEntity(it->second);
                 it = _entityMap.erase(it);
             } else {
@@ -98,16 +71,27 @@ namespace World
         }
 
         for (auto id : toDestroy) {
-            applyDestroy(id);
+            applyDestroy(id, false);
             _entityLastSeen.erase(id);
         }
     }
 
-    void ClientWorld::applyDestroy(const size_t entityId)
+    void ClientWorld::applyDestroy(const size_t entityId, const bool wasKilled)
     {
         const auto it = _entityMap.find(entityId);
         if (it == _entityMap.end())
             return;
+
+        if (wasKilled && _soundRegistry) {
+            const auto entityIndex = static_cast<size_t>(it->second);
+            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
+                if (_spriteRegistry->exists(drawable->spriteId)) {
+                    const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                    if (sprite.destroySoundHandle != Graphics::InvalidAudio)
+                        _soundRegistry->playSound(sprite.destroySoundHandle);
+                }
+            }
+        }
 
         _registry.destroyEntity(it->second);
         _entityMap.erase(it);
@@ -120,7 +104,16 @@ namespace World
         if (it == _entityMap.end())
             return;
 
-        _recentlyDamagedEntities.insert(damageInfo.targetId);
+        if (!damageInfo.wasKilled && _soundRegistry) {
+            const auto entityIndex = static_cast<size_t>(it->second);
+            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
+                if (_spriteRegistry->exists(drawable->spriteId)) {
+                    const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                    if (sprite.hitSoundHandle != Graphics::InvalidAudio)
+                        _soundRegistry->playSound(sprite.hitSoundHandle);
+                }
+            }
+        }
     }
 
     void ClientWorld::applyCreate(const EntityCreate &data)

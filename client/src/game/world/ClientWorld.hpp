@@ -68,8 +68,9 @@ namespace World
         /**
          * @brief Applies a destroy entity command to the client world.
          * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed (play sound), false otherwise.
          */
-        void applyDestroy(size_t entityId);
+        void applyDestroy(size_t entityId, bool wasKilled);
 
       private:
         /**
@@ -90,7 +91,6 @@ namespace World
             _soundRegistry; ///> Shared pointer to the SoundRegistry for sound management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
-        std::unordered_set<size_t> _recentlyDamagedEntities; ///> Entities that took damage since last snapshot
 
         /**
          * @brief Applies a create entity command to the client world.

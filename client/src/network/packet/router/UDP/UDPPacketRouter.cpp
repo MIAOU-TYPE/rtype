@@ -30,10 +30,7 @@ namespace Ecs
         if (!extractHeader(*packet, header))
             return;
 
-        const uint8_t *raw = packet->buffer();
-        const std::size_t total = packet->size();
-
-        dispatchPacket(header, raw, total);
+        dispatchPacket(header, packet->buffer(), packet->size());
     }
 
     void UDPPacketRouter::dispatchPacket(
@@ -41,28 +38,33 @@ namespace Ecs
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT:
-                if (payloadSize != sizeof(DefaultData))
-                    break;
-                handleAccept();
+                if (payloadSize == sizeof(DefaultData))
+                    handleAccept();
                 break;
+
             case Net::Protocol::UDP::REJECT:
-                if (payloadSize != sizeof(DefaultData))
-                    break;
-                handleReject();
+                if (payloadSize == sizeof(DefaultData))
+                    handleReject();
                 break;
+
             case Net::Protocol::UDP::GAME_OVER:
-                if (payloadSize != sizeof(DefaultData))
-                    break;
-                handleGameOver();
+                if (payloadSize == sizeof(DefaultData))
+                    handleGameOver();
                 break;
+
             case Net::Protocol::UDP::PONG:
-                if (payloadSize != sizeof(DefaultData))
-                    break;
-                handlePong();
+                if (payloadSize == sizeof(DefaultData))
+                    handlePong();
                 break;
-            case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
+
+            case Net::Protocol::UDP::SNAPSHOT_RAW: handleSnapEntityRaw(payload, payloadSize); break;
+
+            case Net::Protocol::UDP::SNAPSHOT_COMPRESSED: handleSnapEntityCompressed(payload, payloadSize); break;
+
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
+
             case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
+
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << '\n';
@@ -73,19 +75,19 @@ namespace Ecs
     bool UDPPacketRouter::isHeaderValid(const Net::IPacket &packet, const HeaderData &header)
     {
         static uint32_t lastSequence = 0;
+
         if (packet.size() < sizeof(HeaderData)) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: packet too small\n";
             return false;
         }
-
         if (std::memcmp(header.magic, kPacketMagic, 4) != 0) {
             std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: bad magic\n";
             return false;
         }
 
         if (!isRecent(header.sequence, lastSequence)) {
-            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order packet (sequence=" << header.sequence
-                      << ", last=" << lastSequence << ")\n";
+            std::cerr << "{UDPPacketRouter::isHeaderValid} Dropped: out-of-order/duplicate packet (sequence="
+                      << header.sequence << ", last=" << lastSequence << ")\n";
             return false;
         }
 
@@ -106,21 +108,12 @@ namespace Ecs
 
     bool UDPPacketRouter::isPacketValid(const std::shared_ptr<Net::IPacket> &packet) noexcept
     {
-        if (!packet)
-            return false;
-
-        if (packet->size() < sizeof(HeaderData)) {
-            std::cerr << "{UDPPacketRouter::isPacketValid} Dropped: packet too small\n";
-            return false;
-        }
-        return true;
+        return packet && packet->size() >= sizeof(HeaderData);
     }
 
     bool UDPPacketRouter::extractHeader(const Net::IPacket &packet, HeaderData &outHeader) noexcept
     {
-        if (!packet.buffer())
-            return false;
-        if (packet.size() < sizeof(HeaderData))
+        if (!packet.buffer() || packet.size() < sizeof(HeaderData))
             return false;
 
         std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
@@ -150,13 +143,99 @@ namespace Ecs
         _sink->onGameOver();
     }
 
-    void UDPPacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
+    void UDPPacketRouter::handleSnapEntityRaw(const uint8_t *payload, const size_t size) const
     {
         using clock = std::chrono::steady_clock;
-        static constexpr auto PendingTTL = std::chrono::milliseconds(200);
+        static constexpr auto PendingTTL = std::chrono::milliseconds(400);
+
+        if (!payload || size < sizeof(SnapshotBatchHeader)) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityRaw} Snapshot chunk too small\n";
+            return;
+        }
+
+        SnapshotBatchHeader h{};
+        std::memcpy(&h, payload, sizeof(h));
+
+        const uint16_t count = ntohs(h.count);
+        const uint32_t serverTick = ntohl(h.serverTick);
+        const uint16_t chunkIndex = ntohs(h.chunkIndex);
+        const uint16_t chunkCount = ntohs(h.chunkCount);
+
+        if (chunkCount == 0 || chunkIndex >= chunkCount) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityRaw} Bad chunk meta (idx=" << chunkIndex
+                      << ", count=" << chunkCount << ")\n";
+            return;
+        }
+
+        const size_t expectedMin =
+            sizeof(SnapshotBatchHeader) + static_cast<size_t>(count) * sizeof(SnapshotEntityData);
+        if (size < expectedMin) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityRaw} Truncated raw chunk (size=" << size
+                      << ", expected>=" << expectedMin << ")\n";
+            return;
+        }
+
+        // TTL cleanup (drop old incomplete snapshots, do NOT emit partial here)
+        const auto now = clock::now();
+        for (auto it = _pending.begin(); it != _pending.end();) {
+            if (now - it->second.t0 > PendingTTL)
+                it = _pending.erase(it);
+            else
+                ++it;
+        }
+
+        auto &acc = _pending[serverTick];
+        if (acc.chunkCount == 0) {
+            acc.chunkCount = chunkCount;
+            acc.received.assign(chunkCount, 0);
+            acc.merged.clear();
+            acc.t0 = now;
+        } else if (acc.chunkCount != chunkCount) {
+            // reset accumulator if meta changes
+            acc.chunkCount = chunkCount;
+            acc.received.assign(chunkCount, 0);
+            acc.merged.clear();
+            acc.t0 = now;
+        }
+
+        if (chunkIndex >= acc.chunkCount)
+            return;
+
+        if (acc.received[chunkIndex])
+            return;
+        acc.received[chunkIndex] = 1;
+
+        const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
+        for (uint16_t i = 0; i < count; ++i) {
+            SnapshotEntityData entityData{};
+            std::memcpy(&entityData, cursor, sizeof(entityData));
+
+            SnapshotEntity e{};
+            e.id = ntohl(entityData.id);
+            e.x = ntohs(entityData.x);
+            e.y = ntohs(entityData.y);
+            e.spriteId = entityData.spriteId;
+
+            acc.merged.push_back(e);
+            cursor += sizeof(SnapshotEntityData);
+        }
+
+        for (uint16_t i = 0; i < acc.chunkCount; ++i) {
+            if (!acc.received[i])
+                return;
+        }
+
+        _sink->onSnapshot(serverTick, acc.merged);
+        _pending.erase(serverTick);
+    }
+
+    void UDPPacketRouter::handleSnapEntityCompressed(const uint8_t *payload, const size_t size) const
+    {
+        using clock = std::chrono::steady_clock;
+        static constexpr auto PendingTTL = std::chrono::milliseconds(400);
 
         if (!payload || size < sizeof(SnapshotCompressedHeader)) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot chunk too small\n";
+            std::cerr << "{UDPPacketRouter::handleSnapEntityCompressed} Snapshot chunk too small\n";
             return;
         }
 
@@ -171,21 +250,21 @@ namespace Ecs
         const uint16_t compSize = ntohs(h.compSize);
 
         if (chunkCount == 0 || chunkIndex >= chunkCount) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} Bad chunk meta (idx=" << chunkIndex
+            std::cerr << "{UDPPacketRouter::handleSnapEntityCompressed} Bad chunk meta (idx=" << chunkIndex
                       << ", count=" << chunkCount << ")\n";
             return;
         }
 
-        if (const size_t expectedRaw = static_cast<size_t>(count) * sizeof(SnapshotEntityData);
-            expectedRaw != rawSize) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} rawSize mismatch (rawSize=" << rawSize
+        const size_t expectedRaw = static_cast<size_t>(count) * sizeof(SnapshotEntityData);
+        if (expectedRaw != rawSize) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityCompressed} rawSize mismatch (rawSize=" << rawSize
                       << ", expected=" << expectedRaw << ")\n";
             return;
         }
 
-        if (const size_t expectedMin = sizeof(SnapshotCompressedHeader) + static_cast<size_t>(compSize);
-            size < expectedMin) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} Truncated compressed chunk (size=" << size
+        const size_t expectedMin = sizeof(SnapshotCompressedHeader) + static_cast<size_t>(compSize);
+        if (size < expectedMin) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityCompressed} Truncated compressed chunk (size=" << size
                       << ", expected>=" << expectedMin << ")\n";
             return;
         }
@@ -204,27 +283,27 @@ namespace Ecs
             acc.received.assign(chunkCount, 0);
             acc.merged.clear();
             acc.t0 = now;
-        } else {
-            if (acc.chunkCount != chunkCount) {
-                acc.chunkCount = chunkCount;
-                acc.received.assign(chunkCount, 0);
-                acc.merged.clear();
-                acc.t0 = now;
-            }
-            if (chunkIndex >= acc.chunkCount)
-                return;
+        } else if (acc.chunkCount != chunkCount) {
+            acc.chunkCount = chunkCount;
+            acc.received.assign(chunkCount, 0);
+            acc.merged.clear();
+            acc.t0 = now;
         }
+
+        if (chunkIndex >= acc.chunkCount)
+            return;
 
         if (acc.received[chunkIndex])
             return;
         acc.received[chunkIndex] = 1;
 
-        const auto comp = reinterpret_cast<const char *>(payload + sizeof(SnapshotCompressedHeader));
-        std::vector<char> raw(rawSize);
+        const auto *comp = reinterpret_cast<const char *>(payload + sizeof(SnapshotCompressedHeader));
+        std::vector<char> raw(static_cast<size_t>(rawSize));
 
-        if (const int decoded = LZ4_decompress_safe(comp, raw.data(), compSize, rawSize);
-            decoded < 0 || std::cmp_not_equal(decoded, rawSize)) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} LZ4_decompress_safe failed\n";
+        const int decoded =
+            LZ4_decompress_safe(comp, raw.data(), static_cast<int>(compSize), static_cast<int>(rawSize));
+        if (decoded != static_cast<int>(rawSize)) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntityCompressed} LZ4_decompress_safe failed\n";
             return;
         }
 
@@ -243,15 +322,10 @@ namespace Ecs
             cursor += sizeof(SnapshotEntityData);
         }
 
-        bool complete = true;
         for (uint16_t i = 0; i < acc.chunkCount; ++i) {
-            if (!acc.received[i]) {
-                complete = false;
-                break;
-            }
+            if (!acc.received[i])
+                return;
         }
-        if (!complete)
-            return;
 
         _sink->onSnapshot(serverTick, acc.merged);
         _pending.erase(serverTick);
@@ -267,7 +341,6 @@ namespace Ecs
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
         const uint32_t score = ntohs(scoreData.score);
-
         _sink->onScore(score);
     }
 
@@ -281,7 +354,6 @@ namespace Ecs
         DestroyData destroyData{};
         std::memcpy(&destroyData, payload, sizeof(destroyData));
         const uint32_t entityId = ntohl(destroyData.id);
-
         _sink->onDestroy(entityId);
     }
 } // namespace Ecs

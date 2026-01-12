@@ -69,6 +69,10 @@ namespace Ecs
         void handlePacket(const std::shared_ptr<Net::IPacket> &packet) const;
 
       private:
+        void handleSnapEntityRaw(const uint8_t *payload, size_t size) const;
+
+        void handleSnapEntityCompressed(const uint8_t *payload, size_t size) const;
+
         /**
          * @brief Validates the header of an incoming packet.
          * @param packet The incoming IPacket to validate.

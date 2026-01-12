@@ -25,6 +25,7 @@
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
 #include <unordered_map>
+#include <utility>
 
 namespace Ecs
 {
@@ -69,8 +70,18 @@ namespace Ecs
         void handlePacket(const std::shared_ptr<Net::IPacket> &packet) const;
 
       private:
+        /**
+         * @brief Handler for SNAP_ENTITY packets with raw payload.
+         * @param payload Pointer to the payload data of the SNAP_ENTITY packet.
+         * @param size Size of the payload data.
+         */
         void handleSnapEntityRaw(const uint8_t *payload, size_t size) const;
 
+        /**
+         * @brief Handler for SNAP_ENTITY packets with compressed payload.
+         * @param payload Pointer to the payload data of the SNAP_ENTITY_COMPRESSED packet.
+         * @param size Size of the payload data.
+         */
         void handleSnapEntityCompressed(const uint8_t *payload, size_t size) const;
 
         /**
@@ -107,13 +118,6 @@ namespace Ecs
          * @brief Handler for GAME_OVER packets.
          */
         void handleGameOver() const;
-
-        /**
-         * @brief Handler for SNAP_ENTITY packets.
-         * @param payload Pointer to the payload data of the SNAP_ENTITY packet.
-         * @param size Size of the payload data.
-         */
-        void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for SCORE packets.
@@ -160,5 +164,60 @@ namespace Ecs
         };
 
         mutable std::unordered_map<uint32_t, PendingSnapshot> _pending; ///> Snapshots en attente d'assemblage
+
+        /**
+         * @brief Time-to-live duration for pending snapshots before they are purged.
+         */
+        static constexpr auto PendingTTL = std::chrono::milliseconds(400);
+
+        /**
+         * @brief Purges expired pending snapshots based on the current time.
+         * @param now The current time point used to determine expiration.
+         */
+        void purgeExpired(std::chrono::steady_clock::time_point now) const;
+
+        /**
+         * @brief Retrieves or resets the accumulator for a given server tick and chunk count.
+         * @param serverTick The server tick associated with the snapshot.
+         * @param chunkCount The total number of chunks expected for the snapshot.
+         * @param now The current time point used for timestamping.
+         * @return Reference to the PendingSnapshot accumulator.
+         */
+        [[nodiscard]] PendingSnapshot &getOrResetAcc(uint32_t serverTick, uint16_t chunkCount, std::chrono::steady_clock::time_point now) const;
+
+        /**
+         * @brief Accepts a chunk for the given PendingSnapshot accumulator.
+         * @param acc Reference to the PendingSnapshot accumulator.
+         * @param chunkIndex The index of the chunk being accepted.
+         * @return True if the chunk was accepted, false if it was already received or invalid.
+         */
+        [[nodiscard]] static bool acceptChunk(PendingSnapshot &acc, uint16_t chunkIndex);
+
+        /**
+         * @brief Checks if the PendingSnapshot accumulator has received all expected chunks.
+         * @param acc The PendingSnapshot accumulator to check.
+         * @return True if all chunks have been received, false otherwise.
+         */
+        [[nodiscard]] static bool isComplete(const PendingSnapshot &acc);
+
+        /**
+         * @brief Appends entities from raw data to the PendingSnapshot accumulator.
+         * @param acc Reference to the PendingSnapshot accumulator.
+         * @param raw Pointer to the raw entity data.
+         * @param count The number of entities to append.
+         */
+        static void appendEntitiesFromRaw(PendingSnapshot &acc, const uint8_t *raw, uint16_t count);
+
+        /**
+         * @brief Decompresses a compressed snapshot payload into raw entity data.
+         * @param payload Pointer to the compressed payload data.
+         * @param size Size of the compressed payload data.
+         * @param rawSize Expected size of the decompressed raw data.
+         * @param compSize Size of the compressed data.
+         * @param outRaw Reference to a vector to store the decompressed raw data.
+         * @return True if decompression was successful, false otherwise.
+         */
+        [[nodiscard]] static bool decompressSnapshotPayload(
+            const uint8_t *payload, size_t size, uint16_t rawSize, uint16_t compSize, std::vector<char> &outRaw);
     };
 } // namespace Ecs

@@ -155,18 +155,20 @@ namespace Ecs
         using clock = std::chrono::steady_clock;
         static constexpr auto PendingTTL = std::chrono::milliseconds(200);
 
-        if (!payload || size < sizeof(SnapshotBatchHeader)) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot batch too small\n";
+        if (!payload || size < sizeof(SnapshotCompressedHeader)) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot chunk too small\n";
             return;
         }
 
-        SnapshotBatchHeader batch{};
-        std::memcpy(&batch, payload, sizeof(batch));
+        SnapshotCompressedHeader h{};
+        std::memcpy(&h, payload, sizeof(h));
 
-        const uint16_t count = ntohs(batch.count);
-        const uint32_t serverTick = ntohl(batch.serverTick);
-        const uint16_t chunkIndex = ntohs(batch.chunkIndex);
-        const uint16_t chunkCount = ntohs(batch.chunkCount);
+        const uint16_t count = ntohs(h.count);
+        const uint32_t serverTick = ntohl(h.serverTick);
+        const uint16_t chunkIndex = ntohs(h.chunkIndex);
+        const uint16_t chunkCount = ntohs(h.chunkCount);
+        const uint16_t rawSize = ntohs(h.rawSize);
+        const uint16_t compSize = ntohs(h.compSize);
 
         if (chunkCount == 0 || chunkIndex >= chunkCount) {
             std::cerr << "{UDPPacketRouter::handleSnapEntity} Bad chunk meta (idx=" << chunkIndex
@@ -174,10 +176,16 @@ namespace Ecs
             return;
         }
 
-        const size_t expectedMin =
-            sizeof(SnapshotBatchHeader) + static_cast<size_t>(count) * sizeof(SnapshotEntityData);
-        if (size < expectedMin) {
-            std::cerr << "{UDPPacketRouter::handleSnapEntity} Truncated snapshot chunk (size=" << size
+        if (const size_t expectedRaw = static_cast<size_t>(count) * sizeof(SnapshotEntityData);
+            expectedRaw != rawSize) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} rawSize mismatch (rawSize=" << rawSize
+                      << ", expected=" << expectedRaw << ")\n";
+            return;
+        }
+
+        if (const size_t expectedMin = sizeof(SnapshotCompressedHeader) + static_cast<size_t>(compSize);
+            size < expectedMin) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} Truncated compressed chunk (size=" << size
                       << ", expected>=" << expectedMin << ")\n";
             return;
         }
@@ -211,7 +219,16 @@ namespace Ecs
             return;
         acc.received[chunkIndex] = 1;
 
-        const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
+        const auto comp = reinterpret_cast<const char *>(payload + sizeof(SnapshotCompressedHeader));
+        std::vector<char> raw(rawSize);
+
+        if (const int decoded = LZ4_decompress_safe(comp, raw.data(), compSize, rawSize);
+            decoded < 0 || std::cmp_not_equal(decoded, rawSize)) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} LZ4_decompress_safe failed\n";
+            return;
+        }
+
+        const auto *cursor = reinterpret_cast<const uint8_t *>(raw.data());
         for (uint16_t i = 0; i < count; ++i) {
             SnapshotEntityData entityData{};
             std::memcpy(&entityData, cursor, sizeof(entityData));

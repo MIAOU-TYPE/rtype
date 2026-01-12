@@ -15,6 +15,7 @@
 #include "SpriteRegistry.hpp"
 #include "SoundRegistry.hpp"
 #include "WorldCommand.hpp"
+#include <unordered_set>
 #include <unordered_map>
 
 namespace World

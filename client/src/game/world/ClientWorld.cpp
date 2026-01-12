@@ -158,7 +158,8 @@ namespace World
         const uint32_t targetTick = (latestTick > InterpDelayTicks) ? (latestTick - InterpDelayTicks) : 0;
 
         if (_snapshots.size() == 1 || targetTick < _snapshots.front().tick) {
-            for (const auto &[tick, entities] = _snapshots.front(); const auto &[netId, st] : entities) {
+            const auto &[tick, entities] = _snapshots.front();
+            for (const auto &[netId, st] : entities) {
                 if (_destroyed.contains(static_cast<uint32_t>(netId)))
                     continue;
 

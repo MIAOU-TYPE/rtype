@@ -72,7 +72,8 @@ namespace Net::Factory
             if (entities.empty())
                 return out;
 
-            if (maxPacketBytes <= std::max(sizeof(SnapshotCompressedHeader), sizeof(SnapshotBatchHeader)) + sizeof(SnapshotEntityData))
+            if (maxPacketBytes
+                <= std::max(sizeof(SnapshotCompressedHeader), sizeof(SnapshotBatchHeader)) + sizeof(SnapshotEntityData))
                 return out;
 
             const size_t maxCompBytes = maxPacketBytes - sizeof(SnapshotCompressedHeader);

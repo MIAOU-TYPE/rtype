@@ -50,4 +50,21 @@ struct SnapshotEntityData {
 
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+
+struct SnapshotCompressedHeader {
+    HeaderData header;
+    uint16_t count;
+    uint32_t serverTick;
+    uint16_t chunkIndex;
+    uint16_t chunkCount;
+
+    uint16_t rawSize;
+    uint16_t compSize;
+};
+
+#pragma pack(pop)
+
+static_assert(sizeof(SnapshotCompressedHeader) == 26, "SnapshotCompressedHeader layout mismatch");
+
 static_assert(sizeof(SnapshotEntityData) == 9, "SnapshotEntityData layout mismatch");

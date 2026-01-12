@@ -94,13 +94,15 @@ namespace Net::Factory
             const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
 
         /**
-         * @brief Creates a snapshot packet from the given SnapshotEntity.
-         * @param entities The SnapshotEntity containing the snapshot data.
-         * @param serverTick The server tick at which the snapshot was taken.
-         * @return A shared pointer to the created IPacket.
+         * @brief Creates snapshot packets from the given entities, server tick, and maximum packet size.
+         * @param entities The list of snapshot entities to include in the packets.
+         * @param serverTick The current server tick.
+         * @param maxPacketBytes The maximum size of each packet in bytes.
+         * @return A vector of shared pointers to the created IPackets.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> createSnapshotPacket(
-            const std::vector<SnapshotEntity> &entities, uint32_t serverTick) const noexcept;
+        [[nodiscard]] std::vector<std::shared_ptr<IPacket>> createSnapshotPackets(
+            const std::vector<SnapshotEntity> &entities, uint32_t serverTick,
+            std::size_t maxPacketBytes) const noexcept;
 
         /**
          * @brief Creates a score packet with the specified address and score.

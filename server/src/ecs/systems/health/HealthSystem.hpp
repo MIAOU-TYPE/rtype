@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Health.hpp"
+#include "Id.hpp"
 #include "World.hpp"
 
 namespace Game

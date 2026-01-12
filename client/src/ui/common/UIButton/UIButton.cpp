@@ -100,15 +100,16 @@ namespace UI
             static_cast<float>(_cmd.frame.h) * _cmd.scale.y};
     }
 
-    void UIButton::setLabel(const std::string &text) const
+    void UIButton::setLabel(const std::string &text)
     {
         if (_text)
             _text->setString(text);
+        setPosition(_cmd.position.x, _cmd.position.y);
     }
 
-    void UIButton::setScale(const float scale)
+    void UIButton::setScale(const float scaleX, const float scaleY)
     {
-        _cmd.scale = {scale, scale};
+        _cmd.scale = {scaleX, scaleY};
     }
 
     void UIButton::reset()

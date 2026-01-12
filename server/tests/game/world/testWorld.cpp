@@ -16,7 +16,7 @@ TEST(World, create_player_adds_all_components)
 {
     Game::World world;
 
-    Ecs::Entity e = world.createPlayer();
+    const Ecs::Entity e = world.createPlayer();
 
     auto &reg = world.registry();
 
@@ -32,8 +32,8 @@ TEST(World, create_player_adds_all_components)
 TEST(World, destroy_player_removes_components)
 {
     Game::World world;
-    auto e = world.createPlayer();
-    auto &reg = world.registry();
+    const auto e = world.createPlayer();
+    const auto &reg = world.registry();
 
     ASSERT_TRUE(reg.hasComponent<Ecs::Health>(e));
     world.destroyEntity(e);

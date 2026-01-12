@@ -17,6 +17,20 @@ ServerRuntime::ServerRuntime(
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid UDP server pointer");
     if (!_tcpServer)
         throw ThreadError("{ServerRuntime::ServerRuntime} Invalid TCP server pointer");
+
+    try {
+        std::error_code ec;
+        std::filesystem::create_directories("data", ec);
+        if (ec)
+            throw ThreadError(std::string("{ServerRuntime} create_directories failed: ") + ec.message());
+        _authDb = std::make_shared<Auth::SqliteDb>("data/users.sqlite3");
+        _userRepo = std::make_shared<Auth::UserStorage>(_authDb);
+        _userRepo->initSchema();
+        _authService = std::make_shared<Auth::AuthService>(_userRepo);
+    } catch (const std::exception &e) {
+        throw ThreadError(std::string("{ServerRuntime} auth init failed: ") + e.what());
+    }
+
     _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
     _roomManager =
@@ -25,7 +39,8 @@ ServerRuntime::ServerRuntime(
     _udpPacketRouter = std::make_shared<UDPPacketRouter>(_sessionManager, _roomManager);
 
     _tcpPacketFactory = std::make_shared<Factory::TCPPacketFactory>(std::make_shared<TCPPacket>());
-    _tcpPacketRouter = std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory);
+    _tcpPacketRouter =
+        std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory, _authService);
     _stopRequested.store(false);
 }
 
@@ -91,18 +106,31 @@ void ServerRuntime::stop()
 
 void ServerRuntime::runReceiver() const
 {
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(16);
+    auto nextTick = clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
         _udpServer->readPackets();
+        if (auto now = clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }
 
 void ServerRuntime::runProcessor() const
 {
+    constexpr auto Tick = std::chrono::milliseconds(16);
+    auto nextTick = std::chrono::steady_clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
-        if (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt))
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
+        for (std::shared_ptr<IPacket> pkt = nullptr; _udpServer->popPacket(pkt);)
             _udpPacketRouter->handlePacket(pkt);
-        else
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if (auto now = std::chrono::steady_clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }
 
@@ -117,6 +145,8 @@ void ServerRuntime::runSnapshot() const
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
 
+        const uint32_t tick = _serverTick.fetch_add(1, std::memory_order_relaxed);
+
         _roomManager->forEachRoom([&](const Engine::Room &room) {
             entities.clear();
             room.gameServer().buildSnapshot(entities);
@@ -124,11 +154,12 @@ void ServerRuntime::runSnapshot() const
             if (entities.empty())
                 return;
 
-            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities)) {
+            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities, tick)) {
                 for (const int sessionId : room.sessions()) {
                     if (const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId)) {
-                        basePacket->setAddress(*addr);
-                        (void) _udpServer->sendPacket(*basePacket);
+                        auto pkt = basePacket->clone();
+                        pkt->setAddress(*addr);
+                        (void) _udpServer->sendPacket(*pkt);
                     }
                 }
             }
@@ -141,9 +172,17 @@ void ServerRuntime::runSnapshot() const
 
 void ServerRuntime::runTcp() const
 {
+    using clock = std::chrono::steady_clock;
+    constexpr auto Tick = std::chrono::milliseconds(50);
+    auto nextTick = clock::now();
+
     while (_running.load(std::memory_order_relaxed)) {
+        std::this_thread::sleep_until(nextTick);
+        nextTick += Tick;
         _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);
+        else if (auto now = clock::now(); now > nextTick + Tick)
+            nextTick = now;
     }
 }

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "AuthContext.hpp"
 #include "EventRegistry.hpp"
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
@@ -34,10 +35,12 @@ namespace Engine
          * @param soundRegistry Shared pointer to the sound registry.
          * @param roomManager Shared pointer to the room manager.
          * @param eventBus Shared pointer to the event bus.
+         * @param authCtx Shared pointer to the auth context.
          */
         explicit MenuState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
             std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-            std::shared_ptr<RoomManager> roomManager, std::shared_ptr<EventBus> eventBus);
+            std::shared_ptr<RoomManager> roomManager, std::shared_ptr<EventBus> eventBus,
+            std::shared_ptr<AuthContext> authCtx);
 
         /**
          * @brief Called when entering the state.
@@ -64,6 +67,10 @@ namespace Engine
         std::shared_ptr<RoomManager> _roomManager;      ///> Lobby/room manager shared across states.
         std::unique_ptr<Menu> _menu;                    ///> Unique pointer to the menu.
 
-        std::shared_ptr<EventBus> _eventBus; ///> Shared pointer to the event bus.
+        std::shared_ptr<EventBus> _eventBus;   ///> Shared pointer to the event bus.
+        std::shared_ptr<AuthContext> _authCtx; ///> Shared pointer to the auth context.
+
+        bool _lastAuthed = false;           ///> Tracks the last authentication status.
+        uint32_t _lastAuthErrorVersion = 0; ///> Tracks the last authentication error version.
     };
 } // namespace Engine

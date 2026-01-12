@@ -33,6 +33,7 @@ namespace World
     {
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
+            case WorldCommand::Type::Destroy: applyDestroy(std::get<size_t>(cmd.payload)); break;
             case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
             default: break;
         }
@@ -45,22 +46,35 @@ namespace World
 
     void ClientWorld::applySnapshot(const std::vector<SnapshotEntity> &entities)
     {
-        std::unordered_set<size_t> receivedIds;
-        receivedIds.reserve(entities.size());
+        static constexpr auto maxTime = std::chrono::milliseconds(500);
+        std::vector<size_t> toDestroy;
 
+        const auto time = std::chrono::steady_clock::now();
         for (const auto &entity : entities) {
-            receivedIds.insert(entity.id);
+            _entityLastSeen[entity.id] = time;
             applySingleSnapshot(entity);
         }
 
-        for (auto it = _entityMap.begin(); it != _entityMap.end();) {
-            if (!receivedIds.contains(it->first)) {
-                _registry.destroyEntity(it->second);
-                it = _entityMap.erase(it);
-            } else {
-                ++it;
-            }
+        for (const auto &[id, lastSeen] : _entityLastSeen) {
+            if ((time - lastSeen) > maxTime)
+                toDestroy.push_back(id);
         }
+
+        for (auto id : toDestroy) {
+            applyDestroy(id);
+            _entityLastSeen.erase(id);
+        }
+    }
+
+    void ClientWorld::applyDestroy(const size_t entityId)
+    {
+        const auto it = _entityMap.find(entityId);
+        if (it == _entityMap.end())
+            return;
+
+        _registry.destroyEntity(it->second);
+        _entityMap.erase(it);
+        _entityLastSeen.erase(entityId);
     }
 
     void ClientWorld::applyCreate(const EntityCreate &data)

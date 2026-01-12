@@ -15,11 +15,11 @@ TEST(Registry, create_entities)
 {
     Ecs::Registry registry;
 
-    auto e1 = registry.createEntity();
-    auto e2 = registry.createEntity();
+    const auto e1 = registry.createEntity();
+    const auto e2 = registry.createEntity();
 
-    ASSERT_EQ(static_cast<size_t>(e1), 0);
-    ASSERT_EQ(static_cast<size_t>(e2), 1);
+    ASSERT_EQ(static_cast<size_t>(e1), 1);
+    ASSERT_EQ(static_cast<size_t>(e2), 2);
 }
 
 TEST(Registry, emplace_and_has)

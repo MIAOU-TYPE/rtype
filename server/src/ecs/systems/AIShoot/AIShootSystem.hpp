@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "WeaponConfig.hpp"
 #include "World.hpp"
 
 #include <cmath>

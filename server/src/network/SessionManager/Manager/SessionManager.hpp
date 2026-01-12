@@ -6,11 +6,12 @@
 */
 
 #pragma once
-
+#include <chrono>
 #include <cstdint>
 #include <mutex>
 #include "Endian.hpp"
 #include "ISessionManager.hpp"
+#include "UserStorage.hpp"
 #include <shared_mutex>
 
 #include <unordered_map>
@@ -114,8 +115,43 @@ namespace Net::Server
          */
         [[nodiscard]] bool isSequenceValid(int sessionId, uint32_t sequence) const noexcept override;
 
+        /**
+         * @brief Clear the identity associated with a session ID.
+         * @param sessionId The ID of the session.
+         */
+        void clearIdentity(int sessionId) override;
+
+        /**
+         * @brief Set the identity for a session ID with a time-to-live (TTL).
+         * @param sessionId The ID of the session.
+         * @param id The identity to set.
+         * @param ttl The time-to-live duration.
+         */
+        void setIdentity(int sessionId, Auth::Identity id, std::chrono::seconds ttl) override;
+
+        /**
+         * @brief Get the identity associated with a session ID.
+         * @param sessionId The ID of the session.
+         * @return An optional containing the identity if it exists, otherwise std::nullopt.
+         */
+        [[nodiscard]] std::optional<Auth::Identity> getIdentity(int sessionId) const override;
+
+        /**
+         * @brief Check if a session ID is authenticated.
+         * @param sessionId The ID of the session.
+         * @return True if the session is authenticated, false otherwise.
+         */
+        [[nodiscard]] bool isAuthed(int sessionId) const override;
+
       private:
-        mutable std::shared_mutex _mutex{}; ///> Mutex for thread-safe access
+        mutable std::shared_mutex _mutex{};      ///> Mutex for thread-safe access
+        using Clock = std::chrono::steady_clock; ///> Clock type for time management
+
+        void clearAuthLocked(int sessionId);       ///> Clear authentication data for a session ID
+        bool isExpiredLocked(int sessionId) const; ///> Check if the authentication for a session ID has expired
+
+        std::unordered_map<int, Auth::Identity> _identityById{};      ///> Identity storage
+        std::unordered_map<int, Clock::time_point> _authExpiryById{}; ///> Authentication expiry storage
 
         std::unordered_map<AddressKey, int, AddressKeyHash> _tcpAddressToId{}; ///> TCP legacy binding
         std::unordered_map<int, sockaddr_in> _idToTcpAddress{};                ///> TCP legacy binding

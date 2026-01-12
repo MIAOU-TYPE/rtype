@@ -71,6 +71,7 @@ namespace Network
             switch (h.type) {
                 case Net::Protocol::TCP::WELCOME: onWelcome(h.requestId, r); break;
                 case Net::Protocol::TCP::ERROR_MESSAGE: onError(h.requestId, r); break;
+                case Net::Protocol::TCP::AUTH_OK: onAuthOk(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOMS_LIST: onRoomsList(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOM_CREATED: onRoomCreated(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOM_JOINED: onRoomJoined(h.requestId, r); break;
@@ -214,5 +215,26 @@ namespace Network
         if (r.remaining() != 0)
             return protocolError(req, "GAME_START: unexpected trailing bytes");
         _sink->onGameStart(req, roomId);
+    }
+
+    void TCPPacketRouter::onAuthOk(const uint32_t req, Net::TCP::Reader &r) const
+    {
+        uint32_t userId = 0;
+        std::string username;
+        uint32_t tokenHi = 0, tokenLo = 0, ttlSec = 0;
+
+        try {
+            userId = r.u32();
+            username = r.str16();
+            tokenHi = r.u32();
+            tokenLo = r.u32();
+            ttlSec = r.u32();
+        } catch (...) {
+            return protocolError(req, "AUTH_OK: malformed payload");
+        }
+        if (r.remaining() != 0)
+            return protocolError(req, "AUTH_OK: unexpected trailing bytes");
+        const uint64_t token = static_cast<uint64_t>(tokenHi) << 32 | tokenLo;
+        _sink->onAuthOk(req, userId, username, token, ttlSec);
     }
 } // namespace Network

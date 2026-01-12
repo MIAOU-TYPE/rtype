@@ -13,9 +13,9 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<Ecs::Health>([&](const Ecs::Entity e, const Ecs::Health &health) {
+        reg.view<Ecs::Health, Ecs::Id>([&](const Ecs::Entity, const Ecs::Health &health, const Ecs::Id &id) {
             if (health.hp <= 0)
-                world.events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(e)});
+                world.events().emit<DestroyEvent>(DestroyEvent{id.id});
         });
     }
 } // namespace Game

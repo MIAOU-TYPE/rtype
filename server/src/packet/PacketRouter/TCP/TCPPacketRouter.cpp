@@ -9,7 +9,7 @@
 
 namespace
 {
-    std::string malformedTcp(const char *stage, const std::size_t need, const std::size_t got)
+    std::string malformedTcp(const char *stage, const size_t need, const size_t got)
     {
         std::string s = "TCP ";
         s += stage;

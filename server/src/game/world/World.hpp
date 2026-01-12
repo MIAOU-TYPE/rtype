@@ -20,6 +20,7 @@
 #include "InputComponent.hpp"
 #include "KillScore.hpp"
 #include "Lifetime.hpp"
+#include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"
 #include "Rand.hpp"

@@ -23,6 +23,7 @@
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
+#include <iomanip>
 
 /**
  * @namespace Net

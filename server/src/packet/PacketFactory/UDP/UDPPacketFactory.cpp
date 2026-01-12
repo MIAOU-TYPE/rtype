@@ -64,74 +64,125 @@ namespace Net::Factory
 
     std::vector<std::shared_ptr<IPacket>> UDPPacketFactory::createSnapshotPackets(
         const std::vector<SnapshotEntity> &entities, const uint32_t serverTick,
-        const std::size_t maxPacketBytes) const noexcept
+        const size_t maxPacketBytes) const noexcept
     {
         try {
             std::vector<std::shared_ptr<IPacket>> out;
-            if (maxPacketBytes <= sizeof(SnapshotBatchHeader) + sizeof(SnapshotEntityData))
+
+            if (maxPacketBytes <= sizeof(SnapshotCompressedHeader) + sizeof(SnapshotEntityData))
                 return out;
 
-            const std::size_t maxEntitiesPerPkt =
-                (maxPacketBytes - sizeof(SnapshotBatchHeader)) / sizeof(SnapshotEntityData);
+            const size_t maxCompBytes = maxPacketBytes - sizeof(SnapshotCompressedHeader);
+
+            const size_t maxEntitiesPerPkt =
+                (maxPacketBytes - sizeof(SnapshotCompressedHeader)) / sizeof(SnapshotEntityData);
 
             if (maxEntitiesPerPkt == 0)
                 return out;
 
-            const std::size_t chunkCount = (entities.size() + maxEntitiesPerPkt - 1) / maxEntitiesPerPkt;
-
-            if (chunkCount > std::numeric_limits<uint16_t>::max()) {
-                std::cerr << "{UDPPacketFactory::createSnapshotPackets} Too many chunks\n";
+            const size_t chunkCount = (entities.size() + maxEntitiesPerPkt - 1) / maxEntitiesPerPkt;
+            if (chunkCount > std::numeric_limits<uint16_t>::max())
                 return {};
-            }
 
             out.reserve(chunkCount);
 
-            for (std::size_t chunkIndex = 0; chunkIndex < chunkCount; ++chunkIndex) {
-                const std::size_t begin = chunkIndex * maxEntitiesPerPkt;
-                const std::size_t end = std::min(begin + maxEntitiesPerPkt, entities.size());
-                const std::size_t count = end - begin;
+            std::vector<char> rawBuf;
+            std::vector<char> compBuf;
 
-                const std::size_t totalSize = sizeof(SnapshotBatchHeader) + count * sizeof(SnapshotEntityData);
+            for (size_t chunkIndex = 0; chunkIndex < chunkCount; ++chunkIndex) {
+                const size_t begin = chunkIndex * maxEntitiesPerPkt;
+                const size_t end = std::min(begin + maxEntitiesPerPkt, entities.size());
+                size_t count = end - begin;
 
-                if (totalSize > std::numeric_limits<uint16_t>::max())
-                    throw FactoryError("{UDPPacketFactory::createSnapshotPackets} chunk too large for uint16 size");
+                while (count > 0) {
+                    const size_t rawSize = count * sizeof(SnapshotEntityData);
+                    if (rawSize > std::numeric_limits<uint16_t>::max())
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} raw too large for uint16");
 
-                auto packet = _packet->newPacket();
-                if (!packet)
-                    throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Failed to create new packet");
+                    rawBuf.resize(rawSize);
 
-                if (totalSize > packet->capacity())
-                    throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Packet capacity too small");
+                    size_t off = 0;
+                    for (size_t i = 0; i < count; ++i) {
+                        const auto &[id, x, y, spriteId] = entities.at(begin + i);
 
-                uint8_t *buf = packet->buffer();
-                if (!buf)
-                    throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Null buffer");
+                        SnapshotEntityData packed{};
+                        packed.id = htonl(static_cast<uint32_t>(id));
+                        packed.x = htons(static_cast<uint16_t>(x));
+                        packed.y = htons(static_cast<uint16_t>(y));
+                        packed.spriteId = static_cast<uint8_t>(spriteId);
 
-                SnapshotBatchHeader hdr{};
-                hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
-                hdr.count = htons(static_cast<uint16_t>(count));
-                hdr.serverTick = htonl(serverTick);
-                hdr.chunkIndex = htons(static_cast<uint16_t>(chunkIndex));
-                hdr.chunkCount = htons(static_cast<uint16_t>(chunkCount));
+                        std::memcpy(rawBuf.data() + off, &packed, sizeof(packed));
+                        off += sizeof(packed);
+                    }
 
-                std::memcpy(buf, &hdr, sizeof(hdr));
-                std::size_t offset = sizeof(hdr);
+                    const int maxDst = LZ4_compressBound(static_cast<int>(rawSize));
+                    compBuf.resize(static_cast<size_t>(maxDst));
 
-                for (std::size_t i = begin; i < end; ++i) {
-                    const auto &[id, x, y, spriteId] = entities.at(i);
+                    const int compSizeI =
+                        LZ4_compress_default(rawBuf.data(), compBuf.data(), static_cast<int>(rawSize), maxDst);
 
-                    SnapshotEntityData packed{};
-                    packed.id = htonl(static_cast<uint32_t>(id));
-                    packed.x = htons(static_cast<uint16_t>(x));
-                    packed.y = htons(static_cast<uint16_t>(y));
-                    packed.spriteId = static_cast<uint8_t>(spriteId);
+                    if (compSizeI <= 0)
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} LZ4_compress_default failed");
 
-                    std::memcpy(buf + offset, &packed, sizeof(packed));
-                    offset += sizeof(packed);
+                    const auto compSize = static_cast<size_t>(compSizeI);
+
+                    const double ratio = rawSize ? (static_cast<double>(compSize) / static_cast<double>(rawSize)) : 0.0;
+
+                    std::cout << std::fixed << std::setprecision(2) << "[SNAPSHOT][tick=" << serverTick << "][chunk "
+                              << chunkIndex + 1 << "/" << chunkCount << "] entities=" << count << " raw=" << rawSize
+                              << "B"
+                              << " comp=" << compSize << "B"
+                              << " saved=" << (rawSize > compSize ? (rawSize - compSize) : 0) << "B"
+                              << " ratio=" << ratio << " totalPacket=" << (sizeof(SnapshotCompressedHeader) + compSize)
+                              << "B"
+                              << " maxPacket=" << maxPacketBytes << "B" << '\n';
+
+                    const size_t uncompressedPacketBytes = sizeof(SnapshotBatchHeader) + rawSize; // ancien format
+                    std::cout << "[SNAPSHOT][tick=" << serverTick << "][chunk " << chunkIndex + 1 << "/" << chunkCount
+                              << "] uncompressedPacket=" << uncompressedPacketBytes << "B"
+                              << " compressedPacket=" << (sizeof(SnapshotCompressedHeader) + compSize) << "B" << '\n';
+
+                    if (compSize > maxCompBytes) {
+                        count /= 2;
+                        continue;
+                    }
+
+                    const size_t totalSize = sizeof(SnapshotCompressedHeader) + compSize;
+                    if (totalSize > std::numeric_limits<uint16_t>::max())
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} chunk too large for uint16 size");
+
+                    auto packet = _packet->newPacket();
+                    if (!packet)
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Failed to create new packet");
+                    if (totalSize > packet->capacity())
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Packet capacity too small");
+
+                    uint8_t *buf = packet->buffer();
+                    if (!buf)
+                        throw FactoryError("{UDPPacketFactory::createSnapshotPackets} Null buffer");
+
+                    SnapshotCompressedHeader hdr{};
+                    hdr.header = makeHeader(Protocol::UDP::SNAPSHOT, VERSION, static_cast<uint16_t>(totalSize));
+                    hdr.count = htons(static_cast<uint16_t>(count));
+                    hdr.serverTick = htonl(serverTick);
+                    hdr.chunkIndex = htons(static_cast<uint16_t>(chunkIndex));
+                    hdr.chunkCount = htons(static_cast<uint16_t>(chunkCount));
+                    hdr.rawSize = htons(static_cast<uint16_t>(rawSize));
+                    hdr.compSize = htons(static_cast<uint16_t>(compSize));
+
+                    std::memcpy(buf, &hdr, sizeof(hdr));
+                    std::memcpy(buf + sizeof(hdr), compBuf.data(), compSize);
+
+                    packet->setSize(totalSize);
+                    out.push_back(std::move(packet));
+                    break;
                 }
 
-                packet->setSize(totalSize);
-                out.push_back(std::move(packet));
+                if (count == 0) {
+                    std::cerr
+                        << "{UDPPacketFactory::createSnapshotPackets} cannot fit even 1 entity in compressed chunk\n";
+                    return {};
+                }
             }
 
             return out;

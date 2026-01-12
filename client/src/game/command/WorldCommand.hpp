@@ -19,6 +19,16 @@ namespace World
     struct DamageInfo {
         uint32_t targetId; ///> ID of the entity that received damage
         uint16_t amount;   ///> Amount of damage dealt
+        bool wasKilled;    ///> True if damage killed the entity, false otherwise
+    };
+
+    /**
+     * @struct DestroyInfo
+     * @brief Information about entity destruction.
+     */
+    struct DestroyInfo {
+        size_t entityId;  ///> ID of the entity to be destroyed
+        bool wasKilled;   ///> True if entity was killed (play sound), false otherwise
     };
 
     /**
@@ -37,6 +47,6 @@ namespace World
         };
 
         Type type;                                                                         ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, size_t> payload; ///> Command payload
+        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, DestroyInfo> payload; ///> Command payload
     };
 } // namespace World

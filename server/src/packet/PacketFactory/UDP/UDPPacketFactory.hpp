@@ -9,6 +9,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <lz4.h>
 #include <map>
 #include <memory>
 #include <utility>
@@ -101,8 +102,7 @@ namespace Net::Factory
          * @return A vector of shared pointers to the created IPackets.
          */
         [[nodiscard]] std::vector<std::shared_ptr<IPacket>> createSnapshotPackets(
-            const std::vector<SnapshotEntity> &entities, uint32_t serverTick,
-            std::size_t maxPacketBytes) const noexcept;
+            const std::vector<SnapshotEntity> &entities, uint32_t serverTick, size_t maxPacketBytes) const noexcept;
 
         /**
          * @brief Creates a score packet with the specified address and score.

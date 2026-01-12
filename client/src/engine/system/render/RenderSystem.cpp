@@ -33,7 +33,7 @@ namespace Engine
                 cmd.frame = animation.frames[anim.frameIndex].rect;
                 cmd.position = {pos.x, pos.y};
 
-                if (drawable.spriteId >= 100 && drawable.spriteId < 200) {
+                if (drawable.spriteId >= 100 && drawable.spriteId < 102) {
                     const float viewportWidth = static_cast<float>(viewportSize.width);
                     const float viewportHeight = static_cast<float>(viewportSize.height);
                     const float frameWidth = static_cast<float>(cmd.frame.w);

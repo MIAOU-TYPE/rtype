@@ -29,10 +29,12 @@ struct SnapshotBatchHeader {
     HeaderData header;   ///> Common header data
     uint16_t count;      ///> Number of entities in the batch
     uint32_t serverTick; ///> Server tick at which the snapshot was taken
+    uint16_t chunkIndex; ///> Index of the current chunk
+    uint16_t chunkCount; ///> Total number of chunks
 };
 
 #pragma pack(pop)
-static_assert(sizeof(SnapshotBatchHeader) == 18, "SnapshotBatchHeader layout mismatch");
+static_assert(sizeof(SnapshotBatchHeader) == 22, "SnapshotBatchHeader layout mismatch");
 
 #pragma pack(push, 1)
 

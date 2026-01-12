@@ -46,12 +46,13 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> UDPPacketFactory::makeDamage(
-        const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept
+        const sockaddr_in &addr, uint32_t id, uint16_t amount, bool wasKilled) const noexcept
     {
         DamageData damageData;
         damageData.header = makeHeader(Protocol::UDP::DAMAGE_EVENT, VERSION, sizeof(DamageData));
         damageData.id = htonl(id);
         damageData.amount = htons(amount);
+        damageData.wasKilled = wasKilled ? 1 : 0;
 
         try {
             auto packet = makePacket<DamageData>(addr, damageData);
@@ -133,7 +134,7 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(const size_t entityId) const noexcept
+    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(const size_t entityId, const bool wasKilled) const noexcept
     {
         try {
             auto packet = _packet->newPacket();
@@ -149,6 +150,7 @@ namespace Net::Factory
             DestroyData destroyData;
             destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));
             destroyData.id = htonl(static_cast<uint32_t>(entityId));
+            destroyData.wasKilled = wasKilled ? 1 : 0;
             std::memcpy(buf, &destroyData, sizeof(DestroyData));
             packet->setSize(sizeof(DestroyData));
             return packet;

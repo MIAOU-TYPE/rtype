@@ -7,10 +7,12 @@
 
 #include "AssetLoader.hpp"
 #include "SpriteLoader.hpp"
+#include <iostream>
 
 namespace Utils
 {
     void AssetLoader::load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
+        const std::shared_ptr<Graphics::IAudioManager> &audioManager,
         const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry)
     {
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss.json", *spriteRegistry);
@@ -32,6 +34,13 @@ namespace Utils
 
         spriteRegistry->forEach([&](const unsigned int, Engine::SpriteDefinition &def) {
             def.textureHandle = textureManager->load(def.texturePath);
+            
+            if (def.shootSoundPath.has_value())
+                def.shootSoundHandle = audioManager->load(def.shootSoundPath.value());
+            if (def.hitSoundPath.has_value())
+                def.hitSoundHandle = audioManager->load(def.hitSoundPath.value());
+            if (def.destroySoundPath.has_value())
+                def.destroySoundHandle = audioManager->load(def.destroySoundPath.value());
         });
     }
 } // namespace Utils

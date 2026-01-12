@@ -9,9 +9,9 @@
 
 namespace
 {
-    [[nodiscard]] bool isRecent(uint32_t a, uint32_t b) noexcept
+    [[nodiscard]] bool isRecent(const uint32_t a, const uint32_t b) noexcept
     {
-        return static_cast<int32_t>(a - b) > 0;
+        return static_cast<int32_t>(a - b) >= 0;
     }
 } // namespace
 
@@ -152,6 +152,9 @@ namespace Ecs
 
     void UDPPacketRouter::handleSnapEntity(const uint8_t *payload, const size_t size) const
     {
+        using clock = std::chrono::steady_clock;
+        static constexpr auto PendingTTL = std::chrono::milliseconds(200);
+
         if (!payload || size < sizeof(SnapshotBatchHeader)) {
             std::cerr << "{UDPPacketRouter::handleSnapEntity} Snapshot batch too small\n";
             return;
@@ -162,29 +165,79 @@ namespace Ecs
 
         const uint16_t count = ntohs(batch.count);
         const uint32_t serverTick = ntohl(batch.serverTick);
+        const uint16_t chunkIndex = ntohs(batch.chunkIndex);
+        const uint16_t chunkCount = ntohs(batch.chunkCount);
+
+        if (chunkCount == 0 || chunkIndex >= chunkCount) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} Bad chunk meta (idx=" << chunkIndex
+                      << ", count=" << chunkCount << ")\n";
+            return;
+        }
+
+        const size_t expectedMin =
+            sizeof(SnapshotBatchHeader) + static_cast<size_t>(count) * sizeof(SnapshotEntityData);
+        if (size < expectedMin) {
+            std::cerr << "{UDPPacketRouter::handleSnapEntity} Truncated snapshot chunk (size=" << size
+                      << ", expected>=" << expectedMin << ")\n";
+            return;
+        }
+
+        const auto now = clock::now();
+        for (auto it = _pending.begin(); it != _pending.end();) {
+            if (now - it->second.t0 > PendingTTL)
+                it = _pending.erase(it);
+            else
+                ++it;
+        }
+
+        auto &acc = _pending[serverTick];
+        if (acc.chunkCount == 0) {
+            acc.chunkCount = chunkCount;
+            acc.received.assign(chunkCount, 0);
+            acc.merged.clear();
+            acc.t0 = now;
+        } else {
+            if (acc.chunkCount != chunkCount) {
+                acc.chunkCount = chunkCount;
+                acc.received.assign(chunkCount, 0);
+                acc.merged.clear();
+                acc.t0 = now;
+            }
+            if (chunkIndex >= acc.chunkCount)
+                return;
+        }
+
+        if (acc.received[chunkIndex])
+            return;
+        acc.received[chunkIndex] = 1;
 
         const uint8_t *cursor = payload + sizeof(SnapshotBatchHeader);
-
-        std::vector<SnapshotEntity> entities;
-        entities.reserve(count);
-
         for (uint16_t i = 0; i < count; ++i) {
-            if (cursor + sizeof(SnapshotEntityData) > payload + size)
-                break;
-
             SnapshotEntityData entityData{};
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
-            SnapshotEntity entity{};
-            entity.id = ntohl(entityData.id);
-            entity.x = ntohs(entityData.x);
-            entity.y = ntohs(entityData.y);
-            entity.spriteId = entityData.spriteId;
+            SnapshotEntity e{};
+            e.id = ntohl(entityData.id);
+            e.x = ntohs(entityData.x);
+            e.y = ntohs(entityData.y);
+            e.spriteId = entityData.spriteId;
 
-            entities.push_back(entity);
+            acc.merged.push_back(e);
             cursor += sizeof(SnapshotEntityData);
         }
-        _sink->onSnapshot(serverTick, entities);
+
+        bool complete = true;
+        for (uint16_t i = 0; i < acc.chunkCount; ++i) {
+            if (!acc.received[i]) {
+                complete = false;
+                break;
+            }
+        }
+        if (!complete)
+            return;
+
+        _sink->onSnapshot(serverTick, acc.merged);
+        _pending.erase(serverTick);
     }
 
     void UDPPacketRouter::handleScore(const uint8_t *payload, const size_t size) const

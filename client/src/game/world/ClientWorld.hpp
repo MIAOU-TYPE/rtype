@@ -12,6 +12,7 @@
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
+#include "SoundRegistry.hpp"
 #include "WorldCommand.hpp"
 #include <unordered_set>
 
@@ -25,10 +26,12 @@ namespace World
     class ClientWorld {
       public:
         /**
-         * @brief Constructs a ClientWorld with the given SpriteRegistry.
+         * @brief Constructs a ClientWorld with the given SpriteRegistry and SoundRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
+         * @param soundRegistry Shared pointer to the SoundRegistry used for playing sounds.
          */
-        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry);
+        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry,
+            std::shared_ptr<Engine::SoundRegistry> soundRegistry);
 
         /**
          * @brief Advances the world state by a given delta time.
@@ -54,6 +57,12 @@ namespace World
          */
         void applySnapshot(const std::vector<SnapshotEntity> &entities);
 
+        /**
+         * @brief Applies damage to an entity and plays hit sound if applicable.
+         * @param damageInfo Information about the damage event.
+         */
+        void applyDamage(const DamageInfo &damageInfo);
+
       private:
         /**
          * @struct EntityCreate
@@ -69,8 +78,11 @@ namespace World
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const Engine::SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
+        std::shared_ptr<Engine::SoundRegistry>
+            _soundRegistry; ///> Shared pointer to the SoundRegistry for sound management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
+        std::unordered_set<size_t> _recentlyDamagedEntities; ///> Entities that took damage since last snapshot
 
         /**
          * @brief Applies a create entity command to the client world.

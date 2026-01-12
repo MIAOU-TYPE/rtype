@@ -65,6 +65,8 @@ namespace Graphics
             sound->play();
             _activeSounds.push_back({handle, std::move(sound)});
             return true;
+        } catch (const std::exception &e) {
+            return false;
         } catch (...) {
             return false;
         }

@@ -159,17 +159,21 @@ namespace Game
         _netToEntity.clear();
         _nextId = 1;
 
-        std::unordered_map<size_t, Ecs::Entity> remap;
+        std::unordered_map<size_t, Ecs::Entity> remapById;
+        std::unordered_map<size_t, Ecs::Entity> remapByEntity;
 
+        int entityCount = 0;
         src.view<Ecs::Id, Ecs::Position, Ecs::Drawable>(
-            [&](Ecs::Entity, const Ecs::Id &id, const Ecs::Position &, const Ecs::Drawable &) {
+            [&](Ecs::Entity srcEnt, const Ecs::Id &id, const Ecs::Position &, const Ecs::Drawable &) {
                 const Ecs::Entity newEnt = dst.createEntity();
-                remap.emplace(id.id, newEnt);
+                remapById.emplace(id.id, newEnt);
+                remapByEntity.emplace(static_cast<size_t>(srcEnt), newEnt);
+                entityCount++;
             });
 
         src.view<Ecs::Id, Ecs::Position, Ecs::Drawable>(
             [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &p, const Ecs::Drawable &d) {
-                const Ecs::Entity newEnt = remap.at(nid.id);
+                const Ecs::Entity newEnt = remapById.at(nid.id);
 
                 dst.emplaceComponent<Ecs::Id>(newEnt, nid);
                 dst.emplaceComponent<Ecs::Position>(newEnt, p);
@@ -181,16 +185,20 @@ namespace Game
             });
 
         auto &srcVel = src.getComponents<Ecs::Velocity>();
-        for (const auto &[oldId, newEnt] : remap) {
-            if (const auto &v = srcVel.at(oldId)) {
+        int velCount = 0;
+        for (const auto &[srcEntityId, newEnt] : remapByEntity) {
+            if (const auto &v = srcVel.at(srcEntityId)) {
                 dst.emplaceComponent<Ecs::Velocity>(newEnt, *v);
+                velCount++;
             }
         }
 
         auto &srcBg = src.getComponents<Ecs::Background>();
-        for (const auto &[oldId, newEnt] : remap) {
-            if (const auto &bg = srcBg.at(oldId)) {
+        int bgCount = 0;
+        for (const auto &[srcEntityId, newEnt] : remapByEntity) {
+            if (const auto &bg = srcBg.at(srcEntityId)) {
                 dst.emplaceComponent<Ecs::Background>(newEnt, *bg);
+                bgCount++;
             }
         }
     }

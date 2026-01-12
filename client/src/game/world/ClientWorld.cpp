@@ -67,9 +67,8 @@ namespace World
                 it = prev;
             }
             _snapshots.insert(it, std::move(snap));
-        } else {
+        } else
             _snapshots.push_back(std::move(snap));
-        }
 
         while (_snapshots.size() > _maxSnapshots)
             _snapshots.pop_front();
@@ -239,14 +238,12 @@ namespace World
         toDestroy.reserve(_entityLastSeen.size());
 
         for (const auto &[id, lastSeen] : _entityLastSeen) {
-            if ((now - lastSeen) > maxAge) {
+            if ((now - lastSeen) > maxAge)
                 toDestroy.push_back(id);
-            }
         }
 
-        for (const auto id : toDestroy) {
+        for (const auto id : toDestroy)
             applyDestroy(id);
-        }
     }
 
 } // namespace World

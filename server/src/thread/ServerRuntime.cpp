@@ -138,7 +138,7 @@ void ServerRuntime::runSnapshot() const
 {
     using clock = std::chrono::steady_clock;
     constexpr auto Tick = std::chrono::milliseconds(50);
-    constexpr std::size_t MaxUdpPacketBytes = 1200;
+    constexpr size_t MaxUdpPacketBytes = 1200;
 
     auto nextTick = clock::now();
     std::vector<SnapshotEntity> entities;

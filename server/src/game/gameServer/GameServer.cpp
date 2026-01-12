@@ -53,13 +53,14 @@ namespace
         std::weak_ptr wServer = server;
 
         const auto *mapPtr = &entityToSession;
+        auto *worldPtr = &world;
 
         world.events().subscribe<DamageEvent>(
-            [wSessions, wFactory, wServer, mapPtr](const DamageEvent &damage) {
+            [wSessions, wFactory, wServer, mapPtr, worldPtr](const DamageEvent &damage) {
                 const auto sessionsL = wSessions.lock();
                 const auto factoryL = wFactory.lock();
                 const auto serverL = wServer.lock();
-                if (!sessionsL || !factoryL || !serverL || !mapPtr)
+                if (!sessionsL || !factoryL || !serverL || !mapPtr || !worldPtr)
                     return;
 
                 const auto it = mapPtr->find(damage.target);
@@ -71,9 +72,14 @@ namespace
                 if (!addr)
                     return;
 
+                bool wasKilled = false;
+                const auto &health = worldPtr->registry().getComponents<Ecs::Health>().at(damage.target);
+                if (health && health->hp <= 0)
+                    wasKilled = true;
+
                 const auto targetId = static_cast<uint32_t>(damage.target);
                 const auto amount = static_cast<uint16_t>(damage.amount);
-                if (const auto pkt = factoryL->makeDamage(*addr, targetId, amount))
+                if (const auto pkt = factoryL->makeDamage(*addr, targetId, amount, wasKilled))
                     (void) serverL->sendPacket(*pkt);
         });
     }
@@ -201,7 +207,7 @@ namespace Game
                 _sessionToEntity.erase(it);
                 if (const auto id = _worldWrite->registry().getComponents<Ecs::Id>().at(static_cast<size_t>(ent));
                     id.has_value())
-                    _worldWrite->events().emit(DestroyEvent(id->id));
+                    _worldWrite->events().emit(DestroyEvent(id->id, true));
                 break;
             }
             case GameCommand::Type::PlayerInput: {

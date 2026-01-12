@@ -6,7 +6,6 @@
 */
 
 #include "LevelManager.hpp"
-#include <iostream>
 
 using json = nlohmann::json;
 

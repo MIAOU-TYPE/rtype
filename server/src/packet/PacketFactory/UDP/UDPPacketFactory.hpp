@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <lz4.h>
@@ -23,7 +24,6 @@
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
-#include <iomanip>
 
 /**
  * @namespace Net

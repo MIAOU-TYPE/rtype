@@ -91,7 +91,14 @@
       "size": { "w": 33, "h": 22 },
       "killScore": 10,
       "sprite": "enemy3",
-      "spriteId": 4
+      "spriteId": 4,
+      "movement": {
+        "type": "zigzag",
+        "params": {
+          "amplitude": 50.0,
+          "frequency": 0.5
+        }
+      }
     },
     "boss": {
       "hp": 500,

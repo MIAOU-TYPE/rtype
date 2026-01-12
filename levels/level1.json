@@ -128,6 +128,16 @@
       ]
     }
   },
+  "obstacles": {
+    "gravityWell": {
+      "spriteId": 15,
+      "size": { "w": 34, "h": 34 },
+      "pullStrength": 150,
+      "damagePerSecond": 10,
+      "radius": 200,
+      "innerRadius": 50
+    }
+  },
   "duration": 120,
   "waves": [
     {
@@ -163,6 +173,13 @@
     },
     {
       "time": 40,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleX": 400,
+      "obstacleY": 365
+    },
+    {
+      "time": 40,
       "enemies": { "smallEnemy": 3, "mediumEnemy": 1 }
     },
     {
@@ -189,6 +206,13 @@
     {
       "time": 75,
       "enemies": { "fastEnemy": 4, "smallEnemy": 2 }
+    },
+    {
+      "time": 78,
+      "enemies": {},
+      "obstacleType": "blackHole",
+      "obstacleX": 400,
+      "obstacleY": 200
     },
     {
       "time": 82,

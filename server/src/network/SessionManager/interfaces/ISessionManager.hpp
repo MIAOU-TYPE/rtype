@@ -17,6 +17,7 @@
 #endif
 
 #include <functional>
+#include "UserStorage.hpp"
 
 /**
  * @namespace Net::Server
@@ -109,5 +110,41 @@ namespace Net::Server
          * @return The session ID, or -1 if not found.
          */
         [[nodiscard]] virtual int getSessionIdFromUdp(const sockaddr_in &udpAddr) const = 0;
+
+        /**
+         * @brief Check if the given sequence number is valid for the session and, if so, update the last seen sequence
+         * number.
+         * @param sessionId The ID of the session.
+         * @param sequence The sequence number to set.
+         */
+        [[nodiscard]] virtual bool isSequenceValid(int sessionId, uint32_t sequence) const noexcept = 0;
+
+        /**
+         * @brief Get the identity associated with a session ID.
+         * @param sessionId The ID of the session.
+         * @return An optional Identity object.
+         */
+        [[nodiscard]] virtual std::optional<Auth::Identity> getIdentity(int sessionId) const = 0;
+
+        /**
+         * @brief Set the identity for a session.
+         * @param sessionId The ID of the session.
+         * @param id The Identity object to set.
+         * @param ttl Time to live for the identity.
+         */
+        virtual void setIdentity(int sessionId, Auth::Identity id, std::chrono::seconds ttl) = 0;
+
+        /**
+         * @brief Clear the identity associated with a session ID.
+         * @param sessionId The ID of the session.
+         */
+        virtual void clearIdentity(int sessionId) = 0;
+
+        /**
+         * @brief Check if a session is authenticated.
+         * @param sessionId The ID of the session.
+         * @return True if authenticated, false otherwise.
+         */
+        [[nodiscard]] virtual bool isAuthed(int sessionId) const = 0;
     };
 } // namespace Net::Server

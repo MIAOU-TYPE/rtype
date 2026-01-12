@@ -29,16 +29,16 @@ TEST(SnapshotSystemTests, SingleEntitySnapshotIsCorrect)
     auto drawable = world.registry().registerComponent<Ecs::Drawable>();
     auto position = world.registry().registerComponent<Ecs::Position>();
 
-    const auto entity = world.registry().createEntity();
-    auto fakeEntity = world.registry().createEntity();
+    const auto entity = world.createEntity();
+    auto fakeEntity = world.createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{1});
     world.registry().emplaceComponent<Ecs::Position>(entity, Ecs::Position{100.f, 200.f});
 
     sys.update(world, snapshot);
     ASSERT_EQ(snapshot.size(), 1);
-    EXPECT_EQ(snapshot[0].spriteId, 1);
-    EXPECT_EQ(snapshot[0].x, 100.f);
-    EXPECT_EQ(snapshot[0].y, 200.f);
+    EXPECT_EQ(snapshot.at(0).spriteId, 1);
+    EXPECT_EQ(snapshot.at(0).x, 100.f);
+    EXPECT_EQ(snapshot.at(0).y, 200.f);
 }
 
 TEST(SnapshotSystemTests, MultipleEntitiesAreCapturedInOrder)
@@ -50,16 +50,17 @@ TEST(SnapshotSystemTests, MultipleEntitiesAreCapturedInOrder)
     auto drawable = world.registry().registerComponent<Ecs::Drawable>();
     auto position = world.registry().registerComponent<Ecs::Position>();
 
-    const auto entity1 = world.registry().createEntity();
+    const auto entity1 = world.createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity1, Ecs::Drawable{3});
     world.registry().emplaceComponent<Ecs::Position>(entity1, Ecs::Position{10.f, 20.f});
 
-    const auto entityUnused = world.registry().createEntity();
+    const auto entityUnused = world.createEntity();
 
-    const auto entity2 = world.registry().createEntity();
+    const auto entity2 = world.createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity2, Ecs::Drawable{5});
     world.registry().emplaceComponent<Ecs::Position>(entity2, Ecs::Position{30.f, 40.f});
 
+    world.registry().emplaceComponent<Ecs::Id>(entity2, Ecs::Id{static_cast<size_t>(entity2)});
     sys.update(world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 2);
@@ -82,9 +83,10 @@ TEST(SnapshotSystemTests, SnapshotIsClearedBeforeWriting)
 
     auto drawable = world.registry().registerComponent<Ecs::Drawable>();
     auto position = world.registry().registerComponent<Ecs::Position>();
-    const auto entity = world.registry().createEntity();
+    const auto entity = world.createEntity();
     world.registry().emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{2});
     world.registry().emplaceComponent<Ecs::Position>(entity, Ecs::Position{50.f, 60.f});
+    world.registry().emplaceComponent<Ecs::Id>(entity, Ecs::Id{3});
     sys.update(world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 1);

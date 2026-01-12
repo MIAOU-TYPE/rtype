@@ -20,7 +20,7 @@ namespace
 
         signalHandler->start();
         signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
-            runtime.stop();
+            runtime.requestStop();
         });
         return signalHandler;
     }
@@ -48,6 +48,7 @@ int main(const int argc, char **argv)
         udpServer->configure(host, port + 1);
         runtime.start();
         runtime.wait();
+        runtime.stop();
         signalHandler->stop();
     } catch (const std::exception &e) {
         std::cerr << "{main}: " << e.what() << std::endl;

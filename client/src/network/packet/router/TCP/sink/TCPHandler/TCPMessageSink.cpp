@@ -49,8 +49,13 @@ namespace Network
         _protocolErrorCbs.emplace_back(std::move(cb));
     }
 
-    void TCPMessageSink::onWelcome(const std::uint32_t req, const std::uint16_t ver, const std::uint32_t sessionId,
-        const std::uint16_t udpPort, const std::uint64_t token)
+    void TCPMessageSink::onAuthOkSubscribe(AuthOkCb cb)
+    {
+        _authOkCbs.emplace_back(std::move(cb));
+    }
+
+    void TCPMessageSink::onWelcome(
+        const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
         _isConnected = true;
         _connectData = {sessionId, token, udpPort};
@@ -58,29 +63,29 @@ namespace Network
         emit(_welcomeCbs, req, ver, sessionId, udpPort, token);
     }
 
-    void TCPMessageSink::onError(const std::uint32_t req, const std::uint16_t code, const std::string_view msg)
+    void TCPMessageSink::onError(const uint32_t req, const uint16_t code, const std::string_view msg)
     {
         emit(_errorCbs, req, code, msg);
     }
 
-    void TCPMessageSink::onRoomsList(const std::uint32_t req, const std::vector<RoomData> &rooms)
+    void TCPMessageSink::onRoomsList(const uint32_t req, const std::vector<RoomData> &rooms)
     {
         _rooms = rooms;
 
         emit(_roomsListCbs, req, _rooms);
     }
 
-    void TCPMessageSink::onRoomCreated(const std::uint32_t req, const std::uint32_t roomId)
+    void TCPMessageSink::onRoomCreated(const uint32_t req, const uint32_t roomId)
     {
         emit(_roomCreatedCbs, req, roomId);
     }
 
-    void TCPMessageSink::onRoomJoined(const std::uint32_t req, const std::uint32_t roomId)
+    void TCPMessageSink::onRoomJoined(const uint32_t req, const uint32_t roomId)
     {
         emit(_roomJoinedCbs, req, roomId);
     }
 
-    void TCPMessageSink::onRoomLeft(const std::uint32_t req, const std::uint32_t roomId)
+    void TCPMessageSink::onRoomLeft(const uint32_t req, const uint32_t roomId)
     {
         _isConnected = false;
         _connectData = {0, 0, 0};
@@ -88,14 +93,30 @@ namespace Network
         emit(_roomLeftCbs, req, roomId);
     }
 
-    void TCPMessageSink::onGameStart(const std::uint32_t req, const std::uint32_t roomId)
+    void TCPMessageSink::onGameStart(const uint32_t req, const uint32_t roomId)
     {
         emit(_gameStartCbs, req, roomId);
     }
 
-    void TCPMessageSink::onProtocolError(const std::uint32_t req, const std::string_view msg)
+    void TCPMessageSink::onProtocolError(const uint32_t req, const std::string_view msg)
     {
         emit(_protocolErrorCbs, req, msg);
+    }
+
+    void TCPMessageSink::onAuthOk(const uint32_t req, const uint32_t userId, const std::string_view username,
+        const uint64_t token, const uint32_t ttlSec)
+    {
+        if (!_isConnected) {
+            emit(_protocolErrorCbs, req, "AUTH_OK received while not connected");
+            return;
+        }
+        if (token == 0) {
+            emit(_protocolErrorCbs, req, "AUTH_OK token == 0");
+            return;
+        }
+        _identity = Identity{userId, std::string(username)};
+        _connectData.token = token;
+        emit(_authOkCbs, req, userId, _identity->username, token, ttlSec);
     }
 
     ConnectInfo TCPMessageSink::getConnectInfo() const noexcept

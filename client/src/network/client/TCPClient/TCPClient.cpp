@@ -63,7 +63,7 @@ namespace Network
 
             std::memset(&_serverAddr, 0, sizeof(_serverAddr));
             _serverAddr.sin_family = AF_INET;
-            _serverAddr.sin_port = htons(static_cast<std::uint16_t>(_port));
+            _serverAddr.sin_port = htons(static_cast<uint16_t>(_port));
             if (::inet_pton(AF_INET, _ip.c_str(), &_serverAddr.sin_addr) != 1)
                 throw TCPClientError("{TCPClient::start} inet_pton failed");
 
@@ -77,6 +77,7 @@ namespace Network
             close();
             throw;
         }
+        std::cout << "{TCPClient::start} TCP Client connect on " << _ip << ":" << _port << std::endl;
     }
 
     void TCPClient::close()
@@ -90,6 +91,7 @@ namespace Network
             _socketFd = kInvalidSocket;
         }
         (void) _netWrapper->cleanupNetwork();
+        std::cout << "{TCPClient::close} TCP Client stopped.\n";
     }
 
     void TCPClient::setNonBlocking(const bool nonBlocking)
@@ -119,7 +121,7 @@ namespace Network
     {
         std::scoped_lock lk(_txMutex);
 
-        std::array<std::uint8_t, 4096> tmp{};
+        std::array<uint8_t, 4096> tmp{};
 
         while (_tx.readable() > 0) {
             const std::size_t want = std::min<std::size_t>(_tx.readable(), tmp.size());
@@ -151,11 +153,11 @@ namespace Network
 
     bool TCPClient::sendPacket(const Net::IPacket &pkt)
     {
-        std::uint32_t size = 0;
+        uint32_t size = 0;
         if (!isSendable(pkt, size))
             return false;
 
-        const std::uint32_t beSize = htonl(size);
+        const uint32_t beSize = htonl(size);
 
         if (tryEnqueueFrame(beSize, pkt, size)) {
             flushWrites();
@@ -170,29 +172,29 @@ namespace Network
         return true;
     }
 
-    bool TCPClient::isSendable(const Net::IPacket &pkt, std::uint32_t &outSize) const noexcept
+    bool TCPClient::isSendable(const Net::IPacket &pkt, uint32_t &outSize) const noexcept
     {
         if (_socketFd == kInvalidSocket || !_isRunning.load())
             return false;
 
-        outSize = static_cast<std::uint32_t>(pkt.size());
+        outSize = static_cast<uint32_t>(pkt.size());
         if (outSize == 0 || outSize > MAX_FRAME)
             return false;
         return true;
     }
 
-    bool TCPClient::tryEnqueueFrame(const std::uint32_t beSize, const Net::IPacket &pkt, const std::uint32_t size)
+    bool TCPClient::tryEnqueueFrame(const uint32_t beSize, const Net::IPacket &pkt, const uint32_t size)
     {
         std::scoped_lock lk(_txMutex);
         return enqueueFrameLocked(beSize, pkt, size);
     }
 
-    bool TCPClient::enqueueFrameLocked(const std::uint32_t beSize, const Net::IPacket &pkt, const std::uint32_t size)
+    bool TCPClient::enqueueFrameLocked(const uint32_t beSize, const Net::IPacket &pkt, const uint32_t size)
     {
         if (_tx.writable() < (4u + size))
             return false;
 
-        if (!_tx.write(reinterpret_cast<const std::uint8_t *>(&beSize), 4))
+        if (!_tx.write(reinterpret_cast<const uint8_t *>(&beSize), 4))
             return false;
 
         if (!_tx.write(pkt.buffer(), size))
@@ -204,21 +206,21 @@ namespace Network
     void TCPClient::parseFrames() noexcept
     {
         while (_rx.readable() >= 4u) {
-            std::uint8_t hdr[4]{};
+            uint8_t hdr[4]{};
             if (!_rx.peek(hdr, 4))
                 return close();
 
-            std::uint32_t beSize = 0;
+            uint32_t beSize = 0;
             std::memcpy(&beSize, hdr, 4);
 
-            const std::uint32_t size = ntohl(beSize);
+            const uint32_t size = ntohl(beSize);
             if (size == 0 || size > MAX_FRAME)
                 return close();
 
             if (_rx.readable() < (4u + size))
                 return;
 
-            std::uint8_t throwAway[4]{};
+            uint8_t throwAway[4]{};
             (void) _rx.read(throwAway, 4);
 
             auto p = getTemplatedPacket();
@@ -244,7 +246,7 @@ namespace Network
             return;
 
         flushWrites();
-        std::array<std::uint8_t, 4096> tmp{};
+        std::array<uint8_t, 4096> tmp{};
 
         while (true) {
             const auto r = _netWrapper->recv(_socketFd, tmp.data(), tmp.size(), 0);

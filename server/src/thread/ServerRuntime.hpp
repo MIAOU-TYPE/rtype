@@ -7,9 +7,11 @@
 
 #pragma once
 #include <atomic>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <thread>
+#include "AuthService.hpp"
 #include "GameServer.hpp"
 #include "IServer.hpp"
 #include "RoomManager.hpp"
@@ -69,7 +71,7 @@ namespace Net::Thread
         /**
          * @brief Destroy the Server Runtime object
          */
-        ~ServerRuntime();
+        ~ServerRuntime() = default;
 
         /**
          * @brief Wait for the server to stop
@@ -81,6 +83,12 @@ namespace Net::Thread
          * Launches threads for receiving and processing packets
          */
         void start();
+
+        /**
+         * @brief Request to stop the server runtime
+         * Sets the stop requested flag to true
+         */
+        void requestStop() noexcept;
 
         /**
          * @brief Stop the server runtime
@@ -117,6 +125,10 @@ namespace Net::Thread
         std::shared_ptr<TCPPacketRouter> _tcpPacketRouter; ///> Routes incoming TCP packets to appropriate handlers
         std::shared_ptr<Factory::TCPPacketFactory> _tcpPacketFactory; ///> Builds outgoing TCP packets.
 
+        std::shared_ptr<Auth::SqliteDb> _authDb;         ///> Authentication database
+        std::shared_ptr<Auth::UserStorage> _userRepo;    ///> User repository for managing user data
+        std::shared_ptr<Auth::AuthService> _authService; ///> Authentication service
+
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
         std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms
 
@@ -125,9 +137,10 @@ namespace Net::Thread
         std::thread _snapshotThread;  ///> Thread for handling snapshots
         std::thread _tcpThread;       ///> Thread for handling TCP packets
 
-        std::mutex _mutex;                       ///> Mutex for synchronizing access
-        std::condition_variable _cv;             ///> Condition variable for signaling
-        std::atomic<bool> _stopRequested{false}; ///> Flag to indicate if a stop has been requested
-        std::atomic<bool> _running{false};       ///> Atomic flag to indicate if the server is running
+        std::mutex _mutex;                            ///> Mutex for synchronizing access
+        std::condition_variable _cv;                  ///> Condition variable for signaling
+        std::atomic<bool> _stopRequested{false};      ///> Flag to indicate if a stop has been requested
+        std::atomic<bool> _running{false};            ///> Atomic flag to indicate if the server is running
+        mutable std::atomic<uint32_t> _serverTick{0}; ///> Atomic counter for server ticks
     };
 } // namespace Net::Thread

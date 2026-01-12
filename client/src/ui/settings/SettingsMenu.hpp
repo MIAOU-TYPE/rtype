@@ -11,8 +11,10 @@
 #include <fstream>
 #include <memory>
 #include <stdexcept>
+#include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
+#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"
@@ -50,7 +52,7 @@ namespace Engine
     /**
      * @brief Class representing the settings menu of the game.
      */
-    class SettingsMenu {
+    class SettingsMenu final : public AMenu {
       public:
         /**
          * @brief Construct a new Settings Menu object.
@@ -66,12 +68,12 @@ namespace Engine
          * @brief Update the settings menu state.
          * @param frame The current input frame.
          */
-        void update(const InputFrame &frame);
+        void update(const InputFrame &frame) override;
 
         /**
          * @brief Render the settings menu.
          */
-        void render() const;
+        void render() const override;
 
         /**
          * @brief Called when entering the settings menu.
@@ -83,26 +85,33 @@ namespace Engine
          *
          * @return true if the user wants to go back, false otherwise.
          */
-        bool wantsBack() const noexcept;
+        [[nodiscard]] bool wantsBack() const noexcept;
 
         /**
          * @brief Check if the screen resolution has been changed.
          *
          * @return true if the resolution has been changed, false otherwise.
          */
-        bool resolutionChanged() noexcept;
+        [[nodiscard]] bool resolutionChanged() noexcept;
 
         /**
          * @brief Get the current screen resolution.
          *
          * @return The current screen resolution.
          */
-        Graphics::Extent2u currentResolution() const noexcept;
+        [[nodiscard]] Graphics::Extent2u currentResolution() const noexcept;
+
+        /**
+         * @brief Check if the controls preset has been changed.
+         *
+         * @return true if the controls preset has been changed, false otherwise.
+         */
+        [[nodiscard]] bool controlsChanged() const noexcept;
 
         /**
          * @brief Handle resizing of the settings menu.
          */
-        void layout();
+        void layout() override;
 
       private:
         /**
@@ -110,6 +119,56 @@ namespace Engine
          * @param frame The current input frame.
          */
         void handleInput(const InputFrame &frame);
+
+        /**
+         * @brief Handle mouse pressed events.
+         * @param frame The current input frame.
+         */
+        void handleMousePressed(const InputFrame &frame) const;
+
+        /**
+         * @brief Handle mouse released events.
+         * @param frame The current input frame.
+         */
+        void handleMouseReleased(const InputFrame &frame);
+
+        /**
+         * @brief Handle key pressed events.
+         * @param frame The current input frame.
+         */
+        void handleKeyPressed(const InputFrame &frame);
+
+        /**
+         * @brief Handle video settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a video settings button was released, false otherwise.
+         */
+        [[nodiscard]] bool handleVideoReleased(float mx, float my);
+
+        /**
+         * @brief Handle controls settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a controls settings button was released, false otherwise.
+         */
+        [[nodiscard]] bool handleControlsReleased(float mx, float my);
+
+        /**
+         * @brief Handle audio settings button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if an audio settings button was released, false otherwise.
+         */
+        [[nodiscard]] bool handleAudioReleased(float mx, float my);
+
+        /**
+         * @brief Handle navigation button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a navigation button was released, false otherwise.
+         */
+        [[nodiscard]] bool handleNavigationReleased(float mx, float my);
 
         /**
          * @brief Apply volume change to music registry, handling mute state.
@@ -125,12 +184,8 @@ namespace Engine
          */
         void applySoundVolumeChange(size_t volume, bool isMuted) noexcept;
 
-        std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer used for rendering the settings menu
-        std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry
-        std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Sound registry
-
-        Graphics::TextureHandle _backgroundTexture; ///> Texture handle for the background image
-        RenderCommand _backgroundCmd;               ///> Render command for the background image
+        std::shared_ptr<MusicRegistry> _musicRegistry; ///> Music registry
+        std::shared_ptr<SoundRegistry> _soundRegistry; ///> Sound registry
 
         std::unique_ptr<UI::UIButton> _colorBlindMode; ///> Colorblind mode button
         std::unique_ptr<UI::UIButton> _colorBlindNext; ///> Next colorblind mode button
@@ -155,8 +210,11 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _sfxVolDown;    ///> Decrease SFX volume
         std::unique_ptr<UI::UIButton> _muteMusic;     ///> Mute/unmute music
         std::unique_ptr<UI::UIButton> _muteSFX;       ///> Mute/unmute SFX
+        std::unique_ptr<UI::UIButton> _controls;      ///> Current controls preset display button
+        std::unique_ptr<UI::UIButton> _controlsNext;  ///> Next controls preset button
 
-        bool _backRequested = false; ///> Flag indicating if the user wants to go back
+        bool _backRequested = false;   ///> Flag indicating if the user wants to go back
+        bool _controlsChanged = false; ///> Flag indicating if the controls preset has been changed
 
         /**
          * @brief List of available screen resolutions.

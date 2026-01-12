@@ -82,6 +82,11 @@ namespace Game
             const std::string &levelPath = "levels/level1.json");
 
         /**
+         * @brief Reset the game server to its initial state.
+         */
+        void reset();
+
+        /**
          * @brief Called when a new player connects.
          *
          * Creates a new entity in the world and associates it with the session ID.
@@ -138,6 +143,12 @@ namespace Game
          * @param out Vector to populate with snapshot entities.
          */
         void buildSnapshot(std::vector<SnapshotEntity> &out) const;
+
+        /**
+         * @brief Access the event registry.
+         * @return Reference to the event registry.
+         */
+        [[nodiscard]] Ecs::EventsRegistry &events() const noexcept;
 
       private:
         mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.

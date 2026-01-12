@@ -117,7 +117,7 @@ namespace Ecs
 
       private:
         /** @brief Counter used to assign unique IDs to entities */
-        size_t _entityCounter = 0;
+        size_t _entityCounter = 1;
 
         /** @brief Stores all registered component arrays indexed by type */
         std::unordered_map<std::type_index, std::any> _entityToIndex = {};

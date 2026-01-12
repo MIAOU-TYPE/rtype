@@ -53,6 +53,7 @@ namespace Ecs
 
         /**
          * @brief Called when a SNAPSHOT message is received.
+         * @param data Vector of SnapshotEntity representing the game state.
          */
         void onSnapshot(const std::vector<SnapshotEntity> &data) override;
 
@@ -61,6 +62,12 @@ namespace Ecs
          * @param score The score received from the server.
          */
         void onScore(uint32_t score) override;
+
+        /**
+         * @brief Called when a DESTROY message is received.
+         * @param entityId The ID of the entity to be destroyed.
+         */
+        void onDestroy(size_t entityId) override;
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>

@@ -34,7 +34,7 @@ namespace Graphics
          * @param color Text color.
          * @return A new IText instance with font/size/color already configured.
          */
-        std::unique_ptr<IText> createText(unsigned int characterSize, const Color &color) override;
+        [[nodiscard]] std::unique_ptr<IText> createText(unsigned int characterSize, const Color &color) override;
 
         /**
          * @brief Clears all managed text resources.

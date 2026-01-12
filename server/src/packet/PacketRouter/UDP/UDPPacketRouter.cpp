@@ -17,7 +17,12 @@ UDPPacketRouter::UDPPacketRouter(
 bool UDPPacketRouter::validateHeader(const IPacket &pkt, const HeaderData &header)
 {
     if (pkt.size() < sizeof(HeaderData)) {
-        std::cerr << "{UDPPacketRouter::validateHeader} Dropped: packet too small)" << std::endl;
+        std::cerr << "{UDPPacketRouter::validateHeader} Dropped: packet too small" << std::endl;
+        return false;
+    }
+
+    if (std::memcmp(header.magic, kPacketMagic, 4) != 0) {
+        std::cerr << "{UDPPacketRouter::validateHeader} Dropped: bad magic\n";
         return false;
     }
 
@@ -27,12 +32,11 @@ bool UDPPacketRouter::validateHeader(const IPacket &pkt, const HeaderData &heade
         return false;
     }
 
-    if (const std::uint16_t declaredSize = ntohs(header.size); declaredSize != pkt.size()) {
+    if (const uint16_t declaredSize = header.size; declaredSize != pkt.size()) {
         std::cerr << "{UDPPacketRouter} Dropped: size mismatch "
                   << "(header=" << declaredSize << ", actual=" << pkt.size() << ")" << std::endl;
         return false;
     }
-
     return true;
 }
 
@@ -50,11 +54,15 @@ bool UDPPacketRouter::isPacketValid(const std::shared_ptr<IPacket> &packet) noex
 
 bool UDPPacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader) noexcept
 {
-    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
-
-    if (!validateHeader(packet, outHeader))
+    if (!packet.buffer())
         return false;
-    return true;
+    if (packet.size() < sizeof(HeaderData))
+        return false;
+
+    std::memcpy(&outHeader, packet.buffer(), sizeof(HeaderData));
+    outHeader.size = ntohs(outHeader.size);
+    outHeader.sequence = ntohl(outHeader.sequence);
+    return validateHeader(packet, outHeader);
 }
 
 void UDPPacketRouter::dispatchPacket(
@@ -62,8 +70,22 @@ void UDPPacketRouter::dispatchPacket(
 {
     switch (header.type) {
         case Protocol::UDP::INPUT: handleInput(sessionId, payload, payloadSize); break;
-        case Protocol::UDP::PING: handlePing(sessionId); break;
-        case Protocol::UDP::DISCONNECT: handleDisconnect(sessionId); break;
+
+        case Protocol::UDP::PING:
+            if (payloadSize != sizeof(DefaultData)) {
+                std::cerr << "{UDPPacketRouter} Dropped PING: bad size" << std::endl;
+                break;
+            }
+            handlePing(sessionId);
+            break;
+
+        case Protocol::UDP::DISCONNECT:
+            if (payloadSize != sizeof(DefaultData)) {
+                std::cerr << "{UDPPacketRouter} Dropped DISCONNECT: bad size\n";
+                break;
+            }
+            handleDisconnect(sessionId);
+            break;
         default: std::cerr << "{UDPPacketRouter} Unknown packet type: " << static_cast<int>(header.type) << '\n'; break;
     }
 }
@@ -83,47 +105,63 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
     if (!extractHeader(*packet, header))
         return;
 
-    const std::uint8_t *raw = packet->buffer();
+    const uint8_t *raw = packet->buffer();
     const std::size_t total = packet->size();
-    const std::size_t payloadSize = total - sizeof(HeaderData);
-    const std::uint8_t *payload = raw + sizeof(HeaderData);
 
+    if (handleConnect(header, raw, total, from))
+        return;
+
+    const int sessionId = _sessions->getSessionIdFromUdp(*from);
+    if (sessionId < 0)
+        return;
+    if (!_sessions->isSequenceValid(sessionId, header.sequence)) {
+        std::cerr << "{UDPPacketRouter} Dropped: invalid sequence number from session " << sessionId << std::endl;
+        return;
+    }
+    dispatchPacket(sessionId, header, raw, total);
+}
+
+bool UDPPacketRouter::handleConnect(
+    const HeaderData &header, const uint8_t *raw, const std::size_t total, const sockaddr_in *from) const
+{
     if (header.type == Protocol::UDP::CONNECT) {
         if (total != sizeof(ConnectData)) {
             std::cerr << "{UDPPacketRouter} Dropped CONNECT: bad size\n";
-            return;
+            return true;
         }
 
-        const auto *cd = reinterpret_cast<const ConnectData *>(raw);
+        if (!raw)
+            return true;
+        ConnectData cd{};
+        std::memcpy(&cd, raw, sizeof(cd));
 
-        const uint32_t sid = ntohl(cd->sessionId);
+        const uint32_t sid = ntohl(cd.sessionId);
         const uint64_t token =
-            (static_cast<uint64_t>(ntohl(cd->tokenHi)) << 32) | static_cast<uint64_t>(ntohl(cd->tokenLo));
+            (static_cast<uint64_t>(ntohl(cd.tokenHi)) << 32) | static_cast<uint64_t>(ntohl(cd.tokenLo));
 
         if (_sessions->getUdpToken(static_cast<int>(sid)) != token) {
             std::cerr << "{UDPPacketRouter} Dropped CONNECT: bad token\n";
-            return;
+            return true;
         }
 
         if (!_sessions->bindUdp(static_cast<int>(sid), *from))
             std::cerr << "{UDPPacketRouter} CONNECT: bindUdp failed (unknown session?)\n";
-        return;
+        return true;
     }
-    const int sessionId = _sessions->getSessionIdFromUdp(*from);
-    if (sessionId < 0)
-        return;
-
-    dispatchPacket(sessionId, header, payload, payloadSize);
+    return false;
 }
 
-void UDPPacketRouter::handleInput(const int sessionId, const std::uint8_t *payload, const std::size_t payloadSize) const
+void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, const std::size_t payloadSize) const
 {
-    if (!payload || payloadSize < sizeof(uint8_t)) {
-        std::cerr << "{UDPPacketRouter::handleInput} Dropped INPUT: missing payload" << std::endl;
+    if (!payload || payloadSize != sizeof(PlayerInputData)) {
+        std::cerr << "{UDPPacketRouter::handleInput} Dropped INPUT: bad size\n";
         return;
     }
 
-    const std::uint8_t flags = payload[0];
+    PlayerInputData pkt{};
+    std::memcpy(&pkt, payload, sizeof(pkt));
+
+    const uint8_t flags = pkt.flags;
     const bool up = (flags & 0x01u) != 0;
     const bool down = (flags & 0x02u) != 0;
     const bool left = (flags & 0x04u) != 0;

@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "DefaultData.hpp"
+#include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
 #include "IClientMessageSink.hpp"
@@ -100,13 +101,24 @@ namespace Ecs
 
         /**
          * @brief Handler for SNAP_ENTITY packets.
+         * @param payload Pointer to the payload data of the SNAP_ENTITY packet.
+         * @param size Size of the payload data.
          */
         void handleSnapEntity(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for SCORE packets.
+         * @param payload Pointer to the payload data of the SCORE packet.
+         * @param size Size of the payload data.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
+
+        /**
+         * @brief Handler for DESTROY packets.
+         * @param payload Pointer to the payload data of the DESTROY packet.
+         * @param size Size of the payload data.
+         */
+        void handleDestroy(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.
@@ -122,9 +134,9 @@ namespace Ecs
          * @param payload Pointer to the payload data of the packet
          * @param payloadSize Size of the payload data.
          */
-        void dispatchPacket(const HeaderData &header, const std::uint8_t *payload, std::size_t payloadSize) const;
+        void dispatchPacket(const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
 
-        static constexpr std::uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
+        static constexpr uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
 
         std::shared_ptr<IClientMessageSink> _sink; ///> Pointer to the IClientMessageSink for handling routed messages.
     };

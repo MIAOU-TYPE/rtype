@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include "AnimationSystem.hpp"
@@ -13,7 +14,7 @@
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
-#include <unordered_set>
+#include <unordered_map>
 
 namespace World
 {
@@ -49,10 +50,22 @@ namespace World
         void applyCommand(const WorldCommand &cmd);
 
         /**
+         * @brief Gets the current score.
+         * @return The current score.
+         */
+        uint32_t getScore() const;
+
+        /**
          * @brief Applies a snapshot of entities to the client world.
          * @param entities Vector of snapshot entities to apply.
          */
         void applySnapshot(const std::vector<SnapshotEntity> &entities);
+
+        /**
+         * @brief Applies a destroy entity command to the client world.
+         * @param entityId The ID of the entity to be destroyed.
+         */
+        void applyDestroy(size_t entityId);
 
       private:
         /**
@@ -72,6 +85,8 @@ namespace World
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
 
+        uint32_t _score = 0; ///> Current player score
+
         /**
          * @brief Applies a create entity command to the client world.
          * @param data The data for the entity to be created.
@@ -83,5 +98,8 @@ namespace World
          * @param entity The snapshot entity data to apply.
          */
         void applySingleSnapshot(const SnapshotEntity &entity);
+
+        std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
+            _entityLastSeen; ///> Tracks the last seen time for each entity
     };
 } // namespace World

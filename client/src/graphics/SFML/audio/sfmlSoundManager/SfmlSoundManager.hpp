@@ -45,16 +45,16 @@ namespace Graphics
 
         /**
          * @brief Unload a sound or music resource.
-         * @param handle Handle to the audio resource to unload.
+         * @param audioHandle Handle to the audio resource to unload.
          */
-        void unload(const AudioHandle handle) override;
+        void unload(AudioHandle audioHandle) override;
 
         /**
          * @brief Check if an audio handle is valid.
-         * @param handle The audio handle to check.
+         * @param audioHandle The audio handle to check.
          * @return True if the handle is valid, false otherwise.
          */
-        [[nodiscard]] bool isValid(const AudioHandle handle) const noexcept override;
+        [[nodiscard]] bool isValid(AudioHandle audioHandle) const noexcept override;
 
         /**
          * @brief Clear all loaded audio resources.
@@ -63,29 +63,29 @@ namespace Graphics
 
         /**
          * @brief Play the sound.
-         * @param handle The audio handle.
+         * @param audioHandle The audio handle.
          */
-        bool play(AudioHandle handle) override;
+        bool play(AudioHandle audioHandle) override;
 
         /**
          * @brief Stop the sound.
-         * @param handle The audio handle.
+         * @param audioHandle The audio handle.
          */
-        void stop(AudioHandle handle) override;
+        void stop(AudioHandle audioHandle) override;
 
         /**
          * @brief Set the volume of the sound.
-         * @param handle The audio handle.
+         * @param audioHandle The audio handle.
          * @param volume Volume level (0.0 to 100.0).
          */
-        void setVolume(AudioHandle handle, float volume) override;
+        void setVolume(AudioHandle audioHandle, float volume) override;
 
         /**
          * @brief Set whether the sound should loop.
-         * @param handle The audio handle.
+         * @param audioHandle The audio handle.
          * @param loop True to loop, false otherwise.
          */
-        void setLooping(AudioHandle handle, bool loop) override;
+        void setLooping(AudioHandle audioHandle, bool loop) override;
 
         /**
          * @brief Set the global volume multiplier for all active audio.

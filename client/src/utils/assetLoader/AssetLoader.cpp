@@ -6,8 +6,7 @@
 */
 
 #include "AssetLoader.hpp"
-#include "SpriteLoader.hpp"
-#include <iostream>
+
 namespace Utils
 {
     void AssetLoader::load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
@@ -24,6 +23,8 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/explose.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy2.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/player.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/player2.json", *spriteRegistry);

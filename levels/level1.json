@@ -19,7 +19,8 @@
         "cooldown": 2.0,
         "projectileSpeed": 130,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 30 }
+        "muzzle": { "x": -20, "y": 30 },
+        "projectileSpriteId": 9
       }
     },
     "mediumEnemy": {
@@ -35,7 +36,8 @@
         "cooldown": 2.0,
         "projectileSpeed": 100,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 23 }
+        "muzzle": { "x": -20, "y": 23 },
+        "projectileSpriteId": 9
       }
     },
     "mediumEnemyTriple": {
@@ -51,7 +53,8 @@
         "cooldown": 2.2,
         "projectileSpeed": 110,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 23 }
+        "muzzle": { "x": -20, "y": 23 },
+        "projectileSpriteId": 12
       }
     },
     "mediumEnemyWide": {
@@ -67,7 +70,8 @@
         "cooldown": 2.6,
         "projectileSpeed": 105,
         "damage": 45,
-        "muzzle": { "x": -20, "y": 23 }
+        "muzzle": { "x": -20, "y": 23 },
+        "projectileSpriteId": 12
       }
     },
     "mediumEnemyFive": {
@@ -83,7 +87,8 @@
         "cooldown": 3.0,
         "projectileSpeed": 110,
         "damage": 40,
-        "muzzle": { "x": -20, "y": 23 }
+        "muzzle": { "x": -20, "y": 23 },
+        "projectileSpriteId": 12
       }
     },
     "fastEnemy": {
@@ -107,7 +112,8 @@
         "cooldown": 1.6,
         "projectileSpeed": 140,
         "damage": 35,
-        "muzzle": { "x": 55, "y": 72 }
+        "muzzle": { "x": 55, "y": 72 },
+        "projectileSpriteId": 12
       }
     }
   },

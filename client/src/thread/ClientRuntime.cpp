@@ -42,7 +42,7 @@ namespace Thread
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_unique<World::ClientWorld>(_spriteRegistry);
+        _world = std::make_shared<World::ClientWorld>(_spriteRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _authCtx = std::make_shared<Engine::AuthContext>();
 
@@ -143,7 +143,13 @@ namespace Thread
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
-                    _stateManager->changeState(std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry));
+                    std::weak_ptr<World::ClientWorld> w = _world;
+                    _stateManager->changeState(
+                        std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
+                            if (auto s = w.lock())
+                                return static_cast<int>(s->getScore());
+                            return 0;
+                        }));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }

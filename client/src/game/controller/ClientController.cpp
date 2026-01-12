@@ -40,7 +40,7 @@ namespace Ecs
 
     void ClientController::onScore(const uint32_t score)
     {
-        std::cout << "onScore: " << score << std::endl;
+        _commandBuffer.get().push({World::WorldCommand::Type::Score, score});
     }
 
     void ClientController::onDestroy(const size_t entityId)

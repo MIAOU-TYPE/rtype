@@ -27,7 +27,7 @@ namespace World
             Score,    ///> Score update
         };
 
-        Type type;                                                         ///> Type of the command
+        Type type;                                                                           ///> Type of the command
         std::variant<std::monostate, std::vector<SnapshotEntity>, size_t, uint32_t> payload; ///> Command payload
     };
 } // namespace World

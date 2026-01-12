@@ -12,6 +12,8 @@
 #include <memory>
 
 #include <chrono>
+#include <lz4.h>
+#include <utility>
 #include <vector>
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"

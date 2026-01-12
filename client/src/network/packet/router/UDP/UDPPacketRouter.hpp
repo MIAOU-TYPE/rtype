@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 
+#include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
@@ -107,6 +108,11 @@ namespace Ecs
          * @brief Handler for SCORE packets.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
+
+        /**
+         * @brief Handler for DAMAGE_EVENT packets.
+         */
+        void handleDamageEvent(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

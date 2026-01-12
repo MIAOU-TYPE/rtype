@@ -42,4 +42,9 @@ namespace Ecs
     {
         std::cout << "onScore: " << score << std::endl;
     }
+
+    void ClientController::onDamage(const uint32_t targetId, const uint16_t amount)
+    {
+        _commandBuffer.get().push({World::WorldCommand::Type::Damage, World::DamageInfo{targetId, amount}});
+    }
 }; // namespace Ecs

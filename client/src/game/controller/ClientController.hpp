@@ -63,6 +63,13 @@ namespace Ecs
          */
         void onScore(uint32_t score) override;
 
+        /**
+         * @brief Called when a DAMAGE_EVENT message is received.
+         * @param targetId The ID of the entity that received damage.
+         * @param amount The amount of damage dealt.
+         */
+        void onDamage(uint32_t targetId, uint16_t amount) override;
+
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
             _commandBuffer; ///> Reference to the world command buffer

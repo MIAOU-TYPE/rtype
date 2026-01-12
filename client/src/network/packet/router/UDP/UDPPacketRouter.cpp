@@ -60,6 +60,7 @@ namespace Ecs
                     break;
                 handlePong();
                 break;
+            case Net::Protocol::UDP::DAMAGE_EVENT: handleDamageEvent(payload, payloadSize); break;
             case Net::Protocol::UDP::SNAPSHOT: handleSnapEntity(payload, payloadSize); break;
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
             default:
@@ -196,5 +197,20 @@ namespace Ecs
         const uint32_t score = ntohs(scoreData.score);
 
         _sink->onScore(score);
+    }
+
+    void UDPPacketRouter::handleDamageEvent(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(DamageData)) {
+            std::cerr << "{UDPPacketRouter::handleDamageEvent} Dropped DAMAGE_EVENT: bad size\n";
+            return;
+        }
+
+        DamageData damageData{};
+        std::memcpy(&damageData, payload, sizeof(damageData));
+        const uint32_t targetId = ntohl(damageData.id);
+        const uint16_t amount = ntohs(damageData.amount);
+
+        _sink->onDamage(targetId, amount);
     }
 } // namespace Ecs

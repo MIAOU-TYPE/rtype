@@ -53,5 +53,12 @@ namespace Ecs
          * @param score The score received from the server.
          */
         virtual void onScore(uint32_t score) = 0;
+
+        /**
+         * @brief Called when a DAMAGE_EVENT message is received.
+         * @param targetId The ID of the entity that received damage.
+         * @param amount The amount of damage dealt.
+         */
+        virtual void onDamage(uint32_t targetId, uint16_t amount) = 0;
     };
 } // namespace Ecs

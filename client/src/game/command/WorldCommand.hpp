@@ -13,6 +13,15 @@
 namespace World
 {
     /**
+     * @struct DamageInfo
+     * @brief Information about damage dealt to an entity.
+     */
+    struct DamageInfo {
+        uint32_t targetId; ///> ID of the entity that received damage
+        uint16_t amount;   ///> Amount of damage dealt
+    };
+
+    /**
      * @struct WorldCommand
      * @brief Represents a command sent to or from the game world.
      */
@@ -23,9 +32,10 @@ namespace World
             Pong,     ///> Pong response
             GameOver, ///> Game over notification
             Snapshot, ///> Snapshot of the world state
+            Damage,   ///> Damage event
         };
 
-        Type type;                                                         ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>> payload; ///> Command payload
+        Type type;                                                                         ///> Type of the command
+        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo> payload; ///> Command payload
     };
 } // namespace World

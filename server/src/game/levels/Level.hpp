@@ -26,16 +26,27 @@ namespace Game
     };
 
     /**
+     * @brief Member of an enemy group.
+     */
+    struct GroupMember {
+        std::string enemyType; ///> Type of enemy to spawn
+        float offsetX = 0.f;   ///> X offset from spawn position
+        float offsetY = 0.f;   ///> Y offset from spawn position
+    };
+
+    /**
      * @brief Definition of an enemy type.
      */
     struct EnemyDefinition {
-        int hp = 0;                 ///> Hit points
-        float speed = 0.f;          ///> Movement speed
-        float colW = 0.f;           ///> Collision width
-        float colH = 0.f;           ///> Collision height
-        unsigned int sprite;        ///> Sprite asset path
-        unsigned int killScore = 0; ///> Score awarded for killing this enemy
-        ShootDefinition shoot;      ///> Shooting behavior
+        int hp = 0;                       ///> Hit points
+        float speed = 0.f;                ///> Movement speed
+        float colW = 0.f;                 ///> Collision width
+        float colH = 0.f;                 ///> Collision height
+        unsigned int sprite;              ///> Sprite asset path
+        unsigned int killScore = 0;       ///> Score awarded for killing this enemy
+        ShootDefinition shoot;            ///> Shooting behavior
+        bool isGroup = false;             ///> Is this a group of enemies?
+        std::vector<GroupMember> members; ///> Members if this is a group
     };
 
     /**
@@ -52,6 +63,8 @@ namespace Game
     struct Wave {
         float time = 0.f;                   ///> Time to spawn the wave
         std::vector<WaveEnemyGroup> groups; ///> Enemy groups in the wave
+        std::string spawnPattern = "";      ///> Spawn pattern: line, spread (empty = random)
+        float spawnY = 365.f;               ///> Y position for spawn patterns (center for line)
     };
 
     /**

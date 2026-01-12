@@ -43,13 +43,13 @@ namespace Ecs
         std::cout << "onScore: " << score << std::endl;
     }
 
-    void ClientController::onDamage(const uint32_t targetId, const uint16_t amount)
+    void ClientController::onDamage(const uint32_t targetId, const uint16_t amount, const bool wasKilled)
     {
-        _commandBuffer.get().push({World::WorldCommand::Type::Damage, World::DamageInfo{targetId, amount}});
+        _commandBuffer.get().push({World::WorldCommand::Type::Damage, World::DamageInfo{targetId, amount, wasKilled}});
     }
 
-    void ClientController::onDestroy(const size_t entityId)
+    void ClientController::onDestroy(const size_t entityId, const bool wasKilled)
     {
-        _commandBuffer.get().push({World::WorldCommand::Type::Destroy, entityId});
+        _commandBuffer.get().push({World::WorldCommand::Type::Destroy, World::DestroyInfo{entityId, wasKilled}});
     }
 }; // namespace Ecs

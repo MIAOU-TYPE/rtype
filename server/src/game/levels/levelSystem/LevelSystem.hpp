@@ -63,11 +63,25 @@ namespace Game
         static void spawnWave(IGameWorld &world, const Level &level, const Wave &wave);
 
         /**
-         * @brief Spawn a single enemy based on the enemy definition.
+         * @brief Spawn a group of enemies at relative positions.
+         *
+         * @param world The game world to spawn enemies in.
+         * @param level The current level data.
+         * @param groupDef The group definition containing member positions.
+         * @param pattern Spawn pattern for the group base position.
+         * @param centerY Center Y position for pattern spawning.
+         */
+        static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
+            const std::string &pattern, float centerY);
+
+        /**
+         * @brief Spawn a single enemy at a specific position.
          *
          * @param world The game world to spawn the enemy in.
          * @param def The enemy definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
     };
 } // namespace Game

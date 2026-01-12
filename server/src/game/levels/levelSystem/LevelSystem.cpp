@@ -6,6 +6,38 @@
 */
 
 #include "LevelSystem.hpp"
+#include <cmath>
+
+namespace
+{
+    std::vector<float> calculateSpawnPositions(const std::string &pattern, float centerY, int count)
+    {
+        std::vector<float> positions;
+        positions.reserve(static_cast<size_t>(count));
+
+        if (pattern == "line") {
+            float spacing = 80.f;
+            float startY = centerY - (spacing * static_cast<float>(count - 1) / 2.f);
+            for (int i = 0; i < count; i++)
+                positions.push_back(startY + static_cast<float>(i) * spacing);
+        } else if (pattern == "spread") {
+            float minY = 60.f;
+            float maxY = 630.f;
+            if (count == 1) {
+                positions.push_back((minY + maxY) / 2.f);
+            } else {
+                float step = (maxY - minY) / static_cast<float>(count - 1);
+                for (int i = 0; i < count; i++)
+                    positions.push_back(minY + static_cast<float>(i) * step);
+            }
+        } else {
+            for (int i = 0; i < count; i++)
+                positions.push_back(Rand::enemyY(Rand::rng));
+        }
+
+        return positions;
+    }
+} // namespace
 
 namespace Game
 {
@@ -39,18 +71,43 @@ namespace Game
             if (!level.enemyTypes.contains(type))
                 continue;
             const EnemyDefinition &def = level.enemyTypes.at(type);
-            for (int k = 0; k < count; k++)
-                spawnSingleEnemy(world, def);
+
+            if (def.isGroup) {
+                for (int k = 0; k < count; k++)
+                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY);
+            } else {
+                std::vector<float> yPositions = calculateSpawnPositions(wave.spawnPattern, wave.spawnY, count);
+                for (int k = 0; k < count; k++)
+                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)]);
+            }
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def)
+    void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
+        const std::string &pattern, float centerY)
+    {
+        std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
+        const float baseY = basePositions[0];
+        const float baseX = 1400.f;
+
+        for (const auto &member : groupDef.members) {
+            if (!level.enemyTypes.contains(member.enemyType))
+                continue;
+
+            const EnemyDefinition &memberDef = level.enemyTypes.at(member.enemyType);
+            const float x = baseX + member.offsetX;
+            const float y = baseY + member.offsetY;
+
+            spawnSingleEnemy(world, memberDef, x, y);
+        }
+    }
+
+    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y)
     {
         auto &reg = world.registry();
-        const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity mob = reg.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});

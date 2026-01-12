@@ -103,128 +103,115 @@
         "damage": 35,
         "muzzle": { "x": 55, "y": 72 }
       }
+    },
+    "groupEnemy": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 0, "y": 0 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 0, "y": -120 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 0, "y": 120 }
+        }
+      ]
     }
   },
-  "duration": 175,
+  "duration": 120,
   "waves": [
     {
       "time": 2,
-      "enemies": { "smallEnemy": 1 }
-    },
-    {
-      "time": 5,
-      "enemies": { "smallEnemy": 3 }
+      "enemies": { "smallEnemy": 2 },
+      "spawnPattern": "line",
+      "spawnY": 300
     },
     {
       "time": 8,
-      "enemies": { "smallEnemy": 3 }
-    },
-    {
-      "time": 12,
-      "enemies": { "mediumEnemy": 1 }
+      "enemies": { "smallEnemy": 3 },
+      "spawnPattern": "spread"
     },
     {
       "time": 15,
-      "enemies": { "smallEnemy": 4 }
+      "enemies": { "mediumEnemy": 1 },
+      "spawnY": 360
     },
     {
       "time": 20,
-      "enemies": { "mediumEnemy": 2 }
+      "enemies": { "smallEnemy": 4 },
+      "spawnPattern": "line",
+      "spawnY": 400
     },
     {
-      "time": 24,
-      "enemies": { "smallEnemy": 5 }
+      "time": 28,
+      "enemies": { "fastEnemy": 3 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 30,
+      "time": 35,
+      "enemies": { "groupEnemy": 1 }
+    },
+    {
+      "time": 40,
       "enemies": { "smallEnemy": 3, "mediumEnemy": 1 }
     },
     {
-      "time": 34,
-      "enemies": { "smallEnemy": 4 }
+      "time": 48,
+      "enemies": { "mediumEnemy": 2 },
+      "spawnPattern": "line",
+      "spawnY": 360
     },
     {
-      "time": 38,
-      "enemies": { "fastEnemy": 4 }
+      "time": 55,
+      "enemies": { "smallEnemy": 5 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 41,
-      "enemies": { "fastEnemy": 4 }
+      "time": 62,
+      "enemies": { "groupEnemy": 1 }
     },
     {
-      "time": 46,
-      "enemies": { "mediumEnemyTriple": 1 }
+      "time": 68,
+      "enemies": { "mediumEnemyTriple": 2 },
+      "spawnPattern": "line",
+      "spawnY": 300
     },
     {
-      "time": 50,
-      "enemies": { "smallEnemy": 6 }
+      "time": 75,
+      "enemies": { "fastEnemy": 4, "smallEnemy": 2 }
     },
     {
-      "time": 58,
-      "enemies": { "smallEnemy": 4, "mediumEnemy": 2 }
+      "time": 82,
+      "enemies": { "mediumEnemy": 3 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 64,
-      "enemies": { "fastEnemy": 6 }
+      "time": 88,
+      "enemies": { "groupEnemy": 2 }
     },
     {
-      "time": 70,
-      "enemies": { "mediumEnemyTriple": 2 }
+      "time": 95,
+      "enemies": { "mediumEnemyWide": 1 },
+      "spawnY": 360
     },
     {
-      "time": 76,
-      "enemies": { "smallEnemy": 5, "mediumEnemy": 1 }
+      "time": 100,
+      "enemies": { "smallEnemy": 6 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 84,
-      "enemies": { "fastEnemy": 7 }
-    },
-    {
-      "time": 90,
-      "enemies": { "smallEnemy": 8 }
-    },
-    {
-      "time": 98,
-      "enemies": { "mediumEnemy": 2, "mediumEnemyTriple": 1 }
-    },
-    {
-      "time": 106,
-      "enemies": { "smallEnemy": 4 }
+      "time": 105,
+      "enemies": { "mediumEnemyTriple": 2, "fastEnemy": 3 }
     },
     {
       "time": 112,
-      "enemies": { "mediumEnemyWide": 1 }
-    },
-    {
-      "time": 118,
-      "enemies": { "smallEnemy": 6, "mediumEnemy": 1 }
-    },
-    {
-      "time": 124,
-      "enemies": { "mediumEnemyWide": 2 }
-    },
-    {
-      "time": 132,
-      "enemies": { "fastEnemy": 10 }
-    },
-    {
-      "time": 138,
-      "enemies": { "smallEnemy": 8, "mediumEnemyTriple": 1 }
-    },
-    {
-      "time": 146,
-      "enemies": { "mediumEnemy": 2, "mediumEnemyWide": 1 }
-    },
-    {
-      "time": 152,
-      "enemies": { "mediumEnemyFive": 1 }
-    },
-    {
-      "time": 160,
-      "enemies": { "boss": 1 }
-    },
-    {
-      "time": 168,
-      "enemies": { "fastEnemy": 6 } }
+      "enemies": { "boss": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    }
   ]
 }

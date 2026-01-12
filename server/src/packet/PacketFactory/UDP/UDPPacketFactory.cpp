@@ -104,7 +104,6 @@ namespace Net::Factory
                 SnapshotEntityData packed{};
                 packed.id = htonl(static_cast<uint32_t>(id));
 
-                // Preserve bit representation for signed coordinates
                 const int16_t signedX = static_cast<int16_t>(x);
                 const int16_t signedY = static_cast<int16_t>(y);
                 std::memcpy(&packed.x, &signedX, sizeof(int16_t));

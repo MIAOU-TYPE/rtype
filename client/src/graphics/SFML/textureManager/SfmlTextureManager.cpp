@@ -5,7 +5,6 @@
 ** SfmlTextureManager
 */
 #include "SfmlTextureManager.hpp"
-#include <iostream>
 
 namespace Graphics
 {

@@ -110,6 +110,7 @@ namespace Graphics
          */
         struct SoundEntry {
             std::string resourcePath; ///> Path to the sound resource
+            float volume = 100.f;     ///> Volume for this sound (0-100)
         };
 
         std::shared_ptr<Resources::IResourceManager> _resources = nullptr; ///> Resource manager

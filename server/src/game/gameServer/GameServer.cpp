@@ -42,6 +42,41 @@ namespace
                     (void) serverL->sendPacket(*pkt);
             });
     }
+
+    void registerDamagePacketDispatch(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+    {
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
+
+        const auto *mapPtr = &entityToSession;
+
+        world.events().subscribe<DamageEvent>(
+            [wSessions, wFactory, wServer, mapPtr](const DamageEvent &damage) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL || !mapPtr)
+                    return;
+
+                const auto it = mapPtr->find(damage.target);
+                if (it == mapPtr->end())
+                    return;
+
+                const int sessionId = it->second;
+                const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
+                if (!addr)
+                    return;
+
+                const auto targetId = static_cast<uint32_t>(damage.target);
+                const auto amount = static_cast<uint16_t>(damage.amount);
+                if (const auto pkt = factoryL->makeDamage(*addr, targetId, amount))
+                    (void) serverL->sendPacket(*pkt);
+        });
+    }
 } // namespace
 
 namespace Game
@@ -61,6 +96,7 @@ namespace Game
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
+        registerDamagePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
     void GameServer::onPlayerConnect(const int sessionId)

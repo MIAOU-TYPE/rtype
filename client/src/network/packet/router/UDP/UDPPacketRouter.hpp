@@ -121,6 +121,7 @@ namespace Ecs
          */
         void handleDamage(const uint8_t *payload, size_t size) const;
 
+        /**
          * @brief Handler for DESTROY packets.
          * @param payload Pointer to the payload data of the DESTROY packet.
          * @param size Size of the payload data.

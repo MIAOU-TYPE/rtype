@@ -18,6 +18,10 @@ namespace Ecs
      * @brief Defines the movement pattern of an entity.
      */
     struct MovementPattern {
+        /**
+         * @enum Type
+         * @brief Types of movement patterns.
+         */
         enum class Type {
             Straight, ///> Move in a straight line
             ZigZag    ///> Move in a zig-zag pattern (oscillate vertically)

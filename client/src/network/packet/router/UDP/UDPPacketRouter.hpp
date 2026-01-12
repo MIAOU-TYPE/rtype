@@ -11,6 +11,8 @@
 #include <iostream>
 #include <memory>
 
+#include <chrono>
+#include <vector>
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
 #include "Endian.hpp"
@@ -20,6 +22,7 @@
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
+#include <unordered_map>
 
 namespace Ecs
 {
@@ -139,5 +142,17 @@ namespace Ecs
         static constexpr uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
 
         std::shared_ptr<IClientMessageSink> _sink; ///> Pointer to the IClientMessageSink for handling routed messages.
+
+        /**
+         * @brief Structure representing a pending snapshot being assembled from multiple chunks.
+         */
+        struct PendingSnapshot {
+            uint16_t chunkCount = 0;                  ///> nombre total de chunks attendus
+            std::vector<uint8_t> received;            ///> bitmap des chunks reçus
+            std::vector<SnapshotEntity> merged;       ///> entités assemblées
+            std::chrono::steady_clock::time_point t0; ///> timestamp du premier chunk reçu
+        };
+
+        mutable std::unordered_map<uint32_t, PendingSnapshot> _pending; ///> Snapshots en attente d'assemblage
     };
 } // namespace Ecs

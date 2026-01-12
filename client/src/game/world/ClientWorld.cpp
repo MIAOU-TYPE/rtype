@@ -6,7 +6,6 @@
 */
 
 #include "ClientWorld.hpp"
-#include <iostream>
 
 namespace World
 {

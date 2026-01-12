@@ -134,7 +134,8 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(const size_t entityId, const bool wasKilled) const noexcept
+    std::shared_ptr<IPacket> UDPPacketFactory::createDestroyEntityPacket(
+        const size_t entityId, const bool wasKilled) const noexcept
     {
         try {
             auto packet = _packet->newPacket();

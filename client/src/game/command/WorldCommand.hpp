@@ -27,8 +27,8 @@ namespace World
      * @brief Information about entity destruction.
      */
     struct DestroyInfo {
-        size_t entityId;  ///> ID of the entity to be destroyed
-        bool wasKilled;   ///> True if entity was killed (play sound), false otherwise
+        size_t entityId; ///> ID of the entity to be destroyed
+        bool wasKilled;  ///> True if entity was killed (play sound), false otherwise
     };
 
     /**
@@ -46,7 +46,7 @@ namespace World
             Destroy,  ///> Destroy an entity
         };
 
-        Type type;                                                                         ///> Type of the command
+        Type type; ///> Type of the command
         std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, DestroyInfo> payload; ///> Command payload
     };
 } // namespace World

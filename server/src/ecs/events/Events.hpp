@@ -50,8 +50,8 @@ struct ShootEvent {
  * @brief Event triggered when an entity is destroyed.
  */
 struct DestroyEvent {
-    size_t entityId;  ///> ID of the entity to be destroyed
-    bool wasKilled;   ///> True if entity was killed (play sound), false otherwise
+    size_t entityId; ///> ID of the entity to be destroyed
+    bool wasKilled;  ///> True if entity was killed (play sound), false otherwise
 };
 
 /**

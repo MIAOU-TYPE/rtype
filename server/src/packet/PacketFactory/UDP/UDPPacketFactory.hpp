@@ -118,7 +118,8 @@ namespace Net::Factory
          * @param wasKilled True if entity was killed (play sound), false otherwise.
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(size_t entityId, bool wasKilled) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(
+            size_t entityId, bool wasKilled) const noexcept;
 
       private:
         /**

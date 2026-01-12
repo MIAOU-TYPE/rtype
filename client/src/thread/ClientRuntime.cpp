@@ -45,7 +45,7 @@ namespace Thread
 
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
-        
+
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _authCtx = std::make_shared<Engine::AuthContext>();

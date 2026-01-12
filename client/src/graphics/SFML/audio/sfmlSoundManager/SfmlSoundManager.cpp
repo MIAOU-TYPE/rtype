@@ -90,7 +90,7 @@ namespace Graphics
         if (soundIt != _sounds.end()) {
             soundIt->second.volume = volume;
         }
-        
+
         for (auto &active : _activeSounds) {
             if (active.handle == audioHandle) {
                 active.sound->setVolume(volume);

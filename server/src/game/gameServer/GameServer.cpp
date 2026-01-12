@@ -81,7 +81,7 @@ namespace
                 const auto amount = static_cast<uint16_t>(damage.amount);
                 if (const auto pkt = factoryL->makeDamage(*addr, targetId, amount, wasKilled))
                     (void) serverL->sendPacket(*pkt);
-        });
+            });
     }
 } // namespace
 

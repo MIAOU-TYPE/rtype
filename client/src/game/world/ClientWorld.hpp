@@ -12,11 +12,11 @@
 #include "AnimationSystem.hpp"
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
-#include "SpriteRegistry.hpp"
 #include "SoundRegistry.hpp"
+#include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace World
 {

@@ -32,7 +32,7 @@ namespace Utils
 
         spriteRegistry->forEach([&](const unsigned int, Engine::SpriteDefinition &def) {
             def.textureHandle = textureManager->load(def.texturePath);
-            
+
             if (def.shootSoundPath.has_value())
                 def.shootSoundHandle = audioManager->load(def.shootSoundPath.value());
             if (def.hitSoundPath.has_value())

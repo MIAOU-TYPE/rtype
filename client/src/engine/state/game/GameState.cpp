@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2025
+** EPITECH PROJECT, 2026
 ** R-Type
 ** File description:
 ** GameState
@@ -9,8 +9,10 @@
 
 namespace Engine
 {
-    GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry)
-        : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
+    GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
+        const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore)
+        : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry)),
+          _hud(std::make_unique<HUD>(renderer, getScore))
     {
     }
 
@@ -22,7 +24,7 @@ namespace Engine
                 (void) _musicRegistry->loadAndPlayMusic("sounds/menu_theme.flac", true, currentVolume);
             }
         } catch (const std::exception &e) {
-            throw MenuError(std::string("{GameState::onEnter} ") + e.what());
+            throw GameStateError(std::string("{GameState::onEnter} ") + e.what());
         }
     }
 
@@ -34,5 +36,6 @@ namespace Engine
 
     void GameState::render()
     {
+        _hud->render();
     }
 } // namespace Engine

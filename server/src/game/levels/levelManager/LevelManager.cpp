@@ -47,7 +47,6 @@ namespace
 
             Game::EnemyDefinition def;
 
-            // Check if this is a group definition
             if (defNode.contains("type") && defNode.at("type").is_string()
                 && defNode.at("type").get<std::string>() == "group") {
                 def.isGroup = true;
@@ -75,7 +74,6 @@ namespace
                 if (def.members.empty())
                     return false;
             } else {
-                // Regular enemy definition
                 def.isGroup = false;
                 def.hp = defNode.value("hp", 1);
                 def.speed = defNode.value("speed", -80.f);
@@ -95,6 +93,35 @@ namespace
         return !level.enemyTypes.empty();
     }
 
+    [[nodiscard]] bool parseObstacles(const json &j, Game::Level &level)
+    {
+        level.obstacleTypes.clear();
+
+        if (!j.contains("obstacles") || !j.at("obstacles").is_object())
+            return true;
+
+        for (auto &[name, defNode] : j.at("obstacles").items()) {
+            if (!defNode.is_object())
+                continue;
+
+            Game::ObstacleDefinition def;
+            def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
+
+            if (defNode.contains("size") && defNode.at("size").is_object()) {
+                def.colW = defNode.at("size").value("w", 80.f);
+                def.colH = defNode.at("size").value("h", 80.f);
+            }
+
+            def.pullStrength = defNode.value("pullStrength", 150.f);
+            def.damagePerSecond = defNode.value("damagePerSecond", 10.f);
+            def.radius = defNode.value("radius", 200.f);
+            def.innerRadius = defNode.value("innerRadius", 50.f);
+
+            level.obstacleTypes[name] = def;
+        }
+        return true;
+    }
+
     bool parseWaves(const json &j, Game::Level &level)
     {
         level.waves.clear();
@@ -111,9 +138,12 @@ namespace
             if (wave.time < 0.f)
                 return false;
 
-            // Parse spawn pattern and position (optional)
             wave.spawnPattern = w.value("spawnPattern", "");
             wave.spawnY = w.value("spawnY", 365.f);
+
+            wave.obstacleType = w.value("obstacleType", "");
+            wave.obstacleX = w.value("obstacleX", 0.f);
+            wave.obstacleY = w.value("obstacleY", 0.f);
 
             if (!w.contains("enemies") || !w.at("enemies").is_object())
                 return false;
@@ -123,7 +153,7 @@ namespace
                     return false;
                 wave.groups.push_back({type, count});
             }
-            if (wave.groups.empty())
+            if (wave.groups.empty() && wave.obstacleType.empty())
                 return false;
             level.waves.push_back(wave);
         }
@@ -139,6 +169,8 @@ namespace
         level.duration = j.value("duration", 0.f);
 
         if (!parseEnemies(j, level))
+            return false;
+        if (!parseObstacles(j, level))
             return false;
         if (!parseWaves(j, level))
             return false;

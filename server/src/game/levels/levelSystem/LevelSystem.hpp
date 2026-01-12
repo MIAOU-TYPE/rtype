@@ -16,6 +16,7 @@
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
@@ -84,5 +85,15 @@ namespace Game
          * @param y Y coordinate to spawn at.
          */
         static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
+
+        /**
+         * @brief Spawn an obstacle at a specific position.
+         *
+         * @param world The game world to spawn the obstacle in.
+         * @param def The obstacle definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
+         */
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
     };
 } // namespace Game

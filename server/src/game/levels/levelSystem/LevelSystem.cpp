@@ -81,6 +81,11 @@ namespace Game
                     spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)]);
             }
         }
+        if (!wave.obstacleType.empty() && level.obstacleTypes.contains(wave.obstacleType)) {
+            const ObstacleDefinition &obsDef = level.obstacleTypes.at(wave.obstacleType);
+            spawnObstacle(world, obsDef, wave.obstacleX, wave.obstacleY);
+        } else if (!wave.obstacleType.empty()) {
+        }
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
@@ -152,5 +157,19 @@ namespace Game
         Ecs::WeaponConfig weapon;
         weapon.projectileSpriteId = def.shoot.projectileSpriteId;
         reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
+    }
+
+    void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y)
+    {
+        auto &reg = world.registry();
+        const Ecs::Entity obstacle = world.createEntity();
+
+        reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Velocity>(obstacle, Ecs::Velocity{0.f, 0.f});
+        reg.emplaceComponent<Ecs::GravityField>(
+            obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});
+        reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
+        reg.emplaceComponent<Ecs::Collision>(obstacle, Ecs::Collision{def.colW, def.colH});
+        reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{99999, 99999});
     }
 } // namespace Game

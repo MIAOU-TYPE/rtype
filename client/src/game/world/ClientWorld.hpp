@@ -71,6 +71,12 @@ namespace World
 
       private:
         /**
+         * @brief Purges stale entities that have not been updated within the specified maximum age.
+         * @param maxAge The maximum age for an entity to be considered active.
+         */
+        void purgeStaleEntities(std::chrono::milliseconds maxAge = std::chrono::milliseconds(500));
+
+        /**
          * @struct EntityCreate
          * @brief Data structure for creating a new entity in the client world.
          */

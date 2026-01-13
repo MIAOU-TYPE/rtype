@@ -141,7 +141,7 @@
     "gravityWell": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 250,
+      "pullStrength": 200,
       "damagePerSecond": 10,
       "radius": 130,
       "innerRadius": 50

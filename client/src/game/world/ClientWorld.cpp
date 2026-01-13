@@ -65,6 +65,7 @@ namespace World
         for (auto it = _entityMap.begin(); it != _entityMap.end();) {
             if (!receivedIds.contains(it->first)) {
                 _registry.destroyEntity(it->second);
+                _entityLastSeen.erase(it->first);
                 it = _entityMap.erase(it);
             } else {
                 ++it;

@@ -8,14 +8,14 @@
 #pragma once
 
 #include <cstddef>
-#include <string>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <string>
 #include "GraphicsTypes.hpp"
 #include "Key.hpp"
 #include <unordered_map>
-#include <nlohmann/json.hpp>
-#include <fstream>
-#include <iostream>
 
 namespace Utils
 {
@@ -33,6 +33,7 @@ namespace Utils
         Engine::Key down;  ///> Key for moving down
         Engine::Key left;  ///> Key for moving left
         Engine::Key right; ///> Key for moving right
+        Engine::Key shoot; ///> Key for shooting
     };
 
     /**
@@ -57,13 +58,13 @@ namespace Utils
          */
         ~SettingsConfig() = default;
 
-        /** 
+        /**
          * @brief Loads settings from the configuration file.
          * @return True if loading was successful, false otherwise.
          */
         [[nodiscard]] bool load() noexcept;
 
-        /** 
+        /**
          * @brief Saves settings to the configuration file.
          * @return True if saving was successful, false otherwise.
          */
@@ -71,37 +72,37 @@ namespace Utils
 
         /**
          * @brief Get the Music Volume object
-         * @return std::size_t 
+         * @return std::size_t
          */
         [[nodiscard]] std::size_t getMusicVolume() const noexcept;
 
         /**
          * @brief Get the Sfx Volume object
-         * @return std::size_t 
+         * @return std::size_t
          */
         [[nodiscard]] std::size_t getSfxVolume() const noexcept;
 
         /**
          * @brief Get the Music Muted object
-         * @return bool 
+         * @return bool
          */
         [[nodiscard]] bool isMusicMuted() const noexcept;
 
         /**
          * @brief Get the Sfx Muted object
-         * @return bool 
+         * @return bool
          */
         [[nodiscard]] bool isSfxMuted() const noexcept;
 
         /**
          * @brief Get the Resolution object
-         * @return Graphics::Extent2u 
+         * @return Graphics::Extent2u
          */
         [[nodiscard]] Graphics::Extent2u getResolution() const noexcept;
 
         /**
          * @brief Get the Color Blind Mode object
-         * @return Graphics::ColorBlindMode 
+         * @return Graphics::ColorBlindMode
          */
         [[nodiscard]] Graphics::ColorBlindMode getColorBlindMode() const noexcept;
 
@@ -125,6 +126,43 @@ namespace Utils
         [[nodiscard]] static std::string getPresetName(KeyPreset preset);
 
         /**
+         * @brief Convert a key to string
+         * @param key The key to convert
+         * @return String representation of the key
+         */
+        [[nodiscard]] static std::string keyToString(Engine::Key key);
+
+        /**
+         * @brief Get the up key
+         * @return The up key
+         */
+        [[nodiscard]] Engine::Key getUpKey() const noexcept;
+
+        /**
+         * @brief Get the down key
+         * @return The down key
+         */
+        [[nodiscard]] Engine::Key getDownKey() const noexcept;
+
+        /**
+         * @brief Get the left key
+         * @return The left key
+         */
+        [[nodiscard]] Engine::Key getLeftKey() const noexcept;
+
+        /**
+         * @brief Get the right key
+         * @return The right key
+         */
+        [[nodiscard]] Engine::Key getRightKey() const noexcept;
+
+        /**
+         * @brief Get the shoot key
+         * @return The shoot key
+         */
+        [[nodiscard]] Engine::Key getShootKey() const noexcept;
+
+        /**
          * @brief Check if controls need to be rebound
          * @return true if rebinding is needed, false otherwise
          */
@@ -136,38 +174,47 @@ namespace Utils
         void clearRebindFlag() const noexcept;
 
         /**
+         * @brief Check if a key is already assigned to another movement command
+         * @param key The key to check
+         * @param excludeCommand The command to exclude from the check (optional)
+         * @return true if the key is already assigned, false otherwise
+         */
+        [[nodiscard]] bool isKeyAlreadyAssigned(
+            Engine::Key key, Engine::Key excludeCommand = Engine::Key::Unknown) const noexcept;
+
+        /**
          * @brief Set the Music Volume object
-         * @param volume 
+         * @param volume
          */
         void setMusicVolume(std::size_t volume);
 
         /**
          * @brief Set the Sfx Volume object
-         * @param volume 
+         * @param volume
          */
         void setSfxVolume(std::size_t volume);
 
         /**
          * @brief Set the Music Muted object
-         * @param muted 
+         * @param muted
          */
         void setMusicMuted(bool muted);
 
         /**
          * @brief Set the Sfx Muted object
-         * @param muted 
+         * @param muted
          */
         void setSfxMuted(bool muted);
 
         /**
          * @brief Set the Resolution object
-         * @param resolution 
+         * @param resolution
          */
         void setResolution(Graphics::Extent2u resolution);
 
         /**
          * @brief Set the Color Blind Mode object
-         * @param mode 
+         * @param mode
          */
         void setColorBlindMode(Graphics::ColorBlindMode mode);
 
@@ -184,9 +231,34 @@ namespace Utils
         void setCustomMovementKeys(MovementKeys keys);
 
         /**
-         * @brief Delete copy constructor and assignment operator
+         * @brief Set the up key
+         * @param key The key to set
          */
-        SettingsConfig(const SettingsConfig &) = delete;
+        void setUpKey(Engine::Key key);
+
+        /**
+         * @brief Set the down key
+         * @param key The key to set
+         */
+        void setDownKey(Engine::Key key);
+
+        /**
+         * @brief Set the left key
+         * @param key The key to set
+         */
+        void setLeftKey(Engine::Key key);
+
+        /**
+         * @brief Set the right key
+         * @param key The key to set
+         */
+        void setRightKey(Engine::Key key);
+
+        /**
+         * @brief Set the shoot key
+         * @param key The key to set
+         */
+        void setShootKey(Engine::Key key);
 
         /**
          * @brief Delete assignment operator
@@ -194,18 +266,19 @@ namespace Utils
         SettingsConfig &operator=(const SettingsConfig &) = delete;
 
       private:
-        static constexpr const char *CONFIG_FILE = "client/config/settings.json"; ///> Path to the settings configuration file
+        static constexpr const char *CONFIG_FILE =
+            "client/config/settings.json"; ///> Path to the settings configuration file
 
-        std::size_t _musicVolume = 50;           ///> Music volume level (0-100)
-        std::size_t _sfxVolume = 50;             ///> SFX volume level (0-100)
-        bool _musicMuted = false;                ///> Music mute state
-        bool _sfxMuted = false;                  ///> SFX mute state
-        Graphics::Extent2u _resolution{1280, 720}; ///> Screen resolution
+        std::size_t _musicVolume = 50;                                             ///> Music volume level (0-100)
+        std::size_t _sfxVolume = 50;                                               ///> SFX volume level (0-100)
+        bool _musicMuted = false;                                                  ///> Music mute state
+        bool _sfxMuted = false;                                                    ///> SFX mute state
+        Graphics::Extent2u _resolution{1280, 720};                                 ///> Screen resolution
         Graphics::ColorBlindMode _colorBlindMode = Graphics::ColorBlindMode::NONE; ///> Colorblind mode
 
         KeyPreset _currentPreset = KeyPreset::Arrows;         ///> Current key preset
         std::unordered_map<KeyPreset, MovementKeys> _presets; ///> Map of presets to movement keys
-        MovementKeys _customKeys;                              ///> Custom key bindings
-        mutable bool _needsRebind = false;                     ///> Flag indicating if rebinding is needed
+        MovementKeys _customKeys;                             ///> Custom key bindings
+        mutable bool _needsRebind = false;                    ///> Flag indicating if rebinding is needed
     };
 } // namespace Utils

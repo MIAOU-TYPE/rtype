@@ -26,7 +26,7 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
-#include "InputConfig.hpp"
+#include "SettingsConfig.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
@@ -128,7 +128,7 @@ namespace Thread
         /**
          * @brief Rebinds control inputs based on the current configuration.
          * @details This method recreates the event registry with updated key bindings
-         * from the InputConfig singleton.
+         * from the SettingsConfig singleton.
          */
         void rebindControls() const;
 

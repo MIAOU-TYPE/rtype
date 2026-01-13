@@ -136,9 +136,9 @@ namespace Thread
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
-            if (Utils::InputConfig::getInstance().needsRebind()) {
+            if (Utils::SettingsConfig::getInstance().needsRebind()) {
                 rebindControls();
-                Utils::InputConfig::getInstance().clearRebindFlag();
+                Utils::SettingsConfig::getInstance().clearRebindFlag();
             }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
@@ -240,7 +240,7 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
+        const auto keys = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(keys.up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));

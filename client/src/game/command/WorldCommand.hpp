@@ -13,13 +13,12 @@
 namespace World
 {
     /**
-     * @struct DamageInfo
-     * @brief Information about damage dealt to an entity.
+     * @struct SnapshotBatch
+     * @brief Represents a batch of snapshot entities at a specific server tick.
      */
-    struct DamageInfo {
-        uint32_t targetId; ///> ID of the entity that received damage
-        uint16_t amount;   ///> Amount of damage dealt
-        bool wasKilled;    ///> True if damage killed the entity, false otherwise
+    struct SnapshotBatch {
+        uint32_t serverTick;                  ///> Server tick of the snapshot
+        std::vector<SnapshotEntity> entities; ///> List of snapshot entities
     };
 
     /**
@@ -28,7 +27,7 @@ namespace World
      */
     struct DestroyInfo {
         size_t entityId; ///> ID of the entity to be destroyed
-        bool wasKilled;  ///> True if entity was killed (play sound), false otherwise
+        bool wasKilled;  ///> True if entity was killed by player (play sound), false otherwise
     };
 
     /**
@@ -42,13 +41,12 @@ namespace World
             Pong,     ///> Pong response
             GameOver, ///> Game over notification
             Snapshot, ///> Snapshot of the world state
-            Damage,   ///> Damage event
+            Damage,   ///> Damage event (for hit sound)
             Destroy,  ///> Destroy an entity
             Score,    ///> Score update
         };
 
         Type type; ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>, DamageInfo, DestroyInfo, uint32_t>
-            payload; ///> Command payload
+        std::variant<std::monostate, SnapshotBatch, DestroyInfo, uint32_t> payload; ///> Command payload (uint32_t used for both Damage targetId and Score)
     };
 } // namespace World

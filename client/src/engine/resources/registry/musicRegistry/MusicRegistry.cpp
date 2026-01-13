@@ -27,7 +27,7 @@ namespace Engine
         _globalMusicVolume = volume;
         _musicManager->setLooping(handle, loop);
         _musicManager->setVolume(handle, volume);
-        _musicManager->play(handle);
+        (void) _musicManager->play(handle);
         _currentMusicHandle = handle;
     }
 

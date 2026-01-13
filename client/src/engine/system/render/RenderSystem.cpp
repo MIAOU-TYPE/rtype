@@ -31,13 +31,13 @@ namespace Engine
                 RenderCommand cmd;
                 cmd.textureId = render.texture;
                 cmd.frame = animation.frames[anim.frameIndex].rect;
-                cmd.position = {pos.x, pos.y};
+                cmd.position = {pos.x, pos.y, pos.z};
 
                 if (drawable.spriteId >= 100 && drawable.spriteId < 102) {
-                    const float viewportWidth = static_cast<float>(viewportSize.width);
-                    const float viewportHeight = static_cast<float>(viewportSize.height);
-                    const float frameWidth = static_cast<float>(cmd.frame.w);
-                    const float frameHeight = static_cast<float>(cmd.frame.h);
+                    const auto viewportWidth = static_cast<float>(viewportSize.width);
+                    const auto viewportHeight = static_cast<float>(viewportSize.height);
+                    const auto frameWidth = static_cast<float>(cmd.frame.w);
+                    const auto frameHeight = static_cast<float>(cmd.frame.h);
 
                     const float scaleX = viewportWidth / frameWidth;
                     const float scaleY = viewportHeight / frameHeight;
@@ -48,5 +48,8 @@ namespace Engine
 
                 out.push_back(cmd);
             });
+        std::ranges::sort(out, [](const RenderCommand &a, const RenderCommand &b) {
+            return a.position.z < b.position.z;
+        });
     }
 } // namespace Engine

@@ -41,16 +41,17 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
     reg.registerComponent<Ecs::Position>();
 
     reg.emplaceComponent<Ecs::Drawable>(e, Ecs::Drawable{10});
-    reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{42.0f, 84.0f});
+    reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{42.0f, 84.0f, 9});
 
     SnapshotSystem::update(*world, snapshot);
 
     ASSERT_EQ(snapshot.size(), 1u);
-    const auto &[id, x, y, spriteId] = snapshot.front();
+    const auto &[id, x, y, z, spriteId] = snapshot.front();
 
     EXPECT_EQ(id, static_cast<std::size_t>(1));
     EXPECT_FLOAT_EQ(x, 42.0f);
     EXPECT_FLOAT_EQ(y, 84.0f);
+    EXPECT_EQ(z, 9);
     EXPECT_EQ(spriteId, 10);
 }
 

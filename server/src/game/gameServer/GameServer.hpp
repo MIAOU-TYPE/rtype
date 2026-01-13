@@ -8,6 +8,7 @@
 #pragma once
 
 #include "AIShootSystem.hpp"
+#include "BackgroundSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"

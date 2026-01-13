@@ -78,15 +78,20 @@ namespace
             wave.time = w.value("time", -1.f);
             if (wave.time < 0.f)
                 return false;
-            if (!w.contains("enemies") || !w.at("enemies").is_object())
-                return false;
-            for (auto &[type, countValue] : w.at("enemies").items()) {
-                const int count = countValue.get<int>();
-                if (count <= 0)
-                    return false;
-                wave.groups.push_back({type, count});
+
+            if (w.contains("enemies") && w.at("enemies").is_object()) {
+                for (auto &[type, countValue] : w.at("enemies").items()) {
+                    const int count = countValue.get<int>();
+                    if (count <= 0)
+                        return false;
+                    wave.groups.push_back({type, count});
+                }
             }
-            if (wave.groups.empty())
+
+            if (w.contains("powerUps") && w.at("powerUps").is_number())
+                wave.powerUps = w.at("powerUps").get<int>();
+
+            if (wave.groups.empty() && wave.powerUps == 0)
                 return false;
             level.waves.push_back(wave);
         }

@@ -7,7 +7,7 @@
 
 #include "SqliteDb.hpp"
 
-namespace Auth
+namespace Db
 {
     SqliteDb::SqliteDb(const std::string &path)
     {

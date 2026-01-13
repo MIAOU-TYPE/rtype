@@ -13,7 +13,7 @@
 #include <utility>
 #include <string_view>
 
-namespace Auth
+namespace Db
 {
     /**
      * @brief Exception thrown on SQLite database errors

@@ -21,6 +21,15 @@ namespace Game
     {
         auto &reg = world.registry();
 
+        const float dampingFactor = 0.95f;
+        reg.view<Ecs::Velocity, Ecs::GravityAffected>(
+            [&](const Ecs::Entity, Ecs::Velocity &vel, const Ecs::GravityAffected &affected) {
+                if (affected.isAffected) {
+                    vel.vx *= dampingFactor;
+                    vel.vy *= dampingFactor;
+                }
+            });
+
         reg.view<Ecs::Position, Ecs::GravityField, Ecs::Id>(
             [&](const Ecs::Entity, const Ecs::Position &gravPos, const Ecs::GravityField &field, const Ecs::Id &id) {
                 reg.view<Ecs::Position, Ecs::Velocity, Ecs::Health, Ecs::GravityAffected, Ecs::Id>(

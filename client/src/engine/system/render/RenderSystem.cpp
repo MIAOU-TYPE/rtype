@@ -28,10 +28,13 @@ namespace Engine
                 if (anim.frameIndex >= animation.frames.size())
                     return;
 
+                constexpr float SCALE_FACTOR = 1.7f;
+
                 RenderCommand cmd;
                 cmd.textureId = render.texture;
                 cmd.frame = animation.frames[anim.frameIndex].rect;
                 cmd.position = {pos.x, pos.y};
+                cmd.scale = {1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR};
 
                 if (drawable.spriteId >= 100 && drawable.spriteId < 102) {
                     const float viewportWidth = static_cast<float>(viewportSize.width);

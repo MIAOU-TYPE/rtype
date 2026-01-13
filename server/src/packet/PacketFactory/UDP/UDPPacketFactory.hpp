@@ -12,8 +12,8 @@
 #include <limits>
 #include <lz4.h>
 #include <map>
-#include <optional>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 #include "DamageData.hpp"

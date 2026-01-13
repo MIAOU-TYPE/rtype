@@ -12,6 +12,7 @@
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Attack.hpp"
+#include "Background.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
@@ -44,6 +45,14 @@ namespace Game
          * @param spawned Vector tracking which waves have been spawned.
          */
         static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned);
+
+        /**
+         * @brief Spawn background layers for the level (creates 2 tiles for seamless scrolling).
+         *
+         * @param world The game world to spawn backgrounds in.
+         * @param level The current level data containing background definitions.
+         */
+        static void spawnBackgrounds(IGameWorld &world, const Level &level);
 
       private:
         /**
@@ -95,5 +104,17 @@ namespace Game
          * @param y Y coordinate to spawn at.
          */
         static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
+
+        /**
+         * @brief Create a single background entity with given parameters.
+         *
+         * @param world The game world to create the background in.
+         * @param layer The background layer definition.
+         * @param xPosition The x position for the background tile.
+         * @param scaledWidth The scaled width of the background tile.
+         * @param tileIndex The tile index (0 or 1) for seamless scrolling.
+         */
+        static void createBackgroundEntity(
+            IGameWorld &world, const BackgroundLayer &layer, float xPosition, float scaledWidth, int tileIndex);
     };
 } // namespace Game

@@ -7,15 +7,40 @@
 
 #pragma once
 
+#include <functional>
+#include "HUD.hpp"
 #include "IGameState.hpp"
-#include "IGraphics.hpp"
-#include "IRenderer.hpp"
-#include "Menu.hpp"
 #include "MusicRegistry.hpp"
 #include "SoundRegistry.hpp"
 
 namespace Engine
 {
+    /**
+     * @brief Exception class for GameState errors.
+     */
+    class GameStateError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for GameStateError.
+         * @param message The error message.
+         */
+        explicit GameStateError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception.
+         * @return The error message as a C-style string.
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
     /**
      * @brief Represents the Game state of the game.
      */
@@ -25,8 +50,11 @@ namespace Engine
          * @brief Construct a new Game State object.
          * @param musicRegistry Shared pointer to the music registry.
          * @param soundRegistry Shared pointer to the sound registry.
+         * @param renderer Shared pointer to the renderer.
+         * @param getScore Function to get the current score.
          */
-        explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry);
+        explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
+            std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
 
         /**
          * @brief Called when entering the state.
@@ -48,5 +76,6 @@ namespace Engine
       private:
         std::shared_ptr<MusicRegistry> _musicRegistry; ///> Shared pointer to the music registry.
         std::shared_ptr<SoundRegistry> _soundRegistry; ///> Shared pointer to the sound registry.
+        std::unique_ptr<HUD> _hud;                     ///> Unique pointer to the HUD.
     };
 } // namespace Engine

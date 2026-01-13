@@ -170,9 +170,51 @@ namespace Game
         reg.emplaceComponent<Ecs::GravityField>(
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});
         reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
-        // Collision scaled to match sprite scale (1.7x)
         constexpr float COLLISION_SCALE = 1.7f;
         reg.emplaceComponent<Ecs::Collision>(obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{99999, 99999});
+    }
+
+    void LevelSystem::spawnBackgrounds(IGameWorld &world, const Level &level)
+    {
+        if (level.backgroundLayers.empty())
+            return;
+
+        constexpr float REFERENCE_VIEWPORT_WIDTH = 1280.0f;
+        constexpr float REFERENCE_VIEWPORT_HEIGHT = 720.0f;
+
+        for (const auto &layer : level.backgroundLayers) {
+            const float scaleX = REFERENCE_VIEWPORT_WIDTH / layer.tileWidth;
+            const float scaleY = REFERENCE_VIEWPORT_HEIGHT / layer.tileHeight;
+            const float scale = std::max(scaleX, scaleY);
+
+            const float scaledWidth = layer.tileWidth * scale;
+
+            createBackgroundEntity(world, layer, 0.f, scaledWidth, 0);
+            createBackgroundEntity(world, layer, scaledWidth, scaledWidth, 1);
+        }
+    }
+
+    void LevelSystem::createBackgroundEntity(IGameWorld &world, const BackgroundLayer &layer, const float xPosition,
+        const float scaledWidth, const int tileIndex)
+    {
+        auto &reg = world.registry();
+        const Ecs::Entity bg = world.createEntity();
+
+        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f});
+
+        Ecs::Background bgComp;
+        bgComp.scrollSpeed = layer.scrollSpeed;
+        bgComp.tileWidth = scaledWidth;
+        bgComp.tileHeight = layer.tileHeight;
+        bgComp.originalTileWidth = layer.tileWidth;
+        bgComp.originalTileHeight = layer.tileHeight;
+        bgComp.tileIndex = tileIndex;
+        reg.emplaceComponent<Ecs::Background>(bg, bgComp);
+
+        Ecs::Drawable draw;
+        draw.spriteId = layer.spriteId;
+        draw.drawable = true;
+        reg.emplaceComponent<Ecs::Drawable>(bg, draw);
     }
 } // namespace Game

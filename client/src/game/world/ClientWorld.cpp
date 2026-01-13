@@ -34,8 +34,14 @@ namespace World
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<std::vector<SnapshotEntity>>(cmd.payload)); break;
             case WorldCommand::Type::Destroy: applyDestroy(std::get<size_t>(cmd.payload)); break;
+            case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
             default: break;
         }
+    }
+
+    uint32_t ClientWorld::getScore() const
+    {
+        return _score;
     }
 
     void ClientWorld::applySnapshot(const std::vector<SnapshotEntity> &entities)
@@ -75,6 +81,7 @@ namespace World
     {
         try {
             if (!_spriteRegistry->exists(data.spriteId)) {
+                std::cerr << "[ClientWorld] Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
                 return;
             }
 
@@ -85,6 +92,11 @@ namespace World
             _registry.emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
+
+            if (sprite.textureHandle == Graphics::InvalidTexture) {
+                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                          << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
+            }
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
             _registry.emplaceComponent<Ecs::AnimationState>(entity,

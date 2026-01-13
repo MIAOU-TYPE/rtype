@@ -58,9 +58,9 @@ namespace World
         snap.tick = batch.serverTick;
 
         snap.entities.reserve(batch.entities.size());
-        for (const auto &[id, x, y, spriteId] : batch.entities) {
+        for (const auto &[id, x, y, z, spriteId] : batch.entities) {
             _destroyed.erase(static_cast<uint32_t>(id));
-            snap.entities[id] = NetState{x, y, spriteId};
+            snap.entities[id] = NetState{x, y, z, spriteId};
             _entityLastSeen[id] = std::chrono::steady_clock::now();
         }
 
@@ -108,7 +108,7 @@ namespace World
             const Ecs::Entity entity = _registry.createEntity();
             _entityMap.emplace(data.id, entity);
 
-            _registry.emplaceComponent<Ecs::Position>(entity, Ecs::Position{data.x, data.y});
+            _registry.emplaceComponent<Ecs::Position>(entity, Ecs::Position{data.x, data.y, data.z});
             _registry.emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
@@ -130,7 +130,7 @@ namespace World
     {
         const auto it = _entityMap.find(entity.id);
         if (it == _entityMap.end()) {
-            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.spriteId});
+            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.z, entity.spriteId});
             return;
         }
 
@@ -140,6 +140,7 @@ namespace World
         if (auto &pos = _registry.getComponents<Ecs::Position>().at(entityIndex)) {
             pos->x = entity.x;
             pos->y = entity.y;
+            pos->z = entity.z;
         }
 
         if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
@@ -176,7 +177,7 @@ namespace World
                     continue;
 
                 if (!_entityMap.contains(netId))
-                    applyCreate(EntityCreate{netId, st.x, st.y, st.spriteId});
+                    applyCreate(EntityCreate{netId, st.x, st.y, st.z, st.spriteId});
 
                 const auto local = _entityMap[netId];
                 const auto idx = static_cast<size_t>(local);
@@ -215,7 +216,7 @@ namespace World
             const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
             if (!_entityMap.contains(netId))
-                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.spriteId});
+                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
 
             const Ecs::Entity local = _entityMap[netId];
             const auto idx = static_cast<size_t>(local);
@@ -223,6 +224,7 @@ namespace World
             if (auto &pos = _registry.getComponents<Ecs::Position>().at(idx)) {
                 pos->x = lerp(as.x, bs.x, alpha);
                 pos->y = lerp(as.y, bs.y, alpha);
+                pos-> z = bs.z;
             }
 
             if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(idx)) {

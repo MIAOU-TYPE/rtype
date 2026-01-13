@@ -90,6 +90,7 @@ namespace World
             size_t id;             ///> Entity ID
             float x;               ///> X position
             float y;               ///> Y position
+            uint8_t z; ///> Z position
             unsigned int spriteId; ///> Sprite identifier
         };
 
@@ -123,6 +124,7 @@ namespace World
         struct NetState {
             float x;           ///> X position
             float y;           ///> Y position
+            uint8_t z;         ///> Z position
             uint32_t spriteId; ///> Sprite identifier
         };
 

@@ -167,8 +167,9 @@ void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, c
     const bool left = (flags & 0x04u) != 0;
     const bool right = (flags & 0x08u) != 0;
     const bool shoot = (flags & 0x10u) != 0;
+    const bool powerShoot = (flags & 0x20u) != 0;
 
-    _roomManager->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot});
+    _roomManager->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot, powerShoot});
 }
 
 void UDPPacketRouter::handlePing(const int sessionId) const

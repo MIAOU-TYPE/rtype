@@ -78,11 +78,31 @@ namespace Thread
             throw;
         }
         _running = true;
+        applyLoadedSettings();
         setupGlobalEventHandlers();
         setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
+    }
+
+    void ClientRuntime::applyLoadedSettings() const noexcept
+    {
+        const auto &config = Utils::SettingsConfig::getInstance();
+
+        const float musicVolume = config.isMusicMuted() ? 0.f : static_cast<float>(config.getMusicVolume());
+        _musicRegistry->setMusicVolume(musicVolume);
+        if (config.isMusicMuted())
+            _musicRegistry->setVolumeBeforeMute(static_cast<float>(config.getMusicVolume()));
+
+        const float sfxVolume = config.isSfxMuted() ? 0.f : static_cast<float>(config.getSfxVolume());
+        _soundRegistry->setSoundVolume(sfxVolume);
+        if (config.isSfxMuted())
+            _soundRegistry->setVolumeBeforeMute(static_cast<float>(config.getSfxVolume()));
+
+        _graphics->setResolution(config.getResolution());
+
+        _renderer->setColorBlindMode(config.getColorBlindMode());
     }
 
     void ClientRuntime::stop()

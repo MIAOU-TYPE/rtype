@@ -107,6 +107,13 @@ namespace Thread
         void start();
 
         /**
+         * @brief Applies the settings loaded from the configuration file at startup.
+         * @details This method sets the music volume, sound volume, resolution, and colorblind mode
+         * based on the saved settings.
+         */
+        void applyLoadedSettings() const noexcept;
+
+        /**
          * @brief Stops the client runtime gracefully.
          * @details This method signals the receiver and updater threads to stop and waits for them to finish.
          */

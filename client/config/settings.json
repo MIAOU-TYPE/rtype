@@ -5,14 +5,21 @@
         "sfx_muted": true,
         "sfx_volume": 100
     },
+    "input": {
+        "keys": {
+            "down": "F",
+            "left": "D",
+            "right": "G",
+            "shoot": "S",
+            "up": "R"
+        },
+        "preset": "custom"
+    },
     "video": {
         "colorblind_mode": "none",
         "resolution": {
             "height": 720,
             "width": 1280
         }
-    },
-    "input": {
-        "preset": "arrows"
     }
 }

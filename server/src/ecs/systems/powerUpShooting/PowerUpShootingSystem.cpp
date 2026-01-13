@@ -10,7 +10,7 @@
 namespace Game
 {
     void PowerUpShootingSystem::createPowerUpProjectile(
-        IGameWorld &world, const float x, const float y, const float vx, const float vy)
+        IGameWorld &world, const float x, const float y, const float vx, const float vy, const size_t shooterId)
     {
         auto &reg = world.registry();
         const Ecs::Entity proj = world.createEntity();
@@ -19,7 +19,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{vx, vy});
         reg.emplaceComponent<Ecs::Drawable>(proj, Ecs::Drawable{15, true});
         reg.emplaceComponent<Ecs::Collision>(proj, Ecs::Collision{48.f, 24.f});
-        reg.emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{true});
+        reg.emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{shooterId});
         reg.emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{150});
         reg.emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{5.f});
     }
@@ -29,7 +29,8 @@ namespace Game
         auto &reg = world.registry();
 
         reg.view<Ecs::PlayerPowerUp, InputComponent, Ecs::Position>(
-            [&](const Ecs::Entity, Ecs::PlayerPowerUp &powerUp, const InputComponent &input, const Ecs::Position &pos) {
+            [&](const Ecs::Entity playerEntity, Ecs::PlayerPowerUp &powerUp, const InputComponent &input,
+                const Ecs::Position &pos) {
                 if (!powerUp.hasPowerUp)
                     return;
                 if (!powerUp.isReady) {
@@ -40,7 +41,7 @@ namespace Game
                     }
                 }
                 if (powerUp.isReady && input.powerShoot) {
-                    createPowerUpProjectile(world, pos.x + 40.f, pos.y, 400.f, 0.f);
+                    createPowerUpProjectile(world, pos.x + 40.f, pos.y, 400.f, 0.f, static_cast<size_t>(playerEntity));
                     powerUp.isReady = false;
                     powerUp.cooldown = 0.f;
                     if (powerUp.hasBar && powerUp.barEntity.has_value()) {

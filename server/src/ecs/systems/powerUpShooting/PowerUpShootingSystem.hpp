@@ -55,7 +55,8 @@ namespace Game
          * @param y Starting Y position.
          * @param vx Horizontal velocity.
          * @param vy Vertical velocity.
+         * @param shooterId The entity ID of the shooter (player).
          */
-        static void createPowerUpProjectile(IGameWorld &world, float x, float y, float vx, float vy);
+        static void createPowerUpProjectile(IGameWorld &world, float x, float y, float vx, float vy, size_t shooterId);
     };
 } // namespace Game

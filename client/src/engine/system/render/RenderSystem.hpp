@@ -9,11 +9,11 @@
 #include <memory>
 #include "AnimationState.hpp"
 #include "Drawable.hpp"
+#include "GraphicsTypes.hpp"
 #include "Registry.hpp"
 #include "Render.hpp"
 #include "RenderCommand.hpp"
 #include "SpriteRegistry.hpp"
-#include "GraphicsTypes.hpp"
 
 namespace Engine
 {

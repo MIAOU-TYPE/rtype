@@ -12,6 +12,7 @@
 #include <limits>
 #include <lz4.h>
 #include <map>
+#include <optional>
 #include <memory>
 #include <utility>
 #include <vector>

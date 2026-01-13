@@ -70,5 +70,12 @@ namespace Game
          * @param def The enemy definition.
          */
         static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def);
+
+        /**
+         * @brief Spawn a power-up.
+         *
+         * @param world The game world to spawn the power-up in.
+         */
+        static void spawnPowerUp(IGameWorld &world);
     };
 } // namespace Game

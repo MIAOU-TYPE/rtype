@@ -3,7 +3,7 @@
   "enemies": {
     "smallEnemy": {
       "hp": 15,
-      "speed": -80,
+      "speed": -100,
       "size": { "w": 65, "h": 66 },
       "killScore": 30,
       "sprite": "enemy",
@@ -13,7 +13,7 @@
         "cooldown": 2.0,
         "projectileSpeed": 130,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 30 },
+        "muzzle": { "x": -20, "y": 50 },
         "projectileSpriteId": 9
       }
     },
@@ -30,7 +30,7 @@
         "cooldown": 2.0,
         "projectileSpeed": 100,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 23 },
+        "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 9
       }
     },
@@ -47,7 +47,7 @@
         "cooldown": 2.2,
         "projectileSpeed": 110,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 23 },
+        "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 12
       }
     },
@@ -64,7 +64,7 @@
         "cooldown": 2.6,
         "projectileSpeed": 105,
         "damage": 45,
-        "muzzle": { "x": -20, "y": 23 },
+        "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 12
       }
     },
@@ -81,17 +81,26 @@
         "cooldown": 3.0,
         "projectileSpeed": 110,
         "damage": 40,
-        "muzzle": { "x": -20, "y": 23 },
+        "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 12
       }
     },
     "fastEnemy": {
       "hp": 10,
-      "speed": -120,
+      "speed": -125,
       "size": { "w": 33, "h": 22 },
       "killScore": 10,
       "sprite": "enemy3",
-      "spriteId": 4
+      "spriteId": 4,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 0.8,
+        "projectileSpeed": 160,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 15 },
+        "projectileSpriteId": 9
+      }
+
     },
     "boss": {
       "hp": 500,
@@ -106,7 +115,7 @@
         "cooldown": 1.6,
         "projectileSpeed": 140,
         "damage": 35,
-        "muzzle": { "x": 55, "y": 72 },
+        "muzzle": { "x": 105, "y": 112 },
         "projectileSpriteId": 12
       }
     },
@@ -132,9 +141,9 @@
     "gravityWell": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 150,
+      "pullStrength": 250,
       "damagePerSecond": 10,
-      "radius": 200,
+      "radius": 130,
       "innerRadius": 50
     }
   },
@@ -152,13 +161,20 @@
       "spawnPattern": "spread"
     },
     {
+      "time": 8,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleX": 400,
+      "obstacleY": 365
+    },
+    {
       "time": 15,
       "enemies": { "mediumEnemy": 1 },
       "spawnY": 360
     },
     {
       "time": 20,
-      "enemies": { "smallEnemy": 4 },
+      "enemies": { "smallEnemy": 3 },
       "spawnPattern": "line",
       "spawnY": 400
     },

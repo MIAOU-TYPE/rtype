@@ -47,6 +47,7 @@ namespace World
         };
 
         Type type; ///> Type of the command
-        std::variant<std::monostate, SnapshotBatch, DestroyInfo, uint32_t> payload; ///> Command payload (uint32_t used for both Damage targetId and Score)
+        std::variant<std::monostate, SnapshotBatch, DestroyInfo, uint32_t>
+            payload; ///> Command payload (uint32_t used for both Damage targetId and Score)
     };
 } // namespace World

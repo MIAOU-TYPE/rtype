@@ -17,6 +17,7 @@ struct SnapshotEntity {
     size_t id;             ///> Entity ID
     float x;               ///> X position
     float y;               ///> Y position
+    uint8_t z;             ///> Z position
     unsigned int spriteId; ///> Sprite identifier
 };
 
@@ -43,8 +44,9 @@ static_assert(sizeof(SnapshotBatchHeader) == 22, "SnapshotBatchHeader layout mis
  */
 struct SnapshotEntityData {
     uint32_t id;      ///> Entity ID
-    int16_t x;       ///> X position
-    int16_t y;       ///> Y position
+    int16_t x;        ///> X position
+    int16_t y;        ///> Y position
+    uint8_t z;        ///> Z position
     uint8_t spriteId; ///> Sprite identifier
 };
 
@@ -70,4 +72,4 @@ struct SnapshotCompressedHeader {
 
 static_assert(sizeof(SnapshotCompressedHeader) == 26, "SnapshotCompressedHeader layout mismatch");
 
-static_assert(sizeof(SnapshotEntityData) == 9, "SnapshotEntityData layout mismatch");
+static_assert(sizeof(SnapshotEntityData) == 10, "SnapshotEntityData layout mismatch");

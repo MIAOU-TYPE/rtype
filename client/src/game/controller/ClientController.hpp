@@ -74,6 +74,7 @@ namespace Ecs
         /**
          * @brief Called when a DESTROY message is received.
          * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed (play sound), false otherwise.
          */
         void onDestroy(size_t entityId, bool wasKilled) override;
 

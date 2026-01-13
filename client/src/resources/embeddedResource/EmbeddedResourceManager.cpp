@@ -53,6 +53,14 @@ namespace EmbeddedResources
     extern const unsigned int explose_png_size;
     extern const unsigned char boss_png[];
     extern const unsigned int boss_png_size;
+    extern const unsigned char power_up_png[];
+    extern const unsigned int power_up_png_size;
+    extern const unsigned char power_up_attached_png[];
+    extern const unsigned int power_up_attached_png_size;
+    extern const unsigned char missile_big_png[];
+    extern const unsigned int missile_big_png_size;
+    extern const unsigned char bar_png[];
+    extern const unsigned int bar_png_size;
 
     extern const unsigned char colorblind_frag[];
     extern const unsigned int colorblind_frag_size;
@@ -125,6 +133,12 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
+    _resources["sprites/power_up.png"] = {EmbeddedResources::power_up_png, EmbeddedResources::power_up_png_size};
+    _resources["sprites/power_up_attached.png"] = {
+        EmbeddedResources::power_up_attached_png, EmbeddedResources::power_up_attached_png_size};
+    _resources["sprites/missile_big.png"] = {
+        EmbeddedResources::missile_big_png, EmbeddedResources::missile_big_png_size};
+    _resources["sprites/bar.png"] = {EmbeddedResources::bar_png, EmbeddedResources::bar_png_size};
 
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::colorblind_frag, EmbeddedResources::colorblind_frag_size};

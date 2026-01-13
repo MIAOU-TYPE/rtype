@@ -10,7 +10,7 @@
 namespace Engine
 {
     void RenderSystem::update(Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry,
-        std::vector<RenderCommand> &out)
+        const Graphics::Extent2u &viewportSize, std::vector<RenderCommand> &out)
     {
         registry.view<Ecs::Position, Ecs::Drawable, Ecs::AnimationState, Ecs::Render>(
             [&](Ecs::Entity, const Ecs::Position &pos, const Ecs::Drawable &drawable, const Ecs::AnimationState &anim,
@@ -28,9 +28,25 @@ namespace Engine
                 if (anim.frameIndex >= animation.frames.size())
                     return;
 
-                out.push_back({.textureId = render.texture,
-                    .frame = animation.frames[anim.frameIndex].rect,
-                    .position = {pos.x, pos.y}});
+                RenderCommand cmd;
+                cmd.textureId = render.texture;
+                cmd.frame = animation.frames[anim.frameIndex].rect;
+                cmd.position = {pos.x, pos.y};
+
+                if (drawable.spriteId >= 100 && drawable.spriteId < 102) {
+                    const float viewportWidth = static_cast<float>(viewportSize.width);
+                    const float viewportHeight = static_cast<float>(viewportSize.height);
+                    const float frameWidth = static_cast<float>(cmd.frame.w);
+                    const float frameHeight = static_cast<float>(cmd.frame.h);
+
+                    const float scaleX = viewportWidth / frameWidth;
+                    const float scaleY = viewportHeight / frameHeight;
+
+                    const float scale = std::max(scaleX, scaleY);
+                    cmd.scale = {scale, scale};
+                }
+
+                out.push_back(cmd);
             });
     }
 } // namespace Engine

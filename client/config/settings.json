@@ -1,0 +1,18 @@
+{
+    "audio": {
+        "music_muted": true,
+        "music_volume": 100,
+        "sfx_muted": true,
+        "sfx_volume": 100
+    },
+    "video": {
+        "colorblind_mode": "none",
+        "resolution": {
+            "height": 720,
+            "width": 1280
+        }
+    },
+    "input": {
+        "preset": "arrows"
+    }
+}

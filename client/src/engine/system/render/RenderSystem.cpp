@@ -28,9 +28,12 @@ namespace Engine
                 if (anim.frameIndex >= animation.frames.size())
                     return;
 
+                constexpr float GLOBAL_SPRITE_SCALE = 1.7f;
+
                 out.push_back({.textureId = render.texture,
                     .frame = animation.frames[anim.frameIndex].rect,
-                    .position = {pos.x, pos.y}});
+                    .position = {pos.x, pos.y},
+                    .scale = {GLOBAL_SPRITE_SCALE, GLOBAL_SPRITE_SCALE}});
             });
     }
 } // namespace Engine

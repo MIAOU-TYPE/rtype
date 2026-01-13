@@ -126,6 +126,10 @@
       "enemies": { "smallEnemy": 3 }
     },
     {
+      "time": 10,
+      "powerUps": 1
+    },
+    {
       "time": 12,
       "enemies": { "mediumEnemy": 1 }
     },

@@ -13,6 +13,21 @@ namespace
     {
         return a + (b - a) * t;
     }
+
+    float clamp(const float v) noexcept
+    {
+        if (v < 0.f)
+            return 0.f;
+        if (v > 1.f)
+            return 1.f;
+        return v;
+    }
+
+    uint32_t computeTargetTick(const uint32_t latestTick) noexcept
+    {
+        return (latestTick > World::ClientWorld::InterpDelayTicks) ? (latestTick - World::ClientWorld::InterpDelayTicks)
+                                                                   : 0u;
+    }
 } // namespace
 
 namespace World
@@ -162,36 +177,84 @@ namespace World
         }
     }
 
+    void ClientWorld::refreshSpriteIfChanged(const Ecs::Entity e, const uint32_t spriteId,
+        Ecs::SparseArray<Ecs::Drawable> drawables, Ecs::SparseArray<Ecs::AnimationState> anims,
+        Ecs::SparseArray<Ecs::Render> renders) const
+    {
+        const auto idx = static_cast<size_t>(e);
+
+        if (auto &drawable = drawables.at(idx)) {
+            if (drawable->spriteId == spriteId)
+                return;
+            if (!_spriteRegistry->exists(spriteId))
+                return;
+
+            drawable->spriteId = spriteId;
+            const auto &sprite = _spriteRegistry->get(spriteId);
+
+            if (auto &render = renders.at(idx))
+                render->texture = sprite.textureHandle;
+
+            if (auto &anim = anims.at(idx)) {
+                anim->currentAnimation = sprite.defaultAnimation;
+                anim->frameIndex = 0;
+                anim->elapsed = 0.f;
+            }
+        }
+    };
+
     void ClientWorld::updateInterpolatedPositions()
     {
         if (_snapshots.empty())
             return;
 
-        const uint32_t latestTick = _snapshots.back().tick;
-        const uint32_t targetTick = (latestTick > InterpDelayTicks) ? (latestTick - InterpDelayTicks) : 0;
+        auto &positions = _registry.getComponents<Ecs::Position>();
+        auto &drawables = _registry.getComponents<Ecs::Drawable>();
+        auto &renders = _registry.getComponents<Ecs::Render>();
+        auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
-        if (_snapshots.size() == 1 || targetTick < _snapshots.front().tick) {
-            const auto &[tick, entities] = _snapshots.front();
-            for (const auto &[netId, st] : entities) {
-                if (_destroyed.contains(static_cast<uint32_t>(netId)))
+        const auto isDestroyed = [&](const size_t netId) {
+            return _destroyed.contains(static_cast<uint32_t>(netId));
+        };
+
+        const auto ensureEntity = [&](const size_t netId, const NetState &st) -> Ecs::Entity {
+            if (!_entityMap.contains(netId))
+                applyCreate(EntityCreate{netId, st.x, st.y, st.z, st.spriteId});
+            return _entityMap[netId];
+        };
+
+        const auto setPosition = [&](const Ecs::Entity e, const float x, const float y, const uint8_t z) {
+            const auto idx = static_cast<size_t>(e);
+            if (auto &pos = positions.at(idx)) {
+                pos->x = x;
+                pos->y = y;
+                pos->z = z;
+            }
+        };
+
+        const uint32_t latestTick = _snapshots.back().tick;
+        const uint32_t targetTick = computeTargetTick(latestTick);
+
+        const auto applyNoInterp = [&] {
+            for (const auto &[tick, entities] = _snapshots.front(); const auto &[netId, st] : entities) {
+                if (isDestroyed(netId))
                     continue;
 
-                if (!_entityMap.contains(netId))
-                    applyCreate(EntityCreate{netId, st.x, st.y, st.z, st.spriteId});
-
-                const auto local = _entityMap[netId];
-                const auto idx = static_cast<size_t>(local);
-                if (auto &pos = _registry.getComponents<Ecs::Position>().at(idx)) {
-                    pos->x = st.x;
-                    pos->y = st.y;
-                }
+                const Ecs::Entity e = ensureEntity(netId, st);
+                setPosition(e, st.x, st.y, st.z);
+                refreshSpriteIfChanged(e, st.spriteId, drawables, anims, renders);
             }
-            return;
-        }
+        };
 
-        while (_snapshots.size() >= 2 && _snapshots.at(1).tick <= targetTick)
-            _snapshots.pop_front();
+        const auto trimOldSnapshots = [&] {
+            while (_snapshots.size() >= 2 && _snapshots.at(1).tick <= targetTick)
+                _snapshots.pop_front();
+        };
 
+        if (_snapshots.size() == 1 || targetTick < _snapshots.front().tick)
+            return applyNoInterp();
+
+        trimOldSnapshots();
         if (_snapshots.size() < 2)
             return;
 
@@ -202,46 +265,22 @@ namespace World
         if (dt == 0)
             return;
 
-        float alpha = static_cast<float>(targetTick - A.tick) / static_cast<float>(dt);
-        if (alpha < 0.f)
-            alpha = 0.f;
-        if (alpha > 1.f)
-            alpha = 1.f;
+        const float alpha = clamp(static_cast<float>(targetTick - A.tick) / static_cast<float>(dt));
 
         for (const auto &[netId, bs] : B.entities) {
-            if (_destroyed.contains(static_cast<uint32_t>(netId)))
+            if (isDestroyed(netId))
                 continue;
 
             const auto itA = A.entities.find(netId);
             const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
-            if (!_entityMap.contains(netId))
-                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
+            const Ecs::Entity e = ensureEntity(netId, bs);
 
-            const Ecs::Entity local = _entityMap[netId];
-            const auto idx = static_cast<size_t>(local);
+            const float x = lerp(as.x, bs.x, alpha);
+            const float y = lerp(as.y, bs.y, alpha);
 
-            if (auto &pos = _registry.getComponents<Ecs::Position>().at(idx)) {
-                pos->x = lerp(as.x, bs.x, alpha);
-                pos->y = lerp(as.y, bs.y, alpha);
-                pos->z = bs.z;
-            }
-
-            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(idx)) {
-                if (drawable->spriteId != bs.spriteId && _spriteRegistry->exists(bs.spriteId)) {
-                    drawable->spriteId = bs.spriteId;
-                    const auto &sprite = _spriteRegistry->get(bs.spriteId);
-
-                    if (auto &render = _registry.getComponents<Ecs::Render>().at(idx))
-                        render->texture = sprite.textureHandle;
-
-                    if (auto &anim = _registry.getComponents<Ecs::AnimationState>().at(idx)) {
-                        anim->currentAnimation = sprite.defaultAnimation;
-                        anim->frameIndex = 0;
-                        anim->elapsed = 0.f;
-                    }
-                }
-            }
+            setPosition(e, x, y, bs.z);
+            refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
         }
     }
 

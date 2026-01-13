@@ -28,6 +28,11 @@ namespace World
      */
     class ClientWorld {
       public:
+        static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
+        static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
+        static constexpr uint32_t InterpDelayTicks =
+            (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
+
         /**
          * @brief Constructs a ClientWorld with the given SpriteRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
@@ -76,6 +81,17 @@ namespace World
         void updateInterpolatedPositions();
 
       private:
+        /**
+         * @brief Sets the position of an entity.
+         * @param e The entity whose position is to be set.
+         * @param spriteId The sprite ID to set.
+         * @param drawables sparse array of Drawable components.
+         * @param anims sparse array of AnimationState components.
+         * @param renders sparse array of Render components.
+         */
+        void refreshSpriteIfChanged(Ecs::Entity e, uint32_t spriteId, Ecs::SparseArray<Ecs::Drawable> drawables,
+            Ecs::SparseArray<Ecs::AnimationState> anims, Ecs::SparseArray<Ecs::Render> renders) const;
+
         /**
          * @brief Purges stale entities that have not been updated within the specified maximum age.
          * @param maxAge The maximum age for an entity to be considered active.
@@ -134,11 +150,6 @@ namespace World
         };
 
         std::deque<TickSnapshot> _snapshots; ///> Deque of snapshots for interpolation
-
-        static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
-        static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
-        static constexpr uint32_t InterpDelayTicks =
-            (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
 
         size_t _maxSnapshots = 64; ///> Maximum number of snapshots to store
 

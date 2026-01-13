@@ -1,0 +1,30 @@
+{
+  "sprite": "bar",
+  "spriteId": 16,
+  "texture": "sprites/bar.png",
+  "default_animation": "reloading",
+  "animations": {
+    "reloading": {
+      "loop": false,
+      "frames": [
+        { "x": 0, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 79, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 158, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 237, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 316, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 395, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 474, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 553, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 632, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 711, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 790, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 869, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 948, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 1027, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 1106, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 1185, "y": 0, "w": 79, "h": 8, "duration": 0.294 },
+        { "x": 1264, "y": 0, "w": 79, "h": 8, "duration": 0.304 }
+      ]
+    }
+  }
+}

@@ -61,15 +61,9 @@ namespace Ecs
 
             case Net::Protocol::UDP::SNAPSHOT_COMPRESSED: handleSnapEntityCompressed(payload, payloadSize); break;
 
-            case Net::Protocol::UDP::SCORE:
-                if (payloadSize == sizeof(ScoreData))
-                    handleScore(payload, payloadSize);
-                break;
+            case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
 
-            case Net::Protocol::UDP::DESTROY_ENTITY:
-                if (payloadSize == sizeof(DestroyData))
-                    handleDestroy(payload, payloadSize);
-                break;
+            case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
 
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
@@ -322,8 +316,8 @@ namespace Ecs
 
             SnapshotEntity e{};
             e.id = ntohl(d.id);
-            e.x = ntohs(d.x);
-            e.y = ntohs(d.y);
+            e.x = static_cast<float>(static_cast<int16_t>(ntohs(d.x)));
+            e.y = static_cast<float>(static_cast<int16_t>(ntohs(d.y)));
             e.spriteId = d.spriteId;
 
             acc.merged.push_back(e);

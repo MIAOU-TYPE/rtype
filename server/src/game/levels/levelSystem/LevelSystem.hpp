@@ -21,12 +21,12 @@
 #include "KillScore.hpp"
 #include "LevelManager.hpp"
 #include "Position.hpp"
+#include "PowerUp.hpp"
 #include "Rand.hpp"
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
 #include <unordered_map>
-#include "PowerUp.hpp"
 
 namespace Game
 {

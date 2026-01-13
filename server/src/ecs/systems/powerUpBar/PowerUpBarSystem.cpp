@@ -24,8 +24,7 @@ namespace Game
                         barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
                     powerUp.hasBar = true;
                     powerUp.barEntity = barEntity;
-                }
-                else if (!powerUp.hasPowerUp && powerUp.hasBar && powerUp.barEntity.has_value()) {
+                } else if (!powerUp.hasPowerUp && powerUp.hasBar && powerUp.barEntity.has_value()) {
                     world.destroyEntity(powerUp.barEntity.value());
                     powerUp.hasBar = false;
                     powerUp.barEntity = std::nullopt;

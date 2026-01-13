@@ -123,13 +123,13 @@ namespace Net::Factory
 
       private:
         /*
-        * @struct BuiltPkt
-        * @brief Represents a built packet with its properties.
-        */
+         * @struct BuiltPkt
+         * @brief Represents a built packet with its properties.
+         */
         struct BuiltPkt {
             std::shared_ptr<IPacket> pkt; ///> Pointer to the built IPacket.
-            bool compressed; ///> Indicates if the packet is compressed.
-            uint16_t count; ///> Number of entities in the packet.
+            bool compressed;              ///> Indicates if the packet is compressed.
+            uint16_t count;               ///> Number of entities in the packet.
         };
 
         /**
@@ -137,8 +137,8 @@ namespace Net::Factory
          * @brief Represents the sizes of chunks for packet creation.
          */
         struct ChunkSizes {
-            size_t maxPacketBytes; ///> Maximum size of the packet in bytes.
-            size_t maxCompBytes; ///> Maximum size of the compressed data in bytes.
+            size_t maxPacketBytes;    ///> Maximum size of the packet in bytes.
+            size_t maxCompBytes;      ///> Maximum size of the compressed data in bytes.
             size_t maxEntitiesPerPkt; ///> Maximum number of entities per packet.
         };
 

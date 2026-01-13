@@ -6,6 +6,7 @@
 */
 
 #include "LevelSystem.hpp"
+#include "PowerUp.hpp"
 
 namespace Game
 {
@@ -42,6 +43,9 @@ namespace Game
             for (int k = 0; k < count; k++)
                 spawnSingleEnemy(world, def);
         }
+
+        for (int i = 0; i < wave.powerUps; i++)
+            spawnPowerUp(world);
     }
 
     void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def)
@@ -95,5 +99,18 @@ namespace Game
         Ecs::WeaponConfig weapon;
         weapon.projectileSpriteId = def.shoot.projectileSpriteId;
         reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
+    }
+
+    void LevelSystem::spawnPowerUp(IGameWorld &world)
+    {
+        auto &reg = world.registry();
+        const float y = Rand::enemyY(Rand::rng);
+        const Ecs::Entity powerUpEntity = world.createEntity();
+
+        reg.emplaceComponent<Ecs::Position>(powerUpEntity, Ecs::Position{1400.f, y});
+        reg.emplaceComponent<Ecs::Velocity>(powerUpEntity, Ecs::Velocity{-50.f, 0.f});
+        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{13, true});
+        reg.emplaceComponent<Ecs::Collision>(powerUpEntity, Ecs::Collision{32.f, 32.f});
+        reg.emplaceComponent<Ecs::PowerUp>(powerUpEntity);
     }
 } // namespace Game

@@ -125,7 +125,7 @@ namespace Net::Thread
         std::shared_ptr<TCPPacketRouter> _tcpPacketRouter; ///> Routes incoming TCP packets to appropriate handlers
         std::shared_ptr<Factory::TCPPacketFactory> _tcpPacketFactory; ///> Builds outgoing TCP packets.
 
-        std::shared_ptr<Auth::SqliteDb> _authDb;         ///> Authentication database
+        std::shared_ptr<Db::SqliteDb> _authDb;         ///> Authentication database
         std::shared_ptr<Auth::UserStorage> _userRepo;    ///> User repository for managing user data
         std::shared_ptr<Auth::AuthService> _authService; ///> Authentication service
 

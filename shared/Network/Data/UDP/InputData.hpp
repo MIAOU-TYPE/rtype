@@ -25,6 +25,7 @@ struct PlayerInputData {
                        ///  Bit 2: Left
                        ///  Bit 3: Right
                        ///  Bit 4: Shoot
+                       ///  Bit 5: PowerShoot (E key)
 };
 
 #pragma pack(pop)
@@ -32,9 +33,10 @@ struct PlayerInputData {
 static_assert(sizeof(PlayerInputData) == sizeof(HeaderData) + 1, "PlayerInputData layout mismatch");
 
 struct PlayerInput {
-    bool up = false;    ///> Flag indicating upward movement.
-    bool down = false;  ///> Flag indicating downward movement.
-    bool left = false;  ///> Flag indicating leftward movement.
-    bool right = false; ///> Flag indicating rightward movement.
-    bool shoot = false; ///> Flag indicating shooting action.
+    bool up = false;        ///> Flag indicating upward movement.
+    bool down = false;      ///> Flag indicating downward movement.
+    bool left = false;      ///> Flag indicating leftward movement.
+    bool right = false;     ///> Flag indicating rightward movement.
+    bool shoot = false;     ///> Flag indicating shooting action.
+    bool powerShoot = false; ///> Flag indicating power-up special weapon (E key).
 };

@@ -125,7 +125,8 @@ namespace Game
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{100, 100});
         _registry.emplaceComponent<InputComponent>(ent);
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
-        _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
+        // Collision scaled to match sprite scale (1.7x): 30*1.7=51, 15*1.7=25.5
+        _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});

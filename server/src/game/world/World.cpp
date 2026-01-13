@@ -93,6 +93,62 @@ namespace
             }
         });
     }
+
+    void registerPowerUpCollection(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
+            auto &reg = w->registry();
+
+            const auto &powerUpA = reg.getComponents<Ecs::PowerUp>().at(event.a);
+            const auto &playerB = reg.getComponents<Ecs::PlayerPowerUp>().at(event.b);
+            
+            const auto &powerUpB = reg.getComponents<Ecs::PowerUp>().at(event.b);
+            const auto &playerA = reg.getComponents<Ecs::PlayerPowerUp>().at(event.a);
+
+            size_t powerUpIdx = 0;
+            size_t playerIdx = 0;
+
+            if (powerUpA && playerB) {
+                powerUpIdx = event.a;
+                playerIdx = event.b;
+            } else if (powerUpB && playerA) {
+                powerUpIdx = event.b;
+                playerIdx = event.a;
+            } else {
+                return;
+            }
+
+            auto &powerUp = *reg.getComponents<Ecs::PowerUp>().at(powerUpIdx);
+            auto &playerPowerUp = *reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
+
+            if (powerUp.collected || playerPowerUp.hasPowerUp)
+                return;
+
+            powerUp.collected = true;
+            
+            if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
+                drawable->spriteId = 14;
+
+            if (auto &vel = reg.getComponents<Ecs::Velocity>().at(powerUpIdx)) {
+                vel->vx = 0.f;
+                vel->vy = 0.f;
+            }
+
+            if (auto &pos = reg.getComponents<Ecs::Position>().at(powerUpIdx)) {
+                const auto &playerPos = reg.getComponents<Ecs::Position>().at(playerIdx);
+                if (playerPos) {
+                    pos->x = playerPos->x + 20.f;
+                    pos->y = playerPos->y - 10.f;
+                }
+            }
+
+            playerPowerUp.hasPowerUp = true;
+            playerPowerUp.cooldown = 0.f;
+            playerPowerUp.isReady = false;
+        });
+    }
 } // namespace
 
 namespace Game
@@ -104,6 +160,7 @@ namespace Game
         registerProjectileSpawning(*this);
         registerDestroyEvent(*this);
         registerDamageToScore(*this);
+        registerPowerUpCollection(*this);
     }
 
     Ecs::Registry &World::registry()
@@ -129,6 +186,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
+        _registry.emplaceComponent<Ecs::PlayerPowerUp>(ent);
         return ent;
     }
 

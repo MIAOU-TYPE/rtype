@@ -318,6 +318,7 @@ namespace Ecs
             e.id = ntohl(d.id);
             e.x = static_cast<float>(static_cast<int16_t>(ntohs(d.x)));
             e.y = static_cast<float>(static_cast<int16_t>(ntohs(d.y)));
+            e.z = d.z;
             e.spriteId = d.spriteId;
 
             acc.merged.push_back(e);

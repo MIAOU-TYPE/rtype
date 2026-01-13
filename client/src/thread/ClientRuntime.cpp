@@ -398,7 +398,7 @@ namespace Thread
         });
 
         auto lastHello = clock::now() - std::chrono::seconds(10);
-        while (_running) {
+        while (_running && _tcpClient->isRunning()) {
             _tcpClient->receivePackets();
             std::shared_ptr<Net::IPacket> pkt;
             while (_tcpClient->popPacket(pkt))
@@ -411,5 +411,6 @@ namespace Thread
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
+        _running.store(false, std::memory_order_release);
     }
 } // namespace Thread

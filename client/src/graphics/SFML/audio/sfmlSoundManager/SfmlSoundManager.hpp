@@ -8,7 +8,6 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>

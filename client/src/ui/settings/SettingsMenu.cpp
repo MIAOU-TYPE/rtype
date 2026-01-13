@@ -31,8 +31,8 @@ namespace Engine
         _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
         _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        const auto preset = Utils::InputConfig::getInstance().getCurrentPreset();
-        const auto presetName = Utils::InputConfig::getPresetName(preset);
+        const auto preset = Utils::SettingsConfig::getInstance().getCurrentPreset();
+        const auto presetName = Utils::SettingsConfig::getPresetName(preset);
         _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
         _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
@@ -55,37 +55,38 @@ namespace Engine
             _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(), _musicVolUp.get(),
             _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(),
             _muteSFX.get());
-        if (_musicRegistry) {
-            const float musicVol = _musicRegistry->getMusicVolume();
-            const float volumeBeforeMute = _musicRegistry->getVolumeBeforeMute();
-            if (musicVol < 0.01f && volumeBeforeMute > 0.01f) {
-                _musicMuted = true;
-                _musicVolume = static_cast<size_t>(volumeBeforeMute);
-                _musicVolumeBeforeMute = static_cast<size_t>(volumeBeforeMute);
-            } else {
-                _musicMuted = false;
-                _musicVolume = static_cast<size_t>(musicVol);
-                _musicVolumeBeforeMute = _musicVolume;
+
+        const auto &config = Utils::SettingsConfig::getInstance();
+        _musicVolume = config.getMusicVolume();
+        _sfxVolume = config.getSfxVolume();
+        _musicMuted = config.isMusicMuted();
+        _sfxMuted = config.isSfxMuted();
+        _currentResolution = 0;
+        const auto res = config.getResolution();
+        for (std::size_t i = 0; i < _resolutions.size(); ++i) {
+            if (_resolutions[i].width == res.width && _resolutions[i].height == res.height) {
+                _currentResolution = i;
+                break;
             }
+        }
+        _currentColorBlindMode = config.getColorBlindMode();
+
+        if (_musicRegistry) {
+            _musicRegistry->setMusicVolume(_musicMuted ? 0.f : static_cast<float>(_musicVolume));
+            if (_musicMuted)
+                _musicRegistry->setVolumeBeforeMute(static_cast<float>(_musicVolume));
         }
         if (_soundRegistry) {
-            const float sfxVol = _soundRegistry->getSoundVolume();
-            const float volumeBeforeMute = _soundRegistry->getVolumeBeforeMute();
-            if (sfxVol < 0.01f && volumeBeforeMute > 0.01f) {
-                _sfxMuted = true;
-                _sfxVolume = static_cast<size_t>(volumeBeforeMute);
-                _sfxVolumeBeforeMute = static_cast<size_t>(volumeBeforeMute);
-            } else {
-                _sfxMuted = false;
-                _sfxVolume = static_cast<size_t>(sfxVol);
-                _sfxVolumeBeforeMute = _sfxVolume;
-            }
+            _soundRegistry->setSoundVolume(_sfxMuted ? 0.f : static_cast<float>(_sfxVolume));
+            if (_sfxMuted)
+                _soundRegistry->setVolumeBeforeMute(static_cast<float>(_sfxVolume));
         }
+        _renderer->setColorBlindMode(_currentColorBlindMode);
+
         _musicVolLabel->setLabel(std::to_string(_musicVolume));
         _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
         _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
         _muteSFX->setLabel(_sfxMuted ? "ON SFX" : "OFF SFX");
-        _currentColorBlindMode = _renderer->getColorBlindMode();
         std::string label;
         switch (_currentColorBlindMode) {
             case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
@@ -95,8 +96,8 @@ namespace Engine
             default: label = "UNKNOWN"; break;
         }
         _colorBlindMode->setLabel(label);
-        const auto &res = _resolutions.at(_currentResolution);
-        _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
+        const auto &currentRes = _resolutions.at(_currentResolution);
+        _resolution->setLabel(std::to_string(currentRes.width) + "x" + std::to_string(currentRes.height));
         layout();
     }
 
@@ -207,9 +208,11 @@ namespace Engine
 
     bool SettingsMenu::handleVideoReleased(const float mx, const float my)
     {
+        auto &config = Utils::SettingsConfig::getInstance();
         if (_colorBlindNext->onMouseReleased(mx, my)) {
             _currentColorBlindMode = nextMode(_currentColorBlindMode);
             _renderer->setColorBlindMode(_currentColorBlindMode);
+            config.setColorBlindMode(_currentColorBlindMode);
             static const std::unordered_map<Graphics::ColorBlindMode, std::string> labels = {
                 {Graphics::ColorBlindMode::NONE, "NORMAL"},
                 {Graphics::ColorBlindMode::DEUTERANOPIA, "DEUTER"},
@@ -223,6 +226,7 @@ namespace Engine
         if (_resolutionNext->onMouseReleased(mx, my)) {
             _currentResolution = (_currentResolution + 1) % _resolutions.size();
             _resolutionChanged = true;
+            config.setResolution(_resolutions.at(_currentResolution));
             const auto &[width, height] = _resolutions.at(_currentResolution);
             _resolution->setLabel(std::to_string(width) + "x" + std::to_string(height));
             return true;
@@ -234,11 +238,12 @@ namespace Engine
     {
         if (!_controlsNext->onMouseReleased(mx, my))
             return false;
-        auto &config = Utils::InputConfig::getInstance();
+        auto &config = Utils::SettingsConfig::getInstance();
         const auto current = config.getCurrentPreset();
-        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD : Utils::KeyPreset::Arrows;
+        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD :
+                          current == Utils::KeyPreset::ZQSD ? Utils::KeyPreset::Custom : Utils::KeyPreset::Arrows;
         config.setPreset(next);
-        _controls->setLabel(Utils::InputConfig::getPresetName(next));
+        _controls->setLabel(Utils::SettingsConfig::getPresetName(next));
         _controlsChanged = true;
         _controlsNext->reset();
         return true;
@@ -246,9 +251,11 @@ namespace Engine
 
     bool SettingsMenu::handleAudioReleased(const float mx, const float my)
     {
+        auto &config = Utils::SettingsConfig::getInstance();
         if (_musicVolUp->onMouseReleased(mx, my)) {
             _musicVolume = std::min<size_t>(100, _musicVolume + 10);
             _musicVolLabel->setLabel(std::to_string(_musicVolume));
+            config.setMusicVolume(_musicVolume);
             applyMusicVolumeChange(_musicVolume, _musicMuted);
             _musicVolUp->reset();
             return true;
@@ -256,6 +263,7 @@ namespace Engine
         if (_musicVolDown->onMouseReleased(mx, my)) {
             _musicVolume = (_musicVolume >= 10) ? _musicVolume - 10 : 0;
             _musicVolLabel->setLabel(std::to_string(_musicVolume));
+            config.setMusicVolume(_musicVolume);
             applyMusicVolumeChange(_musicVolume, _musicMuted);
             _musicVolDown->reset();
             return true;
@@ -263,6 +271,7 @@ namespace Engine
         if (_sfxVolUp->onMouseReleased(mx, my)) {
             _sfxVolume = std::min<size_t>(100, _sfxVolume + 10);
             _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+            config.setSfxVolume(_sfxVolume);
             applySoundVolumeChange(_sfxVolume, _sfxMuted);
             _sfxVolUp->reset();
             return true;
@@ -270,6 +279,7 @@ namespace Engine
         if (_sfxVolDown->onMouseReleased(mx, my)) {
             _sfxVolume = (_sfxVolume >= 10) ? _sfxVolume - 10 : 0;
             _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+            config.setSfxVolume(_sfxVolume);
             applySoundVolumeChange(_sfxVolume, _sfxMuted);
             _sfxVolDown->reset();
             return true;
@@ -277,6 +287,7 @@ namespace Engine
         if (_muteMusic->onMouseReleased(mx, my)) {
             _musicMuted = !_musicMuted;
             _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
+            config.setMusicMuted(_musicMuted);
             if (_musicRegistry) {
                 _musicRegistry->setMusicVolume(_musicMuted ? 0.f : static_cast<float>(_musicVolume));
                 if (_musicMuted)
@@ -288,6 +299,7 @@ namespace Engine
         if (_muteSFX->onMouseReleased(mx, my)) {
             _sfxMuted = !_sfxMuted;
             _muteSFX->setLabel(_sfxMuted ? "ON SFX" : "OFF SFX");
+            config.setSfxMuted(_sfxMuted);
             if (_soundRegistry) {
                 _soundRegistry->setSoundVolume(_sfxMuted ? 0.f : static_cast<float>(_sfxVolume));
                 if (_sfxMuted)

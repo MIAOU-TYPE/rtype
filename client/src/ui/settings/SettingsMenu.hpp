@@ -14,7 +14,7 @@
 #include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
-#include "InputConfig.hpp"
+#include "SettingsConfig.hpp"
 #include "InputState.hpp"
 #include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"

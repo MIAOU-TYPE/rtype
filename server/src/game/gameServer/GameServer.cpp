@@ -97,6 +97,9 @@ namespace Game
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
                 std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
+            else {
+                LevelSystem::spawnBackgrounds(*_worldWrite, _levelManager.getCurrentLevel());
+            }
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
@@ -150,6 +153,8 @@ namespace Game
     {
         LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
 
+        BackgroundSystem::update(*_worldWrite, dt);
+        BackgroundSystem::resetScroll(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);

@@ -124,8 +124,10 @@ namespace World
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
-            if (!_spriteRegistry->exists(data.spriteId))
+            if (!_spriteRegistry->exists(data.spriteId)) {
+                std::cerr << "[ClientWorld] Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
                 return;
+            }
 
             const Ecs::Entity entity = _registry.createEntity();
             _entityMap.emplace(data.id, entity);
@@ -134,6 +136,11 @@ namespace World
             _registry.emplaceComponent<Ecs::Drawable>(entity, Ecs::Drawable{data.spriteId});
 
             const auto &sprite = _spriteRegistry->get(data.spriteId);
+
+            if (sprite.textureHandle == Graphics::InvalidTexture) {
+                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                          << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
+            }
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
             _registry.emplaceComponent<Ecs::AnimationState>(entity,

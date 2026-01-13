@@ -176,10 +176,13 @@ namespace Ecs
             SnapshotEntityData entityData{};
             std::memcpy(&entityData, cursor, sizeof(entityData));
 
+            const int16_t x = static_cast<int16_t>(ntohs(static_cast<uint16_t>(entityData.x)));
+            const int16_t y = static_cast<int16_t>(ntohs(static_cast<uint16_t>(entityData.y)));
+
             SnapshotEntity entity{};
             entity.id = ntohl(entityData.id);
-            entity.x = ntohs(entityData.x);
-            entity.y = ntohs(entityData.y);
+            entity.x = static_cast<float>(x);
+            entity.y = static_cast<float>(y);
             entity.spriteId = entityData.spriteId;
 
             entities.push_back(entity);

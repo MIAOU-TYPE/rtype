@@ -7,6 +7,7 @@
 #pragma once
 
 #include <SFML/Graphics/Texture.hpp>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 

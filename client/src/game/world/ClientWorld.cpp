@@ -53,24 +53,13 @@ namespace World
     {
         static constexpr auto maxTime = std::chrono::milliseconds(500);
         std::vector<size_t> toDestroy;
-        std::unordered_set<size_t> receivedIds;
 
         const auto time = std::chrono::steady_clock::now();
         for (const auto &entity : entities) {
             _entityLastSeen[entity.id] = time;
-            receivedIds.insert(entity.id);
             applySingleSnapshot(entity);
         }
 
-        for (auto it = _entityMap.begin(); it != _entityMap.end();) {
-            if (!receivedIds.contains(it->first)) {
-                _registry.destroyEntity(it->second);
-                _entityLastSeen.erase(it->first);
-                it = _entityMap.erase(it);
-            } else {
-                ++it;
-            }
-        }
         for (const auto &[id, lastSeen] : _entityLastSeen) {
             if ((time - lastSeen) > maxTime)
                 toDestroy.push_back(id);

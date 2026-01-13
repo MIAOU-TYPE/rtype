@@ -52,7 +52,7 @@ namespace Net::Factory
         damageData.header = makeHeader(Protocol::UDP::DAMAGE_EVENT, VERSION, sizeof(DamageData));
         damageData.id = htonl(id);
         damageData.amount = htons(amount);
-        damageData.wasKilled = wasKilled ? 1 : 0;
+        damageData.wasKilled = wasKilled;
 
         try {
             auto packet = makePacket<DamageData>(addr, damageData);
@@ -152,7 +152,7 @@ namespace Net::Factory
             DestroyData destroyData;
             destroyData.header = makeHeader(Protocol::UDP::DESTROY_ENTITY, VERSION, sizeof(DestroyData));
             destroyData.id = htonl(static_cast<uint32_t>(entityId));
-            destroyData.wasKilled = wasKilled ? 1 : 0;
+            destroyData.wasKilled = wasKilled;
             std::memcpy(buf, &destroyData, sizeof(DestroyData));
             packet->setSize(sizeof(DestroyData));
             return packet;

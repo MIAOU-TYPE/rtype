@@ -1,0 +1,15 @@
+{
+  "sprite": "missile_big",
+  "spriteId": 15,
+  "texture": "sprites/missile_big.png",
+  "default_animation": "fly",
+  "animations": {
+    "fly": {
+      "loop": true,
+      "frames": [
+        { "x": 0,  "y": 0, "w": 81, "h": 16, "duration": 0.1 },
+        { "x": 81, "y": 0, "w": 82, "h": 16, "duration": 0.1 }
+      ]
+    }
+  }
+}

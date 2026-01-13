@@ -104,8 +104,8 @@ namespace Net::Factory
                 SnapshotEntityData packed{};
 
                 packed.id = htonl(static_cast<uint32_t>(id));
-                packed.x = htons(static_cast<int16_t>(x));
-                packed.y = htons(static_cast<int16_t>(y));
+                packed.x = static_cast<int16_t>(htons(static_cast<uint16_t>(static_cast<int16_t>(x))));
+                packed.y = static_cast<int16_t>(htons(static_cast<uint16_t>(static_cast<int16_t>(y))));
                 packed.spriteId = static_cast<uint8_t>(spriteId);
 
                 std::memcpy(buf + offset, &packed, sizeof(packed));

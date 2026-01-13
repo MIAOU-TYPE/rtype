@@ -44,6 +44,28 @@ namespace Engine
         _sfxVolDown = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
         _muteMusic = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF MUSIC");
         _muteSFX = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF SFX");
+        const auto &config = Utils::SettingsConfig::getInstance();
+        _rebindUp = std::make_unique<UI::UIButton>(
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getUpKey()));
+        _rebindDown = std::make_unique<UI::UIButton>(
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getDownKey()));
+        _rebindLeft = std::make_unique<UI::UIButton>(
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getLeftKey()));
+        _rebindRight = std::make_unique<UI::UIButton>(
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getRightKey()));
+        _rebindShoot = std::make_unique<UI::UIButton>(
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getShootKey()));
+
+        _rebindUpLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
+        _rebindUpLabel->setString("UP");
+        _rebindDownLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
+        _rebindDownLabel->setString("DOWN");
+        _rebindLeftLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
+        _rebindLeftLabel->setString("LEFT");
+        _rebindRightLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
+        _rebindRightLabel->setString("RIGHT");
+        _rebindShootLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
+        _rebindShootLabel->setString("SHOOT");
     }
 
     void SettingsMenu::onEnter()
@@ -51,10 +73,13 @@ namespace Engine
         _backRequested = false;
         _resolutionChanged = false;
         _controlsChanged = false;
+        _errorState = RebindState::None;
+        _errorFrameCount = 0;
         resetButtons(_colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(), _resolutionNext.get(),
             _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(), _musicVolUp.get(),
             _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(),
-            _muteSFX.get());
+            _muteSFX.get(), _rebindUp.get(), _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(),
+            _rebindShoot.get());
 
         const auto &config = Utils::SettingsConfig::getInstance();
         _musicVolume = config.getMusicVolume();
@@ -98,6 +123,8 @@ namespace Engine
         _colorBlindMode->setLabel(label);
         const auto &currentRes = _resolutions.at(_currentResolution);
         _resolution->setLabel(std::to_string(currentRes.width) + "x" + std::to_string(currentRes.height));
+        _controls->setLabel(Utils::SettingsConfig::getPresetName(config.getCurrentPreset()));
+        updateRebindLabels();
         layout();
     }
 
@@ -127,6 +154,24 @@ namespace Engine
             videoButtonSpacing, w, rightMargin);
         layoutChoiceWithNext(*_controls, *_controlsNext, rightColX, videoYStart + 2 * spacingY, labelMargin,
             videoButtonSpacing, w, rightMargin);
+        placeCentered(*_rebindUp, rightColX - w * 0.1f, videoYStart + 3 * spacingY);
+        placeCentered(*_rebindDown, rightColX, videoYStart + 3 * spacingY);
+        placeCentered(*_rebindLeft, rightColX + w * 0.1f, videoYStart + 3 * spacingY);
+        placeCentered(*_rebindRight, rightColX + w * 0.2f, videoYStart + 3 * spacingY);
+        placeCentered(*_rebindShoot, rightColX, videoYStart + 4 * spacingY);
+
+        const float labelOffsetY = h * 0.06f;
+        _rebindUpLabel->setPosition(
+            rightColX - w * 0.1f - _rebindUpLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
+        _rebindDownLabel->setPosition(
+            rightColX - _rebindDownLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
+        _rebindLeftLabel->setPosition(
+            rightColX + w * 0.1f - _rebindLeftLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
+        _rebindRightLabel->setPosition(
+            rightColX + w * 0.2f - _rebindRightLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
+        _rebindShootLabel->setPosition(
+            rightColX - _rebindShootLabel->getWidth() * 0.5f, videoYStart + 4 * spacingY + labelOffsetY);
+
         placeCentered(*_back, cx, h * 0.8f);
     }
 
@@ -157,6 +202,26 @@ namespace Engine
     void SettingsMenu::update(const InputFrame &frame)
     {
         handleInput(frame);
+
+        if (_errorState != RebindState::None) {
+            _errorFrameCount++;
+            if (_errorFrameCount >= 60) {
+                UI::UIButton *button = nullptr;
+                switch (_errorState) {
+                    case RebindState::Up: button = _rebindUp.get(); break;
+                    case RebindState::Down: button = _rebindDown.get(); break;
+                    case RebindState::Left: button = _rebindLeft.get(); break;
+                    case RebindState::Right: button = _rebindRight.get(); break;
+                    case RebindState::Shoot: button = _rebindShoot.get(); break;
+                    default: break;
+                }
+                if (button)
+                    button->setLabel("...");
+                _errorState = RebindState::None;
+                _errorFrameCount = 0;
+            }
+        }
+
         updateButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
             _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(),
             _musicVolUp.get(), _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(),
@@ -175,6 +240,84 @@ namespace Engine
 
     void SettingsMenu::handleKeyPressed(const InputFrame &frame)
     {
+        if (_rebindState != RebindState::None) {
+            auto &config = Utils::SettingsConfig::getInstance();
+            if (frame.key == Key::Escape) {
+                switch (_rebindState) {
+                    case RebindState::Up:
+                        _rebindUp->setLabel(Utils::SettingsConfig::keyToString(config.getUpKey()));
+                        break;
+                    case RebindState::Down:
+                        _rebindDown->setLabel(Utils::SettingsConfig::keyToString(config.getDownKey()));
+                        break;
+                    case RebindState::Left:
+                        _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(config.getLeftKey()));
+                        break;
+                    case RebindState::Right:
+                        _rebindRight->setLabel(Utils::SettingsConfig::keyToString(config.getRightKey()));
+                        break;
+                    case RebindState::Shoot:
+                        _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(config.getShootKey()));
+                        break;
+                    default: break;
+                }
+                _rebindState = RebindState::None;
+                return;
+            }
+            Engine::Key currentKey = Engine::Key::Unknown;
+            switch (_rebindState) {
+                case RebindState::Up: currentKey = config.getUpKey(); break;
+                case RebindState::Down: currentKey = config.getDownKey(); break;
+                case RebindState::Left: currentKey = config.getLeftKey(); break;
+                case RebindState::Right: currentKey = config.getRightKey(); break;
+                case RebindState::Shoot: currentKey = config.getShootKey(); break;
+                default: break;
+            }
+
+            if (config.isKeyAlreadyAssigned(frame.key, currentKey)) {
+                _errorState = _rebindState;
+                _errorFrameCount = 0;
+                UI::UIButton *button = nullptr;
+                switch (_rebindState) {
+                    case RebindState::Up: button = _rebindUp.get(); break;
+                    case RebindState::Down: button = _rebindDown.get(); break;
+                    case RebindState::Left: button = _rebindLeft.get(); break;
+                    case RebindState::Right: button = _rebindRight.get(); break;
+                    case RebindState::Shoot: button = _rebindShoot.get(); break;
+                    default: break;
+                }
+                if (button)
+                    button->setLabel("/!\\");
+                return;
+            }
+            switch (_rebindState) {
+                case RebindState::Up:
+                    config.setUpKey(frame.key);
+                    _rebindUp->setLabel(Utils::SettingsConfig::keyToString(frame.key));
+                    break;
+                case RebindState::Down:
+                    config.setDownKey(frame.key);
+                    _rebindDown->setLabel(Utils::SettingsConfig::keyToString(frame.key));
+                    break;
+                case RebindState::Left:
+                    config.setLeftKey(frame.key);
+                    _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(frame.key));
+                    break;
+                case RebindState::Right:
+                    config.setRightKey(frame.key);
+                    _rebindRight->setLabel(Utils::SettingsConfig::keyToString(frame.key));
+                    break;
+                case RebindState::Shoot:
+                    config.setShootKey(frame.key);
+                    _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(frame.key));
+                    break;
+                default: break;
+            }
+            _rebindState = RebindState::None;
+            _controlsChanged = true;
+            return;
+        }
+
         switch (frame.key) {
             case Key::B: _backRequested = true; break;
             case Key::Backspace: {
@@ -192,7 +335,8 @@ namespace Engine
     {
         pressButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
             _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolUp.get(),
-            _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get());
+            _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get(), _rebindUp.get(),
+            _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(), _rebindShoot.get());
     }
 
     void SettingsMenu::handleMouseReleased(const InputFrame &frame)
@@ -202,6 +346,8 @@ namespace Engine
         if (handleControlsReleased(frame.mouseX, frame.mouseY))
             return;
         if (handleAudioReleased(frame.mouseX, frame.mouseY))
+            return;
+        if (handleRebindReleased(frame.mouseX, frame.mouseY))
             return;
         (void) handleNavigationReleased(frame.mouseX, frame.mouseY);
     }
@@ -240,10 +386,12 @@ namespace Engine
             return false;
         auto &config = Utils::SettingsConfig::getInstance();
         const auto current = config.getCurrentPreset();
-        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD :
-                          current == Utils::KeyPreset::ZQSD ? Utils::KeyPreset::Custom : Utils::KeyPreset::Arrows;
+        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD
+            : current == Utils::KeyPreset::ZQSD               ? Utils::KeyPreset::Custom
+                                                              : Utils::KeyPreset::Arrows;
         config.setPreset(next);
         _controls->setLabel(Utils::SettingsConfig::getPresetName(next));
+        updateRebindLabels();
         _controlsChanged = true;
         _controlsNext->reset();
         return true;
@@ -320,6 +468,56 @@ namespace Engine
         return true;
     }
 
+    bool SettingsMenu::handleRebindReleased(const float mx, const float my)
+    {
+        auto &config = Utils::SettingsConfig::getInstance();
+        if (config.getCurrentPreset() != Utils::KeyPreset::Custom)
+            return false;
+
+        if (_rebindUp->onMouseReleased(mx, my)) {
+            _rebindState = RebindState::Up;
+            _rebindUp->setLabel("...");
+            _rebindUp->reset();
+            return true;
+        }
+        if (_rebindDown->onMouseReleased(mx, my)) {
+            _rebindState = RebindState::Down;
+            _rebindDown->setLabel("...");
+            _rebindDown->reset();
+            return true;
+        }
+        if (_rebindLeft->onMouseReleased(mx, my)) {
+            _rebindState = RebindState::Left;
+            _rebindLeft->setLabel("...");
+            _rebindLeft->reset();
+            return true;
+        }
+        if (_rebindRight->onMouseReleased(mx, my)) {
+            _rebindState = RebindState::Right;
+            _rebindRight->setLabel("...");
+            _rebindRight->reset();
+            return true;
+        }
+        if (_rebindShoot->onMouseReleased(mx, my)) {
+            _rebindState = RebindState::Shoot;
+            _rebindShoot->setLabel("...");
+            _rebindShoot->reset();
+            return true;
+        }
+        return false;
+    }
+
+    void SettingsMenu::updateRebindLabels()
+    {
+        auto &config = Utils::SettingsConfig::getInstance();
+        const auto keys = config.getMovementKeys();
+        _rebindUp->setLabel(Utils::SettingsConfig::keyToString(keys.up));
+        _rebindDown->setLabel(Utils::SettingsConfig::keyToString(keys.down));
+        _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(keys.left));
+        _rebindRight->setLabel(Utils::SettingsConfig::keyToString(keys.right));
+        _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(keys.shoot));
+    }
+
     bool SettingsMenu::wantsBack() const noexcept
     {
         return _backRequested;
@@ -365,5 +563,18 @@ namespace Engine
         _sfxVolDown->render();
         _muteMusic->render();
         _muteSFX->render();
+
+        if (Utils::SettingsConfig::getInstance().getCurrentPreset() == Utils::KeyPreset::Custom) {
+            _rebindUp->render();
+            _rebindDown->render();
+            _rebindLeft->render();
+            _rebindRight->render();
+            _rebindShoot->render();
+            _renderer->draw(*_rebindUpLabel);
+            _renderer->draw(*_rebindDownLabel);
+            _renderer->draw(*_rebindLeftLabel);
+            _renderer->draw(*_rebindRightLabel);
+            _renderer->draw(*_rebindShootLabel);
+        }
     }
 } // namespace Engine

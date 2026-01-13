@@ -116,7 +116,7 @@ namespace Net::Factory
                     rawBuf.resize(rawSize);
                     size_t off = 0;
                     for (size_t i = 0; i < count; ++i) {
-                        const auto &[id, x, y, z,  spriteId] = entities.at(cursorEntity + i);
+                        const auto &[id, x, y, z, spriteId] = entities.at(cursorEntity + i);
 
                         SnapshotEntityData packed{};
                         packed.id = htonl(static_cast<uint32_t>(id));

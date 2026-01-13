@@ -224,7 +224,7 @@ namespace World
             if (auto &pos = _registry.getComponents<Ecs::Position>().at(idx)) {
                 pos->x = lerp(as.x, bs.x, alpha);
                 pos->y = lerp(as.y, bs.y, alpha);
-                pos-> z = bs.z;
+                pos->z = bs.z;
             }
 
             if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(idx)) {

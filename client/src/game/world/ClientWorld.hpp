@@ -90,7 +90,7 @@ namespace World
             size_t id;             ///> Entity ID
             float x;               ///> X position
             float y;               ///> Y position
-            uint8_t z; ///> Z position
+            uint8_t z;             ///> Z position
             unsigned int spriteId; ///> Sprite identifier
         };
 

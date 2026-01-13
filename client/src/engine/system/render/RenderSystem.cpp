@@ -48,7 +48,8 @@ namespace Engine
 
                 out.push_back(cmd);
             });
-        std::ranges::sort(out,
-            [](const RenderCommand &a, const RenderCommand &b) { return a.position.z < b.position.z; });
+        std::ranges::sort(out, [](const RenderCommand &a, const RenderCommand &b) {
+            return a.position.z < b.position.z;
+        });
     }
 } // namespace Engine

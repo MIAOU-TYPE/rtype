@@ -7,7 +7,6 @@
 
 #pragma once
 #include <algorithm>
-#include <algorithm>
 #include <array>
 #include <nlohmann/json.hpp>
 #include <optional>

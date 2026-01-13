@@ -7,7 +7,7 @@
 
 #include "SqliteStatement.hpp"
 
-namespace Auth
+namespace Db
 {
     SqlStatement::SqlStatement(sqlite3 *db, const char *sql)
     {

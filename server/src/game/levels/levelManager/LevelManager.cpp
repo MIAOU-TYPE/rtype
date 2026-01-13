@@ -52,25 +52,21 @@ namespace
     [[nodiscard]] bool parseEnemies(const json &j, Game::Level &level)
     {
         level.enemyTypes.clear();
-        if (!j.contains("enemies") || !j.at("enemies").is_object()) {
+        if (!j.contains("enemies") || !j.at("enemies").is_object())
             return false;
-        }
-        if (j.at("enemies").empty()) {
+        if (j.at("enemies").empty())
             return false;
-        }
 
         for (auto &[name, defNode] : j.at("enemies").items()) {
-            if (!defNode.is_object()) {
+            if (!defNode.is_object())
                 return false;
-            }
 
             Game::EnemyDefinition def;
             def.hp = defNode.value("hp", 1);
             def.speed = defNode.value("speed", -80.f);
 
-            if (!defNode.contains("size") || !defNode.at("size").is_object()) {
+            if (!defNode.contains("size") || !defNode.at("size").is_object())
                 return false;
-            }
 
             def.colW = defNode.at("size").value("w", 20.f);
             def.colH = defNode.at("size").value("h", 20.f);

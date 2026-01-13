@@ -6,7 +6,6 @@
 */
 
 #include "LevelSystem.hpp"
-#include "PowerUp.hpp"
 
 namespace Game
 {

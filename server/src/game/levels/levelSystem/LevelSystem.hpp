@@ -26,6 +26,7 @@
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
 #include <unordered_map>
+#include "PowerUp.hpp"
 
 namespace Game
 {

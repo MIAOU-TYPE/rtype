@@ -102,7 +102,7 @@ namespace Net::Factory
 
             for (const auto &[id, x, y, spriteId] : entities) {
                 SnapshotEntityData packed{};
-                
+
                 packed.id = htonl(static_cast<uint32_t>(id));
                 packed.x = htons(static_cast<int16_t>(x));
                 packed.y = htons(static_cast<int16_t>(y));

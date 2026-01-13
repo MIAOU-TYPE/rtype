@@ -111,11 +111,12 @@ namespace Game
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
+        constexpr float COLLISION_SCALE = 1.7f;
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
-        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});
+        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{200});
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{def.killScore});
@@ -169,7 +170,9 @@ namespace Game
         reg.emplaceComponent<Ecs::GravityField>(
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});
         reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
-        reg.emplaceComponent<Ecs::Collision>(obstacle, Ecs::Collision{def.colW, def.colH});
+        // Collision scaled to match sprite scale (1.7x)
+        constexpr float COLLISION_SCALE = 1.7f;
+        reg.emplaceComponent<Ecs::Collision>(obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{99999, 99999});
     }
 } // namespace Game

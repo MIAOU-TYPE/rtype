@@ -209,9 +209,9 @@ namespace World
             return;
 
         auto &positions = _registry.getComponents<Ecs::Position>();
-        auto &drawables = _registry.getComponents<Ecs::Drawable>();
-        auto &renders = _registry.getComponents<Ecs::Render>();
-        auto &anims = _registry.getComponents<Ecs::AnimationState>();
+        const auto &drawables = _registry.getComponents<Ecs::Drawable>();
+        const auto &renders = _registry.getComponents<Ecs::Render>();
+        const auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
         const auto isDestroyed = [&](const size_t netId) {
             return _destroyed.contains(static_cast<uint32_t>(netId));

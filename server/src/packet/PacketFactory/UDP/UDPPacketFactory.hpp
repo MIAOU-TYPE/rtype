@@ -122,6 +122,101 @@ namespace Net::Factory
         [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(size_t entityId) const noexcept;
 
       private:
+        /*
+        * @struct BuiltPkt
+        * @brief Represents a built packet with its properties.
+        */
+        struct BuiltPkt {
+            std::shared_ptr<IPacket> pkt; ///> Pointer to the built IPacket.
+            bool compressed; ///> Indicates if the packet is compressed.
+            uint16_t count; ///> Number of entities in the packet.
+        };
+
+        /**
+         * @struct ChunkSizes
+         * @brief Represents the sizes of chunks for packet creation.
+         */
+        struct ChunkSizes {
+            size_t maxPacketBytes; ///> Maximum size of the packet in bytes.
+            size_t maxCompBytes; ///> Maximum size of the compressed data in bytes.
+            size_t maxEntitiesPerPkt; ///> Maximum number of entities per packet.
+        };
+
+        /**
+         * @brief Computes the chunk sizes based on the maximum packet size.
+         * @param maxPacketBytes The maximum size of the packet in bytes.
+         * @return An optional ChunkSizes structure if computation is successful; std::nullopt otherwise.
+         */
+        [[nodiscard]] static std::optional<ChunkSizes> computeChunkSizes(size_t maxPacketBytes) noexcept;
+
+        /**
+         * @brief Packs the given entities into a raw buffer.
+         * @param rawBuf The buffer to store the packed entities.
+         * @param entities The list of snapshot entities to pack.
+         * @param cursorEntity The starting index of entities to pack.
+         * @param count The number of entities to pack.
+         */
+        static void packEntitiesToRaw(
+            std::vector<char> &rawBuf, const std::vector<SnapshotEntity> &entities, size_t cursorEntity, size_t count);
+
+        /**
+         * @brief Attempts to compress the raw buffer into the compressed buffer.
+         * @param compBuf The buffer to store the compressed data.
+         * @param rawBuf The raw buffer containing uncompressed data.
+         * @param rawSize The size of the raw buffer.
+         * @param wireUnc The size of the uncompressed data on the wire.
+         * @param sz The chunk sizes for packet creation.
+         * @param outCompSize The size of the compressed data if compression is successful.
+         * @return True if compression was successful and beneficial; false otherwise.
+         */
+        [[nodiscard]] bool tryCompress(std::vector<char> &compBuf, const std::vector<char> &rawBuf, size_t rawSize,
+            size_t wireUnc, const ChunkSizes &sz, size_t &outCompSize) const;
+
+        /**
+         * @brief Builds a raw packet with the specified parameters.
+         * @param rawBuf The buffer containing raw data.
+         * @param rawSize The size of the raw data.
+         * @param count The number of entities in the packet.
+         * @param serverTick The current server tick.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> buildRawPacket(
+            const std::vector<char> &rawBuf, size_t rawSize, uint16_t count, uint32_t serverTick) const;
+
+        /**
+         * @brief Builds a compressed packet with the specified parameters.
+         * @param compBuf The buffer containing compressed data.
+         * @param rawSize The size of the uncompressed data.
+         * @param compSize The size of the compressed data.
+         * @param count The number of entities in the packet.
+         * @param serverTick The current server tick.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> buildCompressedPacket(const std::vector<char> &compBuf, size_t rawSize,
+            size_t compSize, uint16_t count, uint32_t serverTick) const;
+
+        /**
+         * @brief Patches the chunk information in the packet header.
+         * @param bp The built packet containing the IPacket.
+         * @param chunkIndexNet The network byte order chunk index.
+         * @param chunkCountNet The network byte order chunk count.
+         */
+        static void patchChunkInfo(const BuiltPkt &bp, uint16_t chunkIndexNet, uint16_t chunkCountNet) noexcept;
+
+        /**
+         * @brief Builds one chunk of snapshot entities into a packet.
+         * @param entities The list of snapshot entities to include in the chunk.
+         * @param cursorEntity The current index of the entity to process.
+         * @param sz The chunk sizes for packet creation.
+         * @param serverTick The current server tick.
+         * @param rawBuf The buffer to use for raw data packing.
+         * @param compBuf The buffer to use for compressed data packing.
+         * @return An optional BuiltPkt containing the created packet and its properties; std::nullopt on failure.
+         */
+        [[nodiscard]] std::optional<BuiltPkt> buildOneChunk(const std::vector<SnapshotEntity> &entities,
+            size_t &cursorEntity, const ChunkSizes &sz, uint32_t serverTick, std::vector<char> &rawBuf,
+            std::vector<char> &compBuf) const;
+
         /**
          * @brief Creates a HeaderData with the specified parameters.
          * @param type The type of the packet.

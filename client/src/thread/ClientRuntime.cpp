@@ -243,23 +243,27 @@ namespace Thread
         const auto keys = Utils::InputConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(keys.up, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.down, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.left, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false, false}));
         });
 
         _eventRegistry->onKeyPressed(keys.right, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
+        _eventRegistry->onKeyPressed(Engine::Key::Space, [this]() {
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true, false}));
+        });
+
+        _eventRegistry->onKeyPressed(Engine::Key::E, [this]() {
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, false, true}));
         });
     }
 
@@ -342,7 +346,8 @@ namespace Thread
     void ClientRuntime::buildAndSwapRenderCommands()
     {
         _writeRenderCommands->clear();
-        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, *_writeRenderCommands);
+        const auto viewportSize = _renderer->getViewportSize();
+        Engine::RenderSystem::update(_world->registry(), _spriteRegistry, viewportSize, *_writeRenderCommands);
 
         {
             std::scoped_lock lock(_frameMutex);

@@ -103,7 +103,7 @@ namespace
 
             const auto &powerUpA = reg.getComponents<Ecs::PowerUp>().at(event.a);
             const auto &playerB = reg.getComponents<Ecs::PlayerPowerUp>().at(event.b);
-            
+
             const auto &powerUpB = reg.getComponents<Ecs::PowerUp>().at(event.b);
             const auto &playerA = reg.getComponents<Ecs::PlayerPowerUp>().at(event.a);
 
@@ -127,7 +127,7 @@ namespace
                 return;
 
             powerUp.collected = true;
-            
+
             if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
                 drawable->spriteId = 14;
 

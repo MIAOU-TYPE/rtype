@@ -11,6 +11,22 @@ using json = nlohmann::json;
 
 namespace
 {
+    [[nodiscard]] Game::MovementDefinition parseMovementDefinition(const json &j)
+    {
+        Game::MovementDefinition movementDef;
+        if (j.is_string()) {
+            movementDef.type = j.get<std::string>();
+        } else if (j.is_object()) {
+            movementDef.type = j.value("type", "straight");
+            if (j.contains("params") && j.at("params").is_object()) {
+                const auto &params = j.at("params");
+                movementDef.amplitude = params.value("amplitude", 50.f);
+                movementDef.frequency = params.value("frequency", 0.5f);
+            }
+        }
+        return movementDef;
+    }
+
     [[nodiscard]] Game::ShootDefinition parseShootDefinition(const json &j)
     {
         Game::ShootDefinition shootDef;
@@ -58,6 +74,11 @@ namespace
             def.killScore = defNode.value("killScore", 10u);
             def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
 
+            if (defNode.contains("movement")) {
+                def.movement = parseMovementDefinition(defNode.at("movement"));
+            } else {
+                def.movement = parseMovementDefinition("straight");
+            }
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();
@@ -98,7 +119,7 @@ namespace
         level.backgroundLayers.clear();
 
         if (!j.contains("background") || !j.at("background").is_object())
-            return true;
+            return false;
 
         const auto &bgNode = j.at("background");
 

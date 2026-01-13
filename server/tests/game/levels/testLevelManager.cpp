@@ -14,6 +14,7 @@ TEST(LevelManager, Load_ValidJSON)
     {
       "name": "TestLevel",
       "duration": 30,
+      "background": {},
       "enemies": {
         "small": {
           "hp": 10,
@@ -80,6 +81,7 @@ TEST(LevelManager, TimeAdvancement)
     const std::string json = R"(
     {
       "name": "TimeTest",
+      "background": {},
       "enemies": {
         "dummy": {
           "hp": 1,
@@ -110,6 +112,7 @@ TEST(LevelManager, ShouldSpawn)
     const std::string json = R"(
     {
       "name": "SpawnTest",
+      "background": {},
       "enemies": {
         "dummy": {
           "hp": 1,
@@ -138,6 +141,7 @@ TEST(LevelManager, LoadWithShootStraightValue)
     const std::string json = R"(
     {
       "name": "SpawnTest",
+      "background": {},
       "enemies": {
         "smallEnemy": {
           "hp": 15,
@@ -180,6 +184,7 @@ TEST(LevelManager, LoadWithShootDiagonalValue)
     const std::string json = R"(
     {
       "name": "SpawnTest",
+      "background": {},
       "enemies": {
         "smallEnemy": {
           "hp": 15,

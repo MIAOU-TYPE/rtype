@@ -14,6 +14,7 @@
 #include "Render.hpp"
 #include "RenderCommand.hpp"
 #include "SpriteRegistry.hpp"
+#include <algorithm>
 
 namespace Engine
 {

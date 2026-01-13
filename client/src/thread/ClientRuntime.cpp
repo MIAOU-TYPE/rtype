@@ -258,7 +258,7 @@ namespace Thread
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Space, [this]() {
+        _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true, false}));
         });
 

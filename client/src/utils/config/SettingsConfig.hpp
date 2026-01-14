@@ -18,6 +18,11 @@
 #include "Key.hpp"
 #include <unordered_map>
 
+/**
+ * @brief Type alias for nlohmann::json for convenience.
+ */
+using json = nlohmann::json;
+
 namespace Utils
 {
     /**

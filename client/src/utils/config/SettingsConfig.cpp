@@ -7,8 +7,6 @@
 
 #include "SettingsConfig.hpp"
 
-using json = nlohmann::json;
-
 namespace
 {
     Engine::Key stringToKey(const std::string &str)

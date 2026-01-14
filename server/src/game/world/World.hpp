@@ -10,6 +10,7 @@
 #include <iostream>
 #include "AIBrain.hpp"
 #include "Background.hpp"
+#include "BubblePowerUp.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"

@@ -35,7 +35,22 @@ namespace
         auto *w = &world;
 
         world.events().subscribe<DamageEvent>([w](const DamageEvent &event) {
-            auto &health = w->registry().getComponents<Ecs::Health>().at(event.target);
+            auto &reg = w->registry();
+
+            const size_t targetIdx = static_cast<size_t>(event.target);
+            auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
+
+            if (bubbleComp && bubbleComp->isActive && bubbleComp->hitsRemaining > 0) {
+                const auto &proj = reg.getComponents<Ecs::Projectile>().at(event.source);
+                if (proj) {
+                    bubbleComp->hitsRemaining--;
+
+                    w->destroyEntity(static_cast<Ecs::Entity>(event.source));
+                    return;
+                }
+            }
+
+            auto &health = reg.getComponents<Ecs::Health>().at(event.target);
             if (!health || health->hp <= 0)
                 return;
             if (health->hp <= event.amount)
@@ -134,6 +149,14 @@ namespace
                     laserPowerUp->isActive = true;
                     laserPowerUp->duration = 0.f;
                 }
+            } else if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Shield) {
+                auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
+                if (bubblePowerUp && !bubblePowerUp->isActive) {
+                    powerUp.collected = true;
+                    w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+                    bubblePowerUp->isActive = true;
+                    bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+                }
             } else {
                 auto &playerPowerUp = *reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
 
@@ -204,6 +227,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
         _registry.emplaceComponent<Ecs::PlayerPowerUp>(ent);
         _registry.emplaceComponent<Ecs::LaserPowerUp>(ent);
+        _registry.emplaceComponent<Ecs::BubblePowerUp>(ent);
         return ent;
     }
 

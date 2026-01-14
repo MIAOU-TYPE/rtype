@@ -127,20 +127,12 @@
   "duration": 175,
   "waves": [
     {
-      "time": 2,
-      "enemies": { "smallEnemy": 1 }
-    },
-    {
-      "time": 5,
-      "enemies": { "smallEnemy": 3 }
+      "time": 1,
+      "powerUp": { "type": "force" }
     },
     {
       "time": 8,
-      "enemies": { "smallEnemy": 3 }
-    },
-    {
-      "time": 10,
-      "powerUps": 1
+      "powerUp": { "type": "laser" }
     },
     {
       "time": 12,

@@ -24,6 +24,7 @@
 #include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"
+#include "PowerUpType.hpp"
 #include "Rand.hpp"
 #include "Target.hpp"
 #include "Velocity.hpp"
@@ -98,7 +99,8 @@ namespace Game
          * @brief Spawn a power-up.
          *
          * @param world The game world to spawn the power-up in.
+         * @param type The type of power-up to spawn ("force" or "laser").
          */
-        static void spawnPowerUp(IGameWorld &world);
+        static void spawnPowerUp(IGameWorld &world, const std::string &type = "force");
     };
 } // namespace Game

@@ -13,11 +13,13 @@ namespace Game
     {
         auto &reg = world.registry();
 
+        int playerIndex = 0;
         reg.view<Ecs::PlayerPowerUp, Ecs::Position>(
             [&](const Ecs::Entity, Ecs::PlayerPowerUp &powerUp, const Ecs::Position &) {
                 if (powerUp.hasPowerUp && !powerUp.hasBar) {
+                    const float yOffset = (static_cast<float>(playerIndex) * 40.f);
                     const Ecs::Entity barEntity = world.createEntity();
-                    reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, 10.f});
+                    reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, yOffset});
                     reg.emplaceComponent<Ecs::Velocity>(barEntity, Ecs::Velocity{0.f, 0.f});
                     reg.emplaceComponent<Ecs::Drawable>(barEntity, Ecs::Drawable{16, true});
                     reg.emplaceComponent<Ecs::Id>(
@@ -29,6 +31,7 @@ namespace Game
                     powerUp.hasBar = false;
                     powerUp.barEntity = std::nullopt;
                 }
+                playerIndex++;
             });
     }
 } // namespace Game

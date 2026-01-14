@@ -6,8 +6,8 @@
 */
 
 #include "LevelSystem.hpp"
-#include <cmath>
 
+constexpr float COLLISION_SCALE = 1.7f;
 namespace
 {
     std::vector<float> calculateSpawnPositions(const std::string &pattern, float centerY, int count)
@@ -23,6 +23,9 @@ namespace
         } else if (pattern == "spread") {
             float minY = 50.f;
             float maxY = 600.f;
+
+            if (count <= 0)
+                return positions;
             if (count == 1) {
                 positions.push_back((minY + maxY) / 2.f);
             } else {
@@ -84,7 +87,6 @@ namespace Game
         if (!wave.obstacleType.empty() && level.obstacleTypes.contains(wave.obstacleType)) {
             const ObstacleDefinition &obsDef = level.obstacleTypes.at(wave.obstacleType);
             spawnObstacle(world, obsDef, wave.obstacleX, wave.obstacleY);
-        } else if (!wave.obstacleType.empty()) {
         }
     }
 
@@ -92,6 +94,10 @@ namespace Game
         const std::string &pattern, float centerY)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
+
+        if (basePositions.empty())
+            return;
+        
         const float baseY = basePositions[0];
         const float baseX = 1400.f;
 
@@ -111,7 +117,6 @@ namespace Game
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
-        constexpr float COLLISION_SCALE = 1.7f;
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
@@ -175,16 +180,16 @@ namespace Game
     {
         auto &reg = world.registry();
         const Ecs::Entity obstacle = world.createEntity();
+        constexpr int OBSTACLE_HEALTH = 99999;
 
         reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(obstacle, Ecs::Velocity{0.f, 0.f});
         reg.emplaceComponent<Ecs::GravityField>(
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});
         reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
-        constexpr float COLLISION_SCALE = 1.7f;
         reg.emplaceComponent<Ecs::Collision>(
             obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
-        reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{99999, 99999});
+        reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{OBSTACLE_HEALTH, OBSTACLE_HEALTH});
     }
 
     void LevelSystem::spawnBackgrounds(IGameWorld &world, const Level &level)

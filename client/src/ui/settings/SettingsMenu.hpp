@@ -114,6 +114,8 @@ namespace Engine
         void layout() override;
 
       private:
+        static constexpr int ERROR_DISPLAY_FRAMES = 60; ///> Number of frames to display error feedback
+
         /**
          * @brief Handle input for the settings menu.
          * @param frame The current input frame.

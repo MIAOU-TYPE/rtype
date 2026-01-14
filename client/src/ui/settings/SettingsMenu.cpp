@@ -205,7 +205,7 @@ namespace Engine
 
         if (_errorState != RebindState::None) {
             _errorFrameCount++;
-            if (_errorFrameCount >= 60) {
+            if (_errorFrameCount >= ERROR_DISPLAY_FRAMES) {
                 UI::UIButton *button = nullptr;
                 switch (_errorState) {
                     case RebindState::Up: button = _rebindUp.get(); break;

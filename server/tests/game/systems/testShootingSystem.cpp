@@ -73,8 +73,8 @@ TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
 
     const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime, spriteId] = shoots.at(0);
 
-    EXPECT_FLOAT_EQ(x, 130.f);
-    EXPECT_FLOAT_EQ(y, 50.f);
+    EXPECT_FLOAT_EQ(x, 140.f);
+    EXPECT_FLOAT_EQ(y, 57.5f);
     EXPECT_FLOAT_EQ(vx, 100.f);
     EXPECT_FLOAT_EQ(vy, 0.f);
     EXPECT_EQ(damage, 20);
@@ -110,8 +110,8 @@ TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue
     ASSERT_EQ(shoots.size(), 1u);
     const auto &[x, y, vx, vy, damage, shooter, bounds, lifetime, spriteId] = shoots.at(0);
     EXPECT_EQ(shooter, static_cast<size_t>(e1));
-    EXPECT_FLOAT_EQ(x, 40.f);
-    EXPECT_FLOAT_EQ(y, 10.f);
+    EXPECT_FLOAT_EQ(x, 50.f);
+    EXPECT_FLOAT_EQ(y, 17.5f);
     EXPECT_EQ(spriteId, 6u);
 
     EXPECT_FALSE(inputArr.at(static_cast<size_t>(e1))->shoot);

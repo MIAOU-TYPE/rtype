@@ -8,6 +8,7 @@
 #include "LevelSystem.hpp"
 
 constexpr float COLLISION_SCALE = 1.7f;
+
 namespace
 {
     std::vector<float> calculateSpawnPositions(const std::string &pattern, float centerY, int count)
@@ -97,7 +98,7 @@ namespace Game
 
         if (basePositions.empty())
             return;
-        
+
         const float baseY = basePositions[0];
         const float baseX = 1400.f;
 

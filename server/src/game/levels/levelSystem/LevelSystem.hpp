@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <cmath>
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Attack.hpp"

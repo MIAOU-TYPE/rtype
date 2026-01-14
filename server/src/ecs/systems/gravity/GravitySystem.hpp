@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "IGameWorld.hpp"
 #include "Events.hpp"
 #include "GravityAffected.hpp"
 #include "GravityField.hpp"
 #include "Health.hpp"
+#include "IGameWorld.hpp"
 #include "Id.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"

@@ -195,4 +195,17 @@ namespace Engine
         std::string username; ///> The username for login.
         std::string password; ///> The password for login.
     };
+
+    /**
+     * @brief Event triggered when a request to submit a score is made.
+     */
+    struct ScoreboardGetRequested : Event {
+        /**
+         * @brief Constructor for ScoreboardGetRequested event.
+         * @param limit_ The maximum number of scores to retrieve.
+         */
+        explicit ScoreboardGetRequested(const std::size_t limit_ = 10) : limit(limit_) {}
+
+        std::size_t limit;  ///> The maximum number of scores to retrieve.
+    };
 } // namespace Engine

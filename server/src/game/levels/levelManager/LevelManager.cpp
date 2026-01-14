@@ -114,12 +114,12 @@ namespace
         return !level.enemyTypes.empty();
     }
 
-    [[nodiscard]] bool parseObstacles(const json &j, Game::Level &level)
+    void parseObstacles(const json &j, Game::Level &level)
     {
         level.obstacleTypes.clear();
 
         if (!j.contains("obstacles") || !j.at("obstacles").is_object())
-            return true;
+            return;
 
         for (auto &[name, defNode] : j.at("obstacles").items()) {
             if (!defNode.is_object())
@@ -140,7 +140,7 @@ namespace
 
             level.obstacleTypes[name] = def;
         }
-        return true;
+        return;
     }
 
     bool parseWaves(const json &j, Game::Level &level)
@@ -213,8 +213,7 @@ namespace
             return false;
         if (!parseEnemies(j, level))
             return false;
-        if (!parseObstacles(j, level))
-            return false;
+        parseObstacles(j, level);
         if (!parseWaves(j, level))
             return false;
         return true;

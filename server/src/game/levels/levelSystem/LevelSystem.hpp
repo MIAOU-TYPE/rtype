@@ -85,7 +85,7 @@ namespace Game
          * @param centerY Center Y position for pattern spawning.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, float centerY);
+            const std::string &pattern, const float centerY);
 
         /**
          * @brief Spawn a single enemy at a specific position.

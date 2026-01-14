@@ -11,19 +11,19 @@ constexpr float COLLISION_SCALE = 1.7f;
 
 namespace
 {
-    std::vector<float> calculateSpawnPositions(const std::string &pattern, float centerY, int count)
+    [[nodiscard]] std::vector<float> calculateSpawnPositions(const std::string &pattern, const float centerY, const int count)
     {
         std::vector<float> positions;
         positions.reserve(static_cast<size_t>(count));
 
         if (pattern == "line") {
-            float spacing = 80.f;
+            constexpr float spacing = 80.f;
             float startY = centerY - (spacing * static_cast<float>(count - 1) / 2.f);
             for (int i = 0; i < count; i++)
                 positions.push_back(startY + static_cast<float>(i) * spacing);
         } else if (pattern == "spread") {
-            float minY = 50.f;
-            float maxY = 600.f;
+            constexpr float minY = 50.f;
+            constexpr float maxY = 600.f;
 
             if (count <= 0)
                 return positions;
@@ -91,14 +91,14 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, float centerY)
+        const std::string &pattern, const float centerY)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
         if (basePositions.empty())
             return;
 
-        const float baseY = basePositions[0];
+        const float baseY = basePositions.at(0);
         const float baseX = 1400.f;
 
         for (const auto &member : groupDef.members) {

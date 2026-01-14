@@ -9,7 +9,7 @@
 
 namespace Game
 {
-    void GravitySystem::update(IGameWorld &world, float dt)
+    void GravitySystem::update(IGameWorld &world, const float dt)
     {
         auto &reg = world.registry();
 

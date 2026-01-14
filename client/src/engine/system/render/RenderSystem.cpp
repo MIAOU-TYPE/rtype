@@ -33,7 +33,7 @@ namespace Engine
                 RenderCommand cmd;
                 cmd.textureId = render.texture;
                 cmd.frame = animation.frames[anim.frameIndex].rect;
-                cmd.position = {pos.x, pos.y};
+                cmd.position = {pos.x, pos.y, pos.z};
                 cmd.scale = {1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR};
 
                 if (drawable.spriteId >= 100 && drawable.spriteId < 102) {

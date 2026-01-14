@@ -147,6 +147,7 @@ namespace
             playerPowerUp.hasPowerUp = true;
             playerPowerUp.cooldown = 0.f;
             playerPowerUp.isReady = false;
+            playerPowerUp.powerUpEntity = static_cast<Ecs::Entity>(powerUpIdx);
         });
     }
 } // namespace

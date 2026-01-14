@@ -124,6 +124,7 @@ namespace Game
         MovementPatternSystem::update(*_worldWrite, dt);
         MovementSystem::update(*_worldWrite, dt);
         PowerUpAttachmentSystem::update(*_worldWrite);
+        LaserPowerUpSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);

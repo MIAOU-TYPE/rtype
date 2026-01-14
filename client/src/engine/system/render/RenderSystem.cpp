@@ -31,7 +31,9 @@ namespace Engine
                 RenderCommand cmd;
                 cmd.textureId = render.texture;
                 cmd.frame = animation.frames[anim.frameIndex].rect;
-                cmd.position = {pos.x, pos.y, pos.z};
+                const float scalePosX = static_cast<float>(viewportSize.width) / RenderSystem::BASE_WIDTH;
+                const float scalePosY = static_cast<float>(viewportSize.height) / RenderSystem::BASE_HEIGHT;
+                cmd.position = {pos.x * scalePosX, pos.y * scalePosY, pos.z};
 
                 if (drawable.spriteId >= 100 && drawable.spriteId < 102) {
                     const auto viewportWidth = static_cast<float>(viewportSize.width);

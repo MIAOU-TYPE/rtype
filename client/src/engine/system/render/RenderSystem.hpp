@@ -25,6 +25,8 @@ namespace Engine
      */
     class RenderSystem {
       public:
+        static constexpr float BASE_WIDTH = 1280.0f;
+        static constexpr float BASE_HEIGHT = 720.0f;
         /**
          * @brief Submits a render command for the given entity and animation to the renderer.
          * @param registry The ECS registry containing entity components.

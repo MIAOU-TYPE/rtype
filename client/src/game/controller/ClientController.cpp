@@ -13,9 +13,12 @@ namespace Ecs
     {
     }
 
-    void ClientController::onAccept()
+    void ClientController::onAccept(const uint32_t sessionId)
     {
-        std::cout << "onAccept" << std::endl;
+        _commandBuffer.get().push(World::WorldCommand{
+            .type = World::WorldCommand::Type::Accept,
+            .payload = sessionId,
+        });
     }
 
     void ClientController::onReject()

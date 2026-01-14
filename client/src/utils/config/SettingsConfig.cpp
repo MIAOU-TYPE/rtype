@@ -95,6 +95,17 @@ namespace
             default: return "Unknown";
         }
     }
+
+    std::string colorBlindModeToString(Graphics::ColorBlindMode mode)
+    {
+        switch (mode) {
+            case Graphics::ColorBlindMode::DEUTERANOPIA: return "deuteranopia";
+            case Graphics::ColorBlindMode::PROTANOPIA: return "protanopia";
+            case Graphics::ColorBlindMode::TRITANOPIA: return "tritanopia";
+            case Graphics::ColorBlindMode::NONE:
+            default: return "none";
+        }
+    }
 } // namespace
 
 namespace Utils
@@ -200,11 +211,7 @@ namespace Utils
                 {"sfx_muted", _sfxMuted}};
 
             j["video"] = {{"resolution", {{"width", _resolution.width}, {"height", _resolution.height}}},
-                {"colorblind_mode",
-                    _colorBlindMode == Graphics::ColorBlindMode::DEUTERANOPIA     ? "deuteranopia"
-                        : _colorBlindMode == Graphics::ColorBlindMode::PROTANOPIA ? "protanopia"
-                        : _colorBlindMode == Graphics::ColorBlindMode::TRITANOPIA ? "tritanopia"
-                                                                                  : "none"}};
+                {"colorblind_mode", colorBlindModeToString(_colorBlindMode)}};
 
             std::string presetStr;
             switch (_currentPreset) {

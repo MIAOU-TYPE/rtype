@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <limits>
 #include <vector>
 #include <string_view>
 
@@ -108,6 +109,13 @@ namespace Network
          * @param r Reader for parsing the message payload.
          */
         void onAuthOk(uint32_t req, Net::TCP::Reader &r) const;
+
+        /**
+         * @brief Handler for Auth Failed messages.
+         * @param req The request ID.
+         * @param r Reader for parsing the message payload.
+         */
+        void onScoreboardList(uint32_t req, Net::TCP::Reader &r) const;
 
         std::shared_ptr<IMessageHandler> _sink = nullptr; ///> Shared pointer to the message handler.
     };

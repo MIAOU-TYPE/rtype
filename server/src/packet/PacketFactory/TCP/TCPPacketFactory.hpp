@@ -18,6 +18,7 @@
 #include <cstring>
 #include "RoomData.hpp"
 #include "TCPTypesData.hpp"
+#include "ScoreEntry.hpp"
 #include "TCPWriter.hpp"
 
 namespace Net::Factory
@@ -134,6 +135,16 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeAuthOk(const sockaddr_in &addr, ReqId req, uint32_t userId,
             std::string_view username, uint64_t token, uint32_t ttlSec) const;
+
+        /**
+         * @brief Creates a SCOREBOARD_LIST packet.
+         * @param addr The address of the client.
+         * @param req The request ID.
+         * @param scores A vector of ScoreEntry structures representing the scores.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> makeScoreboardList(
+            const sockaddr_in &addr, ReqId req, const std::vector<ScoreEntry> &scores) const;
 
       private:
         /**

@@ -6,7 +6,6 @@
 */
 
 #include "SettingsState.hpp"
-#include "SettingsConfig.hpp"
 
 namespace Engine
 {

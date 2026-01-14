@@ -18,6 +18,7 @@
 #include "SettingsMenu.hpp"
 #include "SoundRegistry.hpp"
 #include "StateManager.hpp"
+#include "SettingsConfig.hpp"
 
 namespace Engine
 {

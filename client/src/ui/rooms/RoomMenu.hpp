@@ -307,10 +307,10 @@ namespace Engine
         std::vector<WorldEntry> _worlds; ///> List of available worlds.
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
 
-        int _selectedWorld = 0;                            ///> Index of the selected world.
+        int _selectedWorld = 0;                                            ///> Index of the selected world.
         Engine::Difficulty _selectedDifficulty = Engine::Difficulty::Easy; ///> Selected difficulty level.
-        uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
-        uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
+        uint8_t _selectedMaxPlayers = 4;                                   ///> Selected maximum number of players.
+        uint32_t _joinRoomId = 0;                                          ///> ID of the room to join.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.

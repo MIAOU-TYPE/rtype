@@ -8,8 +8,8 @@
 #pragma once
 #include <string>
 #include <utility>
-#include "Key.hpp"
 #include "GameConfig.hpp"
+#include "Key.hpp"
 
 namespace Engine
 {
@@ -131,13 +131,13 @@ namespace Engine
          * @param maxP The maximum number of players allowed in the room.
          * @param diff The difficulty level for the room.
          */
-        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Engine::Difficulty diff) 
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Engine::Difficulty diff)
             : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff)
         {
         }
 
-        std::string roomName;     ///> The name of the new room.
-        uint8_t maxPlayers;       ///> The maximum number of players allowed in the room.
+        std::string roomName;          ///> The name of the new room.
+        uint8_t maxPlayers;            ///> The maximum number of players allowed in the room.
         Engine::Difficulty difficulty; ///> The difficulty level for the room.
     };
 

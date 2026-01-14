@@ -10,10 +10,10 @@
 #include <memory>
 #include <mutex>
 #include <utility>
+#include "GameConfig.hpp"
 #include "Room.hpp"
 #include "RoomData.hpp"
 #include <unordered_map>
-#include "GameConfig.hpp"
 
 namespace Engine
 {
@@ -41,7 +41,8 @@ namespace Engine
          * @param maxPlayers maximum number of players allowed in the room
          * @return The ID of the newly created room
          */
-        [[nodiscard]] RoomId createRoom(const Engine::GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept;
+        [[nodiscard]] RoomId createRoom(
+            const Engine::GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept;
 
         /**
          * @brief Removes a game room

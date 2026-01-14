@@ -175,8 +175,8 @@ namespace Network
                 info.gameConfig.parameters.spawnRateMultiplier = static_cast<float>(r.u8()) / 100.0f;
                 info.gameConfig.levelId = r.str16();
             } catch (...) {
-                return protocolError(
-                    req, "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u16)+max(u16)+gameConfig)");
+                return protocolError(req,
+                    "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u16)+max(u16)+gameConfig)");
             }
             rooms.push_back(std::move(info));
         }

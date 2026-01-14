@@ -16,8 +16,9 @@ namespace Engine
         : _maxPlayers(maxPlayers), _name(std::move(name)), _gameConfig(gameConfig)
     {
         Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);
-        
-        _gameServer = std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers);
+
+        _gameServer =
+            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers);
     }
 
     void Room::init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,

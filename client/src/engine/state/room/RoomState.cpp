@@ -35,7 +35,8 @@ namespace Engine
         }
         if (_menu->wantsCreateRoom()) {
             _menu->consumeCreateRoomState();
-            _eventBus->emit<CreateRoomRequested>(CreateRoomRequested("default", _menu->maxPlayerSelected(), _menu->difficultySelected()));
+            _eventBus->emit<CreateRoomRequested>(
+                CreateRoomRequested("default", _menu->maxPlayerSelected(), _menu->difficultySelected()));
         }
         if (_menu->wantsListRooms()) {
             _menu->consumeListRoomsRequest();

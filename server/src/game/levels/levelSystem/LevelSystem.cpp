@@ -9,13 +9,15 @@
 
 namespace Game
 {
-    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned, const DifficultyModifiers &modifiers)
+    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned,
+        const DifficultyModifiers &modifiers)
     {
         lvl.advance(dt);
         handleWaves(world, lvl, spawned, modifiers);
     }
 
-    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned, const DifficultyModifiers &modifiers)
+    void LevelSystem::handleWaves(
+        IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned, const DifficultyModifiers &modifiers)
     {
         const Level &level = lvl.getCurrentLevel();
 
@@ -33,7 +35,8 @@ namespace Game
         }
     }
 
-    void LevelSystem::spawnWave(IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers)
+    void LevelSystem::spawnWave(
+        IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers)
     {
         for (const auto &[type, count] : wave.groups) {
             if (!level.enemyTypes.contains(type))
@@ -44,7 +47,8 @@ namespace Game
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const DifficultyModifiers &modifiers)
+    void LevelSystem::spawnSingleEnemy(
+        IGameWorld &world, const EnemyDefinition &def, const DifficultyModifiers &modifiers)
     {
         auto &reg = world.registry();
         const float y = Rand::enemyY(Rand::rng);

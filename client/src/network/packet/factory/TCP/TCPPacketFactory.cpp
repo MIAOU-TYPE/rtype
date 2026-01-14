@@ -55,8 +55,8 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(
-        const uint32_t req, const std::string_view roomName, const uint8_t maxPlayers, const Engine::Difficulty difficulty) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(const uint32_t req, const std::string_view roomName,
+        const uint8_t maxPlayers, const Engine::Difficulty difficulty) const
     {
         try {
             Net::TCP::Writer b;

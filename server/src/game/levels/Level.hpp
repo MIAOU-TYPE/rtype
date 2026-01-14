@@ -9,8 +9,8 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include "../../../shared/Network/Data/GameConfig.hpp"
+#include <unordered_map>
 
 namespace Game
 {
@@ -18,19 +18,20 @@ namespace Game
      * @brief Difficulty modifiers that affect enemy properties
      */
     struct DifficultyModifiers {
-        float enemyHpMultiplier = 1.0f;        ///> Multiplier for enemy hit points
-        float enemyDamageMultiplier = 1.0f;    ///> Multiplier for enemy damage
-        float enemySpawnRateMultiplier = 1.0f; ///> Multiplier for enemy spawn rate (lower = faster spawns)
+        float enemyHpMultiplier = 1.0f;         ///> Multiplier for enemy hit points
+        float enemyDamageMultiplier = 1.0f;     ///> Multiplier for enemy damage
+        float enemySpawnRateMultiplier = 1.0f;  ///> Multiplier for enemy spawn rate (lower = faster spawns)
         float projectileSpeedMultiplier = 1.0f; ///> Multiplier for projectile speeds
-        float enemySpeedMultiplier = 1.0f;     ///> Multiplier for enemy movement speed
-        float enemyScoreMultiplier = 1.0f;     ///> Multiplier for kill score rewards
+        float enemySpeedMultiplier = 1.0f;      ///> Multiplier for enemy movement speed
+        float enemyScoreMultiplier = 1.0f;      ///> Multiplier for kill score rewards
 
         /**
          * @brief Create difficulty modifiers based on difficulty level
          * @param difficulty The difficulty level
          * @return DifficultyModifiers configured for the given difficulty
          */
-        static DifficultyModifiers fromDifficulty(Engine::Difficulty difficulty) {
+        static DifficultyModifiers fromDifficulty(Engine::Difficulty difficulty)
+        {
             DifficultyModifiers mods;
 
             switch (difficulty) {
@@ -43,8 +44,7 @@ namespace Game
                     mods.enemyScoreMultiplier = 0.8f;
                     break;
 
-                case Engine::Difficulty::Medium:
-                    break;
+                case Engine::Difficulty::Medium: break;
 
                 case Engine::Difficulty::Hard:
                     mods.enemyHpMultiplier = 1.5f;
@@ -59,6 +59,7 @@ namespace Game
             return mods;
         }
     };
+
     /**
      * @brief Definition of movement behavior for enemies.
      */

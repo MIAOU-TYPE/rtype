@@ -21,6 +21,12 @@
 #include "SoundRegistry.hpp"
 #include "UIButton.hpp"
 
+/**
+ * @brief Using declaration to bring BindAction into scope for convenience in the settings menu.
+ * This allows direct use of BindAction enum values without full qualification.
+ */
+using Utils::BindAction;
+
 namespace Engine
 {
     /**

@@ -385,66 +385,28 @@ namespace Utils
         return ::keyToString(key);
     }
 
-    Engine::Key SettingsConfig::getUpKey() const noexcept
+    Engine::Key SettingsConfig::getKey(BindAction action) const noexcept
     {
-        return getMovementKeys().up;
+        const MovementKeys keys = getMovementKeys();
+        switch (action) {
+            case BindAction::Up: return keys.up;
+            case BindAction::Down: return keys.down;
+            case BindAction::Left: return keys.left;
+            case BindAction::Right: return keys.right;
+            case BindAction::Shoot: return keys.shoot;
+        }
+        return Engine::Key::Unknown;
     }
 
-    Engine::Key SettingsConfig::getDownKey() const noexcept
+    void SettingsConfig::setKey(BindAction action, Engine::Key key)
     {
-        return getMovementKeys().down;
-    }
-
-    Engine::Key SettingsConfig::getLeftKey() const noexcept
-    {
-        return getMovementKeys().left;
-    }
-
-    Engine::Key SettingsConfig::getRightKey() const noexcept
-    {
-        return getMovementKeys().right;
-    }
-
-    Engine::Key SettingsConfig::getShootKey() const noexcept
-    {
-        return getMovementKeys().shoot;
-    }
-
-    void SettingsConfig::setUpKey(Engine::Key key)
-    {
-        _customKeys.up = key;
-        _currentPreset = KeyPreset::Custom;
-        _needsRebind = true;
-        _dirty = true;
-    }
-
-    void SettingsConfig::setDownKey(Engine::Key key)
-    {
-        _customKeys.down = key;
-        _currentPreset = KeyPreset::Custom;
-        _needsRebind = true;
-        _dirty = true;
-    }
-
-    void SettingsConfig::setLeftKey(Engine::Key key)
-    {
-        _customKeys.left = key;
-        _currentPreset = KeyPreset::Custom;
-        _needsRebind = true;
-        _dirty = true;
-    }
-
-    void SettingsConfig::setRightKey(Engine::Key key)
-    {
-        _customKeys.right = key;
-        _currentPreset = KeyPreset::Custom;
-        _needsRebind = true;
-        _dirty = true;
-    }
-
-    void SettingsConfig::setShootKey(Engine::Key key)
-    {
-        _customKeys.shoot = key;
+        switch (action) {
+            case BindAction::Up: _customKeys.up = key; break;
+            case BindAction::Down: _customKeys.down = key; break;
+            case BindAction::Left: _customKeys.left = key; break;
+            case BindAction::Right: _customKeys.right = key; break;
+            case BindAction::Shoot: _customKeys.shoot = key; break;
+        }
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
         _dirty = true;

@@ -46,15 +46,15 @@ namespace Engine
         _muteSFX = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF SFX");
         const auto &config = Utils::SettingsConfig::getInstance();
         _rebindUp = std::make_unique<UI::UIButton>(
-            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getUpKey()));
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Up)));
         _rebindDown = std::make_unique<UI::UIButton>(
-            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getDownKey()));
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Down)));
         _rebindLeft = std::make_unique<UI::UIButton>(
-            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getLeftKey()));
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Left)));
         _rebindRight = std::make_unique<UI::UIButton>(
-            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getRightKey()));
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Right)));
         _rebindShoot = std::make_unique<UI::UIButton>(
-            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getShootKey()));
+            _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Shoot)));
 
         _rebindUpLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
         _rebindUpLabel->setString("UP");
@@ -245,19 +245,19 @@ namespace Engine
             if (frame.key == Key::Escape) {
                 switch (_rebindState) {
                     case RebindState::Up:
-                        _rebindUp->setLabel(Utils::SettingsConfig::keyToString(config.getUpKey()));
+                        _rebindUp->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Up)));
                         break;
                     case RebindState::Down:
-                        _rebindDown->setLabel(Utils::SettingsConfig::keyToString(config.getDownKey()));
+                        _rebindDown->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Down)));
                         break;
                     case RebindState::Left:
-                        _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(config.getLeftKey()));
+                        _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Left)));
                         break;
                     case RebindState::Right:
-                        _rebindRight->setLabel(Utils::SettingsConfig::keyToString(config.getRightKey()));
+                        _rebindRight->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Right)));
                         break;
                     case RebindState::Shoot:
-                        _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(config.getShootKey()));
+                        _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Shoot)));
                         break;
                     default: break;
                 }
@@ -266,11 +266,11 @@ namespace Engine
             }
             Engine::Key currentKey = Engine::Key::Unknown;
             switch (_rebindState) {
-                case RebindState::Up: currentKey = config.getUpKey(); break;
-                case RebindState::Down: currentKey = config.getDownKey(); break;
-                case RebindState::Left: currentKey = config.getLeftKey(); break;
-                case RebindState::Right: currentKey = config.getRightKey(); break;
-                case RebindState::Shoot: currentKey = config.getShootKey(); break;
+                case RebindState::Up: currentKey = config.getKey(BindAction::Up); break;
+                case RebindState::Down: currentKey = config.getKey(BindAction::Down); break;
+                case RebindState::Left: currentKey = config.getKey(BindAction::Left); break;
+                case RebindState::Right: currentKey = config.getKey(BindAction::Right); break;
+                case RebindState::Shoot: currentKey = config.getKey(BindAction::Shoot); break;
                 default: break;
             }
 
@@ -292,23 +292,23 @@ namespace Engine
             }
             switch (_rebindState) {
                 case RebindState::Up:
-                    config.setUpKey(frame.key);
+                    config.setKey(BindAction::Up, frame.key);
                     _rebindUp->setLabel(Utils::SettingsConfig::keyToString(frame.key));
                     break;
                 case RebindState::Down:
-                    config.setDownKey(frame.key);
+                    config.setKey(BindAction::Down, frame.key);
                     _rebindDown->setLabel(Utils::SettingsConfig::keyToString(frame.key));
                     break;
                 case RebindState::Left:
-                    config.setLeftKey(frame.key);
+                    config.setKey(BindAction::Left, frame.key);
                     _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(frame.key));
                     break;
                 case RebindState::Right:
-                    config.setRightKey(frame.key);
+                    config.setKey(BindAction::Right, frame.key);
                     _rebindRight->setLabel(Utils::SettingsConfig::keyToString(frame.key));
                     break;
                 case RebindState::Shoot:
-                    config.setShootKey(frame.key);
+                    config.setKey(BindAction::Shoot, frame.key);
                     _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(frame.key));
                     break;
                 default: break;

@@ -32,6 +32,12 @@ namespace Utils
     enum class KeyPreset { Arrows, ZQSD, Custom };
 
     /**
+     * @enum BindAction
+     * @brief Enumeration of bindable actions
+     */
+    enum class BindAction { Up, Down, Left, Right, Shoot };
+
+    /**
      * @brief Structure holding movement key bindings
      */
     struct MovementKeys {
@@ -140,34 +146,18 @@ namespace Utils
         [[nodiscard]] static std::string keyToString(Engine::Key key);
 
         /**
-         * @brief Get the up key
-         * @return The up key
+         * @brief Get a key binding for a specific action
+         * @param action The action to get the key for
+         * @return The key bound to the action
          */
-        [[nodiscard]] Engine::Key getUpKey() const noexcept;
+        [[nodiscard]] Engine::Key getKey(BindAction action) const noexcept;
 
         /**
-         * @brief Get the down key
-         * @return The down key
+         * @brief Set a key binding for a specific action
+         * @param action The action to bind
+         * @param key The key to bind to the action
          */
-        [[nodiscard]] Engine::Key getDownKey() const noexcept;
-
-        /**
-         * @brief Get the left key
-         * @return The left key
-         */
-        [[nodiscard]] Engine::Key getLeftKey() const noexcept;
-
-        /**
-         * @brief Get the right key
-         * @return The right key
-         */
-        [[nodiscard]] Engine::Key getRightKey() const noexcept;
-
-        /**
-         * @brief Get the shoot key
-         * @return The shoot key
-         */
-        [[nodiscard]] Engine::Key getShootKey() const noexcept;
+        void setKey(BindAction action, Engine::Key key);
 
         /**
          * @brief Check if controls need to be rebound
@@ -236,36 +226,6 @@ namespace Utils
          * @param keys The custom keys
          */
         void setCustomMovementKeys(MovementKeys keys);
-
-        /**
-         * @brief Set the up key
-         * @param key The key to set
-         */
-        void setUpKey(Engine::Key key);
-
-        /**
-         * @brief Set the down key
-         * @param key The key to set
-         */
-        void setDownKey(Engine::Key key);
-
-        /**
-         * @brief Set the left key
-         * @param key The key to set
-         */
-        void setLeftKey(Engine::Key key);
-
-        /**
-         * @brief Set the right key
-         * @param key The key to set
-         */
-        void setRightKey(Engine::Key key);
-
-        /**
-         * @brief Set the shoot key
-         * @param key The key to set
-         */
-        void setShootKey(Engine::Key key);
 
         /**
          * @brief Delete copy constructor

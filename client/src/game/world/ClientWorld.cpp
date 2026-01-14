@@ -116,7 +116,8 @@ namespace World
     {
         try {
             if (!_spriteRegistry->exists(data.spriteId)) {
-                std::cerr << "[ClientWorld] Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
+                std::cerr << "{ClientWorld::applyCreate} Sprite ID " << data.spriteId << " not found in registry!"
+                          << std::endl;
                 return;
             }
 
@@ -129,14 +130,13 @@ namespace World
             const auto &sprite = _spriteRegistry->get(data.spriteId);
 
             if (sprite.textureHandle == Graphics::InvalidTexture) {
-                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                std::cerr << "{ClientWorld::applyCreate} WARNING: Sprite " << data.spriteId
                           << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
             }
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
             _registry.emplaceComponent<Ecs::AnimationState>(entity,
                 Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
-
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }

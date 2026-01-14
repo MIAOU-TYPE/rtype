@@ -9,6 +9,7 @@
 
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
+#include "BubblePowerUpSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"

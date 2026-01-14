@@ -37,10 +37,7 @@ namespace Ecs
         const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
-            case Net::Protocol::UDP::ACCEPT:
-                if (payloadSize == sizeof(DefaultData))
-                    handleAccept();
-                break;
+            case Net::Protocol::UDP::ACCEPT: handleAccept(payload, payloadSize); break;
 
             case Net::Protocol::UDP::REJECT:
                 if (payloadSize == sizeof(DefaultData))
@@ -123,9 +120,16 @@ namespace Ecs
         return isHeaderValid(packet, outHeader);
     }
 
-    void UDPPacketRouter::handleAccept() const
+    void UDPPacketRouter::handleAccept(const uint8_t *payload, const size_t size) const
     {
-        _sink->onAccept();
+        if (!payload || size != sizeof(AcceptData)) {
+            std::cerr << "{UDPPacketRouter::handleAccept} Dropped ACCEPT: bad size\n";
+            return;
+        }
+        AcceptData acceptData;
+        std::memcpy(&acceptData, payload, sizeof(acceptData));
+        const uint32_t netPlayerId = ntohl(acceptData.netPlayerId);
+        _sink->onAccept(netPlayerId);
     }
 
     void UDPPacketRouter::handleReject() const

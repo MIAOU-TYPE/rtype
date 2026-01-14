@@ -303,13 +303,13 @@ namespace Utils
 
     void SettingsConfig::setMusicVolume(std::size_t volume)
     {
-        _musicVolume = volume;
+        _musicVolume = (volume > 100U) ? 100U : volume;
         (void) save();
     }
 
     void SettingsConfig::setSfxVolume(std::size_t volume)
     {
-        _sfxVolume = volume;
+        _sfxVolume = (volume > 100U) ? 100U : volume;
         (void) save();
     }
 

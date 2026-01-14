@@ -130,6 +130,10 @@ namespace Utils
                 const auto &audio = j["audio"];
                 _musicVolume = audio.value("music_volume", 50U);
                 _sfxVolume = audio.value("sfx_volume", 50U);
+                if (_musicVolume > 100U)
+                    _musicVolume = 100U;
+                if (_sfxVolume > 100U)
+                    _sfxVolume = 100U;
                 _musicMuted = audio.value("music_muted", false);
                 _sfxMuted = audio.value("sfx_muted", false);
             }

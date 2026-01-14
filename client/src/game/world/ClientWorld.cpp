@@ -55,16 +55,22 @@ namespace World
 
     {
         switch (cmd.type) {
-            case WorldCommand::Type::Snapshot: applySnapshot(std::get<World::SnapshotBatch>(cmd.payload)); break;
+            case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotBatch>(cmd.payload)); break;
             case WorldCommand::Type::Destroy: applyDestroy(std::get<size_t>(cmd.payload)); break;
             case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
+            case WorldCommand::Type::Accept: applyAccept(std::get<uint32_t>(cmd.payload)); break;
             default: break;
         }
     }
 
-    uint32_t ClientWorld::getScore() const
+    uint32_t ClientWorld::getScore() const noexcept
     {
         return _score;
+    }
+
+    int ClientWorld::getEntityPlayerId() const noexcept
+    {
+        return _entityPlayerId;
     }
 
     void ClientWorld::applySnapshot(const SnapshotBatch &batch)
@@ -112,6 +118,11 @@ namespace World
         _entityLastSeen.erase(entityId);
     }
 
+    void ClientWorld::applyAccept(const uint32_t &data)
+    {
+        _entityPlayerId = static_cast<int>(data);
+    }
+
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
@@ -138,42 +149,6 @@ namespace World
                 Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
-        }
-    }
-
-    void ClientWorld::applySingleSnapshot(const SnapshotEntity &entity)
-    {
-        const auto it = _entityMap.find(entity.id);
-        if (it == _entityMap.end()) {
-            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.z, entity.spriteId});
-            return;
-        }
-
-        const Ecs::Entity localEntity = it->second;
-        const auto entityIndex = static_cast<size_t>(localEntity);
-
-        if (auto &pos = _registry.getComponents<Ecs::Position>().at(entityIndex)) {
-            pos->x = entity.x;
-            pos->y = entity.y;
-            pos->z = entity.z;
-        }
-
-        if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
-            if (const bool spriteChanged = (drawable->spriteId != entity.spriteId);
-                spriteChanged && _spriteRegistry->exists(entity.spriteId)) {
-                drawable->spriteId = entity.spriteId;
-                const auto &sprite = _spriteRegistry->get(drawable->spriteId);
-
-                if (auto &render = _registry.getComponents<Ecs::Render>().at(entityIndex)) {
-                    render->texture = sprite.textureHandle;
-
-                    if (auto &animState = _registry.getComponents<Ecs::AnimationState>().at(entityIndex)) {
-                        animState->currentAnimation = sprite.defaultAnimation;
-                        animState->frameIndex = 0;
-                        animState->elapsed = 0.f;
-                    }
-                }
-            }
         }
     }
 
@@ -271,6 +246,17 @@ namespace World
             if (isDestroyed(netId))
                 continue;
 
+            if (std::cmp_equal(netId, _entityPlayerId)) {
+                const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
+                if (it == _entityMap.end())
+                    continue;
+                std::cout << "Player entity position before skipping: "
+                          << " (" << positions.at(static_cast<size_t>(it->second))->x << ", "
+                          << positions.at(static_cast<size_t>(it->second))->y << ")\n";
+                _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(it->second));
+                std::cout << " Skipping interpolation for player entity " << netId << std::endl;
+                continue;
+            }
             const auto itA = A.entities.find(netId);
             const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
@@ -298,6 +284,34 @@ namespace World
 
         for (const auto id : toDestroy)
             applyDestroy(id);
+    }
+
+    void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
+    {
+        float dx = 0.f;
+        float dy = 0.f;
+
+        if (input & 0x01)
+            dx -= 1.f;
+        if (input & 0x02)
+            dx += 1.f;
+        if (input & 0x04)
+            dy += 1.f;
+        if (input & 0x08)
+            dy -= 1.f;
+
+        const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
+        if (it == _entityMap.end())
+            return;
+
+        std::cout << "moving entity" << static_cast<size_t>(_entityPlayerId);
+        const auto ent = it->second;
+        auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
+        if (!pos)
+            return;
+        pos->x += dx * 7.f;
+        pos->y += dy * 7.f;
+        std::cout << " New position: (" << pos->x << ", " << pos->y << ")\n";
     }
 
 } // namespace World

@@ -17,6 +17,7 @@
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
 #include <unordered_map>
+#include <utility>
 #include <unordered_set>
 
 namespace World

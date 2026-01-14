@@ -116,7 +116,7 @@ namespace Game
         return _events;
     }
 
-    Ecs::Entity World::createPlayer()
+    Ecs::Entity World::createPlayer(const int sessionId)
     {
         const Ecs::Entity ent = World::createEntity();
 
@@ -129,6 +129,8 @@ namespace Game
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
+        if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
+            _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;
     }
 

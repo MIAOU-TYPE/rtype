@@ -72,7 +72,7 @@ namespace Game
          *
          * @return The newly created ECS entity.
          */
-        [[nodiscard]] Ecs::Entity createPlayer() override;
+        [[nodiscard]] Ecs::Entity createPlayer(int sessionId) override;
 
         /**
          * @brief Destroy an entity and all its components.

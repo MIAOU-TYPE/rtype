@@ -19,8 +19,8 @@ namespace Ecs
      * @brief Stores the 2D position of an entity.
      */
     struct Position {
-        float x = 0.f;   ///> X coordinate
-        float y = 0.f;   ///> Y coordinate
+        float x = 0.f; ///> X coordinate
+        float y = 0.f; ///> Y coordinate
         uint8_t z = 1; ///> Z coordinate of the entity
     };
 } // namespace Ecs

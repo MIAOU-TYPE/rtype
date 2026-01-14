@@ -66,6 +66,12 @@ namespace Engine
         _rebindRightLabel->setString("RIGHT");
         _rebindShootLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
         _rebindShootLabel->setString("SHOOT");
+
+        _rebindButtonMap[RebindState::Up] = _rebindUp.get();
+        _rebindButtonMap[RebindState::Down] = _rebindDown.get();
+        _rebindButtonMap[RebindState::Left] = _rebindLeft.get();
+        _rebindButtonMap[RebindState::Right] = _rebindRight.get();
+        _rebindButtonMap[RebindState::Shoot] = _rebindShoot.get();
     }
 
     void SettingsMenu::onEnter()
@@ -206,15 +212,7 @@ namespace Engine
         if (_errorState != RebindState::None) {
             _errorFrameCount++;
             if (_errorFrameCount >= ERROR_DISPLAY_FRAMES) {
-                UI::UIButton *button = nullptr;
-                switch (_errorState) {
-                    case RebindState::Up: button = _rebindUp.get(); break;
-                    case RebindState::Down: button = _rebindDown.get(); break;
-                    case RebindState::Left: button = _rebindLeft.get(); break;
-                    case RebindState::Right: button = _rebindRight.get(); break;
-                    case RebindState::Shoot: button = _rebindShoot.get(); break;
-                    default: break;
-                }
+                UI::UIButton *button = _rebindButtonMap[_errorState];
                 if (button)
                     button->setLabel("...");
                 _errorState = RebindState::None;
@@ -243,24 +241,8 @@ namespace Engine
         if (_rebindState != RebindState::None) {
             auto &config = Utils::SettingsConfig::getInstance();
             if (frame.key == Key::Escape) {
-                switch (_rebindState) {
-                    case RebindState::Up:
-                        _rebindUp->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Up)));
-                        break;
-                    case RebindState::Down:
-                        _rebindDown->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Down)));
-                        break;
-                    case RebindState::Left:
-                        _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Left)));
-                        break;
-                    case RebindState::Right:
-                        _rebindRight->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Right)));
-                        break;
-                    case RebindState::Shoot:
-                        _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(config.getKey(BindAction::Shoot)));
-                        break;
-                    default: break;
-                }
+                BindAction action = static_cast<BindAction>(_rebindState);
+                _rebindButtonMap[_rebindState]->setLabel(Utils::SettingsConfig::keyToString(config.getKey(action)));
                 _rebindState = RebindState::None;
                 return;
             }
@@ -277,42 +259,20 @@ namespace Engine
             if (config.isKeyAlreadyAssigned(frame.key, currentKey)) {
                 _errorState = _rebindState;
                 _errorFrameCount = 0;
-                UI::UIButton *button = nullptr;
-                switch (_rebindState) {
-                    case RebindState::Up: button = _rebindUp.get(); break;
-                    case RebindState::Down: button = _rebindDown.get(); break;
-                    case RebindState::Left: button = _rebindLeft.get(); break;
-                    case RebindState::Right: button = _rebindRight.get(); break;
-                    case RebindState::Shoot: button = _rebindShoot.get(); break;
-                    default: break;
-                }
+                UI::UIButton *button = _rebindButtonMap[_rebindState];
                 if (button)
                     button->setLabel("/!\\");
                 return;
             }
             switch (_rebindState) {
-                case RebindState::Up:
-                    config.setKey(BindAction::Up, frame.key);
-                    _rebindUp->setLabel(Utils::SettingsConfig::keyToString(frame.key));
-                    break;
-                case RebindState::Down:
-                    config.setKey(BindAction::Down, frame.key);
-                    _rebindDown->setLabel(Utils::SettingsConfig::keyToString(frame.key));
-                    break;
-                case RebindState::Left:
-                    config.setKey(BindAction::Left, frame.key);
-                    _rebindLeft->setLabel(Utils::SettingsConfig::keyToString(frame.key));
-                    break;
-                case RebindState::Right:
-                    config.setKey(BindAction::Right, frame.key);
-                    _rebindRight->setLabel(Utils::SettingsConfig::keyToString(frame.key));
-                    break;
-                case RebindState::Shoot:
-                    config.setKey(BindAction::Shoot, frame.key);
-                    _rebindShoot->setLabel(Utils::SettingsConfig::keyToString(frame.key));
-                    break;
+                case RebindState::Up: config.setKey(BindAction::Up, frame.key); break;
+                case RebindState::Down: config.setKey(BindAction::Down, frame.key); break;
+                case RebindState::Left: config.setKey(BindAction::Left, frame.key); break;
+                case RebindState::Right: config.setKey(BindAction::Right, frame.key); break;
+                case RebindState::Shoot: config.setKey(BindAction::Shoot, frame.key); break;
                 default: break;
             }
+            _rebindButtonMap[_rebindState]->setLabel(Utils::SettingsConfig::keyToString(frame.key));
             _rebindState = RebindState::None;
             _controlsChanged = true;
             return;
@@ -478,35 +438,13 @@ namespace Engine
         if (config.getCurrentPreset() != Utils::KeyPreset::Custom)
             return false;
 
-        if (_rebindUp->onMouseReleased(mx, my)) {
-            _rebindState = RebindState::Up;
-            _rebindUp->setLabel("...");
-            _rebindUp->reset();
-            return true;
-        }
-        if (_rebindDown->onMouseReleased(mx, my)) {
-            _rebindState = RebindState::Down;
-            _rebindDown->setLabel("...");
-            _rebindDown->reset();
-            return true;
-        }
-        if (_rebindLeft->onMouseReleased(mx, my)) {
-            _rebindState = RebindState::Left;
-            _rebindLeft->setLabel("...");
-            _rebindLeft->reset();
-            return true;
-        }
-        if (_rebindRight->onMouseReleased(mx, my)) {
-            _rebindState = RebindState::Right;
-            _rebindRight->setLabel("...");
-            _rebindRight->reset();
-            return true;
-        }
-        if (_rebindShoot->onMouseReleased(mx, my)) {
-            _rebindState = RebindState::Shoot;
-            _rebindShoot->setLabel("...");
-            _rebindShoot->reset();
-            return true;
+        for (const auto &[state, button] : _rebindButtonMap) {
+            if (button->onMouseReleased(mx, my)) {
+                _rebindState = state;
+                button->setLabel("...");
+                button->reset();
+                return true;
+            }
         }
         return false;
     }

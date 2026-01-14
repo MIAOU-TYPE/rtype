@@ -20,6 +20,7 @@
 #include "SettingsConfig.hpp"
 #include "SoundRegistry.hpp"
 #include "UIButton.hpp"
+#include <unordered_map>
 
 /**
  * @brief Using declaration to bring BindAction into scope for convenience in the settings menu.
@@ -255,6 +256,8 @@ namespace Engine
         int _errorFrameCount = 0;                     ///> Frame counter for error feedback display
         bool _controlsChanged = false;                ///> Flag indicating if the controls preset has been changed
         bool _backRequested = false;                  ///> Flag indicating if the user wants to go back
+
+        std::unordered_map<RebindState, UI::UIButton *> _rebindButtonMap; ///> Map from rebind state to button pointer
 
         /**
          * @brief List of available screen resolutions.

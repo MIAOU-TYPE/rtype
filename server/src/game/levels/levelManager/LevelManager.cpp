@@ -109,8 +109,15 @@ namespace
                 }
             }
 
-            if (w.contains("powerUps") && w.at("powerUps").is_number())
+            if (w.contains("powerUps") && w.at("powerUps").is_number()) {
                 wave.powerUps = w.at("powerUps").get<int>();
+                wave.powerUpType = "force";
+            }
+
+            if (w.contains("powerUp") && w.at("powerUp").is_object()) {
+                wave.powerUps = 1;
+                wave.powerUpType = w.at("powerUp").value("type", "force");
+            }
 
             if (wave.groups.empty() && wave.powerUps == 0)
                 return false;

@@ -169,5 +169,12 @@ namespace World
         std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
 
         int _entityPlayerId = -1; ///> Client session ID
+
+        /**
+         * @brief Reconciles the local player entity's position with the server's authoritative state.
+         * @param bs The network state received from the server.
+         * @param positions Sparse array of Position components.
+         */
+        void reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions);
     };
 } // namespace World

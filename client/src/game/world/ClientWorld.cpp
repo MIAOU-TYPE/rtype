@@ -178,6 +178,42 @@ namespace World
         }
     }
 
+    void ClientWorld::reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions)
+    {
+        const auto itEnt = _entityMap.find(static_cast<std::uint32_t>(_entityPlayerId));
+        if (itEnt == _entityMap.end())
+            return;
+
+        const auto ent = static_cast<std::size_t>(itEnt->second);
+
+        if (ent >= positions.size())
+            return;
+
+        auto &posOpt = positions.at(ent);
+        if (!posOpt)
+            return;
+
+        auto &pos = *posOpt;
+
+        const float serverX = bs.x;
+        const float serverY = bs.y;
+
+        const float dx = serverX - pos.x;
+        const float dy = serverY - pos.y;
+        const float dist2 = dx * dx + dy * dy;
+
+        constexpr float SnapDist = 80.f;
+
+        if (constexpr float SnapDist2 = SnapDist * SnapDist; dist2 > SnapDist2) {
+            pos.x = serverX;
+            pos.y = serverY;
+        } else {
+            constexpr float SmoothFactor = 0.15f;
+            pos.x += dx * SmoothFactor;
+            pos.y += dy * SmoothFactor;
+        }
+    }
+
     void ClientWorld::updateInterpolatedPositions()
     {
         if (_snapshots.empty())
@@ -247,14 +283,7 @@ namespace World
                 continue;
 
             if (std::cmp_equal(netId, _entityPlayerId)) {
-                const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
-                if (it == _entityMap.end())
-                    continue;
-                std::cout << "Player entity position before skipping: "
-                          << " (" << positions.at(static_cast<size_t>(it->second))->x << ", "
-                          << positions.at(static_cast<size_t>(it->second))->y << ")\n";
-                _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(it->second));
-                std::cout << " Skipping interpolation for player entity " << netId << std::endl;
+                reconcileLocalPlayerWithServer(bs, positions);
                 continue;
             }
             const auto itA = A.entities.find(netId);
@@ -304,14 +333,12 @@ namespace World
         if (it == _entityMap.end())
             return;
 
-        std::cout << "moving entity" << static_cast<size_t>(_entityPlayerId);
         const auto ent = it->second;
         auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
         if (!pos)
             return;
         pos->x += dx * 7.f;
         pos->y += dy * 7.f;
-        std::cout << " New position: (" << pos->x << ", " << pos->y << ")\n";
     }
 
 } // namespace World

@@ -62,11 +62,8 @@ namespace
                 const sockaddr_in *addr = sessionsL->getUdpAddress(event.sessionId);
                 if (!addr)
                     return;
-                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId)) {
-                    std::cout << "{GameServer::AcceptOnNewPlayerConnection} Sending ACCEPT packet to sessionId: "
-                              << event.sessionId << " with netPlayerId: " << event.netPlayerId << std::endl;
+                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId))
                     (void) serverL->sendPacket(*pkt);
-                }
             });
     }
 } // namespace

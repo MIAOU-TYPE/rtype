@@ -13,6 +13,15 @@
 namespace World
 {
     /**
+     * @struct SnapshotBatch
+     * @brief Represents a batch of snapshot entities at a specific server tick.
+     */
+    struct SnapshotBatch {
+        uint32_t serverTick;                  ///> Server tick of the snapshot
+        std::vector<SnapshotEntity> entities; ///> List of snapshot entities
+    };
+
+    /**
      * @struct WorldCommand
      * @brief Represents a command sent to or from the game world.
      */
@@ -27,7 +36,7 @@ namespace World
             Score,    ///> Score update
         };
 
-        Type type;                                                                           ///> Type of the command
-        std::variant<std::monostate, std::vector<SnapshotEntity>, size_t, uint32_t> payload; ///> Command payload
+        Type type;                                                             ///> Type of the command
+        std::variant<std::monostate, SnapshotBatch, size_t, uint32_t> payload; ///> Command payload
     };
 } // namespace World

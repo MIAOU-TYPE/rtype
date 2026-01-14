@@ -20,6 +20,7 @@
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
+#include "Level.hpp"
 #include "LevelManager.hpp"
 #include "MovementPattern.hpp"
 #include "Position.hpp"
@@ -43,8 +44,9 @@ namespace Game
          * @param lvl The level manager to use for level data.
          * @param dt The delta time since the last update.
          * @param spawned Vector tracking which waves have been spawned.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned);
+        static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned, const DifficultyModifiers &modifiers = {});
 
         /**
          * @brief Spawn background layers for the level (creates 2 tiles for seamless scrolling).
@@ -61,8 +63,9 @@ namespace Game
          * @param world The game world to spawn enemies in.
          * @param lvl The level manager containing level data.
          * @param spawned Vector tracking which waves have been spawned.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned);
+        static void handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn all enemy groups in a given wave.
@@ -70,16 +73,18 @@ namespace Game
          * @param world The game world to spawn enemies in.
          * @param level The current level data.
          * @param wave The wave to spawn.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void spawnWave(IGameWorld &world, const Level &level, const Wave &wave);
+        static void spawnWave(IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn a single enemy based on the enemy definition.
          *
          * @param world The game world to spawn the enemy in.
          * @param def The enemy definition.
+         * @param modifiers Difficulty modifiers to apply to the enemy.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Create a single background entity with given parameters.

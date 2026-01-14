@@ -10,9 +10,55 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "../../../shared/Network/Data/GameConfig.hpp"
 
 namespace Game
 {
+    /**
+     * @brief Difficulty modifiers that affect enemy properties
+     */
+    struct DifficultyModifiers {
+        float enemyHpMultiplier = 1.0f;        ///> Multiplier for enemy hit points
+        float enemyDamageMultiplier = 1.0f;    ///> Multiplier for enemy damage
+        float enemySpawnRateMultiplier = 1.0f; ///> Multiplier for enemy spawn rate (lower = faster spawns)
+        float projectileSpeedMultiplier = 1.0f; ///> Multiplier for projectile speeds
+        float enemySpeedMultiplier = 1.0f;     ///> Multiplier for enemy movement speed
+        float enemyScoreMultiplier = 1.0f;     ///> Multiplier for kill score rewards
+
+        /**
+         * @brief Create difficulty modifiers based on difficulty level
+         * @param difficulty The difficulty level
+         * @return DifficultyModifiers configured for the given difficulty
+         */
+        static DifficultyModifiers fromDifficulty(Engine::Difficulty difficulty) {
+            DifficultyModifiers mods;
+
+            switch (difficulty) {
+                case Engine::Difficulty::Easy:
+                    mods.enemyHpMultiplier = 0.8f;
+                    mods.enemyDamageMultiplier = 0.7f;
+                    mods.enemySpawnRateMultiplier = 1.2f;
+                    mods.projectileSpeedMultiplier = 0.9f;
+                    mods.enemySpeedMultiplier = 0.9f;
+                    mods.enemyScoreMultiplier = 0.8f;
+                    break;
+
+                case Engine::Difficulty::Medium:
+                    break;
+
+                case Engine::Difficulty::Hard:
+                    mods.enemyHpMultiplier = 1.5f;
+                    mods.enemyDamageMultiplier = 1.3f;
+                    mods.enemySpawnRateMultiplier = 0.8f;
+                    mods.projectileSpeedMultiplier = 1.2f;
+                    mods.enemySpeedMultiplier = 1.1f;
+                    mods.enemyScoreMultiplier = 1.5f;
+                    break;
+            }
+
+            return mods;
+        }
+    };
     /**
      * @brief Definition of movement behavior for enemies.
      */

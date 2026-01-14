@@ -48,10 +48,10 @@ namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
         std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-        const std::string &levelPath)
+        const std::string &levelPath, const Game::DifficultyModifiers &modifiers)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _udpPacketFactory(std::move(udpPacketFactory))
+          _udpPacketFactory(std::move(udpPacketFactory)), _difficultyModifiers(modifiers)
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
@@ -109,7 +109,7 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
+        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned, _difficultyModifiers);
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);

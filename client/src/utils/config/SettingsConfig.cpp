@@ -94,7 +94,7 @@ namespace
         }
     }
 
-    std::string colorBlindModeToString(Graphics::ColorBlindMode mode)
+    [[nodiscard]] std::string colorBlindModeToString(Graphics::ColorBlindMode mode)
     {
         switch (mode) {
             case Graphics::ColorBlindMode::DEUTERANOPIA: return "deuteranopia";

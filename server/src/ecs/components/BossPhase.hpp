@@ -22,6 +22,6 @@ namespace Ecs
         Phase currentPhase = Phase::Phase1;                   ///> Current phase of the boss
         std::vector<int> phaseThresholds = {2500, 1000, 200}; ///> Health thresholds for phase transitions
         float fireSpeedMultiplier = 1.5f;                     ///> Multiplier for fire rate in current phase
-        float damageMultiplier = 1.2f;                        ///> Multiplier for damage in current phase
+        int damageMultiplier = 2;                        ///> Multiplier for damage in current phase
     };
 } // namespace Ecs

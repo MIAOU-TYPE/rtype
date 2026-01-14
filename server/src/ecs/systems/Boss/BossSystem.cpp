@@ -12,9 +12,10 @@ namespace Game
     void BossSystem::update(IGameWorld &world, float dt)
     {
         auto &reg = world.registry();
+        (void)dt;
 
-        reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Id>(
-            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Id &id) {
+        reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Id, Ecs::Position, Ecs::MovementPattern>(
+            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Id, const Ecs::Position &pos, Ecs::MovementPattern &pattern) {
                 int currentThreshold = 0;
                 switch (bossPhase.currentPhase) {
                     case Ecs::BossPhase::Phase::Phase1: currentThreshold = bossPhase.phaseThresholds[0]; break;
@@ -22,11 +23,8 @@ namespace Game
                     case Ecs::BossPhase::Phase::Phase3: currentThreshold = bossPhase.phaseThresholds[2]; break;
                 }
 
-                auto &pos = reg.getComponents<Ecs::Position>();
-                auto &vel = reg.getComponents<Ecs::Velocity>();
-                if (pos.at(static_cast<size_t>(e))->x < 900.f) {
-                    vel.at(static_cast<size_t>(e))->vx = 0.f;
-                }
+                if (pos.x < 800.f)
+                    pattern.baseVx = 0.f;
 
                 if (health.hp <= currentThreshold) {
                     auto &attack = reg.getComponents<Ecs::AIShoot>();

@@ -34,7 +34,7 @@ namespace
         return it->second;
     }
 
-    std::string keyToString(Engine::Key key)
+    [[nodiscard]] std::string keyToString(Engine::Key key)
     {
         switch (key) {
             case Engine::Key::A: return "A";

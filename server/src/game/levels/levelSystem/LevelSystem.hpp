@@ -31,15 +31,17 @@
 #include "WeaponConfig.hpp"
 #include <unordered_map>
 
-constexpr float COLLISION_SCALE = 1.7f;
 
 namespace Game
 {
-    /**
-     * @brief System responsible for managing level progression and enemy spawning.
-     */
-    class LevelSystem {
-      public:
+
+  constexpr float COLLISION_SCALE = 1.7f; ///> Scale factor for enemy collision boxes
+
+  /**
+   * @brief System responsible for managing level progression and enemy spawning.
+   */
+  class LevelSystem {
+    public:
         /**
          * @brief Update the level system for the given game world and level manager.
          *
@@ -107,7 +109,7 @@ namespace Game
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
          */
-        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y);
 
         /**
          * @brief Create a single background entity with given parameters.

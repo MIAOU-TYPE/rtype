@@ -116,7 +116,7 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
 
         Ecs::MovementPattern pattern;
@@ -174,12 +174,12 @@ namespace Game
         reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
     }
 
-    void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y)
+    void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y)
     {
         auto &reg = world.registry();
         const Ecs::Entity obstacle = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y, 1});
         reg.emplaceComponent<Ecs::Velocity>(obstacle, Ecs::Velocity{0.f, 0.f});
         reg.emplaceComponent<Ecs::GravityField>(
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});

@@ -12,8 +12,8 @@
  * Includes header information, session ID, and authentication tokens.
  */
 struct AcceptData {
-    HeaderData header; ///> Header information
-    uint32_t netPlayerId;
+    HeaderData header;    ///> Header information
+    uint32_t netPlayerId; ///> Unique network player identifier
 };
 
 static_assert(sizeof(AcceptData) == sizeof(HeaderData) + 4, "AcceptData layout mismatch");

@@ -61,7 +61,13 @@ namespace World
          * @brief Gets the current score.
          * @return The current score.
          */
-        uint32_t getScore() const;
+        uint32_t getScore() const noexcept;
+
+        /**
+         * @brief get the id of the player entity
+         * @return the id of the player entity
+         */
+        int getEntityPlayerId() const noexcept;
 
         /**
          * @brief Applies a snapshot of entities to the client world.
@@ -76,9 +82,21 @@ namespace World
         void applyDestroy(size_t entityId);
 
         /**
+         * @brief Applies an accept command to the client world.
+         * @param data The session ID received from the server.
+         */
+        void applyAccept(const uint32_t &data);
+
+        /**
          * @brief Updates interpolated positions of entities for smooth rendering.
          */
         void updateInterpolatedPositions();
+
+        /**
+         * @brief Applies local movement based on input flags for the player entity.
+         * @param input Bitmask representing movement directions.
+         */
+        void applyLocalMovementFromNetId(uint8_t input) noexcept;
 
       private:
         /**
@@ -124,12 +142,6 @@ namespace World
          */
         void applyCreate(const EntityCreate &data);
 
-        /**
-         * @brief Applies a single snapshot entity update to the client world.
-         * @param entity The snapshot entity data to apply.
-         */
-        void applySingleSnapshot(const SnapshotEntity &entity);
-
         std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
             _entityLastSeen; ///> Tracks the last seen time for each entity
 
@@ -154,5 +166,7 @@ namespace World
         size_t _maxSnapshots = 64; ///> Maximum number of snapshots to store
 
         std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
+
+        int _entityPlayerId = -1; ///> Client session ID
     };
 } // namespace World

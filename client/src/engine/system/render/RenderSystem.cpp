@@ -37,7 +37,7 @@ namespace Engine
                 if (drawable.spriteId == 16) {
                     const float viewportHeight = static_cast<float>(viewportSize.height);
                     finalX = 10.f;
-                    finalY = viewportHeight - 50.f;
+                    finalY = viewportHeight - 50.f - pos.y;
                     cmd.position = {finalX, finalY};
                     cmd.scale = {2.f, 2.f};
                 }

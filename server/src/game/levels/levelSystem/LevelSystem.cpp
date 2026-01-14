@@ -159,14 +159,22 @@ namespace Game
         const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity powerUpEntity = world.createEntity();
 
-        const bool isLaser = (type == "laser");
+        Ecs::PowerUpTypeEnum powerUpType = Ecs::PowerUpTypeEnum::Standard;
+        uint32_t spriteId = 13u;
+
+        if (type == "laser") {
+            powerUpType = Ecs::PowerUpTypeEnum::Laser;
+            spriteId = 18u;
+        } else if (type == "shield") {
+            powerUpType = Ecs::PowerUpTypeEnum::Shield;
+            spriteId = 19u;
+        }
 
         reg.emplaceComponent<Ecs::Position>(powerUpEntity, Ecs::Position{1400.f, y});
         reg.emplaceComponent<Ecs::Velocity>(powerUpEntity, Ecs::Velocity{-50.f, 0.f});
-        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{isLaser ? 18u : 13u, true});
+        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{spriteId, true});
         reg.emplaceComponent<Ecs::Collision>(powerUpEntity, Ecs::Collision{32.f, 32.f});
         reg.emplaceComponent<Ecs::PowerUp>(powerUpEntity);
-        reg.emplaceComponent<Ecs::PowerUpType>(
-            powerUpEntity, Ecs::PowerUpType{isLaser ? Ecs::PowerUpTypeEnum::Laser : Ecs::PowerUpTypeEnum::Standard});
+        reg.emplaceComponent<Ecs::PowerUpType>(powerUpEntity, Ecs::PowerUpType{powerUpType});
     }
 } // namespace Game

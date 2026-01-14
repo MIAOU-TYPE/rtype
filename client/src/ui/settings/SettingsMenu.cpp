@@ -386,9 +386,13 @@ namespace Engine
             return false;
         auto &config = Utils::SettingsConfig::getInstance();
         const auto current = config.getCurrentPreset();
-        const auto next = current == Utils::KeyPreset::Arrows ? Utils::KeyPreset::ZQSD
-            : current == Utils::KeyPreset::ZQSD               ? Utils::KeyPreset::Custom
-                                                              : Utils::KeyPreset::Arrows;
+        Utils::KeyPreset next;
+        switch (current) {
+            case Utils::KeyPreset::Arrows: next = Utils::KeyPreset::ZQSD; break;
+            case Utils::KeyPreset::ZQSD: next = Utils::KeyPreset::Custom; break;
+            case Utils::KeyPreset::Custom: next = Utils::KeyPreset::Arrows; break;
+            default: next = Utils::KeyPreset::Arrows; break;
+        }
         config.setPreset(next);
         _controls->setLabel(Utils::SettingsConfig::getPresetName(next));
         updateRebindLabels();

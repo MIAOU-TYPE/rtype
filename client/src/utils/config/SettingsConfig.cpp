@@ -130,7 +130,7 @@ namespace Utils
 
     SettingsConfig::~SettingsConfig()
     {
-        (void)saveIfDirty();
+        (void) saveIfDirty();
     }
 
     bool SettingsConfig::saveIfDirty() noexcept

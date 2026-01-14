@@ -23,11 +23,13 @@ namespace Ecs
      * whether they have a power-up equipped, the cooldown timer, and readiness state.
      */
     struct PlayerPowerUp {
-        bool hasPowerUp = false;         ///> Whether the player has a power-up equipped
-        float cooldown = 0.f;            ///> Current cooldown timer (seconds)
-        float maxCooldown = 5.f;         ///> Maximum cooldown duration (seconds)
-        bool isReady = false;            ///> Whether the special weapon is ready to fire
-        bool hasBar = false;             ///> Whether the cooldown bar is currently displayed
-        std::optional<Entity> barEntity; ///> The entity ID of the cooldown bar
+        bool hasPowerUp = false;             ///> Whether the player has a power-up equipped
+        float cooldown = 0.f;                ///> Current cooldown timer (seconds)
+        float maxCooldown = 5.f;             ///> Maximum cooldown duration (seconds)
+        bool isReady = false;                ///> Whether the special weapon is ready to fire
+        bool hasBar = false;                 ///> Whether the cooldown bar is currently displayed
+        std::optional<Entity> barEntity;     ///> The entity ID of the cooldown bar
+        std::optional<Entity> powerUpEntity; ///> The entity ID of the attached power-up
+        bool previousPowerShoot = false;     ///> Previous state of powerShoot input (for edge detection)
     };
 } // namespace Ecs

@@ -29,7 +29,7 @@ namespace
         auto it = keyMap.find(str);
         if (it == keyMap.end()) {
             std::cerr << "Warning: Unrecognized key string '" << str << "', defaulting to Up" << std::endl;
-            return Engine::Key::Up;
+            return Engine::Key::Unknown;
         }
         return it->second;
     }

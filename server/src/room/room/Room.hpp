@@ -18,6 +18,32 @@
 namespace Engine
 {
     /**
+     * @brief Exception class for Room errors
+     */
+    class RoomError : public std::exception {
+      public:
+        /**
+         * @brief Constructor for RoomError
+         * @param message The error message
+         */
+        explicit RoomError(const std::string &message) : _message("\n\t" + message)
+        {
+        }
+
+        /**
+         * @brief Override of the what() method from std::exception
+         * @return The error message as a C-style string
+         */
+        const char *what() const noexcept override
+        {
+            return _message.c_str();
+        }
+
+      private:
+        std::string _message; ///> Error message
+    };
+
+    /**
      * @brief room identifier type
      */
     using RoomId = uint32_t;

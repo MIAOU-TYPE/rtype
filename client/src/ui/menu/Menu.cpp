@@ -208,6 +208,8 @@ namespace Engine
             handleMouseReleased(frame);
         if (frame.keyPressed)
             handleKeyPressed(frame);
+        if (frame.keyReleased)
+            handleKeyReleased(frame);
     }
 
     void Menu::handleMousePressed(const InputFrame &frame) const
@@ -266,8 +268,7 @@ namespace Engine
             return;
         if (frame.key == Key::Tab) {
             const bool uf = _userField->isFocused();
-            const bool pf = _passField->isFocused();
-            if (!uf && !pf) {
+            if (const bool pf = _passField->isFocused(); !uf && !pf) {
                 _userField->setFocused(true);
                 return;
             }
@@ -284,10 +285,12 @@ namespace Engine
             submit();
             return;
         }
-        if (frame.key == Key::Escape) {
+        if (frame.key == Key::Escape)
             backToRoot();
-            return;
-        }
+    }
+
+    void Menu::handleKeyReleased(const InputFrame &frame) const
+    {
         if (_userField->isFocused())
             _userField->onKeyPressed(frame.key);
         else if (_passField->isFocused())

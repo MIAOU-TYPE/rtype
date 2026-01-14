@@ -138,6 +138,8 @@ void ServerRuntime::runSnapshot() const
 {
     using clock = std::chrono::steady_clock;
     constexpr auto Tick = std::chrono::milliseconds(50);
+    constexpr size_t MaxUdpPacketBytes = 1200;
+
     auto nextTick = clock::now();
     std::vector<SnapshotEntity> entities;
 
@@ -154,13 +156,22 @@ void ServerRuntime::runSnapshot() const
             if (entities.empty())
                 return;
 
-            if (const auto basePacket = _udpPacketFactory->createSnapshotPacket(entities, tick)) {
-                for (const int sessionId : room.sessions()) {
-                    if (const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId)) {
-                        auto pkt = basePacket->clone();
-                        pkt->setAddress(*addr);
-                        (void) _udpServer->sendPacket(*pkt);
-                    }
+            const auto packets = _udpPacketFactory->createSnapshotPackets(entities, tick, MaxUdpPacketBytes);
+            if (packets.empty())
+                return;
+
+            for (const int sessionId : room.sessions()) {
+                const sockaddr_in *addr = _sessionManager->getUdpAddress(sessionId);
+                if (!addr)
+                    continue;
+
+                for (const auto &basePkt : packets) {
+                    if (!basePkt)
+                        continue;
+
+                    auto pkt = basePkt->clone();
+                    pkt->setAddress(*addr);
+                    (void) _udpServer->sendPacket(*pkt);
                 }
             }
         });

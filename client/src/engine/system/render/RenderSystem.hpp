@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <algorithm>
 #include <memory>
 #include "AnimationState.hpp"
 #include "Drawable.hpp"

@@ -12,6 +12,11 @@
 #include <string>
 #include "Level.hpp"
 
+/**
+ * @brief Type alias for nlohmann::json for convenience.
+ */
+using json = nlohmann::json;
+
 namespace Game
 {
     /**

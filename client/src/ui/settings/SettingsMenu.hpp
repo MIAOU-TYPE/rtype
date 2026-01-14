@@ -14,12 +14,19 @@
 #include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
-#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "MusicRegistry.hpp"
 #include "RenderCommand.hpp"
+#include "SettingsConfig.hpp"
 #include "SoundRegistry.hpp"
 #include "UIButton.hpp"
+#include <unordered_map>
+
+/**
+ * @brief Using declaration to bring BindAction into scope for convenience in the settings menu.
+ * This allows direct use of BindAction enum values without full qualification.
+ */
+using Utils::BindAction;
 
 namespace Engine
 {
@@ -114,6 +121,8 @@ namespace Engine
         void layout() override;
 
       private:
+        static constexpr int ERROR_DISPLAY_FRAMES = 60; ///> Number of frames to display error feedback
+
         /**
          * @brief Handle input for the settings menu.
          * @param frame The current input frame.
@@ -153,6 +162,19 @@ namespace Engine
          * @return true if a controls settings button was released, false otherwise.
          */
         [[nodiscard]] bool handleControlsReleased(float mx, float my);
+
+        /**
+         * @brief Handle rebind button releases.
+         * @param mx Mouse x-coordinate.
+         * @param my Mouse y-coordinate.
+         * @return true if a rebind button was released, false otherwise.
+         */
+        [[nodiscard]] bool handleRebindReleased(float mx, float my);
+
+        /**
+         * @brief Update the labels of the rebind buttons based on the current preset.
+         */
+        void updateRebindLabels();
 
         /**
          * @brief Handle audio settings button releases.
@@ -213,8 +235,29 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _controls;      ///> Current controls preset display button
         std::unique_ptr<UI::UIButton> _controlsNext;  ///> Next controls preset button
 
-        bool _backRequested = false;   ///> Flag indicating if the user wants to go back
-        bool _controlsChanged = false; ///> Flag indicating if the controls preset has been changed
+        std::unique_ptr<UI::UIButton> _rebindUp;    ///> Rebind up key button
+        std::unique_ptr<UI::UIButton> _rebindDown;  ///> Rebind down key button
+        std::unique_ptr<UI::UIButton> _rebindLeft;  ///> Rebind left key button
+        std::unique_ptr<UI::UIButton> _rebindRight; ///> Rebind right key button
+        std::unique_ptr<UI::UIButton> _rebindShoot; ///> Rebind shoot key button
+
+        std::unique_ptr<Graphics::IText> _rebindUpLabel;    ///> Label for up key button
+        std::unique_ptr<Graphics::IText> _rebindDownLabel;  ///> Label for down key button
+        std::unique_ptr<Graphics::IText> _rebindLeftLabel;  ///> Label for left key button
+        std::unique_ptr<Graphics::IText> _rebindRightLabel; ///> Label for right key button
+        std::unique_ptr<Graphics::IText> _rebindShootLabel; ///> Label for shoot key button
+
+        /**
+         * @brief Enum representing the current rebinding state.
+         */
+        enum class RebindState { None, Up, Down, Left, Right, Shoot };
+        RebindState _rebindState = RebindState::None; ///> Current rebinding state
+        RebindState _errorState = RebindState::None;  ///> State for showing error feedback
+        int _errorFrameCount = 0;                     ///> Frame counter for error feedback display
+        bool _controlsChanged = false;                ///> Flag indicating if the controls preset has been changed
+        bool _backRequested = false;                  ///> Flag indicating if the user wants to go back
+
+        std::unordered_map<RebindState, UI::UIButton *> _rebindButtonMap; ///> Map from rebind state to button pointer
 
         /**
          * @brief List of available screen resolutions.

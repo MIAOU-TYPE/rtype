@@ -7,8 +7,6 @@
 
 #include "LevelManager.hpp"
 
-using json = nlohmann::json;
-
 namespace
 {
     [[nodiscard]] Game::MovementDefinition parseMovementDefinition(const json &j)

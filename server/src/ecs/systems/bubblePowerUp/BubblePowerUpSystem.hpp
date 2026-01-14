@@ -8,9 +8,9 @@
 #pragma once
 
 #include "BubblePowerUp.hpp"
+#include "Drawable.hpp"
 #include "IGameWorld.hpp"
 #include "Position.hpp"
-#include "Drawable.hpp"
 #include "Velocity.hpp"
 
 namespace Game

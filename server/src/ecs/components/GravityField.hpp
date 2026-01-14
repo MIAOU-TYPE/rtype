@@ -25,6 +25,6 @@ namespace Ecs
         float damagePerSecond = 10.f; ///> Damage inflicted per second
         float radius = 200.f;         ///> Radius of effect
         float innerRadius = 50.f;     ///> Radius where damage is applied
-        float lifetime = 15.0f;       ///> Duration in seconds before disappearing
+        float lifetime = 10.0f;       ///> Duration in seconds before disappearing
     };
 } // namespace Ecs

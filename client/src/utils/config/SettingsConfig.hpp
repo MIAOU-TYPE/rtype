@@ -263,6 +263,11 @@ namespace Utils
         void setShootKey(Engine::Key key);
 
         /**
+         * @brief Delete copy constructor
+         */
+        SettingsConfig(const SettingsConfig &) = delete;
+
+        /**
          * @brief Delete assignment operator
          */
         SettingsConfig &operator=(const SettingsConfig &) = delete;

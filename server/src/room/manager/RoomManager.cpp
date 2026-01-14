@@ -75,18 +75,19 @@ namespace Engine
         return true;
     }
 
-    void RoomManager::addPlayerToRoom(const RoomId roomId, const int sessionId) noexcept
+    bool RoomManager::addPlayerToRoom(const RoomId roomId, const int sessionId) noexcept
     {
         const auto room = getRoomById(roomId);
-        if (!room)
-            return;
+        if (!room || room->getCurrentPlayers() >= room->getMaxPlayers())
+            return false;
         try {
             room->join(sessionId);
         } catch (...) {
-            return;
+            return false;
         }
         std::scoped_lock lock(_mutex);
         _playerToRoom[sessionId] = roomId;
+        return true;
     }
 
     RoomId RoomManager::removePlayer(const int sessionId) noexcept

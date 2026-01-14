@@ -54,7 +54,7 @@ namespace Engine
          * @param getScore Function to get the current score.
          */
         explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-            std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
+            const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore);
 
         /**
          * @brief Called when entering the state.

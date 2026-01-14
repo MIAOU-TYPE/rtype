@@ -63,7 +63,7 @@ namespace Game
         const unsigned int modifiedScore = static_cast<unsigned int>(def.killScore * modifiers.enemyScoreMultiplier);
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{modifiedScore});
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed * modifiers.enemySpeedMultiplier, 0.f});
 
         Ecs::MovementPattern pattern;
@@ -142,7 +142,7 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity bg = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f});
+        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f, 0});
 
         Ecs::Background bgComp;
         bgComp.scrollSpeed = layer.scrollSpeed;

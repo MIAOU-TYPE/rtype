@@ -9,7 +9,7 @@
 
 namespace
 {
-    std::string malformedTcp(const char *stage, const std::size_t need, const std::size_t got)
+    [[nodiscard]] std::string malformedTcp(const char *stage, const size_t need, const size_t got)
     {
         std::string s = "TCP ";
         s += stage;
@@ -17,7 +17,7 @@ namespace
         return s;
     }
 
-    uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
+    [[nodiscard]] uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
     {
         auto token = sessions.getUdpToken(sessionId);
         if (token != 0)
@@ -303,7 +303,8 @@ namespace Net
             return sendError(addr, req, 11, "JOIN_ROOM: unexpected trailing bytes");
 
         try {
-            _rooms->addPlayerToRoom(roomId, sessionId);
+            if (const bool success = _rooms->addPlayerToRoom(roomId, sessionId); !success)
+                return sendError(addr, req, 12, "JOIN_ROOM: cannot join room (full/invalid)");
         } catch (const std::exception &e) {
             return sendError(addr, req, 12, e.what());
         }

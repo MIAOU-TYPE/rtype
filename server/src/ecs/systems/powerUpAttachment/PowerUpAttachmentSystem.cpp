@@ -15,16 +15,16 @@ namespace Game
 
         reg.view<Ecs::PlayerPowerUp, Ecs::Position>(
             [&](const Ecs::Entity, const Ecs::PlayerPowerUp &playerPowerUp, const Ecs::Position &playerPos) {
-                if (!playerPowerUp.hasPowerUp)
+                if (!playerPowerUp.hasPowerUp || !playerPowerUp.powerUpEntity.has_value())
                     return;
 
-                reg.view<Ecs::PowerUp, Ecs::Position>(
-                    [&](const Ecs::Entity, const Ecs::PowerUp &powerUp, Ecs::Position &powerUpPos) {
-                        if (powerUp.collected) {
-                            powerUpPos.x = playerPos.x + 30.f;
-                            powerUpPos.y = playerPos.y;
-                        }
-                    });
+                const size_t powerUpIdx = static_cast<size_t>(playerPowerUp.powerUpEntity.value());
+                auto &powerUpPos = reg.getComponents<Ecs::Position>().at(powerUpIdx);
+
+                if (powerUpPos) {
+                    powerUpPos->x = playerPos.x + 30.f;
+                    powerUpPos->y = playerPos.y;
+                }
             });
     }
 } // namespace Game

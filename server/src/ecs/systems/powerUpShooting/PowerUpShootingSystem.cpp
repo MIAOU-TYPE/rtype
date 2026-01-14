@@ -31,6 +31,9 @@ namespace Game
         reg.view<Ecs::PlayerPowerUp, InputComponent, Ecs::Position>(
             [&](const Ecs::Entity playerEntity, Ecs::PlayerPowerUp &powerUp, const InputComponent &input,
                 const Ecs::Position &pos) {
+                const bool powerShootPressed = input.powerShoot && !powerUp.previousPowerShoot;
+                powerUp.previousPowerShoot = input.powerShoot;
+
                 if (!powerUp.hasPowerUp)
                     return;
                 if (!powerUp.isReady) {
@@ -40,7 +43,8 @@ namespace Game
                         powerUp.cooldown = powerUp.maxCooldown;
                     }
                 }
-                if (powerUp.isReady && input.powerShoot) {
+
+                if (powerUp.isReady && powerShootPressed) {
                     createPowerUpProjectile(world, pos.x + 40.f, pos.y, 400.f, 0.f, static_cast<size_t>(playerEntity));
                     powerUp.isReady = false;
                     powerUp.cooldown = 0.f;

@@ -1,19 +1,19 @@
 {
     "audio": {
-        "music_muted": true,
-        "music_volume": 100,
-        "sfx_muted": true,
-        "sfx_volume": 100
+        "music_muted": false,
+        "music_volume": 50,
+        "sfx_muted": false,
+        "sfx_volume": 50
     },
     "input": {
         "keys": {
-            "down": "F",
-            "left": "D",
-            "right": "G",
-            "shoot": "S",
-            "up": "R"
+            "down": "Down",
+            "left": "Left",
+            "right": "Right",
+            "shoot": "Space",
+            "up": "Up"
         },
-        "preset": "custom"
+        "preset": "arrows"
     },
     "video": {
         "colorblind_mode": "none",

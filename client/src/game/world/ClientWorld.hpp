@@ -11,13 +11,13 @@
 #include <deque>
 #include <iostream>
 #include <memory>
+#include <utility>
 #include "AnimationSystem.hpp"
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
 #include <unordered_map>
-#include <utility>
 #include <unordered_set>
 
 namespace World

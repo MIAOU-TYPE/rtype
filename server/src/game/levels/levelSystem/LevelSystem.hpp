@@ -22,6 +22,7 @@
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
 #include "LevelManager.hpp"
+#include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "Rand.hpp"
 #include "Target.hpp"

@@ -14,6 +14,15 @@
 namespace Game
 {
     /**
+     * @brief Definition of movement behavior for enemies.
+     */
+    struct MovementDefinition {
+        std::string type = "straight"; ///> Type of movement pattern
+        float amplitude = 50.f;        ///> Amplitude for movement patterns
+        float frequency = 0.5f;        ///> Frequency for movement patterns
+    };
+
+    /**
      * @brief Definition of shooting behavior for enemies.
      */
     struct ShootDefinition {
@@ -48,6 +57,8 @@ namespace Game
         ShootDefinition shoot;            ///> Shooting behavior
         bool isGroup = false;             ///> Is this a group of enemies?
         std::vector<GroupMember> members; ///> Members if this is a group
+        MovementDefinition movement; ///> Movement behavior
+
     };
 
     /**

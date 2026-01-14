@@ -115,6 +115,16 @@ namespace Game
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
+
+        Ecs::MovementPattern pattern;
+        pattern.type =
+            (def.movement.type == "zigzag") ? Ecs::MovementPattern::Type::ZigZag : Ecs::MovementPattern::Type::Straight;
+        pattern.baseVx = def.speed;
+        pattern.amplitude = def.movement.amplitude;
+        pattern.frequency = def.movement.frequency;
+        pattern.timer = 0.f;
+        reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
+
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});

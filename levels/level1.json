@@ -105,8 +105,14 @@
         "damage": 50,
         "muzzle": { "x": -20, "y": 15 },
         "projectileSpriteId": 9
+      },
+      "movement": {
+        "type": "zigzag",
+        "params": {
+          "amplitude": 50.0,
+          "frequency": 0.5
+        }
       }
-
     },
     "boss": {
       "hp": 500,

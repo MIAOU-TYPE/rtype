@@ -110,10 +110,10 @@ namespace Utils
 {
     SettingsConfig::SettingsConfig()
     {
-        _presets[KeyPreset::Arrows] = {
-            Engine::Key::Up, Engine::Key::Down, Engine::Key::Left, Engine::Key::Right, Engine::Key::Space};
+        _presets[KeyPreset::Arrows] = {Engine::Key::Up, Engine::Key::Down, Engine::Key::Left, Engine::Key::Right,
+            Engine::Key::Space, Engine::Key::E};
         _presets[KeyPreset::ZQSD] = {
-            Engine::Key::Z, Engine::Key::S, Engine::Key::Q, Engine::Key::D, Engine::Key::Space};
+            Engine::Key::Z, Engine::Key::S, Engine::Key::Q, Engine::Key::D, Engine::Key::Space, Engine::Key::E};
         _customKeys = _presets[KeyPreset::Arrows];
 
         if (!load())

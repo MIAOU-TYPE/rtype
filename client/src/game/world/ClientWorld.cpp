@@ -9,12 +9,12 @@
 
 namespace
 {
-    float lerp(const float a, const float b, const float t)
+    [[nodiscard]] float lerp(const float a, const float b, const float t)
     {
         return a + (b - a) * t;
     }
 
-    float clamp(const float v) noexcept
+    [[nodiscard]] float clamp(const float v) noexcept
     {
         if (v < 0.f)
             return 0.f;
@@ -23,7 +23,7 @@ namespace
         return v;
     }
 
-    uint32_t computeTargetTick(const uint32_t latestTick) noexcept
+    [[nodiscard]] uint32_t computeTargetTick(const uint32_t latestTick) noexcept
     {
         return (latestTick > World::ClientWorld::InterpDelayTicks) ? (latestTick - World::ClientWorld::InterpDelayTicks)
                                                                    : 0u;
@@ -238,7 +238,7 @@ namespace World
                 anim->elapsed = 0.f;
             }
         }
-    };
+    }
 
     void ClientWorld::updateInterpolatedPositions()
     {

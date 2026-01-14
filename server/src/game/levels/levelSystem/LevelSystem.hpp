@@ -31,17 +31,16 @@
 #include "WeaponConfig.hpp"
 #include <unordered_map>
 
-
 namespace Game
 {
 
-  constexpr float COLLISION_SCALE = 1.7f; ///> Scale factor for enemy collision boxes
+    constexpr float COLLISION_SCALE = 1.7f; ///> Scale factor for enemy collision boxes
 
-  /**
-   * @brief System responsible for managing level progression and enemy spawning.
-   */
-  class LevelSystem {
-    public:
+    /**
+     * @brief System responsible for managing level progression and enemy spawning.
+     */
+    class LevelSystem {
+      public:
         /**
          * @brief Update the level system for the given game world and level manager.
          *

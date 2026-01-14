@@ -6,6 +6,7 @@
 */
 
 #include "LevelSystem.hpp"
+
 namespace
 {
     [[nodiscard]] std::vector<float> calculateSpawnPositions(

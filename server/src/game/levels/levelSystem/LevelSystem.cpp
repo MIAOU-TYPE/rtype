@@ -181,7 +181,6 @@ namespace Game
     {
         auto &reg = world.registry();
         const Ecs::Entity obstacle = world.createEntity();
-        constexpr int OBSTACLE_HEALTH = 99999;
 
         reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(obstacle, Ecs::Velocity{0.f, 0.f});
@@ -190,7 +189,6 @@ namespace Game
         reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
         reg.emplaceComponent<Ecs::Collision>(
             obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
-        reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{OBSTACLE_HEALTH, OBSTACLE_HEALTH});
     }
 
     void LevelSystem::spawnBackgrounds(IGameWorld &world, const Level &level)

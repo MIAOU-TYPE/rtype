@@ -14,7 +14,6 @@
 #include "AIShoot.hpp"
 #include "Attack.hpp"
 #include "Background.hpp"
-#include "BossPhase.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
@@ -84,10 +83,9 @@ namespace Game
          * @param groupDef The group definition containing member positions.
          * @param pattern Spawn pattern for the group base position.
          * @param centerY Center Y position for pattern spawning.
-         * @param isBoss Whether the group is a boss group.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, float centerY, bool isBoss);
+            const std::string &pattern, float centerY);
 
         /**
          * @brief Spawn a single enemy at a specific position.
@@ -96,9 +94,8 @@ namespace Game
          * @param def The enemy definition.
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
-         * @param isBoss Whether the enemy is a boss.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y, bool isBoss);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
 
         /**
          * @brief Spawn an obstacle at a specific position.

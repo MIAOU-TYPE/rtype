@@ -75,17 +75,13 @@ namespace Game
             if (!level.enemyTypes.contains(type))
                 continue;
             const EnemyDefinition &def = level.enemyTypes.at(type);
-
-            bool isBoss = false;
-            if (type == "boss")
-                isBoss = true;
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)
-                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY, isBoss);
+                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY);
             } else {
                 std::vector<float> yPositions = calculateSpawnPositions(wave.spawnPattern, wave.spawnY, count);
                 for (int k = 0; k < count; k++)
-                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)], isBoss);
+                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)]);
             }
         }
         if (!wave.obstacleType.empty() && level.obstacleTypes.contains(wave.obstacleType)) {
@@ -95,7 +91,7 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, float centerY, bool isBoss)
+        const std::string &pattern, float centerY)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
@@ -113,20 +109,17 @@ namespace Game
             const float x = baseX + member.offsetX;
             const float y = baseY + member.offsetY;
 
-            spawnSingleEnemy(world, memberDef, x, y, isBoss);
+            spawnSingleEnemy(world, memberDef, x, y);
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y, bool isBoss)
+    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y)
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
-
-        if (isBoss)
-            reg.emplaceComponent<Ecs::BossPhase>(mob, Ecs::BossPhase{});
 
         Ecs::MovementPattern pattern;
         pattern.type =

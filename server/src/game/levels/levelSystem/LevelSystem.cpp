@@ -44,7 +44,7 @@ namespace Game
         }
 
         for (int i = 0; i < wave.powerUps; i++)
-            spawnPowerUp(world);
+            spawnPowerUp(world, wave.powerUpType);
     }
 
     void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def)
@@ -153,16 +153,20 @@ namespace Game
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
     }
 
-    void LevelSystem::spawnPowerUp(IGameWorld &world)
+    void LevelSystem::spawnPowerUp(IGameWorld &world, const std::string &type)
     {
         auto &reg = world.registry();
         const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity powerUpEntity = world.createEntity();
 
+        const bool isLaser = (type == "laser");
+
         reg.emplaceComponent<Ecs::Position>(powerUpEntity, Ecs::Position{1400.f, y});
         reg.emplaceComponent<Ecs::Velocity>(powerUpEntity, Ecs::Velocity{-50.f, 0.f});
-        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{13, true});
+        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{isLaser ? 18u : 13u, true});
         reg.emplaceComponent<Ecs::Collision>(powerUpEntity, Ecs::Collision{32.f, 32.f});
         reg.emplaceComponent<Ecs::PowerUp>(powerUpEntity);
+        reg.emplaceComponent<Ecs::PowerUpType>(
+            powerUpEntity, Ecs::PowerUpType{isLaser ? Ecs::PowerUpTypeEnum::Laser : Ecs::PowerUpTypeEnum::Standard});
     }
 } // namespace Game

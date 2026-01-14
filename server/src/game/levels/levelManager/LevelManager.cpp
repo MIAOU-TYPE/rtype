@@ -11,6 +11,22 @@ using json = nlohmann::json;
 
 namespace
 {
+    [[nodiscard]] Game::MovementDefinition parseMovementDefinition(const json &j)
+    {
+        Game::MovementDefinition movementDef;
+        if (j.is_string()) {
+            movementDef.type = j.get<std::string>();
+        } else if (j.is_object()) {
+            movementDef.type = j.value("type", "straight");
+            if (j.contains("params") && j.at("params").is_object()) {
+                const auto &params = j.at("params");
+                movementDef.amplitude = params.value("amplitude", 50.f);
+                movementDef.frequency = params.value("frequency", 0.5f);
+            }
+        }
+        return movementDef;
+    }
+
     [[nodiscard]] Game::ShootDefinition parseShootDefinition(const json &j)
     {
         Game::ShootDefinition shootDef;
@@ -58,6 +74,11 @@ namespace
             def.killScore = defNode.value("killScore", 10u);
             def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
 
+            if (defNode.contains("movement")) {
+                def.movement = parseMovementDefinition(defNode.at("movement"));
+            } else {
+                def.movement = parseMovementDefinition("straight");
+            }
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();
@@ -98,6 +119,26 @@ namespace
         return true;
     }
 
+    bool parseBackground(const json &j, Game::Level &level)
+    {
+        level.backgroundLayers.clear();
+
+        if (!j.contains("background") || !j.at("background").is_object())
+            return false;
+
+        const auto &bgNode = j.at("background");
+
+        Game::BackgroundLayer layer;
+        layer.spriteId = bgNode.value("spriteId", 0u);
+        layer.scrollSpeed = bgNode.value("scrollSpeed", -50.f);
+        layer.tileWidth = bgNode.value("tileWidth", 1920.f);
+        layer.tileHeight = bgNode.value("tileHeight", 1080.f);
+        layer.depth = bgNode.value("depth", 0);
+
+        level.backgroundLayers.push_back(layer);
+        return true;
+    }
+
     bool parseLevelJson(const json &j, Game::Level &level)
     {
         if (!j.contains("name") || !j.at("name").is_string())
@@ -106,6 +147,8 @@ namespace
         level.name = j.at("name").get<std::string>();
         level.duration = j.value("duration", 0.f);
 
+        if (!parseBackground(j, level))
+            return false;
         if (!parseEnemies(j, level))
             return false;
         if (!parseWaves(j, level))

@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include "AIBrain.hpp"
+#include "Background.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
@@ -20,6 +21,7 @@
 #include "InputComponent.hpp"
 #include "KillScore.hpp"
 #include "Lifetime.hpp"
+#include "MovementPattern.hpp"
 #include "PlayerPowerUp.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"

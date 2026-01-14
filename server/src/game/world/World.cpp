@@ -59,7 +59,7 @@ namespace
 
         world.events().subscribe<ShootEvent>([w](const ShootEvent &event) {
             const Ecs::Entity proj = w->createEntity();
-            w->registry().emplaceComponent<Ecs::Position>(proj, Ecs::Position{event.x, event.y});
+            w->registry().emplaceComponent<Ecs::Position>(proj, Ecs::Position{event.x, event.y, 1});
             w->registry().emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{event.vx, event.vy});
             w->registry().emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{event.damage});
             w->registry().emplaceComponent<Ecs::Damageable>(proj);
@@ -178,7 +178,7 @@ namespace Game
     {
         const Ecs::Entity ent = World::createEntity();
 
-        _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng)});
+        _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{100, 100});
         _registry.emplaceComponent<InputComponent>(ent);
@@ -213,29 +213,21 @@ namespace Game
     {
         auto &src = other.registry();
         auto &dst = this->registry();
-
         dst.clear();
         _netToEntity.clear();
         _nextId = 1;
-
         std::unordered_map<size_t, Ecs::Entity> remap;
-
-        src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](Ecs::Entity, const Ecs::Id &id, const Ecs::Position &, const Ecs::Velocity &, const Ecs::Drawable &) {
+        src.view<Ecs::Id, Ecs::Position, Ecs::Drawable>(
+            [&](Ecs::Entity, const Ecs::Id &id, const Ecs::Position &, const Ecs::Drawable &) {
                 const Ecs::Entity newEnt = dst.createEntity();
                 remap.emplace(id.id, newEnt);
             });
-
-        src.view<Ecs::Id, Ecs::Position, Ecs::Velocity, Ecs::Drawable>(
-            [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &p, const Ecs::Velocity &v,
-                const Ecs::Drawable &d) {
+        src.view<Ecs::Id, Ecs::Position, Ecs::Drawable>(
+            [&](Ecs::Entity, const Ecs::Id &nid, const Ecs::Position &p, const Ecs::Drawable &d) {
                 const Ecs::Entity newEnt = remap.at(nid.id);
-
                 dst.emplaceComponent<Ecs::Id>(newEnt, nid);
                 dst.emplaceComponent<Ecs::Position>(newEnt, p);
-                dst.emplaceComponent<Ecs::Velocity>(newEnt, v);
                 dst.emplaceComponent<Ecs::Drawable>(newEnt, d);
-
                 _netToEntity[nid.id] = newEnt;
                 if (nid.id >= _nextId)
                     _nextId = nid.id + 1;

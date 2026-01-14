@@ -6,6 +6,7 @@
     "sfml",
     "sqlite3",
     "openssl",
-    "nlohmann-json"
+    "nlohmann-json",
+    "lz4"
   ]
 }

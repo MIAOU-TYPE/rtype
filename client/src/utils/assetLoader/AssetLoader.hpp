@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <iostream>
 #include "ITextureManager.hpp"
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"

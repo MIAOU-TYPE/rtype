@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <algorithm>
 #include <memory>
 #include "AnimationState.hpp"
 #include "Drawable.hpp"
@@ -28,7 +29,7 @@ namespace Engine
          * @brief Submits a render command for the given entity and animation to the renderer.
          * @param registry The ECS registry containing entity components.
          * @param spriteRegistry Shared pointer to the sprite registry for retrieving sprite definitions.
-         * @param viewportSize The current size of the viewport/window.
+         * @param viewportSize Current viewport size for dynamic scaling calculations.
          * @param out Vector to store the generated render commands.
          */
         static void update(Ecs::Registry &registry, const std::shared_ptr<const SpriteRegistry> &spriteRegistry,

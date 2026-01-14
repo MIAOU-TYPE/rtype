@@ -55,6 +55,9 @@ list(REMOVE_DUPLICATES CLIENT_INCLUDE_DIRS)
 # ------------------------------
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 
+
+find_package(lz4 CONFIG REQUIRED)
+
 # ------------------------------
 # EXECUTABLE
 # ------------------------------
@@ -89,6 +92,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         NetProtocol
         Signal
         Ecs
+        lz4::lz4
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

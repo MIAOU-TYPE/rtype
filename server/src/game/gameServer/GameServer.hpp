@@ -8,6 +8,7 @@
 #pragma once
 
 #include "AIShootSystem.hpp"
+#include "BackgroundSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
@@ -20,6 +21,7 @@
 #include "LevelManager.hpp"
 #include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"
+#include "MovementPatternSystem.hpp"
 #include "MovementSystem.hpp"
 #include "PowerUpAttachmentSystem.hpp"
 #include "PowerUpBarSystem.hpp"

@@ -64,6 +64,7 @@ namespace Game
         float time = 0.f;                   ///> Time to spawn the wave
         std::vector<WaveEnemyGroup> groups; ///> Enemy groups in the wave
         int powerUps = 0;                   ///> Number of power-ups to spawn
+        std::string powerUpType = "force";  ///> Type of power-up ("force" or "laser")
     };
 
     /**

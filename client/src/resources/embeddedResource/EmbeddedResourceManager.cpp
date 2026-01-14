@@ -57,6 +57,10 @@ namespace EmbeddedResources
     extern const unsigned int power_up_png_size;
     extern const unsigned char power_up_attached_png[];
     extern const unsigned int power_up_attached_png_size;
+    extern const unsigned char power_up2_png[];
+    extern const unsigned int power_up2_png_size;
+    extern const unsigned char laser_png[];
+    extern const unsigned int laser_png_size;
     extern const unsigned char missile_big_png[];
     extern const unsigned int missile_big_png_size;
     extern const unsigned char bar_png[];
@@ -136,6 +140,8 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/power_up.png"] = {EmbeddedResources::power_up_png, EmbeddedResources::power_up_png_size};
     _resources["sprites/power_up_attached.png"] = {
         EmbeddedResources::power_up_attached_png, EmbeddedResources::power_up_attached_png_size};
+    _resources["sprites/power_up2.png"] = {EmbeddedResources::power_up2_png, EmbeddedResources::power_up2_png_size};
+    _resources["sprites/laser.png"] = {EmbeddedResources::laser_png, EmbeddedResources::laser_png_size};
     _resources["sprites/missile_big.png"] = {
         EmbeddedResources::missile_big_png, EmbeddedResources::missile_big_png_size};
     _resources["sprites/bar.png"] = {EmbeddedResources::bar_png, EmbeddedResources::bar_png_size};

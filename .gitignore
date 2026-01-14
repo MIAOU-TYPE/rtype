@@ -82,6 +82,7 @@ vcpkg/
 package-lock.json
 
 libraries/
-data/
+db/
+
 
 input_config.cfg

@@ -20,10 +20,10 @@ ServerRuntime::ServerRuntime(
 
     try {
         std::error_code ec;
-        std::filesystem::create_directories("data", ec);
+        std::filesystem::create_directories("db", ec);
         if (ec)
             throw ThreadError(std::string("{ServerRuntime} create_directories failed: ") + ec.message());
-        _authDb = std::make_shared<Auth::SqliteDb>("data/users.sqlite3");
+        _authDb = std::make_shared<Auth::SqliteDb>("db/users.sqlite3");
         _userRepo = std::make_shared<Auth::UserStorage>(_authDb);
         _userRepo->initSchema();
         _authService = std::make_shared<Auth::AuthService>(_userRepo);

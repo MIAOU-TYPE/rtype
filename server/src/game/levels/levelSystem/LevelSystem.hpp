@@ -99,7 +99,7 @@ namespace Game
          * @brief Spawn a power-up.
          *
          * @param world The game world to spawn the power-up in.
-         * @param type The type of power-up to spawn ("force" or "laser").
+         * @param type The type of power-up to spawn ("force", "laser" or "shield").
          */
         static void spawnPowerUp(IGameWorld &world, const std::string &type = "force");
     };

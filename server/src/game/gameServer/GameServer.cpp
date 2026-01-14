@@ -43,7 +43,7 @@ namespace
             });
     }
 
-    void AcceptOnNewPlayerConnection(Game::IGameWorld &world,
+    void registerAcceptOnNewPlayerConnection(Game::IGameWorld &world,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
         const std::shared_ptr<Net::Server::IServer> &server,
         const std::shared_ptr<Net::Server::ISessionManager> &sessions)
@@ -86,7 +86,7 @@ namespace Game
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
-        AcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
+        registerAcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
     }
 
     void GameServer::reset()

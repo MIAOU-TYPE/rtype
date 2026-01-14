@@ -264,19 +264,19 @@ namespace Thread
     {
         const auto keys = Utils::SettingsConfig::getInstance().getMovementKeys();
 
-        _eventRegistry->onKeyPressed(Engine::Key::Up, [this]() {
+        _eventRegistry->onKeyPressed(keys.up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Down, [this]() {
+        _eventRegistry->onKeyPressed(keys.down, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Left, [this]() {
+        _eventRegistry->onKeyPressed(keys.left, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
         });
 
-        _eventRegistry->onKeyPressed(Engine::Key::Right, [this]() {
+        _eventRegistry->onKeyPressed(keys.right, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 

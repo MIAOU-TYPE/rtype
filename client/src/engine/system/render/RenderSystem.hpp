@@ -25,6 +25,12 @@ namespace Engine
      */
     class RenderSystem {
       public:
+        /**
+         * @brief Design-time reference resolution used for position and size scaling.
+         * BASE_WIDTH and BASE_HEIGHT define the logical resolution the game was authored for.
+         * They are used as scaling factors to map entity coordinates and dimensions to the
+         * actual viewport size, keeping rendering consistent across different resolutions.
+         */
         static constexpr float BASE_WIDTH = 1280.0f;
         static constexpr float BASE_HEIGHT = 720.0f;
         /**

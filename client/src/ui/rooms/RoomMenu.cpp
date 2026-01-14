@@ -485,7 +485,7 @@ namespace Engine
         std::unordered_set<uint32_t> seen;
         seen.reserve(rooms.size());
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
             seen.insert(roomId);
 
             const std::string label =
@@ -565,6 +565,11 @@ namespace Engine
     uint8_t RoomMenu::maxPlayerSelected() const noexcept
     {
         return _selectedMaxPlayers;
+    }
+
+    Engine::Difficulty RoomMenu::difficultySelected() const noexcept
+    {
+        return _selectedDifficulty;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

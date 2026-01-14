@@ -13,6 +13,7 @@
 #include <vector>
 #include <string_view>
 
+#include "GameConfig.hpp"
 #include "IPacket.hpp"
 #include "TCPPayload.hpp"
 #include "TCPTypesData.hpp"
@@ -61,10 +62,11 @@ namespace Network
          * @param req The request ID for the CreateRoom packet.
          * @param roomName The name of the room to be created.
          * @param maxPlayers The maximum number of players allowed in the room.
+         * @param difficulty The difficulty level for the room.
          * @return A shared pointer to the created CreateRoom packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(
-            uint32_t req, std::string_view roomName, uint8_t maxPlayers) const;
+            uint32_t req, std::string_view roomName, uint8_t maxPlayers, Engine::Difficulty difficulty) const;
 
         /**
          * @brief Create a JoinRoom packet.

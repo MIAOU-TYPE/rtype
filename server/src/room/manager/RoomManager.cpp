@@ -17,11 +17,11 @@ namespace Engine
     {
     }
 
-    RoomId RoomManager::createRoom(const std::string &name, size_t maxPlayers) noexcept
+    RoomId RoomManager::createRoom(const Engine::GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept
     {
         try {
             auto room =
-                std::make_shared<Room>(_sessionManager, _udpServer, _udpPacketFactory, _levelPath, name, maxPlayers);
+                std::make_shared<Room>(_sessionManager, _udpServer, _udpPacketFactory, _levelPath, gameConfig, name, maxPlayers);
             room->init(_sessionManager, _udpServer, _udpPacketFactory);
             std::scoped_lock lock(_mutex);
             auto id = _nextRoomId++;
@@ -163,6 +163,7 @@ namespace Engine
                 entry.roomName = room->getName();
                 entry.currentPlayers = room->getCurrentPlayers();
                 entry.maxPlayers = room->getMaxPlayers();
+                entry.gameConfig = room->getGameConfig();
                 roomsList.push_back(entry);
             }
             return roomsList;

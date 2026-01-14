@@ -56,12 +56,13 @@ namespace Network
     }
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(
-        const uint32_t req, const std::string_view roomName, const uint8_t maxPlayers) const
+        const uint32_t req, const std::string_view roomName, const uint8_t maxPlayers, const Engine::Difficulty difficulty) const
     {
         try {
             Net::TCP::Writer b;
             b.str16(roomName);
             b.u8(maxPlayers);
+            b.u8(static_cast<uint8_t>(difficulty));
 
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::CREATE_ROOM, req, b.bytes());
             return make(payload);

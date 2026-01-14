@@ -8,6 +8,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include "GameConfig.hpp"
 
 /**
  * @struct RoomData
@@ -18,4 +19,5 @@ struct RoomData {
     std::string roomName;  ///> Name of the room
     size_t currentPlayers; ///> Current number of players in the room
     size_t maxPlayers;     ///> Maximum number of players allowed in the room
+    Engine::GameConfig gameConfig; ///> Game configuration for the room
 };

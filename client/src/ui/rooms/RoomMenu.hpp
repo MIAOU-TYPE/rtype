@@ -142,7 +142,13 @@ namespace Engine
         [[nodiscard]] uint8_t maxPlayerSelected() const noexcept;
 
         /**
-         * @brief Gets the ID of the room selected for joining.
+         * @brief Gets the selected difficulty level.
+         * @return The selected difficulty.
+         */
+        [[nodiscard]] Engine::Difficulty difficultySelected() const noexcept;
+
+        /**
+         * @brief Gets the selected room ID to join.
          * @return The room ID.
          */
         [[nodiscard]] uint32_t roomIdSelected() const noexcept;
@@ -302,7 +308,7 @@ namespace Engine
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
 
         int _selectedWorld = 0;                            ///> Index of the selected world.
-        Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
+        Engine::Difficulty _selectedDifficulty = Engine::Difficulty::Easy; ///> Selected difficulty level.
         uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
         uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
 

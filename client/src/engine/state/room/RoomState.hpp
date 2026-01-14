@@ -37,11 +37,12 @@ namespace Engine
          * @param roomManager Shared pointer to the room manager.
          * @param eventBus Shared pointer to the event bus.
          * @param authCtx Shared pointer to the room manager.
+         * @param scoreCtx Shared pointer to the scoreboard context.
          */
         RoomState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,
             std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
             std::shared_ptr<RoomManager> roomManager, std::shared_ptr<EventBus> eventBus,
-            std::shared_ptr<AuthContext> authCtx);
+            std::shared_ptr<AuthContext> authCtx, std::shared_ptr<ScoreboardContext> scoreCtx);
 
         /**
          * @brief Called when entering the state.
@@ -70,5 +71,6 @@ namespace Engine
         std::unique_ptr<RoomMenu> _menu;           ///> Unique pointer to the room menu.
         std::shared_ptr<EventBus> _eventBus;       ///> Shared pointer to the event bus.
         std::shared_ptr<AuthContext> _authCtx;     ///> Shared pointer to the auth context.
+        std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Shared pointer to the scoreboard context.
     };
 } // namespace Engine

@@ -6,6 +6,7 @@
 */
 
 #include "SettingsState.hpp"
+#include "SettingsConfig.hpp"
 
 namespace Engine
 {
@@ -36,9 +37,11 @@ namespace Engine
             _graphics->setResolution(_menu->currentResolution());
             _pendingResize = true;
         }
-        if (_menu->wantsBack())
+        if (_menu->wantsBack()) {
+            (void)Utils::SettingsConfig::getInstance().saveIfDirty();
             manager.queueState(std::make_unique<MenuState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+        }
     }
 
     void SettingsState::render()

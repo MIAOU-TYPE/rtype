@@ -288,7 +288,7 @@ namespace Utils
         return _needsRebind;
     }
 
-    void SettingsConfig::clearRebindFlag() const noexcept
+    void SettingsConfig::clearRebindFlag() noexcept
     {
         _needsRebind = false;
     }

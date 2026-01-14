@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <cstddef>
 #include <filesystem>
 #include <fstream>
@@ -166,7 +167,7 @@ namespace Utils
         /**
          * @brief Clear the rebind flag
          */
-        void clearRebindFlag() const noexcept;
+        void clearRebindFlag() noexcept;
 
         /**
          * @brief Check if a key is already assigned to another movement command
@@ -279,6 +280,6 @@ namespace Utils
         KeyPreset _currentPreset = KeyPreset::Arrows;         ///> Current key preset
         std::unordered_map<KeyPreset, MovementKeys> _presets; ///> Map of presets to movement keys
         MovementKeys _customKeys;                             ///> Custom key bindings
-        mutable bool _needsRebind = false;                    ///> Flag indicating if rebinding is needed
+        std::atomic<bool> _needsRebind = false;               ///> Flag indicating if rebinding is needed
     };
 } // namespace Utils

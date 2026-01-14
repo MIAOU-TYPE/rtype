@@ -116,7 +116,8 @@ namespace World
     {
         try {
             if (!_spriteRegistry->exists(data.spriteId)) {
-                std::cerr << "{ClientWorld::applyCreate} Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
+                std::cerr << "{ClientWorld::applyCreate} Sprite ID " << data.spriteId << " not found in registry!"
+                          << std::endl;
                 return;
             }
 

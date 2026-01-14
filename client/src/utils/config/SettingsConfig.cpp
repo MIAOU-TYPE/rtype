@@ -128,6 +128,23 @@ namespace Utils
         return instance;
     }
 
+    SettingsConfig::~SettingsConfig()
+    {
+        (void)saveIfDirty();
+    }
+
+    bool SettingsConfig::saveIfDirty() noexcept
+    {
+        if (!_dirty)
+            return true;
+
+        if (save()) {
+            _dirty = false;
+            return true;
+        }
+        return false;
+    }
+
     bool SettingsConfig::load() noexcept
     {
         try {
@@ -192,6 +209,7 @@ namespace Utils
                     _customKeys.shoot = stringToKey(keys.value("shoot", "Space"));
                 }
             }
+            _dirty = false;
             return true;
         } catch (const std::exception &e) {
             std::cerr << "Error loading settings: " << e.what() << std::endl;
@@ -232,6 +250,7 @@ namespace Utils
                 return false;
 
             file << j.dump(4);
+            _dirty = false;
             return true;
         } catch (const std::exception &e) {
             std::cerr << "Error saving settings: " << e.what() << std::endl;
@@ -315,51 +334,44 @@ namespace Utils
     void SettingsConfig::setMusicVolume(std::size_t volume)
     {
         _musicVolume = (volume > 100U) ? 100U : volume;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setSfxVolume(std::size_t volume)
     {
         _sfxVolume = (volume > 100U) ? 100U : volume;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setMusicMuted(bool muted)
     {
         _musicMuted = muted;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setSfxMuted(bool muted)
     {
         _sfxMuted = muted;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setResolution(Graphics::Extent2u resolution)
     {
         _resolution = resolution;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setColorBlindMode(Graphics::ColorBlindMode mode)
     {
         _colorBlindMode = mode;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setPreset(KeyPreset preset)
     {
         _currentPreset = preset;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setCustomMovementKeys(MovementKeys keys)
@@ -367,8 +379,7 @@ namespace Utils
         _customKeys = keys;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     std::string SettingsConfig::keyToString(Engine::Key key)
@@ -406,8 +417,7 @@ namespace Utils
         _customKeys.up = key;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setDownKey(Engine::Key key)
@@ -415,8 +425,7 @@ namespace Utils
         _customKeys.down = key;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setLeftKey(Engine::Key key)
@@ -424,8 +433,7 @@ namespace Utils
         _customKeys.left = key;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setRightKey(Engine::Key key)
@@ -433,8 +441,7 @@ namespace Utils
         _customKeys.right = key;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 
     void SettingsConfig::setShootKey(Engine::Key key)
@@ -442,7 +449,6 @@ namespace Utils
         _customKeys.shoot = key;
         _currentPreset = KeyPreset::Custom;
         _needsRebind = true;
-        if (!save())
-            std::cerr << "Warning: Failed to save settings" << std::endl;
+        _dirty = true;
     }
 } // namespace Utils

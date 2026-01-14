@@ -52,7 +52,13 @@ namespace Utils
         /**
          * @brief Destructor for SettingsConfig.
          */
-        ~SettingsConfig() = default;
+        ~SettingsConfig();
+
+        /**
+         * @brief Save settings if there are unsaved changes
+         * @return True if no changes to save or saving was successful, false otherwise.
+         */
+        [[nodiscard]] bool saveIfDirty() noexcept;
 
         /**
          * @brief Loads settings from the configuration file.
@@ -281,5 +287,6 @@ namespace Utils
         std::unordered_map<KeyPreset, MovementKeys> _presets; ///> Map of presets to movement keys
         MovementKeys _customKeys;                             ///> Custom key bindings
         std::atomic<bool> _needsRebind = false;               ///> Flag indicating if rebinding is needed
+        mutable bool _dirty = false;                          ///> Flag indicating unsaved changes
     };
 } // namespace Utils

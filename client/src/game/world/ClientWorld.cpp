@@ -193,24 +193,22 @@ namespace World
         if (!posOpt)
             return;
 
-        auto &pos = *posOpt;
-
         const float serverX = bs.x;
         const float serverY = bs.y;
 
-        const float dx = serverX - pos.x;
-        const float dy = serverY - pos.y;
+        const float dx = serverX - posOpt->x;
+        const float dy = serverY - posOpt->y;
         const float dist2 = dx * dx + dy * dy;
 
         constexpr float SnapDist = 80.f;
 
         if (constexpr float SnapDist2 = SnapDist * SnapDist; dist2 > SnapDist2) {
-            pos.x = serverX;
-            pos.y = serverY;
+            posOpt->x = serverX;
+            posOpt->y = serverY;
         } else {
             constexpr float SmoothFactor = 0.15f;
-            pos.x += dx * SmoothFactor;
-            pos.y += dy * SmoothFactor;
+            posOpt->x += dx * SmoothFactor;
+            posOpt->y += dy * SmoothFactor;
         }
     }
 

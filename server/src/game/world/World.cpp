@@ -137,7 +137,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
-        _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{true});
+        _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
         return ent;
     }
 

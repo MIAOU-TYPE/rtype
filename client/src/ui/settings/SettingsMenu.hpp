@@ -246,6 +246,9 @@ namespace Engine
         std::unique_ptr<Graphics::IText> _rebindRightLabel; ///> Label for right key button
         std::unique_ptr<Graphics::IText> _rebindShootLabel; ///> Label for shoot key button
 
+        /**
+         * @brief Enum representing the current rebinding state.
+         */
         enum class RebindState { None, Up, Down, Left, Right, Shoot };
         RebindState _rebindState = RebindState::None; ///> Current rebinding state
         RebindState _errorState = RebindState::None;  ///> State for showing error feedback

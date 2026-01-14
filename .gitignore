@@ -86,3 +86,4 @@ db/
 
 
 input_config.cfg
+client/config/*.json

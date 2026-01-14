@@ -15,6 +15,7 @@
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
+#include "SettingsConfig.hpp"
 #include "SettingsMenu.hpp"
 #include "SoundRegistry.hpp"
 #include "StateManager.hpp"

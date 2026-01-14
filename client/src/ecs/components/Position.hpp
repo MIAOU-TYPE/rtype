@@ -17,6 +17,6 @@ namespace Ecs
     struct Position {
         float x = 0.f;   ///> X coordinate of the entity
         float y = 0.f;   ///> Y coordinate of the entity
-        uint8_t z = 1.f; ///> Z coordinate of the entity
+        uint8_t z = 1; ///> Z coordinate of the entity
     };
 } // namespace Ecs

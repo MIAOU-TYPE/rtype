@@ -29,7 +29,11 @@ namespace
             {"Tab", Engine::Key::Tab}, {"Backspace", Engine::Key::Backspace}, {"LShift", Engine::Key::LShift},
             {"RShift", Engine::Key::RShift}, {"LCtrl", Engine::Key::LCtrl}, {"RCtrl", Engine::Key::RCtrl}};
         auto it = keyMap.find(str);
-        return (it != keyMap.end()) ? it->second : Engine::Key::Up;
+        if (it == keyMap.end()) {
+            std::cerr << "Warning: Unrecognized key string '" << str << "', defaulting to Up" << std::endl;
+            return Engine::Key::Up;
+        }
+        return it->second;
     }
 
     std::string keyToString(Engine::Key key)

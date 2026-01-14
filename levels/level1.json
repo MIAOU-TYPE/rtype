@@ -312,7 +312,7 @@
     },
     {
       "time": 80,
-      "enemies": { "groupEnemy3" : 1 },
+      "enemies": { "groupEnemy3": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     },

@@ -126,7 +126,8 @@ namespace Game
         reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
 
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
-        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
+        reg.emplaceComponent<Ecs::Collision>(
+            mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{50});
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{def.killScore});
@@ -181,7 +182,8 @@ namespace Game
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});
         reg.emplaceComponent<Ecs::Drawable>(obstacle, Ecs::Drawable{def.sprite, true});
         constexpr float COLLISION_SCALE = 1.7f;
-        reg.emplaceComponent<Ecs::Collision>(obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
+        reg.emplaceComponent<Ecs::Collision>(
+            obstacle, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Health>(obstacle, Ecs::Health{99999, 99999});
     }
 

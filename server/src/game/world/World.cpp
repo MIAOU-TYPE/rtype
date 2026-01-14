@@ -44,8 +44,15 @@ namespace
                 health->hp -= event.amount;
 
             const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
-            if (proj)
-                w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+            if (proj) {
+                auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
+                if (sourceHealth) {
+                    sourceHealth->hp -= 1;
+                    if (sourceHealth->hp <= 0) {
+                        w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+                    }
+                }
+            }
 
             if (health->hp > 0)
                 return;

@@ -119,7 +119,7 @@ namespace Net::Factory
             auto packet = makePacket<AcceptData>(addr, acceptData);
             return packet;
         } catch (const FactoryError &e) {
-            std::cerr << "{UDPPacketFactory::createScorePacket} " << e.what() << std::endl;
+            std::cerr << "{UDPPacketFactory::createAcceptPacket} " << e.what() << std::endl;
             return nullptr;
         }
     }

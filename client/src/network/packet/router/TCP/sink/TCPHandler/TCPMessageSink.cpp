@@ -54,6 +54,11 @@ namespace Network
         _authOkCbs.emplace_back(std::move(cb));
     }
 
+    void TCPMessageSink::onScoreboardListSubscribe(ScoreboardCb cb)
+    {
+        _scoreboardCbs.emplace_back(std::move(cb));
+    }
+
     void TCPMessageSink::onWelcome(
         const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
@@ -117,6 +122,11 @@ namespace Network
         _identity = Identity{userId, std::string(username)};
         _connectData.token = token;
         emit(_authOkCbs, req, userId, _identity->username, token, ttlSec);
+    }
+
+    void TCPMessageSink::onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores)
+    {
+        emit(_scoreboardCbs, req, scores);
     }
 
     ConnectInfo TCPMessageSink::getConnectInfo() const noexcept

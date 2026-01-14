@@ -88,6 +88,12 @@ namespace Network
         void onAuthOkSubscribe(AuthOkCb cb) override;
 
         /**
+         * @brief Subscribe to scoreboard list message events.
+         * @param cb The callback function to be invoked on scoreboard list messages.
+         */
+        void onScoreboardListSubscribe(ScoreboardCb cb) override;
+
+        /**
          * @brief Event handler methods for various TCP messages.
          * @param req The request ID associated with the message.
          * @param ver The protocol version.
@@ -158,6 +164,8 @@ namespace Network
         void onAuthOk(
             uint32_t req, uint32_t userId, std::string_view username, uint64_t token, uint32_t ttlSec) override;
 
+        void onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores) override;
+
         /**
          * @brief Retrieves the current connection information.
          * @return A ConnectInfo structure containing session ID, token, and UDP port.
@@ -190,6 +198,7 @@ namespace Network
         std::vector<RoomIdCb> _gameStartCbs;       ///> Callbacks for game start events
         std::vector<ProtoErrCb> _protocolErrorCbs; ///> Callbacks for protocol error events
         std::vector<AuthOkCb> _authOkCbs;          ///> Callbacks for authentication success events
+        std::vector<ScoreboardCb> _scoreboardCbs;   ///> Callbacks for scoreboard list events
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information

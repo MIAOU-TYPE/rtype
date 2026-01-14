@@ -131,6 +131,10 @@
       "powerUp": { "type": "force" }
     },
     {
+      "time": 2,
+      "powerUp": { "type": "shield" }
+    },
+    {
       "time": 8,
       "powerUp": { "type": "laser" }
     },

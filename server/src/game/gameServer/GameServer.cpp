@@ -63,7 +63,12 @@ namespace
                 if (!sessionsL || !factoryL || !serverL || !mapPtr || !worldPtr)
                     return;
 
-                const auto it = mapPtr->find(damage.target);
+                size_t shooterId = damage.source;
+                const auto &projectiles = worldPtr->registry().getComponents<Ecs::Projectile>();
+                if (const auto &proj = projectiles.at(damage.source))
+                    shooterId = proj->shooter;
+
+                const auto it = mapPtr->find(shooterId);
                 if (it == mapPtr->end())
                     return;
 

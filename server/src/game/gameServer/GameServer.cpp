@@ -42,6 +42,33 @@ namespace
                     (void) serverL->sendPacket(*pkt);
             });
     }
+
+    void AcceptOnNewPlayerConnection(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
+        const std::shared_ptr<Net::Server::IServer> &server,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions)
+    {
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
+
+        world.events().subscribe<PlayerConnectedEvent>(
+            [wSessions, wFactory, wServer](const PlayerConnectedEvent &event) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL)
+                    return;
+                const sockaddr_in *addr = sessionsL->getUdpAddress(event.sessionId);
+                if (!addr)
+                    return;
+                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId)) {
+                    std::cout << "{GameServer::AcceptOnNewPlayerConnection} Sending ACCEPT packet to sessionId: "
+                              << event.sessionId << " with netPlayerId: " << event.netPlayerId << std::endl;
+                    (void) serverL->sendPacket(*pkt);
+                }
+            });
+    }
 } // namespace
 
 namespace Game
@@ -62,6 +89,7 @@ namespace Game
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
+        AcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
     }
 
     void GameServer::reset()
@@ -77,9 +105,6 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
-        if (const auto *addr = _sessions->getUdpAddress(sessionId)) {
-            (void) _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
-        }
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
@@ -156,7 +181,7 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                const Ecs::Entity ent = _worldWrite->createPlayer();
+                const Ecs::Entity ent = _worldWrite->createPlayer(cmd.sessionId);
                 _sessionToEntity[cmd.sessionId] = ent;
                 _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;
                 break;

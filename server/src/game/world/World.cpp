@@ -19,14 +19,12 @@ namespace
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
-            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB) {
+            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB)
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
-            }
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA) {
+            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA)
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
-            }
         });
     }
 
@@ -48,9 +46,8 @@ namespace
                 auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
                 if (sourceHealth) {
                     sourceHealth->hp -= 1;
-                    if (sourceHealth->hp <= 0) {
+                    if (sourceHealth->hp <= 0)
                         w->events().emit<DestroyEvent>(DestroyEvent{event.source});
-                    }
                 }
             }
 

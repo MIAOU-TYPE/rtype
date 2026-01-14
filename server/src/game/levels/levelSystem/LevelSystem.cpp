@@ -6,9 +6,6 @@
 */
 
 #include "LevelSystem.hpp"
-
-constexpr float COLLISION_SCALE = 1.7f;
-
 namespace
 {
     [[nodiscard]] std::vector<float> calculateSpawnPositions(
@@ -28,9 +25,9 @@ namespace
 
             if (count <= 0)
                 return positions;
-            if (count == 1) {
+            if (count == 1)
                 positions.push_back((minY + maxY) / 2.f);
-            } else {
+            else {
                 float step = (maxY - minY) / static_cast<float>(count - 1);
                 for (int i = 0; i < count; i++)
                     positions.push_back(minY + static_cast<float>(i) * step);

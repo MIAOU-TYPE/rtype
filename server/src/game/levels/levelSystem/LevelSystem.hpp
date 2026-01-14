@@ -31,6 +31,8 @@
 #include "WeaponConfig.hpp"
 #include <unordered_map>
 
+constexpr float COLLISION_SCALE = 1.7f;
+
 namespace Game
 {
     /**

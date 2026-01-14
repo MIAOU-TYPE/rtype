@@ -262,7 +262,7 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right, shoot, big_shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false, false}));
@@ -284,7 +284,7 @@ namespace Thread
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::E, [this]() {
+        _eventRegistry->onKeyReleased(big_shoot, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, false, true}));
         });
     }

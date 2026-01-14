@@ -41,11 +41,12 @@ namespace Utils
      * @brief Structure holding movement key bindings
      */
     struct MovementKeys {
-        Engine::Key up;    ///> Key for moving up
-        Engine::Key down;  ///> Key for moving down
-        Engine::Key left;  ///> Key for moving left
-        Engine::Key right; ///> Key for moving right
-        Engine::Key shoot; ///> Key for shooting
+        Engine::Key up;        ///> Key for moving up
+        Engine::Key down;      ///> Key for moving down
+        Engine::Key left;      ///> Key for moving left
+        Engine::Key right;     ///> Key for moving right
+        Engine::Key shoot;     ///> Key for shooting
+        Engine::Key big_shoot; ///> Key for big shooting
     };
 
     /**

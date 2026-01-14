@@ -46,7 +46,7 @@ namespace Utils
         Engine::Key left;      ///> Key for moving left
         Engine::Key right;     ///> Key for moving right
         Engine::Key shoot;     ///> Key for shooting
-        Engine::Key big_shoot; ///> Key for big shooting
+        Engine::Key big_shoot; ///> Key for power-up shooting
     };
 
     /**

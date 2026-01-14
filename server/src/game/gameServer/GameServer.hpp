@@ -18,6 +18,7 @@
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
+#include "LaserPowerUpSystem.hpp"
 #include "LevelManager.hpp"
 #include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"

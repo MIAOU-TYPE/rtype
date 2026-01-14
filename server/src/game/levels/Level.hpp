@@ -57,8 +57,7 @@ namespace Game
         ShootDefinition shoot;            ///> Shooting behavior
         bool isGroup = false;             ///> Is this a group of enemies?
         std::vector<GroupMember> members; ///> Members if this is a group
-        MovementDefinition movement; ///> Movement behavior
-
+        MovementDefinition movement;      ///> Movement behavior
     };
 
     /**
@@ -112,7 +111,7 @@ namespace Game
     struct Level {
         std::string name;                                                  ///> Level name
         float duration = 0.f;                                              ///> Level duration in seconds
-        std::vector<BackgroundLayer> backgroundLayers;               ///> Background layers
+        std::vector<BackgroundLayer> backgroundLayers;                     ///> Background layers
         std::unordered_map<std::string, EnemyDefinition> enemyTypes;       ///> Catalog of enemy types
         std::unordered_map<std::string, ObstacleDefinition> obstacleTypes; ///> Catalog of obstacle types
         std::vector<Wave> waves;                                           ///> Waves of enemies in the level

@@ -19,7 +19,8 @@ namespace Ecs
      */
     enum class PowerUpTypeEnum {
         Standard, ///> Standard power-up with attached weapon
-        Laser     ///> Laser power-up that fires a continuous beam for 5 seconds
+        Laser,    ///> Laser power-up that fires a continuous beam for 5 seconds
+        Shield    ///> Shield power-up that creates a protective bubble blocking 3 projectiles
     };
 
     /**

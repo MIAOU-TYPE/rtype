@@ -49,11 +49,6 @@ namespace Utils
         static SettingsConfig &getInstance();
 
         /**
-         * @brief Constructor for SettingsConfig.
-         */
-        SettingsConfig();
-
-        /**
          * @brief Destructor for SettingsConfig.
          */
         ~SettingsConfig() = default;
@@ -266,6 +261,11 @@ namespace Utils
         SettingsConfig &operator=(const SettingsConfig &) = delete;
 
       private:
+        /**
+         * @brief Constructor for SettingsConfig.
+         */
+        SettingsConfig();
+
         static constexpr const char *CONFIG_FILE =
             "client/config/settings.json"; ///> Path to the settings configuration file
 

@@ -56,6 +56,11 @@ namespace Engine
                     cmd.scale = {2.f, 2.f};
                 }
 
+                if (drawable.spriteId == 20) {
+                    cmd.scale = {2.3f, 2.3f};
+                    cmd.position = {finalX - 20.f, finalY - 20.f};
+                }
+
                 out.push_back(cmd);
             });
         std::ranges::sort(out, [](const RenderCommand &a, const RenderCommand &b) {

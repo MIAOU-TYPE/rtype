@@ -6,14 +6,7 @@
 */
 
 #include "GravitySystem.hpp"
-#include <cmath>
-#include "Events.hpp"
-#include "GravityAffected.hpp"
-#include "GravityField.hpp"
-#include "Health.hpp"
-#include "Id.hpp"
-#include "Position.hpp"
-#include "Velocity.hpp"
+
 
 namespace Game
 {

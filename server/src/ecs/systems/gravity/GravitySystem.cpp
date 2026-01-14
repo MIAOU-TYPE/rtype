@@ -31,7 +31,12 @@ namespace Game
             });
 
         reg.view<Ecs::Position, Ecs::GravityField, Ecs::Id>(
-            [&](const Ecs::Entity, const Ecs::Position &gravPos, const Ecs::GravityField &field, const Ecs::Id &id) {
+            [&](const Ecs::Entity entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {
+                field.lifetime -= dt;
+                if (field.lifetime <= 0.0f) {
+                    reg.destroyEntity(entity);
+                    return;
+                }
                 reg.view<Ecs::Position, Ecs::Velocity, Ecs::Health, Ecs::GravityAffected, Ecs::Id>(
                     [&](const Ecs::Entity, Ecs::Position &pos, Ecs::Velocity &vel, const Ecs::Health &hp,
                         const Ecs::GravityAffected &affected, const Ecs::Id &targetId) {

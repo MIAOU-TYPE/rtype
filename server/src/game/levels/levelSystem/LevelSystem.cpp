@@ -11,7 +11,8 @@ constexpr float COLLISION_SCALE = 1.7f;
 
 namespace
 {
-    [[nodiscard]] std::vector<float> calculateSpawnPositions(const std::string &pattern, const float centerY, const int count)
+    [[nodiscard]] std::vector<float> calculateSpawnPositions(
+        const std::string &pattern, const float centerY, const int count)
     {
         std::vector<float> positions;
         positions.reserve(static_cast<size_t>(count));

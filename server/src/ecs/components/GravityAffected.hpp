@@ -19,6 +19,5 @@ namespace Ecs
      *
      * Entities without this component will be immune to gravity effects.
      */
-    struct GravityAffected {
-    };
+    struct GravityAffected {};
 } // namespace Ecs

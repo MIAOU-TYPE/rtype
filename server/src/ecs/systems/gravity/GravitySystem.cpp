@@ -16,8 +16,8 @@ namespace Game
         const float dampingFactor = 0.95f;
         reg.view<Ecs::Velocity, Ecs::GravityAffected>(
             [&](const Ecs::Entity, Ecs::Velocity &vel, const Ecs::GravityAffected &affected) {
-                    vel.vx *= dampingFactor;
-                    vel.vy *= dampingFactor;
+                vel.vx *= dampingFactor;
+                vel.vy *= dampingFactor;
             });
 
         reg.view<Ecs::Position, Ecs::GravityField, Ecs::Id>(

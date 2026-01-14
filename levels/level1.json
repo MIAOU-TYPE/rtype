@@ -115,7 +115,7 @@
       }
     },
     "boss": {
-      "hp": 500,
+      "hp": 5000,
       "speed": -30,
       "size": { "w": 177, "h": 144 },
       "killScore": 300,
@@ -123,7 +123,7 @@
       "spriteId": 1,
       "shoot": {
         "type": "diagonal",
-        "angles": [-180, -157.5, -135, -112.5, -90, -67.5, -45, -22.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5],
+        "angles": [-90, -45, 0, -315, -270],
         "cooldown": 1.6,
         "projectileSpeed": 140,
         "damage": 35,
@@ -207,27 +207,27 @@
       "members": [
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": -200, "y": -320 }
+          "offset": { "x": -200, "y": -220 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": -100, "y": -160 }
+          "offset": { "x": -100, "y": -60 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 0 }
+          "offset": { "x": 0, "y": 100 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 150, "y": 0 }
+          "offset": { "x": 150, "y": 100 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 250, "y": -160 }
+          "offset": { "x": 250, "y": -60 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 350, "y": -320 }
+          "offset": { "x": 350, "y": -220 }
         }
       ]
     }
@@ -245,79 +245,7 @@
   "duration": 95,
   "waves": [
     {
-      "time": 2,
-      "enemies": { "smallEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 6,
-      "enemies": { "smallEnemy": 2 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 9,
-      "enemies": { "smallEnemy": 3 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 15,
-      "enemies": {},
-      "obstacleType": "gravityWell",
-      "obstacleY": 360,
-      "obstacleX": 500
-    },
-    {
-      "time": 16,
-      "enemies": { "smallEnemy": 2 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 19,
-      "enemies": { "mediumEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 24,
-      "enemies": { "groupEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 29,
-      "obstacleType": "gravityWell",
-      "obstacleY": 100,
-      "obstacleX": 250,
-      "enemies": { "groupEnemy2": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 37,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 50,
-      "enemies": { "mediumEnemyFive": 3 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 65,
-      "enemies": { "groupEnemy4": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 80,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 95,
+      "time": 1,
       "enemies": { "boss": 1 },
       "spawnPattern": "line",
       "spawnY": 360

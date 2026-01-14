@@ -80,7 +80,7 @@ namespace Net
          * @param payload Pointer to the payload data of the input packet.
          * @param payloadSize Size of the payload data.
          */
-        void handleInput(int sessionId, const uint8_t *payload, std::size_t payloadSize) const;
+        void handleInput(int sessionId, const uint8_t *payload, size_t payloadSize) const;
 
         /**
          * @brief Handler for player ping packets.
@@ -116,8 +116,7 @@ namespace Net
          * @param payload Pointer to the payload data of the packet.
          * @param payloadSize Size of the payload data.
          */
-        void dispatchPacket(
-            int sessionId, const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
+        void dispatchPacket(int sessionId, const HeaderData &header, const uint8_t *payload, size_t payloadSize) const;
 
         std::shared_ptr<Server::ISessionManager>
             _sessions; ///> Pointer to the SessionManager for managing player sessions.

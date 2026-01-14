@@ -7,6 +7,8 @@
 
 #pragma once
 #include <chrono>
+#include <cstdint>
+#include <deque>
 #include <iostream>
 #include <memory>
 #include "AnimationSystem.hpp"
@@ -15,6 +17,7 @@
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
 #include <unordered_map>
+#include <unordered_set>
 
 namespace World
 {
@@ -25,6 +28,11 @@ namespace World
      */
     class ClientWorld {
       public:
+        static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
+        static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
+        static constexpr uint32_t InterpDelayTicks =
+            (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
+
         /**
          * @brief Constructs a ClientWorld with the given SpriteRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
@@ -57,9 +65,9 @@ namespace World
 
         /**
          * @brief Applies a snapshot of entities to the client world.
-         * @param entities Vector of snapshot entities to apply.
+         * @param batch The snapshot batch containing entity data.
          */
-        void applySnapshot(const std::vector<SnapshotEntity> &entities);
+        void applySnapshot(const SnapshotBatch &batch);
 
         /**
          * @brief Applies a destroy entity command to the client world.
@@ -67,7 +75,29 @@ namespace World
          */
         void applyDestroy(size_t entityId);
 
+        /**
+         * @brief Updates interpolated positions of entities for smooth rendering.
+         */
+        void updateInterpolatedPositions();
+
       private:
+        /**
+         * @brief Sets the position of an entity.
+         * @param e The entity whose position is to be set.
+         * @param spriteId The sprite ID to set.
+         * @param drawables sparse array of Drawable components.
+         * @param anims sparse array of AnimationState components.
+         * @param renders sparse array of Render components.
+         */
+        void refreshSpriteIfChanged(Ecs::Entity e, uint32_t spriteId, Ecs::SparseArray<Ecs::Drawable> drawables,
+            Ecs::SparseArray<Ecs::AnimationState> anims, Ecs::SparseArray<Ecs::Render> renders) const;
+
+        /**
+         * @brief Purges stale entities that have not been updated within the specified maximum age.
+         * @param maxAge The maximum age for an entity to be considered active.
+         */
+        void purgeStaleEntities(std::chrono::milliseconds maxAge = std::chrono::milliseconds(500));
+
         /**
          * @struct EntityCreate
          * @brief Data structure for creating a new entity in the client world.
@@ -76,6 +106,7 @@ namespace World
             size_t id;             ///> Entity ID
             float x;               ///> X position
             float y;               ///> Y position
+            uint8_t z;             ///> Z position
             unsigned int spriteId; ///> Sprite identifier
         };
 
@@ -101,5 +132,27 @@ namespace World
 
         std::unordered_map<size_t, std::chrono::time_point<std::chrono::steady_clock>>
             _entityLastSeen; ///> Tracks the last seen time for each entity
+
+        /**
+         * @struct NetState
+         * @brief Represents the network state of an entity for interpolation.
+         */
+        struct NetState {
+            float x;           ///> X position
+            float y;           ///> Y position
+            uint8_t z;         ///> Z position
+            uint32_t spriteId; ///> Sprite identifier
+        };
+
+        struct TickSnapshot {
+            uint32_t tick;                                 ///> Server tick number
+            std::unordered_map<size_t, NetState> entities; ///> Map of entity IDs to their network states
+        };
+
+        std::deque<TickSnapshot> _snapshots; ///> Deque of snapshots for interpolation
+
+        size_t _maxSnapshots = 64; ///> Maximum number of snapshots to store
+
+        std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
     };
 } // namespace World

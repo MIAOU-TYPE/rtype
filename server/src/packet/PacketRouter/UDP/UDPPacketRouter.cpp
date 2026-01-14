@@ -66,7 +66,7 @@ bool UDPPacketRouter::extractHeader(const IPacket &packet, HeaderData &outHeader
 }
 
 void UDPPacketRouter::dispatchPacket(
-    const int sessionId, const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
+    const int sessionId, const HeaderData &header, const uint8_t *payload, const size_t payloadSize) const
 {
     switch (header.type) {
         case Protocol::UDP::INPUT: handleInput(sessionId, payload, payloadSize); break;
@@ -106,7 +106,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
         return;
 
     const uint8_t *raw = packet->buffer();
-    const std::size_t total = packet->size();
+    const size_t total = packet->size();
 
     if (handleConnect(header, raw, total, from))
         return;
@@ -122,7 +122,7 @@ void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 }
 
 bool UDPPacketRouter::handleConnect(
-    const HeaderData &header, const uint8_t *raw, const std::size_t total, const sockaddr_in *from) const
+    const HeaderData &header, const uint8_t *raw, const size_t total, const sockaddr_in *from) const
 {
     if (header.type == Protocol::UDP::CONNECT) {
         if (total != sizeof(ConnectData)) {
@@ -151,7 +151,7 @@ bool UDPPacketRouter::handleConnect(
     return false;
 }
 
-void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, const std::size_t payloadSize) const
+void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, const size_t payloadSize) const
 {
     if (!payload || payloadSize != sizeof(PlayerInputData)) {
         std::cerr << "{UDPPacketRouter::handleInput} Dropped INPUT: bad size\n";

@@ -20,6 +20,7 @@ namespace Game
                 s.id = id.id;
                 s.x = pos.x;
                 s.y = pos.y;
+                s.z = pos.z;
                 s.spriteId = draw.spriteId;
 
                 out.push_back(s);

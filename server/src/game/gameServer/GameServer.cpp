@@ -118,6 +118,7 @@ namespace Game
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
 
+        MovementPatternSystem::update(*_worldWrite, dt);
         MovementSystem::update(*_worldWrite, dt);
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);

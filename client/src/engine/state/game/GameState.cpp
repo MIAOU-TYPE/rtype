@@ -10,7 +10,7 @@
 namespace Engine
 {
     GameState::GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-        std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore)
+        const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore)
         : _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry)),
           _hud(std::make_unique<HUD>(renderer, getScore))
     {

@@ -50,8 +50,18 @@ namespace Game
         const float y = Rand::enemyY(Rand::rng);
         const Ecs::Entity mob = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{1400.f, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
+
+        Ecs::MovementPattern pattern;
+        pattern.type =
+            (def.movement.type == "zigzag") ? Ecs::MovementPattern::Type::ZigZag : Ecs::MovementPattern::Type::Straight;
+        pattern.baseVx = def.speed;
+        pattern.amplitude = def.movement.amplitude;
+        pattern.frequency = def.movement.frequency;
+        pattern.timer = 0.f;
+        reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
+
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
@@ -123,7 +133,7 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity bg = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f});
+        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f, 0});
 
         Ecs::Background bgComp;
         bgComp.scrollSpeed = layer.scrollSpeed;

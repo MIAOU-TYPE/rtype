@@ -64,7 +64,7 @@ namespace UI
             _valueText->setString("");
     }
 
-    void UITextField::setFocused(bool v)
+    void UITextField::setFocused(const bool v)
     {
         _focused = v;
         if (_labelText)
@@ -101,12 +101,12 @@ namespace UI
         return Rect{_x, _y, _w, _h};
     }
 
-    void UITextField::onMousePressed(float mx, float my)
+    void UITextField::onMousePressed(const float mx, const float my)
     {
         setFocused(bounds().contains(mx, my));
     }
 
-    void UITextField::onKeyPressed(Engine::Key key)
+    void UITextField::onKeyPressed(const Engine::Key key)
     {
         if (!_focused)
             return;

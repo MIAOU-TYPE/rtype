@@ -21,8 +21,8 @@ namespace
             for (int i = 0; i < count; i++)
                 positions.push_back(startY + static_cast<float>(i) * spacing);
         } else if (pattern == "spread") {
-            float minY = 60.f;
-            float maxY = 630.f;
+            float minY = 50.f;
+            float maxY = 600.f;
             if (count == 1) {
                 positions.push_back((minY + maxY) / 2.f);
             } else {
@@ -118,7 +118,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
-        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{200});
+        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{50});
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{def.killScore});
 
         Ecs::AIBrain brain;

@@ -76,6 +76,7 @@ namespace Game
                 if (shootFromAiToAi(reg, i, j) || shootFromAiToAi(reg, j, i))
                     continue;
                 world.events().emit(CollisionEvent{i, j});
+                std::cout << "Collision detected between Entity " << i << " and Entity " << j << std::endl;
             }
         }
     }

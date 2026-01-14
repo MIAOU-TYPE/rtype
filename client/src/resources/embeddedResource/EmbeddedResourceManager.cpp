@@ -53,6 +53,8 @@ namespace EmbeddedResources
     extern const unsigned int explose_png_size;
     extern const unsigned char boss_png[];
     extern const unsigned int boss_png_size;
+    extern const unsigned char obstacle_png[];
+    extern const unsigned int obstacle_png_size;
 
     extern const unsigned char colorblind_frag[];
     extern const unsigned int colorblind_frag_size;
@@ -125,6 +127,7 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
+    _resources["sprites/obstacle.png"] = {EmbeddedResources::obstacle_png, EmbeddedResources::obstacle_png_size};
 
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::colorblind_frag, EmbeddedResources::colorblind_frag_size};

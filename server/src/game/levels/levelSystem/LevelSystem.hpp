@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include "AIBrain.hpp"
@@ -17,6 +18,7 @@
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
@@ -74,12 +76,36 @@ namespace Game
         static void spawnWave(IGameWorld &world, const Level &level, const Wave &wave);
 
         /**
-         * @brief Spawn a single enemy based on the enemy definition.
+         * @brief Spawn a group of enemies at relative positions.
+         *
+         * @param world The game world to spawn enemies in.
+         * @param level The current level data.
+         * @param groupDef The group definition containing member positions.
+         * @param pattern Spawn pattern for the group base position.
+         * @param centerY Center Y position for pattern spawning.
+         */
+        static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
+            const std::string &pattern, float centerY);
+
+        /**
+         * @brief Spawn a single enemy at a specific position.
          *
          * @param world The game world to spawn the enemy in.
          * @param def The enemy definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
+
+        /**
+         * @brief Spawn an obstacle at a specific position.
+         *
+         * @param world The game world to spawn the obstacle in.
+         * @param def The obstacle definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
+         */
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
 
         /**
          * @brief Create a single background entity with given parameters.

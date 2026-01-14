@@ -56,7 +56,7 @@ namespace Engine
          * @param roomId The ID of the room
          * @param sessionId The session ID of the player to be added
          */
-        void addPlayerToRoom(RoomId roomId, int sessionId) noexcept;
+        [[nodiscard]] bool addPlayerToRoom(RoomId roomId, int sessionId) noexcept;
 
         /**
          * @brief Removes a player from their assigned room

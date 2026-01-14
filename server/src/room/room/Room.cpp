@@ -66,7 +66,7 @@ namespace Engine
     void Room::join(const int sessionId)
     {
         if (_sessions.contains(sessionId))
-            return;
+            throw RoomError("{Room::join} session " + std::to_string(sessionId) + " already in room");
         _sessions.insert(sessionId);
         _gameServer->onPlayerConnect(sessionId);
     }

@@ -53,6 +53,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # ------------------------------
 find_package(GTest CONFIG REQUIRED)
 
+find_package(lz4 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE lz4::lz4)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
         GTest::gtest
         GTest::gtest_main

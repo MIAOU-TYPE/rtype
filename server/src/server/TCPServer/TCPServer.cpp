@@ -80,7 +80,7 @@ namespace Net::Server
             throw;
         }
         AServer::setRunning(true);
-        std::cout << "{TCPServer::start} Server started on " << _ip << ":" << _port << std::endl;
+        std::cout << "{TCPServer::start} TCP Server started on " << _ip << ":" << _port << std::endl;
     }
 
     void TCPServer::stop() noexcept
@@ -97,7 +97,7 @@ namespace Net::Server
             if (_listenFd != kInvalidSocket) {
                 _netWrapper->closeSocket(_listenFd);
                 _listenFd = kInvalidSocket;
-                std::cout << "{TCPServer::stop} TCP Server Stopped." << std::endl;
+                std::cout << "{TCPServer::stop} TCP Server stopped." << std::endl;
             }
 
             (void) _netWrapper->cleanupNetwork();

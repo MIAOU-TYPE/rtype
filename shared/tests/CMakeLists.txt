@@ -48,6 +48,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
 )
 
+find_package(lz4 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE lz4::lz4)
+
+
 # ------------------------------
 # GTEST
 # ------------------------------

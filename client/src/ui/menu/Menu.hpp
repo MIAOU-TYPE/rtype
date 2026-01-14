@@ -203,6 +203,12 @@ namespace Engine
         void handleKeyPressed(const InputFrame &frame);
 
         /**
+         * @brief Handle key release input.
+         * @param frame The current input frame.
+         */
+        void handleKeyReleased(const InputFrame &frame) const;
+
+        /**
          * @brief Enter the specified form page.
          * @param p The page to enter (LoginForm or RegisterForm).
          */

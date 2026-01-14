@@ -74,7 +74,7 @@ namespace Engine
             if (seen.insert(worldId).second)
                 out.push_back(std::move(worldId));
         }
-        std::sort(out.begin(), out.end());
+        std::ranges::sort(out);
         return out;
     }
 

@@ -219,7 +219,7 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity bg = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f});
+        reg.emplaceComponent<Ecs::Position>(bg, Ecs::Position{xPosition, 0.f, 0});
 
         Ecs::Background bgComp;
         bgComp.scrollSpeed = layer.scrollSpeed;

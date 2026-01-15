@@ -6,7 +6,6 @@
 */
 
 #include "InputSystem.hpp"
-#include <numbers>
 
 namespace Game
 {

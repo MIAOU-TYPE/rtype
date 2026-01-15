@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <numbers>
 #include "GameConfig.hpp"
 #include "World.hpp"
 

@@ -264,10 +264,10 @@ namespace Thread
             input.left = true;
         if (_input->isKeyHeld(right))
             input.right = true;
-        
+
         static auto lastShootTime = clock::now();
         constexpr auto ShootCooldown = std::chrono::milliseconds(250);
-        
+
         if (_input->isKeyHeld(shoot)) {
             const auto now = clock::now();
             if (now - lastShootTime >= ShootCooldown) {

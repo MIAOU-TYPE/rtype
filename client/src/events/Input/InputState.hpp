@@ -77,9 +77,8 @@ namespace Engine
          */
         bool isKeyHeld(Key key) const;
 
-
       private:
-        InputFrame _frame;                      ///> The current input frame state.
-        std::unordered_set<Key> _heldKeys;      ///> Set of keys currently held down.
+        InputFrame _frame;                 ///> The current input frame state.
+        std::unordered_set<Key> _heldKeys; ///> Set of keys currently held down.
     };
 } // namespace Engine

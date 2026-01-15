@@ -10,7 +10,7 @@
 #include <memory>
 #include <mutex>
 #include <utility>
-#include "GameConfig.hpp"
+#include "GameConstants.hpp"
 #include "Room.hpp"
 #include "RoomData.hpp"
 #include <unordered_map>

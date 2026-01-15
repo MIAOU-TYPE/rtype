@@ -11,25 +11,43 @@ namespace Game
 {
     void InputSystem::update(IGameWorld &world)
     {
-        world.registry().view<InputComponent, Ecs::Position>(
-            [](Ecs::Entity, InputComponent &input, Ecs::Position &pos) {
-                constexpr float speed = 7.f;
+        world.registry().view<InputComponent, Ecs::Position, Ecs::Collision>(
+            [](Ecs::Entity, InputComponent &input, Ecs::Position &pos, const Ecs::Collision &col) {
+                constexpr float speed = 3.5f;
+                constexpr float minX = 0.f;
+                constexpr float minY = 0.f;
+                const float maxX = 1280.f - col.width;
+                const float maxY = 720.f - col.height;
+                float dx = 0.f, dy = 0.f;
+                constexpr float inv_sqrt2 = 0.7071067811865476f;
+
                 if (input.left)
-                    pos.x -= speed;
+                    dx -= speed;
                 if (input.right)
-                    pos.x += speed;
+                    dx += speed;
                 if (input.up)
-                    pos.y -= speed;
+                    dy -= speed;
                 if (input.down)
-                    pos.y += speed;
+                    dy += speed;
+
+                if (dx != 0.f && dy != 0.f) {
+                    dx *= inv_sqrt2;
+                    dy *= inv_sqrt2;
+                }
+                pos.x += dx;
+                pos.y += dy;
                 input.left = false;
                 input.right = false;
                 input.up = false;
                 input.down = false;
-                if (pos.x < 0)
-                    pos.x = 0;
-                if (pos.y < 0)
-                    pos.y = 0;
+                if (pos.x < minX)
+                    pos.x = minX;
+                if (pos.x > maxX)
+                    pos.x = maxX;
+                if (pos.y < minY)
+                    pos.y = minY;
+                if (pos.y > maxY)
+                    pos.y = maxY;
             });
     }
 } // namespace Game

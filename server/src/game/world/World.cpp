@@ -145,6 +145,38 @@ namespace
         });
     }
 
+    void registerBubblePowerUpEvent(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<BubblePowerUpEvent>([w](const BubblePowerUpEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp)
+                return;
+
+            if (event.create && !bubblePowerUp->bubbleEntity.has_value()) {
+                const Ecs::Entity bubbleEnt = w->createEntity();
+                reg.emplaceComponent<Ecs::Position>(bubbleEnt, Ecs::Position{event.playerX, event.playerY});
+                reg.emplaceComponent<Ecs::Drawable>(bubbleEnt, Ecs::Drawable{20u, true});
+                bubblePowerUp->bubbleEntity = bubbleEnt;
+                bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+            } else if (event.updatePos && bubblePowerUp->bubbleEntity.has_value()) {
+                const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
+                if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
+                    bubblePos->x = event.playerX;
+                    bubblePos->y = event.playerY;
+                }
+            } else if (event.destroy && bubblePowerUp->bubbleEntity.has_value()) {
+                w->destroyEntity(bubblePowerUp->bubbleEntity.value());
+                bubblePowerUp->bubbleEntity = std::nullopt;
+                bubblePowerUp->isActive = false;
+                bubblePowerUp->hitsRemaining = 0;
+            }
+        });
+    }
+
     void registerPowerUpCollection(Game::IGameWorld &world)
     {
         auto *w = &world;
@@ -228,6 +260,7 @@ namespace Game
         registerDestroyEvent(*this);
         registerDamageToScore(*this);
         registerPowerUpBarEvent(*this);
+        registerBubblePowerUpEvent(*this);
         registerPowerUpCollection(*this);
     }
 

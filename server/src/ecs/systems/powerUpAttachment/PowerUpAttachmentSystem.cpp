@@ -15,7 +15,7 @@ namespace Game
 
         reg.view<Ecs::PlayerPowerUp, Ecs::Position>(
             [&](const Ecs::Entity, const Ecs::PlayerPowerUp &playerPowerUp, const Ecs::Position &playerPos) {
-                if (!playerPowerUp.hasPowerUp || !playerPowerUp.powerUpEntity.has_value())
+                if (!playerPowerUp.powerUpEntity.has_value())
                     return;
 
                 const size_t powerUpIdx = static_cast<size_t>(playerPowerUp.powerUpEntity.value());

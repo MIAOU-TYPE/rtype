@@ -150,12 +150,6 @@ namespace Game
         tgt.visionRange = 350.f;
         reg.emplaceComponent<Ecs::Target>(mob, tgt);
 
-        Ecs::Attack atk;
-        atk.damage = 10;
-        atk.cooldown = 1.2f;
-        atk.projectileSpeed = 320.f;
-        reg.emplaceComponent<Ecs::Attack>(mob, atk);
-
         Ecs::Drawable draw;
         draw.spriteId = def.sprite;
         draw.drawable = true;
@@ -197,8 +191,8 @@ namespace Game
         if (level.backgroundLayers.empty())
             return;
 
-        constexpr float REFERENCE_VIEWPORT_WIDTH = 1280.0f;
-        constexpr float REFERENCE_VIEWPORT_HEIGHT = 720.0f;
+        constexpr float REFERENCE_VIEWPORT_WIDTH = Game::Config::VIEWPORT_WIDTH;
+        constexpr float REFERENCE_VIEWPORT_HEIGHT = Game::Config::VIEWPORT_HEIGHT;
 
         for (const auto &layer : level.backgroundLayers) {
             const float scaleX = REFERENCE_VIEWPORT_WIDTH / layer.tileWidth;

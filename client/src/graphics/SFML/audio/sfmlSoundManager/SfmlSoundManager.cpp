@@ -61,10 +61,12 @@ namespace Graphics
             return false;
 
         try {
-            auto sound = std::make_unique<SfmlSound>(_resources, it->second.resourcePath);
+            auto sound = std::make_unique<SfmlSound>(_resources, it->second.resourcePath, it->second.volume);
             sound->play();
             _activeSounds.push_back({audioHandle, std::move(sound)});
             return true;
+        } catch (const std::exception &e) {
+            return false;
         } catch (...) {
             return false;
         }
@@ -84,9 +86,14 @@ namespace Graphics
 
     void SfmlSoundManager::setVolume(const AudioHandle audioHandle, const float volume)
     {
-        for (auto &[handle, sound] : _activeSounds) {
-            if (handle == audioHandle) {
-                sound->setVolume(volume);
+        auto soundIt = _sounds.find(audioHandle);
+        if (soundIt != _sounds.end()) {
+            soundIt->second.volume = volume;
+        }
+
+        for (auto &active : _activeSounds) {
+            if (active.handle == audioHandle) {
+                active.sound->setVolume(volume);
             }
         }
     }

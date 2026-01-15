@@ -3,6 +3,9 @@
   "spriteId": 10,
   "texture": "sprites/player4.png",
   "default_animation": "idle",
+  "shootSound": "sounds/shoot.wav",
+  "hitSound": "sounds/hit.wav",
+  "destroySound": "sounds/destroy.wav",
   "animations": {
     "idle": {
       "loop": true,

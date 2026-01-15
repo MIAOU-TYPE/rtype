@@ -10,6 +10,7 @@
 namespace Utils
 {
     void AssetLoader::load(const std::shared_ptr<Graphics::ITextureManager> &textureManager,
+        const std::shared_ptr<Graphics::IAudioManager> &audioManager,
         const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry)
     {
         Engine::SpriteLoader::loadFromFile("client/assets/json/background_space.json", *spriteRegistry);
@@ -49,6 +50,12 @@ namespace Utils
                 std::cerr << "[AssetLoader] Failed to load texture for sprite " << spriteId << ": " << def.texturePath
                           << std::endl;
             }
+            if (def.shootSoundPath.has_value())
+                def.shootSoundHandle = audioManager->load(def.shootSoundPath.value());
+            if (def.hitSoundPath.has_value())
+                def.hitSoundHandle = audioManager->load(def.hitSoundPath.value());
+            if (def.destroySoundPath.has_value())
+                def.destroySoundHandle = audioManager->load(def.destroySoundPath.value());
         });
     }
 } // namespace Utils

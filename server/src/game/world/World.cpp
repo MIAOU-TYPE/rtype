@@ -58,11 +58,10 @@ namespace
 
             const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
             if (proj) {
-                auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
-                if (sourceHealth) {
+                if (auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source)) {
                     sourceHealth->hp -= 1;
                     if (sourceHealth->hp <= 0)
-                        w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+                        w->events().emit<DestroyEvent>(DestroyEvent{event.source, false});
                 }
             }
 
@@ -274,7 +273,7 @@ namespace Game
         return _events;
     }
 
-    Ecs::Entity World::createPlayer()
+    Ecs::Entity World::createPlayer(const int sessionId)
     {
         const Ecs::Entity ent = World::createEntity();
 
@@ -291,6 +290,8 @@ namespace Game
         _registry.emplaceComponent<Ecs::PlayerPowerUp>(ent);
         _registry.emplaceComponent<Ecs::LaserPowerUp>(ent);
         _registry.emplaceComponent<Ecs::BubblePowerUp>(ent);
+        if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
+            _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;
     }
 

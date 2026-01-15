@@ -42,6 +42,76 @@ namespace
                     (void) serverL->sendPacket(*pkt);
             });
     }
+
+    void registerDamagePacketDispatch(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+    {
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
+
+        const auto *mapPtr = &entityToSession;
+        auto *worldPtr = &world;
+
+        world.events().subscribe<DamageEvent>(
+            [wSessions, wFactory, wServer, mapPtr, worldPtr](const DamageEvent &damage) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL || !mapPtr || !worldPtr)
+                    return;
+
+                size_t shooterId = damage.source;
+                const auto &projectiles = worldPtr->registry().getComponents<Ecs::Projectile>();
+                if (const auto &proj = projectiles.at(damage.source))
+                    shooterId = proj->shooter;
+
+                const auto it = mapPtr->find(shooterId);
+                if (it == mapPtr->end())
+                    return;
+
+                const int sessionId = it->second;
+                const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
+                if (!addr)
+                    return;
+
+                bool wasKilled = false;
+                const auto &health = worldPtr->registry().getComponents<Ecs::Health>().at(damage.target);
+                if (health && health->hp <= 0)
+                    wasKilled = true;
+
+                const auto targetId = static_cast<uint32_t>(damage.target);
+                const auto amount = static_cast<uint16_t>(damage.amount);
+                if (const auto pkt = factoryL->makeDamage(*addr, targetId, amount, wasKilled))
+                    (void) serverL->sendPacket(*pkt);
+            });
+    }
+
+    void registerAcceptOnNewPlayerConnection(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
+        const std::shared_ptr<Net::Server::IServer> &server,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions)
+    {
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
+
+        world.events().subscribe<PlayerConnectedEvent>(
+            [wSessions, wFactory, wServer](const PlayerConnectedEvent &event) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL)
+                    return;
+                const sockaddr_in *addr = sessionsL->getUdpAddress(event.sessionId);
+                if (!addr)
+                    return;
+                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId))
+                    (void) serverL->sendPacket(*pkt);
+            });
+    }
 } // namespace
 
 namespace Game
@@ -62,6 +132,8 @@ namespace Game
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
+        registerAcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
+        registerDamagePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
     void GameServer::reset()
@@ -77,9 +149,6 @@ namespace Game
         cmd.type = GameCommand::Type::PlayerConnect;
         cmd.sessionId = sessionId;
         _commandBuffer.push(cmd);
-        if (const auto *addr = _sessions->getUdpAddress(sessionId)) {
-            (void) _server->sendPacket(*_udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::ACCEPT));
-        }
     }
 
     void GameServer::onPlayerDisconnect(const int sessionId)
@@ -119,7 +188,7 @@ namespace Game
         PowerUpBarSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
-        ShootingSystem::update(*_worldWrite);
+        ShootingSystem::update(*_worldWrite, dt);
 
         GravitySystem::update(*_worldWrite, dt);
         MovementPatternSystem::update(*_worldWrite, dt);
@@ -163,7 +232,7 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                const Ecs::Entity ent = _worldWrite->createPlayer();
+                const Ecs::Entity ent = _worldWrite->createPlayer(cmd.sessionId);
                 _sessionToEntity[cmd.sessionId] = ent;
                 _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;
                 break;
@@ -178,7 +247,7 @@ namespace Game
                 _sessionToEntity.erase(it);
                 if (const auto id = _worldWrite->registry().getComponents<Ecs::Id>().at(static_cast<size_t>(ent));
                     id.has_value())
-                    _worldWrite->events().emit(DestroyEvent(id->id));
+                    _worldWrite->events().emit(DestroyEvent(id->id, true));
                 break;
             }
             case GameCommand::Type::PlayerInput: {

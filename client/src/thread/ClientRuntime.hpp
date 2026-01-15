@@ -133,13 +133,7 @@ namespace Thread
         [[nodiscard]] std::shared_ptr<Engine::EventBus> getEventBus() const noexcept;
 
         /**
-         * @brief Rebinds control inputs based on the current configuration.
-         * @details This method recreates the event registry with updated key bindings
-         * from the SettingsConfig singleton.
-         */
-        void rebindControls() const;
 
-        /**
          * @brief Runs the display loop for rendering graphics.
          * @details This method handles the rendering of graphics and user input.
          * It should be called from the main thread.
@@ -207,11 +201,11 @@ namespace Thread
         void runUpdater();
 
         /**
-         * @brief Sets up the event registry with key event handlers.
-         * @details This method registers key release events to send appropriate
-         * input packets to the server.
+         * @brief Sends a combined input packet based on currently held keys.
+         * @details This method checks the held keys and constructs a combined input packet
+         * with all active movement and shoot flags set appropriately.
          */
-        void setupEventsRegistry() const;
+        void sendCombinedInput() const;
 
         /**
          * @brief Sets up the global event handlers that never change.

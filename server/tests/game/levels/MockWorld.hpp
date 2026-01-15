@@ -19,9 +19,9 @@ class MockWorld final : public Game::IGameWorld {
         return _world.registry();
     }
 
-    Ecs::Entity createPlayer() override
+    Ecs::Entity createPlayer(int sessionId) override
     {
-        return _world.createPlayer();
+        return _world.createPlayer(sessionId);
     }
 
     void destroyEntity(const Ecs::Entity ent) override

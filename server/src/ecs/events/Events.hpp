@@ -7,6 +7,7 @@
 
 #pragma once
 #include <cstddef>
+#include <cstdint>
 #include <utility>
 
 /**
@@ -52,6 +53,7 @@ struct ShootEvent {
  */
 struct DestroyEvent {
     size_t entityId; ///> ID of the entity to be destroyed
+    bool wasKilled;  ///> True if entity was killed (play sound), false otherwise
 };
 
 /**
@@ -72,6 +74,14 @@ struct ScoreUpdatedEvent {
     unsigned int newScore; ///> The player's new total score
 };
 
+/**
+ * @struct PlayerConnectedEvent
+ * @brief Event triggered when a player connects to the game.
+ */
+struct PlayerConnectedEvent {
+    int sessionId;      ///> Session identifier of the connected player
+    size_t netPlayerId; ///> Network player entity identifier
+};
 /**
  * @struct PowerUpBarEvent
  * @brief Event triggered to create or destroy a power-up bar for a player.

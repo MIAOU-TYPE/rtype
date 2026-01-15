@@ -118,15 +118,6 @@ namespace Net
         void onAuthLogin(const sockaddr_in &addr, int sessionId, uint32_t req, TCP::Reader &r) const;
 
         /**
-         * @brief Handles the SCORE_SUBMIT packet from a client
-         * @param addr The address of the client
-         * @param sessionId The session ID of the client
-         * @param req The request ID
-         * @param r The TCP reader for the packet body
-         */
-        void onScoreSubmit(const sockaddr_in &addr, int sessionId, uint32_t req, TCP::Reader &r) const;
-
-        /**
          * @brief Handles the SCOREBOARD_GET packet from a client
          * @param addr The address of the client
          * @param req The request ID

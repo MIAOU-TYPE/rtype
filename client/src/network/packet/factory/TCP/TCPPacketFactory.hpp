@@ -117,15 +117,6 @@ namespace Network
         [[nodiscard]]
         std::shared_ptr<Net::IPacket> makeScoreboardGet(uint32_t req, uint16_t limit = 10) const;
 
-        /**
-         * @brief Create a ScoreSubmit packet.
-         * @param req The request ID for the ScoreSubmit packet.
-         * @param score The score to submit (optional).
-         * @return A shared pointer to the created ScoreSubmit packet.
-         */
-        [[nodiscard]]
-        std::shared_ptr<Net::IPacket> makeScoreSubmit(uint32_t req, std::optional<uint32_t> score = std::nullopt) const;
-
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets
     };

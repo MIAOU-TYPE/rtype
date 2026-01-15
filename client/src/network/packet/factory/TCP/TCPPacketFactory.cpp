@@ -153,18 +153,4 @@ namespace Network
             return nullptr;
         }
     }
-
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeScoreSubmit(const uint32_t req, const std::optional<uint32_t> score) const
-    {
-        try {
-            Net::TCP::Writer b;
-            if (score.has_value())
-                b.u32(*score);
-            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::SCORE_SUBMIT, req, b.bytes());
-            return make(payload);
-        } catch (...) {
-            std::cerr << "{TCPPacketFactory::makeScoreSubmit} error creating packet" << std::endl;
-            return nullptr;
-        }
-    }
 } // namespace Network

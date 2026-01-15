@@ -77,7 +77,6 @@ namespace Net
             case Protocol::TCP::AUTH_REGISTER: onAuthRegister(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::AUTH_LOGIN: onAuthLogin(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::SCOREBOARD_GET: onScoreboardGet(*addr, h.requestId, r); break;
-            case Protocol::TCP::SCORE_SUBMIT: onScoreSubmit(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::LIST_ROOMS: onListRooms(*addr, h.requestId); break;
             case Protocol::TCP::CREATE_ROOM: onCreateRoom(*addr, h.requestId, r); break;
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
@@ -360,37 +359,6 @@ namespace Net
                 if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
                     (void) _tcp->sendPacket(*out);
             }
-        }
-    }
-
-    void TCPPacketRouter::onScoreSubmit(
-        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
-    {
-        if (!_scores || !_packetFactory)
-            return sendError(addr, req, 500, "SCORE_SUBMIT: service unavailable");
-
-        uint32_t clientScore = 0;
-        try {
-            if (r.remaining() == 4)
-                clientScore = r.u32();
-            else if (r.remaining() != 0)
-                return sendError(addr, req, 400, "SCORE_SUBMIT: malformed payload (optional score u32)");
-        } catch (...) {
-            return sendError(addr, req, 400, "SCORE_SUBMIT: malformed payload");
-        }
-
-        if (!_sessions->isAuthed(sessionId))
-            return sendError(addr, req, 401, "AUTH_REQUIRED");
-        const auto idOpt = _sessions->getIdentity(sessionId);
-        if (!idOpt)
-            return sendError(addr, req, 401, "AUTH_REQUIRED");
-        uint32_t finalScore = clientScore;
-        if (const auto s = _sessions->getLastScore(sessionId))
-            finalScore = *s;
-        try {
-            _scores->saveScore(idOpt->username, static_cast<int>(finalScore));
-        } catch (const std::exception &e) {
-            return sendError(addr, req, 500, std::string("SCORE_SUBMIT: db error: ") + e.what());
         }
     }
 

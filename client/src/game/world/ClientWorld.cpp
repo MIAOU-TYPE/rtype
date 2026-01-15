@@ -153,11 +153,6 @@ namespace World
         _entityPlayerId = static_cast<int>(data);
     }
 
-    void ClientWorld::applyAccept(const uint32_t &data)
-    {
-        _entityPlayerId = static_cast<int>(data);
-    }
-
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
@@ -377,31 +372,4 @@ namespace World
         pos->x += dx * 7.f;
         pos->y += dy * 7.f;
     }
-
-    void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
-    {
-        float dx = 0.f;
-        float dy = 0.f;
-
-        if (input & 0x01)
-            dx -= 1.f;
-        if (input & 0x02)
-            dx += 1.f;
-        if (input & 0x04)
-            dy += 1.f;
-        if (input & 0x08)
-            dy -= 1.f;
-
-        const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
-        if (it == _entityMap.end())
-            return;
-
-        const auto ent = it->second;
-        auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
-        if (!pos)
-            return;
-        pos->x += dx * 7.f;
-        pos->y += dy * 7.f;
-    }
-
 } // namespace World

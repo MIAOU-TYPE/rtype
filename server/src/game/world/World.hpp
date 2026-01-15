@@ -15,6 +15,8 @@
 #include "Damageable.hpp"
 #include "Drawable.hpp"
 #include "EventsRegistry.hpp"
+#include "GravityAffected.hpp"
+#include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "Id.hpp"
@@ -72,7 +74,7 @@ namespace Game
          *
          * @return The newly created ECS entity.
          */
-        [[nodiscard]] Ecs::Entity createPlayer() override;
+        [[nodiscard]] Ecs::Entity createPlayer(int sessionId) override;
 
         /**
          * @brief Destroy an entity and all its components.

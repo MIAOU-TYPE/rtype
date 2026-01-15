@@ -26,11 +26,11 @@
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
-#include "InputConfig.hpp"
 #include "InputState.hpp"
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
+#include "SettingsConfig.hpp"
 #include "SoundRegistry.hpp"
 #include "SpriteLoader.hpp"
 #include "SpriteRegistry.hpp"
@@ -107,6 +107,13 @@ namespace Thread
         void start();
 
         /**
+         * @brief Applies the settings loaded from the configuration file at startup.
+         * @details This method sets the music volume, sound volume, resolution, and colorblind mode
+         * based on the saved settings.
+         */
+        void applyLoadedSettings() const noexcept;
+
+        /**
          * @brief Stops the client runtime gracefully.
          * @details This method signals the receiver and updater threads to stop and waits for them to finish.
          */
@@ -128,7 +135,7 @@ namespace Thread
         /**
          * @brief Rebinds control inputs based on the current configuration.
          * @details This method recreates the event registry with updated key bindings
-         * from the InputConfig singleton.
+         * from the SettingsConfig singleton.
          */
         void rebindControls() const;
 

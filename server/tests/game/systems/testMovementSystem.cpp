@@ -14,7 +14,7 @@
 TEST(MovementSystem, moves_entities_correctly)
 {
     Game::World world;
-    Ecs::Entity e = world.createPlayer();
+    Ecs::Entity e = world.createPlayer(1);
 
     auto &reg = world.registry();
 
@@ -37,7 +37,7 @@ TEST(MovementSystem, moves_entities_correctly)
 TEST(MovementSystem, dt_affects_speed)
 {
     Game::World world;
-    Ecs::Entity e = world.createPlayer();
+    Ecs::Entity e = world.createPlayer(1);
 
     auto &reg = world.registry();
 

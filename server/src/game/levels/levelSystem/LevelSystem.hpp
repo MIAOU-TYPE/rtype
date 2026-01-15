@@ -7,16 +7,17 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
-#include "Attack.hpp"
 #include "Background.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
@@ -32,6 +33,9 @@
 
 namespace Game
 {
+
+    constexpr float COLLISION_SCALE = 1.7f; ///> Scale factor for enemy collision boxes
+
     /**
      * @brief System responsible for managing level progression and enemy spawning.
      */
@@ -81,14 +85,37 @@ namespace Game
             IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers);
 
         /**
-         * @brief Spawn a single enemy based on the enemy definition.
+         * @brief Spawn a group of enemies at relative positions.
+         *
+         * @param world The game world to spawn enemies in.
+         * @param level The current level data.
+         * @param groupDef The group definition containing member positions.
+         * @param pattern Spawn pattern for the group base position.
+         * @param centerY Center Y position for pattern spawning.
+         */
+        static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
+            const std::string &pattern, const float centerY);
+
+        /**
+         * @brief Spawn a single enemy at a specific position.
          *
          * @param world The game world to spawn the enemy in.
          * @param def The enemy definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
          * @param modifiers Difficulty modifiers to apply to the enemy.
          */
-        static void spawnSingleEnemy(
-            IGameWorld &world, const EnemyDefinition &def, const DifficultyModifiers &modifiers);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y, const DifficultyModifiers &modifiers);
+
+        /**
+         * @brief Spawn an obstacle at a specific position.
+         *
+         * @param world The game world to spawn the obstacle in.
+         * @param def The obstacle definition.
+         * @param x X coordinate to spawn at.
+         * @param y Y coordinate to spawn at.
+         */
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y);
 
         /**
          * @brief Create a single background entity with given parameters.

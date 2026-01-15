@@ -16,6 +16,7 @@
 #include <optional>
 #include <utility>
 #include <vector>
+#include "AcceptData.hpp"
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
@@ -91,10 +92,11 @@ namespace Net::Factory
          * @param addr The address to which the packet will be sent.
          * @param id The ID of the entity receiving damage.
          * @param amount The amount of damage to apply.
+         * @param wasKilled Whether the damage killed the entity.
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeDamage(
-            const sockaddr_in &addr, uint32_t id, uint16_t amount) const noexcept;
+            const sockaddr_in &addr, uint32_t id, uint16_t amount, const bool wasKilled) const noexcept;
 
         /**
          * @brief Creates snapshot packets from the given entities, server tick, and maximum packet size.
@@ -118,9 +120,20 @@ namespace Net::Factory
         /**
          * @brief Creates a destroy entity packet with the specified address and entity ID.
          * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed (play sound), false otherwise.
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(size_t entityId) const noexcept;
+        [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(
+            size_t entityId, const bool wasKilled) const noexcept;
+
+        /**
+         * @brief Creates an accept packet with the specified entity ID.
+         * @param addr The address to which the packet will be sent.
+         * @param entityId The ID of the entity to be accepted.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createAcceptPacket(
+            const sockaddr_in &addr, size_t entityId) const noexcept;
 
       private:
         /*

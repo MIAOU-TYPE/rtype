@@ -31,7 +31,7 @@ namespace Engine
             [udpPacketFactory, sessionManager, udpServer, self](const DestroyEvent &data) {
                 if (const auto room = self.lock()) {
                     std::scoped_lock lock(room->_sessionsMutex);
-                    const auto out = udpPacketFactory->createDestroyEntityPacket(data.entityId);
+                    const auto out = udpPacketFactory->createDestroyEntityPacket(data.entityId, data.wasKilled);
                     if (!out)
                         return;
                     for (const auto &player : room->_sessions) {

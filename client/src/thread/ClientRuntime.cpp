@@ -42,19 +42,20 @@ namespace Thread
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_shared<World::ClientWorld>(_spriteRegistry);
-        _stateManager = std::make_unique<Engine::StateManager>();
-        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
+
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
+        _stateManager = std::make_unique<Engine::StateManager>();
+        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
             _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
         _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
-        Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
+        Utils::AssetLoader::load(_renderer->textures(), _renderer->sounds(), _spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()
@@ -78,11 +79,31 @@ namespace Thread
             throw;
         }
         _running = true;
+        applyLoadedSettings();
         setupGlobalEventHandlers();
         setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
+    }
+
+    void ClientRuntime::applyLoadedSettings() const noexcept
+    {
+        const auto &config = Utils::SettingsConfig::getInstance();
+
+        const float musicVolume = config.isMusicMuted() ? 0.f : static_cast<float>(config.getMusicVolume());
+        _musicRegistry->setMusicVolume(musicVolume);
+        if (config.isMusicMuted())
+            _musicRegistry->setVolumeBeforeMute(static_cast<float>(config.getMusicVolume()));
+
+        const float sfxVolume = config.isSfxMuted() ? 0.f : static_cast<float>(config.getSfxVolume());
+        _soundRegistry->setSoundVolume(sfxVolume);
+        if (config.isSfxMuted())
+            _soundRegistry->setVolumeBeforeMute(static_cast<float>(config.getSfxVolume()));
+
+        _graphics->setResolution(config.getResolution());
+
+        _renderer->setColorBlindMode(config.getColorBlindMode());
     }
 
     void ClientRuntime::stop()
@@ -136,14 +157,14 @@ namespace Thread
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
-            if (Utils::InputConfig::getInstance().needsRebind()) {
+            if (Utils::SettingsConfig::getInstance().needsRebind()) {
                 rebindControls();
-                Utils::InputConfig::getInstance().clearRebindFlag();
+                Utils::SettingsConfig::getInstance().clearRebindFlag();
             }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
-                    std::weak_ptr<World::ClientWorld> w = _world;
+                    std::weak_ptr w = _world;
                     _stateManager->changeState(
                         std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
                             if (auto s = w.lock())
@@ -242,25 +263,33 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        const auto [up, down, left, right] = Utils::InputConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(up, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
+            constexpr auto input = PlayerInput{true, false, false, false, false};
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+            _world->applyLocalMovementFromNetId(0x08);
         });
 
         _eventRegistry->onKeyPressed(down, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
+            constexpr auto input = PlayerInput{false, true, false, false, false};
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+            _world->applyLocalMovementFromNetId(0x04);
         });
 
         _eventRegistry->onKeyPressed(left, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
+            constexpr auto input = PlayerInput{false, false, true, false, false};
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+            _world->applyLocalMovementFromNetId(0x01);
         });
 
         _eventRegistry->onKeyPressed(right, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
+            constexpr auto input = PlayerInput{false, false, false, true, false};
+            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+            _world->applyLocalMovementFromNetId(0x02);
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
+        _eventRegistry->onKeyReleased(shoot, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }

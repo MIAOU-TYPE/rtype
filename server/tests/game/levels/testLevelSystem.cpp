@@ -60,7 +60,6 @@ TEST(LevelSystem, SpawnOneWave)
         EXPECT_TRUE(world.registry().hasComponent<Ecs::Health>(Ecs::Entity(i)));
         EXPECT_TRUE(world.registry().hasComponent<Ecs::AIBrain>(Ecs::Entity(i)));
         EXPECT_TRUE(world.registry().hasComponent<Ecs::Damageable>(Ecs::Entity(i)));
-        EXPECT_TRUE(world.registry().hasComponent<Ecs::Attack>(Ecs::Entity(i)));
         EXPECT_TRUE(world.registry().hasComponent<Ecs::Drawable>(Ecs::Entity(i)));
     }
 }

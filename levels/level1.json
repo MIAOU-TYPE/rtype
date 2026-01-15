@@ -131,6 +131,22 @@
         "projectileSpriteId": 12
       }
     },
+    "boss2": {
+      "hp": 3000,
+      "speed": -30,
+      "size": { "w": 130, "h": 50 },
+      "killScore": 300,
+      "sprite": "boss2",
+      "spriteId": 20,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 0.5,
+        "projectileSpeed": 150,
+        "damage": 50,
+        "muzzle": { "x": 65, "y": 25 },
+        "projectileSpriteId": 12
+      }
+    },
     "groupEnemy": {
       "type": "group",
       "members": [
@@ -246,7 +262,7 @@
   "waves": [
     {
       "time": 1,
-      "enemies": { "boss": 1 },
+      "enemies": { "boss2": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     }

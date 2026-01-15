@@ -76,7 +76,7 @@ namespace Game
             const EnemyDefinition &def = level.enemyTypes.at(type);
 
             bool isBoss = false;
-            if (type == "boss")
+            if (type.substr(0, 4) == "boss")
                 isBoss = true;
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)

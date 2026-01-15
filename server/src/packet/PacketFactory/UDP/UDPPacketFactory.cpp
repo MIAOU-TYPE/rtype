@@ -54,7 +54,7 @@ namespace Net::Factory
     }
 
     std::shared_ptr<IPacket> UDPPacketFactory::makeDamage(
-        const sockaddr_in &addr, uint32_t id, uint16_t amount, bool wasKilled) const noexcept
+        const sockaddr_in &addr, uint32_t id, uint16_t amount, const bool wasKilled) const noexcept
     {
         DamageData damageData;
         damageData.header = makeHeader(Protocol::UDP::DAMAGE_EVENT, VERSION, sizeof(DamageData));

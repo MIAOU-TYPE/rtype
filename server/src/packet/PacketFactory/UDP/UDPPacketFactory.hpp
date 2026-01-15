@@ -95,7 +95,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeDamage(
-            const sockaddr_in &addr, uint32_t id, uint16_t amount, bool wasKilled) const noexcept;
+            const sockaddr_in &addr, uint32_t id, uint16_t amount, const bool wasKilled) const noexcept;
 
         /**
          * @brief Creates snapshot packets from the given entities, server tick, and maximum packet size.
@@ -123,7 +123,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(
-            size_t entityId, bool wasKilled) const noexcept;
+            size_t entityId, const bool wasKilled) const noexcept;
 
       private:
         /*

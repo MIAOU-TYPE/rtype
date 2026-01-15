@@ -17,8 +17,8 @@ namespace Game
         reg.view<Ecs::PlayerPowerUp, Ecs::Position>(
             [&](const Ecs::Entity playerEntity, Ecs::PlayerPowerUp &powerUp, const Ecs::Position &) {
                 if (!powerUp.hasBar) {
-                    world.events().emit<PowerUpBarEvent>(
-                        PowerUpBarEvent{static_cast<size_t>(playerEntity), true, playerIndex});
+                    world.events().emit<PowerUpBarCreateEvent>(
+                        PowerUpBarCreateEvent{static_cast<size_t>(playerEntity), playerIndex});
                 }
                 playerIndex++;
             });

@@ -19,29 +19,19 @@ namespace Game
                     return;
 
                 if (!bubble.bubbleEntity.has_value()) {
-                    const Ecs::Entity bubbleEnt = world.createEntity();
-
-                    reg.emplaceComponent<Ecs::Position>(bubbleEnt, Ecs::Position{playerPos.x, playerPos.y});
-                    reg.emplaceComponent<Ecs::Drawable>(bubbleEnt, Ecs::Drawable{20u, true});
-
-                    bubble.bubbleEntity = bubbleEnt;
-                    bubble.hitsRemaining = Ecs::BubblePowerUp::maxHits;
-                }
-
-                if (bubble.bubbleEntity.has_value()) {
-                    const size_t bubbleIdx = static_cast<size_t>(bubble.bubbleEntity.value());
-                    if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
-                        bubblePos->x = playerPos.x;
-                        bubblePos->y = playerPos.y;
-                    }
+                    world.events().emit<BubblePowerUpEvent>(BubblePowerUpEvent{
+                        static_cast<size_t>(playerEntity), playerPos.x, playerPos.y, true, false, false});
+                    return;
                 }
 
                 if (bubble.hitsRemaining <= 0 && bubble.bubbleEntity.has_value()) {
-                    world.destroyEntity(bubble.bubbleEntity.value());
-                    bubble.bubbleEntity = std::nullopt;
-                    bubble.isActive = false;
-                    bubble.hitsRemaining = 0;
+                    world.events().emit<BubblePowerUpEvent>(
+                        BubblePowerUpEvent{static_cast<size_t>(playerEntity), 0.f, 0.f, false, false, true});
+                    return;
                 }
+
+                world.events().emit<BubblePowerUpEvent>(BubblePowerUpEvent{
+                    static_cast<size_t>(playerEntity), playerPos.x, playerPos.y, false, true, false});
             });
     }
 } // namespace Game

@@ -273,6 +273,18 @@
       "spawnPattern": "spread"
     },
     {
+      "time": 17,
+      "powerUp": { "type": "laser" }
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "shield" }
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "bubble" }
+    },
+    {
       "time": 19,
       "enemies": { "mediumEnemy": 1 },
       "spawnPattern": "line",

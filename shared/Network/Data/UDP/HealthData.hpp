@@ -13,9 +13,9 @@
 #pragma pack(push, 1)
 
 /**
- * @brief Structure representing player input data with flags.
- * @details This structure contains the header information and a flags byte
- * where each bit represents a different input action (up, down, left, right, shoot).
+ * @brief Structure representing health data in a UDP packet.
+ * This structure contains the header and health information of an entity.
+ * It is packed to ensure no padding bytes are added.
  */
 struct HealthData {
     HeaderData header;    ///> The packet header containing type, version, and size.

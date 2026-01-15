@@ -125,14 +125,14 @@ namespace
         const auto *mapPtr = &entityToSession;
 
         world.events().subscribe<DamageApplyEvent>(
-            [wSessions, wFactory, wServer, mapPtr](const DamageApplyEvent &life) {
+            [wSessions, wFactory, wServer, mapPtr](const DamageApplyEvent &event) {
                 const auto sessionsL = wSessions.lock();
                 const auto factoryL = wFactory.lock();
                 const auto serverL = wServer.lock();
                 if (!sessionsL || !factoryL || !serverL || !mapPtr)
                     return;
 
-                const auto it = mapPtr->find(life.entityId);
+                const auto it = mapPtr->find(event.entityId);
                 if (it == mapPtr->end())
                     return;
 
@@ -142,7 +142,7 @@ namespace
                     return;
 
                 if (const auto pkt = factoryL->createHealthPacket(
-                        *addr, static_cast<uint16_t>(life.currentLife), static_cast<uint16_t>(life.maxLife)))
+                        *addr, static_cast<uint16_t>(event.currentLife), static_cast<uint16_t>(event.maxLife)))
                     (void) serverL->sendPacket(*pkt);
             });
     }

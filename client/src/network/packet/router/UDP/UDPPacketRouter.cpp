@@ -62,6 +62,8 @@ namespace Ecs
 
             case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
 
+            case Net::Protocol::UDP::HEALTH: handleHealth(payload, payloadSize); break;
+
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << std::endl;
@@ -265,6 +267,20 @@ namespace Ecs
         std::memcpy(&destroyData, payload, sizeof(destroyData));
         const uint32_t entityId = ntohl(destroyData.id);
         _sink->onDestroy(entityId);
+    }
+
+    void UDPPacketRouter::handleHealth(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(HealthData)) {
+            std::cerr << "{UDPPacketRouter::handleHealth} Dropped HEALTH: bad size\n";
+            return;
+        }
+
+        HealthData healthData{};
+        std::memcpy(&healthData, payload, sizeof(healthData));
+        const uint16_t currentLife = ntohs(healthData.currentLife);
+        const uint16_t maxLife = ntohs(healthData.maxLife);
+        _sink->onHealth(currentLife, maxLife);
     }
 
     void UDPPacketRouter::purgeExpired(const std::chrono::steady_clock::time_point now) const

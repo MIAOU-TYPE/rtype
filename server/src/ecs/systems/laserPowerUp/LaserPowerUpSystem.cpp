@@ -15,13 +15,9 @@ namespace Game
 
         reg.view<Ecs::LaserPowerUp, Ecs::Position>(
             [&](const Ecs::Entity playerEntity, Ecs::LaserPowerUp &laser, const Ecs::Position &playerPos) {
-                if (!laser.isActive)
-                    return;
-
                 laser.duration += dt;
                 if (laser.duration >= laser.maxDuration) {
-                    laser.isActive = false;
-                    laser.duration = 0.f;
+                    reg.getComponents<Ecs::LaserPowerUp>().remove(static_cast<size_t>(playerEntity));
                     return;
                 }
 

@@ -276,6 +276,9 @@ namespace Thread
         if (_input->isKeyHeld(shoot))
             input.shoot = true;
 
+        if (_input->isKeyHeld(big_shoot))
+            input.powerShoot = true;
+
         if (auto packet = _udpPacketFactory.makeInput(input))
             _udpClient->sendPacket(*packet);
     }

@@ -24,6 +24,7 @@ namespace Engine
 
             _play = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "PLAY");
             _settings = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SETTINGS");
+            _levelEditor = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "LEVEL EDITOR");
             _quit = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "QUIT");
 
             _userField = std::make_unique<UI::UITextField>(_renderer, "Username", false);
@@ -43,6 +44,7 @@ namespace Engine
         _startRequested = false;
         _quitRequested = false;
         _settingsRequested = false;
+        _levelEditorRequested = false;
         _submitted = false;
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
@@ -52,8 +54,8 @@ namespace Engine
         if (_authErrorText)
             _authErrorText->setString("");
         clearAuthError();
-        resetButtons(
-            _login.get(), _register.get(), _play.get(), _settings.get(), _quit.get(), _submitBtn.get(), _backBtn.get());
+        resetButtons(_login.get(), _register.get(), _play.get(), _settings.get(), _levelEditor.get(), _quit.get(),
+            _submitBtn.get(), _backBtn.get());
 
         if (_userField) {
             _userField->clear();
@@ -76,6 +78,7 @@ namespace Engine
         _startRequested = false;
         _quitRequested = false;
         _settingsRequested = false;
+        _levelEditorRequested = false;
         _submitted = false;
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
@@ -141,9 +144,10 @@ namespace Engine
         }
 
         if (_page == Page::AuthedRoot) {
-            placeCentered(*_play, vp.cx, h * 0.63f);
-            placeCentered(*_settings, vp.cx, h * 0.76f);
-            placeCentered(*_quit, vp.cx, h * 0.89f);
+            placeCentered(*_play, vp.cx, h * 0.55f);
+            placeCentered(*_settings, vp.cx, h * 0.68f);
+            placeCentered(*_levelEditor, vp.cx, h * 0.81f);
+            placeCentered(*_quit, vp.cx, h * 0.94f);
             return;
         }
 
@@ -169,7 +173,7 @@ namespace Engine
         if (_page == Page::UnauthedRoot) {
             updateButtons(frame.mouseX, frame.mouseY, _login.get(), _register.get(), _settings.get(), _quit.get());
         } else if (_page == Page::AuthedRoot) {
-            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
+            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _levelEditor.get(), _quit.get());
         } else {
             updateButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
         }
@@ -189,6 +193,7 @@ namespace Engine
         if (_page == Page::AuthedRoot) {
             _play->render();
             _settings->render();
+            _levelEditor->render();
             _quit->render();
             return;
         }
@@ -219,7 +224,7 @@ namespace Engine
             return;
         }
         if (_page == Page::AuthedRoot) {
-            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
+            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _levelEditor.get(), _quit.get());
             return;
         }
         pressButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
@@ -233,7 +238,7 @@ namespace Engine
 
     void Menu::handleMouseReleased(const InputFrame &frame)
     {
-        enum class Action { None, Login, Register, Play, Settings, Quit, Submit, Back };
+        enum class Action { None, Login, Register, Play, Settings, LevelEditor, Quit, Submit, Back };
         auto a = Action::None;
 
         if (_page == Page::UnauthedRoot)
@@ -242,7 +247,8 @@ namespace Engine
                     {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
         else if (_page == Page::AuthedRoot)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
-                {{_play.get(), Action::Play}, {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+                {{_play.get(), Action::Play}, {_settings.get(), Action::Settings},
+                    {_levelEditor.get(), Action::LevelEditor}, {_quit.get(), Action::Quit}});
         else
             a = pickAction<Action>(
                 frame.mouseX, frame.mouseY, {{_submitBtn.get(), Action::Submit}, {_backBtn.get(), Action::Back}});
@@ -254,6 +260,7 @@ namespace Engine
             case Action::Register: enterForm(Page::RegisterForm); break;
             case Action::Play: _startRequested = true; break;
             case Action::Settings: _settingsRequested = true; break;
+            case Action::LevelEditor: _levelEditorRequested = true; break;
             case Action::Quit: _quitRequested = true; break;
             case Action::Submit: submit(); break;
             case Action::Back: backToRoot(); break;
@@ -368,5 +375,10 @@ namespace Engine
     bool Menu::wantsSettings() const noexcept
     {
         return _settingsRequested;
+    }
+
+    bool Menu::wantsLevelEditor() const noexcept
+    {
+        return _levelEditorRequested;
     }
 } // namespace Engine

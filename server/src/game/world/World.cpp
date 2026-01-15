@@ -134,8 +134,7 @@ namespace
             reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, yOffset});
             reg.emplaceComponent<Ecs::Velocity>(barEntity, Ecs::Velocity{0.f, 0.f});
             reg.emplaceComponent<Ecs::Drawable>(barEntity, Ecs::Drawable{16, true});
-            reg.emplaceComponent<Ecs::Id>(
-                barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
+            reg.emplaceComponent<Ecs::Id>(barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
             playerPowerUp->hasBar = true;
             playerPowerUp->barEntity = barEntity;
         });
@@ -147,8 +146,7 @@ namespace
             if (!playerPowerUp || !playerPowerUp->hasBar || !playerPowerUp->barEntity.has_value())
                 return;
 
-            w->events().emit<DestroyEvent>(
-                DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
+            w->events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
             playerPowerUp->hasBar = false;
             playerPowerUp->barEntity = std::nullopt;
         });

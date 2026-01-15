@@ -16,6 +16,7 @@
 #include <optional>
 #include <utility>
 #include <vector>
+#include "AcceptData.hpp"
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
@@ -124,6 +125,15 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(
             size_t entityId, const bool wasKilled) const noexcept;
+
+        /**
+         * @brief Creates an accept packet with the specified entity ID.
+         * @param addr The address to which the packet will be sent.
+         * @param entityId The ID of the entity to be accepted.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createAcceptPacket(
+            const sockaddr_in &addr, size_t entityId) const noexcept;
 
       private:
         /*

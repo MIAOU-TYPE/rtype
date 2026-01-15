@@ -55,17 +55,23 @@ namespace World
     void ClientWorld::applyCommand(const WorldCommand &cmd)
     {
         switch (cmd.type) {
-            case WorldCommand::Type::Snapshot: applySnapshot(std::get<World::SnapshotBatch>(cmd.payload)); break;
+            case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotBatch>(cmd.payload)); break;
             case WorldCommand::Type::Damage: applyDamage(std::get<World::DamageInfo>(cmd.payload)); break;
             case WorldCommand::Type::Destroy: applyDestroy(std::get<World::DestroyInfo>(cmd.payload)); break;
             case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
+            case WorldCommand::Type::Accept: applyAccept(std::get<uint32_t>(cmd.payload)); break;
             default: break;
         }
     }
 
-    uint32_t ClientWorld::getScore() const
+    uint32_t ClientWorld::getScore() const noexcept
     {
         return _score;
+    }
+
+    int ClientWorld::getEntityPlayerId() const noexcept
+    {
+        return _entityPlayerId;
     }
 
     void ClientWorld::applySnapshot(const SnapshotBatch &batch)
@@ -142,6 +148,11 @@ namespace World
         }
     }
 
+    void ClientWorld::applyAccept(const uint32_t &data)
+    {
+        _entityPlayerId = static_cast<int>(data);
+    }
+
     void ClientWorld::applyCreate(const EntityCreate &data)
     {
         try {
@@ -175,42 +186,6 @@ namespace World
         }
     }
 
-    void ClientWorld::applySingleSnapshot(const SnapshotEntity &entity)
-    {
-        const auto it = _entityMap.find(entity.id);
-        if (it == _entityMap.end()) {
-            applyCreate(EntityCreate{entity.id, entity.x, entity.y, entity.z, entity.spriteId});
-            return;
-        }
-
-        const Ecs::Entity localEntity = it->second;
-        const auto entityIndex = static_cast<size_t>(localEntity);
-
-        if (auto &pos = _registry.getComponents<Ecs::Position>().at(entityIndex)) {
-            pos->x = entity.x;
-            pos->y = entity.y;
-            pos->z = entity.z;
-        }
-
-        if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
-            if (const bool spriteChanged = (drawable->spriteId != entity.spriteId);
-                spriteChanged && _spriteRegistry->exists(entity.spriteId)) {
-                drawable->spriteId = entity.spriteId;
-                const auto &sprite = _spriteRegistry->get(drawable->spriteId);
-
-                if (auto &render = _registry.getComponents<Ecs::Render>().at(entityIndex)) {
-                    render->texture = sprite.textureHandle;
-
-                    if (auto &animState = _registry.getComponents<Ecs::AnimationState>().at(entityIndex)) {
-                        animState->currentAnimation = sprite.defaultAnimation;
-                        animState->frameIndex = 0;
-                        animState->elapsed = 0.f;
-                    }
-                }
-            }
-        }
-    }
-
     void ClientWorld::refreshSpriteIfChanged(const Ecs::Entity e, const uint32_t spriteId,
         Ecs::SparseArray<Ecs::Drawable> drawables, Ecs::SparseArray<Ecs::AnimationState> anims,
         Ecs::SparseArray<Ecs::Render> renders) const
@@ -234,6 +209,42 @@ namespace World
                 anim->frameIndex = 0;
                 anim->elapsed = 0.f;
             }
+        }
+    }
+
+    void ClientWorld::reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions)
+    {
+        if (_entityPlayerId < 0)
+            return;
+        const auto itEnt = _entityMap.find(static_cast<uint32_t>(_entityPlayerId));
+        if (itEnt == _entityMap.end())
+            return;
+
+        const auto ent = static_cast<std::size_t>(itEnt->second);
+
+        if (ent >= positions.size())
+            return;
+
+        auto &posOpt = positions.at(ent);
+        if (!posOpt)
+            return;
+
+        const float serverX = bs.x;
+        const float serverY = bs.y;
+
+        const float dx = serverX - posOpt->x;
+        const float dy = serverY - posOpt->y;
+        const float dist2 = dx * dx + dy * dy;
+
+        constexpr float SnapDist = 80.f;
+
+        if (constexpr float SnapDist2 = SnapDist * SnapDist; dist2 > SnapDist2) {
+            posOpt->x = serverX;
+            posOpt->y = serverY;
+        } else {
+            constexpr float SmoothFactor = 0.15f;
+            posOpt->x += dx * SmoothFactor;
+            posOpt->y += dy * SmoothFactor;
         }
     }
 
@@ -305,6 +316,10 @@ namespace World
             if (isDestroyed(netId))
                 continue;
 
+            if (std::cmp_equal(netId, _entityPlayerId)) {
+                reconcileLocalPlayerWithServer(bs, positions);
+                continue;
+            }
             const auto itA = A.entities.find(netId);
             const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
@@ -334,4 +349,29 @@ namespace World
             applyDestroy(DestroyInfo{id, false});
     }
 
+    void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
+    {
+        float dx = 0.f;
+        float dy = 0.f;
+
+        if (input & 0x01)
+            dx -= 1.f;
+        if (input & 0x02)
+            dx += 1.f;
+        if (input & 0x04)
+            dy += 1.f;
+        if (input & 0x08)
+            dy -= 1.f;
+
+        const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
+        if (it == _entityMap.end())
+            return;
+
+        const auto ent = it->second;
+        auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
+        if (!pos)
+            return;
+        pos->x += dx * 7.f;
+        pos->y += dy * 7.f;
+    }
 } // namespace World

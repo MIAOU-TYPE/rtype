@@ -112,6 +112,21 @@ namespace Net::Factory
         }
     }
 
+    std::shared_ptr<IPacket> UDPPacketFactory::createAcceptPacket(
+        const sockaddr_in &addr, const size_t entityId) const noexcept
+    {
+        AcceptData acceptData;
+        acceptData.header = makeHeader(Protocol::UDP::ACCEPT, VERSION, sizeof(AcceptData));
+        acceptData.netPlayerId = htonl(static_cast<uint32_t>(entityId));
+        try {
+            auto packet = makePacket<AcceptData>(addr, acceptData);
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::createAcceptPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
     std::optional<UDPPacketFactory::ChunkSizes> UDPPacketFactory::computeChunkSizes(
         const size_t maxPacketBytes) noexcept
     {

@@ -15,6 +15,7 @@
 #include <lz4.h>
 #include <utility>
 #include <vector>
+#include "AcceptData.hpp"
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
@@ -102,7 +103,7 @@ namespace Ecs
         /**
          * @brief Handler for ACCEPT packets.
          */
-        void handleAccept() const;
+        void handleAccept(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for REJECT packets.

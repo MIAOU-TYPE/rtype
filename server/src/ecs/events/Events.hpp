@@ -71,3 +71,12 @@ struct ScoreUpdatedEvent {
     size_t playerId;       ///> ID of the player whose score was updated
     unsigned int newScore; ///> The player's new total score
 };
+
+/**
+ * @struct PlayerConnectedEvent
+ * @brief Event triggered when a player connects to the game.
+ */
+struct PlayerConnectedEvent {
+    int sessionId;      ///> Session identifier of the connected player
+    size_t netPlayerId; ///> Network player entity identifier
+};

@@ -25,7 +25,7 @@ namespace Ecs
         /**
          * @brief Called when an ACCEPT message is received.
          */
-        virtual void onAccept() = 0;
+        virtual void onAccept(uint32_t sessionId) = 0;
 
         /**
          * @brief Called when a REJECT message is received.

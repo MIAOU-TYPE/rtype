@@ -33,8 +33,9 @@ namespace Ecs
 
         /**
          * @brief Called when an ACCEPT message is received.
+         * @param sessionId The session ID assigned by the server.
          */
-        void onAccept() override;
+        void onAccept(uint32_t sessionId) override;
 
         /**
          * @brief Called when a REJECT message is received.

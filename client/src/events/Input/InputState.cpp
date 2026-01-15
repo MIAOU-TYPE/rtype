@@ -59,6 +59,6 @@ namespace Engine
 
     bool InputState::isKeyHeld(const Key key) const
     {
-        return _heldKeys.find(key) != _heldKeys.end();
+        return _heldKeys.contains(key);
     }
 } // namespace Engine

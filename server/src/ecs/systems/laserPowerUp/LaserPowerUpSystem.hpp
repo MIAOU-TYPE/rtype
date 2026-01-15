@@ -14,6 +14,7 @@
 #include "Id.hpp"
 #include "LaserPowerUp.hpp"
 #include "Position.hpp"
+#include "Projectile.hpp"
 #include "Velocity.hpp"
 
 namespace Game
@@ -33,8 +34,7 @@ namespace Game
          * Manages laser creation, duration, and destruction.
          *
          * @param world The game world containing all entities.
-         * @param dt Delta time since last update (seconds).
          */
-        static void update(IGameWorld &world, float dt);
+        static void update(IGameWorld &world, const float dt);
     };
 } // namespace Game

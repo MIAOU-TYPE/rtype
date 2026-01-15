@@ -43,7 +43,7 @@ namespace
                 if (proj) {
                     bubbleComp->hitsRemaining--;
 
-                    w->destroyEntity(static_cast<Ecs::Entity>(event.source));
+                    w->events().emit<DestroyEvent>(DestroyEvent{event.source, false});
                     return;
                 }
             }
@@ -137,7 +137,8 @@ namespace
                 playerPowerUp->hasBar = true;
                 playerPowerUp->barEntity = barEntity;
             } else if (!event.create && playerPowerUp->hasBar && playerPowerUp->barEntity.has_value()) {
-                w->destroyEntity(playerPowerUp->barEntity.value());
+                w->events().emit<DestroyEvent>(
+                    DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
                 playerPowerUp->hasBar = false;
                 playerPowerUp->barEntity = std::nullopt;
             }
@@ -168,7 +169,8 @@ namespace
                     bubblePos->y = event.playerY;
                 }
             } else if (event.destroy && bubblePowerUp->bubbleEntity.has_value()) {
-                w->destroyEntity(bubblePowerUp->bubbleEntity.value());
+                w->events().emit<DestroyEvent>(
+                    DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
                 bubblePowerUp->bubbleEntity = std::nullopt;
                 bubblePowerUp->hitsRemaining = 0;
                 reg.getComponents<Ecs::BubblePowerUp>().remove(static_cast<size_t>(event.playerId));
@@ -179,7 +181,7 @@ namespace
     void activateLaserPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
     {
         auto &reg = w->registry();
-        w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+        w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
 
         auto &laserPowerUp = reg.getComponents<Ecs::LaserPowerUp>().at(playerIdx);
         if (laserPowerUp) {
@@ -192,7 +194,7 @@ namespace
     void activateShieldPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
     {
         auto &reg = w->registry();
-        w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+        w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
 
         auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
         if (bubblePowerUp) {

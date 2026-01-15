@@ -1,0 +1,15 @@
+{
+  "sprite": "boss2",
+  "spriteId": 20,
+  "texture": "sprites/boss2.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 130, "h": 50, "duration": 0.4 },
+        { "x": 130, "y": 0, "w": 130, "h": 50, "duration": 0.4 }
+      ]
+    }
+  }
+}

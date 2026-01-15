@@ -57,4 +57,9 @@ namespace Ecs
     {
         _commandBuffer.get().push({World::WorldCommand::Type::Destroy, entityId});
     }
+
+    void ClientController::onHealth(const uint16_t currentLife, const uint16_t maxLife)
+    {
+        std::cout << "onHealth: " << currentLife << " / " << maxLife << std::endl;
+    }
 }; // namespace Ecs

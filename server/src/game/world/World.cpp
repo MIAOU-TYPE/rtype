@@ -118,66 +118,86 @@ namespace
         });
     }
 
-    void registerPowerUpBarEvent(Game::IGameWorld &world)
+    void registerPowerUpBarEvents(Game::IGameWorld &world)
     {
         auto *w = &world;
 
-        world.events().subscribe<PowerUpBarEvent>([w](const PowerUpBarEvent &event) {
+        world.events().subscribe<PowerUpBarCreateEvent>([w](const PowerUpBarCreateEvent &event) {
             auto &reg = w->registry();
             auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(event.playerId);
 
-            if (!playerPowerUp)
+            if (!playerPowerUp || playerPowerUp->hasBar)
                 return;
 
-            if (event.create && !playerPowerUp->hasBar) {
-                const float yOffset = (static_cast<float>(event.playerIndex) * 40.f);
-                const Ecs::Entity barEntity = w->createEntity();
-                reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, yOffset});
-                reg.emplaceComponent<Ecs::Velocity>(barEntity, Ecs::Velocity{0.f, 0.f});
-                reg.emplaceComponent<Ecs::Drawable>(barEntity, Ecs::Drawable{16, true});
-                reg.emplaceComponent<Ecs::Id>(
-                    barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
-                playerPowerUp->hasBar = true;
-                playerPowerUp->barEntity = barEntity;
-            } else if (!event.create && playerPowerUp->hasBar && playerPowerUp->barEntity.has_value()) {
-                w->events().emit<DestroyEvent>(
-                    DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
-                playerPowerUp->hasBar = false;
-                playerPowerUp->barEntity = std::nullopt;
-            }
+            const float yOffset = (static_cast<float>(event.playerIndex) * 40.f);
+            const Ecs::Entity barEntity = w->createEntity();
+            reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, yOffset});
+            reg.emplaceComponent<Ecs::Velocity>(barEntity, Ecs::Velocity{0.f, 0.f});
+            reg.emplaceComponent<Ecs::Drawable>(barEntity, Ecs::Drawable{16, true});
+            reg.emplaceComponent<Ecs::Id>(
+                barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
+            playerPowerUp->hasBar = true;
+            playerPowerUp->barEntity = barEntity;
+        });
+
+        world.events().subscribe<PowerUpBarDestroyEvent>([w](const PowerUpBarDestroyEvent &event) {
+            auto &reg = w->registry();
+            auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(event.playerId);
+
+            if (!playerPowerUp || !playerPowerUp->hasBar || !playerPowerUp->barEntity.has_value())
+                return;
+
+            w->events().emit<DestroyEvent>(
+                DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
+            playerPowerUp->hasBar = false;
+            playerPowerUp->barEntity = std::nullopt;
         });
     }
 
-    void registerBubblePowerUpEvent(Game::IGameWorld &world)
+    void registerBubblePowerUpEvents(Game::IGameWorld &world)
     {
         auto *w = &world;
 
-        world.events().subscribe<BubblePowerUpEvent>([w](const BubblePowerUpEvent &event) {
+        world.events().subscribe<BubblePowerUpCreateEvent>([w](const BubblePowerUpCreateEvent &event) {
             auto &reg = w->registry();
             auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
 
-            if (!bubblePowerUp)
+            if (!bubblePowerUp || bubblePowerUp->bubbleEntity.has_value())
                 return;
 
-            if (event.create && !bubblePowerUp->bubbleEntity.has_value()) {
-                const Ecs::Entity bubbleEnt = w->createEntity();
-                reg.emplaceComponent<Ecs::Position>(bubbleEnt, Ecs::Position{event.playerX, event.playerY});
-                reg.emplaceComponent<Ecs::Drawable>(bubbleEnt, Ecs::Drawable{20u, true});
-                bubblePowerUp->bubbleEntity = bubbleEnt;
-                bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
-            } else if (event.updatePos && bubblePowerUp->bubbleEntity.has_value()) {
-                const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
-                if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
-                    bubblePos->x = event.playerX;
-                    bubblePos->y = event.playerY;
-                }
-            } else if (event.destroy && bubblePowerUp->bubbleEntity.has_value()) {
-                w->events().emit<DestroyEvent>(
-                    DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
-                bubblePowerUp->bubbleEntity = std::nullopt;
-                bubblePowerUp->hitsRemaining = 0;
-                reg.getComponents<Ecs::BubblePowerUp>().remove(static_cast<size_t>(event.playerId));
+            const Ecs::Entity bubbleEnt = w->createEntity();
+            reg.emplaceComponent<Ecs::Position>(bubbleEnt, Ecs::Position{event.playerX, event.playerY});
+            reg.emplaceComponent<Ecs::Drawable>(bubbleEnt, Ecs::Drawable{20u, true});
+            bubblePowerUp->bubbleEntity = bubbleEnt;
+            bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+        });
+
+        world.events().subscribe<BubblePowerUpUpdatePosEvent>([w](const BubblePowerUpUpdatePosEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
+                return;
+
+            const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
+            if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
+                bubblePos->x = event.playerX;
+                bubblePos->y = event.playerY;
             }
+        });
+
+        world.events().subscribe<BubblePowerUpDestroyEvent>([w](const BubblePowerUpDestroyEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
+                return;
+
+            w->events().emit<DestroyEvent>(
+                DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
+            bubblePowerUp->bubbleEntity = std::nullopt;
+            bubblePowerUp->hitsRemaining = 0;
+            reg.getComponents<Ecs::BubblePowerUp>().remove(static_cast<size_t>(event.playerId));
         });
     }
 
@@ -283,8 +303,8 @@ namespace Game
         registerProjectileSpawning(*this);
         registerDestroyEvent(*this);
         registerDamageToScore(*this);
-        registerPowerUpBarEvent(*this);
-        registerBubblePowerUpEvent(*this);
+        registerPowerUpBarEvents(*this);
+        registerBubblePowerUpEvents(*this);
         registerPowerUpCollection(*this);
     }
 

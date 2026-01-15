@@ -252,12 +252,6 @@ namespace Thread
          */
         std::atomic_bool _pendingGameStart{false};
         std::atomic_bool _pendingAuthOk{false};
-
-        /**
-         * @brief Last time a shoot input was sent (for cooldown management).
-         * @details Mutable because sendCombinedInput() is const but needs to update this timestamp.
-         */
-        mutable steadyClock::time_point _lastShootTime{steadyClock::now()};
     };
 
 } // namespace Thread

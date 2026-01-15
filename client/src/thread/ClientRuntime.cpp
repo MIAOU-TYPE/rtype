@@ -264,16 +264,8 @@ namespace Thread
             input.left = true;
         if (_input->isKeyHeld(right))
             input.right = true;
-
-        constexpr auto ShootCooldown = std::chrono::milliseconds(250);
-
-        if (_input->isKeyHeld(shoot)) {
-            const auto now = clock::now();
-            if (now - _lastShootTime >= ShootCooldown) {
-                input.shoot = true;
-                _lastShootTime = now;
-            }
-        }
+        if (_input->isKeyHeld(shoot))
+            input.shoot = true;
 
         if (auto packet = _udpPacketFactory.makeInput(input))
             _udpClient->sendPacket(*packet);

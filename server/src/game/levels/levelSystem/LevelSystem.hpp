@@ -27,6 +27,7 @@
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
+#include "GameConfig.hpp"
 #include <unordered_map>
 
 namespace Game

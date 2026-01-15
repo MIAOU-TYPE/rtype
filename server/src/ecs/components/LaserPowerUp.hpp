@@ -20,11 +20,11 @@ namespace Ecs
      * @struct LaserPowerUp
      * @brief Component tracking the laser power-up state for a player.
      *
-     * When active, the player fires a continuous laser beam that destroys
+     * When this component is present, the player fires a continuous laser beam that destroys
      * all enemies in its path for a limited duration.
+     * The component is removed when the laser duration expires.
      */
     struct LaserPowerUp {
-        bool isActive = false;   ///> Whether the laser is currently active
         float duration = 0.f;    ///> Current duration timer (seconds)
         float maxDuration = 5.f; ///> Maximum duration of the laser (seconds)
     };

@@ -7,29 +7,28 @@
 
 #include "LevelSystem.hpp"
 
-constexpr float COLLISION_SCALE = 1.7f;
-
 namespace
 {
-    std::vector<float> calculateSpawnPositions(const std::string &pattern, float centerY, int count)
+    [[nodiscard]] std::vector<float> calculateSpawnPositions(
+        const std::string &pattern, const float centerY, const int count)
     {
         std::vector<float> positions;
         positions.reserve(static_cast<size_t>(count));
 
         if (pattern == "line") {
-            float spacing = 80.f;
+            constexpr float spacing = 80.f;
             float startY = centerY - (spacing * static_cast<float>(count - 1) / 2.f);
             for (int i = 0; i < count; i++)
                 positions.push_back(startY + static_cast<float>(i) * spacing);
         } else if (pattern == "spread") {
-            float minY = 50.f;
-            float maxY = 600.f;
+            constexpr float minY = 50.f;
+            constexpr float maxY = 600.f;
 
             if (count <= 0)
                 return positions;
-            if (count == 1) {
+            if (count == 1)
                 positions.push_back((minY + maxY) / 2.f);
-            } else {
+            else {
                 float step = (maxY - minY) / static_cast<float>(count - 1);
                 for (int i = 0; i < count; i++)
                     positions.push_back(minY + static_cast<float>(i) * step);
@@ -95,14 +94,14 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, float centerY, bool isBoss)
+        const std::string &pattern, const float centerY, bool isBoss)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
         if (basePositions.empty())
             return;
 
-        const float baseY = basePositions[0];
+        const float baseY = basePositions.at(0);
         const float baseX = 1400.f;
 
         for (const auto &member : groupDef.members) {
@@ -117,12 +116,12 @@ namespace Game
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y, bool isBoss)
+    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y, bool isBoss)
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
 
         if (isBoss)
@@ -183,12 +182,12 @@ namespace Game
         reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
     }
 
-    void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y)
+    void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y)
     {
         auto &reg = world.registry();
         const Ecs::Entity obstacle = world.createEntity();
 
-        reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y});
+        reg.emplaceComponent<Ecs::Position>(obstacle, Ecs::Position{x, y, 1});
         reg.emplaceComponent<Ecs::Velocity>(obstacle, Ecs::Velocity{0.f, 0.f});
         reg.emplaceComponent<Ecs::GravityField>(
             obstacle, Ecs::GravityField{def.pullStrength, def.damagePerSecond, def.radius, def.innerRadius});

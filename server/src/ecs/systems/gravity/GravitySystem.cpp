@@ -9,21 +9,19 @@
 
 namespace Game
 {
-    void GravitySystem::update(IGameWorld &world, float dt)
+    void GravitySystem::update(IGameWorld &world, const float dt)
     {
         auto &reg = world.registry();
 
         const float dampingFactor = 0.95f;
         reg.view<Ecs::Velocity, Ecs::GravityAffected>(
             [&](const Ecs::Entity, Ecs::Velocity &vel, const Ecs::GravityAffected &affected) {
-                if (affected.isAffected) {
-                    vel.vx *= dampingFactor;
-                    vel.vy *= dampingFactor;
-                }
+                vel.vx *= dampingFactor;
+                vel.vy *= dampingFactor;
             });
 
         reg.view<Ecs::Position, Ecs::GravityField, Ecs::Id>(
-            [&](const Ecs::Entity entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {
+            [&](const Ecs::Entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {
                 field.lifetime -= dt;
                 if (field.lifetime <= 0.0f) {
                     world.events().emit(DestroyEvent{id.id});
@@ -32,7 +30,7 @@ namespace Game
                 reg.view<Ecs::Position, Ecs::Velocity, Ecs::Health, Ecs::GravityAffected, Ecs::Id>(
                     [&](const Ecs::Entity, Ecs::Position &pos, Ecs::Velocity &vel, const Ecs::Health &hp,
                         const Ecs::GravityAffected &affected, const Ecs::Id &targetId) {
-                        if (!affected.isAffected || hp.hp <= 0)
+                        if (hp.hp <= 0)
                             return;
 
                         const float dx = gravPos.x - pos.x;

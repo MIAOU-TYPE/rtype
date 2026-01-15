@@ -24,4 +24,4 @@ struct DestroyData {
 
 #pragma pack(pop)
 
-static_assert(sizeof(DestroyData) == sizeof(HeaderData) + 5, "DestroyData layout mismatch");
+static_assert(sizeof(DestroyData) == sizeof(HeaderData) + 4 + 1, "DestroyData layout mismatch");

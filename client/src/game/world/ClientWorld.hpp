@@ -53,7 +53,7 @@ namespace World
          * @brief Provides access to the entity registry.
          * @return Reference to the entity registry.
          */
-        Ecs::Registry &registry();
+        [[nodiscard]] Ecs::Registry &registry();
 
         /**
          * @brief Applies a world command to the client world.
@@ -65,13 +65,13 @@ namespace World
          * @brief Gets the current score.
          * @return The current score.
          */
-        uint32_t getScore() const noexcept;
+        [[nodiscard]] uint32_t getScore() const noexcept;
 
         /**
          * @brief get the id of the player entity
          * @return the id of the player entity
          */
-        int getEntityPlayerId() const noexcept;
+        [[nodiscard]] int getEntityPlayerId() const noexcept;
 
         /**
          * @brief Applies a snapshot of entities to the client world.

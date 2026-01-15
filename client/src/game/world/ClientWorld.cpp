@@ -214,7 +214,9 @@ namespace World
 
     void ClientWorld::reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions)
     {
-        const auto itEnt = _entityMap.find(static_cast<std::uint32_t>(_entityPlayerId));
+        if (_entityPlayerId < 0)
+            return;
+        const auto itEnt = _entityMap.find(static_cast<uint32_t>(_entityPlayerId));
         if (itEnt == _entityMap.end())
             return;
 

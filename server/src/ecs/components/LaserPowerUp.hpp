@@ -24,9 +24,8 @@ namespace Ecs
      * all enemies in its path for a limited duration.
      */
     struct LaserPowerUp {
-        bool isActive = false;             ///> Whether the laser is currently active
-        float duration = 0.f;              ///> Current duration timer (seconds)
-        float maxDuration = 5.f;           ///> Maximum duration of the laser (seconds)
-        std::optional<Entity> laserEntity; ///> The entity ID of the laser beam
+        bool isActive = false;   ///> Whether the laser is currently active
+        float duration = 0.f;    ///> Current duration timer (seconds)
+        float maxDuration = 5.f; ///> Maximum duration of the laser (seconds)
     };
 } // namespace Ecs

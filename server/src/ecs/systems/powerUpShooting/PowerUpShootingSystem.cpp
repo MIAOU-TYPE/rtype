@@ -9,21 +9,6 @@
 
 namespace Game
 {
-    void PowerUpShootingSystem::createPowerUpProjectile(
-        IGameWorld &world, const float x, const float y, const float vx, const float vy, const size_t shooterId)
-    {
-        auto &reg = world.registry();
-        const Ecs::Entity proj = world.createEntity();
-
-        reg.emplaceComponent<Ecs::Position>(proj, Ecs::Position{x, y});
-        reg.emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{vx, vy});
-        reg.emplaceComponent<Ecs::Drawable>(proj, Ecs::Drawable{15, true});
-        reg.emplaceComponent<Ecs::Collision>(proj, Ecs::Collision{48.f, 24.f});
-        reg.emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{shooterId});
-        reg.emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{150});
-        reg.emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{5.f});
-    }
-
     void PowerUpShootingSystem::update(IGameWorld &world, const float dt)
     {
         auto &reg = world.registry();
@@ -45,7 +30,8 @@ namespace Game
                 }
 
                 if (powerUp.isReady && powerShootPressed) {
-                    createPowerUpProjectile(world, pos.x + 40.f, pos.y, 400.f, 0.f, static_cast<size_t>(playerEntity));
+                    world.events().emit<ShootEvent>(ShootEvent{pos.x + 40.f, pos.y, 400.f, 0.f, 150,
+                        static_cast<size_t>(playerEntity), {48.f, 24.f}, 5.f, 21, 1, 1});
                     powerUp.isReady = false;
                     powerUp.cooldown = 0.f;
                     if (powerUp.hasBar && powerUp.barEntity.has_value()) {

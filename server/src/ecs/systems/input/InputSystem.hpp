@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "World.hpp"
 #include "GameConfig.hpp"
+#include "World.hpp"
 
 namespace Game
 {

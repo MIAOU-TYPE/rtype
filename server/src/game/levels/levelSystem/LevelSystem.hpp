@@ -17,6 +17,7 @@
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
+#include "GameConfig.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
@@ -27,7 +28,6 @@
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
-#include "GameConfig.hpp"
 #include <unordered_map>
 
 namespace Game

@@ -82,6 +82,7 @@ struct PlayerConnectedEvent {
     int sessionId;      ///> Session identifier of the connected player
     size_t netPlayerId; ///> Network player entity identifier
 };
+
 /**
  * @struct PowerUpBarEvent
  * @brief Event triggered to create or destroy a power-up bar for a player.

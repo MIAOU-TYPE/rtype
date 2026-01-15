@@ -74,16 +74,15 @@ namespace World
 
         /**
          * @brief Applies damage to an entity and plays hit sound.
-         * @param targetId The ID of the entity that received damage.
+         * @param damageInfo Information about the damage event.
          */
-        void applyDamage(uint32_t targetId);
+        void applyDamage(const DamageInfo &damageInfo);
 
         /**
          * @brief Applies a destroy entity command to the client world.
-         * @param entityId The ID of the entity to be destroyed.
-         * @param wasKilled True if entity was killed by player (play sound), false otherwise.
+         * @param destroyInfo Information about the entity destruction.
          */
-        void applyDestroy(size_t entityId, bool wasKilled);
+        void applyDestroy(const DestroyInfo &destroyInfo);
 
         /**
          * @brief Updates interpolated positions of entities for smooth rendering.

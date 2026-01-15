@@ -56,12 +56,8 @@ namespace World
     {
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<World::SnapshotBatch>(cmd.payload)); break;
-            case WorldCommand::Type::Damage: applyDamage(std::get<uint32_t>(cmd.payload)); break;
-            case WorldCommand::Type::Destroy: {
-                const auto &destroyInfo = std::get<World::DestroyInfo>(cmd.payload);
-                applyDestroy(destroyInfo.entityId, destroyInfo.wasKilled);
-                break;
-            }
+            case WorldCommand::Type::Damage: applyDamage(std::get<World::DamageInfo>(cmd.payload)); break;
+            case WorldCommand::Type::Destroy: applyDestroy(std::get<World::DestroyInfo>(cmd.payload)); break;
             case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
             default: break;
         }
@@ -101,18 +97,18 @@ namespace World
         purgeStaleEntities(std::chrono::milliseconds(500));
     }
 
-    void ClientWorld::applyDestroy(const size_t entityId, const bool wasKilled)
+    void ClientWorld::applyDestroy(const DestroyInfo &destroyInfo)
     {
-        _destroyed.insert(static_cast<uint32_t>(entityId));
+        _destroyed.insert(static_cast<uint32_t>(destroyInfo.entityId));
 
         for (auto &[tick, entities] : _snapshots)
-            entities.erase(entityId);
+            entities.erase(destroyInfo.entityId);
 
-        const auto it = _entityMap.find(entityId);
+        const auto it = _entityMap.find(destroyInfo.entityId);
         if (it == _entityMap.end())
             return;
 
-        if (wasKilled && _soundRegistry) {
+        if (destroyInfo.wasKilled && _soundRegistry) {
             const auto entityIndex = static_cast<size_t>(it->second);
             if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
                 if (_spriteRegistry->exists(drawable->spriteId)) {
@@ -125,12 +121,12 @@ namespace World
 
         _registry.destroyEntity(it->second);
         _entityMap.erase(it);
-        _entityLastSeen.erase(entityId);
+        _entityLastSeen.erase(destroyInfo.entityId);
     }
 
-    void ClientWorld::applyDamage(const uint32_t targetId)
+    void ClientWorld::applyDamage(const DamageInfo &damageInfo)
     {
-        const auto it = _entityMap.find(targetId);
+        const auto it = _entityMap.find(damageInfo.targetId);
         if (it == _entityMap.end())
             return;
 
@@ -335,7 +331,7 @@ namespace World
         }
 
         for (const auto id : toDestroy)
-            applyDestroy(id, false);
+            applyDestroy(DestroyInfo{id, false});
     }
 
 } // namespace World

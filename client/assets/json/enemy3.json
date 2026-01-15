@@ -3,6 +3,8 @@
   "spriteId": 4,
   "texture": "sprites/enemy3.png",
   "default_animation": "idle",
+  "hitSound": "sounds/hit.wav",
+  "destroySound": "sounds/explosion.wav",
   "animations": {
     "idle": {
       "loop": true,

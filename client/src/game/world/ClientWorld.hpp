@@ -15,6 +15,7 @@
 #include "AnimationSystem.hpp"
 #include "Registry.hpp"
 #include "RenderSystem.hpp"
+#include "SoundRegistry.hpp"
 #include "SpriteRegistry.hpp"
 #include "WorldCommand.hpp"
 #include <unordered_map>
@@ -35,10 +36,12 @@ namespace World
             (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
 
         /**
-         * @brief Constructs a ClientWorld with the given SpriteRegistry.
+         * @brief Constructs a ClientWorld with the given SpriteRegistry and SoundRegistry.
          * @param spriteRegistry Shared pointer to the SpriteRegistry used for rendering sprites.
+         * @param soundRegistry Shared pointer to the SoundRegistry used for playing sounds.
          */
-        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry);
+        explicit ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry,
+            std::shared_ptr<Engine::SoundRegistry> soundRegistry);
 
         /**
          * @brief Advances the world state by a given delta time.
@@ -50,7 +53,7 @@ namespace World
          * @brief Provides access to the entity registry.
          * @return Reference to the entity registry.
          */
-        Ecs::Registry &registry();
+        [[nodiscard]] Ecs::Registry &registry();
 
         /**
          * @brief Applies a world command to the client world.
@@ -62,13 +65,13 @@ namespace World
          * @brief Gets the current score.
          * @return The current score.
          */
-        uint32_t getScore() const noexcept;
+        [[nodiscard]] uint32_t getScore() const noexcept;
 
         /**
          * @brief get the id of the player entity
          * @return the id of the player entity
          */
-        int getEntityPlayerId() const noexcept;
+        [[nodiscard]] int getEntityPlayerId() const noexcept;
 
         /**
          * @brief Applies a snapshot of entities to the client world.
@@ -77,10 +80,16 @@ namespace World
         void applySnapshot(const SnapshotBatch &batch);
 
         /**
-         * @brief Applies a destroy entity command to the client world.
-         * @param entityId The ID of the entity to be destroyed.
+         * @brief Applies damage to an entity and plays hit sound.
+         * @param damageInfo Information about the damage event.
          */
-        void applyDestroy(size_t entityId);
+        void applyDamage(const DamageInfo &damageInfo);
+
+        /**
+         * @brief Applies a destroy entity command to the client world.
+         * @param destroyInfo Information about the entity destruction.
+         */
+        void applyDestroy(const DestroyInfo &destroyInfo);
 
         /**
          * @brief Applies an accept command to the client world.
@@ -132,6 +141,8 @@ namespace World
         Ecs::Registry _registry; ///> Entity registry managing entities and their components
         std::shared_ptr<const Engine::SpriteRegistry>
             _spriteRegistry; ///> Shared pointer to the SpriteRegistry for sprite management
+        std::shared_ptr<Engine::SoundRegistry>
+            _soundRegistry; ///> Shared pointer to the SoundRegistry for sound management
 
         std::unordered_map<size_t, Ecs::Entity> _entityMap; ///> Maps network entity IDs to local entity IDs
 

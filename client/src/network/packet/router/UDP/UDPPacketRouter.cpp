@@ -58,6 +58,8 @@ namespace Ecs
 
             case Net::Protocol::UDP::SNAPSHOT_COMPRESSED: handleSnapEntityCompressed(payload, payloadSize); break;
 
+            case Net::Protocol::UDP::DAMAGE_EVENT: handleDamage(payload, payloadSize); break;
+
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
 
             case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
@@ -256,6 +258,21 @@ namespace Ecs
         _sink->onScore(score);
     }
 
+    void UDPPacketRouter::handleDamage(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(DamageData)) {
+            std::cerr << "{UDPPacketRouter::handleDamage} Dropped DAMAGE_EVENT: bad size\n";
+            return;
+        }
+
+        DamageData damageData{};
+        std::memcpy(&damageData, payload, sizeof(damageData));
+        const uint32_t targetId = ntohl(damageData.id);
+        const bool wasKilled = damageData.wasKilled != 0;
+
+        _sink->onDamage(targetId, wasKilled);
+    }
+
     void UDPPacketRouter::handleDestroy(const uint8_t *payload, const size_t size) const
     {
         if (!payload || size != sizeof(DestroyData)) {
@@ -266,7 +283,8 @@ namespace Ecs
         DestroyData destroyData{};
         std::memcpy(&destroyData, payload, sizeof(destroyData));
         const uint32_t entityId = ntohl(destroyData.id);
-        _sink->onDestroy(entityId);
+        const bool wasKilled = destroyData.wasKilled != 0;
+        _sink->onDestroy(entityId, wasKilled);
     }
 
     void UDPPacketRouter::handleHealth(const uint8_t *payload, const size_t size) const

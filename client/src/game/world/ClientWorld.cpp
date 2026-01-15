@@ -32,8 +32,9 @@ namespace
 
 namespace World
 {
-    ClientWorld::ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry)
-        : _spriteRegistry(std::move(spriteRegistry))
+    ClientWorld::ClientWorld(std::shared_ptr<const Engine::SpriteRegistry> spriteRegistry,
+        std::shared_ptr<Engine::SoundRegistry> soundRegistry)
+        : _spriteRegistry(std::move(spriteRegistry)), _soundRegistry(std::move(soundRegistry))
     {
         _registry.registerComponent<Ecs::Position>();
         _registry.registerComponent<Ecs::Drawable>();
@@ -52,11 +53,11 @@ namespace World
     }
 
     void ClientWorld::applyCommand(const WorldCommand &cmd)
-
     {
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotBatch>(cmd.payload)); break;
-            case WorldCommand::Type::Destroy: applyDestroy(std::get<size_t>(cmd.payload)); break;
+            case WorldCommand::Type::Damage: applyDamage(std::get<World::DamageInfo>(cmd.payload)); break;
+            case WorldCommand::Type::Destroy: applyDestroy(std::get<World::DestroyInfo>(cmd.payload)); break;
             case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
             case WorldCommand::Type::Accept: applyAccept(std::get<uint32_t>(cmd.payload)); break;
             default: break;
@@ -102,20 +103,49 @@ namespace World
         purgeStaleEntities(std::chrono::milliseconds(500));
     }
 
-    void ClientWorld::applyDestroy(const size_t entityId)
+    void ClientWorld::applyDestroy(const DestroyInfo &destroyInfo)
     {
-        _destroyed.insert(static_cast<uint32_t>(entityId));
+        _destroyed.insert(static_cast<uint32_t>(destroyInfo.entityId));
 
         for (auto &[tick, entities] : _snapshots)
-            entities.erase(entityId);
+            entities.erase(destroyInfo.entityId);
 
-        const auto it = _entityMap.find(entityId);
+        const auto it = _entityMap.find(destroyInfo.entityId);
         if (it == _entityMap.end())
             return;
 
+        if (destroyInfo.wasKilled && _soundRegistry) {
+            const auto entityIndex = static_cast<size_t>(it->second);
+            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
+                if (_spriteRegistry->exists(drawable->spriteId)) {
+                    const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                    if (sprite.destroySoundHandle != Graphics::InvalidAudio)
+                        _soundRegistry->playSound(sprite.destroySoundHandle);
+                }
+            }
+        }
+
         _registry.destroyEntity(it->second);
         _entityMap.erase(it);
-        _entityLastSeen.erase(entityId);
+        _entityLastSeen.erase(destroyInfo.entityId);
+    }
+
+    void ClientWorld::applyDamage(const DamageInfo &damageInfo)
+    {
+        const auto it = _entityMap.find(damageInfo.targetId);
+        if (it == _entityMap.end())
+            return;
+
+        if (_soundRegistry) {
+            const auto entityIndex = static_cast<size_t>(it->second);
+            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
+                if (_spriteRegistry->exists(drawable->spriteId)) {
+                    const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                    if (sprite.hitSoundHandle != Graphics::InvalidAudio)
+                        _soundRegistry->playSound(sprite.hitSoundHandle);
+                }
+            }
+        }
     }
 
     void ClientWorld::applyAccept(const uint32_t &data)
@@ -127,7 +157,8 @@ namespace World
     {
         try {
             if (!_spriteRegistry->exists(data.spriteId)) {
-                std::cerr << "[ClientWorld] Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
+                std::cerr << "{ClientWorld::applyCreate} Sprite ID " << data.spriteId << " not found in registry!"
+                          << std::endl;
                 return;
             }
 
@@ -140,13 +171,16 @@ namespace World
             const auto &sprite = _spriteRegistry->get(data.spriteId);
 
             if (sprite.textureHandle == Graphics::InvalidTexture) {
-                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                std::cerr << "{ClientWorld::applyCreate} WARNING: Sprite " << data.spriteId
                           << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
             }
 
             _registry.emplaceComponent<Ecs::Render>(entity, Ecs::Render{sprite.textureHandle});
             _registry.emplaceComponent<Ecs::AnimationState>(entity,
                 Ecs::AnimationState{.currentAnimation = sprite.defaultAnimation, .frameIndex = 0, .elapsed = 0.f});
+
+            if (data.spriteId == 6 && _soundRegistry && sprite.shootSoundHandle != Graphics::InvalidAudio)
+                _soundRegistry->playSound(sprite.shootSoundHandle);
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }
@@ -180,7 +214,9 @@ namespace World
 
     void ClientWorld::reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions)
     {
-        const auto itEnt = _entityMap.find(static_cast<std::uint32_t>(_entityPlayerId));
+        if (_entityPlayerId < 0)
+            return;
+        const auto itEnt = _entityMap.find(static_cast<uint32_t>(_entityPlayerId));
         if (itEnt == _entityMap.end())
             return;
 
@@ -310,7 +346,7 @@ namespace World
         }
 
         for (const auto id : toDestroy)
-            applyDestroy(id);
+            applyDestroy(DestroyInfo{id, false});
     }
 
     void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
@@ -338,5 +374,4 @@ namespace World
         pos->x += dx * 7.f;
         pos->y += dy * 7.f;
     }
-
 } // namespace World

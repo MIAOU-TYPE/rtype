@@ -56,16 +56,17 @@ namespace Ecs
         virtual void onScore(uint32_t score) = 0;
 
         /**
-         * @brief Called when a DESTROY message is received.
-         * @param entityId The ID of the entity to be destroyed.
+         * @brief Called when a DAMAGE_EVENT message is received.
+         * @param targetId The ID of the entity that received damage.
+         * @param wasKilled True if the damage killed the entity, false otherwise.
          */
-        virtual void onDestroy(size_t entityId) = 0;
+        virtual void onDamage(size_t targetId, bool wasKilled) = 0;
 
         /**
-         * @brief Called when a HEALTH message is received.
-         * @param currentLife The current life of the entity.
-         * @param maxLife The maximum life of the entity.
+         * @brief Called when a DESTROY message is received.
+         * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed by player (play sound), false otherwise.
          */
-        virtual void onHealth(uint16_t currentLife, uint16_t maxLife) = 0;
+        virtual void onDestroy(size_t entityId, bool wasKilled) = 0;
     };
 } // namespace Ecs

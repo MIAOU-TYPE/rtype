@@ -176,6 +176,58 @@ namespace
         });
     }
 
+    void activateLaserPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        auto &laserPowerUp = reg.getComponents<Ecs::LaserPowerUp>().at(playerIdx);
+        if (laserPowerUp && !laserPowerUp->isActive) {
+            w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+            laserPowerUp->isActive = true;
+            laserPowerUp->duration = 0.f;
+        }
+    }
+
+    void activateShieldPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
+        if (bubblePowerUp && !bubblePowerUp->isActive) {
+            w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+            bubblePowerUp->isActive = true;
+            bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+        }
+    }
+
+    void attachStandardPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        auto &playerPowerUp = *reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
+
+        if (playerPowerUp.hasPowerUp)
+            return;
+
+        if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
+            drawable->spriteId = 14;
+
+        if (auto &vel = reg.getComponents<Ecs::Velocity>().at(powerUpIdx)) {
+            vel->vx = 0.f;
+            vel->vy = 0.f;
+        }
+
+        if (auto &pos = reg.getComponents<Ecs::Position>().at(powerUpIdx)) {
+            const auto &playerPos = reg.getComponents<Ecs::Position>().at(playerIdx);
+            if (playerPos) {
+                pos->x = playerPos->x + 20.f;
+                pos->y = playerPos->y - 10.f;
+            }
+        }
+
+        playerPowerUp.hasPowerUp = true;
+        playerPowerUp.cooldown = 0.f;
+        playerPowerUp.isReady = false;
+        playerPowerUp.powerUpEntity = static_cast<Ecs::Entity>(powerUpIdx);
+    }
+
     void registerPowerUpCollection(Game::IGameWorld &world)
     {
         auto *w = &world;
@@ -205,45 +257,11 @@ namespace
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
 
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Laser) {
-                auto &laserPowerUp = reg.getComponents<Ecs::LaserPowerUp>().at(playerIdx);
-                if (laserPowerUp && !laserPowerUp->isActive) {
-                    w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
-                    laserPowerUp->isActive = true;
-                    laserPowerUp->duration = 0.f;
-                }
+                activateLaserPowerUp(w, powerUpIdx, playerIdx);
             } else if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Shield) {
-                auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
-                if (bubblePowerUp && !bubblePowerUp->isActive) {
-                    w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
-                    bubblePowerUp->isActive = true;
-                    bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
-                }
+                activateShieldPowerUp(w, powerUpIdx, playerIdx);
             } else {
-                auto &playerPowerUp = *reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
-
-                if (playerPowerUp.hasPowerUp)
-                    return;
-
-                if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
-                    drawable->spriteId = 14;
-
-                if (auto &vel = reg.getComponents<Ecs::Velocity>().at(powerUpIdx)) {
-                    vel->vx = 0.f;
-                    vel->vy = 0.f;
-                }
-
-                if (auto &pos = reg.getComponents<Ecs::Position>().at(powerUpIdx)) {
-                    const auto &playerPos = reg.getComponents<Ecs::Position>().at(playerIdx);
-                    if (playerPos) {
-                        pos->x = playerPos->x + 20.f;
-                        pos->y = playerPos->y - 10.f;
-                    }
-                }
-
-                playerPowerUp.hasPowerUp = true;
-                playerPowerUp.cooldown = 0.f;
-                playerPowerUp.isReady = false;
-                playerPowerUp.powerUpEntity = static_cast<Ecs::Entity>(powerUpIdx);
+                attachStandardPowerUp(w, powerUpIdx, playerIdx);
             }
         });
     }

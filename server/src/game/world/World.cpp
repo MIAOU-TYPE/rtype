@@ -43,11 +43,10 @@ namespace
 
             const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
             if (proj) {
-                auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
-                if (sourceHealth) {
+                if (auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source)) {
                     sourceHealth->hp -= 1;
                     if (sourceHealth->hp <= 0)
-                        w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+                        w->events().emit<DestroyEvent>(DestroyEvent{event.source, false});
                 }
             }
 

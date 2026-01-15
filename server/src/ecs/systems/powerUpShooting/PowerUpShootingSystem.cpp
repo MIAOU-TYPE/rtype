@@ -35,7 +35,8 @@ namespace Game
                     powerUp.isReady = false;
                     powerUp.cooldown = 0.f;
                     if (powerUp.hasBar && powerUp.barEntity.has_value()) {
-                        world.destroyEntity(powerUp.barEntity.value());
+                        world.events().emit<DestroyEvent>(
+                            DestroyEvent{static_cast<size_t>(powerUp.barEntity.value()), false});
                         powerUp.hasBar = false;
                         powerUp.barEntity = std::nullopt;
                     }

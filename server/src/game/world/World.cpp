@@ -67,8 +67,11 @@ namespace
 
             if (health->hp > 0)
                 return;
-            if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0)
-                w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
+            if (proj) {
+                if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target);
+                    ks && ks->score > 0)
+                    w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
+            }
         });
     }
 
@@ -207,9 +210,9 @@ namespace
     void attachStandardPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
     {
         auto &reg = w->registry();
-        auto &playerPowerUp = *reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
+        auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
 
-        if (playerPowerUp.hasPowerUp)
+        if (playerPowerUp)
             return;
 
         if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
@@ -228,10 +231,8 @@ namespace
             }
         }
 
-        playerPowerUp.hasPowerUp = true;
-        playerPowerUp.cooldown = 0.f;
-        playerPowerUp.isReady = false;
-        playerPowerUp.powerUpEntity = static_cast<Ecs::Entity>(powerUpIdx);
+        reg.emplaceComponent<Ecs::PlayerPowerUp>(static_cast<Ecs::Entity>(playerIdx),
+            Ecs::PlayerPowerUp{0.f, 5.f, false, false, std::nullopt, static_cast<Ecs::Entity>(powerUpIdx), false});
     }
 
     void registerPowerUpCollection(Game::IGameWorld &world)
@@ -242,10 +243,10 @@ namespace
             auto &reg = w->registry();
 
             const auto &powerUpA = reg.getComponents<Ecs::PowerUp>().at(event.a);
-            const auto &playerB = reg.getComponents<Ecs::PlayerPowerUp>().at(event.b);
+            const auto &playerB = reg.getComponents<Game::InputComponent>().at(event.b);
 
             const auto &powerUpB = reg.getComponents<Ecs::PowerUp>().at(event.b);
-            const auto &playerA = reg.getComponents<Ecs::PlayerPowerUp>().at(event.a);
+            const auto &playerA = reg.getComponents<Game::InputComponent>().at(event.a);
 
             size_t powerUpIdx = 0;
             size_t playerIdx = 0;
@@ -304,14 +305,13 @@ namespace Game
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{500, 500});
-        _registry.emplaceComponent<InputComponent>(ent);
+        _registry.emplaceComponent<Game::InputComponent>(ent);
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
         _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
-        _registry.emplaceComponent<Ecs::PlayerPowerUp>(ent);
         if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
             _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;

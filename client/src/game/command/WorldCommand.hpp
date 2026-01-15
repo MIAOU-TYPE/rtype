@@ -31,6 +31,15 @@ namespace World
     };
 
     /**
+     * @struct DamageInfo
+     * @brief Information about entity damage.
+     */
+    struct DamageInfo {
+        size_t targetId; ///> ID of the entity that received damage
+        bool wasKilled;  ///> True if entity was killed by this damage (play sound), false otherwise
+    };
+
+    /**
      * @struct WorldCommand
      * @brief Represents a command sent to or from the game world.
      */
@@ -47,7 +56,7 @@ namespace World
         };
 
         Type type; ///> Type of the command
-        std::variant<std::monostate, SnapshotBatch, DestroyInfo, uint32_t>
-            payload; ///> Command payload (uint32_t used for both Damage targetId and Score)
+        std::variant<std::monostate, SnapshotBatch, DestroyInfo, DamageInfo, uint32_t>
+            payload; ///> Command payload (uint32_t used for Score)
     };
 } // namespace World

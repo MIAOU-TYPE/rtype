@@ -69,7 +69,7 @@ namespace Ecs
          * @param targetId The ID of the entity that received damage.
          * @param wasKilled True if the damage killed the entity, false otherwise.
          */
-        void onDamage(uint32_t targetId, bool wasKilled) override;
+        void onDamage(size_t targetId, bool wasKilled) override;
 
         /**
          * @brief Called when a DESTROY message is received.

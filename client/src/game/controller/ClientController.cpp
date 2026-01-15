@@ -50,10 +50,9 @@ namespace Ecs
         _commandBuffer.get().push({World::WorldCommand::Type::Score, score});
     }
 
-    void ClientController::onDamage(const uint32_t targetId, const bool wasKilled)
+    void ClientController::onDamage(const size_t targetId, const bool wasKilled)
     {
-        if (!wasKilled)
-            _commandBuffer.get().push({World::WorldCommand::Type::Damage, targetId});
+        _commandBuffer.get().push({World::WorldCommand::Type::Damage, World::DamageInfo{targetId, wasKilled}});
     }
 
     void ClientController::onDestroy(const size_t entityId, const bool wasKilled)

@@ -12,7 +12,6 @@
 #include <iostream>
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
-#include "Attack.hpp"
 #include "Background.hpp"
 #include "BossPhase.hpp"
 #include "Collision.hpp"

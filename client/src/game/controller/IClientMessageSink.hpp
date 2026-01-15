@@ -25,7 +25,7 @@ namespace Ecs
         /**
          * @brief Called when an ACCEPT message is received.
          */
-        virtual void onAccept() = 0;
+        virtual void onAccept(uint32_t sessionId) = 0;
 
         /**
          * @brief Called when a REJECT message is received.
@@ -56,9 +56,17 @@ namespace Ecs
         virtual void onScore(uint32_t score) = 0;
 
         /**
+         * @brief Called when a DAMAGE_EVENT message is received.
+         * @param targetId The ID of the entity that received damage.
+         * @param wasKilled True if the damage killed the entity, false otherwise.
+         */
+        virtual void onDamage(size_t targetId, bool wasKilled) = 0;
+
+        /**
          * @brief Called when a DESTROY message is received.
          * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed by player (play sound), false otherwise.
          */
-        virtual void onDestroy(size_t entityId) = 0;
+        virtual void onDestroy(size_t entityId, bool wasKilled) = 0;
     };
 } // namespace Ecs

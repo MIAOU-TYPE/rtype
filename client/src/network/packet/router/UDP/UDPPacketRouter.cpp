@@ -37,10 +37,7 @@ namespace Ecs
         const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
     {
         switch (header.type) {
-            case Net::Protocol::UDP::ACCEPT:
-                if (payloadSize == sizeof(DefaultData))
-                    handleAccept();
-                break;
+            case Net::Protocol::UDP::ACCEPT: handleAccept(payload, payloadSize); break;
 
             case Net::Protocol::UDP::REJECT:
                 if (payloadSize == sizeof(DefaultData))
@@ -60,6 +57,8 @@ namespace Ecs
             case Net::Protocol::UDP::SNAPSHOT_RAW: handleSnapEntityRaw(payload, payloadSize); break;
 
             case Net::Protocol::UDP::SNAPSHOT_COMPRESSED: handleSnapEntityCompressed(payload, payloadSize); break;
+
+            case Net::Protocol::UDP::DAMAGE_EVENT: handleDamage(payload, payloadSize); break;
 
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
 
@@ -123,9 +122,16 @@ namespace Ecs
         return isHeaderValid(packet, outHeader);
     }
 
-    void UDPPacketRouter::handleAccept() const
+    void UDPPacketRouter::handleAccept(const uint8_t *payload, const size_t size) const
     {
-        _sink->onAccept();
+        if (!payload || size != sizeof(AcceptData)) {
+            std::cerr << "{UDPPacketRouter::handleAccept} Dropped ACCEPT: bad size\n";
+            return;
+        }
+        AcceptData acceptData;
+        std::memcpy(&acceptData, payload, sizeof(acceptData));
+        const uint32_t netPlayerId = ntohl(acceptData.netPlayerId);
+        _sink->onAccept(netPlayerId);
     }
 
     void UDPPacketRouter::handleReject() const
@@ -250,6 +256,21 @@ namespace Ecs
         _sink->onScore(score);
     }
 
+    void UDPPacketRouter::handleDamage(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(DamageData)) {
+            std::cerr << "{UDPPacketRouter::handleDamage} Dropped DAMAGE_EVENT: bad size\n";
+            return;
+        }
+
+        DamageData damageData{};
+        std::memcpy(&damageData, payload, sizeof(damageData));
+        const uint32_t targetId = ntohl(damageData.id);
+        const bool wasKilled = damageData.wasKilled != 0;
+
+        _sink->onDamage(targetId, wasKilled);
+    }
+
     void UDPPacketRouter::handleDestroy(const uint8_t *payload, const size_t size) const
     {
         if (!payload || size != sizeof(DestroyData)) {
@@ -260,7 +281,8 @@ namespace Ecs
         DestroyData destroyData{};
         std::memcpy(&destroyData, payload, sizeof(destroyData));
         const uint32_t entityId = ntohl(destroyData.id);
-        _sink->onDestroy(entityId);
+        const bool wasKilled = destroyData.wasKilled != 0;
+        _sink->onDestroy(entityId, wasKilled);
     }
 
     void UDPPacketRouter::purgeExpired(const std::chrono::steady_clock::time_point now) const

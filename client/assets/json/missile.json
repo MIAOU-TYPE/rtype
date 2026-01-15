@@ -3,6 +3,7 @@
   "spriteId": 6,
   "texture": "sprites/missile.png",
   "default_animation": "fly",
+  "shootSound": "sounds/shoot.wav",
   "animations": {
     "fly": {
       "loop": true,

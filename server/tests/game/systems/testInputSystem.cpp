@@ -12,7 +12,7 @@
 TEST(InputSystem, input_dont_affect_velocity)
 {
     Game::World world;
-    auto e = world.createPlayer();
+    auto e = world.createPlayer(1);
 
     auto &reg = world.registry();
 
@@ -31,7 +31,7 @@ TEST(InputSystem, input_dont_affect_velocity)
 TEST(InputSystem, diagonal_movement)
 {
     Game::World world;
-    auto e = world.createPlayer();
+    auto e = world.createPlayer(1);
 
     auto &reg = world.registry();
 

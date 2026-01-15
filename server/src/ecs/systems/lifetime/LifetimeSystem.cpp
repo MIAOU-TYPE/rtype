@@ -16,7 +16,7 @@ namespace Game
         reg.view<Ecs::Lifetime, Ecs::Id>([&](const Ecs::Entity, Ecs::Lifetime &life, const Ecs::Id &id) {
             life.remaining -= dt;
             if (life.remaining <= 0.f)
-                world.events().emit<DestroyEvent>(DestroyEvent{id.id});
+                world.events().emit<DestroyEvent>(DestroyEvent{id.id, false});
         });
     }
 } // namespace Game

@@ -3,6 +3,8 @@
   "spriteId": 1,
   "texture": "sprites/boss.png",
   "default_animation": "idle",
+  "hitSound": "sounds/hit.wav",
+  "destroySound": "sounds/explosion.wav",
   "animations": {
     "idle": {
       "loop": true,

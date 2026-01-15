@@ -24,7 +24,7 @@ namespace Game
             [&](const Ecs::Entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {
                 field.lifetime -= dt;
                 if (field.lifetime <= 0.0f) {
-                    world.events().emit(DestroyEvent{id.id});
+                    world.events().emit(DestroyEvent{id.id, false});
                     return;
                 }
                 reg.view<Ecs::Position, Ecs::Velocity, Ecs::Health, Ecs::GravityAffected, Ecs::Id>(

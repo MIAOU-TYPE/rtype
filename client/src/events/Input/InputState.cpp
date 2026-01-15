@@ -57,7 +57,7 @@ namespace Engine
         return out;
     }
 
-    bool InputState::isKeyHeld(const Key key) const
+    [[nodiscard]] bool InputState::isKeyHeld(const Key key) const noexcept
     {
         return _heldKeys.contains(key);
     }

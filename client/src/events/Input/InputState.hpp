@@ -75,7 +75,7 @@ namespace Engine
          * @param key The key to check.
          * @return True if the key is held, false otherwise.
          */
-        bool isKeyHeld(Key key) const;
+        [[nodiscard]] bool isKeyHeld(Key key) const noexcept;
 
       private:
         InputFrame _frame;                 ///> The current input frame state.

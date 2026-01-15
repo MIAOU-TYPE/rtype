@@ -42,6 +42,8 @@ struct ShootEvent {
     std::pair<float, float> bounds; ///> Width and height of the projectile
     float lifetime;                 ///> Lifetime of the projectile in seconds
     unsigned int spriteId;          ///> Sprite ID for rendering the projectile
+    int health;                     ///> Health of the projectile
+    int maxHealth;                  ///> Max health of the projectile
 };
 
 /**
@@ -68,4 +70,14 @@ struct UpdateScoreEvent {
 struct ScoreUpdatedEvent {
     size_t playerId;       ///> ID of the player whose score was updated
     unsigned int newScore; ///> The player's new total score
+};
+
+/**
+ * @struct PowerUpBarEvent
+ * @brief Event triggered to create or destroy a power-up bar for a player.
+ */
+struct PowerUpBarEvent {
+    size_t playerId; ///> ID of the player entity
+    bool create;     ///> True to create, false to destroy
+    int playerIndex; ///> Index of the player for positioning
 };

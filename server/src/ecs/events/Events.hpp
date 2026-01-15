@@ -81,3 +81,16 @@ struct PowerUpBarEvent {
     bool create;     ///> True to create, false to destroy
     int playerIndex; ///> Index of the player for positioning
 };
+
+/**
+ * @struct BubblePowerUpEvent
+ * @brief Event triggered to create, update or destroy a bubble shield.
+ */
+struct BubblePowerUpEvent {
+    size_t playerId; ///> ID of the player entity
+    float playerX;   ///> Player's X position
+    float playerY;   ///> Player's Y position
+    bool create;     ///> True to create the bubble
+    bool updatePos;  ///> True to update bubble position
+    bool destroy;    ///> True to destroy the bubble
+};

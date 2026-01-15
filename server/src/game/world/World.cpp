@@ -42,6 +42,8 @@ namespace
                 health->hp = 0;
             else
                 health->hp -= event.amount;
+            w->events().emit<DamageApplyEvent>(DamageApplyEvent{
+                event.target, static_cast<uint32_t>(health->hp), static_cast<uint32_t>(health->maxHp)});
 
             if (health->hp > 0)
                 return;

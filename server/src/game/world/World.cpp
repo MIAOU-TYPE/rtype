@@ -19,14 +19,12 @@ namespace
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
-            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB) {
+            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB)
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
-            }
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA) {
+            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA)
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
-            }
         });
     }
 
@@ -43,10 +41,17 @@ namespace
             else
                 health->hp -= event.amount;
 
-            if (health->hp > 0)
-                return;
             const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
-            if (!proj)
+            if (proj) {
+                auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
+                if (sourceHealth) {
+                    sourceHealth->hp -= 1;
+                    if (sourceHealth->hp <= 0)
+                        w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+                }
+            }
+
+            if (health->hp > 0)
                 return;
             if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0)
                 w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
@@ -122,13 +127,14 @@ namespace Game
 
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
-        _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{100, 100});
+        _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{500, 500});
         _registry.emplaceComponent<InputComponent>(ent);
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
-        _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{30, 15});
+        _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
+        _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
         if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
             _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;

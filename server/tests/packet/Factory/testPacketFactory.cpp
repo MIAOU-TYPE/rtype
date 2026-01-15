@@ -68,8 +68,9 @@ TEST(UDPPacketFactory, MakeDamagePacket)
     sockaddr_in addr = makeAddr(0xDEADBEEF, 7777);
     uint32_t id = 4242;
     uint16_t amount = 1337;
+    bool wasKilled = true;
 
-    auto p = f.makeDamage(addr, id, amount);
+    auto p = f.makeDamage(addr, id, amount, wasKilled);
     ASSERT_NE(p, nullptr);
 
     const auto *raw = reinterpret_cast<const DamageData *>(p->buffer());
@@ -77,4 +78,5 @@ TEST(UDPPacketFactory, MakeDamagePacket)
     EXPECT_EQ(raw->header.type, Net::Protocol::UDP::DAMAGE_EVENT);
     EXPECT_EQ(raw->id, htonl(id));
     EXPECT_EQ(raw->amount, htons(amount));
+    EXPECT_EQ(raw->wasKilled, 1);
 }

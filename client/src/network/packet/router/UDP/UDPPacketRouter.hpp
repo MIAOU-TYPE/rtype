@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 #include "AcceptData.hpp"
+#include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
 #include "Endian.hpp"
@@ -125,6 +126,13 @@ namespace Ecs
          * @param size Size of the payload data.
          */
         void handleScore(const uint8_t *payload, size_t size) const;
+
+        /**
+         * @brief Handler for DAMAGE_EVENT packets.
+         * @param payload Pointer to the payload data of the DAMAGE_EVENT packet.
+         * @param size Size of the payload data.
+         */
+        void handleDamage(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for DESTROY packets.

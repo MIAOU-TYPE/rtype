@@ -14,6 +14,7 @@
 #include "CommandBuffer.hpp"
 #include "Damage.hpp"
 #include "GameClock.hpp"
+#include "GravitySystem.hpp"
 #include "HealthSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"

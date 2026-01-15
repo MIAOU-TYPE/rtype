@@ -6,6 +6,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <numbers>
 #include "InputSystem.hpp"
 #include "World.hpp"
 
@@ -45,6 +46,8 @@ TEST(InputSystem, diagonal_movement)
 
     auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
 
-    ASSERT_EQ(pos->x, (beforePos->x - 7.f));
-    ASSERT_EQ(pos->y, (beforePos->y - 7.f));
+    // With diagonal normalization: speed * (1/sqrt(2)) = 3.5 * 0.7071... ≈ 2.475
+    constexpr float expectedDelta = 3.5f / std::numbers::sqrt2_v<float>;
+    ASSERT_NEAR(pos->x, beforePos->x - expectedDelta, 0.001f);
+    ASSERT_NEAR(pos->y, beforePos->y - expectedDelta, 0.001f);
 }

@@ -19,14 +19,12 @@ namespace
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
-            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB) {
+            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB)
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
-            }
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA) {
+            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA)
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
-            }
         });
     }
 
@@ -44,8 +42,14 @@ namespace
                 health->hp -= event.amount;
 
             const auto &proj = w->registry().getComponents<Ecs::Projectile>().at(event.source);
-            if (proj)
-                w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+            if (proj) {
+                auto &sourceHealth = w->registry().getComponents<Ecs::Health>().at(event.source);
+                if (sourceHealth) {
+                    sourceHealth->hp -= 1;
+                    if (sourceHealth->hp <= 0)
+                        w->events().emit<DestroyEvent>(DestroyEvent{event.source});
+                }
+            }
 
             if (health->hp > 0)
                 return;
@@ -130,7 +134,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
-        _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{true});
+        _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
         return ent;
     }
 

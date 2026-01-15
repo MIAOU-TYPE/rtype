@@ -79,11 +79,31 @@ namespace Thread
             throw;
         }
         _running = true;
+        applyLoadedSettings();
         setupGlobalEventHandlers();
         setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
+    }
+
+    void ClientRuntime::applyLoadedSettings() const noexcept
+    {
+        const auto &config = Utils::SettingsConfig::getInstance();
+
+        const float musicVolume = config.isMusicMuted() ? 0.f : static_cast<float>(config.getMusicVolume());
+        _musicRegistry->setMusicVolume(musicVolume);
+        if (config.isMusicMuted())
+            _musicRegistry->setVolumeBeforeMute(static_cast<float>(config.getMusicVolume()));
+
+        const float sfxVolume = config.isSfxMuted() ? 0.f : static_cast<float>(config.getSfxVolume());
+        _soundRegistry->setSoundVolume(sfxVolume);
+        if (config.isSfxMuted())
+            _soundRegistry->setVolumeBeforeMute(static_cast<float>(config.getSfxVolume()));
+
+        _graphics->setResolution(config.getResolution());
+
+        _renderer->setColorBlindMode(config.getColorBlindMode());
     }
 
     void ClientRuntime::stop()
@@ -137,9 +157,9 @@ namespace Thread
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
-            if (Utils::InputConfig::getInstance().needsRebind()) {
+            if (Utils::SettingsConfig::getInstance().needsRebind()) {
                 rebindControls();
-                Utils::InputConfig::getInstance().clearRebindFlag();
+                Utils::SettingsConfig::getInstance().clearRebindFlag();
             }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
@@ -243,7 +263,7 @@ namespace Thread
 
     void ClientRuntime::setupEventsRegistry() const
     {
-        const auto [up, down, left, right] = Utils::InputConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         _eventRegistry->onKeyPressed(up, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
@@ -261,7 +281,7 @@ namespace Thread
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
         });
 
-        _eventRegistry->onKeyReleased(Engine::Key::Space, [this]() {
+        _eventRegistry->onKeyReleased(shoot, [this]() {
             _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
         });
     }

@@ -33,6 +33,9 @@
 
 namespace Game
 {
+
+    constexpr float COLLISION_SCALE = 1.7f; ///> Scale factor for enemy collision boxes
+
     /**
      * @brief System responsible for managing level progression and enemy spawning.
      */
@@ -85,7 +88,7 @@ namespace Game
          * @param centerY Center Y position for pattern spawning.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, float centerY);
+            const std::string &pattern, const float centerY);
 
         /**
          * @brief Spawn a single enemy at a specific position.
@@ -105,7 +108,7 @@ namespace Game
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
          */
-        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y);
 
         /**
          * @brief Create a single background entity with given parameters.

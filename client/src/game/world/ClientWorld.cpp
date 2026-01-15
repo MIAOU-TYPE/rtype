@@ -150,7 +150,8 @@ namespace World
     {
         try {
             if (!_spriteRegistry->exists(data.spriteId)) {
-                std::cerr << "[ClientWorld] Sprite ID " << data.spriteId << " not found in registry!" << std::endl;
+                std::cerr << "{ClientWorld::applyCreate} Sprite ID " << data.spriteId << " not found in registry!"
+                          << std::endl;
                 return;
             }
 
@@ -163,7 +164,7 @@ namespace World
             const auto &sprite = _spriteRegistry->get(data.spriteId);
 
             if (sprite.textureHandle == Graphics::InvalidTexture) {
-                std::cerr << "[ClientWorld] WARNING: Sprite " << data.spriteId
+                std::cerr << "{ClientWorld::applyCreate} WARNING: Sprite " << data.spriteId
                           << " has invalid texture handle! Path: " << sprite.texturePath << std::endl;
             }
 

@@ -36,6 +36,6 @@ namespace Game
          * @param world The game world.
          * @param dt Delta time in seconds.
          */
-        static void update(IGameWorld &world, float dt);
+        static void update(IGameWorld &world, const float dt);
     };
 } // namespace Game

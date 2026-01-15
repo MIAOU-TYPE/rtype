@@ -21,6 +21,7 @@
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
 #include "Endian.hpp"
+#include "HealthData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "ScoreData.hpp"
@@ -131,6 +132,16 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> createAcceptPacket(
             const sockaddr_in &addr, size_t entityId) const noexcept;
+
+        /**
+         * @brief Creates a health packet with the specified current and maximum life.
+         * @param addr The address to which the packet will be sent.
+         * @param currentLife The current life of the entity.
+         * @param maxLife The maximum life of the entity.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createHealthPacket(
+            const sockaddr_in &addr, uint16_t currentLife, uint16_t maxLife) const noexcept;
 
       private:
         /*

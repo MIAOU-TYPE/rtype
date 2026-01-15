@@ -62,8 +62,8 @@ namespace Engine
                 }
 
                 if (drawable.spriteId == 20) {
-                    cmd.scale = {2.3f, 2.3f};
-                    cmd.position = {finalX - 20.f, finalY - 20.f};
+                    cmd.scale = {3.f, 3.f};
+                    cmd.position = {finalX - 20.f, finalY - 30.f};
                 }
 
                 out.push_back(cmd);

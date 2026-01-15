@@ -22,7 +22,7 @@ namespace Game
                 auto &powerUpPos = reg.getComponents<Ecs::Position>().at(powerUpIdx);
 
                 if (powerUpPos) {
-                    powerUpPos->x = playerPos.x + 30.f;
+                    powerUpPos->x = playerPos.x + 50.f;
                     powerUpPos->y = playerPos.y;
                 }
             });

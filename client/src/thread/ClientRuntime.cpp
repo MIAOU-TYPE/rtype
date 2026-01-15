@@ -80,7 +80,6 @@ namespace Thread
         _running = true;
         applyLoadedSettings();
         setupGlobalEventHandlers();
-        setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -140,12 +139,6 @@ namespace Thread
         return _eventBus;
     }
 
-    void ClientRuntime::rebindControls() const
-    {
-        _eventRegistry->clear();
-        setupEventsRegistry();
-    }
-
     void ClientRuntime::runDisplay()
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
@@ -155,11 +148,6 @@ namespace Thread
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
-
-            if (Utils::SettingsConfig::getInstance().needsRebind()) {
-                rebindControls();
-                Utils::SettingsConfig::getInstance().clearRebindFlag();
-            }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
@@ -237,6 +225,8 @@ namespace Thread
             processNetworkPackets(deadline, 256);
             applyWorldCommands(deadline, 500);
 
+            sendCombinedInput();
+
             _world->updateInterpolatedPositions();
 
             int steps = 0;
@@ -260,29 +250,34 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::setupEventsRegistry() const
+    void ClientRuntime::sendCombinedInput() const
     {
         const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
-        _eventRegistry->onKeyPressed(up, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{true, false, false, false, false}));
-        });
+        PlayerInput input{false, false, false, false, false};
 
-        _eventRegistry->onKeyPressed(down, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, true, false, false, false}));
-        });
+        if (_input->isKeyHeld(up))
+            input.up = true;
+        if (_input->isKeyHeld(down))
+            input.down = true;
+        if (_input->isKeyHeld(left))
+            input.left = true;
+        if (_input->isKeyHeld(right))
+            input.right = true;
+        
+        static auto lastShootTime = clock::now();
+        constexpr auto ShootCooldown = std::chrono::milliseconds(250);
+        
+        if (_input->isKeyHeld(shoot)) {
+            const auto now = clock::now();
+            if (now - lastShootTime >= ShootCooldown) {
+                input.shoot = true;
+                lastShootTime = now;
+            }
+        }
 
-        _eventRegistry->onKeyPressed(left, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, true, false, false}));
-        });
-
-        _eventRegistry->onKeyPressed(right, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, true, false}));
-        });
-
-        _eventRegistry->onKeyReleased(shoot, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
-        });
+        if (auto packet = _udpPacketFactory.makeInput(input))
+            _udpClient->sendPacket(*packet);
     }
 
     void ClientRuntime::setupGlobalEventHandlers()

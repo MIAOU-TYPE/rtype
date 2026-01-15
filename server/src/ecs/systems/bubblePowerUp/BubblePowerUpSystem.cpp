@@ -15,9 +15,6 @@ namespace Game
 
         reg.view<Ecs::BubblePowerUp, Ecs::Position>(
             [&](const Ecs::Entity playerEntity, Ecs::BubblePowerUp &bubble, const Ecs::Position &playerPos) {
-                if (!bubble.isActive)
-                    return;
-
                 if (!bubble.bubbleEntity.has_value()) {
                     world.events().emit<BubblePowerUpEvent>(BubblePowerUpEvent{
                         static_cast<size_t>(playerEntity), playerPos.x, playerPos.y, true, false, false});

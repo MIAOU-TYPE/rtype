@@ -84,24 +84,46 @@ struct PlayerConnectedEvent {
 };
 
 /**
- * @struct PowerUpBarEvent
- * @brief Event triggered to create or destroy a power-up bar for a player.
+ * @struct PowerUpBarCreateEvent
+ * @brief Event triggered to create a power-up bar for a player.
  */
-struct PowerUpBarEvent {
+struct PowerUpBarCreateEvent {
     size_t playerId; ///> ID of the player entity
-    bool create;     ///> True to create, false to destroy
     int playerIndex; ///> Index of the player for positioning
 };
 
 /**
- * @struct BubblePowerUpEvent
- * @brief Event triggered to create, update or destroy a bubble shield.
+ * @struct PowerUpBarDestroyEvent
+ * @brief Event triggered to destroy a power-up bar for a player.
  */
-struct BubblePowerUpEvent {
+struct PowerUpBarDestroyEvent {
+    size_t playerId; ///> ID of the player entity
+};
+
+/**
+ * @struct BubblePowerUpCreateEvent
+ * @brief Event triggered to create a bubble shield.
+ */
+struct BubblePowerUpCreateEvent {
     size_t playerId; ///> ID of the player entity
     float playerX;   ///> Player's X position
     float playerY;   ///> Player's Y position
-    bool create;     ///> True to create the bubble
-    bool updatePos;  ///> True to update bubble position
-    bool destroy;    ///> True to destroy the bubble
+};
+
+/**
+ * @struct BubblePowerUpUpdatePosEvent
+ * @brief Event triggered to update bubble shield position.
+ */
+struct BubblePowerUpUpdatePosEvent {
+    size_t playerId; ///> ID of the player entity
+    float playerX;   ///> Player's X position
+    float playerY;   ///> Player's Y position
+};
+
+/**
+ * @struct BubblePowerUpDestroyEvent
+ * @brief Event triggered to destroy a bubble shield.
+ */
+struct BubblePowerUpDestroyEvent {
+    size_t playerId; ///> ID of the player entity
 };

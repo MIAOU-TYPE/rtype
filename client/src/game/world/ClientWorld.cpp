@@ -371,7 +371,7 @@ namespace World
         auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
         if (!pos)
             return;
-        pos->x += dx * 7.f;
-        pos->y += dy * 7.f;
+        pos->x += dx * 3.5f;
+        pos->y += dy * 3.5f;
     }
 } // namespace World

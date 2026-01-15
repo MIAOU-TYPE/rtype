@@ -28,7 +28,7 @@ class ShootingSystemTests : public ::testing::Test {
 
     void run()
     {
-        Game::ShootingSystem::update(world);
+        Game::ShootingSystem::update(world, 0.1f);
         world.events().process();
     }
 };

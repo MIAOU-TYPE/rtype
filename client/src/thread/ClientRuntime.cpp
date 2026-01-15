@@ -81,7 +81,6 @@ namespace Thread
         _running = true;
         applyLoadedSettings();
         setupGlobalEventHandlers();
-        setupEventsRegistry();
         _tcpThread = std::thread(&ClientRuntime::runTcp, this);
         _receiverThread = std::thread(&ClientRuntime::runReceiver, this);
         _updaterThread = std::thread(&ClientRuntime::runUpdater, this);
@@ -141,12 +140,6 @@ namespace Thread
         return _eventBus;
     }
 
-    void ClientRuntime::rebindControls() const
-    {
-        _eventRegistry->clear();
-        setupEventsRegistry();
-    }
-
     void ClientRuntime::runDisplay()
     {
         constexpr auto Tick = std::chrono::milliseconds(16);
@@ -156,11 +149,6 @@ namespace Thread
 
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
-
-            if (Utils::SettingsConfig::getInstance().needsRebind()) {
-                rebindControls();
-                Utils::SettingsConfig::getInstance().clearRebindFlag();
-            }
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
@@ -238,6 +226,8 @@ namespace Thread
             processNetworkPackets(deadline, 256);
             applyWorldCommands(deadline, 500);
 
+            sendCombinedInput();
+
             _world->updateInterpolatedPositions();
 
             int steps = 0;
@@ -261,37 +251,33 @@ namespace Thread
         }
     }
 
-    void ClientRuntime::setupEventsRegistry() const
+    void ClientRuntime::sendCombinedInput() const
     {
         const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
-        _eventRegistry->onKeyPressed(up, [this]() {
-            constexpr auto input = PlayerInput{true, false, false, false, false};
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+        PlayerInput input{false, false, false, false, false};
+
+        if (_input->isKeyHeld(up)) {
+            input.up = true;
             _world->applyLocalMovementFromNetId(0x08);
-        });
-
-        _eventRegistry->onKeyPressed(down, [this]() {
-            constexpr auto input = PlayerInput{false, true, false, false, false};
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+        }
+        if (_input->isKeyHeld(down)) {
+            input.down = true;
             _world->applyLocalMovementFromNetId(0x04);
-        });
-
-        _eventRegistry->onKeyPressed(left, [this]() {
-            constexpr auto input = PlayerInput{false, false, true, false, false};
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+        }
+        if (_input->isKeyHeld(left)) {
+            input.left = true;
             _world->applyLocalMovementFromNetId(0x01);
-        });
-
-        _eventRegistry->onKeyPressed(right, [this]() {
-            constexpr auto input = PlayerInput{false, false, false, true, false};
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(input));
+        }
+        if (_input->isKeyHeld(right)) {
+            input.right = true;
             _world->applyLocalMovementFromNetId(0x02);
-        });
+        }
+        if (_input->isKeyHeld(shoot))
+            input.shoot = true;
 
-        _eventRegistry->onKeyReleased(shoot, [this]() {
-            _udpClient->sendPacket(*_udpPacketFactory.makeInput(PlayerInput{false, false, false, false, true}));
-        });
+        if (auto packet = _udpPacketFactory.makeInput(input))
+            _udpClient->sendPacket(*packet);
     }
 
     void ClientRuntime::setupGlobalEventHandlers()

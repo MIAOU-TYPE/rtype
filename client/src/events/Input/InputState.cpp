@@ -34,12 +34,14 @@ namespace Engine
     {
         _frame.key = key;
         _frame.keyPressed = true;
+        _heldKeys.insert(key);
     }
 
     void InputState::setKeyReleased(const Key key)
     {
         _frame.key = key;
         _frame.keyReleased = true;
+        _heldKeys.erase(key);
     }
 
     InputFrame InputState::consumeFrame()
@@ -53,5 +55,10 @@ namespace Engine
         _frame.key = Key::Unknown;
 
         return out;
+    }
+
+    bool InputState::isKeyHeld(const Key key) const noexcept
+    {
+        return _heldKeys.contains(key);
     }
 } // namespace Engine

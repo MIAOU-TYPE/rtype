@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Key.hpp"
+#include <unordered_set>
 
 namespace Engine
 {
@@ -69,7 +70,15 @@ namespace Engine
          */
         InputFrame consumeFrame();
 
+        /**
+         * @brief Checks if a key is currently being held down.
+         * @param key The key to check.
+         * @return True if the key is held, false otherwise.
+         */
+        [[nodiscard]] bool isKeyHeld(Key key) const noexcept;
+
       private:
-        InputFrame _frame; ///> The current input frame state.
+        InputFrame _frame;                 ///> The current input frame state.
+        std::unordered_set<Key> _heldKeys; ///> Set of keys currently held down.
     };
 } // namespace Engine

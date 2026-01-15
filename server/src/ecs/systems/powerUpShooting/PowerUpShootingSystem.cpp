@@ -19,8 +19,6 @@ namespace Game
                 const bool powerShootPressed = input.powerShoot && !powerUp.previousPowerShoot;
                 powerUp.previousPowerShoot = input.powerShoot;
 
-                if (!powerUp.hasPowerUp)
-                    return;
                 if (!powerUp.isReady) {
                     powerUp.cooldown += dt;
                     if (powerUp.cooldown >= powerUp.maxCooldown) {

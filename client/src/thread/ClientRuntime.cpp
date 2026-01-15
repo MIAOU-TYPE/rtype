@@ -42,19 +42,20 @@ namespace Thread
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_shared<World::ClientWorld>(_spriteRegistry);
-        _stateManager = std::make_unique<Engine::StateManager>();
-        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
+
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
+        _stateManager = std::make_unique<Engine::StateManager>();
+        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
             _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
         _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
-        Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
+        Utils::AssetLoader::load(_renderer->textures(), _renderer->sounds(), _spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()

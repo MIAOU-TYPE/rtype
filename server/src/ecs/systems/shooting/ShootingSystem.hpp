@@ -20,6 +20,6 @@ namespace Game
         /** @brief Update the shooting system.
          * @param world The game world containing all entities and components.
          */
-        static void update(IGameWorld &world);
+        static void update(IGameWorld &world, float dt);
     };
 } // namespace Game

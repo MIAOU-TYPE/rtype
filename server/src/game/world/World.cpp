@@ -38,7 +38,7 @@ namespace
             const size_t targetIdx = static_cast<size_t>(event.target);
             auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
 
-            if (bubbleComp && bubbleComp->isActive && bubbleComp->hitsRemaining > 0) {
+            if (bubbleComp && bubbleComp->hitsRemaining > 0) {
                 const auto &proj = reg.getComponents<Ecs::Projectile>().at(event.source);
                 if (proj) {
                     bubbleComp->hitsRemaining--;
@@ -170,8 +170,8 @@ namespace
             } else if (event.destroy && bubblePowerUp->bubbleEntity.has_value()) {
                 w->destroyEntity(bubblePowerUp->bubbleEntity.value());
                 bubblePowerUp->bubbleEntity = std::nullopt;
-                bubblePowerUp->isActive = false;
                 bubblePowerUp->hitsRemaining = 0;
+                reg.getComponents<Ecs::BubblePowerUp>().remove(static_cast<size_t>(event.playerId));
             }
         });
     }
@@ -179,22 +179,26 @@ namespace
     void activateLaserPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
     {
         auto &reg = w->registry();
+        w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+
         auto &laserPowerUp = reg.getComponents<Ecs::LaserPowerUp>().at(playerIdx);
-        if (laserPowerUp && !laserPowerUp->isActive) {
-            w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
-            laserPowerUp->isActive = true;
+        if (laserPowerUp) {
             laserPowerUp->duration = 0.f;
+        } else {
+            reg.emplaceComponent<Ecs::LaserPowerUp>(static_cast<Ecs::Entity>(playerIdx));
         }
     }
 
     void activateShieldPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
     {
         auto &reg = w->registry();
+        w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
+
         auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
-        if (bubblePowerUp && !bubblePowerUp->isActive) {
-            w->destroyEntity(static_cast<Ecs::Entity>(powerUpIdx));
-            bubblePowerUp->isActive = true;
+        if (bubblePowerUp) {
             bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+        } else {
+            reg.emplaceComponent<Ecs::BubblePowerUp>(static_cast<Ecs::Entity>(playerIdx));
         }
     }
 
@@ -306,8 +310,6 @@ namespace Game
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
         _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
         _registry.emplaceComponent<Ecs::PlayerPowerUp>(ent);
-        _registry.emplaceComponent<Ecs::LaserPowerUp>(ent);
-        _registry.emplaceComponent<Ecs::BubblePowerUp>(ent);
         if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
             _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;

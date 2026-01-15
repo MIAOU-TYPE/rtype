@@ -11,7 +11,6 @@
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "Registry.hpp"
-#include "ShootCooldown.hpp"
 #include "ShootingSystem.hpp"
 #include "mockTestsWorld.hpp"
 
@@ -29,7 +28,7 @@ class ShootingSystemTests : public ::testing::Test {
 
     void run()
     {
-        Game::ShootingSystem::update(world);
+        Game::ShootingSystem::update(world, 0.1f);
         world.events().process();
     }
 };
@@ -42,7 +41,6 @@ TEST_F(ShootingSystemTests, DoesNotEmit_WhenShootIsFalse)
     reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
     reg.emplaceComponent<Ecs::WeaponConfig>(e, Ecs::WeaponConfig{6});
-    reg.emplaceComponent<Ecs::ShootCooldown>(e, Ecs::ShootCooldown{0.25f, 0.f});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
@@ -61,7 +59,6 @@ TEST_F(ShootingSystemTests, EmitsShootEvent_AndResetsShootFlag)
     reg.emplaceComponent<Game::InputComponent>(e, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e, Ecs::Position{100.f, 50.f});
     reg.emplaceComponent<Ecs::WeaponConfig>(e, Ecs::WeaponConfig{6});
-    reg.emplaceComponent<Ecs::ShootCooldown>(e, Ecs::ShootCooldown{0.25f, 0.f});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     ASSERT_TRUE(inputArr.at(static_cast<size_t>(e)).has_value());
@@ -98,13 +95,11 @@ TEST_F(ShootingSystemTests, MultipleEntities_EmitsForEachShooterThatHasShootTrue
     reg.emplaceComponent<Game::InputComponent>(e1, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e1, Ecs::Position{10.f, 10.f});
     reg.emplaceComponent<Ecs::WeaponConfig>(e1, Ecs::WeaponConfig{6});
-    reg.emplaceComponent<Ecs::ShootCooldown>(e1, Ecs::ShootCooldown{0.25f, 0.f});
 
     const Ecs::Entity e2 = reg.createEntity();
     reg.emplaceComponent<Game::InputComponent>(e2, Game::InputComponent{});
     reg.emplaceComponent<Ecs::Position>(e2, Ecs::Position{20.f, 20.f});
     reg.emplaceComponent<Ecs::WeaponConfig>(e2, Ecs::WeaponConfig{12});
-    reg.emplaceComponent<Ecs::ShootCooldown>(e2, Ecs::ShootCooldown{0.25f, 0.f});
 
     auto &inputArr = reg.getComponents<Game::InputComponent>();
     inputArr.at(static_cast<size_t>(e1))->shoot = true;

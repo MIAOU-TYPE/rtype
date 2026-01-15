@@ -185,8 +185,7 @@ namespace Game
         AIShootSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
-        ShootingSystem::updateCooldowns(*_worldWrite, dt);
-        ShootingSystem::update(*_worldWrite);
+        ShootingSystem::update(*_worldWrite, dt);
 
         GravitySystem::update(*_worldWrite, dt);
         MovementPatternSystem::update(*_worldWrite, dt);

@@ -134,7 +134,6 @@ namespace Game
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});
         _registry.emplaceComponent<Ecs::WeaponConfig>(ent, Ecs::WeaponConfig{6});
         _registry.emplaceComponent<Ecs::GravityAffected>(ent, Ecs::GravityAffected{});
-        _registry.emplaceComponent<Ecs::ShootCooldown>(ent, Ecs::ShootCooldown{0.25f, 0.f});
         if (const auto netId = _registry.getComponents<Ecs::Id>().at(static_cast<size_t>(ent)); netId)
             _events.emit<PlayerConnectedEvent>(PlayerConnectedEvent{sessionId, static_cast<size_t>(ent)});
         return ent;

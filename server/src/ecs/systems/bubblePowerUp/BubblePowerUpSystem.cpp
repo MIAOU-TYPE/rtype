@@ -16,19 +16,19 @@ namespace Game
         reg.view<Ecs::BubblePowerUp, Ecs::Position>(
             [&](const Ecs::Entity playerEntity, Ecs::BubblePowerUp &bubble, const Ecs::Position &playerPos) {
                 if (!bubble.bubbleEntity.has_value()) {
-                    world.events().emit<BubblePowerUpEvent>(BubblePowerUpEvent{
-                        static_cast<size_t>(playerEntity), playerPos.x, playerPos.y, true, false, false});
+                    world.events().emit<BubblePowerUpCreateEvent>(
+                        BubblePowerUpCreateEvent{static_cast<size_t>(playerEntity), playerPos.x, playerPos.y});
                     return;
                 }
 
                 if (bubble.hitsRemaining <= 0 && bubble.bubbleEntity.has_value()) {
-                    world.events().emit<BubblePowerUpEvent>(
-                        BubblePowerUpEvent{static_cast<size_t>(playerEntity), 0.f, 0.f, false, false, true});
+                    world.events().emit<BubblePowerUpDestroyEvent>(
+                        BubblePowerUpDestroyEvent{static_cast<size_t>(playerEntity)});
                     return;
                 }
 
-                world.events().emit<BubblePowerUpEvent>(BubblePowerUpEvent{
-                    static_cast<size_t>(playerEntity), playerPos.x, playerPos.y, false, true, false});
+                world.events().emit<BubblePowerUpUpdatePosEvent>(
+                    BubblePowerUpUpdatePosEvent{static_cast<size_t>(playerEntity), playerPos.x, playerPos.y});
             });
     }
 } // namespace Game

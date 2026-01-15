@@ -28,6 +28,7 @@
 #include "Projectile.hpp"
 #include "Rand.hpp"
 #include "Score.hpp"
+#include "ShootCooldown.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
 

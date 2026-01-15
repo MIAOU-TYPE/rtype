@@ -19,7 +19,7 @@ namespace Game
                 pos.y += vel.vy * dt;
 
                 if (pos.x < 0 || pos.y < 0)
-                    world.events().emit<DestroyEvent>(DestroyEvent{id.id});
+                    world.events().emit<DestroyEvent>(DestroyEvent{id.id, false});
             });
     }
 } // namespace Game

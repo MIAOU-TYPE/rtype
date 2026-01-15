@@ -22,7 +22,7 @@ namespace Test
             return _events;
         }
 
-        Ecs::Entity createPlayer() override
+        Ecs::Entity createPlayer(int sessionId) override
         {
             return _reg.createEntity();
         }

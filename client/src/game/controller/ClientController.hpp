@@ -33,8 +33,9 @@ namespace Ecs
 
         /**
          * @brief Called when an ACCEPT message is received.
+         * @param sessionId The session ID assigned by the server.
          */
-        void onAccept() override;
+        void onAccept(uint32_t sessionId) override;
 
         /**
          * @brief Called when a REJECT message is received.
@@ -65,10 +66,18 @@ namespace Ecs
         void onScore(uint32_t score) override;
 
         /**
+         * @brief Called when a DAMAGE_EVENT message is received.
+         * @param targetId The ID of the entity that received damage.
+         * @param wasKilled True if the damage killed the entity, false otherwise.
+         */
+        void onDamage(size_t targetId, bool wasKilled) override;
+
+        /**
          * @brief Called when a DESTROY message is received.
          * @param entityId The ID of the entity to be destroyed.
+         * @param wasKilled True if entity was killed by player (play sound), false otherwise.
          */
-        void onDestroy(size_t entityId) override;
+        void onDestroy(size_t entityId, bool wasKilled) override;
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>

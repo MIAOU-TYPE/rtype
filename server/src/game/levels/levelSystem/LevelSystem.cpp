@@ -147,12 +147,6 @@ namespace Game
         tgt.visionRange = 350.f;
         reg.emplaceComponent<Ecs::Target>(mob, tgt);
 
-        Ecs::Attack atk;
-        atk.damage = 10;
-        atk.cooldown = 1.2f;
-        atk.projectileSpeed = 320.f;
-        reg.emplaceComponent<Ecs::Attack>(mob, atk);
-
         Ecs::Drawable draw;
         draw.spriteId = def.sprite;
         draw.drawable = true;

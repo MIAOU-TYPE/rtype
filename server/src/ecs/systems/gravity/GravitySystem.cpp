@@ -15,7 +15,7 @@ namespace Game
 
         const float dampingFactor = 0.95f;
         reg.view<Ecs::Velocity, Ecs::GravityAffected>(
-            [&](const Ecs::Entity, Ecs::Velocity &vel, const Ecs::GravityAffected &affected) {
+            [&](const Ecs::Entity, Ecs::Velocity &vel, const Ecs::GravityAffected &) {
                 vel.vx *= dampingFactor;
                 vel.vy *= dampingFactor;
             });
@@ -24,12 +24,12 @@ namespace Game
             [&](const Ecs::Entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {
                 field.lifetime -= dt;
                 if (field.lifetime <= 0.0f) {
-                    world.events().emit(DestroyEvent{id.id});
+                    world.events().emit(DestroyEvent{id.id, false});
                     return;
                 }
                 reg.view<Ecs::Position, Ecs::Velocity, Ecs::Health, Ecs::GravityAffected, Ecs::Id>(
-                    [&](const Ecs::Entity, Ecs::Position &pos, Ecs::Velocity &vel, const Ecs::Health &hp,
-                        const Ecs::GravityAffected &affected, const Ecs::Id &targetId) {
+                    [&](const Ecs::Entity, const Ecs::Position &pos, Ecs::Velocity &vel, const Ecs::Health &hp,
+                        const Ecs::GravityAffected &, const Ecs::Id &targetId) {
                         if (hp.hp <= 0)
                             return;
 

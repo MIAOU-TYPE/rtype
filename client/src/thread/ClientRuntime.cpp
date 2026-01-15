@@ -42,19 +42,20 @@ namespace Thread
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
-        _world = std::make_shared<World::ClientWorld>(_spriteRegistry);
-        _stateManager = std::make_unique<Engine::StateManager>();
-        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
+
+        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
+        _stateManager = std::make_unique<Engine::StateManager>();
+        _authCtx = std::make_shared<Engine::AuthContext>();
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
             _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
         _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
-        Utils::AssetLoader::load(_renderer->textures(), _spriteRegistry);
+        Utils::AssetLoader::load(_renderer->textures(), _renderer->sounds(), _spriteRegistry);
     }
 
     ClientRuntime::~ClientRuntime()
@@ -151,7 +152,7 @@ namespace Thread
 
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
-                    std::weak_ptr<World::ClientWorld> w = _world;
+                    std::weak_ptr w = _world;
                     _stateManager->changeState(
                         std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
                             if (auto s = w.lock())
@@ -256,14 +257,22 @@ namespace Thread
 
         PlayerInput input{false, false, false, false, false};
 
-        if (_input->isKeyHeld(up))
+        if (_input->isKeyHeld(up)) {
             input.up = true;
-        if (_input->isKeyHeld(down))
+            _world->applyLocalMovementFromNetId(0x08);
+        }
+        if (_input->isKeyHeld(down)) {
             input.down = true;
-        if (_input->isKeyHeld(left))
+            _world->applyLocalMovementFromNetId(0x04);
+        }
+        if (_input->isKeyHeld(left)) {
             input.left = true;
-        if (_input->isKeyHeld(right))
+            _world->applyLocalMovementFromNetId(0x01);
+        }
+        if (_input->isKeyHeld(right)) {
             input.right = true;
+            _world->applyLocalMovementFromNetId(0x02);
+        }
         if (_input->isKeyHeld(shoot))
             input.shoot = true;
 

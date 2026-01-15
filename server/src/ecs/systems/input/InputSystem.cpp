@@ -6,6 +6,7 @@
 */
 
 #include "InputSystem.hpp"
+#include <numbers>
 
 namespace Game
 {
@@ -19,7 +20,7 @@ namespace Game
                 const float maxX = Game::Config::VIEWPORT_WIDTH - col.width;
                 const float maxY = Game::Config::VIEWPORT_HEIGHT - col.height;
                 float dx = 0.f, dy = 0.f;
-                constexpr float inv_sqrt2 = 0.7071067811865476f;
+                constexpr float inv_sqrt2 = 1.0f / std::numbers::sqrt2_v<float>;
 
                 if (input.left)
                     dx -= speed;

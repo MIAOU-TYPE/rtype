@@ -20,7 +20,7 @@ namespace Game
                     return;
                 input.shoot = false;
                 world.events().emit<ShootEvent>(ShootEvent{pos.x + 40, pos.y + 7.5f, 100.f, 0.f, 20,
-                    static_cast<size_t>(entity), {8.f, 8.f}, 5.f, weapon.projectileSpriteId});
+                    static_cast<size_t>(entity), {8.f, 8.f}, 5.f, weapon.projectileSpriteId, 1, 1});
             });
     }
 } // namespace Game

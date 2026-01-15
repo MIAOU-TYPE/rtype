@@ -31,7 +31,7 @@ namespace Game
 
                 if (powerUp.isReady && powerShootPressed) {
                     world.events().emit<ShootEvent>(ShootEvent{pos.x + 40.f, pos.y, 400.f, 0.f, 150,
-                        static_cast<size_t>(playerEntity), {48.f, 24.f}, 5.f, 21, 1, 1});
+                        static_cast<size_t>(playerEntity), {48.f, 24.f}, 5.f, 21, 1000, 1000});
                     powerUp.isReady = false;
                     powerUp.cooldown = 0.f;
                     if (powerUp.hasBar && powerUp.barEntity.has_value()) {

@@ -173,6 +173,13 @@ namespace Engine
         [[nodiscard]] bool wantsSettings() const noexcept;
 
         /**
+         * @brief Check if the user wants to access the level editor.
+         *
+         * @return true if the user wants to access the level editor, false otherwise.
+         */
+        [[nodiscard]] bool wantsLevelEditor() const noexcept;
+
+        /**
          * @brief Handle resizing of the menu.
          */
         void layout() override;
@@ -233,9 +240,10 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _login;    ///> Button to access the login form.
         std::unique_ptr<UI::UIButton> _register; ///> Button to access the registration form.
 
-        std::unique_ptr<UI::UIButton> _play;     ///> Button to start the game.
-        std::unique_ptr<UI::UIButton> _settings; ///> Button to access settings.
-        std::unique_ptr<UI::UIButton> _quit;     ///> Button to quit the game.
+        std::unique_ptr<UI::UIButton> _play;        ///> Button to start the game.
+        std::unique_ptr<UI::UIButton> _settings;    ///> Button to access settings.
+        std::unique_ptr<UI::UIButton> _levelEditor; ///> Button to access level editor.
+        std::unique_ptr<UI::UIButton> _quit;        ///> Button to quit the game.
 
         std::unique_ptr<UI::UIButton> _submitBtn;    ///> Button to submit the authentication form.
         std::unique_ptr<UI::UIButton> _backBtn;      ///> Button to go back to the root page.
@@ -245,9 +253,10 @@ namespace Engine
         std::unique_ptr<Graphics::IText> _authErrorText; ///> Text object for displaying authentication error messages.
         std::string _authErrorMessage;                   ///> Authentication error message.
 
-        bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
-        bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.
-        bool _settingsRequested = false; ///> Flag indicating if the user requested to access settings.
+        bool _startRequested = false;       ///> Flag indicating if the user requested to start the game.
+        bool _quitRequested = false;        ///> Flag indicating if the user requested to quit.
+        bool _settingsRequested = false;    ///> Flag indicating if the user requested to access settings.
+        bool _levelEditorRequested = false; ///> Flag indicating if the user requested to access level editor.
 
         bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
         AuthMode _submittedMode = AuthMode::None; ///> Submitted authentication mode.

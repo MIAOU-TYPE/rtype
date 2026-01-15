@@ -22,10 +22,9 @@ namespace Ecs
      *
      * This component tracks the bubble shield power-up that creates a protective
      * barrier around the player. The shield can block up to 3 enemy projectiles
-     * before disappearing.
+     * before disappearing. The component's presence indicates the shield is active.
      */
     struct BubblePowerUp {
-        bool isActive = false;                             ///> Whether the bubble shield is currently active
         int hitsRemaining = 0;                             ///> Number of projectile hits the shield can still block
         static constexpr int maxHits = 3;                  ///> Maximum number of hits the shield can block
         std::optional<Entity> bubbleEntity = std::nullopt; ///> The visual bubble entity attached to player

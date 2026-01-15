@@ -53,6 +53,8 @@ namespace EmbeddedResources
     extern const unsigned int explose_png_size;
     extern const unsigned char boss_png[];
     extern const unsigned int boss_png_size;
+    extern const unsigned char obstacle_png[];
+    extern const unsigned int obstacle_png_size;
     extern const unsigned char power_up_png[];
     extern const unsigned int power_up_png_size;
     extern const unsigned char power_up_attached_png[];
@@ -141,6 +143,7 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
+    _resources["sprites/obstacle.png"] = {EmbeddedResources::obstacle_png, EmbeddedResources::obstacle_png_size};
     _resources["sprites/power_up.png"] = {EmbeddedResources::power_up_png, EmbeddedResources::power_up_png_size};
     _resources["sprites/power_up_attached.png"] = {
         EmbeddedResources::power_up_attached_png, EmbeddedResources::power_up_attached_png_size};

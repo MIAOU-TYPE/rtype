@@ -121,6 +121,7 @@ namespace Game
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite);
 
+        GravitySystem::update(*_worldWrite, dt);
         MovementPatternSystem::update(*_worldWrite, dt);
         MovementSystem::update(*_worldWrite, dt);
         PowerUpAttachmentSystem::update(*_worldWrite);

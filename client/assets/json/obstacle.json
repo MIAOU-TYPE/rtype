@@ -1,0 +1,16 @@
+{
+  "sprite": "obstacle",
+  "spriteId": 15,
+  "texture": "sprites/obstacle.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 34, "h": 34, "duration": 0.1 },
+        { "x": 34, "y": 0, "w": 34, "h": 34, "duration": 0.1 },
+        { "x": 68, "y": 0, "w": 34, "h": 34, "duration": 0.1 }
+      ]
+    }
+  }
+}

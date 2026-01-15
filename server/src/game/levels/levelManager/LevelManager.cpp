@@ -60,17 +60,47 @@ namespace
                 return false;
 
             Game::EnemyDefinition def;
-            def.hp = defNode.value("hp", 1);
-            def.speed = defNode.value("speed", -80.f);
 
-            if (!defNode.contains("size") || !defNode.at("size").is_object())
-                return false;
+            if (defNode.contains("type") && defNode.at("type").is_string()
+                && defNode.at("type").get<std::string>() == "group") {
+                def.isGroup = true;
 
-            def.colW = defNode.at("size").value("w", 20.f);
-            def.colH = defNode.at("size").value("h", 20.f);
-            def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
-            def.killScore = defNode.value("killScore", 10u);
-            def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
+                if (!defNode.contains("members") || !defNode.at("members").is_array())
+                    return false;
+
+                for (const auto &memberNode : defNode.at("members")) {
+                    if (!memberNode.is_object())
+                        return false;
+
+                    Game::GroupMember member;
+                    member.enemyType = memberNode.value("enemyType", "");
+                    if (member.enemyType.empty())
+                        return false;
+
+                    if (memberNode.contains("offset") && memberNode.at("offset").is_object()) {
+                        member.offsetX = memberNode.at("offset").value("x", 0.f);
+                        member.offsetY = memberNode.at("offset").value("y", 0.f);
+                    }
+
+                    def.members.push_back(member);
+                }
+
+                if (def.members.empty())
+                    return false;
+            } else {
+                def.isGroup = false;
+                def.hp = defNode.value("hp", 1);
+                def.speed = defNode.value("speed", -80.f);
+
+                if (!defNode.contains("size") || !defNode.at("size").is_object())
+                    return false;
+
+                def.colW = defNode.at("size").value("w", 20.f);
+                def.colH = defNode.at("size").value("h", 20.f);
+                def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
+                def.killScore = defNode.value("killScore", 10u);
+                def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
+            }
 
             if (defNode.contains("movement")) {
                 def.movement = parseMovementDefinition(defNode.at("movement"));
@@ -80,6 +110,35 @@ namespace
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();
+    }
+
+    void parseObstacles(const json &j, Game::Level &level)
+    {
+        level.obstacleTypes.clear();
+
+        if (!j.contains("obstacles") || !j.at("obstacles").is_object())
+            return;
+
+        for (auto &[name, defNode] : j.at("obstacles").items()) {
+            if (!defNode.is_object())
+                continue;
+
+            Game::ObstacleDefinition def;
+            def.sprite = defNode.value("spriteId", static_cast<unsigned int>(0));
+
+            if (defNode.contains("size") && defNode.at("size").is_object()) {
+                def.colW = defNode.at("size").value("w", 80.f);
+                def.colH = defNode.at("size").value("h", 80.f);
+            }
+
+            def.pullStrength = defNode.value("pullStrength", 150.f);
+            def.damagePerSecond = defNode.value("damagePerSecond", 10.f);
+            def.radius = defNode.value("radius", 200.f);
+            def.innerRadius = defNode.value("innerRadius", 50.f);
+
+            level.obstacleTypes[name] = def;
+        }
+        return;
     }
 
     bool parseWaves(const json &j, Game::Level &level)
@@ -97,6 +156,14 @@ namespace
             wave.time = w.value("time", -1.f);
             if (wave.time < 0.f)
                 return false;
+
+            wave.spawnPattern = w.value("spawnPattern", "");
+            wave.spawnY = w.value("spawnY", 365.f);
+
+            wave.obstacleType = w.value("obstacleType", "");
+            wave.obstacleX = w.value("obstacleX", 0.f);
+            wave.obstacleY = w.value("obstacleY", 0.f);
+
 
             if (w.contains("enemies") && w.at("enemies").is_object()) {
                 for (auto &[type, countValue] : w.at("enemies").items()) {
@@ -117,7 +184,7 @@ namespace
                 wave.powerUpType = w.at("powerUp").value("type", "force");
             }
 
-            if (wave.groups.empty() && wave.powerUps == 0)
+            if (wave.groups.empty() && wave.obstacleType.empty() && wave.powerUps == 0)
                 return false;
             level.waves.push_back(wave);
         }
@@ -156,6 +223,7 @@ namespace
             return false;
         if (!parseEnemies(j, level))
             return false;
+        parseObstacles(j, level);
         if (!parseWaves(j, level))
             return false;
         return true;

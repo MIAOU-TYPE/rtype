@@ -22,6 +22,8 @@ namespace Utils
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/explose.json", *spriteRegistry);
 
+        Engine::SpriteLoader::loadFromFile("client/assets/json/obstacle.json", *spriteRegistry);
+
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_big.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy.json", *spriteRegistry);

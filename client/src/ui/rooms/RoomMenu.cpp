@@ -603,7 +603,7 @@ namespace Engine
         if (_levels.empty())
             return "";
         const int idx = std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1);
-        return _levels.at(static_cast<std::size_t>(idx)).path;
+        return _levels.at(static_cast<size_t>(idx)).path;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

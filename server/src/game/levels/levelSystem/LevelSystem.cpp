@@ -256,8 +256,8 @@ namespace Game
 
             Ecs::Entity previousEntity = mob;
             const int numTailSegments = 8;
-            float tailStartX = x + 80.f;
-            float tailStartY = y + 225.f;
+            float tailStartX = x + 90.f;
+            float tailStartY = y + 300.f;
             for (int i = 0; i < numTailSegments; ++i) {
                 const Ecs::Entity tailSegment = world.createEntity();
                 float offsetX = -50.f * (static_cast<float>(i) + 1);

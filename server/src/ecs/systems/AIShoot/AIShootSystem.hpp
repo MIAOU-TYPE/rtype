@@ -6,15 +6,15 @@
 */
 
 #pragma once
+#include "Health.hpp"
 #include "HomingProjectile.hpp"
+#include "Id.hpp"
 #include "InputComponent.hpp"
 #include "WeaponConfig.hpp"
 #include "World.hpp"
-#include "Health.hpp"
-#include "Id.hpp"
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 #include <numbers>
 #include "AIShoot.hpp"
 

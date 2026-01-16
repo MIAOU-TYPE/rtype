@@ -40,8 +40,8 @@ namespace Game
                         const float bulletY = startY + static_cast<float>(i) * 50.f;
                         const float vx = -shoot.projectileSpeed;
                         constexpr float vy = 0.f;
-                        world.events().emit(ShootEvent(posX, bulletY, vx, vy, shoot.damage,
-                            static_cast<size_t>(ent), {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                        world.events().emit(ShootEvent(posX, bulletY, vx, vy, shoot.damage, static_cast<size_t>(ent),
+                            {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
                     }
                     return;
                 }

@@ -84,6 +84,16 @@ struct PlayerConnectedEvent {
 };
 
 /**
+ * @struct DamageApplyEvent
+ * @brief Event triggered when damage is applied to an entity.
+ */
+struct DamageApplyEvent {
+    size_t entityId;      ///> ID of the entity that received damage
+    uint32_t currentLife; ///> Current life of the entity
+    uint32_t maxLife;     ///> Maximum life of the entity
+};
+
+/**
  * @struct PowerUpBarCreateEvent
  * @brief Event triggered to create a power-up bar for a player.
  */

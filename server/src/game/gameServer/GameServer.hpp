@@ -98,28 +98,28 @@ namespace Game
          *
          * Creates a new entity in the world and associates it with the session ID.
          */
-        void onPlayerConnect(int sessionId) override;
+        void onPlayerConnect(int sessionId) noexcept override;
 
         /**
          * @brief Called when a player disconnects.
          *
          * Removes the entity associated with the session and cleans internal mappings.
          */
-        void onPlayerDisconnect(int sessionId) override;
+        void onPlayerDisconnect(int sessionId) noexcept override;
 
         /**
          * @brief Called when a player sends input.
          *
          * Updates the InputComponent of the associated entity.
          */
-        void onPlayerInput(int sessionId, const InputComponent &msg) override;
+        void onPlayerInput(int sessionId, const InputComponent &msg) noexcept override;
 
         /**
          * @brief Called when a PING message is received.
          *
          * Sends a PONG packet back to the corresponding client.
          */
-        void onPing(int sessionId) override;
+        void onPing(int sessionId) noexcept override;
 
         /**
          * @brief Executes one simulation step.

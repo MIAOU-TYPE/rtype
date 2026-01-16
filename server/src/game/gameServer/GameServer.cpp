@@ -112,6 +112,40 @@ namespace
                     (void) serverL->sendPacket(*pkt);
             });
     }
+
+    void registerMessageOnLifeUpdated(Game::IGameWorld &world,
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
+        const std::unordered_map<size_t, int> &entityToSession, const std::shared_ptr<Net::Server::IServer> &server)
+    {
+        std::weak_ptr wSessions = sessions;
+        std::weak_ptr wFactory = UDPPacketFactory;
+        std::weak_ptr wServer = server;
+
+        const auto *mapPtr = &entityToSession;
+
+        world.events().subscribe<DamageApplyEvent>(
+            [wSessions, wFactory, wServer, mapPtr](const DamageApplyEvent &event) {
+                const auto sessionsL = wSessions.lock();
+                const auto factoryL = wFactory.lock();
+                const auto serverL = wServer.lock();
+                if (!sessionsL || !factoryL || !serverL || !mapPtr)
+                    return;
+
+                const auto it = mapPtr->find(event.entityId);
+                if (it == mapPtr->end())
+                    return;
+
+                const int sessionId = it->second;
+                const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
+                if (!addr)
+                    return;
+
+                if (const auto pkt = factoryL->createHealthPacket(
+                        *addr, static_cast<uint16_t>(event.currentLife), static_cast<uint16_t>(event.maxLife)))
+                    (void) serverL->sendPacket(*pkt);
+            });
+    }
 } // namespace
 
 namespace Game
@@ -133,6 +167,7 @@ namespace Game
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
         registerAcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
+        registerMessageOnLifeUpdated(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
         registerDamagePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
 
@@ -143,7 +178,7 @@ namespace Game
         _clock = GameClock();
     }
 
-    void GameServer::onPlayerConnect(const int sessionId)
+    void GameServer::onPlayerConnect(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerConnect;
@@ -151,7 +186,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPlayerDisconnect(const int sessionId)
+    void GameServer::onPlayerDisconnect(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerDisconnect;
@@ -159,7 +194,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg)
+    void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerInput;
@@ -168,7 +203,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPing(const int sessionId)
+    void GameServer::onPing(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::Ping;

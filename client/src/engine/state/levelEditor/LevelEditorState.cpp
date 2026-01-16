@@ -74,6 +74,9 @@ namespace Engine
             _entityTextures["enemy3"] = textures->load("sprites/enemy3.png");
             _entityTextures["boss"] = textures->load("sprites/boss.png");
             _entityTextures["obstacle"] = textures->load("sprites/obstacle.png");
+            _entityTextures["power_up"] = textures->load("sprites/power_up.png");
+            _entityTextures["power_up2"] = textures->load("sprites/power_up2.png");
+            _entityTextures["power_up3"] = textures->load("sprites/power_up3.png");
 
             layout();
         } catch (const std::exception &e) {
@@ -90,6 +93,10 @@ namespace Engine
         _entityTypes.push_back({"Boss", 1, 177.0f, 144.0f, "boss", "boss"});
 
         _entityTypes.push_back({"Obstacle", 15, 34.0f, 34.0f, "gravityWell", "obstacle"});
+
+        _entityTypes.push_back({"Laser Power-Up", 13, 33.0f, 28.0f, "laser", "power_up"});
+        _entityTypes.push_back({"Shield Power-Up", 18, 33.0f, 28.0f, "shield", "power_up2"});
+        _entityTypes.push_back({"Bubble Power-Up", 19, 33.0f, 28.0f, "bubble", "power_up3"});
     }
 
     void LevelEditorState::initializeBackgrounds()
@@ -207,6 +214,18 @@ namespace Engine
                 spriteName = "obstacle";
                 frameWidth = 34;
                 frameHeight = 34;
+            } else if (entity.type == "laser") {
+                spriteName = "power_up";
+                frameWidth = 33;
+                frameHeight = 28;
+            } else if (entity.type == "shield") {
+                spriteName = "power_up2";
+                frameWidth = 33;
+                frameHeight = 28;
+            } else if (entity.type == "bubble") {
+                spriteName = "power_up3";
+                frameWidth = 33;
+                frameHeight = 28;
             }
 
             auto it = _entityTextures.find(spriteName);
@@ -582,6 +601,8 @@ namespace Engine
                     file << "      \"obstacleX\": " << entity.x << ",\n";
                     file << "      \"obstacleY\": " << entity.y << ",\n";
                     file << "      \"enemies\": {}\n";
+                } else if (entity.type == "laser" || entity.type == "shield" || entity.type == "bubble") {
+                    file << "      \"powerUp\": { \"type\": \"" << entity.type << "\" }\n";
                 } else {
                     file << "      \"enemies\": { \"" << entity.type << "\": 1 },\n";
                     file << "      \"spawnPattern\": \"line\",\n";

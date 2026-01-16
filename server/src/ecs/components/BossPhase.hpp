@@ -20,7 +20,7 @@ namespace Ecs
     struct BossPhase {
         /**
          * @brief Enumeration of boss phases
-        */
+         */
         enum class Phase {
             Phase1, ///> Initial phase of the boss
             Phase2, ///> Second phase of the boss

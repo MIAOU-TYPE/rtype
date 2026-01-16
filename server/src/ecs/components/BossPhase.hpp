@@ -22,7 +22,7 @@ namespace Ecs
         std::vector<float> anglesToAdd; ///> Additional attack angles for this phase
         float fireSpeedMultiplier;      ///> Multiplier for fire speed in this phase
         int damageMultiplier;           ///> Multiplier for damage in this phase
-        unsigned int spriteId = 0;                   ///> Sprite ID for this phase
+        unsigned int spriteId = 0;      ///> Sprite ID for this phase
     };
 
     /** @brief Component representing the phase of a boss entity
@@ -33,6 +33,6 @@ namespace Ecs
      */
     struct BossPhase {
         std::vector<BossPhaseData> phases; ///> Data for each boss phase
-        size_t currentPhaseIndex = 0;          ///> Index of the current phase
+        size_t currentPhaseIndex = 0;      ///> Index of the current phase
     };
 } // namespace Ecs

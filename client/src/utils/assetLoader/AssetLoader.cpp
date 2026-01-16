@@ -17,6 +17,7 @@ namespace Utils
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss2.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/boss3.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy2.json", *spriteRegistry);
@@ -29,6 +30,7 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy2.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/homingbullet.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/player.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/player2.json", *spriteRegistry);

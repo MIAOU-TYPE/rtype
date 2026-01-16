@@ -49,12 +49,16 @@ namespace EmbeddedResources
     extern const unsigned int missile_enemy_png_size;
     extern const unsigned char missile_enemy2_png[];
     extern const unsigned int missile_enemy2_png_size;
+    extern const unsigned char homingbullet_png[];
+    extern const unsigned int homingbullet_png_size;
     extern const unsigned char explose_png[];
     extern const unsigned int explose_png_size;
     extern const unsigned char boss_png[];
     extern const unsigned int boss_png_size;
     extern const unsigned char boss2_png[];
     extern const unsigned int boss2_png_size;
+    extern const unsigned char boss3_png[];
+    extern const unsigned int boss3_png_size;
     extern const unsigned char obstacle_png[];
     extern const unsigned int obstacle_png_size;
 
@@ -127,9 +131,12 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::missile_enemy_png, EmbeddedResources::missile_enemy_png_size};
     _resources["sprites/missile_enemy2.png"] = {
         EmbeddedResources::missile_enemy2_png, EmbeddedResources::missile_enemy2_png_size};
+    _resources["sprites/homingbullet.png"] = {
+        EmbeddedResources::homingbullet_png, EmbeddedResources::homingbullet_png_size};
     _resources["sprites/explose.png"] = {EmbeddedResources::explose_png, EmbeddedResources::explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::boss_png, EmbeddedResources::boss_png_size};
     _resources["sprites/boss2.png"] = {EmbeddedResources::boss2_png, EmbeddedResources::boss2_png_size};
+    _resources["sprites/boss3.png"] = {EmbeddedResources::boss3_png, EmbeddedResources::boss3_png_size};
     _resources["sprites/obstacle.png"] = {EmbeddedResources::obstacle_png, EmbeddedResources::obstacle_png_size};
 
     _resources["shaders/colorblind.frag"] = {

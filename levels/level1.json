@@ -137,14 +137,31 @@
       "size": { "w": 130, "h": 50 },
       "killScore": 300,
       "sprite": "boss2",
-      "spriteId": 20,
+      "spriteId": 21,
       "shoot": {
-        "type": "straight",
+        "type": "spread",
+        "bulletsNbr": 5,
         "cooldown": 0.5,
         "projectileSpeed": 150,
         "damage": 50,
         "muzzle": { "x": 65, "y": 25 },
         "projectileSpriteId": 12
+      }
+    },
+    "boss3": {
+      "hp": 3000,
+      "speed": -30,
+      "size": { "w": 160, "h": 213 },
+      "killScore": 300,
+      "sprite": "boss3",
+      "spriteId": 22,
+      "shoot": {
+        "type": "homing",
+        "cooldown": 4.0,
+        "projectileSpeed": 170,
+        "damage": 500,
+        "muzzle": { "x": 60, "y": 70 },
+        "projectileSpriteId": 23
       }
     },
     "groupEnemy": {
@@ -262,9 +279,9 @@
   "waves": [
     {
       "time": 1,
-      "enemies": { "boss2": 1 },
+      "enemies": { "boss3": 1 },
       "spawnPattern": "line",
-      "spawnY": 360
+      "spawnY": 100
     }
   ]
 }

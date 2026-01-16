@@ -22,12 +22,6 @@ namespace
             return 1.f;
         return v;
     }
-
-    [[nodiscard]] uint32_t computeTargetTick(const uint32_t latestTick) noexcept
-    {
-        return (latestTick > World::ClientWorld::InterpDelayTicks) ? (latestTick - World::ClientWorld::InterpDelayTicks)
-                                                                   : 0u;
-    }
 } // namespace
 
 namespace World
@@ -78,6 +72,7 @@ namespace World
     {
         TickSnapshot snap;
         snap.tick = batch.serverTick;
+        snap.arrivalTime = std::chrono::steady_clock::now();
 
         snap.entities.reserve(batch.entities.size());
         for (const auto &[id, x, y, z, spriteId] : batch.entities) {
@@ -107,7 +102,7 @@ namespace World
     {
         _destroyed.insert(static_cast<uint32_t>(destroyInfo.entityId));
 
-        for (auto &[tick, entities] : _snapshots)
+        for (auto &[tick, arrivalTime, entities] : _snapshots)
             entities.erase(destroyInfo.entityId);
 
         const auto it = _entityMap.find(destroyInfo.entityId);
@@ -216,12 +211,12 @@ namespace World
     {
         if (_entityPlayerId < 0)
             return;
+
         const auto itEnt = _entityMap.find(static_cast<uint32_t>(_entityPlayerId));
         if (itEnt == _entityMap.end())
             return;
 
         const auto ent = static_cast<std::size_t>(itEnt->second);
-
         if (ent >= positions.size())
             return;
 
@@ -236,21 +231,23 @@ namespace World
         const float dy = serverY - posOpt->y;
         const float dist2 = dx * dx + dy * dy;
 
-        constexpr float SnapDist = 80.f;
+        constexpr float SnapDist = 250.f;
 
         if (constexpr float SnapDist2 = SnapDist * SnapDist; dist2 > SnapDist2) {
-            posOpt->x = serverX;
-            posOpt->y = serverY;
-        } else {
-            constexpr float SmoothFactor = 0.15f;
-            posOpt->x += dx * SmoothFactor;
-            posOpt->y += dy * SmoothFactor;
+            constexpr float CatchupFactor = 0.25f;
+            posOpt->x += dx * CatchupFactor;
+            posOpt->y += dy * CatchupFactor;
+            return;
         }
+
+        constexpr float SmoothFactor = 0.15f;
+        posOpt->x += dx * SmoothFactor;
+        posOpt->y += dy * SmoothFactor;
     }
 
     void ClientWorld::updateInterpolatedPositions()
     {
-        if (_snapshots.empty())
+        if (_snapshots.size() < 2)
             return;
 
         auto &positions = _registry.getComponents<Ecs::Position>();
@@ -258,78 +255,70 @@ namespace World
         const auto &renders = _registry.getComponents<Ecs::Render>();
         const auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
-        const auto isDestroyed = [&](const size_t netId) {
-            return _destroyed.contains(static_cast<uint32_t>(netId));
-        };
+        const auto now = std::chrono::steady_clock::now();
+        constexpr auto InterpDelay = std::chrono::milliseconds(100);
 
-        const auto ensureEntity = [&](const size_t netId, const NetState &st) -> Ecs::Entity {
-            if (!_entityMap.contains(netId))
-                applyCreate(EntityCreate{netId, st.x, st.y, st.z, st.spriteId});
-            return _entityMap[netId];
-        };
+        TickSnapshot *A = nullptr;
+        TickSnapshot *B = nullptr;
 
-        const auto setPosition = [&](const Ecs::Entity e, const float x, const float y, const uint8_t z) {
-            const auto idx = static_cast<size_t>(e);
-            if (auto &pos = positions.at(idx)) {
-                pos->x = x;
-                pos->y = y;
-                pos->z = z;
+        for (size_t i = 1; i < _snapshots.size(); ++i) {
+            if (_snapshots.at(i).arrivalTime > now - InterpDelay) {
+                A = &_snapshots.at(i - 1);
+                B = &_snapshots.at(i);
+                break;
             }
-        };
+        }
 
-        const uint32_t latestTick = _snapshots.back().tick;
-        const uint32_t targetTick = computeTargetTick(latestTick);
-
-        const auto applyNoInterp = [&] {
-            for (const auto &[tick, entities] = _snapshots.front(); const auto &[netId, st] : entities) {
-                if (isDestroyed(netId))
-                    continue;
-
-                const Ecs::Entity e = ensureEntity(netId, st);
-                setPosition(e, st.x, st.y, st.z);
-                refreshSpriteIfChanged(e, st.spriteId, drawables, anims, renders);
-            }
-        };
-
-        const auto trimOldSnapshots = [&] {
-            while (_snapshots.size() >= 2 && _snapshots.at(1).tick <= targetTick)
-                _snapshots.pop_front();
-        };
-
-        if (_snapshots.size() == 1 || targetTick < _snapshots.front().tick)
-            return applyNoInterp();
-
-        trimOldSnapshots();
-        if (_snapshots.size() < 2)
+        if (!A || !B)
             return;
 
-        const auto &A = _snapshots.at(0);
-        const auto &B = _snapshots.at(1);
-
-        const uint32_t dt = B.tick - A.tick;
-        if (dt == 0)
+        const float denom = std::chrono::duration<float>(B->arrivalTime - A->arrivalTime).count();
+        if (denom <= 0.f)
             return;
 
-        const float alpha = clamp(static_cast<float>(targetTick - A.tick) / static_cast<float>(dt));
+        const float alpha = clamp(std::chrono::duration<float>(now - InterpDelay - A->arrivalTime).count() / denom);
 
-        for (const auto &[netId, bs] : B.entities) {
-            if (isDestroyed(netId))
+        for (const auto &[netId, bs] : B->entities) {
+            if (_destroyed.contains(static_cast<uint32_t>(netId)))
                 continue;
 
             if (std::cmp_equal(netId, _entityPlayerId)) {
+                if (!_entityMap.contains(netId)) {
+                    applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
+                }
                 reconcileLocalPlayerWithServer(bs, positions);
+                refreshSpriteIfChanged(_entityMap[netId], bs.spriteId, drawables, anims, renders);
                 continue;
             }
-            const auto itA = A.entities.find(netId);
-            const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
-            const Ecs::Entity e = ensureEntity(netId, bs);
+            if (!_entityMap.contains(netId))
+                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
 
-            const float x = lerp(as.x, bs.x, alpha);
-            const float y = lerp(as.y, bs.y, alpha);
+            const Ecs::Entity e = _entityMap[netId];
+            const auto idx = static_cast<size_t>(e);
+            auto &posOpt = positions.at(idx);
+            if (!posOpt)
+                continue;
 
-            setPosition(e, x, y, bs.z);
+            const auto itA = A->entities.find(netId);
+            const NetState as = (itA != A->entities.end()) ? itA->second : bs;
+
+            constexpr float MaxVisualStep = 20.f;
+
+            const float targetX = lerp(as.x, bs.x, alpha);
+            const float targetY = lerp(as.y, bs.y, alpha);
+
+            const float dx = targetX - posOpt->x;
+            const float dy = targetY - posOpt->y;
+
+            posOpt->x += std::clamp(dx, -MaxVisualStep, MaxVisualStep);
+            posOpt->y += std::clamp(dy, -MaxVisualStep, MaxVisualStep);
+            posOpt->z = bs.z;
+
             refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
+        }
+        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A->arrivalTime) {
+            _snapshots.pop_front();
         }
     }
 

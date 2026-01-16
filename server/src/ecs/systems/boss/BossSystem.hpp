@@ -27,8 +27,7 @@ namespace Game
          * @brief Update the boss system for the given game world.
          *
          * @param world The game world containing boss entities.
-         * @param dt The delta time since the last update.
          */
-        static void update(IGameWorld &world, float dt);
+        static void update(IGameWorld &world);
     };
 } // namespace Game

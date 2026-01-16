@@ -9,7 +9,7 @@
 
 namespace Game
 {
-    void BossSystem::update(IGameWorld &world, float dt)
+    void BossSystem::update(IGameWorld &world)
     {
         auto &reg = world.registry();
         (void) dt;

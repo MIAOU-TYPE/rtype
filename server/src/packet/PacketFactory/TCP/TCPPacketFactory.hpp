@@ -17,8 +17,8 @@
 
 #include <cstring>
 #include "RoomData.hpp"
-#include "TCPTypesData.hpp"
 #include "ScoreEntry.hpp"
+#include "TCPTypesData.hpp"
 #include "TCPWriter.hpp"
 
 namespace Net::Factory

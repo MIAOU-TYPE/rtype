@@ -121,13 +121,13 @@ namespace Game
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
 
-        const int modifiedHp = static_cast<int>(def.hp * modifiers.enemyHpMultiplier);
+        const int modifiedHp = static_cast<int>(static_cast<float>(def.hp) * modifiers.enemyHpMultiplier);
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{modifiedHp, modifiedHp});
 
         const int modifiedDamage = static_cast<int>(200 * modifiers.enemyDamageMultiplier);
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{modifiedDamage});
 
-        const unsigned int modifiedScore = static_cast<unsigned int>(def.killScore * modifiers.enemyScoreMultiplier);
+        const unsigned int modifiedScore = static_cast<unsigned int>(static_cast<float>(def.killScore) * modifiers.enemyScoreMultiplier);
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{modifiedScore});
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
@@ -142,7 +142,6 @@ namespace Game
         pattern.timer = 0.f;
         reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
 
-        reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{modifiedHp, modifiedHp});
         reg.emplaceComponent<Ecs::Collision>(
             mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
@@ -172,7 +171,7 @@ namespace Game
         shoot.cooldown = def.shoot.cooldown;
         shoot.timer = 0.f;
         shoot.projectileSpeed = def.shoot.projectileSpeed * modifiers.projectileSpeedMultiplier;
-        shoot.damage = static_cast<int>(def.shoot.damage * modifiers.enemyDamageMultiplier);
+        shoot.damage = static_cast<int>(static_cast<float>(def.shoot.damage) * modifiers.enemyDamageMultiplier);
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
@@ -180,8 +179,6 @@ namespace Game
         Ecs::WeaponConfig weapon;
         weapon.projectileSpriteId = def.shoot.projectileSpriteId;
         reg.emplaceComponent<Ecs::WeaponConfig>(mob, weapon);
-
-        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW, def.colH});
     }
 
     void LevelSystem::spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y)

@@ -12,7 +12,7 @@ namespace Engine
     Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
         const std::shared_ptr<Net::Server::IServer> &udpServer,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
-        const Engine::GameConfig &gameConfig, std::string name, const size_t maxPlayers)
+        const GameConfig &gameConfig, std::string name, const size_t maxPlayers)
         : _maxPlayers(maxPlayers), _name(std::move(name)), _gameConfig(gameConfig)
     {
         Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);

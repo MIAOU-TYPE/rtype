@@ -67,7 +67,7 @@ namespace Engine
         explicit Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
             const std::shared_ptr<Net::Server::IServer> &udpServer,
             const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
-            const Engine::GameConfig &gameConfig, std::string name = "room", size_t maxPlayers = 4);
+            const GameConfig &gameConfig, std::string name = "room", size_t maxPlayers = 4);
 
         /**
          * @brief Initializes the Room with necessary components
@@ -164,6 +164,6 @@ namespace Engine
         std::thread _thread;               ///> Thread for the room's game server loop
         size_t _maxPlayers = 0;            ///> Maximum number of players allowed in the room
         std::string _name = "";            ///> Name of the room
-        Engine::GameConfig _gameConfig;    ///> Game configuration for the room
+        GameConfig _gameConfig;    ///> Game configuration for the room
     };
 } // namespace Engine

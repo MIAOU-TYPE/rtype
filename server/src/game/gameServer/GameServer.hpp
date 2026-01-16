@@ -30,6 +30,7 @@
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
+#include "TailFollowerSystem.hpp"
 
 namespace Game
 {

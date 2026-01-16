@@ -35,7 +35,7 @@ namespace
         world.events().subscribe<DamageEvent>([w](const DamageEvent &event) {
             auto &reg = w->registry();
 
-            const size_t targetIdx = static_cast<size_t>(event.target);
+            const size_t targetIdx = event.target;
             auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
 
             if (bubbleComp && bubbleComp->hitsRemaining > 0) {
@@ -197,11 +197,11 @@ namespace
                 DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
             bubblePowerUp->bubbleEntity = std::nullopt;
             bubblePowerUp->hitsRemaining = 0;
-            reg.getComponents<Ecs::BubblePowerUp>().remove(static_cast<size_t>(event.playerId));
+            reg.getComponents<Ecs::BubblePowerUp>().remove(event.playerId);
         });
     }
 
-    void activateLaserPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    void activateLaserPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
     {
         auto &reg = w->registry();
         w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
@@ -214,7 +214,7 @@ namespace
         }
     }
 
-    void activateShieldPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    void activateShieldPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
     {
         auto &reg = w->registry();
         w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
@@ -227,7 +227,7 @@ namespace
         }
     }
 
-    void attachStandardPowerUp(Game::IGameWorld *w, size_t powerUpIdx, size_t playerIdx)
+    void attachStandardPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
     {
         auto &reg = w->registry();
         auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
@@ -325,7 +325,7 @@ namespace Game
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{500, 500});
-        _registry.emplaceComponent<Game::InputComponent>(ent);
+        _registry.emplaceComponent<InputComponent>(ent);
         _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);

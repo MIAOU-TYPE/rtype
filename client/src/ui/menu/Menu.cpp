@@ -132,7 +132,10 @@ namespace Engine
         layout();
     }
 
-    void Menu::consumeScoreboardRefresh() noexcept { _scoreboardRefreshRequested = false; }
+    void Menu::consumeScoreboardRefresh() noexcept
+    {
+        _scoreboardRefreshRequested = false;
+    }
 
     void Menu::setScoreboard(std::vector<ScoreEntry> scores)
     {
@@ -166,8 +169,7 @@ namespace Engine
         const std::size_t n = std::min<std::size_t>(_scores.size(), _scoreRowTexts.size());
         for (std::size_t i = 0; i < n; ++i) {
             const auto &[username, score] = _scores.at(i);
-            _scoreRowTexts.at(i)->setString(
-                std::to_string(i + 1) + ". " + username + " - " + std::to_string(score));
+            _scoreRowTexts.at(i)->setString(std::to_string(i + 1) + ". " + username + " - " + std::to_string(score));
         }
     }
 
@@ -320,13 +322,13 @@ namespace Engine
         else if (_page == Page::AuthedRoot)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
                 {{_play.get(), Action::Play}, {_scoreboard.get(), Action::Scoreboard},
-                 {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+                    {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
         else if (_page == Page::Scoreboard)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
                 {{_scoreRefreshBtn.get(), Action::RefreshScores}, {_backBtn.get(), Action::Back}});
         else
-            a = pickAction<Action>(frame.mouseX, frame.mouseY,
-                {{_submitBtn.get(), Action::Submit}, {_backBtn.get(), Action::Back}});
+            a = pickAction<Action>(
+                frame.mouseX, frame.mouseY, {{_submitBtn.get(), Action::Submit}, {_backBtn.get(), Action::Back}});
 
         if (a == Action::None)
             return;

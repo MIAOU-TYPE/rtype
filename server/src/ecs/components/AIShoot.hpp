@@ -22,7 +22,8 @@ namespace Ecs
         enum class Type {
             Straight, ///> Shoots projectiles in a straight line
             Diagonal, ///> Shoots projectiles at diagonal angles
-            Spread    ///> Shoots multiple projectiles in a spread pattern
+            Spread,   ///> Shoots multiple projectiles in a spread pattern
+            Homing    ///> Shoots homing projectiles
         };
 
         Type type;                      ///> Type of shooting pattern
@@ -32,5 +33,6 @@ namespace Ecs
         int damage = 0;                 ///> Damage dealt by each projectile
         std::pair<float, float> muzzle; ///> Muzzle offset (x, y)
         std::vector<float> angles;      ///> Angles at which projectiles are fired
+        int bulletsNbr = 0;             ///> Number of bullets for spread type
     };
 } // namespace Ecs

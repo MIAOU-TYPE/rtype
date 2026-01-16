@@ -164,6 +164,11 @@ namespace Network
         void onAuthOk(
             uint32_t req, uint32_t userId, std::string_view username, uint64_t token, uint32_t ttlSec) override;
 
+        /**
+         * @brief Event handler for scoreboard list messages.
+         * @param req The request ID associated with the message.
+         * @param scores The list of scoreboard entries.
+         */
         void onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores) override;
 
         /**

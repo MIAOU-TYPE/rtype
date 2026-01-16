@@ -36,6 +36,23 @@ namespace
             auto &reg = w->registry();
 
             const size_t targetIdx = event.target;
+
+            if (const auto &bossPart = reg.getComponents<Ecs::BossPart>().at(targetIdx); bossPart) {
+                const size_t bossIdx = static_cast<size_t>(bossPart->bossEntity);
+                auto &bossHealth = reg.getComponents<Ecs::Health>().at(bossIdx);
+                if (bossHealth) {
+                    int adjustedDamage = static_cast<int>(event.amount * bossPart->damageMultiplier);
+                    if (bossHealth->hp <= adjustedDamage) {
+                        bossHealth->hp = 0;
+                    } else {
+                        bossHealth->hp -= adjustedDamage;
+                    }
+                    w->events().emit<DamageApplyEvent>(DamageApplyEvent{
+                        bossIdx, static_cast<uint32_t>(bossHealth->hp), static_cast<uint32_t>(bossHealth->maxHp)});
+                }
+                return;
+            }
+
             auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
 
             if (bubbleComp && bubbleComp->hitsRemaining > 0) {

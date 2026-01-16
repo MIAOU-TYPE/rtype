@@ -37,6 +37,7 @@
 #include "Score.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
+#include "BossPart.hpp"
 
 namespace Game
 {

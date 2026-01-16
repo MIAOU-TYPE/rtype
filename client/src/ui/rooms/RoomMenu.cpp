@@ -425,6 +425,8 @@ namespace Engine
 
     void RoomMenu::refreshCreateCatalog()
     {
+        if (_roomManager)
+            _roomManager->loadCustomWorldFromFilesystem();
         _worlds = _roomManager ? _roomManager->worlds() : std::vector<WorldEntry>{};
         if (_worlds.empty()) {
             _selectedWorld = 0;

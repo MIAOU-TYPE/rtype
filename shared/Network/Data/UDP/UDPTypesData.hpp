@@ -46,4 +46,5 @@ namespace Net::Protocol::UDP
     constexpr uint8_t GAME_OVER = 0x16;           ///> Server notifies client of game over event
     constexpr uint8_t SCORE = 0x17;               ///> Server sends score update to the client
     constexpr uint8_t DESTROY_ENTITY = 0x18;      ///> Server notifies client to destroy an entity
+    constexpr uint8_t HEALTH = 0x19;              ///> Server sends health update to the client
 } // namespace Net::Protocol::UDP

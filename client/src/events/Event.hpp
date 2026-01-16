@@ -132,14 +132,14 @@ namespace Engine
          * @param diff The difficulty level for the room.
          * @param level The path to the level configuration file.
          */
-        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Engine::Difficulty diff, std::string level)
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Difficulty diff, std::string level)
             : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), levelPath(std::move(level))
         {
         }
 
         std::string roomName;          ///> The name of the new room.
         uint8_t maxPlayers;            ///> The maximum number of players allowed in the room.
-        Engine::Difficulty difficulty; ///> The difficulty level for the room.
+        Difficulty difficulty; ///> The difficulty level for the room.
         std::string levelPath;         ///> The path to the level configuration file.
     };
 

@@ -15,5 +15,6 @@ namespace Game
         bool left = false;
         bool right = false;
         bool shoot = false;
+        bool powerShoot = false;
     };
 } // namespace Game

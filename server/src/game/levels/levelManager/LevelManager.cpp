@@ -166,13 +166,27 @@ namespace
 
             if (!w.contains("enemies") || !w.at("enemies").is_object())
                 return false;
-            for (auto &[type, countValue] : w.at("enemies").items()) {
-                const int count = countValue.get<int>();
-                if (count <= 0)
-                    return false;
-                wave.groups.push_back({type, count});
+
+            if (w.contains("enemies") && w.at("enemies").is_object()) {
+                for (auto &[type, countValue] : w.at("enemies").items()) {
+                    const int count = countValue.get<int>();
+                    if (count <= 0)
+                        return false;
+                    wave.groups.push_back({type, count});
+                }
             }
-            if (wave.groups.empty() && wave.obstacleType.empty())
+
+            if (w.contains("powerUps") && w.at("powerUps").is_number()) {
+                wave.powerUps = w.at("powerUps").get<int>();
+                wave.powerUpType = "force";
+            }
+
+            if (w.contains("powerUp") && w.at("powerUp").is_object()) {
+                wave.powerUps = 1;
+                wave.powerUpType = w.at("powerUp").value("type", "force");
+            }
+
+            if (wave.groups.empty() && wave.obstacleType.empty() && wave.powerUps == 0)
                 return false;
             level.waves.push_back(wave);
         }

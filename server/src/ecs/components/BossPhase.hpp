@@ -18,7 +18,11 @@ namespace Ecs
      * and damage. It is used to manage boss behavior as its health changes.
      */
     struct BossPhase {
-        enum class Phase { Phase1, Phase2, Phase3 };          ///> Enumeration of boss phases
+        enum class Phase {
+            Phase1, ///> Initial phase of the boss
+            Phase2, ///> Second phase of the boss
+            Phase3  ///> Final phase of the boss
+        };
         Phase currentPhase = Phase::Phase1;                   ///> Current phase of the boss
         std::vector<int> phaseThresholds = {2500, 1000, 200}; ///> Health thresholds for phase transitions
         float fireSpeedMultiplier = 1.5f;                     ///> Multiplier for fire rate in current phase

@@ -1,17 +1,17 @@
 [
   {
     "id": "ruins_level1",
-    "name": "Level 1",
+    "name": "Level 1 - Lost Ark Sanctuary",
     "path": "levels/ruins_level1.json"
   },
   {
     "id": "ruins_level2",
-    "name": "Level 2",
+    "name": "Level 2 - Moria's Labyrinth",
     "path": "levels/ruins_level2.json"
   },
   {
     "id": "ruins_level3",
-    "name": "Level 3",
+    "name": "Level 3 - Tomb Raider's Legacy",
     "path": "levels/ruins_level3.json"
   }
 ]

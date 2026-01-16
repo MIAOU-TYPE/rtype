@@ -12,10 +12,13 @@ namespace Engine
     Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
         const std::shared_ptr<Net::Server::IServer> &udpServer,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
-        std::string name, const size_t maxPlayers)
-        : _maxPlayers(maxPlayers), _name(std::move(name))
+        const GameConfig &gameConfig, std::string name, const size_t maxPlayers)
+        : _maxPlayers(maxPlayers), _name(std::move(name)), _gameConfig(gameConfig)
     {
-        _gameServer = std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath);
+        Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);
+
+        _gameServer =
+            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers);
     }
 
     void Room::init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,

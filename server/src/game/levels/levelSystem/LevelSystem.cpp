@@ -44,13 +44,15 @@ namespace
 
 namespace Game
 {
-    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned)
+    void LevelSystem::update(IGameWorld &world, LevelManager &lvl, const float dt, std::vector<bool> &spawned,
+        const DifficultyModifiers &modifiers)
     {
         lvl.advance(dt);
-        handleWaves(world, lvl, spawned);
+        handleWaves(world, lvl, spawned, modifiers);
     }
 
-    void LevelSystem::handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned)
+    void LevelSystem::handleWaves(
+        IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned, const DifficultyModifiers &modifiers)
     {
         const Level &level = lvl.getCurrentLevel();
 
@@ -64,11 +66,12 @@ namespace Game
             if (!lvl.shouldSpawn(wave.time))
                 continue;
             spawned.at(i) = true;
-            spawnWave(world, level, wave);
+            spawnWave(world, level, wave, modifiers);
         }
     }
 
-    void LevelSystem::spawnWave(IGameWorld &world, const Level &level, const Wave &wave)
+    void LevelSystem::spawnWave(
+        IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers)
     {
         for (const auto &[type, count] : wave.groups) {
             if (!level.enemyTypes.contains(type))
@@ -76,11 +79,11 @@ namespace Game
             const EnemyDefinition &def = level.enemyTypes.at(type);
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)
-                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY);
+                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY, modifiers);
             } else {
                 std::vector<float> yPositions = calculateSpawnPositions(wave.spawnPattern, wave.spawnY, count);
                 for (int k = 0; k < count; k++)
-                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)]);
+                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)], modifiers);
             }
         }
         if (!wave.obstacleType.empty() && level.obstacleTypes.contains(wave.obstacleType)) {
@@ -93,7 +96,7 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, const float centerY)
+        const std::string &pattern, const float centerY, const DifficultyModifiers &modifiers)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
@@ -111,33 +114,41 @@ namespace Game
             const float x = baseX + member.offsetX;
             const float y = baseY + member.offsetY;
 
-            spawnSingleEnemy(world, memberDef, x, y);
+            spawnSingleEnemy(world, memberDef, x, y, modifiers);
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y)
+    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y,
+        const DifficultyModifiers &modifiers)
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
 
+        const int modifiedHp = static_cast<int>(static_cast<float>(def.hp) * modifiers.enemyHpMultiplier);
+        reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{modifiedHp, modifiedHp});
+
+        const int modifiedDamage = static_cast<int>(static_cast<float>(def.damage) * modifiers.enemyDamageMultiplier);
+        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{modifiedDamage});
+
+        const unsigned int modifiedScore =
+            static_cast<unsigned int>(static_cast<float>(def.killScore) * modifiers.enemyScoreMultiplier);
+        reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{modifiedScore});
+
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
-        reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
+        reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed * modifiers.enemySpeedMultiplier, 0.f});
 
         Ecs::MovementPattern pattern;
         pattern.type =
             (def.movement.type == "zigzag") ? Ecs::MovementPattern::Type::ZigZag : Ecs::MovementPattern::Type::Straight;
-        pattern.baseVx = def.speed;
+        pattern.baseVx = def.speed * modifiers.enemySpeedMultiplier;
         pattern.amplitude = def.movement.amplitude;
         pattern.frequency = def.movement.frequency;
         pattern.timer = 0.f;
         reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
 
-        reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{def.hp, def.hp});
         reg.emplaceComponent<Ecs::Collision>(
             mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
-        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{50});
-        reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{def.killScore});
 
         Ecs::AIBrain brain;
         brain.state = Ecs::AIState::Patrol;
@@ -161,8 +172,8 @@ namespace Game
                                                   : Ecs::AIShoot::Type::Spread;
         shoot.cooldown = def.shoot.cooldown;
         shoot.timer = 0.f;
-        shoot.projectileSpeed = def.shoot.projectileSpeed;
-        shoot.damage = def.shoot.damage;
+        shoot.projectileSpeed = def.shoot.projectileSpeed * modifiers.projectileSpeedMultiplier;
+        shoot.damage = static_cast<int>(static_cast<float>(def.shoot.damage) * modifiers.enemyDamageMultiplier);
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);

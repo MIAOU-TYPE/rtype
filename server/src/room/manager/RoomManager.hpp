@@ -10,6 +10,7 @@
 #include <memory>
 #include <mutex>
 #include <utility>
+#include "GameConstants.hpp"
 #include "Room.hpp"
 #include "RoomData.hpp"
 #include "ScoreService.hpp"
@@ -38,9 +39,13 @@ namespace Engine
 
         /**
          * @brief Creates a new game room
+         * @param gameConfig game configuration settings
+         * @param name name of the room
+         * @param maxPlayers maximum number of players allowed in the room
          * @return The ID of the newly created room
          */
-        [[nodiscard]] RoomId createRoom(const std::string &name, size_t maxPlayers) noexcept;
+        [[nodiscard]] RoomId createRoom(
+            const GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept;
 
         /**
          * @brief Removes a game room
@@ -132,9 +137,9 @@ namespace Engine
         std::shared_ptr<Net::Server::ISessionManager> _sessionManager; ///> Session manager for handling player sessions
         std::shared_ptr<Net::Server::IServer> _udpServer;              ///> Server instance for network communication
         std::shared_ptr<Net::Factory::UDPPacketFactory>
-            _udpPacketFactory;                               ///> Packet factory for creating network packets
-        std::shared_ptr<Engine::ScoreService> _scoreService; ///> Service for managing player scores
-        std::string _levelPath;                              ///> Path to the game level data
+            _udpPacketFactory;                       ///> Packet factory for creating network packets
+        std::shared_ptr<ScoreService> _scoreService; ///> Service for managing player scores
+        std::string _levelPath;                      ///> Path to the game level data
 
         mutable std::mutex _mutex; ///> Mutex for synchronizing access to shared resources
     };

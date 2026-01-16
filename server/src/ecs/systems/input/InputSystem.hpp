@@ -8,7 +8,7 @@
 #pragma once
 
 #include <numbers>
-#include "GameConfig.hpp"
+#include "GameConstants.hpp"
 #include "World.hpp"
 
 namespace Game

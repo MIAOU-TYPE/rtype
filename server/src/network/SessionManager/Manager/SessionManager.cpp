@@ -247,8 +247,9 @@ bool SessionManager::consumeUdp(const sockaddr_in &addr)
         tokens = std::min(MaxTokens, tokens + refill);
     }
 
-    if (tokens-- == 0)
+    if (tokens == 0)
         return false;
+    tokens--;
     return true;
 }
 

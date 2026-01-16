@@ -8,8 +8,8 @@
 #pragma once
 
 #include "IGameWorld.hpp"
-#include "TailFollower.hpp"
 #include "Position.hpp"
+#include "TailFollower.hpp"
 #include "Velocity.hpp"
 
 #include <cmath>
@@ -33,6 +33,6 @@ namespace Game
          * @param world The game world containing entities and components.
          * @param dt The delta time since the last update.
          */
-        void update(IGameWorld &world, float dt);
+        static void update(IGameWorld &world, float dt);
     };
 } // namespace Game

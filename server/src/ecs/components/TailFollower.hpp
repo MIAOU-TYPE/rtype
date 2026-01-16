@@ -19,7 +19,7 @@ namespace Ecs
      * typically used for boss entities with segmented tails.
      */
     struct TailFollower {
-        Ecs::Entity bossEntity;    ///< The boss entity this tail segment is associated with
+        Ecs::Entity bossEntity;      ///< The boss entity this tail segment is associated with
         Ecs::Entity leaderEntity;    ///< The entity that this tail segment follows
         float followDistance = 50.f; ///< The distance to maintain from the leader entity
         float followSpeed = 100.f;   ///< The speed at which the tail segment follows the leader

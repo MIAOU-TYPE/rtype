@@ -9,6 +9,7 @@
 
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
+#include "BossSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
@@ -16,6 +17,7 @@
 #include "GameClock.hpp"
 #include "GravitySystem.hpp"
 #include "HealthSystem.hpp"
+#include "HomingSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
@@ -28,7 +30,6 @@
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
-#include "BossSystem.hpp"
 
 namespace Game
 {

@@ -38,8 +38,8 @@ TEST(LevelSystem, SpawnOneWave)
     EXPECT_EQ(world.registry().getComponents<Ecs::Position>().size(), 0u);
 
     std::vector<bool> spawned;
-    Game::LevelSystem::update(world, mgr, 0.3f, spawned);
-    Game::LevelSystem::update(world, mgr, 0.3f, spawned);
+    Game::LevelSystem::update(world, mgr, 0.3f, spawned, {});
+    Game::LevelSystem::update(world, mgr, 0.3f, spawned, {});
 
     auto &posArr = world.registry().getComponents<Ecs::Position>();
 
@@ -90,7 +90,7 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
     ASSERT_TRUE(mgr.load(json));
 
     std::vector<bool> spawned;
-    Game::LevelSystem::update(world, mgr, 1.2f, spawned);
+    Game::LevelSystem::update(world, mgr, 1.2f, spawned, {});
 
     auto &posArr = world.registry().getComponents<Ecs::Position>();
     int firstSpawnCount = 0;
@@ -98,7 +98,7 @@ TEST(LevelSystem, WaveTriggersOnlyOnce)
         if (posArr.at(i).has_value())
             firstSpawnCount++;
 
-    Game::LevelSystem::update(world, mgr, 5.f, spawned);
+    Game::LevelSystem::update(world, mgr, 5.f, spawned, {});
 
     int secondSpawnCount = 0;
     for (size_t i = 0; i < posArr.size(); ++i)

@@ -165,9 +165,19 @@ namespace Network
                 info.roomName = r.str16();
                 info.currentPlayers = r.u16();
                 info.maxPlayers = r.u16();
+                info.gameConfig.difficulty = static_cast<Engine::Difficulty>(r.u8());
+                info.gameConfig.mode = static_cast<Engine::GameMode>(r.u8());
+                info.gameConfig.parameters.timeLimit = r.u32();
+                info.gameConfig.parameters.scoreLimit = r.u32();
+                info.gameConfig.parameters.sharedHealth = r.u8() != 0;
+                info.gameConfig.parameters.teamDamage = r.u8() != 0;
+                info.gameConfig.parameters.friendlyFireMultiplier = static_cast<float>(r.u8()) / 100.0f;
+                info.gameConfig.parameters.waveCount = r.u8();
+                info.gameConfig.parameters.spawnRateMultiplier = static_cast<float>(r.u8()) / 100.0f;
+                info.gameConfig.levelId = r.str16();
             } catch (...) {
-                return protocolError(
-                    req, "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u8)+max(u8))");
+                return protocolError(req,
+                    "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u16)+max(u16)+gameConfig)");
             }
             rooms.push_back(std::move(info));
         }

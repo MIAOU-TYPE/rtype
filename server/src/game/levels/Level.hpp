@@ -9,10 +9,30 @@
 
 #include <string>
 #include <vector>
+#include "GameConfig.hpp"
 #include <unordered_map>
 
 namespace Game
 {
+    /**
+     * @brief Difficulty modifiers that affect enemy properties
+     */
+    struct DifficultyModifiers {
+        float enemyHpMultiplier = 1.0f;         ///> Multiplier for enemy hit points
+        float enemyDamageMultiplier = 1.0f;     ///> Multiplier for enemy damage
+        float enemySpawnRateMultiplier = 1.0f;  ///> Multiplier for enemy spawn rate (lower = faster spawns)
+        float projectileSpeedMultiplier = 1.0f; ///> Multiplier for projectile speeds
+        float enemySpeedMultiplier = 1.0f;      ///> Multiplier for enemy movement speed
+        float enemyScoreMultiplier = 1.0f;      ///> Multiplier for kill score rewards
+
+        /**
+         * @brief Create difficulty modifiers based on difficulty level
+         * @param difficulty The difficulty level
+         * @return DifficultyModifiers configured for the given difficulty
+         */
+        [[nodiscard]] static DifficultyModifiers fromDifficulty(Engine::Difficulty difficulty);
+    };
+
     /**
      * @brief Definition of movement behavior for enemies.
      */
@@ -49,6 +69,7 @@ namespace Game
      */
     struct EnemyDefinition {
         int hp = 0;                       ///> Hit points
+        int damage = 200;                 ///> Collision damage
         float speed = 0.f;                ///> Movement speed
         float colW = 0.f;                 ///> Collision width
         float colH = 0.f;                 ///> Collision height

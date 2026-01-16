@@ -382,100 +382,100 @@ namespace Engine
         }
         if (frame.key == Key::Escape) {
             backToRoot();
-    }
+        }
 
-    void Menu::handleKeyReleased(const InputFrame &frame) const
-    {
-        if (_userField->isFocused())
-            _userField->onKeyPressed(frame.key);
-        else if (_passField->isFocused())
-            _passField->onKeyPressed(frame.key);
-    }
+        void Menu::handleKeyReleased(const InputFrame &frame) const
+        {
+            if (_userField->isFocused())
+                _userField->onKeyPressed(frame.key);
+            else if (_passField->isFocused())
+                _passField->onKeyPressed(frame.key);
+        }
 
-    void Menu::enterForm(const Page p)
-    {
-        _page = p;
-        clearAuthError();
-        _userField->setFocused(true);
-        _passField->setFocused(false);
-        layout();
-    }
+        void Menu::enterForm(const Page p)
+        {
+            _page = p;
+            clearAuthError();
+            _userField->setFocused(true);
+            _passField->setFocused(false);
+            layout();
+        }
 
-    void Menu::enterScoreboard()
-    {
-        _page = Page::Scoreboard;
-        _scoreboardRefreshRequested = true;
-        _scoreboardLoading = true;
-        rebuildScoreboardTexts();
-        layout();
-    }
+        void Menu::enterScoreboard()
+        {
+            _page = Page::Scoreboard;
+            _scoreboardRefreshRequested = true;
+            _scoreboardLoading = true;
+            rebuildScoreboardTexts();
+            layout();
+        }
 
-    void Menu::backToRoot()
-    {
-        _page = _authed ? Page::AuthedRoot : Page::UnauthedRoot;
-        clearAuthError();
-        _userField->clear();
-        _passField->clear();
-        _userField->setFocused(false);
-        _passField->setFocused(false);
-        layout();
-    }
+        void Menu::backToRoot()
+        {
+            _page = _authed ? Page::AuthedRoot : Page::UnauthedRoot;
+            clearAuthError();
+            _userField->clear();
+            _passField->clear();
+            _userField->setFocused(false);
+            _passField->setFocused(false);
+            layout();
+        }
 
-    void Menu::submit()
-    {
-        if (_userField->value().empty() || _passField->value().empty())
-            return;
-        _submitted = true;
-        _submittedMode = (_page == Page::LoginForm) ? AuthMode::Login : AuthMode::Register;
-        _submittedUser = _userField->value();
-        _submittedPass = _passField->value();
-    }
+        void Menu::submit()
+        {
+            if (_userField->value().empty() || _passField->value().empty())
+                return;
+            _submitted = true;
+            _submittedMode = (_page == Page::LoginForm) ? AuthMode::Login : AuthMode::Register;
+            _submittedUser = _userField->value();
+            _submittedPass = _passField->value();
+        }
 
-    bool Menu::hasAuthSubmission() const noexcept
-    {
-        return _submitted;
-    }
+        bool Menu::hasAuthSubmission() const noexcept
+        {
+            return _submitted;
+        }
 
-    void Menu::consumeAuthSubmission() noexcept
-    {
-        _submitted = false;
-        _submittedMode = AuthMode::None;
-        _submittedUser.clear();
-        _submittedPass.clear();
-    }
+        void Menu::consumeAuthSubmission() noexcept
+        {
+            _submitted = false;
+            _submittedMode = AuthMode::None;
+            _submittedUser.clear();
+            _submittedPass.clear();
+        }
 
-    Menu::AuthMode Menu::submittedMode() const noexcept
-    {
-        return _submittedMode;
-    }
+        Menu::AuthMode Menu::submittedMode() const noexcept
+        {
+            return _submittedMode;
+        }
 
-    const std::string &Menu::submittedUsername() const noexcept
-    {
-        return _submittedUser;
-    }
+        const std::string &Menu::submittedUsername() const noexcept
+        {
+            return _submittedUser;
+        }
 
-    const std::string &Menu::submittedPassword() const noexcept
-    {
-        return _submittedPass;
-    }
+        const std::string &Menu::submittedPassword() const noexcept
+        {
+            return _submittedPass;
+        }
 
-    bool Menu::wantsToStart() const noexcept
-    {
-        return _startRequested;
-    }
+        bool Menu::wantsToStart() const noexcept
+        {
+            return _startRequested;
+        }
 
-    bool Menu::wantsToQuit() const noexcept
-    {
-        return _quitRequested;
-    }
+        bool Menu::wantsToQuit() const noexcept
+        {
+            return _quitRequested;
+        }
 
-    bool Menu::wantsSettings() const noexcept
-    {
-        return _settingsRequested;
-    }
+        bool Menu::wantsSettings() const noexcept
+        {
+            return _settingsRequested;
+        }
 
-    bool Menu::wantsScoreboardRefresh() const noexcept
-    {
-        return _scoreboardRefreshRequested;
-    }
-} // namespace Engine
+        bool Menu::wantsScoreboardRefresh() const noexcept
+        {
+            return _scoreboardRefreshRequested;
+        }
+    } // namespace Engine

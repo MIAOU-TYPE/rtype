@@ -33,11 +33,11 @@ namespace
                     return;
 
                 const int sessionId = it->second;
+                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
+                sessionsL->setLastScore(sessionId, totalScore);
                 const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
                 if (!addr)
                     return;
-
-                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
                 if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
                     (void) serverL->sendPacket(*pkt);
             });
@@ -152,10 +152,10 @@ namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
         std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-        const std::string &levelPath)
+        const std::string &levelPath, const DifficultyModifiers &modifiers)
         : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
           _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _udpPacketFactory(std::move(udpPacketFactory))
+          _udpPacketFactory(std::move(udpPacketFactory)), _difficultyModifiers(modifiers)
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
@@ -213,13 +213,16 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
-        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned);
+        LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned, _difficultyModifiers);
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);
         BossSystem::update(*_worldWrite, dt);
         TailFollowerSystem::update(*_worldWrite, dt);
         AIShootSystem::update(*_worldWrite, dt);
+
+        PowerUpShootingSystem::update(*_worldWrite, dt);
+        PowerUpBarSystem::update(*_worldWrite, dt);
 
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite, dt);
@@ -228,6 +231,9 @@ namespace Game
         GravitySystem::update(*_worldWrite, dt);
         MovementPatternSystem::update(*_worldWrite, dt);
         MovementSystem::update(*_worldWrite, dt);
+        PowerUpAttachmentSystem::update(*_worldWrite);
+        LaserPowerUpSystem::update(*_worldWrite, dt);
+        BubblePowerUpSystem::update(*_worldWrite);
         CollisionSystem::update(*_worldWrite);
         HealthSystem::update(*_worldWrite);
         LifetimeSystem::update(*_worldWrite, dt);
@@ -294,6 +300,7 @@ namespace Game
                     inputOpt->left = cmd.input.left;
                     inputOpt->right = cmd.input.right;
                     inputOpt->shoot = cmd.input.shoot;
+                    inputOpt->powerShoot = cmd.input.powerShoot;
                 }
                 break;
             }

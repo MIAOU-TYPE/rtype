@@ -17,7 +17,7 @@ namespace
         return s;
     }
 
-    [[nodiscard]] uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
+    [[nodiscard]] uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, const int sessionId)
     {
         auto token = sessions.getUdpToken(sessionId);
         if (token != 0)
@@ -35,9 +35,11 @@ namespace Net
 {
     TCPPacketRouter::TCPPacketRouter(std::shared_ptr<Server::ISessionManager> sessions,
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
-        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService)
+        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService,
+        std::shared_ptr<Engine::ScoreService> scoreService)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _serverUdpPort(_tcp->getPort() + 1)
+          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _scores(std::move(scoreService)),
+          _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 
@@ -76,6 +78,7 @@ namespace Net
             case Protocol::TCP::HELLO: onHello(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::AUTH_REGISTER: onAuthRegister(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::AUTH_LOGIN: onAuthLogin(*addr, sessionId, h.requestId, r); break;
+            case Protocol::TCP::SCOREBOARD_GET: onScoreboardGet(*addr, h.requestId, r); break;
             case Protocol::TCP::LIST_ROOMS: onListRooms(*addr, h.requestId); break;
             case Protocol::TCP::CREATE_ROOM: onCreateRoom(*addr, h.requestId, r); break;
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
@@ -218,12 +221,13 @@ namespace Net
         std::vector<RoomData> outRooms;
         outRooms.reserve(rooms.size());
 
-        for (const auto &[id, name, currentPlayers, maxPlayers] : rooms) {
+        for (const auto &[id, name, currentPlayers, maxPlayers, gameConfig] : rooms) {
             RoomData ri{};
             ri.roomId = static_cast<uint32_t>(id);
             ri.roomName = name;
             ri.currentPlayers = static_cast<size_t>(currentPlayers);
             ri.maxPlayers = static_cast<size_t>(maxPlayers);
+            ri.gameConfig = gameConfig;
             outRooms.push_back(ri);
         }
 
@@ -238,12 +242,18 @@ namespace Net
     {
         std::string roomName;
         uint8_t maxPlayers = 0;
+        uint8_t difficultyRaw = 0;
+        std::string levelPath;
 
         try {
             roomName = r.str16();
             maxPlayers = r.u8();
+            difficultyRaw = r.u8();
+            levelPath = r.str16();
         } catch (...) {
-            return sendError(addr, req, 4, "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8))");
+            return sendError(addr, req, 4,
+                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + "
+                "levelPath(str16))");
         }
 
         if (roomName.empty() || roomName.size() > 32)
@@ -252,12 +262,21 @@ namespace Net
         if (maxPlayers < 1 || maxPlayers > 4)
             return sendError(addr, req, 5, "CREATE_ROOM: maxPlayers must be in range 1..4");
 
+        Engine::Difficulty difficulty;
+        switch (difficultyRaw) {
+            case 0: difficulty = Engine::Difficulty::Easy; break;
+            case 1: difficulty = Engine::Difficulty::Medium; break;
+            case 2: difficulty = Engine::Difficulty::Hard; break;
+            default: return sendError(addr, req, 10, "CREATE_ROOM: invalid difficulty value");
+        }
+
         if (r.remaining() != 0)
             return sendError(addr, req, 7, "CREATE_ROOM: unexpected trailing bytes");
 
         uint32_t roomId = 0;
         try {
-            roomId = _rooms->createRoom(roomName, maxPlayers);
+            Engine::GameConfig config{difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
+            roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());
         }
@@ -359,5 +378,38 @@ namespace Net
                     (void) _tcp->sendPacket(*out);
             }
         }
+    }
+
+    void TCPPacketRouter::onScoreboardGet(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
+    {
+        if (!_scores || !_packetFactory)
+            return sendError(addr, req, 500, "SCOREBOARD_GET: service unavailable");
+
+        uint16_t limit = 10;
+        try {
+            if (r.remaining() == 2)
+                limit = r.u16();
+            else if (r.remaining() != 0)
+                return sendError(addr, req, 400, "SCOREBOARD_GET: malformed payload (optional limit u16)");
+        } catch (...) {
+            return sendError(addr, req, 400, "SCOREBOARD_GET: malformed payload");
+        }
+
+        if (limit == 0)
+            limit = 10;
+        if (limit > 100)
+            limit = 100;
+
+        std::vector<ScoreEntry> top;
+        try {
+            top = _scores->getTopScores(limit);
+        } catch (const std::exception &e) {
+            return sendError(addr, req, 500, std::string("SCOREBOARD_GET: db error: ") + e.what());
+        }
+        const auto out = _packetFactory->makeScoreboardList(addr, req, top);
+        if (!out)
+            return sendError(addr, req, 500, "SCOREBOARD_GET: build response failed");
+
+        (void) _tcp->sendPacket(*out);
     }
 } // namespace Net

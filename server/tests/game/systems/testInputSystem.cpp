@@ -46,8 +46,7 @@ TEST(InputSystem, diagonal_movement)
 
     auto &pos = reg.getComponents<Ecs::Position>().at(static_cast<size_t>(e));
 
-    // With diagonal normalization: speed * (1/sqrt(2)) = 3.5 * 0.7071... ≈ 2.475
-    constexpr float expectedDelta = 3.5f / std::numbers::sqrt2_v<float>;
+    constexpr float expectedDelta = 5.0f / std::numbers::sqrt2_v<float>;
     ASSERT_NEAR(pos->x, beforePos->x - expectedDelta, 0.001f);
     ASSERT_NEAR(pos->y, beforePos->y - expectedDelta, 0.001f);
 }

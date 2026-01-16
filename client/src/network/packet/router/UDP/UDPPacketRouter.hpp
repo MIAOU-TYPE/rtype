@@ -163,7 +163,7 @@ namespace Ecs
          * @param payload Pointer to the payload data of the packet
          * @param payloadSize Size of the payload data.
          */
-        void dispatchPacket(const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
+        void dispatchPacket(const HeaderData &header, const uint8_t *payload, size_t payloadSize) const;
 
         static constexpr uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
 

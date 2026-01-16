@@ -48,7 +48,7 @@ TEST_F(SnapshotSystemTest, SingleEntityWithDrawableAndPosition)
     ASSERT_EQ(snapshot.size(), 1u);
     const auto &[id, x, y, z, spriteId] = snapshot.front();
 
-    EXPECT_EQ(id, static_cast<std::size_t>(1));
+    EXPECT_EQ(id, static_cast<size_t>(1));
     EXPECT_FLOAT_EQ(x, 42.0f);
     EXPECT_FLOAT_EQ(y, 84.0f);
     EXPECT_EQ(z, 9);

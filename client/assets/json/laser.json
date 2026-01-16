@@ -1,0 +1,14 @@
+{
+  "sprite": "laser",
+  "spriteId": 17,
+  "texture": "sprites/laser.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 1430, "h": 16, "duration": 1.0 }
+      ]
+    }
+  }
+}

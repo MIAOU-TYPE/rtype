@@ -98,6 +98,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/shared/NetWrapper/Wrapper
         ${CMAKE_SOURCE_DIR}/shared/NetPacket/src
+        ${CMAKE_SOURCE_DIR}/shared/Network/Data
 )
 
 if (WIN32)

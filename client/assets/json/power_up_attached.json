@@ -1,0 +1,25 @@
+{
+  "sprite": "power_up_attached",
+  "spriteId": 14,
+  "texture": "sprites/power_up_attached.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0,   "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 17,  "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 34,  "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 51,  "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 68,  "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 85,  "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 102, "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 119, "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 136, "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 153, "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 170, "y": 0, "w": 17, "h": 18, "duration": 0.05 },
+        { "x": 187, "y": 0, "w": 17, "h": 18, "duration": 0.05 }
+      ]
+    }
+  }
+}

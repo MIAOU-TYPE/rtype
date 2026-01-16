@@ -11,17 +11,20 @@ namespace Engine
 {
     RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
         std::shared_ptr<Net::Server::IServer> UDPServer,
-        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath)
+        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::shared_ptr<ScoreService> scoreService,
+        std::string levelPath)
         : _sessionManager(std::move(sessionManager)), _udpServer(std::move(UDPServer)),
-          _udpPacketFactory(std::move(udpPacketFactory)), _levelPath(std::move(levelPath))
+          _udpPacketFactory(std::move(udpPacketFactory)), _scoreService(std::move(scoreService)),
+          _levelPath(std::move(levelPath))
     {
     }
 
-    RoomId RoomManager::createRoom(const std::string &name, size_t maxPlayers) noexcept
+    RoomId RoomManager::createRoom(const GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept
     {
         try {
-            auto room =
-                std::make_shared<Room>(_sessionManager, _udpServer, _udpPacketFactory, _levelPath, name, maxPlayers);
+            const std::string levelPath = gameConfig.levelId.empty() ? _levelPath : gameConfig.levelId;
+            auto room = std::make_shared<Room>(
+                _sessionManager, _udpServer, _udpPacketFactory, levelPath, gameConfig, name, maxPlayers);
             room->init(_sessionManager, _udpServer, _udpPacketFactory);
             std::scoped_lock lock(_mutex);
             auto id = _nextRoomId++;
@@ -84,6 +87,8 @@ namespace Engine
         } catch (...) {
             return false;
         }
+        if (_sessionManager)
+            _sessionManager->setLastScore(sessionId, 0);
         std::scoped_lock lock(_mutex);
         _playerToRoom[sessionId] = roomId;
         return true;
@@ -96,6 +101,16 @@ namespace Engine
 
         if (!room)
             return roomId;
+        if (_scoreService && _sessionManager) {
+            const auto idOpt = _sessionManager->getIdentity(sessionId);
+            if (const auto scoreOpt = _sessionManager->getLastScore(sessionId); idOpt && scoreOpt) {
+                try {
+                    _scoreService->saveScore(idOpt->username, static_cast<int>(*scoreOpt));
+                } catch (...) {
+                    return InvalidRoomId;
+                }
+            }
+        }
         try {
             roomId = getRoomIdOfPlayer(sessionId);
             room->leave(sessionId);

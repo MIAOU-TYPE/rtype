@@ -54,8 +54,8 @@ def sanitize_var_name(filename: str) -> str:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: bin2header.py <input_file> <output_file>")
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("Usage: bin2header.py <input_file> <output_file> [var_name]")
         sys.exit(1)
     
     input_path = sys.argv[1]
@@ -65,6 +65,10 @@ if __name__ == "__main__":
         print(f"Error: Input file '{input_path}' not found")
         sys.exit(1)
     
-    var_name = sanitize_var_name(input_path)
+    if len(sys.argv) == 4:
+        var_name = sys.argv[3]
+    else:
+        var_name = sanitize_var_name(input_path)
+    
     bin_to_header(input_path, output_path, var_name)
     print(f"Generated {output_path} with variable '{var_name}'")

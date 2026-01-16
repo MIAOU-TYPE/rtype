@@ -20,15 +20,16 @@ file(GLOB_RECURSE ASSET_FILES
 
 foreach(asset_file ${ASSET_FILES})
     if(EXISTS "${asset_file}")
-        get_filename_component(asset_name "${asset_file}" NAME)
-        string(REPLACE "." "_" safe_name "${asset_name}")
+        file(RELATIVE_PATH asset_rel_path "${CLIENT_ASSETS_DIR}" "${asset_file}")
+        string(REPLACE "/" "_" safe_name "${asset_rel_path}")
+        string(REPLACE "." "_" safe_name "${safe_name}")
         string(REPLACE "-" "_" safe_name "${safe_name}")
 
         set(output_file "${EMBEDDED_RESOURCES_DIR}/${safe_name}.cpp")
 
-        message(STATUS "Generating ${safe_name}.cpp from ${asset_name}")
+        message(STATUS "Generating ${safe_name}.cpp from ${asset_rel_path}")
         execute_process(
-            COMMAND python3 "${PYTHON_SCRIPT}" "${asset_file}" "${output_file}"
+            COMMAND python3 "${PYTHON_SCRIPT}" "${asset_file}" "${output_file}" "${safe_name}"
             RESULT_VARIABLE result
         )
 

@@ -37,9 +37,19 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/obstacle.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/missile_big.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy2.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/homingbullet.json", *spriteRegistry);
+
+        Engine::SpriteLoader::loadFromFile("client/assets/json/bar.json", *spriteRegistry);
+
+        Engine::SpriteLoader::loadFromFile("client/assets/json/power_up.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/power_up_attached.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/power_up2.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/power_up3.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/laser.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/bubble.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/player.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/player2.json", *spriteRegistry);

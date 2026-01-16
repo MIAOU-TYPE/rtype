@@ -110,10 +110,10 @@ namespace Utils
 {
     SettingsConfig::SettingsConfig()
     {
-        _presets[KeyPreset::Arrows] = {
-            Engine::Key::Up, Engine::Key::Down, Engine::Key::Left, Engine::Key::Right, Engine::Key::Space};
+        _presets[KeyPreset::Arrows] = {Engine::Key::Up, Engine::Key::Down, Engine::Key::Left, Engine::Key::Right,
+            Engine::Key::Space, Engine::Key::E};
         _presets[KeyPreset::ZQSD] = {
-            Engine::Key::Z, Engine::Key::S, Engine::Key::Q, Engine::Key::D, Engine::Key::Space};
+            Engine::Key::Z, Engine::Key::S, Engine::Key::Q, Engine::Key::D, Engine::Key::Space, Engine::Key::E};
         _customKeys = _presets[KeyPreset::Arrows];
 
         if (!load())
@@ -256,12 +256,12 @@ namespace Utils
         }
     }
 
-    std::size_t SettingsConfig::getMusicVolume() const noexcept
+    size_t SettingsConfig::getMusicVolume() const noexcept
     {
         return _musicVolume;
     }
 
-    std::size_t SettingsConfig::getSfxVolume() const noexcept
+    size_t SettingsConfig::getSfxVolume() const noexcept
     {
         return _sfxVolume;
     }
@@ -329,13 +329,13 @@ namespace Utils
             || (key == keys.shoot && excludeCommand != keys.shoot);
     }
 
-    void SettingsConfig::setMusicVolume(std::size_t volume)
+    void SettingsConfig::setMusicVolume(size_t volume)
     {
         _musicVolume = (volume > 100U) ? 100U : volume;
         _dirty = true;
     }
 
-    void SettingsConfig::setSfxVolume(std::size_t volume)
+    void SettingsConfig::setSfxVolume(size_t volume)
     {
         _sfxVolume = (volume > 100U) ? 100U : volume;
         _dirty = true;

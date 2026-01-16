@@ -281,7 +281,91 @@
       "time": 1,
       "enemies": { "boss3": 1 },
       "spawnPattern": "line",
-      "spawnY": 100
+      "spawnY": 360
+    },
+    {
+      "time": 6,
+      "enemies": { "smallEnemy": 2 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 9,
+      "enemies": { "smallEnemy": 3 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 15,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 360,
+      "obstacleX": 500
+    },
+    {
+      "time": 16,
+      "enemies": { "smallEnemy": 2 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "laser" }
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "shield" }
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "bubble" }
+    },
+    {
+      "time": 19,
+      "enemies": { "mediumEnemy": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 24,
+      "enemies": { "groupEnemy": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 29,
+      "obstacleType": "gravityWell",
+      "obstacleY": 100,
+      "obstacleX": 250,
+      "enemies": { "groupEnemy2": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 37,
+      "enemies": { "groupEnemy3": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 50,
+      "enemies": { "mediumEnemyFive": 3 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 65,
+      "enemies": { "groupEnemy4": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 80,
+      "enemies": { "groupEnemy3": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 95,
+      "enemies": { "boss": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
     }
   ]
 }

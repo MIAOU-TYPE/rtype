@@ -220,7 +220,7 @@ namespace World
         if (itEnt == _entityMap.end())
             return;
 
-        const auto ent = static_cast<std::size_t>(itEnt->second);
+        const auto ent = static_cast<size_t>(itEnt->second);
 
         if (ent >= positions.size())
             return;
@@ -371,7 +371,7 @@ namespace World
         auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
         if (!pos)
             return;
-        pos->x += dx * 3.5f;
-        pos->y += dy * 3.5f;
+        pos->x += dx * 5.f;
+        pos->y += dy * 5.f;
     }
 } // namespace World

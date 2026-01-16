@@ -246,8 +246,8 @@ namespace Utils
         static constexpr const char *CONFIG_FILE =
             "client/config/settings.json"; ///> Path to the settings configuration file
 
-        size_t _musicVolume = 50;                                             ///> Music volume level (0-100)
-        size_t _sfxVolume = 50;                                               ///> SFX volume level (0-100)
+        size_t _musicVolume = 50;                                                  ///> Music volume level (0-100)
+        size_t _sfxVolume = 50;                                                    ///> SFX volume level (0-100)
         bool _musicMuted = false;                                                  ///> Music mute state
         bool _sfxMuted = false;                                                    ///> SFX mute state
         Graphics::Extent2u _resolution{1280, 720};                                 ///> Screen resolution

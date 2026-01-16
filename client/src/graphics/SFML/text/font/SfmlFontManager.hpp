@@ -73,7 +73,7 @@ namespace Graphics
          * @brief Internal structure to hold font data and reference count.
          */
         struct FontEntry {
-            sf::Font font;            ///> The SFML font
+            sf::Font font;       ///> The SFML font
             size_t refCount = 1; ///> Reference count for the font
         };
 

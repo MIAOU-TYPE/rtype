@@ -16,6 +16,7 @@
 #include "ITextureManager.hpp"
 #include "InputState.hpp"
 #include "RenderCommand.hpp"
+#include "ScoreEntry.hpp"
 #include "UIButton.hpp"
 #include "UITextField.hpp"
 
@@ -58,8 +59,9 @@ namespace Engine
          * AuthedRoot: The root page for authenticated users.
          * LoginForm: The login form page.
          * RegisterForm: The registration form page.
+         * Scoreboard: The scoreboard page.
          */
-        enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm };
+        enum class Page { UnauthedRoot, AuthedRoot, LoginForm, RegisterForm, Scoreboard };
 
         /**
          * @brief Enumeration of authentication modes.
@@ -107,7 +109,7 @@ namespace Engine
          *
          * @param v true if the user is authenticated, false otherwise.
          */
-        void setAuthed(bool v) noexcept;
+        void setAuthed(bool v);
 
         /**
          * @brief Check if the user is authenticated.
@@ -129,6 +131,23 @@ namespace Engine
          * @brief Consume the authentication submission.
          */
         void consumeAuthSubmission() noexcept;
+
+        /**
+         * @brief Consume the scoreboard refresh request.
+         */
+        void consumeScoreboardRefresh() noexcept;
+
+        /**
+         * @brief Set the scoreboard entries.
+         * @param scores The vector of ScoreEntry objects representing the scoreboard.
+         */
+        void setScoreboard(std::vector<ScoreEntry> scores);
+
+        /**
+         * @brief Set the loading state of the scoreboard.
+         * @param v true if the scoreboard is loading, false otherwise.
+         */
+        void setScoreboardLoading(bool v);
 
         /**
          * @brief Get the submitted authentication mode.
@@ -171,6 +190,12 @@ namespace Engine
          * @return true if the user wants to access the settings, false otherwise.
          */
         [[nodiscard]] bool wantsSettings() const noexcept;
+
+        /**
+         * @brief Check if the user wants to refresh the scoreboard.
+         * @return true if the user wants to refresh the scoreboard, false otherwise.
+         */
+        [[nodiscard]] bool wantsScoreboardRefresh() const noexcept;
 
         /**
          * @brief Handle resizing of the menu.
@@ -224,6 +249,16 @@ namespace Engine
          */
         void submit();
 
+        /**
+         * @brief Enter the scoreboard page.
+         */
+        void enterScoreboard();
+
+        /**
+         * @brief Rebuild the scoreboard text objects.
+         */
+        void rebuildScoreboardTexts() const;
+
         Graphics::TextureHandle _logoTexture = Graphics::InvalidTexture; ///> Handle to the logo texture.
         RenderCommand _logoCmd;                                          ///> Render command for the logo.
 
@@ -242,14 +277,22 @@ namespace Engine
         std::unique_ptr<UI::UITextField> _userField; ///> Text field for entering the username.
         std::unique_ptr<UI::UITextField> _passField; ///> Text field for entering the password.
 
+        std::unique_ptr<UI::UIButton> _scoreboard;  ///> Button to access the scoreboard page.
+        std::unique_ptr<UI::UIButton> _scoreRefreshBtn; ///> Button to refresh the scoreboard.
+        std::shared_ptr<Graphics::IText> _scoreTitleText;   ///> Text object for the scoreboard title.
+        std::vector<std::shared_ptr<Graphics::IText>> _scoreRowTexts;   ///> Text objects for each row in the scoreboard.
+
         std::unique_ptr<Graphics::IText> _authErrorText; ///> Text object for displaying authentication error messages.
         std::string _authErrorMessage;                   ///> Authentication error message.
 
         bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
         bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.
         bool _settingsRequested = false; ///> Flag indicating if the user requested to access settings.
-
+        bool _scoreboardRefreshRequested = false;   ///> Flag indicating if the user requested to refresh the scoreboard.
+        bool _scoreboardLoading = false;    ///> Flag indicating if the scoreboard is loading.
         bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
+
+        std::vector<ScoreEntry> _scores;    ///> Vector of scoreboard entries.
         AuthMode _submittedMode = AuthMode::None; ///> Submitted authentication mode.
         std::string _submittedUser;               ///> Submitted username.
         std::string _submittedPass;               ///> Submitted password.

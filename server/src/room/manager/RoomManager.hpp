@@ -132,9 +132,9 @@ namespace Engine
         std::shared_ptr<Net::Server::ISessionManager> _sessionManager; ///> Session manager for handling player sessions
         std::shared_ptr<Net::Server::IServer> _udpServer;              ///> Server instance for network communication
         std::shared_ptr<Net::Factory::UDPPacketFactory>
-            _udpPacketFactory;  ///> Packet factory for creating network packets
+            _udpPacketFactory;                               ///> Packet factory for creating network packets
         std::shared_ptr<Engine::ScoreService> _scoreService; ///> Service for managing player scores
-        std::string _levelPath; ///> Path to the game level data
+        std::string _levelPath;                              ///> Path to the game level data
 
         mutable std::mutex _mutex; ///> Mutex for synchronizing access to shared resources
     };

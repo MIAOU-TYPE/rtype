@@ -293,12 +293,12 @@ namespace Engine
         std::unique_ptr<Graphics::IText> _authErrorText; ///> Text object for displaying authentication error messages.
         std::string _authErrorMessage;                   ///> Authentication error message.
 
-        bool _startRequested = false;                ///> Flag indicating if the user requested to start the game.
-        bool _quitRequested = false;                 ///> Flag indicating if the user requested to quit.
-        bool _settingsRequested = false;             ///> Flag indicating if the user requested to access settings.
+        bool _startRequested = false;             ///> Flag indicating if the user requested to start the game.
+        bool _quitRequested = false;              ///> Flag indicating if the user requested to quit.
+        bool _settingsRequested = false;          ///> Flag indicating if the user requested to access settings.
         bool _scoreboardRefreshRequested = false; ///> Flag indicating if the user requested to refresh the scoreboard.
-        bool _scoreboardLoading = false;          ///> Flag indicating if the scoreboard is loading.        bool _levelEditorRequested = false; ///> Flag indicating if the user requested to access level editor.
-        bool _levelEditorRequested = false; ///> Flag indicating if the user requested to access level editor.
+        bool _scoreboardLoading = false;          ///> Flag indicating if the scoreboard is loading.
+        bool _levelEditorRequested = false;       ///> Flag indicating if the user requested to access level editor.
         bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
 
         std::vector<ScoreEntry> _scores;          ///> Vector of scoreboard entries.

@@ -30,7 +30,7 @@ namespace Game
          * @param difficulty The difficulty level
          * @return DifficultyModifiers configured for the given difficulty
          */
-        [[nodiscard]] static DifficultyModifiers fromDifficulty(Difficulty difficulty);
+        [[nodiscard]] static DifficultyModifiers fromDifficulty(Engine::Difficulty difficulty);
     };
 
     /**

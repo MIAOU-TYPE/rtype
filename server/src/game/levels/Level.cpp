@@ -9,7 +9,7 @@
 
 namespace Game
 {
-    DifficultyModifiers DifficultyModifiers::fromDifficulty(Difficulty difficulty)
+    DifficultyModifiers DifficultyModifiers::fromDifficulty(Engine::Difficulty difficulty)
     {
         DifficultyModifiers mods;
 

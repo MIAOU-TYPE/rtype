@@ -62,11 +62,21 @@ namespace Net::Factory
         TCP::Writer b;
         b.u16(static_cast<uint16_t>(rooms.size()));
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
             b.u32(roomId);
             b.str16(roomName);
             b.u16(static_cast<uint16_t>(currentPlayers));
             b.u16(static_cast<uint16_t>(maxPlayers));
+            b.u8(static_cast<uint8_t>(gameConfig.difficulty));
+            b.u8(static_cast<uint8_t>(gameConfig.mode));
+            b.u32(gameConfig.parameters.timeLimit);
+            b.u32(gameConfig.parameters.scoreLimit);
+            b.u8(gameConfig.parameters.sharedHealth ? 1 : 0);
+            b.u8(gameConfig.parameters.teamDamage ? 1 : 0);
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.friendlyFireMultiplier * 100));
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.waveCount));
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.spawnRateMultiplier * 100));
+            b.str16(gameConfig.levelId);
         }
 
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOMS_LIST, req, b.bytes());

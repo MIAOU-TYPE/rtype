@@ -1,0 +1,20 @@
+{
+  "name": "Custom World",
+  "levels": [
+    {
+      "id": "custom_level1",
+      "name": "Level 1",
+      "path": "levels/custom_level1.json"
+    },
+    {
+      "id": "custom_level2",
+      "name": "Level 2",
+      "path": "levels/custom_level2.json"
+    },
+    {
+      "id": "custom_level3",
+      "name": "Level 3",
+      "path": "levels/custom_level3.json"
+    }
+  ]
+}

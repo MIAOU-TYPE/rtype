@@ -1,0 +1,20 @@
+{
+  "name": "World 2 - Jungle World",
+  "levels": [
+    {
+      "id": "jungle_level1",
+      "name": "Level 1 - Ewok Outskirts",
+      "path": "levels/jungle_level1.json"
+    },
+    {
+      "id": "jungle_level2",
+      "name": "Level 2 - Temple of Doom",
+      "path": "levels/jungle_level2.json"
+    },
+    {
+      "id": "jungle_level3",
+      "name": "Level 3 - Jurassic Depths",
+      "path": "levels/jungle_level3.json"
+    }
+  ]
+}

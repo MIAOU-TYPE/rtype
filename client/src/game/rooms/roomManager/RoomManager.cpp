@@ -25,18 +25,13 @@ namespace Engine
         return _worlds;
     }
 
-    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId, const Difficulty difficulty) const
+    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId) const
     {
         const auto it = _levelsByWorldId.find(std::string(worldId));
         if (it == _levelsByWorldId.end())
             throw RoomManagerError("{RoomManager::levelsFor} unknown worldId");
         const WorldLevels &wl = it->second;
-        switch (difficulty) {
-            case Difficulty::Easy: return wl.easy;
-            case Difficulty::Medium: return wl.medium;
-            case Difficulty::Hard: return wl.hard;
-        }
-        return wl.easy;
+        return wl.levels;
     }
 
     std::vector<RoomData> &RoomManager::rooms() noexcept
@@ -74,7 +69,18 @@ namespace Engine
             if (seen.insert(worldId).second)
                 out.push_back(std::move(worldId));
         }
-        std::ranges::sort(out);
+        std::ranges::sort(out, [](const std::string &a, const std::string &b) {
+            auto getPriority = [](const std::string &s) -> int {
+                if (s == "world1")
+                    return 1;
+                if (s == "world2")
+                    return 2;
+                if (s == "world3")
+                    return 3;
+                return 4;
+            };
+            return getPriority(a) < getPriority(b);
+        });
         return out;
     }
 
@@ -91,53 +97,43 @@ namespace Engine
         return std::string(reinterpret_cast<const char *>(data), size);
     }
 
-    std::vector<LevelInfo> RoomManager::parseLevelsListJson(const std::string_view jsonText)
+    std::pair<std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(const std::string_view jsonText)
     {
         json j;
         try {
             j = json::parse(jsonText.begin(), jsonText.end());
         } catch (const std::exception &e) {
-            throw RoomManagerError(std::string("{RoomManager::parseLevelsListJson} parse error: ") + e.what());
+            throw RoomManagerError(std::string("{RoomManager::parseWorldLevelsJson} parse error: ") + e.what());
         }
 
-        if (!j.is_array())
-            throw RoomManagerError("{RoomManager::parseLevelsListJson} JSON is not an array");
+        if (!j.is_object())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} JSON is not an object");
 
-        std::vector<LevelInfo> out;
-        out.reserve(j.size());
+        const std::string name = j.value("name", "");
+        if (name.empty())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} Missing or empty 'name' field");
 
-        for (const auto &item : j) {
+        const auto levelsJson = j.find("levels");
+        if (levelsJson == j.end() || !levelsJson->is_array())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} Missing or invalid 'levels' array");
+
+        std::vector<LevelInfo> levels;
+        levels.reserve(levelsJson->size());
+
+        for (const auto &item : *levelsJson) {
             if (!item.is_object())
                 continue;
 
             LevelInfo lvl;
             lvl.id = item.value("id", "");
             lvl.displayName = item.value("name", "");
+            lvl.path = item.value("path", "");
 
             if (!lvl.id.empty() && !lvl.displayName.empty())
-                out.push_back(std::move(lvl));
+                levels.push_back(std::move(lvl));
         }
 
-        return out;
-    }
-
-    std::optional<std::string> RoomManager::parseWorldNameJson(std::string_view jsonText)
-    {
-        json j;
-        try {
-            j = json::parse(jsonText.begin(), jsonText.end());
-        } catch (...) {
-            return std::nullopt;
-        }
-
-        if (!j.is_object())
-            return std::nullopt;
-
-        const std::string name = j.value("name", "");
-        if (name.empty())
-            return std::nullopt;
-
-        return name;
+        return {name, levels};
     }
 
     void RoomManager::loadFromEmbedded()
@@ -145,37 +141,17 @@ namespace Engine
         _worlds.clear();
         _levelsByWorldId.clear();
 
-        static constexpr std::array<std::pair<Difficulty, std::string_view>, 3> diffFiles = {{
-            {Difficulty::Easy, "easy.json"},
-            {Difficulty::Medium, "medium.json"},
-            {Difficulty::Hard, "hard.json"},
-        }};
-
         for (const auto &worldId : listEmbeddedWorldIds()) {
-            WorldLevels wl;
-
-            for (const auto &[diff, file] : diffFiles) {
-                const auto content = readTextAsset(makePath(worldId, file));
-                if (!content)
-                    continue;
-
-                auto parsed = parseLevelsListJson(*content);
-
-                switch (diff) {
-                    case Difficulty::Easy: wl.easy = std::move(parsed); break;
-                    case Difficulty::Medium: wl.medium = std::move(parsed); break;
-                    case Difficulty::Hard: wl.hard = std::move(parsed); break;
-                }
-            }
-
-            if (wl.easy.empty() && wl.medium.empty() && wl.hard.empty())
+            const auto content = readTextAsset(makePath(worldId, "levels.json"));
+            if (!content)
                 continue;
 
-            std::string displayName = worldId;
-            if (auto wj = readTextAsset(makePath(worldId, "world.json"))) {
-                if (auto name = parseWorldNameJson(*wj))
-                    displayName = *name;
-            }
+            auto [displayName, parsed] = parseWorldLevelsJson(*content);
+            if (parsed.empty())
+                continue;
+
+            WorldLevels wl;
+            wl.levels = std::move(parsed);
 
             _worlds.push_back(WorldEntry{worldId, displayName});
             _levelsByWorldId.emplace(worldId, std::move(wl));

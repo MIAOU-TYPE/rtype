@@ -18,11 +18,12 @@
 #include "Damage.hpp"
 #include "Damageable.hpp"
 #include "Drawable.hpp"
-#include "GameConfig.hpp"
+#include "GameConstants.hpp"
 #include "GravityField.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "KillScore.hpp"
+#include "Level.hpp"
 #include "LevelManager.hpp"
 #include "MovementPattern.hpp"
 #include "Position.hpp"
@@ -51,8 +52,10 @@ namespace Game
          * @param lvl The level manager to use for level data.
          * @param dt The delta time since the last update.
          * @param spawned Vector tracking which waves have been spawned.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned);
+        static void update(IGameWorld &world, LevelManager &lvl, float dt, std::vector<bool> &spawned,
+            const DifficultyModifiers &modifiers = {});
 
         /**
          * @brief Spawn background layers for the level (creates 2 tiles for seamless scrolling).
@@ -69,8 +72,10 @@ namespace Game
          * @param world The game world to spawn enemies in.
          * @param lvl The level manager containing level data.
          * @param spawned Vector tracking which waves have been spawned.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned);
+        static void handleWaves(IGameWorld &world, const LevelManager &lvl, std::vector<bool> &spawned,
+            const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn all enemy groups in a given wave.
@@ -78,8 +83,10 @@ namespace Game
          * @param world The game world to spawn enemies in.
          * @param level The current level data.
          * @param wave The wave to spawn.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
-        static void spawnWave(IGameWorld &world, const Level &level, const Wave &wave);
+        static void spawnWave(
+            IGameWorld &world, const Level &level, const Wave &wave, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn a group of enemies at relative positions.
@@ -89,9 +96,10 @@ namespace Game
          * @param groupDef The group definition containing member positions.
          * @param pattern Spawn pattern for the group base position.
          * @param centerY Center Y position for pattern spawning.
+         * @param modifiers Difficulty modifiers to apply to enemies.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, float centerY);
+            const std::string &pattern, const float centerY, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn a single enemy at a specific position.
@@ -100,8 +108,10 @@ namespace Game
          * @param def The enemy definition.
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
+         * @param modifiers Difficulty modifiers to apply to the enemy.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y,
+            const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn an obstacle at a specific position.

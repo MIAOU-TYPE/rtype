@@ -89,7 +89,7 @@ namespace Game
          * @param centerY Center Y position for pattern spawning.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, const float centerY);
+            const std::string &pattern, float centerY);
 
         /**
          * @brief Spawn a single enemy at a specific position.
@@ -99,7 +99,7 @@ namespace Game
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, float x, float y);
 
         /**
          * @brief Spawn an obstacle at a specific position.
@@ -109,7 +109,7 @@ namespace Game
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
          */
-        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y);
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
 
         /**
          * @brief Create a single background entity with given parameters.

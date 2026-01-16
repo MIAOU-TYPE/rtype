@@ -25,18 +25,13 @@ namespace Engine
         return _worlds;
     }
 
-    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId, const Difficulty difficulty) const
+    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId) const
     {
         const auto it = _levelsByWorldId.find(std::string(worldId));
         if (it == _levelsByWorldId.end())
             throw RoomManagerError("{RoomManager::levelsFor} unknown worldId");
         const WorldLevels &wl = it->second;
-        switch (difficulty) {
-            case Difficulty::Easy: return wl.easy;
-            case Difficulty::Medium: return wl.medium;
-            case Difficulty::Hard: return wl.hard;
-        }
-        return wl.easy;
+        return wl.levels;
     }
 
     std::vector<RoomData> &RoomManager::rooms() noexcept
@@ -145,31 +140,17 @@ namespace Engine
         _worlds.clear();
         _levelsByWorldId.clear();
 
-        static constexpr std::array<std::pair<Difficulty, std::string_view>, 3> diffFiles = {{
-            {Difficulty::Easy, "easy.json"},
-            {Difficulty::Medium, "medium.json"},
-            {Difficulty::Hard, "hard.json"},
-        }};
-
         for (const auto &worldId : listEmbeddedWorldIds()) {
-            WorldLevels wl;
-
-            for (const auto &[diff, file] : diffFiles) {
-                const auto content = readTextAsset(makePath(worldId, file));
-                if (!content)
-                    continue;
-
-                auto parsed = parseLevelsListJson(*content);
-
-                switch (diff) {
-                    case Difficulty::Easy: wl.easy = std::move(parsed); break;
-                    case Difficulty::Medium: wl.medium = std::move(parsed); break;
-                    case Difficulty::Hard: wl.hard = std::move(parsed); break;
-                }
-            }
-
-            if (wl.easy.empty() && wl.medium.empty() && wl.hard.empty())
+            const auto content = readTextAsset(makePath(worldId, "levels.json"));
+            if (!content)
                 continue;
+
+            auto parsed = parseLevelsListJson(*content);
+            if (parsed.empty())
+                continue;
+
+            WorldLevels wl;
+            wl.levels = std::move(parsed);
 
             std::string displayName = worldId;
             if (auto wj = readTextAsset(makePath(worldId, "world.json"))) {

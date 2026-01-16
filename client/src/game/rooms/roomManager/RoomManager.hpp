@@ -70,13 +70,12 @@ namespace Engine
         [[nodiscard]] const std::vector<WorldEntry> &worlds() const noexcept;
 
         /**
-         * @brief Retrieves the levels for a given world ID and difficulty.
+         * @brief Retrieves the levels for a given world ID.
          * @param worldId The ID of the world.
-         * @param difficulty The difficulty level.
-         * @return A constant reference to the vector of LevelInfo objects for the specified world and difficulty.
+         * @return A constant reference to the vector of LevelInfo objects for the specified world.
          * @throws RoomManagerError if the world ID is unknown.
          */
-        [[nodiscard]] const std::vector<LevelInfo> &levelsFor(std::string_view worldId, Difficulty difficulty) const;
+        [[nodiscard]] const std::vector<LevelInfo> &levelsFor(std::string_view worldId) const;
 
         /**
          * @brief Retrieves the list of available rooms.

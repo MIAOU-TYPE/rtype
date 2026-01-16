@@ -9,7 +9,7 @@
 
 #include <string>
 #include <vector>
-#include "../../../shared/Network/Data/GameConfig.hpp"
+#include "GameConfig.hpp"
 #include <unordered_map>
 
 namespace Game

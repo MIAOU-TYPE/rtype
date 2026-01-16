@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** real_r_type
+** R-Type
 ** File description:
 ** SfmlRenderer
 */

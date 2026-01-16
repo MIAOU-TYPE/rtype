@@ -140,6 +140,8 @@ namespace Game
         std::string obstacleType = "";      ///> Optional obstacle type to spawn
         float obstacleX = 0.f;              ///> X position for obstacle
         float obstacleY = 0.f;              ///> Y position for obstacle
+        int powerUps = 0;                   ///> Number of power-ups to spawn
+        std::string powerUpType = "force";  ///> Type of power-up ("force" or "laser")
     };
 
     /**

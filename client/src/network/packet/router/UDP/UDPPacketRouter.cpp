@@ -254,7 +254,7 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohl(scoreData.score);
+        const uint32_t score = ntohs(scoreData.score);
 
         _sink->onScore(score);
     }

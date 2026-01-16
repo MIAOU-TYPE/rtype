@@ -26,6 +26,7 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss3/boss3P5.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss3/boss3P6.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss3/boss3P7.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/boss3/boss3Tail.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy2.json", *spriteRegistry);

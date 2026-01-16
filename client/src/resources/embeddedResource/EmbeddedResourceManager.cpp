@@ -75,6 +75,8 @@ namespace EmbeddedResources
     extern const unsigned int boss3P6_png_size;
     extern const unsigned char boss3P7_png[];
     extern const unsigned int boss3P7_png_size;
+    extern const unsigned char boss3Tail_png[];
+    extern const unsigned int boss3Tail_png_size;
     extern const unsigned char obstacle_png[];
     extern const unsigned int obstacle_png_size;
 
@@ -163,6 +165,8 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/boss3/boss3P5.png"] = {EmbeddedResources::boss3P5_png, EmbeddedResources::boss3P5_png_size};
     _resources["sprites/boss3/boss3P6.png"] = {EmbeddedResources::boss3P6_png, EmbeddedResources::boss3P6_png_size};
     _resources["sprites/boss3/boss3P7.png"] = {EmbeddedResources::boss3P7_png, EmbeddedResources::boss3P7_png_size};
+    _resources["sprites/boss3/boss3Tail.png"] = {
+        EmbeddedResources::boss3Tail_png, EmbeddedResources::boss3Tail_png_size};
     _resources["sprites/obstacle.png"] = {EmbeddedResources::obstacle_png, EmbeddedResources::obstacle_png_size};
 
     _resources["shaders/colorblind.frag"] = {

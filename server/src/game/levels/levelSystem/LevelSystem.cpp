@@ -142,11 +142,8 @@ namespace Game
         pattern.timer = 0.f;
         reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
 
-        reg.emplaceComponent<Ecs::Collision>(
-            mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
+        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
-        reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{modifiedDamage});
-        reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{modifiedScore});
 
         Ecs::AIBrain brain;
         brain.state = Ecs::AIState::Patrol;

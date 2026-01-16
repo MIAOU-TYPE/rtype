@@ -12,7 +12,6 @@ namespace Game
     void BossSystem::update(IGameWorld &world)
     {
         auto &reg = world.registry();
-        (void) dt;
 
         reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Id, Ecs::Position, Ecs::MovementPattern>(
             [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Id,

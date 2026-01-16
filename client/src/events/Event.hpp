@@ -204,8 +204,10 @@ namespace Engine
          * @brief Constructor for ScoreboardGetRequested event.
          * @param limit_ The maximum number of scores to retrieve.
          */
-        explicit ScoreboardGetRequested(const std::size_t limit_ = 10) : limit(limit_) {}
+        explicit ScoreboardGetRequested(const std::size_t limit_ = 10) : limit(limit_)
+        {
+        }
 
-        std::size_t limit;  ///> The maximum number of scores to retrieve.
+        std::size_t limit; ///> The maximum number of scores to retrieve.
     };
 } // namespace Engine

@@ -8,8 +8,8 @@
 #pragma once
 
 #include <memory>
-
 #include "AuthContext.hpp"
+#include "ScoreboardContext.hpp"
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"

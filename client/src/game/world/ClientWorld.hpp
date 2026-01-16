@@ -167,6 +167,10 @@ namespace World
             uint32_t spriteId; ///> Sprite identifier
         };
 
+        /**
+         * @struct TickSnapshot
+         * @brief Represents a snapshot of the world state at a specific server tick.
+         */
         struct TickSnapshot {
             uint32_t tick;                                     ///> Server tick number
             std::chrono::steady_clock::time_point arrivalTime; ///> Time when the snapshot was received

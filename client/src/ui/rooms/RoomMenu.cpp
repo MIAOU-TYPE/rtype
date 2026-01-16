@@ -147,7 +147,6 @@ namespace Engine
         _create.confirm = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CREATE");
         _create.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
 
-        _create.levelName = _renderer->texts()->createText(36, {255, 255, 255, 255});
         _create.worldLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.levelLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.difficultyLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
@@ -191,7 +190,7 @@ namespace Engine
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = h * 0.34f + h * 0.11f * static_cast<float>(i);
+            const float y = h * 0.24f + h * 0.11f * static_cast<float>(i);
             prev.centerButtonLabel(w * 0.25f, y, label, cx);
             centerX(next, w * 0.75f, y);
         };
@@ -200,7 +199,6 @@ namespace Engine
         row(*_create.levelPrev, *_create.levelNext, *_create.levelLabel, 1);
         row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
         row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
-        _create.levelName->setPosition(cx - _create.levelName->getWidth() * 0.5f, h * 0.24f);
         centerX(*_create.confirm, cx, h * 0.75f);
         centerX(*_create.back, cx, h * 0.88f);
     }
@@ -454,15 +452,6 @@ namespace Engine
     {
         _header.subtitle->setString(_page == Page::Root ? "" : _page == Page::Create ? "Create a room" : "Join a room");
 
-        if (_levels.empty())
-            _create.levelName->setString("(no level)");
-        else {
-            const auto clampedIndex =
-                static_cast<size_t>(std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1));
-            const auto &level = _levels.at(clampedIndex);
-            _create.levelName->setString(level.displayName);
-        }
-
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
         if (_worlds.empty())
@@ -498,7 +487,6 @@ namespace Engine
             _create.difficultyNext->render();
             _create.playersPrev->render();
             _create.playersNext->render();
-            _renderer->draw(*_create.levelName);
             _renderer->draw(*_create.worldLabel);
             _renderer->draw(*_create.levelLabel);
             _renderer->draw(*_create.difficultyLabel);

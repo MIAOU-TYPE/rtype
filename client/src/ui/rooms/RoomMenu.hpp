@@ -230,7 +230,6 @@ namespace Engine
             std::unique_ptr<UI::UIButton> confirm; ///> Confirm button.
             std::unique_ptr<UI::UIButton> back;    ///> Back button.
 
-            std::unique_ptr<Graphics::IText> levelName;       ///> Level name text.
             std::unique_ptr<Graphics::IText> worldLabel;      ///> World label text.
             std::unique_ptr<Graphics::IText> levelLabel;      ///> Level label text.
             std::unique_ptr<Graphics::IText> difficultyLabel; ///> Difficulty label text.

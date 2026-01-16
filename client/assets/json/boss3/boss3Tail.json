@@ -1,6 +1,6 @@
 {
   "sprite": "boss3Tail",
-  "spriteId": 29,
+  "spriteId": 30,
   "texture": "sprites/boss3/boss3Tail.png",
   "default_animation": "idle",
   "animations": {

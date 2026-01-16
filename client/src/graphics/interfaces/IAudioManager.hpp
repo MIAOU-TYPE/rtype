@@ -42,7 +42,7 @@ namespace Graphics
     /**
      * @brief Handle type for audio resources (music and sounds)
      */
-    using AudioHandle = std::size_t;
+    using AudioHandle = size_t;
 
     /**
      * @brief Invalid audio handle constant

@@ -43,7 +43,7 @@ namespace Graphics
      * Backend-specific implementations will internally map this
      * handle to a real GPU texture (sf::Texture, OpenGL id, etc.)
      */
-    using TextureHandle = std::size_t;
+    using TextureHandle = size_t;
     constexpr TextureHandle InvalidTexture = 0;
 
     /**

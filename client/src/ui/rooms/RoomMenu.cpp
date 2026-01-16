@@ -420,7 +420,7 @@ namespace Engine
         _selectedMaxPlayers = static_cast<uint8_t>(std::clamp(static_cast<int>(_selectedMaxPlayers), 1, 4));
         _levels.clear();
         try {
-            const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;
+            const std::string &worldId = _worlds.at(static_cast<size_t>(_selectedWorld)).id;
             const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty);
             _levels.assign(ref.begin(), ref.end());
         } catch (const std::exception &) {
@@ -438,7 +438,7 @@ namespace Engine
             _create.worldLabel->setString("World: (none)");
         else
             _create.worldLabel->setString(
-                "World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
+                "World: " + std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
     }
 
     void RoomMenu::render() const

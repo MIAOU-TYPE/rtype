@@ -7,7 +7,7 @@
 
 #include "SqliteDb.hpp"
 
-namespace Auth
+namespace Db
 {
     SqliteDb::SqliteDb(const std::string &path)
     {
@@ -57,4 +57,4 @@ namespace Auth
     {
         return _mtx;
     }
-} // namespace Auth
+} // namespace Db

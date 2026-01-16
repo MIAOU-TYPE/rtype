@@ -33,7 +33,7 @@ struct AddressKeyHash {
      * @param k The AddressKey to hash.
      * @return The computed hash value.
      */
-    std::size_t operator()(const AddressKey &k) const noexcept
+    size_t operator()(const AddressKey &k) const noexcept
     {
         return std::hash<uint64_t>{}((static_cast<uint64_t>(k.ip) << 16) | k.port);
     }

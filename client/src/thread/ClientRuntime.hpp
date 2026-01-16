@@ -150,8 +150,8 @@ namespace Thread
         std::unique_ptr<Engine::StateManager> _stateManager = nullptr; ///> State manager for managing game states
         std::shared_ptr<Engine::AuthContext> _authCtx;                 ///> Authentication context
 
-        // Request id of the latest auth (login/register) request, to attach server errors to the menu.
-        std::atomic_uint32_t _lastAuthReq{0};
+        std::atomic_uint32_t _lastAuthReq{0};                      ///> Last authentication request ID
+        std::shared_ptr<Engine::ScoreboardContext> _scoreboardCtx; ///> Scoreboard context
 
         std::shared_ptr<Engine::RoomManager> _roomManager = nullptr;       ///> Shared lobby/room state cache
         std::unique_ptr<Engine::InputState> _input;                        ///> Input state for managing user input
@@ -248,10 +248,15 @@ namespace Thread
         void runTcp();
 
         /**
-         * @brief Atomic flag to indicate if a game start has been requested.
+         * @brief Submits the last score to the server if there is a pending score submission.
+         * @details This method checks if there is a pending score submission and sends
+         * the last score to the server if needed.
          */
-        std::atomic_bool _pendingGameStart{false};
-        std::atomic_bool _pendingAuthOk{false};
-    };
+        void submitScoreOnce() const noexcept;
 
+        std::atomic_bool _pendingGameStart{false};   ///> Atomic flag to indicate pending game start
+        std::atomic_bool _pendingAuthOk{false};      ///> Atomic flag to indicate pending authentication OK
+        std::atomic_uint32_t _lastScore{0};          ///> Atomic variable to store the last score
+        std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
+    };
 } // namespace Thread

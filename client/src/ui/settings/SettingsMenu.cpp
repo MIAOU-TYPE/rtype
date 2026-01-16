@@ -94,7 +94,7 @@ namespace Engine
         _sfxMuted = config.isSfxMuted();
         _currentResolution = 0;
         const auto res = config.getResolution();
-        for (std::size_t i = 0; i < _resolutions.size(); ++i) {
+        for (size_t i = 0; i < _resolutions.size(); ++i) {
             if (_resolutions[i].width == res.width && _resolutions[i].height == res.height) {
                 _currentResolution = i;
                 break;

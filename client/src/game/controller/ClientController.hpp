@@ -79,6 +79,13 @@ namespace Ecs
          */
         void onDestroy(size_t entityId, bool wasKilled) override;
 
+        /**
+         * @brief Called when a HEALTH message is received.
+         * @param currentLife The current life of the entity.
+         * @param maxLife The maximum life of the entity.
+         */
+        void onHealth(uint16_t currentLife, uint16_t maxLife) override;
+
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
             _commandBuffer; ///> Reference to the world command buffer

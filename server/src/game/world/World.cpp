@@ -76,20 +76,16 @@ namespace
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
 
             if (event.spriteId == 23) {
-                size_t targetId = SIZE_MAX;
-
+                size_t targetId;
                 auto &reg = w->registry();
-                reg.view<Ecs::Controllable, Ecs::Health, Ecs::Id>(
-                    [&](const Ecs::Entity, const Ecs::Controllable &, const Ecs::Health &hp, const Ecs::Id &id) {
-                        if (hp.hp > 0 && targetId == SIZE_MAX) {
+                reg.view<Game::InputComponent, Ecs::Health, Ecs::Id>(
+                    [&](const Ecs::Entity, const Game::InputComponent &, const Ecs::Health &hp, const Ecs::Id &id) {
+                        if (hp.hp > 0)
                             targetId = id.id;
-                        }
                     });
-
-                if (targetId != SIZE_MAX) {
+                if (targetId > 0)
                     w->registry().emplaceComponent<Ecs::HomingProjectile>(
                         proj, Ecs::HomingProjectile{targetId, 2.0f, 200.0f});
-                }
             }
         });
     }

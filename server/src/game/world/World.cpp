@@ -76,13 +76,18 @@ namespace
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
 
             if (event.spriteId == 23) {
-                size_t targetId;
+                std::vector<size_t> possibleTargets;
                 auto &reg = w->registry();
                 reg.view<Game::InputComponent, Ecs::Health, Ecs::Id>(
                     [&](const Ecs::Entity, const Game::InputComponent &, const Ecs::Health &hp, const Ecs::Id &id) {
                         if (hp.hp > 0)
-                            targetId = id.id;
+                            possibleTargets.push_back(id.id);
                     });
+                size_t targetId = 0;
+                if (!possibleTargets.empty()) {
+                    size_t randomIndex = Rand::rng() % possibleTargets.size();
+                    targetId = possibleTargets[randomIndex];
+                }
                 if (targetId > 0)
                     w->registry().emplaceComponent<Ecs::HomingProjectile>(
                         proj, Ecs::HomingProjectile{targetId, 2.0f, 200.0f});

@@ -11,8 +11,8 @@ namespace Engine
 {
     RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
         std::shared_ptr<Net::Server::IServer> UDPServer,
-        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-        std::shared_ptr<ScoreService> scoreService, std::string levelPath)
+        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::shared_ptr<ScoreService> scoreService,
+        std::string levelPath)
         : _sessionManager(std::move(sessionManager)), _udpServer(std::move(UDPServer)),
           _udpPacketFactory(std::move(udpPacketFactory)), _scoreService(std::move(scoreService)),
           _levelPath(std::move(levelPath))
@@ -106,7 +106,7 @@ namespace Engine
                 try {
                     _scoreService->saveScore(idOpt->username, static_cast<int>(*scoreOpt));
                 } catch (...) {
-                   return InvalidRoomId;
+                    return InvalidRoomId;
                 }
             }
         }

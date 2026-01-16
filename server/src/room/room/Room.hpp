@@ -13,7 +13,6 @@
 #include <utility>
 #include <unordered_set>
 
-#include "../../../shared/Network/Data/GameConfig.hpp"
 #include "GameServer.hpp"
 
 namespace Engine

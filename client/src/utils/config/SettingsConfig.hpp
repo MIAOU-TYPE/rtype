@@ -85,15 +85,15 @@ namespace Utils
 
         /**
          * @brief Get the Music Volume object
-         * @return std::size_t
+         * @return size_t
          */
-        [[nodiscard]] std::size_t getMusicVolume() const noexcept;
+        [[nodiscard]] size_t getMusicVolume() const noexcept;
 
         /**
          * @brief Get the Sfx Volume object
-         * @return std::size_t
+         * @return size_t
          */
-        [[nodiscard]] std::size_t getSfxVolume() const noexcept;
+        [[nodiscard]] size_t getSfxVolume() const noexcept;
 
         /**
          * @brief Get the Music Muted object
@@ -183,13 +183,13 @@ namespace Utils
          * @brief Set the Music Volume object
          * @param volume
          */
-        void setMusicVolume(std::size_t volume);
+        void setMusicVolume(size_t volume);
 
         /**
          * @brief Set the Sfx Volume object
          * @param volume
          */
-        void setSfxVolume(std::size_t volume);
+        void setSfxVolume(size_t volume);
 
         /**
          * @brief Set the Music Muted object
@@ -246,8 +246,8 @@ namespace Utils
         static constexpr const char *CONFIG_FILE =
             "client/config/settings.json"; ///> Path to the settings configuration file
 
-        std::size_t _musicVolume = 50;                                             ///> Music volume level (0-100)
-        std::size_t _sfxVolume = 50;                                               ///> SFX volume level (0-100)
+        size_t _musicVolume = 50;                                             ///> Music volume level (0-100)
+        size_t _sfxVolume = 50;                                               ///> SFX volume level (0-100)
         bool _musicMuted = false;                                                  ///> Music mute state
         bool _sfxMuted = false;                                                    ///> SFX mute state
         Graphics::Extent2u _resolution{1280, 720};                                 ///> Screen resolution

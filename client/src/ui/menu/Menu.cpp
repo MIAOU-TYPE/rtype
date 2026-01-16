@@ -166,8 +166,8 @@ namespace Engine
             _scoreRowTexts.at(0)->setString("No scores yet.");
             return;
         }
-        const std::size_t n = std::min<std::size_t>(_scores.size(), _scoreRowTexts.size());
-        for (std::size_t i = 0; i < n; ++i) {
+        const size_t n = std::min<size_t>(_scores.size(), _scoreRowTexts.size());
+        for (size_t i = 0; i < n; ++i) {
             const auto &[username, score] = _scores.at(i);
             _scoreRowTexts.at(i)->setString(std::to_string(i + 1) + ". " + username + " - " + std::to_string(score));
         }
@@ -204,7 +204,7 @@ namespace Engine
             placeCentered(*_scoreRefreshBtn, vp.cx, h * 0.79f);
             placeCentered(*_backBtn, vp.cx, h * 0.90f);
             const float startY = h * 0.50f;
-            for (std::size_t i = 0; i < _scoreRowTexts.size(); ++i) {
+            for (size_t i = 0; i < _scoreRowTexts.size(); ++i) {
                 constexpr float lineH = 30.0f;
                 const auto &t = _scoreRowTexts.at(i);
                 if (!t)

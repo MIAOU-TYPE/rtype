@@ -84,7 +84,7 @@ namespace Engine
          * @return std::vector<ScoreEntry> A vector of ScoreEntry objects representing the top scores.
          * @throws std::runtime_error on database errors.
          */
-        std::vector<ScoreEntry> getTopScores(std::size_t limit = 10) const;
+        [[nodiscard]] std::vector<ScoreEntry> getTopScores(size_t limit = 10) const;
 
       private:
         std::shared_ptr<Db::SqliteDb> _db; ///> Shared pointer to the database instance.

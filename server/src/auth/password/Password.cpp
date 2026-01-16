@@ -16,8 +16,8 @@ namespace Auth
         constexpr uint64_t kp = 1;
         constexpr uint64_t kMaxMem = 64ull * 1024ull * 1024ull;
 
-        constexpr std::size_t kSaltLen = 16;
-        constexpr std::size_t kDkLen = 32;
+        constexpr size_t kSaltLen = 16;
+        constexpr size_t kDkLen = 32;
 
         constexpr uint64_t kMinN = 1ull << 14;
         constexpr uint64_t kMaxN = 1ull << 18;
@@ -67,8 +67,8 @@ namespace Auth
             return !f.empty();
         }
 
-        [[nodiscard]] bool scryptDerive(const std::string_view password, const unsigned char *salt, std::size_t saltLen,
-            const uint64_t N, const uint64_t r, const uint64_t p, unsigned char *out, std::size_t outLen) noexcept
+        [[nodiscard]] bool scryptDerive(const std::string_view password, const unsigned char *salt, size_t saltLen,
+            const uint64_t N, const uint64_t r, const uint64_t p, unsigned char *out, size_t outLen) noexcept
         {
             return EVP_PBE_scrypt(password.data(), password.size(), salt, saltLen, N, r, p, kMaxMem, out, outLen) == 1;
         }

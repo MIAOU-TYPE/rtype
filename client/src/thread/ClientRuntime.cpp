@@ -332,7 +332,7 @@ namespace Thread
         });
 
         _eventBus->on<Engine::ScoreboardGetRequested>([this](const Engine::ScoreboardGetRequested &e) {
-            const std::size_t clamped = std::min<std::size_t>(std::max<std::size_t>(e.limit, 1), 100);
+            const size_t clamped = std::min<size_t>(std::max<size_t>(e.limit, 1), 100);
             const uint32_t req = nextReqId();
             if (const auto pkt = _tcpPacketFactory.makeScoreboardGet(req, static_cast<uint16_t>(clamped)))
                 (void) _tcpClient->sendPacket(*pkt);

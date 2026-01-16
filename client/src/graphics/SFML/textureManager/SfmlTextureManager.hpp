@@ -73,7 +73,7 @@ namespace Graphics
          */
         struct TextureEntry {
             sf::Texture texture;      ///> The SFML texture
-            std::size_t refCount = 1; ///> Reference count for the texture
+            size_t refCount = 1; ///> Reference count for the texture
         };
 
         std::shared_ptr<Resources::IResourceManager> _resources =

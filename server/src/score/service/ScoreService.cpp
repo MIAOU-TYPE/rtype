@@ -42,7 +42,7 @@ namespace Engine
                 "{ScoreService::saveScore} step failed: " + std::string(sqlite3_errmsg(_db->raw())));
     }
 
-    std::vector<ScoreEntry> ScoreService::getTopScores(const std::size_t limit) const
+    std::vector<ScoreEntry> ScoreService::getTopScores(const size_t limit) const
     {
         std::scoped_lock lk(_db->mutex());
 

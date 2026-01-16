@@ -144,6 +144,6 @@ namespace UI
 
         bool _focused = false;    ///> Whether the text field is focused.
         bool _password = false;   ///> Whether the text field is for password input.
-        std::size_t _maxLen = 32; ///> The maximum length of the input value.
+        size_t _maxLen = 32; ///> The maximum length of the input value.
     };
 } // namespace UI

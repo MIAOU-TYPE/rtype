@@ -52,7 +52,7 @@ namespace Resources
      */
     struct ResourceData {
         const unsigned char *data; ///> Pointer to raw binary data
-        std::size_t size;          ///> Size of the data in bytes
+        size_t size;          ///> Size of the data in bytes
     };
 
     /**

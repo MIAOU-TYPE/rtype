@@ -9,7 +9,7 @@
 
 namespace
 {
-    std::string malformedTcp(const char *stage, const std::size_t need, const std::size_t got)
+    std::string malformedTcp(const char *stage, const size_t need, const size_t got)
     {
         std::string s = "TCP ";
         s += stage;
@@ -49,7 +49,7 @@ namespace Network
         if (const auto addr = pkt->address(); !addr)
             return;
 
-        const std::size_t n = pkt->size();
+        const size_t n = pkt->size();
         const auto *payload = pkt->buffer();
 
         if (n < 5)

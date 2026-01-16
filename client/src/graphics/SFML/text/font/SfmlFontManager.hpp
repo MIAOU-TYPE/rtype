@@ -74,7 +74,7 @@ namespace Graphics
          */
         struct FontEntry {
             sf::Font font;            ///> The SFML font
-            std::size_t refCount = 1; ///> Reference count for the font
+            size_t refCount = 1; ///> Reference count for the font
         };
 
         std::shared_ptr<const Resources::IResourceManager> _resources =

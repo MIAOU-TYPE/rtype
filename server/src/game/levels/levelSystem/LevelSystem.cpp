@@ -87,6 +87,9 @@ namespace Game
             const ObstacleDefinition &obsDef = level.obstacleTypes.at(wave.obstacleType);
             spawnObstacle(world, obsDef, wave.obstacleX, wave.obstacleY);
         }
+
+        for (int i = 0; i < wave.powerUps; i++)
+            spawnPowerUp(world, wave.powerUpType);
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
@@ -224,5 +227,30 @@ namespace Game
         draw.spriteId = layer.spriteId;
         draw.drawable = true;
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
+    }
+
+    void LevelSystem::spawnPowerUp(IGameWorld &world, const std::string &type)
+    {
+        auto &reg = world.registry();
+        const float y = Rand::enemyY(Rand::rng);
+        const Ecs::Entity powerUpEntity = world.createEntity();
+
+        Ecs::PowerUpTypeEnum powerUpType = Ecs::PowerUpTypeEnum::Standard;
+        uint32_t spriteId = 13u;
+
+        if (type == "laser") {
+            powerUpType = Ecs::PowerUpTypeEnum::Laser;
+            spriteId = 18u;
+        } else if (type == "shield") {
+            powerUpType = Ecs::PowerUpTypeEnum::Shield;
+            spriteId = 19u;
+        }
+
+        reg.emplaceComponent<Ecs::Position>(powerUpEntity, Ecs::Position{1400.f, y});
+        reg.emplaceComponent<Ecs::Velocity>(powerUpEntity, Ecs::Velocity{-50.f, 0.f});
+        reg.emplaceComponent<Ecs::Drawable>(powerUpEntity, Ecs::Drawable{spriteId, true});
+        reg.emplaceComponent<Ecs::Collision>(powerUpEntity, Ecs::Collision{32.f, 32.f});
+        reg.emplaceComponent<Ecs::PowerUp>(powerUpEntity);
+        reg.emplaceComponent<Ecs::PowerUpType>(powerUpEntity, Ecs::PowerUpType{powerUpType});
     }
 } // namespace Game

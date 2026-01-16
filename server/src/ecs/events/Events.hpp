@@ -43,6 +43,8 @@ struct ShootEvent {
     std::pair<float, float> bounds; ///> Width and height of the projectile
     float lifetime;                 ///> Lifetime of the projectile in seconds
     unsigned int spriteId;          ///> Sprite ID for rendering the projectile
+    int health;                     ///> Health of the projectile
+    int maxHealth;                  ///> Max health of the projectile
 };
 
 /**
@@ -89,4 +91,49 @@ struct DamageApplyEvent {
     size_t entityId;      ///> ID of the entity that received damage
     uint32_t currentLife; ///> Current life of the entity
     uint32_t maxLife;     ///> Maximum life of the entity
+};
+
+/**
+ * @struct PowerUpBarCreateEvent
+ * @brief Event triggered to create a power-up bar for a player.
+ */
+struct PowerUpBarCreateEvent {
+    size_t playerId; ///> ID of the player entity
+    int playerIndex; ///> Index of the player for positioning
+};
+
+/**
+ * @struct PowerUpBarDestroyEvent
+ * @brief Event triggered to destroy a power-up bar for a player.
+ */
+struct PowerUpBarDestroyEvent {
+    size_t playerId; ///> ID of the player entity
+};
+
+/**
+ * @struct BubblePowerUpCreateEvent
+ * @brief Event triggered to create a bubble shield.
+ */
+struct BubblePowerUpCreateEvent {
+    size_t playerId; ///> ID of the player entity
+    float playerX;   ///> Player's X position
+    float playerY;   ///> Player's Y position
+};
+
+/**
+ * @struct BubblePowerUpUpdatePosEvent
+ * @brief Event triggered to update bubble shield position.
+ */
+struct BubblePowerUpUpdatePosEvent {
+    size_t playerId; ///> ID of the player entity
+    float playerX;   ///> Player's X position
+    float playerY;   ///> Player's Y position
+};
+
+/**
+ * @struct BubblePowerUpDestroyEvent
+ * @brief Event triggered to destroy a bubble shield.
+ */
+struct BubblePowerUpDestroyEvent {
+    size_t playerId; ///> ID of the player entity
 };

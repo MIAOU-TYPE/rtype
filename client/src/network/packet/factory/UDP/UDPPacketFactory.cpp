@@ -59,6 +59,8 @@ namespace Network
             packet.flags |= 0x08;
         if (input.shoot)
             packet.flags |= 0x10;
+        if (input.powerShoot)
+            packet.flags |= 0x20;
 
         try {
             return makePacket<PlayerInputData>(packet);

@@ -30,11 +30,9 @@ namespace Engine
     };
 
     /**
-     * @brief Levels categorized by difficulty for a world
+     * @brief Levels for a world
      */
     struct WorldLevels {
-        std::vector<LevelInfo> easy;   ///> Easy levels
-        std::vector<LevelInfo> medium; ///> Medium levels
-        std::vector<LevelInfo> hard;   ///> Hard levels
+        std::vector<LevelInfo> levels; ///> All levels in this world
     };
 } // namespace Engine

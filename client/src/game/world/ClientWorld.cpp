@@ -111,10 +111,10 @@ namespace World
 
         if (destroyInfo.wasKilled && _soundRegistry) {
             const auto entityIndex = static_cast<size_t>(it->second);
-            if (auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
+            if (const auto &drawable = _registry.getComponents<Ecs::Drawable>().at(entityIndex)) {
                 if (_spriteRegistry->exists(drawable->spriteId)) {
-                    const auto &sprite = _spriteRegistry->get(drawable->spriteId);
-                    if (sprite.destroySoundHandle != Graphics::InvalidAudio)
+                    if (const auto &sprite = _spriteRegistry->get(drawable->spriteId);
+                        sprite.destroySoundHandle != Graphics::InvalidAudio)
                         _soundRegistry->playSound(sprite.destroySoundHandle);
                 }
             }
@@ -183,7 +183,7 @@ namespace World
 
     void ClientWorld::refreshSpriteIfChanged(const Ecs::Entity e, const uint32_t spriteId,
         Ecs::SparseArray<Ecs::Drawable> &drawables, Ecs::SparseArray<Ecs::AnimationState> &anims,
-        Ecs::SparseArray<Ecs::Render> &renders)
+        Ecs::SparseArray<Ecs::Render> &renders) const
     {
         const auto idx = static_cast<size_t>(e);
 
@@ -235,9 +235,12 @@ namespace World
         constexpr float SnapDist = 250.f;
 
         if (constexpr float SnapDist2 = SnapDist * SnapDist; dist2 > SnapDist2) {
-            constexpr float CatchupFactor = 0.25f;
-            posOpt->x += dx * CatchupFactor;
-            posOpt->y += dy * CatchupFactor;
+            const float dist = std::sqrt(dist2);
+
+            const float factor = dist > 300.f ? 0.5f : dist > 150.f ? 0.35f : 0.2f;
+
+            posOpt->x += dx * factor;
+            posOpt->y += dy * factor;
             return;
         }
 
@@ -259,36 +262,40 @@ namespace World
         const auto now = std::chrono::steady_clock::now();
         constexpr auto InterpDelay = std::chrono::milliseconds(100);
 
-        TickSnapshot *A = nullptr;
-        TickSnapshot *B = nullptr;
+        std::optional<size_t> idxA;
+        std::optional<size_t> idxB;
 
         for (size_t i = 1; i < _snapshots.size(); ++i) {
             if (_snapshots.at(i).arrivalTime > now - InterpDelay) {
-                A = &_snapshots.at(i - 1);
-                B = &_snapshots.at(i);
+                idxA = i - 1;
+                idxB = i;
                 break;
             }
         }
 
-        if (!A || !B)
+        if (!idxA || !idxB)
             return;
 
-        const float denom = std::chrono::duration<float>(B->arrivalTime - A->arrivalTime).count();
+        const TickSnapshot &A = _snapshots.at(*idxA);
+        const TickSnapshot &B = _snapshots.at(*idxB);
+
+        const float denom = std::chrono::duration<float>(B.arrivalTime - A.arrivalTime).count();
         if (denom <= 0.f)
             return;
 
-        const float alpha = clamp(std::chrono::duration<float>(now - InterpDelay - A->arrivalTime).count() / denom);
+        const float alpha = clamp(std::chrono::duration<float>(now - InterpDelay - A.arrivalTime).count() / denom);
 
-        for (const auto &[netId, bs] : B->entities) {
+        for (const auto &[netId, bs] : B.entities) {
             if (_destroyed.contains(static_cast<uint32_t>(netId)))
                 continue;
 
             if (std::cmp_equal(netId, _entityPlayerId)) {
-                if (!_entityMap.contains(netId)) {
+                if (!_entityMap.contains(netId))
                     applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-                }
+
                 reconcileLocalPlayerWithServer(bs, positions);
-                refreshSpriteIfChanged(_entityMap[netId], bs.spriteId, drawables, anims, renders);
+                if (auto it = _entityMap.find(netId); it != _entityMap.end())
+                    refreshSpriteIfChanged(it->second, bs.spriteId, drawables, anims, renders);
                 continue;
             }
 
@@ -296,13 +303,13 @@ namespace World
                 applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
 
             const Ecs::Entity e = _entityMap[netId];
-            const auto idx = static_cast<size_t>(e);
-            auto &posOpt = positions.at(idx);
+            const auto entIdx = static_cast<size_t>(e);
+            auto &posOpt = positions.at(entIdx);
             if (!posOpt)
                 continue;
 
-            const auto itA = A->entities.find(netId);
-            const NetState as = (itA != A->entities.end()) ? itA->second : bs;
+            const auto itA = A.entities.find(netId);
+            const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
             constexpr float MaxVisualStep = 20.f;
 
@@ -318,7 +325,8 @@ namespace World
 
             refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
         }
-        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A->arrivalTime) {
+
+        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime) {
             _snapshots.pop_front();
         }
     }

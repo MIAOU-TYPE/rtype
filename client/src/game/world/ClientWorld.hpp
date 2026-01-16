@@ -116,7 +116,7 @@ namespace World
          * @param renders sparse array of Render components.
          */
         void refreshSpriteIfChanged(Ecs::Entity e, uint32_t spriteId, Ecs::SparseArray<Ecs::Drawable> &drawables,
-            Ecs::SparseArray<Ecs::AnimationState> &anims, Ecs::SparseArray<Ecs::Render> &renders);
+            Ecs::SparseArray<Ecs::AnimationState> &anims, Ecs::SparseArray<Ecs::Render> &renders) const;
 
         /**
          * @brief Purges stale entities that have not been updated within the specified maximum age.

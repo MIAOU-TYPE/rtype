@@ -55,6 +55,7 @@ class MockServer : public Net::Server::IServer {
 
     [[nodiscard]] bool readPackets() noexcept override
     {
+        return false;
     }
 
     [[nodiscard]] bool popPacket(std::shared_ptr<Net::IPacket> &) noexcept override

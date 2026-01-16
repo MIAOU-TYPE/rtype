@@ -15,6 +15,7 @@
 #include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
+#include "Drawable.hpp"
 
 namespace Game
 {

@@ -137,33 +137,33 @@ namespace Engine
         _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         if (_page == Page::UnauthedRoot) {
-            layoutRowCentered(*_login, *_register, vp.cx, h * 0.63f, w * 0.05f);
-            placeCentered(*_settings, vp.cx, h * 0.76f);
-            placeCentered(*_quit, vp.cx, h * 0.89f);
+            layoutRowCentered(*_login, *_register, vp.cx, h * 0.50f, w * 0.05f);
+            placeCentered(*_settings, vp.cx, h * 0.63f);
+            placeCentered(*_quit, vp.cx, h * 0.76f);
             return;
         }
 
         if (_page == Page::AuthedRoot) {
-            placeCentered(*_play, vp.cx, h * 0.55f);
-            placeCentered(*_settings, vp.cx, h * 0.68f);
-            placeCentered(*_levelEditor, vp.cx, h * 0.81f);
-            placeCentered(*_quit, vp.cx, h * 0.94f);
+            placeCentered(*_play, vp.cx, h * 0.42f);
+            placeCentered(*_settings, vp.cx, h * 0.55f);
+            placeCentered(*_levelEditor, vp.cx, h * 0.68f);
+            placeCentered(*_quit, vp.cx, h * 0.81f);
             return;
         }
 
         const float fieldX = w * 0.5f - 220.f;
         constexpr float fieldW = 440.f;
 
-        _userField->setPosition(fieldX, h * 0.40f);
+        _userField->setPosition(fieldX, h * 0.35f);
         _userField->setWidth(fieldW);
 
-        _passField->setPosition(fieldX, h * 0.55f);
+        _passField->setPosition(fieldX, h * 0.48f);
         _passField->setWidth(fieldW);
 
         if (_authErrorText && !_authErrorMessage.empty())
-            _authErrorText->setPosition(vp.cx - _authErrorText->getWidth() * 0.5f, h * 0.32f);
-        placeCentered(*_submitBtn, vp.cx, h * 0.73f);
-        placeCentered(*_backBtn, vp.cx, h * 0.87f);
+            _authErrorText->setPosition(vp.cx - _authErrorText->getWidth() * 0.5f, h * 0.27f);
+        placeCentered(*_submitBtn, vp.cx, h * 0.63f);
+        placeCentered(*_backBtn, vp.cx, h * 0.76f);
     }
 
     void Menu::update(const InputFrame &frame)

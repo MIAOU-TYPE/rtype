@@ -267,6 +267,11 @@ namespace Game
 
             };
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
+            Ecs::Entity weakBox = world.createEntity();
+            reg.emplaceComponent<Ecs::Position>(weakBox, Ecs::Position{x + 75.f, y + 100.f, 2});
+            reg.emplaceComponent<Ecs::Collision>(weakBox, Ecs::Collision{30.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
+            reg.emplaceComponent<Ecs::BossPart>(weakBox, Ecs::BossPart{mob, 5.0f});
+            reg.emplaceComponent<Ecs::Velocity>(weakBox, Ecs::Velocity{def.speed, 0.f});
 
             Ecs::Entity previousEntity = mob;
             const int numTailSegments = 8;
@@ -289,8 +294,7 @@ namespace Game
                 follower.followSpeed = 80.f;
                 follower.followDistance = 40.f;
                 reg.emplaceComponent<Ecs::TailFollower>(tailSegment, follower);
-
-                previousEntity = tailSegment;
+                previousEntity = tailSegment;                
             }
         }
     }

@@ -34,6 +34,7 @@
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
+#include "BossPart.hpp"
 #include <unordered_map>
 
 namespace Game

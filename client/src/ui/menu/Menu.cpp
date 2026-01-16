@@ -195,11 +195,11 @@ namespace Engine
             return;
         }
         if (_page == Page::AuthedRoot) {
-            placeCentered(*_play, vp.cx, h * 0.55f);
-            placeCentered(*_scoreboard, vp.cx, h * 0.68f);
-            placeCentered(*_settings, vp.cx, h * 0.79f);
-            placeCentered(*_levelEditor, vp.cx, h * 0.68f);
-            placeCentered(*_quit, vp.cx, h * 0.90f);
+            placeCentered(*_play, vp.cx, h * 0.32f);
+            placeCentered(*_scoreboard, vp.cx, h * 0.45f);
+            placeCentered(*_levelEditor, vp.cx, h * 0.58f);
+            placeCentered(*_settings, vp.cx, h * 0.71f);
+            placeCentered(*_quit, vp.cx, h * 0.84f);
             return;
         }
         if (_page == Page::Scoreboard) {

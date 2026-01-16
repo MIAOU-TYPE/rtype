@@ -97,22 +97,30 @@ namespace Engine
         return std::string(reinterpret_cast<const char *>(data), size);
     }
 
-    std::vector<LevelInfo> RoomManager::parseLevelsListJson(const std::string_view jsonText)
+    std::pair<std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(const std::string_view jsonText)
     {
         json j;
         try {
             j = json::parse(jsonText.begin(), jsonText.end());
         } catch (const std::exception &e) {
-            throw RoomManagerError(std::string("{RoomManager::parseLevelsListJson} parse error: ") + e.what());
+            throw RoomManagerError(std::string("{RoomManager::parseWorldLevelsJson} parse error: ") + e.what());
         }
 
-        if (!j.is_array())
-            throw RoomManagerError("{RoomManager::parseLevelsListJson} JSON is not an array");
+        if (!j.is_object())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} JSON is not an object");
 
-        std::vector<LevelInfo> out;
-        out.reserve(j.size());
+        const std::string name = j.value("name", "");
+        if (name.empty())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} Missing or empty 'name' field");
 
-        for (const auto &item : j) {
+        const auto levelsJson = j.find("levels");
+        if (levelsJson == j.end() || !levelsJson->is_array())
+            throw RoomManagerError("{RoomManager::parseWorldLevelsJson} Missing or invalid 'levels' array");
+
+        std::vector<LevelInfo> levels;
+        levels.reserve(levelsJson->size());
+
+        for (const auto &item : *levelsJson) {
             if (!item.is_object())
                 continue;
 
@@ -122,29 +130,10 @@ namespace Engine
             lvl.path = item.value("path", "");
 
             if (!lvl.id.empty() && !lvl.displayName.empty())
-                out.push_back(std::move(lvl));
+                levels.push_back(std::move(lvl));
         }
 
-        return out;
-    }
-
-    std::optional<std::string> RoomManager::parseWorldNameJson(std::string_view jsonText)
-    {
-        json j;
-        try {
-            j = json::parse(jsonText.begin(), jsonText.end());
-        } catch (...) {
-            return std::nullopt;
-        }
-
-        if (!j.is_object())
-            return std::nullopt;
-
-        const std::string name = j.value("name", "");
-        if (name.empty())
-            return std::nullopt;
-
-        return name;
+        return {name, levels};
     }
 
     void RoomManager::loadFromEmbedded()
@@ -157,18 +146,12 @@ namespace Engine
             if (!content)
                 continue;
 
-            auto parsed = parseLevelsListJson(*content);
+            auto [displayName, parsed] = parseWorldLevelsJson(*content);
             if (parsed.empty())
                 continue;
 
             WorldLevels wl;
             wl.levels = std::move(parsed);
-
-            std::string displayName = worldId;
-            if (auto wj = readTextAsset(makePath(worldId, "world.json"))) {
-                if (auto name = parseWorldNameJson(*wj))
-                    displayName = *name;
-            }
 
             _worlds.push_back(WorldEntry{worldId, displayName});
             _levelsByWorldId.emplace(worldId, std::move(wl));

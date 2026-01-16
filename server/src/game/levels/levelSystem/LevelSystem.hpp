@@ -122,5 +122,7 @@ namespace Game
          */
         static void createBackgroundEntity(
             IGameWorld &world, const BackgroundLayer &layer, float xPosition, float scaledWidth, int tileIndex);
+
+        static void handleBossPhases(IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob);
     };
 } // namespace Game

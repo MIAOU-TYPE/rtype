@@ -453,15 +453,16 @@ namespace Engine
     void RoomMenu::updateTextStrings() const
     {
         _header.subtitle->setString(_page == Page::Root ? "" : _page == Page::Create ? "Create a room" : "Join a room");
-        
+
         if (_levels.empty())
             _create.levelName->setString("(no level)");
         else {
-            const auto clampedIndex = static_cast<size_t>(std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1));
+            const auto clampedIndex =
+                static_cast<size_t>(std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1));
             const auto &level = _levels.at(clampedIndex);
             _create.levelName->setString(level.displayName);
         }
-        
+
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
         if (_worlds.empty())
@@ -469,11 +470,12 @@ namespace Engine
         else
             _create.worldLabel->setString(
                 "World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
-        
+
         if (_levels.empty())
             _create.levelLabel->setString("Level: (none)");
         else
-            _create.levelLabel->setString("Level: " + std::to_string(_selectedLevel + 1) + "/" + std::to_string(_levels.size()));
+            _create.levelLabel->setString(
+                "Level: " + std::to_string(_selectedLevel + 1) + "/" + std::to_string(_levels.size()));
     }
 
     void RoomMenu::render() const

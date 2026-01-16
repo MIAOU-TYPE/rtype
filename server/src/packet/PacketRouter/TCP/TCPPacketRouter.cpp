@@ -249,7 +249,8 @@ namespace Net
             levelPath = r.str16();
         } catch (...) {
             return sendError(addr, req, 4,
-                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + levelPath(str16))");
+                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + "
+                "levelPath(str16))");
         }
 
         if (roomName.empty() || roomName.size() > 32)

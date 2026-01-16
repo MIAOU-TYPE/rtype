@@ -82,8 +82,8 @@ namespace Game
          */
         explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
             std::shared_ptr<Net::Server::IServer> server,
-            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-            const std::string &levelPath, const Game::DifficultyModifiers &modifiers = {});
+            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, const std::string &levelPath,
+            const Game::DifficultyModifiers &modifiers = {});
 
         /**
          * @brief Reset the game server to its initial state.

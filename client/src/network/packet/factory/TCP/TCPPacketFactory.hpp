@@ -66,8 +66,8 @@ namespace Network
          * @param levelPath The path to the level configuration file.
          * @return A shared pointer to the created CreateRoom packet.
          */
-        [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(
-            uint32_t req, std::string_view roomName, uint8_t maxPlayers, Engine::Difficulty difficulty, std::string_view levelPath) const;
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(uint32_t req, std::string_view roomName,
+            uint8_t maxPlayers, Engine::Difficulty difficulty, std::string_view levelPath) const;
 
         /**
          * @brief Create a JoinRoom packet.

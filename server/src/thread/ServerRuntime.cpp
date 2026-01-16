@@ -33,8 +33,8 @@ ServerRuntime::ServerRuntime(
 
     _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
-    _roomManager =
-        std::make_shared<Engine::RoomManager>(_sessionManager, _udpServer, _udpPacketFactory, "levels/space_level1.json");
+    _roomManager = std::make_shared<Engine::RoomManager>(
+        _sessionManager, _udpServer, _udpPacketFactory, "levels/space_level1.json");
 
     _udpPacketRouter = std::make_shared<UDPPacketRouter>(_sessionManager, _roomManager);
 

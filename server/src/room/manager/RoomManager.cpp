@@ -19,8 +19,7 @@ namespace Engine
     {
     }
 
-    RoomId RoomManager::createRoom(
-        const GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept
+    RoomId RoomManager::createRoom(const GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept
     {
         try {
             const std::string levelPath = gameConfig.levelId.empty() ? _levelPath : gameConfig.levelId;

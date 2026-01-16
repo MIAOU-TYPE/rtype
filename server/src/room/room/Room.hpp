@@ -164,6 +164,6 @@ namespace Engine
         std::thread _thread;               ///> Thread for the room's game server loop
         size_t _maxPlayers = 0;            ///> Maximum number of players allowed in the room
         std::string _name = "";            ///> Name of the room
-        GameConfig _gameConfig;    ///> Game configuration for the room
+        GameConfig _gameConfig;            ///> Game configuration for the room
     };
 } // namespace Engine

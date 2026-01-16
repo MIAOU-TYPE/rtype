@@ -137,10 +137,10 @@ namespace Engine
         {
         }
 
-        std::string roomName;          ///> The name of the new room.
-        uint8_t maxPlayers;            ///> The maximum number of players allowed in the room.
+        std::string roomName;  ///> The name of the new room.
+        uint8_t maxPlayers;    ///> The maximum number of players allowed in the room.
         Difficulty difficulty; ///> The difficulty level for the room.
-        std::string levelPath;         ///> The path to the level configuration file.
+        std::string levelPath; ///> The path to the level configuration file.
     };
 
     /**

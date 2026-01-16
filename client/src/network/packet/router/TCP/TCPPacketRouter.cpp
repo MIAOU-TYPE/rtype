@@ -252,6 +252,8 @@ namespace Network
         }
         std::vector<ScoreEntry> scores;
         scores.reserve(count);
+        constexpr uint32_t intMaxU32 = (std::numeric_limits<int>::max)();
+
         for (uint16_t i = 0; i < count; ++i) {
             std::string username;
             uint32_t s = 0;
@@ -263,8 +265,8 @@ namespace Network
             }
             ScoreEntry e{};
             e.username = std::move(username);
-            if (s > static_cast<uint32_t>(std::numeric_limits<int>::max()))
-                e.score = std::numeric_limits<int>::max();
+            if (s > intMaxU32)
+                e.score = (std::numeric_limits<int>::max)();
             else
                 e.score = static_cast<int>(s);
             scores.push_back(std::move(e));

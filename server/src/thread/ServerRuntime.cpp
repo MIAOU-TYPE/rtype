@@ -113,7 +113,8 @@ void ServerRuntime::runReceiver() const
     while (_running.load(std::memory_order_relaxed)) {
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
-        _udpServer->readPackets();
+
+        while (_udpServer->readPackets()) {}
         if (auto now = clock::now(); now > nextTick + Tick)
             nextTick = now;
     }
@@ -190,7 +191,7 @@ void ServerRuntime::runTcp() const
     while (_running.load(std::memory_order_relaxed)) {
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
-        _tcpServer->readPackets();
+        (void) _tcpServer->readPackets();
         if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);
         else if (auto now = clock::now(); now > nextTick + Tick)

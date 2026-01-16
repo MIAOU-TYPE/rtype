@@ -217,7 +217,7 @@ namespace Game
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);
-        BossSystem::update(*_worldWrite, dt);
+        BossSystem::update(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
         PowerUpShootingSystem::update(*_worldWrite, dt);

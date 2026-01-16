@@ -9,7 +9,6 @@
 
 #include <memory>
 #include "AuthContext.hpp"
-#include "ScoreboardContext.hpp"
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
@@ -17,6 +16,7 @@
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
 #include "RoomMenu.hpp"
+#include "ScoreboardContext.hpp"
 #include "SoundRegistry.hpp"
 
 namespace Engine

@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include "HomingProjectile.hpp"
+#include "InputComponent.hpp"
 #include "WeaponConfig.hpp"
 #include "World.hpp"
 

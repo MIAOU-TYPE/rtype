@@ -6,6 +6,10 @@
 */
 
 #include "AIShootSystem.hpp"
+#include <iostream>
+#include "Controllable.hpp"
+#include "Health.hpp"
+#include "Id.hpp"
 
 namespace Game
 {
@@ -31,6 +35,34 @@ namespace Game
 
                     world.events().emit(ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent),
                         {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                    return;
+                }
+
+                if (shoot.type == Ecs::AIShoot::Type::Homing) {
+                    size_t targetId = SIZE_MAX;
+
+                    reg.view<Game::InputComponent, Ecs::Position, Ecs::Health, Ecs::Id>(
+                        [&](const Ecs::Entity, const Game::InputComponent &, const Ecs::Position &,
+                            const Ecs::Health &hp, const Ecs::Id &id) {
+                            if (hp.hp > 0 && targetId == SIZE_MAX) {
+                                targetId = id.id;
+                            }
+                        });
+
+                    if (targetId != SIZE_MAX) {
+                        auto &playerPos = reg.getComponents<Ecs::Position>().at(targetId);
+                        if (playerPos) {
+                            float dx = playerPos->x - posX;
+                            float dy = playerPos->y - posY;
+                            float distance = std::sqrt(dx * dx + dy * dy);
+                            if (distance > 0) {
+                                float vx = (dx / distance) * shoot.projectileSpeed;
+                                float vy = (dy / distance) * shoot.projectileSpeed;
+                                world.events().emit(ShootEvent(posX, posY, vx, vy, shoot.damage,
+                                    static_cast<size_t>(ent), {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                            }
+                        }
+                    }
                     return;
                 }
 

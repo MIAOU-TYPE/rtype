@@ -15,7 +15,7 @@ namespace Engine
         std::shared_ptr<AuthContext> authCtx, std::shared_ptr<ScoreboardContext> scoreCtx)
         : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
           _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)),
-            _eventBus(std::move(eventBus)), _authCtx(std::move(authCtx)), _scoreCtx(std::move(scoreCtx))
+          _eventBus(std::move(eventBus)), _authCtx(std::move(authCtx)), _scoreCtx(std::move(scoreCtx))
     {
     }
 

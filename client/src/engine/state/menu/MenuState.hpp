@@ -8,7 +8,6 @@
 #pragma once
 
 #include "AuthContext.hpp"
-#include "ScoreboardContext.hpp"
 #include "EventRegistry.hpp"
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
@@ -16,6 +15,7 @@
 #include "Menu.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomState.hpp"
+#include "ScoreboardContext.hpp"
 #include "SettingsState.hpp"
 #include "SoundRegistry.hpp"
 #include "StateManager.hpp"
@@ -69,11 +69,11 @@ namespace Engine
         std::shared_ptr<RoomManager> _roomManager;      ///> Lobby/room manager shared across states.
         std::unique_ptr<Menu> _menu;                    ///> Unique pointer to the menu.
 
-        std::shared_ptr<EventBus> _eventBus;   ///> Shared pointer to the event bus.
-        std::shared_ptr<AuthContext> _authCtx; ///> Shared pointer to the auth context.
+        std::shared_ptr<EventBus> _eventBus;          ///> Shared pointer to the event bus.
+        std::shared_ptr<AuthContext> _authCtx;        ///> Shared pointer to the auth context.
         std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Shared pointer to the scoreboard context.
 
-        uint32_t _lastScoreVersion = 0; ///> Tracks the last scoreboard version.
+        uint32_t _lastScoreVersion = 0;     ///> Tracks the last scoreboard version.
         bool _lastAuthed = false;           ///> Tracks the last authentication status.
         uint32_t _lastAuthErrorVersion = 0; ///> Tracks the last authentication error version.
     };

@@ -12,9 +12,12 @@
 #include <iomanip>
 #include <map>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
+
+using json = nlohmann::json;
 #include "AuthContext.hpp"
 #include "EventRegistry.hpp"
 #include "IGameState.hpp"
@@ -194,13 +197,20 @@ namespace Engine
         bool saveLevel();
 
         /**
+         * @brief Update the custom levels index file with the new level.
+         * @param levelPath The path to the saved level file.
+         * @param levelName The display name of the level.
+         */
+        void updateCustomLevelsIndex(const std::string &levelPath, const std::string &levelName);
+
+        /**
          * @brief Convert screen coordinates to world coordinates.
          * @param screenX Screen X coordinate.
          * @param screenY Screen Y coordinate.
          * @param worldX Output world X coordinate.
          * @param worldY Output world Y coordinate.
          */
-        void screenToWorld(float screenX, float screenY, float &worldX, float &worldY) const noexcept;
+        void screenToWorld(const float screenX, const float screenY, float &worldX, float &worldY) const noexcept;
 
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface

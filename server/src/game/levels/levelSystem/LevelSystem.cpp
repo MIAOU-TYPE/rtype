@@ -77,6 +77,7 @@ namespace Game
             if (!level.enemyTypes.contains(type))
                 continue;
             const EnemyDefinition &def = level.enemyTypes.at(type);
+
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)
                     spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY, modifiers);
@@ -137,6 +138,9 @@ namespace Game
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed * modifiers.enemySpeedMultiplier, 0.f});
 
+        if (def.sprite == 1 || def.sprite == 21 || def.sprite == 22)
+            reg.emplaceComponent<Ecs::BossPhase>(mob, Ecs::BossPhase{});
+
         Ecs::MovementPattern pattern;
         pattern.type =
             (def.movement.type == "zigzag") ? Ecs::MovementPattern::Type::ZigZag : Ecs::MovementPattern::Type::Straight;
@@ -169,6 +173,7 @@ namespace Game
         Ecs::AIShoot shoot;
         shoot.type = def.shoot.type == "straight" ? Ecs::AIShoot::Type::Straight
             : def.shoot.type == "diagonal"        ? Ecs::AIShoot::Type::Diagonal
+            : def.shoot.type == "homing"          ? Ecs::AIShoot::Type::Homing
                                                   : Ecs::AIShoot::Type::Spread;
         shoot.cooldown = def.shoot.cooldown;
         shoot.timer = 0.f;
@@ -176,6 +181,7 @@ namespace Game
         shoot.damage = static_cast<int>(static_cast<float>(def.shoot.damage) * modifiers.enemyDamageMultiplier);
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
+        shoot.bulletsNbr = def.shoot.bulletsNbr;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
 
         Ecs::WeaponConfig weapon;

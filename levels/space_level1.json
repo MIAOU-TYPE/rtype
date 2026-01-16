@@ -115,7 +115,7 @@
       }
     },
     "boss": {
-      "hp": 500,
+      "hp": 3000,
       "speed": -30,
       "size": { "w": 177, "h": 144 },
       "killScore": 300,
@@ -123,12 +123,45 @@
       "spriteId": 1,
       "shoot": {
         "type": "diagonal",
-        "angles": [-180, -157.5, -135, -112.5, -90, -67.5, -45, -22.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5],
+        "angles": [-90, -45, 0, -315, -270],
         "cooldown": 1.6,
         "projectileSpeed": 140,
         "damage": 35,
         "muzzle": { "x": 105, "y": 112 },
         "projectileSpriteId": 12
+      }
+    },
+    "boss2": {
+      "hp": 3000,
+      "speed": -30,
+      "size": { "w": 130, "h": 50 },
+      "killScore": 300,
+      "sprite": "boss2",
+      "spriteId": 21,
+      "shoot": {
+        "type": "spread",
+        "bulletsNbr": 5,
+        "cooldown": 0.5,
+        "projectileSpeed": 150,
+        "damage": 50,
+        "muzzle": { "x": 65, "y": 25 },
+        "projectileSpriteId": 12
+      }
+    },
+    "boss3": {
+      "hp": 3000,
+      "speed": -30,
+      "size": { "w": 160, "h": 213 },
+      "killScore": 300,
+      "sprite": "boss3",
+      "spriteId": 22,
+      "shoot": {
+        "type": "homing",
+        "cooldown": 4.0,
+        "projectileSpeed": 170,
+        "damage": 500,
+        "muzzle": { "x": 60, "y": 70 },
+        "projectileSpriteId": 23
       }
     },
     "groupEnemy": {
@@ -207,27 +240,27 @@
       "members": [
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": -200, "y": -320 }
+          "offset": { "x": -200, "y": -220 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": -100, "y": -160 }
+          "offset": { "x": -100, "y": -60 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 0 }
+          "offset": { "x": 0, "y": 100 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 150, "y": 0 }
+          "offset": { "x": 150, "y": 100 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 250, "y": -160 }
+          "offset": { "x": 250, "y": -60 }
         },
         {
           "enemyType": "smallEnemy",
-          "offset": { "x": 350, "y": -320 }
+          "offset": { "x": 350, "y": -220 }
         }
       ]
     }
@@ -245,10 +278,10 @@
   "duration": 95,
   "waves": [
     {
-      "time": 2,
-      "enemies": { "smallEnemy": 1 },
+      "time": 1,
+      "enemies": { "boss3": 1 },
       "spawnPattern": "line",
-      "spawnY": 360
+      "spawnY": 100
     },
     {
       "time": 6,

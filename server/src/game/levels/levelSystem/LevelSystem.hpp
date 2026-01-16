@@ -110,7 +110,7 @@ namespace Game
          * @param modifiers Difficulty modifiers to apply to the enemy.
          */
         static void spawnSingleEnemy(
-            IGameWorld &world, const EnemyDefinition &def, float x, float y, const DifficultyModifiers &modifiers);
+            IGameWorld &world, const EnemyDefinition &def, const float x, const float y, const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn an obstacle at a specific position.

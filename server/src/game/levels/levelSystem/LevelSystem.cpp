@@ -119,7 +119,7 @@ namespace Game
     }
 
     void LevelSystem::spawnSingleEnemy(
-        IGameWorld &world, const EnemyDefinition &def, float x, float y, const DifficultyModifiers &modifiers)
+        IGameWorld &world, const EnemyDefinition &def, const float x, const float y, const DifficultyModifiers &modifiers)
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();

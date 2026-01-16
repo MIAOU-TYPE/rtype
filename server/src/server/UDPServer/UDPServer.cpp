@@ -75,7 +75,7 @@ bool UDPServer::readPackets() noexcept
     sockaddr_in from{};
     socklen_t addrLen = sizeof(from);
 
-    const ssize_t received = _netWrapper.recvFrom(
+    const recvfrom_return_t received = _netWrapper.recvFrom(
         _socketFd, _rxTempBuffer.data(), _rxTempBuffer.size(), 0, reinterpret_cast<sockaddr *>(&from), &addrLen);
 
     if (received <= 0)

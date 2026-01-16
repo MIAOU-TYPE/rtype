@@ -110,11 +110,6 @@ namespace Engine
         return _name;
     }
 
-    const Engine::GameConfig &Room::getGameConfig() const noexcept
-    {
-        return _gameConfig;
-    }
-
     std::mutex &Room::getSessionMutex()
     {
         return _sessionsMutex;

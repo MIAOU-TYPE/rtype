@@ -180,7 +180,6 @@ namespace Engine
                 entry.roomName = room->getName();
                 entry.currentPlayers = room->getCurrentPlayers();
                 entry.maxPlayers = room->getMaxPlayers();
-                entry.gameConfig = room->getGameConfig();
                 roomsList.push_back(entry);
             }
             return roomsList;

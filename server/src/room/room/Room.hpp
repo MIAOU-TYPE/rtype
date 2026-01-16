@@ -142,12 +142,6 @@ namespace Engine
         [[nodiscard]] std::string getName() const noexcept;
 
         /**
-         * @brief Gets the game configuration of the room
-         * @return The game configuration
-         */
-        [[nodiscard]] const Engine::GameConfig &getGameConfig() const noexcept;
-
-        /**
          * @brief Gets the mutex used for synchronizing access to the room
          * @return A reference to the mutex
          */

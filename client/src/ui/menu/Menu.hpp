@@ -277,22 +277,22 @@ namespace Engine
         std::unique_ptr<UI::UITextField> _userField; ///> Text field for entering the username.
         std::unique_ptr<UI::UITextField> _passField; ///> Text field for entering the password.
 
-        std::unique_ptr<UI::UIButton> _scoreboard;  ///> Button to access the scoreboard page.
-        std::unique_ptr<UI::UIButton> _scoreRefreshBtn; ///> Button to refresh the scoreboard.
-        std::shared_ptr<Graphics::IText> _scoreTitleText;   ///> Text object for the scoreboard title.
-        std::vector<std::shared_ptr<Graphics::IText>> _scoreRowTexts;   ///> Text objects for each row in the scoreboard.
+        std::unique_ptr<UI::UIButton> _scoreboard;                    ///> Button to access the scoreboard page.
+        std::unique_ptr<UI::UIButton> _scoreRefreshBtn;               ///> Button to refresh the scoreboard.
+        std::shared_ptr<Graphics::IText> _scoreTitleText;             ///> Text object for the scoreboard title.
+        std::vector<std::shared_ptr<Graphics::IText>> _scoreRowTexts; ///> Text objects for each row in the scoreboard.
 
         std::unique_ptr<Graphics::IText> _authErrorText; ///> Text object for displaying authentication error messages.
         std::string _authErrorMessage;                   ///> Authentication error message.
 
-        bool _startRequested = false;    ///> Flag indicating if the user requested to start the game.
-        bool _quitRequested = false;     ///> Flag indicating if the user requested to quit.
-        bool _settingsRequested = false; ///> Flag indicating if the user requested to access settings.
-        bool _scoreboardRefreshRequested = false;   ///> Flag indicating if the user requested to refresh the scoreboard.
-        bool _scoreboardLoading = false;    ///> Flag indicating if the scoreboard is loading.
+        bool _startRequested = false;             ///> Flag indicating if the user requested to start the game.
+        bool _quitRequested = false;              ///> Flag indicating if the user requested to quit.
+        bool _settingsRequested = false;          ///> Flag indicating if the user requested to access settings.
+        bool _scoreboardRefreshRequested = false; ///> Flag indicating if the user requested to refresh the scoreboard.
+        bool _scoreboardLoading = false;          ///> Flag indicating if the scoreboard is loading.
         bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
 
-        std::vector<ScoreEntry> _scores;    ///> Vector of scoreboard entries.
+        std::vector<ScoreEntry> _scores;          ///> Vector of scoreboard entries.
         AuthMode _submittedMode = AuthMode::None; ///> Submitted authentication mode.
         std::string _submittedUser;               ///> Submitted username.
         std::string _submittedPass;               ///> Submitted password.

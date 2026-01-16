@@ -9,7 +9,7 @@
 
 namespace
 {
-    std::string malformedTcp(const char *stage, const std::size_t need, const std::size_t got)
+    std::string malformedTcp(const char *stage, const size_t need, const size_t got)
     {
         std::string s = "TCP ";
         s += stage;
@@ -49,7 +49,7 @@ namespace Network
         if (const auto addr = pkt->address(); !addr)
             return;
 
-        const std::size_t n = pkt->size();
+        const size_t n = pkt->size();
         const auto *payload = pkt->buffer();
 
         if (n < 5)
@@ -77,6 +77,7 @@ namespace Network
                 case Net::Protocol::TCP::ROOM_JOINED: onRoomJoined(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOM_LEFT: onRoomLeft(h.requestId, r); break;
                 case Net::Protocol::TCP::GAME_START: onGameStart(h.requestId, r); break;
+                case Net::Protocol::TCP::SCOREBOARD_LIST: onScoreboardList(h.requestId, r); break;
                 default: protocolError(h.requestId, "Unsupported TCP packet type (client)"); break;
             }
         } catch (const std::exception &e) {
@@ -164,9 +165,19 @@ namespace Network
                 info.roomName = r.str16();
                 info.currentPlayers = r.u16();
                 info.maxPlayers = r.u16();
+                info.gameConfig.difficulty = static_cast<Engine::Difficulty>(r.u8());
+                info.gameConfig.mode = static_cast<Engine::GameMode>(r.u8());
+                info.gameConfig.parameters.timeLimit = r.u32();
+                info.gameConfig.parameters.scoreLimit = r.u32();
+                info.gameConfig.parameters.sharedHealth = r.u8() != 0;
+                info.gameConfig.parameters.teamDamage = r.u8() != 0;
+                info.gameConfig.parameters.friendlyFireMultiplier = static_cast<float>(r.u8()) / 100.0f;
+                info.gameConfig.parameters.waveCount = r.u8();
+                info.gameConfig.parameters.spawnRateMultiplier = static_cast<float>(r.u8()) / 100.0f;
+                info.gameConfig.levelId = r.str16();
             } catch (...) {
-                return protocolError(
-                    req, "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u8)+max(u8))");
+                return protocolError(req,
+                    "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u16)+max(u16)+gameConfig)");
             }
             rooms.push_back(std::move(info));
         }
@@ -236,5 +247,42 @@ namespace Network
             return protocolError(req, "AUTH_OK: unexpected trailing bytes");
         const uint64_t token = static_cast<uint64_t>(tokenHi) << 32 | tokenLo;
         _sink->onAuthOk(req, userId, username, token, ttlSec);
+    }
+
+    void TCPPacketRouter::onScoreboardList(const uint32_t req, Net::TCP::Reader &r) const
+    {
+        if (r.remaining() < 2u)
+            return protocolError(req, malformedTcp("SCOREBOARD_LIST count(u16)", 2, r.remaining()));
+
+        uint16_t count = 0;
+        try {
+            count = r.u16();
+        } catch (...) {
+            return protocolError(req, "SCOREBOARD_LIST: malformed payload (expected count(u16))");
+        }
+        std::vector<ScoreEntry> scores;
+        scores.reserve(count);
+        constexpr uint32_t intMaxU32 = (std::numeric_limits<int>::max)();
+
+        for (uint16_t i = 0; i < count; ++i) {
+            std::string username;
+            uint32_t s = 0;
+            try {
+                username = r.str16();
+                s = r.u32();
+            } catch (...) {
+                return protocolError(req, "SCOREBOARD_LIST: malformed entry (expected username(str16)+score(u32))");
+            }
+            ScoreEntry e{};
+            e.username = std::move(username);
+            if (s > intMaxU32)
+                e.score = (std::numeric_limits<int>::max)();
+            else
+                e.score = static_cast<int>(s);
+            scores.push_back(std::move(e));
+        }
+        if (r.remaining() != 0)
+            return protocolError(req, "SCOREBOARD_LIST: unexpected trailing bytes");
+        _sink->onScoreboardList(req, scores);
     }
 } // namespace Network

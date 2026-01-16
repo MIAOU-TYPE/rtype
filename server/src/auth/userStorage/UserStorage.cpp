@@ -9,7 +9,7 @@
 
 namespace Auth
 {
-    UserStorage::UserStorage(std::shared_ptr<SqliteDb> db) : _db(std::move(db))
+    UserStorage::UserStorage(std::shared_ptr<Db::SqliteDb> db) : _db(std::move(db))
     {
         if (!_db)
             throw UserStorageError("{UserStorage::UserStorage} null SqliteDb");
@@ -19,7 +19,7 @@ namespace Auth
     {
         std::scoped_lock lk(_db->mutex());
 
-        const SqlStatement st(_db->raw(), "PRAGMA user_version;");
+        const Db::SqlStatement st(_db->raw(), "PRAGMA user_version;");
         if (sqlite3_step(st.raw()) != SQLITE_ROW)
             throw UserStorageError("{UserStorage::initSchema} step failed: " + std::string(sqlite3_errmsg(_db->raw())));
         if (const int version = sqlite3_column_int(st.raw(), 0); version != 0)
@@ -38,7 +38,7 @@ namespace Auth
     {
         std::scoped_lock lk(_db->mutex());
 
-        const SqlStatement st(_db->raw(),
+        const Db::SqlStatement st(_db->raw(),
             "SELECT id, username, password_scrypt "
             "FROM users WHERE username = ?1 LIMIT 1;");
         if (sqlite3_bind_text(st.raw(), 1, username.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK)
@@ -68,7 +68,7 @@ namespace Auth
     {
         std::scoped_lock lk(_db->mutex());
 
-        const SqlStatement st(_db->raw(), "INSERT INTO users(username, password_scrypt) VALUES(?1, ?2);");
+        const Db::SqlStatement st(_db->raw(), "INSERT INTO users(username, password_scrypt) VALUES(?1, ?2);");
         if (sqlite3_bind_text(st.raw(), 1, username.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK
             || sqlite3_bind_text(st.raw(), 2, passwordScrypt.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK)
             throw UserStorageError("insertUser: bind failed");

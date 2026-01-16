@@ -43,7 +43,7 @@ namespace Graphics
     /**
      * @brief Opaque handle to a font.
      */
-    using FontHandle = std::size_t;
+    using FontHandle = size_t;
     constexpr FontHandle InvalidFont = 0;
 
     /**

@@ -92,6 +92,8 @@ void SessionManager::removeSession(const int sessionId)
     }
 
     _udpTokenById.erase(sessionId);
+    _lastScoreById.erase(sessionId);
+    _lastSequenceById.erase(sessionId);
 }
 
 const sockaddr_in *SessionManager::getAddress(const int sessionId) const
@@ -269,4 +271,18 @@ bool SessionManager::isSequenceValid(const int sessionId, const uint32_t sequenc
         return true;
     }
     return false;
+}
+
+void SessionManager::setLastScore(const int sessionId, const uint32_t score)
+{
+    std::unique_lock lock(_mutex);
+    _lastScoreById[sessionId] = score;
+}
+
+std::optional<uint32_t> SessionManager::getLastScore(const int sessionId) const
+{
+    std::shared_lock lock(_mutex);
+    if (const auto it = _lastScoreById.find(sessionId); it != _lastScoreById.end())
+        return it->second;
+    return std::nullopt;
 }

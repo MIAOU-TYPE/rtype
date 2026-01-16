@@ -182,8 +182,8 @@ namespace World
     }
 
     void ClientWorld::refreshSpriteIfChanged(const Ecs::Entity e, const uint32_t spriteId,
-        Ecs::SparseArray<Ecs::Drawable> drawables, Ecs::SparseArray<Ecs::AnimationState> anims,
-        Ecs::SparseArray<Ecs::Render> renders) const
+        Ecs::SparseArray<Ecs::Drawable> &drawables, Ecs::SparseArray<Ecs::AnimationState> &anims,
+        Ecs::SparseArray<Ecs::Render> &renders)
     {
         const auto idx = static_cast<size_t>(e);
 
@@ -216,7 +216,8 @@ namespace World
         if (itEnt == _entityMap.end())
             return;
 
-        const auto ent = static_cast<std::size_t>(itEnt->second);
+        const auto ent = static_cast<size_t>(itEnt->second);
+
         if (ent >= positions.size())
             return;
 
@@ -251,9 +252,9 @@ namespace World
             return;
 
         auto &positions = _registry.getComponents<Ecs::Position>();
-        const auto &drawables = _registry.getComponents<Ecs::Drawable>();
-        const auto &renders = _registry.getComponents<Ecs::Render>();
-        const auto &anims = _registry.getComponents<Ecs::AnimationState>();
+        auto &drawables = _registry.getComponents<Ecs::Drawable>();
+        auto &renders = _registry.getComponents<Ecs::Render>();
+        auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
         const auto now = std::chrono::steady_clock::now();
         constexpr auto InterpDelay = std::chrono::milliseconds(100);
@@ -360,7 +361,7 @@ namespace World
         auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
         if (!pos)
             return;
-        pos->x += dx * 3.5f;
-        pos->y += dy * 3.5f;
+        pos->x += dx * 5.f;
+        pos->y += dy * 5.f;
     }
 } // namespace World

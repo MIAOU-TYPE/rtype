@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 
-namespace Auth
+namespace Db
 {
     /**
      * @class SqlStatementError
@@ -78,4 +78,4 @@ namespace Auth
       private:
         sqlite3_stmt *_statement = nullptr; ///> Pointer to the prepared statement.
     };
-} // namespace Auth
+} // namespace Db

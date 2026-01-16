@@ -150,6 +150,21 @@ namespace Net::Server
          */
         [[nodiscard]] bool consumeUdp(const sockaddr_in &addr) override;
 
+        /**
+         * @brief Set the last score for a session ID.
+         * @param sessionId The ID of the session.
+         * @param score The score to set.
+         */
+        void setLastScore(int sessionId, uint32_t score) override;
+
+        /**
+         * @brief Get the last score associated with a session ID.
+         * @param sessionId The ID of the session.
+         * @return An optional containing the last score if it exists, otherwise std::nullopt.
+         */
+        [[nodiscard]]
+        std::optional<uint32_t> getLastScore(int sessionId) const override;
+
       private:
         mutable std::shared_mutex _mutex{};      ///> Mutex for thread-safe access
         using Clock = std::chrono::steady_clock; ///> Clock type for time management
@@ -168,6 +183,8 @@ namespace Net::Server
 
         std::unordered_map<int, uint64_t> _udpTokenById{};             ///> UDP token storage
         mutable std::unordered_map<int, uint32_t> _lastSequenceById{}; ///> Last UDP sequence storage
+
+        std::unordered_map<int, uint32_t> _lastScoreById{}; ///> Last score storage
 
         int _nextId = 1; ///> Next available session ID
 

@@ -153,5 +153,20 @@ namespace Net::Server
          * @return True if the packet was consumed, false otherwise.
          */
         [[nodiscard]] virtual bool consumeUdp(const sockaddr_in &addr) = 0;
+
+        /**
+         * @brief Set the last score for a session.
+         * @param sessionId The ID of the session.
+         * @param score The score to set.
+         */
+        virtual void setLastScore(int sessionId, uint32_t score) = 0;
+
+        /**
+         * @brief Get the last score for a session.
+         * @param sessionId The ID of the session.
+         * @return An optional uint32_t representing the last score.
+         */
+        [[nodiscard]]
+        virtual std::optional<uint32_t> getLastScore(int sessionId) const = 0;
     };
 } // namespace Net::Server

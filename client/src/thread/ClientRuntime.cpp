@@ -49,10 +49,11 @@ namespace Thread
         _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _authCtx = std::make_shared<Engine::AuthContext>();
+        _scoreboardCtx = std::make_shared<Engine::ScoreboardContext>();
 
         _roomManager = std::make_shared<Engine::RoomManager>(_graphics->resources());
         _stateManager->changeState(std::make_unique<Engine::MenuState>(
-            _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+            _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx));
         _readRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         _writeRenderCommands = std::make_shared<std::vector<Engine::RenderCommand>>();
         Utils::AssetLoader::load(_renderer->textures(), _renderer->sounds(), _spriteRegistry);
@@ -165,8 +166,8 @@ namespace Thread
             }
             if (_pendingAuthOk.exchange(false, std::memory_order_acq_rel)) {
                 try {
-                    _stateManager->changeState(std::make_unique<Engine::MenuState>(
-                        _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+                    _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry,
+                        _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} state change failed\n";
                 }
@@ -253,7 +254,7 @@ namespace Thread
 
     void ClientRuntime::sendCombinedInput() const
     {
-        const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right, shoot, big_shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         PlayerInput input{false, false, false, false, false};
 
@@ -275,6 +276,9 @@ namespace Thread
         }
         if (_input->isKeyHeld(shoot))
             input.shoot = true;
+
+        if (_input->isKeyHeld(big_shoot))
+            input.powerShoot = true;
 
         if (auto packet = _udpPacketFactory.makeInput(input))
             _udpClient->sendPacket(*packet);
@@ -306,7 +310,8 @@ namespace Thread
 
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
-            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers));
+            _tcpClient->sendPacket(
+                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.levelPath));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
@@ -328,6 +333,13 @@ namespace Thread
             const auto req = nextReqId();
             _lastAuthReq.store(req, std::memory_order_release);
             _tcpClient->sendPacket(*_tcpPacketFactory.makeAuthLogin(req, e.username, e.password));
+        });
+
+        _eventBus->on<Engine::ScoreboardGetRequested>([this](const Engine::ScoreboardGetRequested &e) {
+            const size_t clamped = std::min<size_t>(std::max<size_t>(e.limit, 1), 100);
+            const uint32_t req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeScoreboardGet(req, static_cast<uint16_t>(clamped)))
+                (void) _tcpClient->sendPacket(*pkt);
         });
     }
 
@@ -402,6 +414,16 @@ namespace Thread
                 }
                 _pendingAuthOk.store(true, std::memory_order_release);
             });
+
+        _tcpPacketRouter->sink()->onScoreboardListSubscribe([this](uint32_t, const std::vector<ScoreEntry> &scores) {
+            if (!_scoreboardCtx)
+                return;
+            {
+                std::scoped_lock lk(_scoreboardCtx->m);
+                _scoreboardCtx->scores = scores;
+            }
+            _scoreboardCtx->version.fetch_add(1, std::memory_order_release);
+        });
 
         _tcpPacketRouter->sink()->onErrorSubscribe([this](const uint32_t req, uint16_t, const std::string_view msg) {
             if (const auto last = _lastAuthReq.load(std::memory_order_acquire); !last || req != last || !_authCtx)

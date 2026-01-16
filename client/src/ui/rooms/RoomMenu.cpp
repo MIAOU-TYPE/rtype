@@ -138,6 +138,8 @@ namespace Engine
 
         _create.worldPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
         _create.worldNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
+        _create.levelPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
+        _create.levelNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
         _create.difficultyPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
         _create.difficultyNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
         _create.playersPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
@@ -145,8 +147,8 @@ namespace Engine
         _create.confirm = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CREATE");
         _create.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
 
-        _create.levelName = _renderer->texts()->createText(36, {255, 255, 255, 255});
         _create.worldLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
+        _create.levelLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.difficultyLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.playersLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
 
@@ -188,15 +190,15 @@ namespace Engine
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = h * 0.34f + h * 0.11f * static_cast<float>(i);
+            const float y = h * 0.24f + h * 0.11f * static_cast<float>(i);
             prev.centerButtonLabel(w * 0.25f, y, label, cx);
             centerX(next, w * 0.75f, y);
         };
 
         row(*_create.worldPrev, *_create.worldNext, *_create.worldLabel, 0);
-        row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 1);
-        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 2);
-        _create.levelName->setPosition(cx - _create.levelName->getWidth() * 0.5f, h * 0.24f);
+        row(*_create.levelPrev, *_create.levelNext, *_create.levelLabel, 1);
+        row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
+        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
         centerX(*_create.confirm, cx, h * 0.75f);
         centerX(*_create.back, cx, h * 0.88f);
     }
@@ -250,6 +252,8 @@ namespace Engine
             } else if (_page == Page::Create) {
                 fn(*_create.worldPrev);
                 fn(*_create.worldNext);
+                fn(*_create.levelPrev);
+                fn(*_create.levelNext);
                 fn(*_create.difficultyPrev);
                 fn(*_create.difficultyNext);
                 fn(*_create.playersPrev);
@@ -339,9 +343,10 @@ namespace Engine
 
     void RoomMenu::handleCreateReleased(const float mx, const float my)
     {
-        enum class Action { None, WPrev, WNext, DPrev, DNext, PPrev, PNext, Confirm, Back };
+        enum class Action { None, WPrev, WNext, LPrev, LNext, DPrev, DNext, PPrev, PNext, Confirm, Back };
         const auto a = pickAction<Action>(mx, my,
             {{_create.worldPrev.get(), Action::WPrev}, {_create.worldNext.get(), Action::WNext},
+                {_create.levelPrev.get(), Action::LPrev}, {_create.levelNext.get(), Action::LNext},
                 {_create.difficultyPrev.get(), Action::DPrev}, {_create.difficultyNext.get(), Action::DNext},
                 {_create.playersPrev.get(), Action::PPrev}, {_create.playersNext.get(), Action::PNext},
                 {_create.confirm.get(), Action::Confirm}, {_create.back.get(), Action::Back}});
@@ -361,6 +366,16 @@ namespace Engine
                     _selectedWorld = (_selectedWorld + 1) % wc;
                     refreshCatalog = true;
                 }
+                break;
+            }
+            case Action::LPrev: {
+                if (const int lc = static_cast<int>(_levels.size()))
+                    _selectedLevel = (_selectedLevel - 1 + lc) % lc;
+                break;
+            }
+            case Action::LNext: {
+                if (const int lc = static_cast<int>(_levels.size()))
+                    _selectedLevel = (_selectedLevel + 1) % lc;
                 break;
             }
             case Action::DPrev:
@@ -413,32 +428,43 @@ namespace Engine
         _worlds = _roomManager ? _roomManager->worlds() : std::vector<WorldEntry>{};
         if (_worlds.empty()) {
             _selectedWorld = 0;
+            _selectedLevel = 0;
             _levels.clear();
             return;
         }
         _selectedWorld = std::clamp(_selectedWorld, 0, static_cast<int>(_worlds.size()) - 1);
         _selectedMaxPlayers = static_cast<uint8_t>(std::clamp(static_cast<int>(_selectedMaxPlayers), 1, 4));
         _levels.clear();
+        _selectedLevel = 0;
         try {
-            const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;
-            const auto &ref = _roomManager->levelsFor(worldId, _selectedDifficulty);
+            const std::string &worldId = _worlds.at(static_cast<size_t>(_selectedWorld)).id;
+            const auto &ref = _roomManager->levelsFor(worldId);
             _levels.assign(ref.begin(), ref.end());
         } catch (const std::exception &) {
             _levels.clear();
         }
+        _selectedLevel = std::clamp(_selectedLevel, 0, std::max(0, static_cast<int>(_levels.size()) - 1));
     }
 
     void RoomMenu::updateTextStrings() const
     {
         _header.subtitle->setString(_page == Page::Root ? "" : _page == Page::Create ? "Create a room" : "Join a room");
-        _create.levelName->setString(_levels.empty() ? "(no level)" : _levels.front().displayName);
+
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
+        else if (static_cast<size_t>(_selectedWorld) < _worlds.size())
+            _create.worldLabel->setString(std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
         else
-            _create.worldLabel->setString(
-                "World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
+            _create.worldLabel->setString("World: (invalid)");
+
+        if (_levels.empty())
+            _create.levelLabel->setString("Level: (none)");
+        else if (static_cast<size_t>(_selectedLevel) < _levels.size())
+            _create.levelLabel->setString(_levels.at(static_cast<size_t>(_selectedLevel)).displayName);
+        else
+            _create.levelLabel->setString("Level: (invalid)");
     }
 
     void RoomMenu::render() const
@@ -455,12 +481,14 @@ namespace Engine
         if (_page == Page::Create) {
             _create.worldPrev->render();
             _create.worldNext->render();
+            _create.levelPrev->render();
+            _create.levelNext->render();
             _create.difficultyPrev->render();
             _create.difficultyNext->render();
             _create.playersPrev->render();
             _create.playersNext->render();
-            _renderer->draw(*_create.levelName);
             _renderer->draw(*_create.worldLabel);
+            _renderer->draw(*_create.levelLabel);
             _renderer->draw(*_create.difficultyLabel);
             _renderer->draw(*_create.playersLabel);
             _create.confirm->render();
@@ -485,7 +513,7 @@ namespace Engine
         std::unordered_set<uint32_t> seen;
         seen.reserve(rooms.size());
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
             seen.insert(roomId);
 
             const std::string label =
@@ -565,6 +593,19 @@ namespace Engine
     uint8_t RoomMenu::maxPlayerSelected() const noexcept
     {
         return _selectedMaxPlayers;
+    }
+
+    Engine::Difficulty RoomMenu::difficultySelected() const noexcept
+    {
+        return _selectedDifficulty;
+    }
+
+    std::string RoomMenu::levelSelected() const noexcept
+    {
+        if (_levels.empty())
+            return "";
+        const int idx = std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1);
+        return _levels.at(static_cast<size_t>(idx)).path;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

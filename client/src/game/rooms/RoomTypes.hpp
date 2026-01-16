@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "GameConfig.hpp"
 
 namespace Engine
 {
@@ -18,6 +19,7 @@ namespace Engine
     struct LevelInfo {
         std::string id;          ///> Level identifier
         std::string displayName; ///> Level display name
+        std::string path;        ///> Path to the level file on server
     };
 
     /**
@@ -29,20 +31,9 @@ namespace Engine
     };
 
     /**
-     * @brief Levels categorized by difficulty for a world
+     * @brief Levels for a world
      */
     struct WorldLevels {
-        std::vector<LevelInfo> easy;   ///> Easy levels
-        std::vector<LevelInfo> medium; ///> Medium levels
-        std::vector<LevelInfo> hard;   ///> Hard levels
-    };
-
-    /**
-     * @brief Types of worlds
-     */
-    enum class Difficulty : uint8_t {
-        Easy = 0,   ///> Easy difficulty
-        Medium = 1, ///> Medium difficulty
-        Hard = 2,   ///> Hard difficulty
+        std::vector<LevelInfo> levels; ///> All levels in this world
     };
 } // namespace Engine

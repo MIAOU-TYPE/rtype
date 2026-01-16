@@ -1,0 +1,29 @@
+{
+  "sprite": "power_up3",
+  "spriteId": 19,
+  "texture": "sprites/power_up3.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0,   "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 33,  "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 66,  "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 99,  "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 132, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 165, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 198, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 231, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 264, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 297, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 330, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 363, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 396, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 429, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 462, "y": 0, "w": 33, "h": 28, "duration": 0.05 },
+        { "x": 495, "y": 0, "w": 33, "h": 28, "duration": 0.05 }
+      ]
+    }
+  }
+}

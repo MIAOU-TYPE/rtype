@@ -55,13 +55,15 @@ namespace Network
         }
     }
 
-    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(
-        const uint32_t req, const std::string_view roomName, const uint8_t maxPlayers) const
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(const uint32_t req, const std::string_view roomName,
+        const uint8_t maxPlayers, const Engine::Difficulty difficulty, const std::string_view levelPath) const
     {
         try {
             Net::TCP::Writer b;
             b.str16(roomName);
             b.u8(maxPlayers);
+            b.u8(static_cast<uint8_t>(difficulty));
+            b.str16(levelPath);
 
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::CREATE_ROOM, req, b.bytes());
             return make(payload);
@@ -137,6 +139,19 @@ namespace Network
             return make(payload);
         } catch (...) {
             std::cerr << "{TCPPacketFactory::makeAuthLogin} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeScoreboardGet(const uint32_t req, const uint16_t limit) const
+    {
+        try {
+            Net::TCP::Writer b;
+            b.u16(limit);
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::SCOREBOARD_GET, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeScoreboardGet} error creating packet" << std::endl;
             return nullptr;
         }
     }

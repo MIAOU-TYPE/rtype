@@ -62,11 +62,21 @@ namespace Net::Factory
         TCP::Writer b;
         b.u16(static_cast<uint16_t>(rooms.size()));
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
             b.u32(roomId);
             b.str16(roomName);
             b.u16(static_cast<uint16_t>(currentPlayers));
             b.u16(static_cast<uint16_t>(maxPlayers));
+            b.u8(static_cast<uint8_t>(gameConfig.difficulty));
+            b.u8(static_cast<uint8_t>(gameConfig.mode));
+            b.u32(gameConfig.parameters.timeLimit);
+            b.u32(gameConfig.parameters.scoreLimit);
+            b.u8(gameConfig.parameters.sharedHealth ? 1 : 0);
+            b.u8(gameConfig.parameters.teamDamage ? 1 : 0);
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.friendlyFireMultiplier * 100));
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.waveCount));
+            b.u8(static_cast<uint8_t>(gameConfig.parameters.spawnRateMultiplier * 100));
+            b.str16(gameConfig.levelId);
         }
 
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOMS_LIST, req, b.bytes());
@@ -124,6 +134,22 @@ namespace Net::Factory
         b.u32(ttlSec);
 
         const auto payload = TCP::buildPayload(Protocol::TCP::AUTH_OK, req, b.bytes());
+        return make(addr, payload);
+    }
+
+    std::shared_ptr<IPacket> TCPPacketFactory::makeScoreboardList(
+        const sockaddr_in &addr, const ReqId req, const std::vector<ScoreEntry> &scores) const
+    {
+        if (scores.size() > 0xFFFFu)
+            return makeError(addr, req, 16, "SCOREBOARD_GET: too many rows to fit in u16");
+
+        TCP::Writer b;
+        b.u16(static_cast<uint16_t>(scores.size()));
+        for (const auto &[username, score] : scores) {
+            b.str16(username);
+            b.u32(static_cast<uint32_t>(score));
+        }
+        const auto payload = TCP::buildPayload(Protocol::TCP::SCOREBOARD_LIST, req, b.bytes());
         return make(addr, payload);
     }
 } // namespace Net::Factory

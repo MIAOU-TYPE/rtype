@@ -102,11 +102,14 @@ EmbeddedResourceManager::EmbeddedResourceManager()
 
 void EmbeddedResourceManager::registerResources()
 {
-    _resources["sprites/bg-preview.png"] = {EmbeddedResources::sprites_bg_preview_png, EmbeddedResources::sprites_bg_preview_png_size};
+    _resources["sprites/bg-preview.png"] = {
+        EmbeddedResources::sprites_bg_preview_png, EmbeddedResources::sprites_bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
         EmbeddedResources::sprites_background_space_png, EmbeddedResources::sprites_background_space_png_size};
-    _resources["sprites/menu_logo.png"] = {EmbeddedResources::sprites_menu_logo_png, EmbeddedResources::sprites_menu_logo_png_size};
-    _resources["sprites/game_over.png"] = {EmbeddedResources::sprites_game_over_png, EmbeddedResources::sprites_game_over_png_size};
+    _resources["sprites/menu_logo.png"] = {
+        EmbeddedResources::sprites_menu_logo_png, EmbeddedResources::sprites_menu_logo_png_size};
+    _resources["sprites/game_over.png"] = {
+        EmbeddedResources::sprites_game_over_png, EmbeddedResources::sprites_game_over_png_size};
     _resources["sprites/button_s_pressed.png"] = {
         EmbeddedResources::sprites_button_s_pressed_png, EmbeddedResources::sprites_button_s_pressed_png_size};
     _resources["sprites/button_s_released.png"] = {
@@ -119,21 +122,30 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_button_l_released_png, EmbeddedResources::sprites_button_l_released_png_size};
     _resources["sprites/button_l_hover.png"] = {
         EmbeddedResources::sprites_button_l_hover_png, EmbeddedResources::sprites_button_l_hover_png_size};
-    _resources["sprites/player.png"] = {EmbeddedResources::sprites_player_png, EmbeddedResources::sprites_player_png_size};
-    _resources["sprites/player2.png"] = {EmbeddedResources::sprites_player2_png, EmbeddedResources::sprites_player2_png_size};
-    _resources["sprites/player3.png"] = {EmbeddedResources::sprites_player3_png, EmbeddedResources::sprites_player3_png_size};
-    _resources["sprites/player4.png"] = {EmbeddedResources::sprites_player4_png, EmbeddedResources::sprites_player4_png_size};
+    _resources["sprites/player.png"] = {
+        EmbeddedResources::sprites_player_png, EmbeddedResources::sprites_player_png_size};
+    _resources["sprites/player2.png"] = {
+        EmbeddedResources::sprites_player2_png, EmbeddedResources::sprites_player2_png_size};
+    _resources["sprites/player3.png"] = {
+        EmbeddedResources::sprites_player3_png, EmbeddedResources::sprites_player3_png_size};
+    _resources["sprites/player4.png"] = {
+        EmbeddedResources::sprites_player4_png, EmbeddedResources::sprites_player4_png_size};
     _resources["sprites/enemy.png"] = {EmbeddedResources::sprites_enemy_png, EmbeddedResources::sprites_enemy_png_size};
-    _resources["sprites/enemy2.png"] = {EmbeddedResources::sprites_enemy2_png, EmbeddedResources::sprites_enemy2_png_size};
-    _resources["sprites/enemy3.png"] = {EmbeddedResources::sprites_enemy3_png, EmbeddedResources::sprites_enemy3_png_size};
-    _resources["sprites/missile.png"] = {EmbeddedResources::sprites_missile_png, EmbeddedResources::sprites_missile_png_size};
+    _resources["sprites/enemy2.png"] = {
+        EmbeddedResources::sprites_enemy2_png, EmbeddedResources::sprites_enemy2_png_size};
+    _resources["sprites/enemy3.png"] = {
+        EmbeddedResources::sprites_enemy3_png, EmbeddedResources::sprites_enemy3_png_size};
+    _resources["sprites/missile.png"] = {
+        EmbeddedResources::sprites_missile_png, EmbeddedResources::sprites_missile_png_size};
     _resources["sprites/missile_enemy.png"] = {
         EmbeddedResources::sprites_missile_enemy_png, EmbeddedResources::sprites_missile_enemy_png_size};
     _resources["sprites/missile_enemy2.png"] = {
         EmbeddedResources::sprites_missile_enemy2_png, EmbeddedResources::sprites_missile_enemy2_png_size};
-    _resources["sprites/explose.png"] = {EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
+    _resources["sprites/explose.png"] = {
+        EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
-    _resources["sprites/obstacle.png"] = {EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
+    _resources["sprites/obstacle.png"] = {
+        EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
 
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::shaders_colorblind_frag, EmbeddedResources::shaders_colorblind_frag_size};
@@ -143,21 +155,29 @@ void EmbeddedResourceManager::registerResources()
 
     _resources["sounds/boss_theme.flac"] = {
         EmbeddedResources::sounds_boss_theme_flac, EmbeddedResources::sounds_boss_theme_flac_size};
-    _resources["sounds/explosion.wav"] = {EmbeddedResources::sounds_explosion_wav, EmbeddedResources::sounds_explosion_wav_size};
+    _resources["sounds/explosion.wav"] = {
+        EmbeddedResources::sounds_explosion_wav, EmbeddedResources::sounds_explosion_wav_size};
     _resources["sounds/game_theme.flac"] = {
         EmbeddedResources::sounds_game_theme_flac, EmbeddedResources::sounds_game_theme_flac_size};
     _resources["sounds/hit.wav"] = {EmbeddedResources::sounds_hit_wav, EmbeddedResources::sounds_hit_wav_size};
     _resources["sounds/menu_theme.flac"] = {
         EmbeddedResources::sounds_menu_theme_flac, EmbeddedResources::sounds_menu_theme_flac_size};
-    _resources["sounds/powerup.wav"] = {EmbeddedResources::sounds_powerup_wav, EmbeddedResources::sounds_powerup_wav_size};
+    _resources["sounds/powerup.wav"] = {
+        EmbeddedResources::sounds_powerup_wav, EmbeddedResources::sounds_powerup_wav_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::sounds_shoot_wav, EmbeddedResources::sounds_shoot_wav_size};
 
-    _resources["levels/world1/levels.json"] = {EmbeddedResources::levels_world1_levels_json, EmbeddedResources::levels_world1_levels_json_size};
-    _resources["levels/world1/world.json"] = {EmbeddedResources::levels_world1_world_json, EmbeddedResources::levels_world1_world_json_size};
-    _resources["levels/world2/levels.json"] = {EmbeddedResources::levels_world2_levels_json, EmbeddedResources::levels_world2_levels_json_size};
-    _resources["levels/world2/world.json"] = {EmbeddedResources::levels_world2_world_json, EmbeddedResources::levels_world2_world_json_size};
-    _resources["levels/world3/levels.json"] = {EmbeddedResources::levels_world3_levels_json, EmbeddedResources::levels_world3_levels_json_size};
-    _resources["levels/world3/world.json"] = {EmbeddedResources::levels_world3_world_json, EmbeddedResources::levels_world3_world_json_size};
+    _resources["levels/world1/levels.json"] = {
+        EmbeddedResources::levels_world1_levels_json, EmbeddedResources::levels_world1_levels_json_size};
+    _resources["levels/world1/world.json"] = {
+        EmbeddedResources::levels_world1_world_json, EmbeddedResources::levels_world1_world_json_size};
+    _resources["levels/world2/levels.json"] = {
+        EmbeddedResources::levels_world2_levels_json, EmbeddedResources::levels_world2_levels_json_size};
+    _resources["levels/world2/world.json"] = {
+        EmbeddedResources::levels_world2_world_json, EmbeddedResources::levels_world2_world_json_size};
+    _resources["levels/world3/levels.json"] = {
+        EmbeddedResources::levels_world3_levels_json, EmbeddedResources::levels_world3_levels_json_size};
+    _resources["levels/world3/world.json"] = {
+        EmbeddedResources::levels_world3_world_json, EmbeddedResources::levels_world3_world_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

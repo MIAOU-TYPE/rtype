@@ -14,11 +14,10 @@ namespace Game
         auto &reg = world.registry();
 
         const float dampingFactor = 0.95f;
-        reg.view<Ecs::Velocity, Ecs::GravityAffected>(
-            [&](const Ecs::Entity, Ecs::Velocity &vel, Ecs::GravityAffected) {
-                vel.vx *= dampingFactor;
-                vel.vy *= dampingFactor;
-            });
+        reg.view<Ecs::Velocity, Ecs::GravityAffected>([&](const Ecs::Entity, Ecs::Velocity &vel, Ecs::GravityAffected) {
+            vel.vx *= dampingFactor;
+            vel.vy *= dampingFactor;
+        });
 
         reg.view<Ecs::Position, Ecs::GravityField, Ecs::Id>(
             [&](const Ecs::Entity, const Ecs::Position &gravPos, Ecs::GravityField &field, const Ecs::Id &id) {

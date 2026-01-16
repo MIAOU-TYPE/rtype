@@ -504,6 +504,62 @@ namespace Engine
         worldY = screenY;
     }
 
+    void LevelEditorState::updateCustomLevelsIndex(const std::string &levelPath, const std::string &levelName)
+    {
+        try {
+            const std::string indexPath = "client/assets/levels/custom/levels.json";
+
+            json indexJson;
+            std::ifstream indexFile(indexPath);
+            if (indexFile.is_open()) {
+                indexFile >> indexJson;
+                indexFile.close();
+
+                if (!indexJson.contains("name")) {
+                    indexJson["name"] = "Custom World";
+                }
+                if (!indexJson.contains("levels") || !indexJson["levels"].is_array()) {
+                    indexJson["levels"] = json::array();
+                }
+            } else {
+                indexJson = {{"name", "Custom World"}, {"levels", json::array()}};
+            }
+
+            std::string levelId = levelPath;
+            size_t lastSlash = levelId.find_last_of('/');
+            if (lastSlash != std::string::npos) {
+                levelId = levelId.substr(lastSlash + 1);
+            }
+            size_t dotPos = levelId.find_last_of('.');
+            if (dotPos != std::string::npos) {
+                levelId = levelId.substr(0, dotPos);
+            }
+
+            bool levelExists = false;
+            for (auto &level : indexJson["levels"]) {
+                if (level["id"] == levelId) {
+                    level["name"] = levelName;
+                    level["path"] = levelPath;
+                    levelExists = true;
+                    break;
+                }
+            }
+
+            if (!levelExists) {
+                json newLevel = {{"id", levelId}, {"name", levelName}, {"path", levelPath}};
+                indexJson["levels"].push_back(newLevel);
+            }
+
+            std::ofstream outIndexFile(indexPath);
+            if (outIndexFile.is_open()) {
+                outIndexFile << indexJson.dump(2);
+                outIndexFile.close();
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "Warning: Failed to update custom levels index: " << e.what() << std::endl;
+        }
+    }
+
     bool LevelEditorState::saveLevel()
     {
         try {
@@ -620,6 +676,7 @@ namespace Engine
             file << "}\n";
 
             file.close();
+            updateCustomLevelsIndex(filename.str(), _levelName);
             return true;
         } catch (const std::exception &) {
             return false;

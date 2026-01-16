@@ -35,8 +35,10 @@ namespace Engine
         }
         if (_menu->wantsCreateRoom()) {
             _menu->consumeCreateRoomState();
+            const std::string levelPath = _menu->levelSelected();
             _eventBus->emit<CreateRoomRequested>(
-                CreateRoomRequested("default", _menu->maxPlayerSelected(), _menu->difficultySelected()));
+                CreateRoomRequested("default", _menu->maxPlayerSelected(), _menu->difficultySelected(),
+                    levelPath.empty() ? "levels/space_level1.json" : levelPath));
         }
         if (_menu->wantsListRooms()) {
             _menu->consumeListRoomsRequest();

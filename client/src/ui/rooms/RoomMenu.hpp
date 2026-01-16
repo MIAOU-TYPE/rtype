@@ -148,6 +148,12 @@ namespace Engine
         [[nodiscard]] Engine::Difficulty difficultySelected() const noexcept;
 
         /**
+         * @brief Gets the selected level ID (path to the level file).
+         * @return The level ID, or empty string if no level is selected.
+         */
+        [[nodiscard]] std::string levelSelected() const noexcept;
+
+        /**
          * @brief Gets the selected room ID to join.
          * @return The room ID.
          */
@@ -212,6 +218,9 @@ namespace Engine
             std::unique_ptr<UI::UIButton> worldPrev; ///> Previous world button.
             std::unique_ptr<UI::UIButton> worldNext; ///> Next world button.
 
+            std::unique_ptr<UI::UIButton> levelPrev; ///> Previous level button.
+            std::unique_ptr<UI::UIButton> levelNext; ///> Next level button.
+
             std::unique_ptr<UI::UIButton> difficultyPrev; ///> Previous difficulty button.
             std::unique_ptr<UI::UIButton> difficultyNext; ///> Next difficulty button.
 
@@ -223,6 +232,7 @@ namespace Engine
 
             std::unique_ptr<Graphics::IText> levelName;       ///> Level name text.
             std::unique_ptr<Graphics::IText> worldLabel;      ///> World label text.
+            std::unique_ptr<Graphics::IText> levelLabel;      ///> Level label text.
             std::unique_ptr<Graphics::IText> difficultyLabel; ///> Difficulty label text.
             std::unique_ptr<Graphics::IText> playersLabel;    ///> Players label text.
         };
@@ -308,6 +318,7 @@ namespace Engine
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
 
         int _selectedWorld = 0;                                            ///> Index of the selected world.
+        int _selectedLevel = 0;                                            ///> Index of the selected level.
         Engine::Difficulty _selectedDifficulty = Engine::Difficulty::Easy; ///> Selected difficulty level.
         uint8_t _selectedMaxPlayers = 4;                                   ///> Selected maximum number of players.
         uint32_t _joinRoomId = 0;                                          ///> ID of the room to join.

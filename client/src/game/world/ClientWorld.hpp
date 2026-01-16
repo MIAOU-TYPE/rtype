@@ -7,6 +7,7 @@
 
 #pragma once
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <deque>
 #include <iostream>

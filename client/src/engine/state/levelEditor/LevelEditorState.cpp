@@ -43,6 +43,11 @@ namespace Engine
             _statusText = _renderer->texts()->createText(18, {100, 255, 100, 255});
             _statusText->setString("");
 
+            _levelNameField = std::make_unique<UI::UITextField>(_renderer, "Level Name", false);
+            _levelNameField->setValue("custom_level");
+            _confirmSaveButton = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CONFIRM");
+            _cancelSaveButton = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CANCEL");
+
             for (size_t i = 0; i < _entityTypes.size(); ++i) {
                 auto btn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "");
                 _toolbar.push_back(std::move(btn));
@@ -123,6 +128,18 @@ namespace Engine
         if (_statusText && !_statusMessage.empty()) {
             _statusText->setPosition(w * 0.5f - _statusText->getWidth() * 0.5f, h * 0.5f);
         }
+
+        if (_levelNameField) {
+            _levelNameField->setPosition(w * 0.5f - 200.0f, h * 0.5f - 50.0f);
+            _levelNameField->setWidth(400.0f);
+            _levelNameField->layout();
+        }
+        if (_confirmSaveButton) {
+            _confirmSaveButton->setPosition(w * 0.5f - 220.0f, h * 0.5f + 20.0f);
+        }
+        if (_cancelSaveButton) {
+            _cancelSaveButton->setPosition(w * 0.5f + 20.0f, h * 0.5f + 20.0f);
+        }
     }
 
     void LevelEditorState::update(StateManager &manager, const InputFrame &frame)
@@ -146,6 +163,13 @@ namespace Engine
 
     void LevelEditorState::render()
     {
+        if (_showSaveDialog) {
+            if (_levelNameField) _levelNameField->render();
+            if (_confirmSaveButton) _confirmSaveButton->render();
+            if (_cancelSaveButton) _cancelSaveButton->render();
+            return;
+        }
+
         if (_backgroundTexture != Graphics::InvalidTexture) {
             _renderer->draw(_backgroundCmd);
         }
@@ -247,6 +271,45 @@ namespace Engine
 
     void LevelEditorState::handleInput(const InputFrame &frame)
     {
+        if (_showSaveDialog) {
+            if (frame.mousePressed && _levelNameField) {
+                _levelNameField->onMousePressed(frame.mouseX, frame.mouseY);
+            }
+            if (frame.keyPressed && _levelNameField && _levelNameField->isFocused()) {
+                _levelNameField->onKeyPressed(frame.key);
+            }
+            if (frame.mousePressed) {
+                if (_confirmSaveButton) _confirmSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
+                if (_cancelSaveButton) _cancelSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
+            }
+            if (frame.mouseReleased) {
+                if (_confirmSaveButton && _confirmSaveButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                    _levelName = _levelNameField->value();
+                    if (saveLevel()) {
+                        _statusMessage = "Level saved successfully!";
+                        _statusText->setString(_statusMessage);
+                        _statusText->setColor({100, 255, 100, 255});
+                        _statusMessageTimer = STATUS_DISPLAY_TIME;
+                    } else {
+                        _statusMessage = "Failed to save level!";
+                        _statusText->setString(_statusMessage);
+                        _statusText->setColor({255, 100, 100, 255});
+                        _statusMessageTimer = STATUS_DISPLAY_TIME;
+                    }
+                    _showSaveDialog = false;
+                    _confirmSaveButton->reset();
+                    layout();
+                    return;
+                }
+                if (_cancelSaveButton && _cancelSaveButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
+                    _showSaveDialog = false;
+                    _cancelSaveButton->reset();
+                    return;
+                }
+            }
+            return;
+        }
+
         if (frame.mousePressed) {
             handleMousePressed(frame);
         }
@@ -287,19 +350,8 @@ namespace Engine
         }
 
         if (_saveButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
-            if (saveLevel()) {
-                _statusMessage = "Level saved successfully!";
-                _statusText->setString(_statusMessage);
-                _statusText->setColor({100, 255, 100, 255});
-                _statusMessageTimer = STATUS_DISPLAY_TIME;
-            } else {
-                _statusMessage = "Failed to save level!";
-                _statusText->setString(_statusMessage);
-                _statusText->setColor({255, 100, 100, 255});
-                _statusMessageTimer = STATUS_DISPLAY_TIME;
-            }
+            _showSaveDialog = true;
             _saveButton->reset();
-            layout();
             return;
         }
 
@@ -326,7 +378,7 @@ namespace Engine
     {
         switch (frame.key) {
             case Key::Escape: _backRequested = true; break;
-            case Key::S: saveLevel(); break;
+            case Key::S: _showSaveDialog = true; break;
             case Key::C:
                 _placedEntities.clear();
                 _statusMessage = "All entities cleared!";
@@ -431,8 +483,13 @@ namespace Engine
     {
         try {
             const auto now = std::time(nullptr);
+            const auto tm = std::localtime(&now);
             std::ostringstream filename;
-            filename << "levels/" << _levelName << "_" << now << ".json";
+            filename << "levels/" << _levelName << "_" 
+                     << std::setfill('0') << std::setw(2) << tm->tm_mday << "-"
+                     << std::setfill('0') << std::setw(2) << (tm->tm_mon + 1) << "-"
+                     << std::setfill('0') << std::setw(2) << (tm->tm_year % 100) 
+                     << ".json";
 
             std::ofstream file(filename.str());
             if (!file.is_open()) {

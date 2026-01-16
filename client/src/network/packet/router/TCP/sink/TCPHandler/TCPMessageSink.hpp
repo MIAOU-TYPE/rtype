@@ -198,7 +198,7 @@ namespace Network
         std::vector<RoomIdCb> _gameStartCbs;       ///> Callbacks for game start events
         std::vector<ProtoErrCb> _protocolErrorCbs; ///> Callbacks for protocol error events
         std::vector<AuthOkCb> _authOkCbs;          ///> Callbacks for authentication success events
-        std::vector<ScoreboardCb> _scoreboardCbs;   ///> Callbacks for scoreboard list events
+        std::vector<ScoreboardCb> _scoreboardCbs;  ///> Callbacks for scoreboard list events
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information

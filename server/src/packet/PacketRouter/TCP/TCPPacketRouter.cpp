@@ -240,14 +240,16 @@ namespace Net
         std::string roomName;
         uint8_t maxPlayers = 0;
         uint8_t difficultyRaw = 0;
+        std::string levelPath;
 
         try {
             roomName = r.str16();
             maxPlayers = r.u8();
             difficultyRaw = r.u8();
+            levelPath = r.str16();
         } catch (...) {
             return sendError(addr, req, 4,
-                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8))");
+                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + levelPath(str16))");
         }
 
         if (roomName.empty() || roomName.size() > 32)
@@ -269,7 +271,7 @@ namespace Net
 
         uint32_t roomId = 0;
         try {
-            Engine::GameConfig config{difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, "level1"};
+            Engine::GameConfig config{difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
             roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());

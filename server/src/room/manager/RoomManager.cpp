@@ -21,8 +21,9 @@ namespace Engine
         const Engine::GameConfig &gameConfig, const std::string &name, size_t maxPlayers) noexcept
     {
         try {
+            const std::string levelPath = gameConfig.levelId.empty() ? _levelPath : gameConfig.levelId;
             auto room = std::make_shared<Room>(
-                _sessionManager, _udpServer, _udpPacketFactory, _levelPath, gameConfig, name, maxPlayers);
+                _sessionManager, _udpServer, _udpPacketFactory, levelPath, gameConfig, name, maxPlayers);
             room->init(_sessionManager, _udpServer, _udpPacketFactory);
             std::scoped_lock lock(_mutex);
             auto id = _nextRoomId++;

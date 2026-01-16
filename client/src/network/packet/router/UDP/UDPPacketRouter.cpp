@@ -354,8 +354,8 @@ namespace Ecs
 
             SnapshotEntity e{};
             e.id = ntohl(d.id);
-            e.x = static_cast<float>(static_cast<int16_t>(ntohs(d.x)));
-            e.y = static_cast<float>(static_cast<int16_t>(ntohs(d.y)));
+            e.x = static_cast<float>(static_cast<int16_t>(ntohs(static_cast<uint16_t>(d.x))));
+            e.y = static_cast<float>(static_cast<int16_t>(ntohs(static_cast<uint16_t>(d.y))));
             e.z = d.z;
             e.spriteId = d.spriteId;
 

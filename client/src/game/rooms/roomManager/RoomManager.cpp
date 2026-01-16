@@ -71,9 +71,12 @@ namespace Engine
         }
         std::ranges::sort(out, [](const std::string &a, const std::string &b) {
             auto getPriority = [](const std::string &s) -> int {
-                if (s == "world1") return 1;
-                if (s == "world2") return 2;
-                if (s == "world3") return 3;
+                if (s == "world1")
+                    return 1;
+                if (s == "world2")
+                    return 2;
+                if (s == "world3")
+                    return 3;
                 return 4;
             };
             return getPriority(a) < getPriority(b);

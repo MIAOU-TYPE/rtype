@@ -457,8 +457,7 @@ namespace Engine
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
         else
-            _create.worldLabel->setString(
-                std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
+            _create.worldLabel->setString(std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
 
         if (_levels.empty())
             _create.levelLabel->setString("Level: (none)");

@@ -221,8 +221,8 @@ namespace Engine
         size_t _sfxVolume = 50;             ///> SFX volume level (0-100)
         size_t _musicVolumeBeforeMute = 50; ///> Music volume before mute
         size_t _sfxVolumeBeforeMute = 50;   ///> SFX volume before mute
-        bool _musicMuted = false;                ///> Music mute state
-        bool _sfxMuted = false;                  ///> SFX mute state
+        bool _musicMuted = false;           ///> Music mute state
+        bool _sfxMuted = false;             ///> SFX mute state
 
         std::unique_ptr<UI::UIButton> _musicVolLabel; ///> Music volume display
         std::unique_ptr<UI::UIButton> _musicVolUp;    ///> Increase music volume
@@ -263,8 +263,8 @@ namespace Engine
          * @brief List of available screen resolutions.
          */
         std::vector<Graphics::Extent2u> _resolutions{{900, 600}, {1280, 720}, {1920, 1080}};
-        size_t _currentResolution = 1; ///> Index of the current screen resolution
-        bool _resolutionChanged = false;    ///> Flag indicating if the resolution has been changed
+        size_t _currentResolution = 1;   ///> Index of the current screen resolution
+        bool _resolutionChanged = false; ///> Flag indicating if the resolution has been changed
 
         Graphics::ColorBlindMode _currentColorBlindMode = Graphics::ColorBlindMode::NONE; ///> Current colorblind mode
     };

@@ -142,8 +142,8 @@ namespace UI
         float _w = 420.f; ///> The width of the text field.
         float _h = 40.f;  ///> The height of the text field.
 
-        bool _focused = false;    ///> Whether the text field is focused.
-        bool _password = false;   ///> Whether the text field is for password input.
-        size_t _maxLen = 32; ///> The maximum length of the input value.
+        bool _focused = false;  ///> Whether the text field is focused.
+        bool _password = false; ///> Whether the text field is for password input.
+        size_t _maxLen = 32;    ///> The maximum length of the input value.
     };
 } // namespace UI

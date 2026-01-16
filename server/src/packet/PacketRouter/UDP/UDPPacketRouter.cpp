@@ -92,14 +92,20 @@ void UDPPacketRouter::dispatchPacket(
 
 void UDPPacketRouter::handlePacket(const std::shared_ptr<IPacket> &packet) const
 {
-    if (!isPacketValid(packet))
+    if (!packet)
+        return;
+    const sockaddr_in *from = packet->address();
+    if (!from)
         return;
 
-    const sockaddr_in *from = packet->address();
-    if (!from) {
-        std::cerr << "{UDPPacketRouter} Dropped: null address in packet\n";
+    if (!_sessions->consumeUdp(*from))
         return;
-    }
+
+    if (const size_t size = packet->size(); size < sizeof(HeaderData) || size > 1500)
+        return;
+
+    if (!isPacketValid(packet))
+        return;
 
     HeaderData header{};
     if (!extractHeader(*packet, header))

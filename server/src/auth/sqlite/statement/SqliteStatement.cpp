@@ -27,4 +27,4 @@ namespace Db
     {
         return _statement;
     }
-} // namespace Auth
+} // namespace Db

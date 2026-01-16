@@ -124,7 +124,7 @@ namespace Game
         const int modifiedHp = static_cast<int>(static_cast<float>(def.hp) * modifiers.enemyHpMultiplier);
         reg.emplaceComponent<Ecs::Health>(mob, Ecs::Health{modifiedHp, modifiedHp});
 
-        const int modifiedDamage = static_cast<int>(200 * modifiers.enemyDamageMultiplier);
+        const int modifiedDamage = static_cast<int>(static_cast<float>(def.damage) * modifiers.enemyDamageMultiplier);
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{modifiedDamage});
 
         const unsigned int modifiedScore = static_cast<unsigned int>(static_cast<float>(def.killScore) * modifiers.enemyScoreMultiplier);

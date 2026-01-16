@@ -96,6 +96,7 @@ namespace Game
      */
     struct EnemyDefinition {
         int hp = 0;                       ///> Hit points
+        int damage = 200;                 ///> Collision damage
         float speed = 0.f;                ///> Movement speed
         float colW = 0.f;                 ///> Collision width
         float colH = 0.f;                 ///> Collision height

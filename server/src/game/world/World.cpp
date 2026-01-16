@@ -72,6 +72,23 @@ namespace
             w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{1, 1});
             w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
+
+            if (event.spriteId == 23) {
+                size_t targetId = SIZE_MAX;
+
+                auto &reg = w->registry();
+                reg.view<Ecs::Controllable, Ecs::Health, Ecs::Id>(
+                    [&](const Ecs::Entity, const Ecs::Controllable &, const Ecs::Health &hp, const Ecs::Id &id) {
+                        if (hp.hp > 0 && targetId == SIZE_MAX) {
+                            targetId = id.id;
+                        }
+                    });
+
+                if (targetId != SIZE_MAX) {
+                    w->registry().emplaceComponent<Ecs::HomingProjectile>(
+                        proj, Ecs::HomingProjectile{targetId, 2.0f, 200.0f});
+                }
+            }
         });
     }
 

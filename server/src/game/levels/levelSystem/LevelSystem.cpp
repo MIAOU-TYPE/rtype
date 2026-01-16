@@ -127,7 +127,8 @@ namespace Game
         const int modifiedDamage = static_cast<int>(static_cast<float>(def.damage) * modifiers.enemyDamageMultiplier);
         reg.emplaceComponent<Ecs::Damage>(mob, Ecs::Damage{modifiedDamage});
 
-        const unsigned int modifiedScore = static_cast<unsigned int>(static_cast<float>(def.killScore) * modifiers.enemyScoreMultiplier);
+        const unsigned int modifiedScore =
+            static_cast<unsigned int>(static_cast<float>(def.killScore) * modifiers.enemyScoreMultiplier);
         reg.emplaceComponent<Ecs::KillScore>(mob, Ecs::KillScore{modifiedScore});
 
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
@@ -142,7 +143,8 @@ namespace Game
         pattern.timer = 0.f;
         reg.emplaceComponent<Ecs::MovementPattern>(mob, pattern);
 
-        reg.emplaceComponent<Ecs::Collision>(mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
+        reg.emplaceComponent<Ecs::Collision>(
+            mob, Ecs::Collision{def.colW * COLLISION_SCALE, def.colH * COLLISION_SCALE});
         reg.emplaceComponent<Ecs::Damageable>(mob, Ecs::Damageable{true});
 
         Ecs::AIBrain brain;

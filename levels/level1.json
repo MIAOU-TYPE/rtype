@@ -149,7 +149,7 @@
       }
     },
     "boss3": {
-      "hp": 3000,
+      "hp": 4998,
       "speed": -30,
       "size": { "w": 160, "h": 213 },
       "killScore": 300,
@@ -159,7 +159,7 @@
         "type": "homing",
         "cooldown": 4.0,
         "projectileSpeed": 130,
-        "damage": 100,
+        "damage": 50,
         "muzzle": { "x": 60, "y": 70 },
         "projectileSpriteId": 29
       }

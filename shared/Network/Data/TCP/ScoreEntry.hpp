@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** ClientRuntime.cpp
+** R-Type
 ** File description:
 ** ScoreEntry
 */

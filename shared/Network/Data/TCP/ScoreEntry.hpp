@@ -13,6 +13,6 @@
  * @brief Structure representing a user's score entry.
  */
 struct ScoreEntry {
-    std::string username;       ///> The username of the player
-    int score;  ///> The score achieved by the player
+    std::string username; ///> The username of the player
+    int score;            ///> The score achieved by the player
 };

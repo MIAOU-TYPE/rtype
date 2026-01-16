@@ -6,10 +6,6 @@
 */
 
 #include "AIShootSystem.hpp"
-#include <iostream>
-#include "Controllable.hpp"
-#include "Health.hpp"
-#include "Id.hpp"
 
 namespace Game
 {
@@ -35,6 +31,18 @@ namespace Game
 
                     world.events().emit(ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent),
                         {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                    return;
+                }
+
+                if (shoot.type == Ecs::AIShoot::Type::Spread) {
+                    const float startY = posY - (static_cast<float>(shoot.bulletsNbr) - 1.f) * 10.f;
+                    for (int i = 0; i < shoot.bulletsNbr; ++i) {
+                        const float bulletY = startY + static_cast<float>(i) * 50.f;
+                        const float vx = -shoot.projectileSpeed;
+                        constexpr float vy = 0.f;
+                        world.events().emit(ShootEvent(posX, bulletY, vx, vy, shoot.damage,
+                            static_cast<size_t>(ent), {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                    }
                     return;
                 }
 

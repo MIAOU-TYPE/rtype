@@ -10,7 +10,10 @@
 #include "InputComponent.hpp"
 #include "WeaponConfig.hpp"
 #include "World.hpp"
+#include "Health.hpp"
+#include "Id.hpp"
 
+#include <iostream>
 #include <cmath>
 #include <numbers>
 #include "AIShoot.hpp"

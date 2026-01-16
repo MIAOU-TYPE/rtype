@@ -18,7 +18,7 @@ namespace Game
             const float vx = -shoot.projectileSpeed;
             constexpr float vy = 0.f;
             world.events().emit(ShootEvent(posX, bulletY, vx, vy, shoot.damage, static_cast<size_t>(ent), {8.f, 8.f},
-                5.f, weapon.projectileSpriteId));
+                5.f, weapon.projectileSpriteId, 1, 1));
         }
         return;
     }

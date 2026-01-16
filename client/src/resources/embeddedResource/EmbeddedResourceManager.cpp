@@ -81,20 +81,12 @@ namespace EmbeddedResources
 
     extern const unsigned char levels_world1_levels_json[];
     extern const unsigned int levels_world1_levels_json_size;
-    extern const unsigned char levels_world1_world_json[];
-    extern const unsigned int levels_world1_world_json_size;
     extern const unsigned char levels_world2_levels_json[];
     extern const unsigned int levels_world2_levels_json_size;
-    extern const unsigned char levels_world2_world_json[];
-    extern const unsigned int levels_world2_world_json_size;
     extern const unsigned char levels_world3_levels_json[];
     extern const unsigned int levels_world3_levels_json_size;
-    extern const unsigned char levels_world3_world_json[];
-    extern const unsigned int levels_world3_world_json_size;
     extern const unsigned char levels_custom_levels_json[];
     extern const unsigned int levels_custom_levels_json_size;
-    extern const unsigned char levels_custom_world_json[];
-    extern const unsigned int levels_custom_world_json_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -172,20 +164,12 @@ void EmbeddedResourceManager::registerResources()
 
     _resources["levels/world1/levels.json"] = {
         EmbeddedResources::levels_world1_levels_json, EmbeddedResources::levels_world1_levels_json_size};
-    _resources["levels/world1/world.json"] = {
-        EmbeddedResources::levels_world1_world_json, EmbeddedResources::levels_world1_world_json_size};
     _resources["levels/world2/levels.json"] = {
         EmbeddedResources::levels_world2_levels_json, EmbeddedResources::levels_world2_levels_json_size};
-    _resources["levels/world2/world.json"] = {
-        EmbeddedResources::levels_world2_world_json, EmbeddedResources::levels_world2_world_json_size};
     _resources["levels/world3/levels.json"] = {
         EmbeddedResources::levels_world3_levels_json, EmbeddedResources::levels_world3_levels_json_size};
-    _resources["levels/world3/world.json"] = {
-        EmbeddedResources::levels_world3_world_json, EmbeddedResources::levels_world3_world_json_size};
     _resources["levels/custom/levels.json"] = {
         EmbeddedResources::levels_custom_levels_json, EmbeddedResources::levels_custom_levels_json_size};
-    _resources["levels/custom/world.json"] = {
-        EmbeddedResources::levels_custom_world_json, EmbeddedResources::levels_custom_world_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

@@ -67,10 +67,10 @@ namespace Engine
         std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Shared pointer to the music registry.
         std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
 
-        std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.
-        std::unique_ptr<RoomMenu> _menu;           ///> Unique pointer to the room menu.
-        std::shared_ptr<EventBus> _eventBus;       ///> Shared pointer to the event bus.
-        std::shared_ptr<AuthContext> _authCtx;     ///> Shared pointer to the auth context.
+        std::shared_ptr<RoomManager> _roomManager;    ///> Shared pointer to the room manager.
+        std::unique_ptr<RoomMenu> _menu;              ///> Unique pointer to the room menu.
+        std::shared_ptr<EventBus> _eventBus;          ///> Shared pointer to the event bus.
+        std::shared_ptr<AuthContext> _authCtx;        ///> Shared pointer to the auth context.
         std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Shared pointer to the scoreboard context.
     };
 } // namespace Engine

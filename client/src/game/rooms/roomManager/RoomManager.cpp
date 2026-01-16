@@ -69,7 +69,15 @@ namespace Engine
             if (seen.insert(worldId).second)
                 out.push_back(std::move(worldId));
         }
-        std::ranges::sort(out);
+        std::ranges::sort(out, [](const std::string &a, const std::string &b) {
+            auto getPriority = [](const std::string &s) -> int {
+                if (s == "world1") return 1;
+                if (s == "world2") return 2;
+                if (s == "world3") return 3;
+                return 4;
+            };
+            return getPriority(a) < getPriority(b);
+        });
         return out;
     }
 

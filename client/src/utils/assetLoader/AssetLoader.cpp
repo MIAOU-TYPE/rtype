@@ -14,6 +14,8 @@ namespace Utils
         const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry)
     {
         Engine::SpriteLoader::loadFromFile("client/assets/json/background_space.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/background_jungle.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/background_ruin.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss2.json", *spriteRegistry);

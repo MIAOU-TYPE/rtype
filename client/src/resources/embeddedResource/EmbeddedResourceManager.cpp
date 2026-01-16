@@ -13,6 +13,10 @@ namespace EmbeddedResources
     extern const unsigned int bg_preview_png_size;
     extern const unsigned char background_space_png[];
     extern const unsigned int background_space_png_size;
+    extern const unsigned char background_jungle_png[];
+    extern const unsigned int background_jungle_png_size;
+    extern const unsigned char background_ruin_png[];
+    extern const unsigned int background_ruin_png_size;
     extern const unsigned char menu_logo_png[];
     extern const unsigned int menu_logo_png_size;
     extern const unsigned char game_over_png[];
@@ -105,6 +109,10 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/bg-preview.png"] = {EmbeddedResources::bg_preview_png, EmbeddedResources::bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
         EmbeddedResources::background_space_png, EmbeddedResources::background_space_png_size};
+    _resources["sprites/background_jungle.png"] = {
+        EmbeddedResources::background_jungle_png, EmbeddedResources::background_jungle_png_size};
+    _resources["sprites/background_ruin.png"] = {
+        EmbeddedResources::background_ruin_png, EmbeddedResources::background_ruin_png_size};
     _resources["sprites/menu_logo.png"] = {EmbeddedResources::menu_logo_png, EmbeddedResources::menu_logo_png_size};
     _resources["sprites/game_over.png"] = {EmbeddedResources::game_over_png, EmbeddedResources::game_over_png_size};
     _resources["sprites/button_s_pressed.png"] = {

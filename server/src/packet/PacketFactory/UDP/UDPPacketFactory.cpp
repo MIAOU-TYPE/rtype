@@ -118,11 +118,29 @@ namespace Net::Factory
         AcceptData acceptData;
         acceptData.header = makeHeader(Protocol::UDP::ACCEPT, VERSION, sizeof(AcceptData));
         acceptData.netPlayerId = htonl(static_cast<uint32_t>(entityId));
+
         try {
             auto packet = makePacket<AcceptData>(addr, acceptData);
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{UDPPacketFactory::createAcceptPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<IPacket> UDPPacketFactory::createHealthPacket(
+        const sockaddr_in &addr, const uint16_t currentLife, const uint16_t maxLife) const noexcept
+    {
+        HealthData healthData;
+        healthData.header = makeHeader(Protocol::UDP::HEALTH, VERSION, sizeof(HealthData));
+        healthData.currentLife = htons(currentLife);
+        healthData.maxLife = htons(maxLife);
+
+        try {
+            auto packet = makePacket<HealthData>(addr, healthData);
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::createHealthPacket} " << e.what() << std::endl;
             return nullptr;
         }
     }

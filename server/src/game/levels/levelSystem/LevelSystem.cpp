@@ -79,7 +79,7 @@ namespace Game
             const EnemyDefinition &def = level.enemyTypes.at(type);
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)
-                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY);
+                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY, modifiers);
             } else {
                 std::vector<float> yPositions = calculateSpawnPositions(wave.spawnPattern, wave.spawnY, count);
                 for (int k = 0; k < count; k++)
@@ -93,7 +93,7 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, const float centerY)
+        const std::string &pattern, const float centerY, const DifficultyModifiers &modifiers)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
@@ -111,7 +111,7 @@ namespace Game
             const float x = baseX + member.offsetX;
             const float y = baseY + member.offsetY;
 
-            spawnSingleEnemy(world, memberDef, x, y, {});
+            spawnSingleEnemy(world, memberDef, x, y, modifiers);
         }
     }
 

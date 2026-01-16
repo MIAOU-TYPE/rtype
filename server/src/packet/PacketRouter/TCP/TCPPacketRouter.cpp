@@ -35,9 +35,11 @@ namespace Net
 {
     TCPPacketRouter::TCPPacketRouter(std::shared_ptr<Server::ISessionManager> sessions,
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
-        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService, std::shared_ptr<Engine::ScoreService> scoreService)
+        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService,
+        std::shared_ptr<Engine::ScoreService> scoreService)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _scores(std::move(scoreService)), _serverUdpPort(_tcp->getPort() + 1)
+          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _scores(std::move(scoreService)),
+          _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 

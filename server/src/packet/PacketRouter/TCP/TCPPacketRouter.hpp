@@ -9,9 +9,9 @@
 #include <memory>
 #include "AuthService.hpp"
 #include "RoomManager.hpp"
+#include "ScoreService.hpp"
 #include "TCPPacketFactory.hpp"
 #include "TCPTypesData.hpp"
-#include "ScoreService.hpp"
 
 namespace Net
 {
@@ -130,7 +130,7 @@ namespace Net
         std::shared_ptr<Server::IServer> _tcp = nullptr;                     ///> TCP server
         std::shared_ptr<Factory::TCPPacketFactory> _packetFactory = nullptr; ///> TCP packet factory
         std::shared_ptr<Auth::AuthService> _auth;                            ///> Authentication service
-        std::shared_ptr<Engine::ScoreService> _scores;      ///> Score service
+        std::shared_ptr<Engine::ScoreService> _scores;                       ///> Score service
 
         int32_t _serverUdpPort = 0; ///> UDP port to send to clients
     };

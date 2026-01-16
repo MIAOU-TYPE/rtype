@@ -231,7 +231,8 @@ namespace Game
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
     }
 
-    void LevelSystem::handleBossPhases(IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob, const float x, const float y)
+    void LevelSystem::handleBossPhases(
+        IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob, const float x, const float y)
     {
         auto &reg = world.registry();
 
@@ -255,12 +256,14 @@ namespace Game
 
             Ecs::Entity previousEntity = mob;
             const int numTailSegments = 8;
-            float tailStartX = x + 150.f;
-            float tailStartY = y + 300.f;
+            float tailStartX = x + 80.f;
+            float tailStartY = y + 225.f;
             for (int i = 0; i < numTailSegments; ++i) {
                 const Ecs::Entity tailSegment = world.createEntity();
-                float offsetX = 50.f * (static_cast<float>(i) + 1);
-                reg.emplaceComponent<Ecs::Position>(tailSegment, Ecs::Position{tailStartX + offsetX, tailStartY, 2});
+                float offsetX = -50.f * (static_cast<float>(i) + 1);
+                float offsetY = 50.f * (static_cast<float>(i) + 1);
+                reg.emplaceComponent<Ecs::Position>(
+                    tailSegment, Ecs::Position{tailStartX + offsetX, tailStartY + offsetY, 2});
                 reg.emplaceComponent<Ecs::Velocity>(tailSegment, Ecs::Velocity{def.speed, 0.f});
                 Ecs::Drawable draw;
                 draw.spriteId = 30;

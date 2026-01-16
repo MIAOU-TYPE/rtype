@@ -178,7 +178,7 @@ namespace Game
         _clock = GameClock();
     }
 
-    void GameServer::onPlayerConnect(const int sessionId)
+    void GameServer::onPlayerConnect(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerConnect;
@@ -186,7 +186,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPlayerDisconnect(const int sessionId)
+    void GameServer::onPlayerDisconnect(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerDisconnect;
@@ -194,7 +194,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg)
+    void GameServer::onPlayerInput(const int sessionId, const InputComponent &msg) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::PlayerInput;
@@ -203,7 +203,7 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPing(const int sessionId)
+    void GameServer::onPing(const int sessionId) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::Ping;

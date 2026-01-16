@@ -1,0 +1,17 @@
+{
+  "sprite": "boss3P3",
+  "spriteId": 24,
+  "texture": "sprites/boss3/boss3P3.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 162, "h": 204, "duration": 0.4 },
+        { "x": 162, "y": 0, "w": 162, "h": 204, "duration": 0.4 },
+        { "x": 324, "y": 0, "w": 162, "h": 204, "duration": 0.4 },
+        { "x": 486, "y": 0, "w": 162, "h": 204, "duration": 0.4 }
+      ]
+    }
+  }
+}

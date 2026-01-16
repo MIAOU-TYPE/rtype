@@ -78,7 +78,7 @@ namespace Net::Server
          * @note This function should be called periodically to process incoming data.
          * @throws ServerError if reading packets fails.
          */
-        void readPackets() noexcept override;
+        [[nodiscard]] bool readPackets() noexcept override;
 
         /**
          * @brief Send a packet to a client.

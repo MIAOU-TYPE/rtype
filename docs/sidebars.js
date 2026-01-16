@@ -77,6 +77,14 @@ module.exports = {
             'technical-docs/client/events/event-bus',
           ],
         },
+        {
+          type: 'category',
+          label: 'Score',
+          items: [
+            'technical-docs/client/score/overview',
+            'technical-docs/client/score/protocol-and-flow',
+          ],
+        }
       ],
     },
     {

@@ -8,6 +8,9 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <stdexcept>
@@ -18,9 +21,6 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
 
 using json = nlohmann::json; ///> Alias for nlohmann::json
 

@@ -19,6 +19,7 @@ namespace Engine
     struct LevelInfo {
         std::string id;          ///> Level identifier
         std::string displayName; ///> Level display name
+        std::string path;        ///> Path to the level file on server
     };
 
     /**

@@ -108,6 +108,7 @@ namespace Engine
             LevelInfo lvl;
             lvl.id = item.value("id", "");
             lvl.displayName = item.value("name", "");
+            lvl.path = item.value("path", "");
 
             if (!lvl.id.empty() && !lvl.displayName.empty())
                 out.push_back(std::move(lvl));

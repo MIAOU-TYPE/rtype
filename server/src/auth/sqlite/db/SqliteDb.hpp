@@ -97,4 +97,4 @@ namespace Db
         sqlite3 *_db = nullptr;  ///> Raw sqlite3 pointer
         mutable std::mutex _mtx; ///> Mutex for thread-safe operations
     };
-} // namespace Auth
+} // namespace Db

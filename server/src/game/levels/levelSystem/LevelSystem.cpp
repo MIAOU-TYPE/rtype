@@ -121,7 +121,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
 
-        handleBossPhases(world, def, mob);
+        handleBossPhases(world, def, mob, x, y);
 
         Ecs::MovementPattern pattern;
         pattern.type =
@@ -231,7 +231,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
     }
 
-    void LevelSystem::handleBossPhases(IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob)
+    void LevelSystem::handleBossPhases(IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob, const float x, const float y)
     {
         auto &reg = world.registry();
 
@@ -252,6 +252,29 @@ namespace Game
 
             };
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
+
+            Ecs::Entity previousEntity = mob;
+            const int numTailSegments = 8;
+            float tailStartX = x + 150.f;
+            float tailStartY = y + 300.f;
+            for (int i = 0; i < numTailSegments; ++i) {
+                const Ecs::Entity tailSegment = world.createEntity();
+                float offsetX = 50.f * (static_cast<float>(i) + 1);
+                reg.emplaceComponent<Ecs::Position>(tailSegment, Ecs::Position{tailStartX + offsetX, tailStartY, 2});
+                reg.emplaceComponent<Ecs::Velocity>(tailSegment, Ecs::Velocity{def.speed, 0.f});
+                Ecs::Drawable draw;
+                draw.spriteId = 30;
+                draw.drawable = true;
+                reg.emplaceComponent<Ecs::Drawable>(tailSegment, draw);
+                Ecs::TailFollower follower;
+                follower.bossEntity = mob;
+                follower.leaderEntity = previousEntity;
+                follower.followSpeed = 80.f;
+                follower.followDistance = 40.f;
+                reg.emplaceComponent<Ecs::TailFollower>(tailSegment, follower);
+
+                previousEntity = tailSegment;
+            }
         }
     }
 } // namespace Game

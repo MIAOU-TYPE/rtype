@@ -15,5 +15,7 @@ namespace Ecs
      */
     struct WeaponConfig {
         unsigned int projectileSpriteId = 6; ///> Sprite ID for the projectiles this entity fires
+        float cooldown = 0.25f;              ///> Time in seconds between shots
+        float timer = 0.f;                   ///> Timer to track cooldown
     };
 } // namespace Ecs

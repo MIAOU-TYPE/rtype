@@ -193,8 +193,8 @@ namespace Game
         if (level.backgroundLayers.empty())
             return;
 
-        constexpr float REFERENCE_VIEWPORT_WIDTH = 1280.0f;
-        constexpr float REFERENCE_VIEWPORT_HEIGHT = 720.0f;
+        constexpr float REFERENCE_VIEWPORT_WIDTH = Game::Config::VIEWPORT_WIDTH;
+        constexpr float REFERENCE_VIEWPORT_HEIGHT = Game::Config::VIEWPORT_HEIGHT;
 
         for (const auto &layer : level.backgroundLayers) {
             const float scaleX = REFERENCE_VIEWPORT_WIDTH / layer.tileWidth;

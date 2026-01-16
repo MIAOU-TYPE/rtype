@@ -66,8 +66,8 @@ namespace Engine
         _authErrorMessage.clear();
         if (_authErrorText)
             _authErrorText->setString("");
-        resetButtons(_login.get(), _register.get(), _play.get(), _scoreboard.get(), _settings.get(), _levelEditor.get(), _quit.get(),
-            _submitBtn.get(), _backBtn.get(), _scoreRefreshBtn.get());
+        resetButtons(_login.get(), _register.get(), _play.get(), _scoreboard.get(), _settings.get(), _levelEditor.get(),
+            _quit.get(), _submitBtn.get(), _backBtn.get(), _scoreRefreshBtn.get());
         if (_userField) {
             _userField->clear();
             _userField->setFocused(false);
@@ -236,7 +236,8 @@ namespace Engine
         if (_page == Page::UnauthedRoot)
             updateButtons(frame.mouseX, frame.mouseY, _login.get(), _register.get(), _settings.get(), _quit.get());
         else if (_page == Page::AuthedRoot)
-            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(), _levelEditor.get(), _quit.get());
+            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(),
+                _levelEditor.get(), _quit.get());
         else if (_page == Page::Scoreboard)
             updateButtons(frame.mouseX, frame.mouseY, _scoreRefreshBtn.get(), _backBtn.get());
         else
@@ -299,7 +300,8 @@ namespace Engine
             return;
         }
         if (_page == Page::AuthedRoot) {
-            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(), _levelEditor.get(), _quit.get());
+            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(),
+                _levelEditor.get(), _quit.get());
             return;
         }
         if (_page == Page::Scoreboard) {
@@ -317,7 +319,19 @@ namespace Engine
 
     void Menu::handleMouseReleased(const InputFrame &frame)
     {
-        enum class Action { None, Login, Register, Play, Scoreboard, Settings, LevelEditor, Quit, Submit, Back, RefreshScores };
+        enum class Action {
+            None,
+            Login,
+            Register,
+            Play,
+            Scoreboard,
+            Settings,
+            LevelEditor,
+            Quit,
+            Submit,
+            Back,
+            RefreshScores
+        };
         auto a = Action::None;
 
         if (_page == Page::UnauthedRoot)
@@ -327,8 +341,8 @@ namespace Engine
         else if (_page == Page::AuthedRoot)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
                 {{_play.get(), Action::Play}, {_scoreboard.get(), Action::Scoreboard},
-                    {_settings.get(), Action::Settings},
-                    {_levelEditor.get(), Action::LevelEditor}, {_quit.get(), Action::Quit}});
+                    {_settings.get(), Action::Settings}, {_levelEditor.get(), Action::LevelEditor},
+                    {_quit.get(), Action::Quit}});
         else if (_page == Page::Scoreboard)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
                 {{_scoreRefreshBtn.get(), Action::RefreshScores}, {_backBtn.get(), Action::Back}});

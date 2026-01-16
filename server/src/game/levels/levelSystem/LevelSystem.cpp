@@ -167,6 +167,7 @@ namespace Game
         shoot.damage = def.shoot.damage;
         shoot.muzzle = {def.shoot.muzzle.first, def.shoot.muzzle.second};
         shoot.angles = def.shoot.angles;
+        shoot.bulletsNbr = def.shoot.bulletsNbr;
         reg.emplaceComponent<Ecs::AIShoot>(mob, shoot);
 
         Ecs::WeaponConfig weapon;

@@ -87,7 +87,6 @@ namespace Game
          * @param groupDef The group definition containing member positions.
          * @param pattern Spawn pattern for the group base position.
          * @param centerY Center Y position for pattern spawning.
-         * @param isBoss Whether the group is a boss group.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
             const std::string &pattern, const float centerY);
@@ -99,7 +98,6 @@ namespace Game
          * @param def The enemy definition.
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
-         * @param isBoss Whether the enemy is a boss.
          */
         static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y);
 

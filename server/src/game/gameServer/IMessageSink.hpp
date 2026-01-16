@@ -26,13 +26,13 @@ namespace Net
          * @brief Called when a player connects.
          * @param sessionId The ID of the connected player.
          */
-        virtual void onPlayerConnect(int sessionId) = 0;
+        virtual void onPlayerConnect(int sessionId) noexcept = 0;
 
         /**
          * @brief Called when a player disconnects.
          * @param sessionId The ID of the disconnected player.
          */
-        virtual void onPlayerDisconnect(int sessionId) = 0;
+        virtual void onPlayerDisconnect(int sessionId) noexcept = 0;
 
         /**
          * @brief Called when a player sends input.
@@ -45,6 +45,6 @@ namespace Net
          * @brief Called when a ping message is received.
          * @param sessionId The ID of the player.
          */
-        virtual void onPing(int sessionId) = 0;
+        virtual void onPing(int sessionId) noexcept = 0;
     };
 } // namespace Net

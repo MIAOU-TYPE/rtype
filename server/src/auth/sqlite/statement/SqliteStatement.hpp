@@ -78,4 +78,4 @@ namespace Db
       private:
         sqlite3_stmt *_statement = nullptr; ///> Pointer to the prepared statement.
     };
-} // namespace Auth
+} // namespace Db

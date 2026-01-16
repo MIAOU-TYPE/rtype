@@ -237,35 +237,21 @@ namespace Game
 
         if (def.sprite == 1) {
             Ecs::BossPhase bossConfig;
-            bossConfig.phases = {
-                {2500, { -15.f, 0.f, 15.f }, 1.2f, 1, 0},
-                {1500, { -30.f, -15.f, 0.f, 15.f, 30.f }, 1.5f, 2, 0},
-                {500, { -45.f, -30.f, -15.f, 0.f, 15.f, 30.f, 45.f }, 1.5f, 2, 0}
-            };
+            bossConfig.phases = {{2500, {-15.f, 0.f, 15.f}, 1.2f, 1, 0},
+                {1500, {-30.f, -15.f, 0.f, 15.f, 30.f}, 1.5f, 2, 0},
+                {500, {-45.f, -30.f, -15.f, 0.f, 15.f, 30.f, 45.f}, 1.5f, 2, 0}};
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
         } else if (def.sprite == 21) {
             Ecs::BossPhase bossConfig;
-            bossConfig.phases = {
-                {2500, {}, 1.f, 1, 0},
-                {1500, {}, 1.3f, 3, 0},
-                {500, {}, 1.5f, 3, 0}
-            };
+            bossConfig.phases = {{2500, {}, 1.f, 1, 0}, {1500, {}, 1.3f, 3, 0}, {500, {}, 1.5f, 3, 0}};
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
         } else if (def.sprite == 22) {
             Ecs::BossPhase bossConfig;
-            bossConfig.phases = {
-                {4998, {}, 1.f, 1, 22},
-                {4284, {}, 1.f, 1, 23},
-                {3570, {}, 1.2f, 2, 24},
-                {2856, {}, 1.5f, 2, 25},
-                {2142, {}, 1.5f, 3, 26},
-                {1428, {}, 1.7f, 3, 27},
-                {714, {}, 2.f, 4, 28}
-                
+            bossConfig.phases = {{4998, {}, 1.f, 1, 22}, {4284, {}, 1.f, 1, 23}, {3570, {}, 1.2f, 2, 24},
+                {2856, {}, 1.5f, 2, 25}, {2142, {}, 1.5f, 3, 26}, {1428, {}, 1.7f, 3, 27}, {714, {}, 2.f, 4, 28}
 
             };
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
         }
-
     }
 } // namespace Game

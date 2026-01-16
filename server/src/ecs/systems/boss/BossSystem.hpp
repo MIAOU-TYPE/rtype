@@ -9,13 +9,13 @@
 
 #include "AIShoot.hpp"
 #include "BossPhase.hpp"
+#include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "Id.hpp"
 #include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
-#include "Drawable.hpp"
 
 namespace Game
 {

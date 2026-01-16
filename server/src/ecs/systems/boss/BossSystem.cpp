@@ -10,13 +10,14 @@
 
 namespace Game
 {
-    void BossSystem::update(IGameWorld &world, float dt) {
+    void BossSystem::update(IGameWorld &world, float dt)
+    {
         auto &reg = world.registry();
         (void) dt;
 
         reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Position, Ecs::MovementPattern, Ecs::Drawable>(
-            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health,
-                const Ecs::Position &pos, Ecs::MovementPattern &pattern, Ecs::Drawable &drawable) {
+            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Position &pos,
+                Ecs::MovementPattern &pattern, Ecs::Drawable &drawable) {
                 if (pos.x < 800.f)
                     pattern.baseVx = 0.f;
 
@@ -27,13 +28,13 @@ namespace Game
                         const auto &currentPhase = bossPhase.phases[bossPhase.currentPhaseIndex];
                         auto &attack = reg.getComponents<Ecs::AIShoot>();
                         if (!currentPhase.anglesToAdd.empty())
-                            for (float angle : currentPhase.anglesToAdd) 
+                            for (float angle : currentPhase.anglesToAdd)
                                 attack.at(static_cast<size_t>(e))->angles.push_back(angle);
                         if (currentPhase.fireSpeedMultiplier > 0.f)
                             attack.at(static_cast<size_t>(e))->projectileSpeed *= currentPhase.fireSpeedMultiplier;
                         if (currentPhase.damageMultiplier > 0)
-                            attack.at(static_cast<size_t>(e))->damage =
-                                static_cast<int>(attack.at(static_cast<size_t>(e))->damage * currentPhase.damageMultiplier);
+                            attack.at(static_cast<size_t>(e))->damage = static_cast<int>(
+                                attack.at(static_cast<size_t>(e))->damage * currentPhase.damageMultiplier);
                         if (currentPhase.spriteId > 0) {
                             drawable.spriteId = currentPhase.spriteId;
                         }

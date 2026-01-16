@@ -164,9 +164,12 @@ namespace Engine
     void LevelEditorState::render()
     {
         if (_showSaveDialog) {
-            if (_levelNameField) _levelNameField->render();
-            if (_confirmSaveButton) _confirmSaveButton->render();
-            if (_cancelSaveButton) _cancelSaveButton->render();
+            if (_levelNameField)
+                _levelNameField->render();
+            if (_confirmSaveButton)
+                _confirmSaveButton->render();
+            if (_cancelSaveButton)
+                _cancelSaveButton->render();
             return;
         }
 
@@ -279,8 +282,10 @@ namespace Engine
                 _levelNameField->onKeyPressed(frame.key);
             }
             if (frame.mousePressed) {
-                if (_confirmSaveButton) _confirmSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
-                if (_cancelSaveButton) _cancelSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
+                if (_confirmSaveButton)
+                    _confirmSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
+                if (_cancelSaveButton)
+                    _cancelSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
             }
             if (frame.mouseReleased) {
                 if (_confirmSaveButton && _confirmSaveButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
@@ -485,11 +490,9 @@ namespace Engine
             const auto now = std::time(nullptr);
             const auto tm = std::localtime(&now);
             std::ostringstream filename;
-            filename << "levels/" << _levelName << "_" 
-                     << std::setfill('0') << std::setw(2) << tm->tm_mday << "-"
-                     << std::setfill('0') << std::setw(2) << (tm->tm_mon + 1) << "-"
-                     << std::setfill('0') << std::setw(2) << (tm->tm_year % 100) 
-                     << ".json";
+            filename << "levels/" << _levelName << "_" << std::setfill('0') << std::setw(2) << tm->tm_mday << "-"
+                     << std::setfill('0') << std::setw(2) << (tm->tm_mon + 1) << "-" << std::setfill('0')
+                     << std::setw(2) << (tm->tm_year % 100) << ".json";
 
             std::ofstream file(filename.str());
             if (!file.is_open()) {

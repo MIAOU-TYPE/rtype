@@ -146,5 +146,20 @@ namespace Net::Server
          * @return True if authenticated, false otherwise.
          */
         [[nodiscard]] virtual bool isAuthed(int sessionId) const = 0;
+
+        /**
+         * @brief Set the last score for a session.
+         * @param sessionId The ID of the session.
+         * @param score The score to set.
+         */
+        virtual void setLastScore(int sessionId, uint32_t score) = 0;
+
+        /**
+         * @brief Get the last score for a session.
+         * @param sessionId The ID of the session.
+         * @return An optional uint32_t representing the last score.
+         */
+        [[nodiscard]]
+        virtual std::optional<uint32_t> getLastScore(int sessionId) const = 0;
     };
 } // namespace Net::Server

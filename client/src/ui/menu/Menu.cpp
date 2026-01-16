@@ -23,6 +23,7 @@ namespace Engine
             _register = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "REGISTER");
 
             _play = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "PLAY");
+            _scoreboard = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SCOREBOARD");
             _settings = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SETTINGS");
             _quit = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "QUIT");
 
@@ -30,9 +31,18 @@ namespace Engine
             _passField = std::make_unique<UI::UITextField>(_renderer, "Password", true);
             _submitBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SUBMIT");
             _backBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+            _scoreRefreshBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "REFRESH");
 
             _authErrorText = _renderer->texts()->createText(22, {255, 80, 80, 255});
             _authErrorText->setString("");
+            _scoreTitleText = _renderer->texts()->createText(32, {255, 255, 255, 255});
+            _scoreTitleText->setString("SCOREBOARD");
+            _scoreRowTexts.reserve(10);
+            for (int i = 0; i < 10; ++i) {
+                auto t = _renderer->texts()->createText(22, {255, 255, 255, 255});
+                t->setString("");
+                _scoreRowTexts.push_back(std::move(t));
+            }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{Menu::Menu} initialization failed: ") + e.what());
         }
@@ -47,14 +57,15 @@ namespace Engine
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
         _submittedPass.clear();
-
+        _scoreboardRefreshRequested = false;
+        _scoreboardLoading = false;
+        _scores.clear();
+        rebuildScoreboardTexts();
         _authErrorMessage.clear();
         if (_authErrorText)
             _authErrorText->setString("");
-        clearAuthError();
-        resetButtons(
-            _login.get(), _register.get(), _play.get(), _settings.get(), _quit.get(), _submitBtn.get(), _backBtn.get());
-
+        resetButtons(_login.get(), _register.get(), _play.get(), _scoreboard.get(), _settings.get(), _quit.get(),
+            _submitBtn.get(), _backBtn.get(), _scoreRefreshBtn.get());
         if (_userField) {
             _userField->clear();
             _userField->setFocused(false);
@@ -67,7 +78,7 @@ namespace Engine
         layout();
     }
 
-    void Menu::setAuthed(const bool v) noexcept
+    void Menu::setAuthed(const bool v)
     {
         if (_authed == v)
             return;
@@ -80,11 +91,13 @@ namespace Engine
         _submittedMode = AuthMode::None;
         _submittedUser.clear();
         _submittedPass.clear();
-
+        _scoreboardRefreshRequested = false;
+        _scoreboardLoading = false;
+        _scores.clear();
+        rebuildScoreboardTexts();
         _authErrorMessage.clear();
         if (_authErrorText)
             _authErrorText->setString("");
-        clearAuthError();
         if (_userField) {
             _userField->clear();
             _userField->setFocused(false);
@@ -119,19 +132,58 @@ namespace Engine
         layout();
     }
 
+    void Menu::consumeScoreboardRefresh() noexcept
+    {
+        _scoreboardRefreshRequested = false;
+    }
+
+    void Menu::setScoreboard(std::vector<ScoreEntry> scores)
+    {
+        _scores = std::move(scores);
+        _scoreboardLoading = false;
+        rebuildScoreboardTexts();
+        layout();
+    }
+
+    void Menu::setScoreboardLoading(const bool v)
+    {
+        _scoreboardLoading = v;
+        rebuildScoreboardTexts();
+        layout();
+    }
+
+    void Menu::rebuildScoreboardTexts() const
+    {
+        if (_scoreRowTexts.empty())
+            return;
+        for (const auto &t : _scoreRowTexts)
+            t->setString("");
+        if (_scoreboardLoading) {
+            _scoreRowTexts.at(0)->setString("Loading...");
+            return;
+        }
+        if (_scores.empty()) {
+            _scoreRowTexts.at(0)->setString("No scores yet.");
+            return;
+        }
+        const size_t n = std::min<size_t>(_scores.size(), _scoreRowTexts.size());
+        for (size_t i = 0; i < n; ++i) {
+            const auto &[username, score] = _scores.at(i);
+            _scoreRowTexts.at(i)->setString(std::to_string(i + 1) + ". " + username + " - " + std::to_string(score));
+        }
+    }
+
     void Menu::layout()
     {
         const auto vp = viewportF();
         const float w = vp.w;
         const float h = vp.h;
         layoutBackground();
-        const auto logoSize = _renderer->textures()->getSize(_logoTexture);
-
-        _logoCmd.frame = {0, 0, static_cast<int>(logoSize.width), static_cast<int>(logoSize.height)};
-
+        const auto [width, height] = _renderer->textures()->getSize(_logoTexture);
+        _logoCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
         constexpr float LOGO_SCALE = 1.0f;
         _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
-        _logoCmd.position = {(w - static_cast<float>(logoSize.width) * LOGO_SCALE) * 0.5f, h * 0.05f};
+        _logoCmd.position = {(w - static_cast<float>(width) * LOGO_SCALE) * 0.5f, h * 0.05f};
 
         if (_page == Page::UnauthedRoot) {
             layoutRowCentered(*_login, *_register, vp.cx, h * 0.63f, w * 0.05f);
@@ -139,23 +191,34 @@ namespace Engine
             placeCentered(*_quit, vp.cx, h * 0.89f);
             return;
         }
-
         if (_page == Page::AuthedRoot) {
-            placeCentered(*_play, vp.cx, h * 0.63f);
-            placeCentered(*_settings, vp.cx, h * 0.76f);
-            placeCentered(*_quit, vp.cx, h * 0.89f);
+            placeCentered(*_play, vp.cx, h * 0.55f);
+            placeCentered(*_scoreboard, vp.cx, h * 0.68f);
+            placeCentered(*_settings, vp.cx, h * 0.79f);
+            placeCentered(*_quit, vp.cx, h * 0.90f);
             return;
         }
-
+        if (_page == Page::Scoreboard) {
+            if (_scoreTitleText)
+                _scoreTitleText->setPosition(vp.cx - _scoreTitleText->getWidth() * 0.5f, h * 0.30f);
+            placeCentered(*_scoreRefreshBtn, vp.cx, h * 0.79f);
+            placeCentered(*_backBtn, vp.cx, h * 0.90f);
+            const float startY = h * 0.50f;
+            for (size_t i = 0; i < _scoreRowTexts.size(); ++i) {
+                constexpr float lineH = 30.0f;
+                const auto &t = _scoreRowTexts.at(i);
+                if (!t)
+                    continue;
+                t->setPosition(vp.cx - t->getWidth() * 0.5f, startY + static_cast<float>(i) * lineH);
+            }
+            return;
+        }
         const float fieldX = w * 0.5f - 220.f;
         constexpr float fieldW = 440.f;
-
         _userField->setPosition(fieldX, h * 0.40f);
         _userField->setWidth(fieldW);
-
         _passField->setPosition(fieldX, h * 0.55f);
         _passField->setWidth(fieldW);
-
         if (_authErrorText && !_authErrorMessage.empty())
             _authErrorText->setPosition(vp.cx - _authErrorText->getWidth() * 0.5f, h * 0.32f);
         placeCentered(*_submitBtn, vp.cx, h * 0.73f);
@@ -166,13 +229,14 @@ namespace Engine
     {
         handleInput(frame);
 
-        if (_page == Page::UnauthedRoot) {
+        if (_page == Page::UnauthedRoot)
             updateButtons(frame.mouseX, frame.mouseY, _login.get(), _register.get(), _settings.get(), _quit.get());
-        } else if (_page == Page::AuthedRoot) {
-            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
-        } else {
+        else if (_page == Page::AuthedRoot)
+            updateButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(), _quit.get());
+        else if (_page == Page::Scoreboard)
+            updateButtons(frame.mouseX, frame.mouseY, _scoreRefreshBtn.get(), _backBtn.get());
+        else
             updateButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
-        }
     }
 
     void Menu::render() const
@@ -188,8 +252,19 @@ namespace Engine
         }
         if (_page == Page::AuthedRoot) {
             _play->render();
+            _scoreboard->render();
             _settings->render();
             _quit->render();
+            return;
+        }
+        if (_page == Page::Scoreboard) {
+            if (_scoreTitleText)
+                _renderer->draw(*_scoreTitleText);
+            for (const auto &t : _scoreRowTexts)
+                if (t)
+                    _renderer->draw(*t);
+            _scoreRefreshBtn->render();
+            _backBtn->render();
             return;
         }
         if (_authErrorText && !_authErrorMessage.empty())
@@ -219,7 +294,11 @@ namespace Engine
             return;
         }
         if (_page == Page::AuthedRoot) {
-            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _settings.get(), _quit.get());
+            pressButtons(frame.mouseX, frame.mouseY, _play.get(), _scoreboard.get(), _settings.get(), _quit.get());
+            return;
+        }
+        if (_page == Page::Scoreboard) {
+            pressButtons(frame.mouseX, frame.mouseY, _scoreRefreshBtn.get(), _backBtn.get());
             return;
         }
         pressButtons(frame.mouseX, frame.mouseY, _submitBtn.get(), _backBtn.get());
@@ -233,7 +312,7 @@ namespace Engine
 
     void Menu::handleMouseReleased(const InputFrame &frame)
     {
-        enum class Action { None, Login, Register, Play, Settings, Quit, Submit, Back };
+        enum class Action { None, Login, Register, Play, Scoreboard, Settings, Quit, Submit, Back, RefreshScores };
         auto a = Action::None;
 
         if (_page == Page::UnauthedRoot)
@@ -242,7 +321,11 @@ namespace Engine
                     {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
         else if (_page == Page::AuthedRoot)
             a = pickAction<Action>(frame.mouseX, frame.mouseY,
-                {{_play.get(), Action::Play}, {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+                {{_play.get(), Action::Play}, {_scoreboard.get(), Action::Scoreboard},
+                    {_settings.get(), Action::Settings}, {_quit.get(), Action::Quit}});
+        else if (_page == Page::Scoreboard)
+            a = pickAction<Action>(frame.mouseX, frame.mouseY,
+                {{_scoreRefreshBtn.get(), Action::RefreshScores}, {_backBtn.get(), Action::Back}});
         else
             a = pickAction<Action>(
                 frame.mouseX, frame.mouseY, {{_submitBtn.get(), Action::Submit}, {_backBtn.get(), Action::Back}});
@@ -253,9 +336,16 @@ namespace Engine
             case Action::Login: enterForm(Page::LoginForm); break;
             case Action::Register: enterForm(Page::RegisterForm); break;
             case Action::Play: _startRequested = true; break;
+            case Action::Scoreboard: enterScoreboard(); break;
             case Action::Settings: _settingsRequested = true; break;
             case Action::Quit: _quitRequested = true; break;
             case Action::Submit: submit(); break;
+            case Action::RefreshScores:
+                _scoreboardRefreshRequested = true;
+                _scoreboardLoading = true;
+                rebuildScoreboardTexts();
+                layout();
+                break;
             case Action::Back: backToRoot(); break;
             case Action::None:
             default: break;
@@ -285,8 +375,14 @@ namespace Engine
             submit();
             return;
         }
-        if (frame.key == Key::Escape)
+        if (_page == Page::Scoreboard) {
+            if (frame.key == Key::Escape)
+                backToRoot();
+            return;
+        }
+        if (frame.key == Key::Escape) {
             backToRoot();
+        }
     }
 
     void Menu::handleKeyReleased(const InputFrame &frame) const
@@ -303,6 +399,15 @@ namespace Engine
         clearAuthError();
         _userField->setFocused(true);
         _passField->setFocused(false);
+        layout();
+    }
+
+    void Menu::enterScoreboard()
+    {
+        _page = Page::Scoreboard;
+        _scoreboardRefreshRequested = true;
+        _scoreboardLoading = true;
+        rebuildScoreboardTexts();
         layout();
     }
 
@@ -368,5 +473,10 @@ namespace Engine
     bool Menu::wantsSettings() const noexcept
     {
         return _settingsRequested;
+    }
+
+    bool Menu::wantsScoreboardRefresh() const noexcept
+    {
+        return _scoreboardRefreshRequested;
     }
 } // namespace Engine

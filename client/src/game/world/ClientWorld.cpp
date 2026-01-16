@@ -187,8 +187,8 @@ namespace World
     }
 
     void ClientWorld::refreshSpriteIfChanged(const Ecs::Entity e, const uint32_t spriteId,
-        Ecs::SparseArray<Ecs::Drawable> drawables, Ecs::SparseArray<Ecs::AnimationState> anims,
-        Ecs::SparseArray<Ecs::Render> renders) const
+        Ecs::SparseArray<Ecs::Drawable> &drawables, Ecs::SparseArray<Ecs::AnimationState> &anims,
+        Ecs::SparseArray<Ecs::Render> &renders)
     {
         const auto idx = static_cast<size_t>(e);
 
@@ -220,7 +220,7 @@ namespace World
         if (itEnt == _entityMap.end())
             return;
 
-        const auto ent = static_cast<std::size_t>(itEnt->second);
+        const auto ent = static_cast<size_t>(itEnt->second);
 
         if (ent >= positions.size())
             return;
@@ -254,9 +254,9 @@ namespace World
             return;
 
         auto &positions = _registry.getComponents<Ecs::Position>();
-        const auto &drawables = _registry.getComponents<Ecs::Drawable>();
-        const auto &renders = _registry.getComponents<Ecs::Render>();
-        const auto &anims = _registry.getComponents<Ecs::AnimationState>();
+        auto &drawables = _registry.getComponents<Ecs::Drawable>();
+        auto &renders = _registry.getComponents<Ecs::Render>();
+        auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
         const auto isDestroyed = [&](const size_t netId) {
             return _destroyed.contains(static_cast<uint32_t>(netId));

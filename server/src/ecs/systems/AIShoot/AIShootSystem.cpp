@@ -44,7 +44,7 @@ namespace Game
                     constexpr float vy = 0.f;
 
                     world.events().emit(ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent),
-                        {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                        {8.f, 8.f}, 5.f, weapon.projectileSpriteId, 1, 1));
                     return;
                 }
 
@@ -59,7 +59,7 @@ namespace Game
                     const float vy = -shoot.projectileSpeed * std::sin(angleRad);
 
                     world.events().emit(ShootEvent(posX, posY, vx, vy, shoot.damage, static_cast<size_t>(ent),
-                        {8.f, 8.f}, 5.f, weapon.projectileSpriteId));
+                        {8.f, 8.f}, 5.f, weapon.projectileSpriteId, 1, 1));
                 }
             });
     }

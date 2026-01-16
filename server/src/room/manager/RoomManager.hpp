@@ -12,6 +12,7 @@
 #include <utility>
 #include "Room.hpp"
 #include "RoomData.hpp"
+#include "ScoreService.hpp"
 #include <unordered_map>
 
 namespace Engine
@@ -27,11 +28,13 @@ namespace Engine
          * @param sessionManager shared pointer to the session manager
          * @param UDPServer shared pointer to the server
          * @param udpPacketFactory shared pointer to the packet factory
+         * @param scoreService
          * @param levelPath path to the game level data
          */
         explicit RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
             std::shared_ptr<Net::Server::IServer> UDPServer,
-            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath);
+            std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
+            std::shared_ptr<ScoreService> scoreService, std::string levelPath);
 
         /**
          * @brief Creates a new game room
@@ -129,8 +132,9 @@ namespace Engine
         std::shared_ptr<Net::Server::ISessionManager> _sessionManager; ///> Session manager for handling player sessions
         std::shared_ptr<Net::Server::IServer> _udpServer;              ///> Server instance for network communication
         std::shared_ptr<Net::Factory::UDPPacketFactory>
-            _udpPacketFactory;  ///> Packet factory for creating network packets
-        std::string _levelPath; ///> Path to the game level data
+            _udpPacketFactory;                               ///> Packet factory for creating network packets
+        std::shared_ptr<Engine::ScoreService> _scoreService; ///> Service for managing player scores
+        std::string _levelPath;                              ///> Path to the game level data
 
         mutable std::mutex _mutex; ///> Mutex for synchronizing access to shared resources
     };

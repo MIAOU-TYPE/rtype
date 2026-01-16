@@ -72,8 +72,8 @@ namespace Graphics
          * @brief Represents a loaded texture and its reference count.
          */
         struct TextureEntry {
-            sf::Texture texture;      ///> The SFML texture
-            std::size_t refCount = 1; ///> Reference count for the texture
+            sf::Texture texture; ///> The SFML texture
+            size_t refCount = 1; ///> Reference count for the texture
         };
 
         std::shared_ptr<Resources::IResourceManager> _resources =

@@ -18,12 +18,12 @@ namespace Auth
         return -1;
     }
 
-    template <std::size_t N>
+    template <size_t N>
     [[nodiscard]] bool hexDecodeFixed(const std::string_view hex, std::array<unsigned char, N> &out) noexcept
     {
         if (hex.size() != N * 2)
             return false;
-        for (std::size_t i = 0; i < N; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             const int hi = hexNibble(hex.at(i * 2));
             const int lo = hexNibble(hex.at(i * 2 + 1));
             if (hi < 0 || lo < 0)
@@ -33,14 +33,14 @@ namespace Auth
         return true;
     }
 
-    template <std::size_t N>
+    template <size_t N>
     [[nodiscard]] std::string hexEncodeFixed(const std::array<unsigned char, N> &buf)
     {
         static constexpr char kHex[] = "0123456789abcdef";
 
         std::string out;
         out.resize(N * 2);
-        for (std::size_t i = 0; i < N; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             out.at(i * 2 + 0) = kHex[buf[i] >> 4 & 0x0F];
             out.at(i * 2 + 1) = kHex[buf[i] >> 0 & 0x0F];
         }

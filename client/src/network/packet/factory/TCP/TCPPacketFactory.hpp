@@ -108,6 +108,15 @@ namespace Network
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeAuthLogin(
             uint32_t req, std::string_view username, std::string_view password) const;
 
+        /**
+         * @brief Create a ScoreboardGet packet.
+         * @param req The request ID for the ScoreboardGet packet.
+         * @param limit The maximum number of scores to retrieve (default is 10).
+         * @return A shared pointer to the created ScoreboardGet packet.
+         */
+        [[nodiscard]]
+        std::shared_ptr<Net::IPacket> makeScoreboardGet(uint32_t req, uint16_t limit = 10) const;
+
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets
     };

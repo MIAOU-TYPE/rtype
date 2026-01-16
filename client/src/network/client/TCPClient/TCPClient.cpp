@@ -124,7 +124,7 @@ namespace Network
         std::array<uint8_t, 4096> tmp{};
 
         while (_tx.readable() > 0) {
-            const std::size_t want = std::min<std::size_t>(_tx.readable(), tmp.size());
+            const size_t want = std::min<size_t>(_tx.readable(), tmp.size());
 
             if (!_tx.peek(tmp.data(), want)) {
                 close();
@@ -134,7 +134,7 @@ namespace Network
             const auto sent = _netWrapper->send(_socketFd, reinterpret_cast<const char *>(tmp.data()), want, 0);
 
             if (sent > 0) {
-                const auto n = static_cast<std::size_t>(sent);
+                const auto n = static_cast<size_t>(sent);
                 (void) _tx.read(tmp.data(), n);
                 continue;
             }
@@ -252,7 +252,7 @@ namespace Network
             const auto r = _netWrapper->recv(_socketFd, tmp.data(), tmp.size(), 0);
 
             if (r > 0) {
-                if (const auto n = static_cast<std::size_t>(r); !_rx.write(tmp.data(), n))
+                if (const auto n = static_cast<size_t>(r); !_rx.write(tmp.data(), n))
                     return close();
                 parseFrames();
                 if (!_nonBlocking)

@@ -10,6 +10,7 @@
 #include <functional>
 #include "ConnectData.hpp"
 #include "RoomData.hpp"
+#include "ScoreEntry.hpp"
 
 namespace Network
 {
@@ -91,6 +92,13 @@ namespace Network
             uint32_t req, uint32_t userId, std::string_view username, uint64_t token, uint32_t ttlSec) = 0;
 
         /**
+         * @brief onScoreboardList is called when a scoreboard list is received.
+         * @param req The request ID.
+         * @param scores The list of score entries.
+         */
+        virtual void onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores) = 0;
+
+        /**
          * @brief onProtocolError is called when a protocol error occurs.
          * @param req The request ID.
          * @param msg The error message.
@@ -107,6 +115,8 @@ namespace Network
             std::function<void(uint32_t, std::string_view)>; ///> Callback type for protocol error messages
         using AuthOkCb = std::function<void(uint32_t, uint32_t, std::string_view, uint64_t,
             uint32_t)>; ///> Callback type for authentication success messages
+        using ScoreboardCb = std::function<void(
+            uint32_t, const std::vector<ScoreEntry> &)>; ///> Callback type for scoreboard list messages
 
         /**
          * @brief Subscribe to welcome message events.
@@ -161,6 +171,12 @@ namespace Network
          * @param cb The callback function to be invoked on authentication success messages.
          */
         virtual void onAuthOkSubscribe(AuthOkCb cb) = 0;
+
+        /**
+         * @brief Subscribe to scoreboard list message events.
+         * @param cb The callback function to be invoked on scoreboard list messages.
+         */
+        virtual void onScoreboardListSubscribe(ScoreboardCb cb) = 0;
 
         /**
          * @brief Get the connection information.

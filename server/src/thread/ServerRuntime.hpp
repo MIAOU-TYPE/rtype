@@ -15,6 +15,7 @@
 #include "GameServer.hpp"
 #include "IServer.hpp"
 #include "RoomManager.hpp"
+#include "ScoreService.hpp"
 #include "SessionManager.hpp"
 #include "SnapshotSystem.hpp"
 #include "TCPPacket.hpp"
@@ -125,9 +126,10 @@ namespace Net::Thread
         std::shared_ptr<TCPPacketRouter> _tcpPacketRouter; ///> Routes incoming TCP packets to appropriate handlers
         std::shared_ptr<Factory::TCPPacketFactory> _tcpPacketFactory; ///> Builds outgoing TCP packets.
 
-        std::shared_ptr<Auth::SqliteDb> _authDb;         ///> Authentication database
-        std::shared_ptr<Auth::UserStorage> _userRepo;    ///> User repository for managing user data
-        std::shared_ptr<Auth::AuthService> _authService; ///> Authentication service
+        std::shared_ptr<Db::SqliteDb> _authDb;               ///> Authentication database
+        std::shared_ptr<Auth::UserStorage> _userRepo;        ///> User repository for managing user data
+        std::shared_ptr<Auth::AuthService> _authService;     ///> Authentication service
+        std::shared_ptr<Engine::ScoreService> _scoreService; ///> Score management service
 
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
         std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms

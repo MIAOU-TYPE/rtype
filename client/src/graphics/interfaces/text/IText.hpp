@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** real_r_type
+** R-Type
 ** File description:
 ** IText
 */
@@ -22,7 +22,7 @@ namespace Graphics
         unsigned char a;
     };
 
-    using FontHandle = std::size_t;
+    using FontHandle = size_t;
 
     class TextError : public std::exception {
       public:

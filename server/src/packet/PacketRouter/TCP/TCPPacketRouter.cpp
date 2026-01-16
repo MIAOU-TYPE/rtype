@@ -17,7 +17,7 @@ namespace
         return s;
     }
 
-    [[nodiscard]] uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, int sessionId)
+    [[nodiscard]] uint64_t ensureUdpToken(Net::Server::ISessionManager &sessions, const int sessionId)
     {
         auto token = sessions.getUdpToken(sessionId);
         if (token != 0)
@@ -35,9 +35,11 @@ namespace Net
 {
     TCPPacketRouter::TCPPacketRouter(std::shared_ptr<Server::ISessionManager> sessions,
         std::shared_ptr<Engine::RoomManager> rooms, std::shared_ptr<Server::IServer> tcpServer,
-        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService)
+        std::shared_ptr<Factory::TCPPacketFactory> packetFactory, std::shared_ptr<Auth::AuthService> authService,
+        std::shared_ptr<Engine::ScoreService> scoreService)
         : _sessions(std::move(sessions)), _rooms(std::move(rooms)), _tcp(std::move(tcpServer)),
-          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _serverUdpPort(_tcp->getPort() + 1)
+          _packetFactory(std::move(packetFactory)), _auth(std::move(authService)), _scores(std::move(scoreService)),
+          _serverUdpPort(_tcp->getPort() + 1)
     {
     }
 
@@ -76,6 +78,7 @@ namespace Net
             case Protocol::TCP::HELLO: onHello(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::AUTH_REGISTER: onAuthRegister(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::AUTH_LOGIN: onAuthLogin(*addr, sessionId, h.requestId, r); break;
+            case Protocol::TCP::SCOREBOARD_GET: onScoreboardGet(*addr, h.requestId, r); break;
             case Protocol::TCP::LIST_ROOMS: onListRooms(*addr, h.requestId); break;
             case Protocol::TCP::CREATE_ROOM: onCreateRoom(*addr, h.requestId, r); break;
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
@@ -359,5 +362,38 @@ namespace Net
                     (void) _tcp->sendPacket(*out);
             }
         }
+    }
+
+    void TCPPacketRouter::onScoreboardGet(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
+    {
+        if (!_scores || !_packetFactory)
+            return sendError(addr, req, 500, "SCOREBOARD_GET: service unavailable");
+
+        uint16_t limit = 10;
+        try {
+            if (r.remaining() == 2)
+                limit = r.u16();
+            else if (r.remaining() != 0)
+                return sendError(addr, req, 400, "SCOREBOARD_GET: malformed payload (optional limit u16)");
+        } catch (...) {
+            return sendError(addr, req, 400, "SCOREBOARD_GET: malformed payload");
+        }
+
+        if (limit == 0)
+            limit = 10;
+        if (limit > 100)
+            limit = 100;
+
+        std::vector<ScoreEntry> top;
+        try {
+            top = _scores->getTopScores(limit);
+        } catch (const std::exception &e) {
+            return sendError(addr, req, 500, std::string("SCOREBOARD_GET: db error: ") + e.what());
+        }
+        const auto out = _packetFactory->makeScoreboardList(addr, req, top);
+        if (!out)
+            return sendError(addr, req, 500, "SCOREBOARD_GET: build response failed");
+
+        (void) _tcp->sendPacket(*out);
     }
 } // namespace Net

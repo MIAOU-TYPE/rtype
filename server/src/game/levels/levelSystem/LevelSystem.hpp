@@ -89,7 +89,7 @@ namespace Game
          * @param isBoss Whether the group is a boss group.
          */
         static void spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-            const std::string &pattern, const float centerY, bool isBoss);
+            const std::string &pattern, const float centerY);
 
         /**
          * @brief Spawn a single enemy at a specific position.
@@ -100,7 +100,7 @@ namespace Game
          * @param y Y coordinate to spawn at.
          * @param isBoss Whether the enemy is a boss.
          */
-        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y, bool isBoss);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y);
 
         /**
          * @brief Spawn an obstacle at a specific position.

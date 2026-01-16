@@ -75,16 +75,13 @@ namespace Game
                 continue;
             const EnemyDefinition &def = level.enemyTypes.at(type);
 
-            bool isBoss = false;
-            if (type.substr(0, 4) == "boss")
-                isBoss = true;
             if (def.isGroup) {
                 for (int k = 0; k < count; k++)
-                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY, isBoss);
+                    spawnEnemyGroup(world, level, def, wave.spawnPattern, wave.spawnY);
             } else {
                 std::vector<float> yPositions = calculateSpawnPositions(wave.spawnPattern, wave.spawnY, count);
                 for (int k = 0; k < count; k++)
-                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)], isBoss);
+                    spawnSingleEnemy(world, def, 1400.f, yPositions[static_cast<size_t>(k)]);
             }
         }
         if (!wave.obstacleType.empty() && level.obstacleTypes.contains(wave.obstacleType)) {
@@ -94,7 +91,7 @@ namespace Game
     }
 
     void LevelSystem::spawnEnemyGroup(IGameWorld &world, const Level &level, const EnemyDefinition &groupDef,
-        const std::string &pattern, const float centerY, bool isBoss)
+        const std::string &pattern, const float centerY)
     {
         std::vector<float> basePositions = calculateSpawnPositions(pattern, centerY, 1);
 
@@ -112,11 +109,11 @@ namespace Game
             const float x = baseX + member.offsetX;
             const float y = baseY + member.offsetY;
 
-            spawnSingleEnemy(world, memberDef, x, y, isBoss);
+            spawnSingleEnemy(world, memberDef, x, y);
         }
     }
 
-    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y, bool isBoss)
+    void LevelSystem::spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y)
     {
         auto &reg = world.registry();
         const Ecs::Entity mob = world.createEntity();
@@ -124,7 +121,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed, 0.f});
 
-        if (isBoss)
+        if (def.sprite == 1 || def.sprite == 21 || def.sprite == 22)
             reg.emplaceComponent<Ecs::BossPhase>(mob, Ecs::BossPhase{});
 
         Ecs::MovementPattern pattern;
@@ -162,6 +159,7 @@ namespace Game
         Ecs::AIShoot shoot;
         shoot.type = def.shoot.type == "straight" ? Ecs::AIShoot::Type::Straight
             : def.shoot.type == "diagonal"        ? Ecs::AIShoot::Type::Diagonal
+            : def.shoot.type == "homing"          ? Ecs::AIShoot::Type::Homing
                                                   : Ecs::AIShoot::Type::Spread;
         shoot.cooldown = def.shoot.cooldown;
         shoot.timer = 0.f;

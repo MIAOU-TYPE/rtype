@@ -153,15 +153,15 @@
       "speed": -30,
       "size": { "w": 160, "h": 213 },
       "killScore": 300,
-      "sprite": "boss3",
+      "sprite": "boss3P1",
       "spriteId": 22,
       "shoot": {
         "type": "homing",
         "cooldown": 4.0,
-        "projectileSpeed": 170,
-        "damage": 500,
+        "projectileSpeed": 130,
+        "damage": 100,
         "muzzle": { "x": 60, "y": 70 },
-        "projectileSpriteId": 23
+        "projectileSpriteId": 29
       }
     },
     "groupEnemy": {

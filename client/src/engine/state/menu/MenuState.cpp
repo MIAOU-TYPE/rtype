@@ -94,7 +94,7 @@ namespace Engine
         }
         if (_menu->wantsLevelEditor()) {
             manager.queueState(std::make_unique<LevelEditorState>(
-                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx));
+                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
             return;
         }
         if (_menu->isAuthed() && _menu->wantsToStart()) {

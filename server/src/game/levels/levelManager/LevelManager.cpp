@@ -164,9 +164,6 @@ namespace
             wave.obstacleX = w.value("obstacleX", 0.f);
             wave.obstacleY = w.value("obstacleY", 0.f);
 
-            if (!w.contains("enemies") || !w.at("enemies").is_object())
-                return false;
-
             if (w.contains("enemies") && w.at("enemies").is_object()) {
                 for (auto &[type, countValue] : w.at("enemies").items()) {
                     const int count = countValue.get<int>();

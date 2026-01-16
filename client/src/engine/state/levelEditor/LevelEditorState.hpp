@@ -29,6 +29,7 @@
 #include "SoundRegistry.hpp"
 #include "StateManager.hpp"
 #include "UIButton.hpp"
+#include "UITextField.hpp"
 
 namespace Engine
 {
@@ -210,20 +211,24 @@ namespace Engine
         std::vector<PlacedEntity> _placedEntities;           ///> Entities placed in the level
         std::vector<std::unique_ptr<UI::UIButton>> _toolbar; ///> Toolbar buttons for entity types
 
-        std::unique_ptr<UI::UIButton> _saveButton;    ///> Save button
-        std::unique_ptr<UI::UIButton> _backButton;    ///> Back to menu button
-        std::unique_ptr<UI::UIButton> _clearButton;   ///> Clear all entities button
-        std::unique_ptr<UI::UIButton> _bgPrevButton;  ///> Previous background button
-        std::unique_ptr<UI::UIButton> _bgNextButton;  ///> Next background button
-        std::unique_ptr<Graphics::IText> _bgLabel;    ///> Background label
-        std::unique_ptr<Graphics::IText> _timeLabel;  ///> Current time label
-        std::unique_ptr<Graphics::IText> _helpText;   ///> Help text
-        std::unique_ptr<Graphics::IText> _statusText; ///> Status message text
+        std::unique_ptr<UI::UIButton> _saveButton;        ///> Save button
+        std::unique_ptr<UI::UIButton> _backButton;        ///> Back to menu button
+        std::unique_ptr<UI::UIButton> _clearButton;       ///> Clear all entities button
+        std::unique_ptr<UI::UIButton> _bgPrevButton;      ///> Previous background button
+        std::unique_ptr<UI::UIButton> _bgNextButton;      ///> Next background button
+        std::unique_ptr<Graphics::IText> _bgLabel;        ///> Background label
+        std::unique_ptr<Graphics::IText> _timeLabel;      ///> Current time label
+        std::unique_ptr<Graphics::IText> _helpText;       ///> Help text
+        std::unique_ptr<Graphics::IText> _statusText;     ///> Status message text
+        std::unique_ptr<UI::UITextField> _levelNameField; ///> Text field for level name input
+        std::unique_ptr<UI::UIButton> _confirmSaveButton; ///> Confirm save button
+        std::unique_ptr<UI::UIButton> _cancelSaveButton;  ///> Cancel save button
 
         int _selectedEntityType = 0;             ///> Index of currently selected entity type (-1 = none)
         float _currentTime = 0.0f;               ///> Current spawn time for new entities
         int _currentBackgroundIndex = 0;         ///> Index of current background
         bool _backRequested = false;             ///> Back to menu requested flag
+        bool _showSaveDialog = false;            ///> Whether the save dialog is shown
         std::string _statusMessage;              ///> Current status message
         float _statusMessageTimer = 0.0f;        ///> Timer for status message fade
         std::string _levelName = "custom_level"; ///> Name of the level being created

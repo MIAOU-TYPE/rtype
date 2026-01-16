@@ -42,7 +42,7 @@ namespace Game
          * @param posY The Y position of the muzzle.
          * @param weapon The WeaponConfig component of the entity.
          */
-        static void spreadProjectile(IGameWorld &world, const Ecs::Entity ent, const Ecs::AIShoot &shoot,
-            const float posX, const float posY, const Ecs::WeaponConfig &weapon);
+        static void spreadProjectile(IGameWorld &world, Ecs::Entity ent, const Ecs::AIShoot &shoot,
+            float posX, float posY, const Ecs::WeaponConfig &weapon);
     };
 } // namespace Game

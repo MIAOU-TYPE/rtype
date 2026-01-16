@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ruins_level1",
+    "name": "Level 1",
+    "path": "levels/ruins_level1.json"
+  },
+  {
+    "id": "ruins_level2",
+    "name": "Level 2",
+    "path": "levels/ruins_level2.json"
+  },
+  {
+    "id": "ruins_level3",
+    "name": "Level 3",
+    "path": "levels/ruins_level3.json"
+  }
+]

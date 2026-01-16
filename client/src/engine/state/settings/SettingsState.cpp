@@ -41,7 +41,7 @@ namespace Engine
             (void) Utils::SettingsConfig::getInstance().saveIfDirty();
             manager.queueState(std::make_unique<MenuState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
-            }
+        }
     }
 
     void SettingsState::render()

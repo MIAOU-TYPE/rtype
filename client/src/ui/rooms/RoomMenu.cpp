@@ -458,13 +458,12 @@ namespace Engine
             _create.worldLabel->setString("World: (none)");
         else
             _create.worldLabel->setString(
-                "World: " + std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
+                std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
 
         if (_levels.empty())
             _create.levelLabel->setString("Level: (none)");
         else
-            _create.levelLabel->setString(
-                "Level: " + std::to_string(_selectedLevel + 1) + "/" + std::to_string(_levels.size()));
+            _create.levelLabel->setString(_levels.at(static_cast<std::size_t>(_selectedLevel)).displayName);
     }
 
     void RoomMenu::render() const

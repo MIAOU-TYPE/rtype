@@ -26,6 +26,8 @@
 #include "LevelManager.hpp"
 #include "MovementPattern.hpp"
 #include "Position.hpp"
+#include "PowerUp.hpp"
+#include "PowerUpType.hpp"
 #include "Rand.hpp"
 #include "Target.hpp"
 #include "Velocity.hpp"
@@ -107,8 +109,8 @@ namespace Game
          * @param y Y coordinate to spawn at.
          * @param modifiers Difficulty modifiers to apply to the enemy.
          */
-        static void spawnSingleEnemy(
-            IGameWorld &world, const EnemyDefinition &def, float x, float y, const DifficultyModifiers &modifiers);
+        static void spawnSingleEnemy(IGameWorld &world, const EnemyDefinition &def, const float x, const float y,
+            const DifficultyModifiers &modifiers);
 
         /**
          * @brief Spawn an obstacle at a specific position.
@@ -131,5 +133,13 @@ namespace Game
          */
         static void createBackgroundEntity(
             IGameWorld &world, const BackgroundLayer &layer, float xPosition, float scaledWidth, int tileIndex);
+
+        /**
+         * @brief Spawn a power-up.
+         *
+         * @param world The game world to spawn the power-up in.
+         * @param type The type of power-up to spawn ("force", "laser" or "shield").
+         */
+        static void spawnPowerUp(IGameWorld &world, const std::string &type = "force");
     };
 } // namespace Game

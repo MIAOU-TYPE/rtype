@@ -9,6 +9,7 @@
 
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
+#include "BubblePowerUpSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
 #include "CommandBuffer.hpp"
@@ -19,12 +20,16 @@
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"
+#include "LaserPowerUpSystem.hpp"
 #include "Level.hpp"
 #include "LevelManager.hpp"
 #include "LevelSystem.hpp"
 #include "LifetimeSystem.hpp"
 #include "MovementPatternSystem.hpp"
 #include "MovementSystem.hpp"
+#include "PowerUpAttachmentSystem.hpp"
+#include "PowerUpBarSystem.hpp"
+#include "PowerUpShootingSystem.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
@@ -83,7 +88,7 @@ namespace Game
         explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
             std::shared_ptr<Net::Server::IServer> server,
             std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, const std::string &levelPath,
-            const Game::DifficultyModifiers &modifiers = {});
+            const DifficultyModifiers &modifiers = {});
 
         /**
          * @brief Reset the game server to its initial state.
@@ -166,7 +171,7 @@ namespace Game
         std::shared_ptr<Net::Server::IServer> _server;                     ///> Sends packets to clients.
         std::shared_ptr<Net::Factory::UDPPacketFactory> _udpPacketFactory; ///> Builds outgoing packets.
 
-        Game::DifficultyModifiers _difficultyModifiers; ///> Difficulty modifiers for enemies.
+        DifficultyModifiers _difficultyModifiers; ///> Difficulty modifiers for enemies.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
         std::unordered_map<size_t, int> _entityToSession;      ///> Maps entities to sessions.

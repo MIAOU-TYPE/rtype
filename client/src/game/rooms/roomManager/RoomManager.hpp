@@ -103,19 +103,13 @@ namespace Engine
         [[nodiscard]] std::optional<std::string> readTextAsset(std::string_view assetPath) const;
 
         /**
-         * @brief Parses a JSON string to extract a list of levels.
+         * @brief Parses a JSON string to extract the world name and list of levels.
          * @param jsonText The JSON text to parse.
-         * @return A vector of LevelInfo objects parsed from the JSON.
+         * @return A pair containing the world name and vector of LevelInfo objects parsed from the JSON.
          * @throws RoomManagerError if parsing fails or the JSON format is incorrect.
          */
-        [[nodiscard]] static std::vector<LevelInfo> parseLevelsListJson(std::string_view jsonText);
-
-        /**
-         * @brief Parses a JSON string to extract the world name.
-         * @param jsonText The JSON text to parse.
-         * @return An optional string containing the world name, or std::nullopt if not found.
-         */
-        [[nodiscard]] static std::optional<std::string> parseWorldNameJson(std::string_view jsonText);
+        [[nodiscard]] static std::pair<std::string, std::vector<LevelInfo>> parseWorldLevelsJson(
+            std::string_view jsonText);
 
         /**
          * @brief Constructs the resource path for a given world ID and file name.

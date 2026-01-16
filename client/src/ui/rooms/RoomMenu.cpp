@@ -369,15 +369,13 @@ namespace Engine
                 break;
             }
             case Action::LPrev: {
-                if (const int lc = static_cast<int>(_levels.size())) {
+                if (const int lc = static_cast<int>(_levels.size()))
                     _selectedLevel = (_selectedLevel - 1 + lc) % lc;
-                }
                 break;
             }
             case Action::LNext: {
-                if (const int lc = static_cast<int>(_levels.size())) {
+                if (const int lc = static_cast<int>(_levels.size()))
                     _selectedLevel = (_selectedLevel + 1) % lc;
-                }
                 break;
             }
             case Action::DPrev:
@@ -456,13 +454,17 @@ namespace Engine
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
-        else
+        else if (static_cast<size_t>(_selectedWorld) < _worlds.size())
             _create.worldLabel->setString(std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
+        else
+            _create.worldLabel->setString("World: (invalid)");
 
         if (_levels.empty())
             _create.levelLabel->setString("Level: (none)");
-        else
+        else if (static_cast<size_t>(_selectedLevel) < _levels.size())
             _create.levelLabel->setString(_levels.at(static_cast<size_t>(_selectedLevel)).displayName);
+        else
+            _create.levelLabel->setString("Level: (invalid)");
     }
 
     void RoomMenu::render() const
@@ -603,7 +605,7 @@ namespace Engine
         if (_levels.empty())
             return "";
         const int idx = std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1);
-        return _levels.at(static_cast<std::size_t>(idx)).path;
+        return _levels.at(static_cast<size_t>(idx)).path;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** real_r_type
+** R-Type
 ** File description:
 ** EmbeddedResourceManager
 */
@@ -55,6 +55,22 @@ namespace EmbeddedResources
     extern const unsigned int sprites_boss_png_size;
     extern const unsigned char sprites_obstacle_png[];
     extern const unsigned int sprites_obstacle_png_size;
+    extern const unsigned char sprites_power_up_png[];
+    extern const unsigned int sprites_power_up_png_size;
+    extern const unsigned char sprites_power_up_attached_png[];
+    extern const unsigned int sprites_power_up_attached_png_size;
+    extern const unsigned char sprites_power_up2_png[];
+    extern const unsigned int sprites_power_up2_png_size;
+    extern const unsigned char sprites_power_up3_png[];
+    extern const unsigned int sprites_power_up3_png_size;
+    extern const unsigned char sprites_laser_png[];
+    extern const unsigned int sprites_laser_png_size;
+    extern const unsigned char sprites_bubble_png[];
+    extern const unsigned int sprites_bubble_png_size;
+    extern const unsigned char sprites_missile_big_png[];
+    extern const unsigned int sprites_missile_big_png_size;
+    extern const unsigned char sprites_bar_png[];
+    extern const unsigned int sprites_bar_png_size;
 
     extern const unsigned char shaders_colorblind_frag[];
     extern const unsigned int shaders_colorblind_frag_size;
@@ -81,20 +97,12 @@ namespace EmbeddedResources
 
     extern const unsigned char levels_world1_levels_json[];
     extern const unsigned int levels_world1_levels_json_size;
-    extern const unsigned char levels_world1_world_json[];
-    extern const unsigned int levels_world1_world_json_size;
     extern const unsigned char levels_world2_levels_json[];
     extern const unsigned int levels_world2_levels_json_size;
-    extern const unsigned char levels_world2_world_json[];
-    extern const unsigned int levels_world2_world_json_size;
     extern const unsigned char levels_world3_levels_json[];
     extern const unsigned int levels_world3_levels_json_size;
-    extern const unsigned char levels_world3_world_json[];
-    extern const unsigned int levels_world3_world_json_size;
     extern const unsigned char levels_custom_levels_json[];
     extern const unsigned int levels_custom_levels_json_size;
-    extern const unsigned char levels_custom_world_json[];
-    extern const unsigned int levels_custom_world_json_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -150,6 +158,20 @@ void EmbeddedResourceManager::registerResources()
     _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
     _resources["sprites/obstacle.png"] = {
         EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
+    _resources["sprites/power_up.png"] = {
+        EmbeddedResources::sprites_power_up_png, EmbeddedResources::sprites_power_up_png_size};
+    _resources["sprites/power_up_attached.png"] = {
+        EmbeddedResources::sprites_power_up_attached_png, EmbeddedResources::sprites_power_up_attached_png_size};
+    _resources["sprites/power_up2.png"] = {
+        EmbeddedResources::sprites_power_up2_png, EmbeddedResources::sprites_power_up2_png_size};
+    _resources["sprites/power_up3.png"] = {
+        EmbeddedResources::sprites_power_up3_png, EmbeddedResources::sprites_power_up3_png_size};
+    _resources["sprites/laser.png"] = {EmbeddedResources::sprites_laser_png, EmbeddedResources::sprites_laser_png_size};
+    _resources["sprites/bubble.png"] = {
+        EmbeddedResources::sprites_bubble_png, EmbeddedResources::sprites_bubble_png_size};
+    _resources["sprites/missile_big.png"] = {
+        EmbeddedResources::sprites_missile_big_png, EmbeddedResources::sprites_missile_big_png_size};
+    _resources["sprites/bar.png"] = {EmbeddedResources::sprites_bar_png, EmbeddedResources::sprites_bar_png_size};
 
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::shaders_colorblind_frag, EmbeddedResources::shaders_colorblind_frag_size};
@@ -172,20 +194,12 @@ void EmbeddedResourceManager::registerResources()
 
     _resources["levels/world1/levels.json"] = {
         EmbeddedResources::levels_world1_levels_json, EmbeddedResources::levels_world1_levels_json_size};
-    _resources["levels/world1/world.json"] = {
-        EmbeddedResources::levels_world1_world_json, EmbeddedResources::levels_world1_world_json_size};
     _resources["levels/world2/levels.json"] = {
         EmbeddedResources::levels_world2_levels_json, EmbeddedResources::levels_world2_levels_json_size};
-    _resources["levels/world2/world.json"] = {
-        EmbeddedResources::levels_world2_world_json, EmbeddedResources::levels_world2_world_json_size};
     _resources["levels/world3/levels.json"] = {
         EmbeddedResources::levels_world3_levels_json, EmbeddedResources::levels_world3_levels_json_size};
-    _resources["levels/world3/world.json"] = {
-        EmbeddedResources::levels_world3_world_json, EmbeddedResources::levels_world3_world_json_size};
     _resources["levels/custom/levels.json"] = {
         EmbeddedResources::levels_custom_levels_json, EmbeddedResources::levels_custom_levels_json_size};
-    _resources["levels/custom/world.json"] = {
-        EmbeddedResources::levels_custom_world_json, EmbeddedResources::levels_custom_world_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

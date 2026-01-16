@@ -33,7 +33,22 @@ namespace
         auto *w = &world;
 
         world.events().subscribe<DamageEvent>([w](const DamageEvent &event) {
-            auto &health = w->registry().getComponents<Ecs::Health>().at(event.target);
+            auto &reg = w->registry();
+
+            const size_t targetIdx = event.target;
+            auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
+
+            if (bubbleComp && bubbleComp->hitsRemaining > 0) {
+                const auto &proj = reg.getComponents<Ecs::Projectile>().at(event.source);
+                if (proj) {
+                    bubbleComp->hitsRemaining--;
+
+                    w->events().emit<DestroyEvent>(DestroyEvent{event.source, false});
+                    return;
+                }
+            }
+
+            auto &health = reg.getComponents<Ecs::Health>().at(event.target);
             if (!health || health->hp <= 0)
                 return;
             if (health->hp <= event.amount)
@@ -54,8 +69,11 @@ namespace
 
             if (health->hp > 0)
                 return;
-            if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target); ks && ks->score > 0)
-                w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
+            if (proj) {
+                if (const auto &ks = w->registry().getComponents<Ecs::KillScore>().at(event.target);
+                    ks && ks->score > 0)
+                    w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
+            }
         });
     }
 
@@ -69,9 +87,11 @@ namespace
             w->registry().emplaceComponent<Ecs::Velocity>(proj, Ecs::Velocity{event.vx, event.vy});
             w->registry().emplaceComponent<Ecs::Damage>(proj, Ecs::Damage{event.damage});
             w->registry().emplaceComponent<Ecs::Damageable>(proj);
-            w->registry().emplaceComponent<Ecs::Collision>(proj, Ecs::Collision{8.f, 8.f});
+            w->registry().emplaceComponent<Ecs::Collision>(
+                proj, Ecs::Collision{event.bounds.first, event.bounds.second});
             w->registry().emplaceComponent<Ecs::Drawable>(proj, Ecs::Drawable{event.spriteId, true});
-            w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{1, 1});
+            if (event.health != 0 && event.maxHealth != 0)
+                w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{event.health, event.maxHealth});
             w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
         });
@@ -99,6 +119,179 @@ namespace
             }
         });
     }
+
+    void registerPowerUpBarEvents(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<PowerUpBarCreateEvent>([w](const PowerUpBarCreateEvent &event) {
+            auto &reg = w->registry();
+            auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(event.playerId);
+
+            if (!playerPowerUp || playerPowerUp->hasBar)
+                return;
+
+            const float yOffset = (static_cast<float>(event.playerIndex) * 40.f);
+            const Ecs::Entity barEntity = w->createEntity();
+            reg.emplaceComponent<Ecs::Position>(barEntity, Ecs::Position{10.f, yOffset});
+            reg.emplaceComponent<Ecs::Velocity>(barEntity, Ecs::Velocity{0.f, 0.f});
+            reg.emplaceComponent<Ecs::Drawable>(barEntity, Ecs::Drawable{16, true});
+            reg.emplaceComponent<Ecs::Id>(barEntity, Ecs::Id{static_cast<uint32_t>(static_cast<size_t>(barEntity))});
+            playerPowerUp->hasBar = true;
+            playerPowerUp->barEntity = barEntity;
+        });
+
+        world.events().subscribe<PowerUpBarDestroyEvent>([w](const PowerUpBarDestroyEvent &event) {
+            auto &reg = w->registry();
+            auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(event.playerId);
+
+            if (!playerPowerUp || !playerPowerUp->hasBar || !playerPowerUp->barEntity.has_value())
+                return;
+
+            w->events().emit<DestroyEvent>(DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
+            playerPowerUp->hasBar = false;
+            playerPowerUp->barEntity = std::nullopt;
+        });
+    }
+
+    void registerBubblePowerUpEvents(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<BubblePowerUpCreateEvent>([w](const BubblePowerUpCreateEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp || bubblePowerUp->bubbleEntity.has_value())
+                return;
+
+            const Ecs::Entity bubbleEnt = w->createEntity();
+            reg.emplaceComponent<Ecs::Position>(bubbleEnt, Ecs::Position{event.playerX, event.playerY});
+            reg.emplaceComponent<Ecs::Drawable>(bubbleEnt, Ecs::Drawable{20u, true});
+            bubblePowerUp->bubbleEntity = bubbleEnt;
+            bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+        });
+
+        world.events().subscribe<BubblePowerUpUpdatePosEvent>([w](const BubblePowerUpUpdatePosEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
+                return;
+
+            const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
+            if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
+                bubblePos->x = event.playerX;
+                bubblePos->y = event.playerY;
+            }
+        });
+
+        world.events().subscribe<BubblePowerUpDestroyEvent>([w](const BubblePowerUpDestroyEvent &event) {
+            auto &reg = w->registry();
+            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+
+            if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
+                return;
+
+            w->events().emit<DestroyEvent>(
+                DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
+            bubblePowerUp->bubbleEntity = std::nullopt;
+            bubblePowerUp->hitsRemaining = 0;
+            reg.getComponents<Ecs::BubblePowerUp>().remove(event.playerId);
+        });
+    }
+
+    void activateLaserPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
+
+        auto &laserPowerUp = reg.getComponents<Ecs::LaserPowerUp>().at(playerIdx);
+        if (laserPowerUp) {
+            laserPowerUp->duration = 0.f;
+        } else {
+            reg.emplaceComponent<Ecs::LaserPowerUp>(static_cast<Ecs::Entity>(playerIdx));
+        }
+    }
+
+    void activateShieldPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        w->events().emit<DestroyEvent>(DestroyEvent{powerUpIdx, false});
+
+        auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(playerIdx);
+        if (bubblePowerUp) {
+            bubblePowerUp->hitsRemaining = Ecs::BubblePowerUp::maxHits;
+        } else {
+            reg.emplaceComponent<Ecs::BubblePowerUp>(static_cast<Ecs::Entity>(playerIdx));
+        }
+    }
+
+    void attachStandardPowerUp(Game::IGameWorld *w, const size_t powerUpIdx, const size_t playerIdx)
+    {
+        auto &reg = w->registry();
+        auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
+
+        if (playerPowerUp)
+            return;
+
+        if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
+            drawable->spriteId = 14;
+
+        if (auto &vel = reg.getComponents<Ecs::Velocity>().at(powerUpIdx)) {
+            vel->vx = 0.f;
+            vel->vy = 0.f;
+        }
+
+        if (auto &pos = reg.getComponents<Ecs::Position>().at(powerUpIdx)) {
+            const auto &playerPos = reg.getComponents<Ecs::Position>().at(playerIdx);
+            if (playerPos) {
+                pos->x = playerPos->x + 20.f;
+                pos->y = playerPos->y - 10.f;
+            }
+        }
+
+        reg.emplaceComponent<Ecs::PlayerPowerUp>(static_cast<Ecs::Entity>(playerIdx),
+            Ecs::PlayerPowerUp{0.f, 5.f, false, false, std::nullopt, static_cast<Ecs::Entity>(powerUpIdx), false});
+    }
+
+    void registerPowerUpCollection(Game::IGameWorld &world)
+    {
+        auto *w = &world;
+
+        world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
+            auto &reg = w->registry();
+
+            const auto &powerUpA = reg.getComponents<Ecs::PowerUp>().at(event.a);
+            const auto &playerB = reg.getComponents<Game::InputComponent>().at(event.b);
+
+            const auto &powerUpB = reg.getComponents<Ecs::PowerUp>().at(event.b);
+            const auto &playerA = reg.getComponents<Game::InputComponent>().at(event.a);
+
+            size_t powerUpIdx = 0;
+            size_t playerIdx = 0;
+
+            if (powerUpA && playerB) {
+                powerUpIdx = event.a;
+                playerIdx = event.b;
+            } else if (powerUpB && playerA) {
+                powerUpIdx = event.b;
+                playerIdx = event.a;
+            } else {
+                return;
+            }
+
+            const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
+
+            if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Laser) {
+                activateLaserPowerUp(w, powerUpIdx, playerIdx);
+            } else if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Shield) {
+                activateShieldPowerUp(w, powerUpIdx, playerIdx);
+            } else {
+                attachStandardPowerUp(w, powerUpIdx, playerIdx);
+            }
+        });
+    }
 } // namespace
 
 namespace Game
@@ -110,6 +303,9 @@ namespace Game
         registerProjectileSpawning(*this);
         registerDestroyEvent(*this);
         registerDamageToScore(*this);
+        registerPowerUpBarEvents(*this);
+        registerBubblePowerUpEvents(*this);
+        registerPowerUpCollection(*this);
     }
 
     Ecs::Registry &World::registry()

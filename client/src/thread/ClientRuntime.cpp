@@ -254,7 +254,7 @@ namespace Thread
 
     void ClientRuntime::sendCombinedInput() const
     {
-        const auto [up, down, left, right, shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
+        const auto [up, down, left, right, shoot, big_shoot] = Utils::SettingsConfig::getInstance().getMovementKeys();
 
         PlayerInput input{false, false, false, false, false};
 
@@ -276,6 +276,9 @@ namespace Thread
         }
         if (_input->isKeyHeld(shoot))
             input.shoot = true;
+
+        if (_input->isKeyHeld(big_shoot))
+            input.powerShoot = true;
 
         if (auto packet = _udpPacketFactory.makeInput(input))
             _udpClient->sendPacket(*packet);

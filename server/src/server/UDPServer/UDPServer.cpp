@@ -67,24 +67,33 @@ void UDPServer::setNonBlocking(const bool nonBlocking)
         throw ServerError("{UDPServer::setNonBlocking} Failed to set socket non-blocking mode");
 }
 
-void UDPServer::readPackets() noexcept
+bool UDPServer::readPackets() noexcept
 {
     if (!isRunning() || _socketFd == kInvalidSocket)
-        return;
-    const auto pkt = std::make_shared<Net::UDPPacket>();
-    socklen_t addrLen = sizeof(sockaddr_in);
+        return false;
 
-    const recvfrom_return_t received = _netWrapper.recvFrom(_socketFd, pkt->buffer(), Net::UDPPacket::MAX_SIZE, 0,
-        reinterpret_cast<sockaddr *>(const_cast<sockaddr_in *>(pkt->address())), &addrLen);
+    sockaddr_in from{};
+    socklen_t addrLen = sizeof(from);
+
+    const ssize_t received = _netWrapper.recvFrom(
+        _socketFd, _rxTempBuffer.data(), _rxTempBuffer.size(), 0, reinterpret_cast<sockaddr *>(&from), &addrLen);
+
     if (received <= 0)
-        return;
+        return false;
+
+    if (static_cast<size_t>(received) < sizeof(HeaderData) || received > 1500)
+        return true;
+
+    const auto pkt = std::make_shared<Net::UDPPacket>();
+    pkt->setAddress(from);
     pkt->setSize(static_cast<size_t>(received));
+    std::memcpy(pkt->buffer(), _rxTempBuffer.data(), static_cast<size_t>(received));
 
     {
         std::scoped_lock lock(_rxMutex);
-        if (!_rxBuffer.push(pkt))
-            std::cerr << "{UDPServer::readPackets} Warning: RX buffer overflow, packet dropped\n";
+        _rxBuffer.push(pkt);
     }
+    return true;
 }
 
 bool UDPServer::sendPacket(const Net::IPacket &pkt) noexcept

@@ -167,12 +167,15 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_missile_enemy_png, EmbeddedResources::sprites_missile_enemy_png_size};
     _resources["sprites/homingbullet.png"] = {
         EmbeddedResources::sprites_homingbullet_png, EmbeddedResources::sprites_homingbullet_png_size};
-    _resources["sprites/explose.png"] = {EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
+    _resources["sprites/explose.png"] = {
+        EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
     _resources["sprites/boss2.png"] = {EmbeddedResources::sprites_boss2_png, EmbeddedResources::sprites_boss2_png_size};
     _resources["sprites/boss3.png"] = {EmbeddedResources::sprites_boss3_png, EmbeddedResources::sprites_boss3_png_size};
-    _resources["sprites/obstacle.png"] = {EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
-    _resources["sprites/power_up.png"] = {EmbeddedResources::sprites_power_up_png, EmbeddedResources::sprites_power_up_png_size};
+    _resources["sprites/obstacle.png"] = {
+        EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
+    _resources["sprites/power_up.png"] = {
+        EmbeddedResources::sprites_power_up_png, EmbeddedResources::sprites_power_up_png_size};
     _resources["sprites/missile_enemy2.png"] = {
         EmbeddedResources::sprites_missile_enemy2_png, EmbeddedResources::sprites_missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {

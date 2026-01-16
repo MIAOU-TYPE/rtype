@@ -18,6 +18,9 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 using json = nlohmann::json; ///> Alias for nlohmann::json
 
@@ -82,6 +85,11 @@ namespace Engine
          * @return A reference to the vector of RoomData objects.
          */
         [[nodiscard]] std::vector<RoomData> &rooms() noexcept;
+
+        /**
+         * @brief Loads custom levels from the filesystem.
+         */
+        void loadCustomWorldFromFilesystem();
 
       private:
         /**

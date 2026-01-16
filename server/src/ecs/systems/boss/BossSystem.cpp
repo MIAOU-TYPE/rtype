@@ -12,10 +12,11 @@ namespace Game
     void BossSystem::update(IGameWorld &world, float dt)
     {
         auto &reg = world.registry();
-        (void)dt;
+        (void) dt;
 
         reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Id, Ecs::Position, Ecs::MovementPattern>(
-            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Id, const Ecs::Position &pos, Ecs::MovementPattern &pattern) {
+            [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Id,
+                const Ecs::Position &pos, Ecs::MovementPattern &pattern) {
                 int currentThreshold = 0;
                 switch (bossPhase.currentPhase) {
                     case Ecs::BossPhase::Phase::Phase1: currentThreshold = bossPhase.phaseThresholds[0]; break;
@@ -42,7 +43,6 @@ namespace Game
                     attack.at(static_cast<size_t>(e))->projectileSpeed *= bossPhase.fireSpeedMultiplier;
                     attack.at(static_cast<size_t>(e))->damage =
                         static_cast<int>(attack.at(static_cast<size_t>(e))->damage * bossPhase.damageMultiplier);
-                    
                 }
             });
     }

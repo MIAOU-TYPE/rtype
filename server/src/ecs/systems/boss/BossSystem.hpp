@@ -13,8 +13,8 @@
 #include "IGameWorld.hpp"
 #include "Id.hpp"
 #include "MovementPattern.hpp"
-#include "Velocity.hpp"
 #include "Position.hpp"
+#include "Velocity.hpp"
 
 namespace Game
 {

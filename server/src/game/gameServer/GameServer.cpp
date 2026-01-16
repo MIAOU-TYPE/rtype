@@ -33,11 +33,11 @@ namespace
                     return;
 
                 const int sessionId = it->second;
+                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
+                sessionsL->setLastScore(sessionId, totalScore);
                 const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
                 if (!addr)
                     return;
-
-                const auto totalScore = static_cast<uint32_t>(scoreUpdated.newScore);
                 if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
                     (void) serverL->sendPacket(*pkt);
             });

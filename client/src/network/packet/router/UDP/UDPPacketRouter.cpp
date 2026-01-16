@@ -34,7 +34,7 @@ namespace Ecs
     }
 
     void UDPPacketRouter::dispatchPacket(
-        const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
+        const HeaderData &header, const uint8_t *payload, const size_t payloadSize) const
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT: handleAccept(payload, payloadSize); break;
@@ -254,7 +254,8 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohs(scoreData.score);
+        const uint32_t score = ntohl(scoreData.score);
+
         _sink->onScore(score);
     }
 

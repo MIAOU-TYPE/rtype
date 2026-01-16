@@ -439,7 +439,7 @@ namespace Engine
         _levels.clear();
         _selectedLevel = 0;
         try {
-            const std::string &worldId = _worlds.at(static_cast<std::size_t>(_selectedWorld)).id;
+            const std::string &worldId = _worlds.at(static_cast<size_t>(_selectedWorld)).id;
             const auto &ref = _roomManager->levelsFor(worldId);
             _levels.assign(ref.begin(), ref.end());
         } catch (const std::exception &) {
@@ -458,12 +458,12 @@ namespace Engine
             _create.worldLabel->setString("World: (none)");
         else
             _create.worldLabel->setString(
-                std::string(_worlds.at(static_cast<std::size_t>(_selectedWorld)).displayName));
+                std::string(_worlds.at(static_cast<size_t>(_selectedWorld)).displayName));
 
         if (_levels.empty())
             _create.levelLabel->setString("Level: (none)");
         else
-            _create.levelLabel->setString(_levels.at(static_cast<std::size_t>(_selectedLevel)).displayName);
+            _create.levelLabel->setString(_levels.at(static_cast<size_t>(_selectedLevel)).displayName);
     }
 
     void RoomMenu::render() const

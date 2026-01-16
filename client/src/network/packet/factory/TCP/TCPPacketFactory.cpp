@@ -142,4 +142,17 @@ namespace Network
             return nullptr;
         }
     }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeScoreboardGet(const uint32_t req, const uint16_t limit) const
+    {
+        try {
+            Net::TCP::Writer b;
+            b.u16(limit);
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::SCOREBOARD_GET, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeScoreboardGet} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Network

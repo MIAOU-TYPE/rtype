@@ -11,9 +11,11 @@ namespace Engine
 {
     RoomManager::RoomManager(std::shared_ptr<Net::Server::ISessionManager> sessionManager,
         std::shared_ptr<Net::Server::IServer> UDPServer,
-        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::string levelPath)
+        std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, std::shared_ptr<ScoreService> scoreService,
+        std::string levelPath)
         : _sessionManager(std::move(sessionManager)), _udpServer(std::move(UDPServer)),
-          _udpPacketFactory(std::move(udpPacketFactory)), _levelPath(std::move(levelPath))
+          _udpPacketFactory(std::move(udpPacketFactory)), _scoreService(std::move(scoreService)),
+          _levelPath(std::move(levelPath))
     {
     }
 
@@ -86,6 +88,8 @@ namespace Engine
         } catch (...) {
             return false;
         }
+        if (_sessionManager)
+            _sessionManager->setLastScore(sessionId, 0);
         std::scoped_lock lock(_mutex);
         _playerToRoom[sessionId] = roomId;
         return true;
@@ -98,6 +102,16 @@ namespace Engine
 
         if (!room)
             return roomId;
+        if (_scoreService && _sessionManager) {
+            const auto idOpt = _sessionManager->getIdentity(sessionId);
+            if (const auto scoreOpt = _sessionManager->getLastScore(sessionId); idOpt && scoreOpt) {
+                try {
+                    _scoreService->saveScore(idOpt->username, static_cast<int>(*scoreOpt));
+                } catch (...) {
+                    return InvalidRoomId;
+                }
+            }
+        }
         try {
             roomId = getRoomIdOfPlayer(sessionId);
             room->leave(sessionId);

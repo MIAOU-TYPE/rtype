@@ -23,9 +23,11 @@ ServerRuntime::ServerRuntime(
         std::filesystem::create_directories("db", ec);
         if (ec)
             throw ThreadError(std::string("{ServerRuntime} create_directories failed: ") + ec.message());
-        _authDb = std::make_shared<Auth::SqliteDb>("db/users.sqlite3");
+        _authDb = std::make_shared<Db::SqliteDb>("db/users.sqlite3");
         _userRepo = std::make_shared<Auth::UserStorage>(_authDb);
         _userRepo->initSchema();
+        _scoreService = std::make_shared<Engine::ScoreService>(_authDb);
+        _scoreService->initSchema();
         _authService = std::make_shared<Auth::AuthService>(_userRepo);
     } catch (const std::exception &e) {
         throw ThreadError(std::string("{ServerRuntime} auth init failed: ") + e.what());
@@ -34,13 +36,13 @@ ServerRuntime::ServerRuntime(
     _udpPacketFactory = std::make_shared<Factory::UDPPacketFactory>(std::make_shared<UDPPacket>());
     _sessionManager = std::make_shared<Server::SessionManager>();
     _roomManager = std::make_shared<Engine::RoomManager>(
-        _sessionManager, _udpServer, _udpPacketFactory, "levels/space_level1.json");
+        _sessionManager, _udpServer, _udpPacketFactory, _scoreService, "levels/space_level1.json");
 
     _udpPacketRouter = std::make_shared<UDPPacketRouter>(_sessionManager, _roomManager);
 
     _tcpPacketFactory = std::make_shared<Factory::TCPPacketFactory>(std::make_shared<TCPPacket>());
-    _tcpPacketRouter =
-        std::make_shared<TCPPacketRouter>(_sessionManager, _roomManager, _tcpServer, _tcpPacketFactory, _authService);
+    _tcpPacketRouter = std::make_shared<TCPPacketRouter>(
+        _sessionManager, _roomManager, _tcpServer, _tcpPacketFactory, _authService, _scoreService);
     _stopRequested.store(false);
 }
 

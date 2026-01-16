@@ -123,7 +123,7 @@ namespace Game
          * @param x X coordinate to spawn at.
          * @param y Y coordinate to spawn at.
          */
-        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, const float x, const float y);
+        static void spawnObstacle(IGameWorld &world, const ObstacleDefinition &def, float x, float y);
 
         /**
          * @brief Create a single background entity with given parameters.

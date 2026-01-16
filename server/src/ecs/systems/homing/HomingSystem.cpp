@@ -12,15 +12,16 @@ namespace Game
     void HomingSystem::update(IGameWorld &world, float dt)
     {
         auto &reg = world.registry();
+        auto &targetPosComp = reg.getComponents<Ecs::Position>();
 
         reg.view<Ecs::HomingProjectile, Ecs::Position, Ecs::Velocity>(
             [&](const Ecs::Entity, Ecs::HomingProjectile &homing, Ecs::Position &pos, Ecs::Velocity &vel) {
-                auto &targetPosComp = reg.getComponents<Ecs::Position>().at(homing.targetId);
-                if (!targetPosComp)
+                const auto &targetPos = targetPosComp.at(homing.targetId);
+                if (!targetPos)
                     return;
 
-                const float dx = targetPosComp->x - pos.x;
-                const float dy = targetPosComp->y - pos.y;
+                const float dx = targetPos->x - pos.x;
+                const float dy = targetPos->y - pos.y;
                 const float distance = std::sqrt(dx * dx + dy * dy);
 
                 if (distance < 0.1f)

@@ -281,7 +281,7 @@
       "time": 1,
       "enemies": { "boss3": 1 },
       "spawnPattern": "line",
-      "spawnY": 360
+      "spawnY": 100
     },
     {
       "time": 6,

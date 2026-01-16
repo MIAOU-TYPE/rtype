@@ -10,10 +10,9 @@
 
 namespace Game
 {
-    void BossSystem::update(IGameWorld &world, float dt)
+    void BossSystem::update(IGameWorld &world)
     {
         auto &reg = world.registry();
-        (void) dt;
 
         reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Position, Ecs::MovementPattern, Ecs::Drawable>(
             [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Position &pos,

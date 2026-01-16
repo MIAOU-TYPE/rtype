@@ -34,7 +34,7 @@ namespace Ecs
     }
 
     void UDPPacketRouter::dispatchPacket(
-        const HeaderData &header, const uint8_t *payload, const std::size_t payloadSize) const
+        const HeaderData &header, const uint8_t *payload, const size_t payloadSize) const
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT: handleAccept(payload, payloadSize); break;
@@ -63,6 +63,8 @@ namespace Ecs
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
 
             case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
+
+            case Net::Protocol::UDP::HEALTH: handleHealth(payload, payloadSize); break;
 
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
@@ -252,7 +254,8 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohs(scoreData.score);
+        const uint32_t score = ntohl(scoreData.score);
+
         _sink->onScore(score);
     }
 
@@ -283,6 +286,20 @@ namespace Ecs
         const uint32_t entityId = ntohl(destroyData.id);
         const bool wasKilled = destroyData.wasKilled != 0;
         _sink->onDestroy(entityId, wasKilled);
+    }
+
+    void UDPPacketRouter::handleHealth(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload || size != sizeof(HealthData)) {
+            std::cerr << "{UDPPacketRouter::handleHealth} Dropped HEALTH: bad size\n";
+            return;
+        }
+
+        HealthData healthData{};
+        std::memcpy(&healthData, payload, sizeof(healthData));
+        const uint16_t currentLife = ntohs(healthData.currentLife);
+        const uint16_t maxLife = ntohs(healthData.maxLife);
+        _sink->onHealth(currentLife, maxLife);
     }
 
     void UDPPacketRouter::purgeExpired(const std::chrono::steady_clock::time_point now) const
@@ -338,8 +355,8 @@ namespace Ecs
 
             SnapshotEntity e{};
             e.id = ntohl(d.id);
-            e.x = static_cast<float>(static_cast<int16_t>(ntohs(d.x)));
-            e.y = static_cast<float>(static_cast<int16_t>(ntohs(d.y)));
+            e.x = static_cast<float>(static_cast<int16_t>(ntohs(static_cast<uint16_t>(d.x))));
+            e.y = static_cast<float>(static_cast<int16_t>(ntohs(static_cast<uint16_t>(d.y))));
             e.z = d.z;
             e.spriteId = d.spriteId;
 

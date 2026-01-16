@@ -36,11 +36,13 @@ namespace Engine
          * @param authCtx Shared pointer to the auth context.
          * @param musicRegistry Shared pointer to the music registry.
          * @param soundRegistry Shared pointer to the sound registry.
+         * @param scoreCtx Shared pointer to the scoreboard context.
          */
         explicit SettingsState(std::shared_ptr<Graphics::IGraphics> graphics,
             std::shared_ptr<Graphics::IRenderer> renderer, std::shared_ptr<MusicRegistry> musicRegistry,
             std::shared_ptr<SoundRegistry> soundRegistry, std::shared_ptr<RoomManager> roomManager,
-            std::shared_ptr<EventBus> eventBus, std::shared_ptr<AuthContext> authCtx);
+            std::shared_ptr<EventBus> eventBus, std::shared_ptr<AuthContext> authCtx,
+            std::shared_ptr<ScoreboardContext> scoreCtx);
 
         /**
          * @brief Called when entering the state.
@@ -67,8 +69,9 @@ namespace Engine
         std::shared_ptr<RoomManager> _roomManager;      ///> Shared lobby/room service.
         std::unique_ptr<SettingsMenu> _menu;            ///> Settings menu
 
-        std::shared_ptr<EventBus> _eventBus; ///> Event bus
-        std::shared_ptr<AuthContext> _authCtx;
+        std::shared_ptr<EventBus> _eventBus;          ///> Event bus
+        std::shared_ptr<AuthContext> _authCtx;        ///> Auth context
+        std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Scoreboard context
 
         bool _pendingResize = false; ///> Flag indicating if a resize is pending
     };

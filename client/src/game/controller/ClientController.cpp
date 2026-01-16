@@ -33,7 +33,7 @@ namespace Ecs
 
     void ClientController::onGameOver()
     {
-        std::cout << "onGameOver" << std::endl;
+        _commandBuffer.get().push({World::WorldCommand::Type::GameOver, {}});
     }
 
     void ClientController::onSnapshot(const uint32_t serverTick, const std::vector<SnapshotEntity> &data)
@@ -61,5 +61,10 @@ namespace Ecs
     void ClientController::onDestroy(const size_t entityId, const bool wasKilled)
     {
         _commandBuffer.get().push({World::WorldCommand::Type::Destroy, World::DestroyInfo{entityId, wasKilled}});
+    }
+
+    void ClientController::onHealth(const uint16_t currentLife, const uint16_t maxLife)
+    {
+        std::cout << "onHealth: " << currentLife << " / " << maxLife << std::endl;
     }
 }; // namespace Ecs

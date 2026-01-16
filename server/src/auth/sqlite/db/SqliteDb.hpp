@@ -13,7 +13,7 @@
 #include <utility>
 #include <string_view>
 
-namespace Auth
+namespace Db
 {
     /**
      * @brief Exception thrown on SQLite database errors
@@ -97,4 +97,4 @@ namespace Auth
         sqlite3 *_db = nullptr;  ///> Raw sqlite3 pointer
         mutable std::mutex _mtx; ///> Mutex for thread-safe operations
     };
-} // namespace Auth
+} // namespace Db

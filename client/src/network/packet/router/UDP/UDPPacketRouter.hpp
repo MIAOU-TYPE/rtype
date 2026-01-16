@@ -21,6 +21,7 @@
 #include "DestroyData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
+#include "HealthData.hpp"
 #include "IClientMessageSink.hpp"
 #include "IPacket.hpp"
 #include "ScoreData.hpp"
@@ -142,6 +143,13 @@ namespace Ecs
         void handleDestroy(const uint8_t *payload, size_t size) const;
 
         /**
+         * @brief Handler for HEALTH packets.
+         * @param payload Pointer to the payload data of the HEALTH packet.
+         * @param size Size of the payload data.
+         */
+        void handleHealth(const uint8_t *payload, size_t size) const;
+
+        /**
          * @brief Extracts the header from the incoming packet.
          * @param packet The incoming IPacket to extract the header from.
          * @param outHeader Reference to the HeaderData to populate with extracted data
@@ -155,7 +163,7 @@ namespace Ecs
          * @param payload Pointer to the payload data of the packet
          * @param payloadSize Size of the payload data.
          */
-        void dispatchPacket(const HeaderData &header, const uint8_t *payload, std::size_t payloadSize) const;
+        void dispatchPacket(const HeaderData &header, const uint8_t *payload, size_t payloadSize) const;
 
         static constexpr uint8_t PROTOCOL_VERSION = 1; ///> Expected protocol version for incoming packets.
 

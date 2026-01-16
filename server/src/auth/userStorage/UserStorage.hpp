@@ -68,7 +68,7 @@ namespace Auth
          * @param db A shared pointer to the SqliteDb instance.
          * @throws UserStorageError if the provided database pointer is null.
          */
-        explicit UserStorage(std::shared_ptr<SqliteDb> db);
+        explicit UserStorage(std::shared_ptr<Db::SqliteDb> db);
 
         /**
          * @brief Initializes the database schema for user storage.
@@ -94,6 +94,6 @@ namespace Auth
         [[nodiscard]] uint32_t insertUser(const std::string &username, const std::string &passwordScrypt) const;
 
       private:
-        std::shared_ptr<SqliteDb> _db; ///> The database connection.
+        std::shared_ptr<Db::SqliteDb> _db; ///> The database connection.
     };
 } // namespace Auth

@@ -80,3 +80,13 @@ struct PlayerConnectedEvent {
     int sessionId;      ///> Session identifier of the connected player
     size_t netPlayerId; ///> Network player entity identifier
 };
+
+/**
+ * @struct DamageApplyEvent
+ * @brief Event triggered when damage is applied to an entity.
+ */
+struct DamageApplyEvent {
+    size_t entityId;      ///> ID of the entity that received damage
+    uint32_t currentLife; ///> Current life of the entity
+    uint32_t maxLife;     ///> Maximum life of the entity
+};

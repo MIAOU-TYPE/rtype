@@ -126,4 +126,20 @@ namespace Net::Factory
         const auto payload = TCP::buildPayload(Protocol::TCP::AUTH_OK, req, b.bytes());
         return make(addr, payload);
     }
+
+    std::shared_ptr<IPacket> TCPPacketFactory::makeScoreboardList(
+        const sockaddr_in &addr, const ReqId req, const std::vector<ScoreEntry> &scores) const
+    {
+        if (scores.size() > 0xFFFFu)
+            return makeError(addr, req, 16, "SCOREBOARD_GET: too many rows to fit in u16");
+
+        TCP::Writer b;
+        b.u16(static_cast<uint16_t>(scores.size()));
+        for (const auto &[username, score] : scores) {
+            b.str16(username);
+            b.u32(static_cast<uint32_t>(score));
+        }
+        const auto payload = TCP::buildPayload(Protocol::TCP::SCOREBOARD_LIST, req, b.bytes());
+        return make(addr, payload);
+    }
 } // namespace Net::Factory

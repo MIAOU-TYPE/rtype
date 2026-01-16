@@ -220,7 +220,7 @@ namespace World
         if (itEnt == _entityMap.end())
             return;
 
-        const auto ent = static_cast<std::size_t>(itEnt->second);
+        const auto ent = static_cast<size_t>(itEnt->second);
 
         if (ent >= positions.size())
             return;

@@ -13,7 +13,7 @@ namespace Game
     {
         auto &reg = world.registry();
         auto &targetPosComp = reg.getComponents<Ecs::Position>();
-        
+
         reg.view<Ecs::HomingProjectile, Ecs::Position, Ecs::Velocity>(
             [&](const Ecs::Entity, Ecs::HomingProjectile &homing, Ecs::Position &pos, Ecs::Velocity &vel) {
                 const auto &targetPos = targetPosComp.at(homing.targetId);

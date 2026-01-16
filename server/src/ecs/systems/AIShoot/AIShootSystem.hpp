@@ -43,6 +43,6 @@ namespace Game
          * @param weapon The WeaponConfig component of the entity.
          */
         static void spreadProjectile(IGameWorld &world, const Ecs::Entity ent, const Ecs::AIShoot &shoot,
-          const float posX, const float posY, const Ecs::WeaponConfig &weapon);
+            const float posX, const float posY, const Ecs::WeaponConfig &weapon);
     };
 } // namespace Game

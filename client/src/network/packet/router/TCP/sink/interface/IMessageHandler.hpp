@@ -115,7 +115,8 @@ namespace Network
             std::function<void(uint32_t, std::string_view)>; ///> Callback type for protocol error messages
         using AuthOkCb = std::function<void(uint32_t, uint32_t, std::string_view, uint64_t,
             uint32_t)>; ///> Callback type for authentication success messages
-        using ScoreboardCb = std::function<void(uint32_t, const std::vector<ScoreEntry>&)>; ///> Callback type for scoreboard list messages
+        using ScoreboardCb = std::function<void(
+            uint32_t, const std::vector<ScoreEntry> &)>; ///> Callback type for scoreboard list messages
 
         /**
          * @brief Subscribe to welcome message events.

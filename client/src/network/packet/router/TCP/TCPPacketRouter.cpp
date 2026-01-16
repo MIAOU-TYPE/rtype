@@ -244,10 +244,15 @@ namespace Network
         if (r.remaining() < 2u)
             return protocolError(req, malformedTcp("SCOREBOARD_LIST count(u16)", 2, r.remaining()));
 
-        const uint16_t count = r.u16();
+        uint16_t count = 0;
+        try {
+            count = r.u16();
+        } catch (...) {
+            return protocolError(req, "SCOREBOARD_LIST: malformed payload (expected count(u16))");
+        }
         std::vector<ScoreEntry> scores;
+        scores.reserve(count);
         for (uint16_t i = 0; i < count; ++i) {
-            scores.reserve(count);
             std::string username;
             uint32_t s = 0;
             try {

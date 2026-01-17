@@ -137,29 +137,25 @@ namespace Engine
         const float bgY = TOOLBAR_HEIGHT + 20.0f;
         _bgPrevButton->setPosition(BUTTON_SPACING, bgY);
         _bgNextButton->setPosition(BUTTON_SPACING + 120.0f, bgY);
-        _bgLabel->setPosition(BUTTON_SPACING + 160.0f, bgY + 10.0f);
+        _bgLabel->setPosition(BUTTON_SPACING + 240.0f, bgY + 10.0f);
 
         _timeLabel->setPosition(w - 150.0f, bgY + 10.0f);
 
-        if (_helpText) {
+        if (_helpText)
             _helpText->setPosition(w * 0.5f - _helpText->getWidth() * 0.5f, h - 100.0f);
-        }
 
-        if (_statusText && !_statusMessage.empty()) {
+        if (_statusText && !_statusMessage.empty())
             _statusText->setPosition(w * 0.5f - _statusText->getWidth() * 0.5f, h * 0.5f);
-        }
 
         if (_levelNameField) {
             _levelNameField->setPosition(w * 0.5f - 200.0f, h * 0.5f - 50.0f);
             _levelNameField->setWidth(400.0f);
             _levelNameField->layout();
         }
-        if (_confirmSaveButton) {
+        if (_confirmSaveButton)
             _confirmSaveButton->setPosition(w * 0.5f - 220.0f, h * 0.5f + 20.0f);
-        }
-        if (_cancelSaveButton) {
+        if (_cancelSaveButton)
             _cancelSaveButton->setPosition(w * 0.5f + 20.0f, h * 0.5f + 20.0f);
-        }
     }
 
     void LevelEditorState::update(StateManager &manager, const InputFrame &frame)
@@ -193,9 +189,8 @@ namespace Engine
             return;
         }
 
-        if (_backgroundTexture != Graphics::InvalidTexture) {
+        if (_backgroundTexture != Graphics::InvalidTexture)
             _renderer->draw(_backgroundCmd);
-        }
 
         for (const auto &entity : _placedEntities) {
             RenderCommand cmd;
@@ -304,23 +299,19 @@ namespace Engine
 
         _renderer->draw(*_bgLabel);
         _renderer->draw(*_timeLabel);
-        if (_helpText) {
+        if (_helpText)
             _renderer->draw(*_helpText);
-        }
-        if (_statusText && !_statusMessage.empty()) {
+        if (_statusText && !_statusMessage.empty())
             _renderer->draw(*_statusText);
-        }
     }
 
     void LevelEditorState::handleInput(const InputFrame &frame)
     {
         if (_showSaveDialog) {
-            if (frame.mousePressed && _levelNameField) {
+            if (frame.mousePressed && _levelNameField)
                 _levelNameField->onMousePressed(frame.mouseX, frame.mouseY);
-            }
-            if (frame.keyPressed && _levelNameField && _levelNameField->isFocused()) {
+            if (frame.keyPressed && _levelNameField && _levelNameField->isFocused())
                 _levelNameField->onKeyPressed(frame.key);
-            }
             if (frame.mousePressed) {
                 if (_confirmSaveButton)
                     _confirmSaveButton->onMousePressed(frame.mouseX, frame.mouseY);
@@ -355,15 +346,12 @@ namespace Engine
             return;
         }
 
-        if (frame.mousePressed) {
+        if (frame.mousePressed)
             handleMousePressed(frame);
-        }
-        if (frame.mouseReleased) {
+        if (frame.mouseReleased)
             handleMouseReleased(frame);
-        }
-        if (frame.keyPressed) {
+        if (frame.keyPressed)
             handleKeyPressed(frame);
-        }
     }
 
     void LevelEditorState::handleMousePressed(const InputFrame &frame)
@@ -427,9 +415,8 @@ namespace Engine
 
         const auto vp = _renderer->getViewportSize();
         if (frame.mouseY > TOOLBAR_HEIGHT && frame.mouseY < static_cast<float>(vp.height) - 120.0f) {
-            if (_selectedEntityType >= 0 && _selectedEntityType < static_cast<int>(_entityTypes.size())) {
+            if (_selectedEntityType >= 0 && _selectedEntityType < static_cast<int>(_entityTypes.size()))
                 placeEntity(frame.mouseX, frame.mouseY);
-            }
         }
     }
 
@@ -474,9 +461,8 @@ namespace Engine
 
     void LevelEditorState::placeEntity(const float screenX, const float screenY)
     {
-        if (_selectedEntityType < 0 || _selectedEntityType >= static_cast<int>(_entityTypes.size())) {
+        if (_selectedEntityType < 0 || _selectedEntityType >= static_cast<int>(_entityTypes.size()))
             return;
-        }
 
         float worldX, worldY;
         screenToWorld(screenX, screenY, worldX, worldY);
@@ -549,25 +535,21 @@ namespace Engine
                 indexFile >> indexJson;
                 indexFile.close();
 
-                if (!indexJson.contains("name")) {
+                if (!indexJson.contains("name"))
                     indexJson["name"] = "Custom World";
-                }
-                if (!indexJson.contains("levels") || !indexJson["levels"].is_array()) {
+                if (!indexJson.contains("levels") || !indexJson["levels"].is_array())
                     indexJson["levels"] = json::array();
-                }
             } else {
                 indexJson = {{"name", "Custom World"}, {"levels", json::array()}};
             }
 
             std::string levelId = levelPath;
             size_t lastSlash = levelId.find_last_of('/');
-            if (lastSlash != std::string::npos) {
+            if (lastSlash != std::string::npos)
                 levelId = levelId.substr(lastSlash + 1);
-            }
             size_t dotPos = levelId.find_last_of('.');
-            if (dotPos != std::string::npos) {
+            if (dotPos != std::string::npos)
                 levelId = levelId.substr(0, dotPos);
-            }
 
             bool levelExists = false;
             for (auto &level : indexJson["levels"]) {
@@ -605,9 +587,8 @@ namespace Engine
                      << std::setw(2) << (tm->tm_year % 100) << ".json";
 
             std::ofstream file(filename.str());
-            if (!file.is_open()) {
+            if (!file.is_open())
                 return false;
-            }
 
             file << "{\n";
             file << "  \"name\": \"" << _levelName << "\",\n";
@@ -712,9 +693,8 @@ namespace Engine
 
             float maxTime = 0.0f;
             for (const auto &entity : _placedEntities) {
-                if (entity.spawnTime > maxTime) {
+                if (entity.spawnTime > maxTime)
                     maxTime = entity.spawnTime;
-                }
             }
             file << "  \"duration\": " << static_cast<int>(maxTime + 10.0f) << ",\n";
 
@@ -744,9 +724,8 @@ namespace Engine
                 }
 
                 file << "    }";
-                if (i < sortedEntities.size() - 1) {
+                if (i < sortedEntities.size() - 1)
                     file << ",";
-                }
                 file << "\n";
             }
 

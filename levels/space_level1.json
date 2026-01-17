@@ -129,7 +129,30 @@
         "damage": 35,
         "muzzle": { "x": 105, "y": 112 },
         "projectileSpriteId": 12
-      }
+      },
+      "phases": [
+        {
+          "hpThreshold": 2500,
+          "angles": [-15, 0, 15],
+          "fireSpeedMultiplier": 1.2,
+          "damageMultiplier": 1,
+          "spriteId": 1
+        },
+        {
+          "hpThreshold": 1500,
+          "angles": [-30, 30],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 2,
+          "spriteId": 1
+        },
+        {
+          "hpThreshold": 500,
+          "angles": [-45, 45],
+          "fireSpeedMultiplier": 2.0,
+          "damageMultiplier": 2,
+          "spriteId": 1
+        }
+      ]
     },
     "boss2": {
       "hp": 3000,
@@ -146,7 +169,30 @@
         "damage": 50,
         "muzzle": { "x": 65, "y": 25 },
         "projectileSpriteId": 12
-      }
+      },
+      "phases": [
+        {
+          "hpThreshold": 2500,
+          "angles": [],
+          "fireSpeedMultiplier": 1.0,
+          "damageMultiplier": 1,
+          "spriteId": 31
+        },
+        {
+          "hpThreshold": 1500,
+          "angles": [],
+          "fireSpeedMultiplier": 1.3,
+          "damageMultiplier": 3,
+          "spriteId": 31
+        },
+        {
+          "hpThreshold": 500,
+          "angles": [],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 1,
+          "spriteId": 31
+        }
+      ]
     },
     "boss3": {
       "hp": 4998,
@@ -162,7 +208,58 @@
         "damage": 50,
         "muzzle": { "x": 60, "y": 70 },
         "projectileSpriteId": 29
-      }
+      },
+      "phases": [
+        {
+          "hpThreshold": 4998,
+          "angles": [],
+          "fireSpeedMultiplier": 1.0,
+          "damageMultiplier": 1,
+          "spriteId": 22
+        },
+        {
+          "hpThreshold": 4284,
+          "angles": [],
+          "fireSpeedMultiplier": 1.0,
+          "damageMultiplier": 1,
+          "spriteId": 23
+        },
+        {
+          "hpThreshold": 3570,
+          "angles": [],
+          "fireSpeedMultiplier": 1.2,
+          "damageMultiplier": 2,
+          "spriteId": 24
+        },
+        {
+          "hpThreshold": 2856,
+          "angles": [],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 2,
+          "spriteId": 25
+        },
+        {
+          "hpThreshold": 2142,
+          "angles": [],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 3,
+          "spriteId": 26
+        },
+        {
+          "hpThreshold": 1428,
+          "angles": [],
+          "fireSpeedMultiplier": 2.0,
+          "damageMultiplier": 3,
+          "spriteId": 27
+        },
+        {
+          "hpThreshold": 714,
+          "angles": [],
+          "fireSpeedMultiplier": 2.0,
+          "damageMultiplier": 4,
+          "spriteId": 28
+        }
+      ]
     },
     "groupEnemy": {
       "type": "group",

@@ -154,15 +154,12 @@ namespace Engine
          * @return The selected difficulty.
          */
         [[nodiscard]] Difficulty difficultySelected() const noexcept;
-<<<<<<< HEAD
 
         /**
          * @brief Gets the selected game mode.
          * @return The selected game mode.
          */
         [[nodiscard]] GameMode modeSelected() const noexcept;
-=======
->>>>>>> 8fc3e6018ebc258c6b3841853690cf187badc27d
 
         /**
          * @brief Gets the selected level ID (path to the level file).

@@ -32,6 +32,7 @@
 #include "PowerUpShootingSystem.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
+#include "GameConfig.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
 
@@ -84,11 +85,12 @@ namespace Game
          * @param udpPacketFactory Factory to build outgoing packets.
          * @param levelPath Path to the level configuration file.
          * @param modifiers Difficulty modifiers to apply to enemies.
+         * @param gameConfig Game configuration.
          */
         explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
             std::shared_ptr<Net::Server::IServer> server,
             std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, const std::string &levelPath,
-            const DifficultyModifiers &modifiers = {});
+            const DifficultyModifiers &modifiers, const Engine::GameConfig &gameConfig);
 
         /**
          * @brief Reset the game server to its initial state.
@@ -183,6 +185,8 @@ namespace Game
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
         std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
+
+        Engine::GameConfig _gameConfig; ///> Game configuration.
     };
 
 } // namespace Game

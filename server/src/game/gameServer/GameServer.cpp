@@ -152,10 +152,10 @@ namespace Game
 {
     GameServer::GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
         std::shared_ptr<Net::Server::IServer> server, std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory,
-        const std::string &levelPath, const DifficultyModifiers &modifiers)
-        : _worldWrite(std::make_unique<World>()), _worldRead(std::make_unique<World>()),
-          _worldTemp(std::make_unique<World>()), _sessions(std::move(sessions)), _server(std::move(server)),
-          _udpPacketFactory(std::move(udpPacketFactory)), _difficultyModifiers(modifiers)
+        const std::string &levelPath, const DifficultyModifiers &modifiers, const Engine::GameConfig &gameConfig)
+        : _worldWrite(std::make_unique<World>(gameConfig)), _worldRead(std::make_unique<World>(gameConfig)),
+          _worldTemp(std::make_unique<World>(gameConfig)), _sessions(std::move(sessions)), _server(std::move(server)),
+          _udpPacketFactory(std::move(udpPacketFactory)), _difficultyModifiers(modifiers), _gameConfig(gameConfig)
     {
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))

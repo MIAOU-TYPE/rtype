@@ -13,6 +13,13 @@ namespace
     {
         return static_cast<int32_t>(a - b) > 0;
     }
+
+    [[nodiscard]] uint64_t nowNs() noexcept
+    {
+        return static_cast<uint64_t>(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
+                .count());
+    }
 } // namespace
 
 using namespace Net::Server;
@@ -214,6 +221,36 @@ bool SessionManager::isAuthed(const int sessionId) const
         return false;
 
     return _identityById.contains(sessionId);
+}
+
+bool SessionManager::consumeUdp(const sockaddr_in &addr)
+{
+    const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
+
+    const uint64_t now = nowNs();
+
+    std::unique_lock lock(_mutex);
+
+    auto &[tokens, lastNs] = _udpRates[key];
+
+    if (lastNs == 0) {
+        lastNs = now;
+        tokens = MaxTokens - 1;
+        return true;
+    }
+
+    const uint64_t elapsed = now - lastNs;
+    lastNs = now;
+
+    if (elapsed >= TokenRefillRateNs) {
+        const auto refill = static_cast<uint32_t>(elapsed / TokenRefillRateNs);
+        tokens = std::min(MaxTokens, tokens + refill);
+    }
+
+    if (tokens == 0)
+        return false;
+    tokens--;
+    return true;
 }
 
 void SessionManager::clearIdentity(const int sessionId)

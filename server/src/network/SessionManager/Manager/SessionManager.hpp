@@ -144,6 +144,13 @@ namespace Net::Server
         [[nodiscard]] bool isAuthed(int sessionId) const override;
 
         /**
+         * @brief Check if the UDP Addr has tokens left, if he doesn't fuzz, to prevent UDP flood attacks
+         * @param addr The address from which the UDP packet was received.
+         * @return True if the packet was successfully consumed, false otherwise.
+         */
+        [[nodiscard]] bool consumeUdp(const sockaddr_in &addr) override;
+
+        /**
          * @brief Set the last score for a session ID.
          * @param sessionId The ID of the session.
          * @param score The score to set.
@@ -180,5 +187,17 @@ namespace Net::Server
         std::unordered_map<int, uint32_t> _lastScoreById{}; ///> Last score storage
 
         int _nextId = 1; ///> Next available session ID
+
+        /**
+         * @brief Structure to manage UDP rate limiting tokens and timestamps.
+         */
+        struct UdpRate {
+            uint32_t tokens; ///> Available tokens
+            uint64_t lastNs; ///> Timestamp of the last token update in nanoseconds
+        };
+
+        std::unordered_map<AddressKey, UdpRate, AddressKeyHash> _udpRates; ///> UDP rate limiting data
+        static constexpr uint32_t MaxTokens = 60;                          ///> Maximum tokens for rate limiting
+        static constexpr uint32_t TokenRefillRateNs = 16'000'000;          ///> Token refill rate in nanoseconds
     };
 } // namespace Net::Server

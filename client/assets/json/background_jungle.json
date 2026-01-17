@@ -1,0 +1,14 @@
+{
+  "sprite": "background_jungle",
+  "spriteId": 101,
+  "texture": "sprites/background_jungle.png",
+  "default_animation": "static",
+  "animations": {
+    "static": {
+      "loop": false,
+      "frames": [
+        { "x": 0, "y": 0, "w": 2584, "h": 720, "duration": 1.0 }
+      ]
+    }
+  }
+}

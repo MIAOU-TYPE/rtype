@@ -20,17 +20,17 @@ class MockServer : public Net::Server::IServer {
     {
     }
 
-    bool isStoredIpCorrect() const noexcept override
+    [[nodiscard]] bool isStoredIpCorrect() const noexcept override
     {
         return true;
     }
 
-    bool isStoredPortCorrect() const noexcept override
+    [[nodiscard]] bool isStoredPortCorrect() const noexcept override
     {
         return true;
     }
 
-    bool sendPacket(const Net::IPacket &) noexcept override
+    [[nodiscard]] bool sendPacket(const Net::IPacket &) noexcept override
     {
         sent = true;
         return true;
@@ -44,7 +44,7 @@ class MockServer : public Net::Server::IServer {
     {
     }
 
-    bool isRunning() const noexcept override
+    [[nodiscard]] bool isRunning() const noexcept override
     {
         return false;
     }
@@ -53,16 +53,17 @@ class MockServer : public Net::Server::IServer {
     {
     }
 
-    void readPackets() noexcept override
-    {
-    }
-
-    bool popPacket(std::shared_ptr<Net::IPacket> &) noexcept override
+    [[nodiscard]] bool readPackets() noexcept override
     {
         return false;
     }
 
-    int32_t getPort() const noexcept override
+    [[nodiscard]] bool popPacket(std::shared_ptr<Net::IPacket> &) noexcept override
+    {
+        return false;
+    }
+
+    [[nodiscard]] int32_t getPort() const noexcept override
     {
         return 0;
     }

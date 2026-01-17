@@ -104,6 +104,23 @@ namespace
                 def.shoot = parseShootDefinition(defNode.value("shoot", json::object()));
             }
 
+            if (defNode.contains("phases") && defNode.at("phases").is_array()) {
+                for (const auto &phaseNode : defNode.at("phases")) {
+                    if (!phaseNode.is_object()) continue;
+                    Ecs::BossPhaseData phase;
+                    phase.healthThreshold = phaseNode.value("hpThreshold", 0);
+                    phase.fireSpeedMultiplier = phaseNode.value("fireSpeedMultiplier", 1.0f);
+                    phase.damageMultiplier = phaseNode.value("damageMultiplier", 1);
+                    phase.spriteId = phaseNode.value("spriteId", 0u);
+                    if (phaseNode.contains("angles") && phaseNode.at("angles").is_array()) {
+                        for (const auto &angle : phaseNode.at("angles")) {
+                            phase.anglesToAdd.push_back(angle.get<float>());
+                        }
+                    }
+                    def.phases.push_back(phase);
+                }
+            }
+
             if (defNode.contains("movement")) {
                 def.movement = parseMovementDefinition(defNode.at("movement"));
             } else {

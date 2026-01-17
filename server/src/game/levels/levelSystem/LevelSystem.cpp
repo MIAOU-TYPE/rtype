@@ -250,30 +250,12 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        if (def.sprite == 1) {
+        if (!def.phases.empty()) {
             Ecs::BossPhase bossConfig;
-            bossConfig.phases = {{2500, {-15.f, 0.f, 15.f}, 1.2f, 1, 0},
-                {1500, {-30.f, -15.f, 0.f, 15.f, 30.f}, 1.5f, 2, 0},
-                {500, {-45.f, -30.f, -15.f, 0.f, 15.f, 30.f, 45.f}, 1.5f, 2, 0}};
+            bossConfig.phases = def.phases;
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
-        } else if (def.sprite == 21) {
-            Ecs::BossPhase bossConfig;
-            bossConfig.phases = {{2500, {}, 1.f, 1, 0}, {1500, {}, 1.3f, 3, 0}, {500, {}, 1.5f, 3, 0}};
-            reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
-        } else if (def.sprite == 22) {
-            Ecs::BossPhase bossConfig;
-            bossConfig.phases = {{4998, {}, 1.f, 1, 22}, {4284, {}, 1.f, 1, 23}, {3570, {}, 1.2f, 2, 24},
-                {2856, {}, 1.5f, 2, 25}, {2142, {}, 1.5f, 3, 26}, {1428, {}, 1.7f, 3, 27}, {714, {}, 2.f, 4, 28}
-
-            };
-            reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
-            Ecs::Entity weakBox = world.createEntity();
-            reg.emplaceComponent<Ecs::Position>(weakBox, Ecs::Position{x + 75.f, y + 100.f, 2});
-            reg.emplaceComponent<Ecs::Collision>(
-                weakBox, Ecs::Collision{30.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
-            reg.emplaceComponent<Ecs::BossPart>(weakBox, Ecs::BossPart{mob, 5.0f});
-            reg.emplaceComponent<Ecs::Velocity>(weakBox, Ecs::Velocity{def.speed, 0.f});
-
+        }
+        if (def.sprite == 22) {
             Ecs::Entity previousEntity = mob;
             const int numTailSegments = 5;
             float tailStartX = x - 50.f;

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include "GameConfig.hpp"
+#include "BossPhase.hpp"
 #include <unordered_map>
 
 namespace Game
@@ -80,6 +81,7 @@ namespace Game
         bool isGroup = false;             ///> Is this a group of enemies?
         std::vector<GroupMember> members; ///> Members if this is a group
         MovementDefinition movement;      ///> Movement behavior
+        std::vector<Ecs::BossPhaseData> phases; ///> Boss phase data if this is a boss
     };
 
     /**

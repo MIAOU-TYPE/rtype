@@ -49,10 +49,7 @@ namespace Ecs
                     handleGameOver();
                 break;
 
-            case Net::Protocol::UDP::PONG:
-                if (payloadSize == sizeof(DefaultData))
-                    handlePong();
-                break;
+            case Net::Protocol::UDP::PONG: handlePong(payload, payloadSize); break;
 
             case Net::Protocol::UDP::SNAPSHOT_RAW: handleSnapEntityRaw(payload, payloadSize); break;
 
@@ -141,9 +138,17 @@ namespace Ecs
         _sink->onReject();
     }
 
-    void UDPPacketRouter::handlePong() const
+    void UDPPacketRouter::handlePong(const uint8_t *payload, const size_t size) const
     {
-        _sink->onPong();
+        if (!payload || size != sizeof(PongData)) {
+            std::cerr << "{UDPPacketRouter::handlePong} Dropped PONG: bad size\n";
+            return;
+        }
+
+        PongData pongData{};
+        std::memcpy(&pongData, payload, sizeof(pongData));
+        const uint32_t timestamp = ntohl(pongData.pongTimestamp);
+        _sink->onPong(timestamp);
     }
 
     void UDPPacketRouter::handleGameOver() const

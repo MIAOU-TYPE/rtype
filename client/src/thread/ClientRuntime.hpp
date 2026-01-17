@@ -27,6 +27,7 @@
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
 #include "InputState.hpp"
+#include "LobbyState.hpp"
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
@@ -40,7 +41,6 @@
 #include "TCPPacketRouter.hpp"
 #include "UDPPacketFactory.hpp"
 #include "UDPPacketRouter.hpp"
-#include "LobbyState.hpp"
 
 #include <condition_variable>
 

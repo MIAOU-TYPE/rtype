@@ -217,7 +217,14 @@ namespace Engine
         size_t limit; ///> The maximum number of scores to retrieve.
     };
 
+    /**
+     * @brief Event triggered when a ping is sent.
+     */
     struct PongReceived : Event {
+        /**
+         * @brief Constructor for PongReceived event.
+         * @param timestamp The timestamp of the pong received.
+         */
         explicit PongReceived(const uint32_t timestamp) : timestamp(timestamp)
         {
         }

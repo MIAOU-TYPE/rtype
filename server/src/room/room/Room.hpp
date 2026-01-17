@@ -170,6 +170,6 @@ namespace Engine
 
         std::atomic<bool> _running{false}; ///> Atomic flag indicating if the room is running
         std::thread _thread;               ///> Thread for the room's game server loop
-        RoomData _roomData; ///> Data structure containing room information
+        RoomData _roomData;                ///> Data structure containing room information
     };
 } // namespace Engine

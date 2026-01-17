@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <atomic>
 #include "CommandBuffer.hpp"
 #include "IClientMessageSink.hpp"
 #include "WorldCommand.hpp"

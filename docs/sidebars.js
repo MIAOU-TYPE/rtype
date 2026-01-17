@@ -155,6 +155,13 @@ module.exports = {
         },
       ],
     },
+    {
+      type: 'category',
+      label: 'Architecture',
+      items: [
+        'technical-docs/architecture/decision'
+      ],
+    },
   ],
   userGuideSidebar: [
     'user-guide/overview',

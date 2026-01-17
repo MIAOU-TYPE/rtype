@@ -11,6 +11,7 @@
 #include "Position.hpp"
 #include "TailFollower.hpp"
 #include "Velocity.hpp"
+#include "Health.hpp"
 
 #include <cmath>
 

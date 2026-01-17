@@ -14,8 +14,6 @@ namespace Game
         auto &reg = world.registry();
         float waveAmplitude = 30.f;
         float waveFrequency = 3.f;
-        static float time = 0.f;
-        time += dt;
 
         reg.view<Ecs::TailFollower, Ecs::Position, Ecs::Velocity>(
             [&](Ecs::Entity entity, Ecs::TailFollower &tailFollower, Ecs::Position &position, Ecs::Velocity &velocity) {
@@ -41,11 +39,11 @@ namespace Game
                 if (tailFollower.segmentIndex == 0)
                     targetY = leaderPosition.y + 300.f
                         + waveAmplitude
-                            * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
+                            * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
                 else
                     targetY = leaderPosition.y
                         + waveAmplitude
-                            * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
+                            * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
 
                 float baseOffsetX = 0.f;
                 if (tailFollower.segmentIndex == 0)

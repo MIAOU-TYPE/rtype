@@ -194,7 +194,6 @@ namespace Engine
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
 
-        // Room name input
         if (_create.roomNameField) {
             const float fieldW = std::min(520.f, w * 0.70f);
             const float fieldX = cx - fieldW * 0.5f;
@@ -202,7 +201,6 @@ namespace Engine
             _create.roomNameField->setWidth(fieldW);
         }
 
-        // Shift rows down a bit to make space for the input
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
             const float y = h * 0.36f + h * 0.10f * static_cast<float>(i);
             prev.centerButtonLabel(w * 0.25f, y, label, cx);

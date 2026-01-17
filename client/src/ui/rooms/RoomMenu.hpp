@@ -51,6 +51,10 @@ namespace Engine
      */
     class RoomMenuError : public std::exception {
       public:
+        /**
+         * @brief Constructs a RoomMenuError with a given message.
+         * @param message The error message.
+         */
         explicit RoomMenuError(const std::string &message) : _message("\n\t" + message)
         {
         }
@@ -61,7 +65,7 @@ namespace Engine
         }
 
       private:
-        std::string _message;
+        std::string _message; ///> The error message.
     };
 
     /**

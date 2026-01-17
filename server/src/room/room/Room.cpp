@@ -83,7 +83,6 @@ namespace Engine
         _sessions.erase(sessionId);
         _gameServer->onPlayerDisconnect(sessionId);
         auto &player = _roomData.playerNames;
-        ;
         std::erase_if(player, [username](const std::string &name) {
             return name == username;
         });

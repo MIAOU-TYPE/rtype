@@ -9,7 +9,8 @@
 
 #include "Entity.hpp"
 
-namespace Ecs {
+namespace Ecs
+{
     /**
      * @brief Component representing hitbox zones for a boss entity
      * This component defines multiple hitbox zones for a boss,
@@ -19,6 +20,5 @@ namespace Ecs {
     struct BossPart {
         Ecs::Entity bossEntity; ///> The main boss entity this part belongs to
         float damageMultiplier; ///> Damage multiplier for this part
-
     };
 } // namespace Ecs

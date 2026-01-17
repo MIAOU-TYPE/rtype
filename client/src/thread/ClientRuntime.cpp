@@ -33,7 +33,8 @@ namespace Thread
         : _graphics(graphics), _udpClient(udpClient), _udpPacketFactory(udpClient->getTemplatedPacket()),
           _tcpClient(tcpClient), _tcpPacketFactory(tcpClient->getTemplatedPacket())
     {
-        _graphics->create(Graphics::Extent2u{1280, 720}, "R-Type", false);
+        const auto &config = Utils::SettingsConfig::getInstance();
+        _graphics->create(config.getResolution(), "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);

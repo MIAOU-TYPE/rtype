@@ -354,101 +354,104 @@ namespace World
                     continue;
                 }
 
-                if (!_entityMap.contains(netId))
-                    applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-
-                const Ecs::Entity e = _entityMap[netId];
-                const auto entIdx = static_cast<size_t>(e);
-                auto &posOpt = positions.at(entIdx);
-                if (!posOpt)
-                    continue;
-
-                const auto itA = A.entities.find(netId);
-                const NetState as = (itA != A.entities.end()) ? itA->second : bs;
-
-                constexpr float MaxVisualStep = 20.f;
-
-                const float targetX = lerp(as.x, bs.x, alpha);
-                const float targetY = lerp(as.y, bs.y, alpha);
-
-                const float dx = targetX - posOpt->x;
-                const float dy = targetY - posOpt->y;
-
-                posOpt->x += std::clamp(dx, -MaxVisualStep, MaxVisualStep);
-                posOpt->y += std::clamp(dy, -MaxVisualStep, MaxVisualStep);
-                posOpt->z = bs.z;
-
-                refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
+                continue;
             }
 
-            while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime) {
-                _snapshots.pop_front();
-            }
+            if (!_entityMap.contains(netId))
+                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
+
+            const Ecs::Entity e = _entityMap[netId];
+            const auto entIdx = static_cast<size_t>(e);
+            auto &posOpt = positions.at(entIdx);
+            if (!posOpt)
+                continue;
+
+            const auto itA = A.entities.find(netId);
+            const NetState as = (itA != A.entities.end()) ? itA->second : bs;
+
+            constexpr float MaxVisualStep = 20.f;
+
+            const float targetX = lerp(as.x, bs.x, alpha);
+            const float targetY = lerp(as.y, bs.y, alpha);
+
+            const float dx = targetX - posOpt->x;
+            const float dy = targetY - posOpt->y;
+
+            posOpt->x += std::clamp(dx, -MaxVisualStep, MaxVisualStep);
+            posOpt->y += std::clamp(dy, -MaxVisualStep, MaxVisualStep);
+            posOpt->z = bs.z;
+
+            refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
         }
 
-        void ClientWorld::purgeStaleEntities(const std::chrono::milliseconds maxAge)
-        {
-            const auto now = std::chrono::steady_clock::now();
+        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime) {
+            _snapshots.pop_front();
+        }
+    }
 
-            std::vector<size_t> toDestroy;
-            toDestroy.reserve(_entityLastSeen.size());
+    void ClientWorld::purgeStaleEntities(const std::chrono::milliseconds maxAge)
+    {
+        const auto now = std::chrono::steady_clock::now();
 
-            for (const auto &[id, lastSeen] : _entityLastSeen) {
-                if ((now - lastSeen) > maxAge)
-                    toDestroy.push_back(id);
-            }
+        std::vector<size_t> toDestroy;
+        toDestroy.reserve(_entityLastSeen.size());
 
-            for (const auto id : toDestroy)
-                applyDestroy(DestroyInfo{id, false});
+        for (const auto &[id, lastSeen] : _entityLastSeen) {
+            if ((now - lastSeen) > maxAge)
+                toDestroy.push_back(id);
         }
 
-        void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
-        {
-            float dx = 0.f;
-            float dy = 0.f;
+        for (const auto id : toDestroy)
+            applyDestroy(DestroyInfo{id, false});
+    }
 
-            if (input & 0x01)
-                dx -= 1.f;
-            if (input & 0x02)
-                dx += 1.f;
-            if (input & 0x04)
-                dy += 1.f;
-            if (input & 0x08)
-                dy -= 1.f;
+    void ClientWorld::applyLocalMovementFromNetId(const uint8_t input) noexcept
+    {
+        float dx = 0.f;
+        float dy = 0.f;
 
-            const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
-            if (it == _entityMap.end())
-                return;
+        if (input & 0x01)
+            dx -= 1.f;
+        if (input & 0x02)
+            dx += 1.f;
+        if (input & 0x04)
+            dy += 1.f;
+        if (input & 0x08)
+            dy -= 1.f;
 
-            const auto ent = it->second;
-            auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
-            if (!pos)
-                return;
-            pos->x += dx * 5.f;
-            pos->y += dy * 5.f;
-        }
+        const auto it = _entityMap.find(static_cast<size_t>(_entityPlayerId));
+        if (it == _entityMap.end())
+            return;
 
-        void ClientWorld::reset()
-        {
-            _registry = Ecs::Registry{};
-            _entityMap.clear();
-            _entityLastSeen.clear();
-            _scoresByPlayerId.clear();
-            _snapshots.clear();
-            _destroyed.clear();
-            _score = 0;
-            _entityPlayerId = -1;
-            _activePowerUpType = 0;
-            _bubbleSoundPlaying = false;
-            _laserSoundPlaying = false;
-        }
+        const auto ent = it->second;
+        auto &pos = _registry.getComponents<Ecs::Position>().at(static_cast<size_t>(ent));
+        if (!pos)
+            return;
+        pos->x += dx * 5.f;
+        pos->y += dy * 5.f;
+    }
 
-        std::vector<std::pair<uint32_t, uint32_t>> ClientWorld::getRoomScores() const
-        {
-            std::vector<std::pair<uint32_t, uint32_t>> out;
-            out.reserve(_scoresByPlayerId.size());
-            for (const auto &kv : _scoresByPlayerId)
-                out.push_back(kv);
-            return out;
-        }
-    } // namespace World
+    void ClientWorld::reset()
+    {
+        _registry = Ecs::Registry{};
+        _entityMap.clear();
+        _entityLastSeen.clear();
+        _scoresByPlayerId.clear();
+        _snapshots.clear();
+        _destroyed.clear();
+        _score = 0;
+        _entityPlayerId = -1;
+        _activePowerUpType = 0;
+        _bubbleSoundPlaying = false;
+        _laserSoundPlaying = false;
+    }
+
+    std::vector<std::pair<uint32_t, uint32_t>> ClientWorld::getRoomScores() const
+    {
+        std::vector<std::pair<uint32_t, uint32_t>> out;
+        out.reserve(_scoresByPlayerId.size());
+        for (const auto &kv : _scoresByPlayerId)
+            out.push_back(kv);
+        return out;
+    }
+} // namespace World

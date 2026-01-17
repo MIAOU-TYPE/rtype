@@ -18,7 +18,7 @@ namespace Engine
         Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);
 
         _gameServer =
-            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers);
+            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers, _gameConfig);
     }
 
     void Room::init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,

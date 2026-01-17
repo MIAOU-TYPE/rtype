@@ -8,6 +8,7 @@
 #pragma once
 #include <atomic>
 #include <iostream>
+#include <memory>
 #include "CommandBuffer.hpp"
 #include "Event.hpp"
 #include "EventBus.hpp"

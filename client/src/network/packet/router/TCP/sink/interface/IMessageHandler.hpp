@@ -124,7 +124,8 @@ namespace Network
             uint32_t)>; ///> Callback type for authentication success messages
         using ScoreboardCb = std::function<void(
             uint32_t, const std::vector<ScoreEntry> &)>; ///> Callback type for scoreboard list messages
-        using RoomUpdatedCb = std::function<void(uint32_t, const RoomData &)>; ///> Callback type for room updated messages
+        using RoomUpdatedCb =
+            std::function<void(uint32_t, const RoomData &)>; ///> Callback type for room updated messages
 
         /**
          * @brief Subscribe to welcome message events.

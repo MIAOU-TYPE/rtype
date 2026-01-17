@@ -198,6 +198,13 @@ namespace Engine
         [[nodiscard]] bool wantsScoreboardRefresh() const noexcept;
 
         /**
+         * @brief Check if the user wants to access the level editor.
+         *
+         * @return true if the user wants to access the level editor, false otherwise.
+         */
+        [[nodiscard]] bool wantsLevelEditor() const noexcept;
+
+        /**
          * @brief Handle resizing of the menu.
          */
         void layout() override;
@@ -268,9 +275,10 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _login;    ///> Button to access the login form.
         std::unique_ptr<UI::UIButton> _register; ///> Button to access the registration form.
 
-        std::unique_ptr<UI::UIButton> _play;     ///> Button to start the game.
-        std::unique_ptr<UI::UIButton> _settings; ///> Button to access settings.
-        std::unique_ptr<UI::UIButton> _quit;     ///> Button to quit the game.
+        std::unique_ptr<UI::UIButton> _play;        ///> Button to start the game.
+        std::unique_ptr<UI::UIButton> _settings;    ///> Button to access settings.
+        std::unique_ptr<UI::UIButton> _levelEditor; ///> Button to access level editor.
+        std::unique_ptr<UI::UIButton> _quit;        ///> Button to quit the game.
 
         std::unique_ptr<UI::UIButton> _submitBtn;    ///> Button to submit the authentication form.
         std::unique_ptr<UI::UIButton> _backBtn;      ///> Button to go back to the root page.
@@ -290,6 +298,7 @@ namespace Engine
         bool _settingsRequested = false;          ///> Flag indicating if the user requested to access settings.
         bool _scoreboardRefreshRequested = false; ///> Flag indicating if the user requested to refresh the scoreboard.
         bool _scoreboardLoading = false;          ///> Flag indicating if the scoreboard is loading.
+        bool _levelEditorRequested = false;       ///> Flag indicating if the user requested to access level editor.
         bool _submitted = false;                  ///> Flag indicating if there is a submitted authentication form.
 
         std::vector<ScoreEntry> _scores;          ///> Vector of scoreboard entries.

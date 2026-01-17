@@ -8,6 +8,9 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <stdexcept>
@@ -95,6 +98,11 @@ namespace Engine
          * @return A constant reference to the current RoomData object.
          */
         [[nodiscard]] const RoomData &currentRoomData() const noexcept;
+
+        /**
+         * @brief Loads custom levels from the filesystem.
+         */
+        void loadCustomWorldFromFilesystem();
 
       private:
         /**

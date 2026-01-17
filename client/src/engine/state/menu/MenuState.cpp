@@ -92,6 +92,11 @@ namespace Engine
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
             return;
         }
+        if (_menu->wantsLevelEditor()) {
+            manager.queueState(std::make_unique<LevelEditorState>(
+                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
+            return;
+        }
         if (_menu->isAuthed() && _menu->wantsToStart()) {
             manager.queueState(std::make_unique<RoomState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));

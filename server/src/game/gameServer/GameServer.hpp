@@ -35,8 +35,8 @@
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
-#include "UDPPacketFactory.hpp"
 #include "TailFollowerSystem.hpp"
+#include "UDPPacketFactory.hpp"
 
 namespace Game
 {

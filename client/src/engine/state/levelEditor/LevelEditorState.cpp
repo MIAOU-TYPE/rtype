@@ -101,7 +101,8 @@ namespace Engine
     void LevelEditorState::updateBackgroundDisplay()
     {
         const auto &bg = _backgrounds[static_cast<size_t>(_currentBackgroundIndex)];
-        std::string texName = "sprites/background_" + std::string(1, static_cast<char>(std::tolower(bg.name[0]))) + bg.name.substr(1) + ".png";
+        std::string texName = "sprites/background_" + std::string(1, static_cast<char>(std::tolower(bg.name[0])))
+            + bg.name.substr(1) + ".png";
         _backgroundTexture = _renderer->textures()->load(texName);
         if (_backgroundTexture != Graphics::InvalidTexture) {
             const auto size = _renderer->textures()->getSize(_backgroundTexture);
@@ -400,7 +401,8 @@ namespace Engine
         }
 
         if (_bgPrevButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
-            _currentBackgroundIndex = (_currentBackgroundIndex - 1 + static_cast<int>(_backgrounds.size())) % static_cast<int>(_backgrounds.size());
+            _currentBackgroundIndex = (_currentBackgroundIndex - 1 + static_cast<int>(_backgrounds.size()))
+                % static_cast<int>(_backgrounds.size());
             updateBackgroundDisplay();
             _bgPrevButton->reset();
             return;
@@ -593,10 +595,14 @@ namespace Engine
             file << "{\n";
             file << "  \"name\": \"" << _levelName << "\",\n";
             file << "  \"background\": {\n";
-            file << "    \"spriteId\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].spriteId << ",\n";
-            file << "    \"scrollSpeed\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].scrollSpeed << ",\n";
-            file << "    \"tileWidth\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileWidth << ",\n";
-            file << "    \"tileHeight\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileHeight << "\n";
+            file << "    \"spriteId\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].spriteId
+                 << ",\n";
+            file << "    \"scrollSpeed\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].scrollSpeed
+                 << ",\n";
+            file << "    \"tileWidth\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileWidth
+                 << ",\n";
+            file << "    \"tileHeight\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileHeight
+                 << "\n";
             file << "  },\n";
 
             file << "  \"enemies\": {\n";

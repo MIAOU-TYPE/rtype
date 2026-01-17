@@ -7,6 +7,7 @@
 
 #pragma once
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <deque>
 #include <iostream>
@@ -32,8 +33,6 @@ namespace World
       public:
         static constexpr uint32_t ServerTickRate = 20; ///> Server tick rate in ticks per second
         static constexpr uint32_t InterpDelayMs = 100; ///> Interpolation delay in milliseconds
-        static constexpr uint32_t InterpDelayTicks =
-            (ServerTickRate * InterpDelayMs) / 1000; ///> Interpolation delay in ticks
 
         /**
          * @brief Constructs a ClientWorld with the given SpriteRegistry and SoundRegistry.
@@ -118,7 +117,7 @@ namespace World
          * @param renders sparse array of Render components.
          */
         void refreshSpriteIfChanged(Ecs::Entity e, uint32_t spriteId, Ecs::SparseArray<Ecs::Drawable> &drawables,
-            Ecs::SparseArray<Ecs::AnimationState> &anims, Ecs::SparseArray<Ecs::Render> &renders);
+            Ecs::SparseArray<Ecs::AnimationState> &anims, Ecs::SparseArray<Ecs::Render> &renders) const;
 
         /**
          * @brief Purges stale entities that have not been updated within the specified maximum age.
@@ -168,9 +167,14 @@ namespace World
             uint32_t spriteId; ///> Sprite identifier
         };
 
+        /**
+         * @struct TickSnapshot
+         * @brief Represents a snapshot of the world state at a specific server tick.
+         */
         struct TickSnapshot {
-            uint32_t tick;                                 ///> Server tick number
-            std::unordered_map<size_t, NetState> entities; ///> Map of entity IDs to their network states
+            uint32_t tick;                                     ///> Server tick number
+            std::chrono::steady_clock::time_point arrivalTime; ///> Time when the snapshot was received
+            std::unordered_map<size_t, NetState> entities;     ///> Map of entity IDs to their network states
         };
 
         std::deque<TickSnapshot> _snapshots; ///> Deque of snapshots for interpolation

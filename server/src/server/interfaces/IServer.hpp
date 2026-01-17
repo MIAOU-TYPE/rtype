@@ -101,7 +101,7 @@ namespace Net::Server
         /**
          * @brief reads packets from the server.
          */
-        virtual void readPackets() noexcept = 0;
+        [[nodiscard]] virtual bool readPackets() noexcept = 0;
 
         /**
          * @brief Sends a packet through the server.

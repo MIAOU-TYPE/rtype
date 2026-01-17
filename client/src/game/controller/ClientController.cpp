@@ -7,11 +7,6 @@
 
 #include "ClientController.hpp"
 
-#include <utility>
-
-#include "Event.hpp"
-#include "EventBus.hpp"
-
 namespace Ecs
 {
     ClientController::ClientController(

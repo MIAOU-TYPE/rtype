@@ -6,10 +6,14 @@
 */
 
 #pragma once
+#include <iostream>
 #include "CommandBuffer.hpp"
+#include "Event.hpp"
 #include "EventBus.hpp"
 #include "IClientMessageSink.hpp"
 #include "WorldCommand.hpp"
+
+#include <utility>
 
 namespace Ecs
 {

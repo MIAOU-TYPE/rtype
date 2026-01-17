@@ -274,16 +274,16 @@ namespace Game
             reg.emplaceComponent<Ecs::Velocity>(weakBox, Ecs::Velocity{def.speed, 0.f});
 
             Ecs::Entity previousEntity = mob;
-            const int numTailSegments = 8;
-            float tailStartX = x + 90.f;
-            float tailStartY = y + 300.f;
+            const int numTailSegments = 5;
+            float tailStartX = x - 50.f;
+            float tailStartY = y + def.colH;
             for (int i = 0; i < numTailSegments; ++i) {
                 const Ecs::Entity tailSegment = world.createEntity();
-                float offsetX = -50.f * (static_cast<float>(i) + 1);
-                float offsetY = 50.f * (static_cast<float>(i) + 1);
+                float offsetX = -20.f * (static_cast<float>(i) + 1);
+                float offsetY = 30.f * (static_cast<float>(i));
                 reg.emplaceComponent<Ecs::Position>(
                     tailSegment, Ecs::Position{tailStartX + offsetX, tailStartY + offsetY, 2});
-                reg.emplaceComponent<Ecs::Velocity>(tailSegment, Ecs::Velocity{def.speed, 0.f});
+                reg.emplaceComponent<Ecs::Velocity>(tailSegment, Ecs::Velocity{0.f, 0.f});
                 Ecs::Drawable draw;
                 draw.spriteId = 30;
                 draw.drawable = true;
@@ -293,6 +293,7 @@ namespace Game
                 follower.leaderEntity = previousEntity;
                 follower.followSpeed = 80.f;
                 follower.followDistance = 40.f;
+                follower.segmentIndex = i;
                 reg.emplaceComponent<Ecs::TailFollower>(tailSegment, follower);
                 previousEntity = tailSegment;                
             }

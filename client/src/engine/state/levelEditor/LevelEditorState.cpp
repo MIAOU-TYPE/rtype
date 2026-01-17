@@ -35,6 +35,8 @@ namespace Engine
             _bgLabel = _renderer->texts()->createText(20, {255, 255, 255, 255});
             _bgLabel->setString("Background: Space");
 
+            updateBackgroundDisplay();
+
             _timeLabel = _renderer->texts()->createText(18, {255, 255, 255, 255});
             _timeLabel->setString("Time: 0s (left) - 120s (right)");
 
@@ -52,20 +54,6 @@ namespace Engine
             for (size_t i = 0; i < _entityTypes.size(); ++i) {
                 auto btn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "");
                 _toolbar.push_back(std::move(btn));
-            }
-
-            if (_currentBackgroundIndex == 0) {
-                const auto textures = _renderer->textures();
-                _backgroundTexture = textures->load("sprites/bg-preview.png");
-                if (_backgroundTexture != Graphics::InvalidTexture) {
-                    const auto size = textures->getSize(_backgroundTexture);
-                    _backgroundCmd.textureId = _backgroundTexture;
-                    _backgroundCmd.frame = {0, 0, static_cast<int>(size.width), static_cast<int>(size.height)};
-                    _backgroundCmd.position = {0, 0};
-                    const auto vp = _renderer->getViewportSize();
-                    _backgroundCmd.scale = {static_cast<float>(vp.width) / static_cast<float>(size.width),
-                        static_cast<float>(vp.height) / static_cast<float>(size.height)};
-                }
             }
 
             const auto textures = _renderer->textures();
@@ -105,6 +93,26 @@ namespace Engine
 
     void LevelEditorState::initializeBackgrounds()
     {
+        _backgrounds.push_back({"Space", 100, -50.0f, 1140.0f, 207.0f});
+        _backgrounds.push_back({"Jungle", 101, -50.0f, 2584.0f, 720.0f});
+        _backgrounds.push_back({"Ruin", 102, -50.0f, 1148.0f, 223.0f});
+    }
+
+    void LevelEditorState::updateBackgroundDisplay()
+    {
+        const auto &bg = _backgrounds[static_cast<size_t>(_currentBackgroundIndex)];
+        std::string texName = "sprites/background_" + std::string(1, static_cast<char>(std::tolower(bg.name[0]))) + bg.name.substr(1) + ".png";
+        _backgroundTexture = _renderer->textures()->load(texName);
+        if (_backgroundTexture != Graphics::InvalidTexture) {
+            const auto size = _renderer->textures()->getSize(_backgroundTexture);
+            _backgroundCmd.textureId = _backgroundTexture;
+            _backgroundCmd.frame = {0, 0, static_cast<int>(size.width), static_cast<int>(size.height)};
+            _backgroundCmd.position = {0, 0};
+            const auto vp = _renderer->getViewportSize();
+            const float scale = static_cast<float>(vp.height) / static_cast<float>(size.height);
+            _backgroundCmd.scale = {scale, scale};
+        }
+        _bgLabel->setString("Background: " + bg.name);
     }
 
     void LevelEditorState::layout()
@@ -403,6 +411,20 @@ namespace Engine
             return;
         }
 
+        if (_bgPrevButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            _currentBackgroundIndex = (_currentBackgroundIndex - 1 + static_cast<int>(_backgrounds.size())) % static_cast<int>(_backgrounds.size());
+            updateBackgroundDisplay();
+            _bgPrevButton->reset();
+            return;
+        }
+
+        if (_bgNextButton->onMouseReleased(frame.mouseX, frame.mouseY)) {
+            _currentBackgroundIndex = (_currentBackgroundIndex + 1) % static_cast<int>(_backgrounds.size());
+            updateBackgroundDisplay();
+            _bgNextButton->reset();
+            return;
+        }
+
         const auto vp = _renderer->getViewportSize();
         if (frame.mouseY > TOOLBAR_HEIGHT && frame.mouseY < static_cast<float>(vp.height) - 120.0f) {
             if (_selectedEntityType >= 0 && _selectedEntityType < static_cast<int>(_entityTypes.size())) {
@@ -590,10 +612,10 @@ namespace Engine
             file << "{\n";
             file << "  \"name\": \"" << _levelName << "\",\n";
             file << "  \"background\": {\n";
-            file << "    \"spriteId\": 100,\n";
-            file << "    \"scrollSpeed\": -50.0,\n";
-            file << "    \"tileWidth\": 1140.0,\n";
-            file << "    \"tileHeight\": 207.0\n";
+            file << "    \"spriteId\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].spriteId << ",\n";
+            file << "    \"scrollSpeed\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].scrollSpeed << ",\n";
+            file << "    \"tileWidth\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileWidth << ",\n";
+            file << "    \"tileHeight\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileHeight << "\n";
             file << "  },\n";
 
             file << "  \"enemies\": {\n";

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** Score
+** ScoreData
 */
 
 #pragma once
@@ -12,13 +12,14 @@
 
 /**
  * @brief Structure representing score data sent from server to clients.
- * @details This structure contains the header information and the new score of the player.
+ * @details Contains the net player id and the player score.
  */
 struct ScoreData {
-    HeaderData header; ///> The header of the score packet.
-    uint16_t score;    ///> The new score of the player.
+    HeaderData header;
+    uint32_t playerId; ///> net player id (same as ACCEPT)
+    uint32_t score;    ///> score value
 };
 
 #pragma pack(pop)
 
-static_assert(sizeof(ScoreData) == sizeof(HeaderData) + 2, "ScoreData layout mismatch");
+static_assert(sizeof(ScoreData) == sizeof(HeaderData) + 8, "ScoreData layout mismatch");

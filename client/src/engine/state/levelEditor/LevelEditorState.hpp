@@ -235,6 +235,44 @@ namespace Engine
          */
         void screenToWorld(const float screenX, const float screenY, float &worldX, float &worldY) const noexcept;
 
+        /**
+         * @brief Generate the filename for the level save.
+         * @return The generated filename.
+         */
+        [[nodiscard]] std::string generateLevelFilename() const;
+
+        /**
+         * @brief Create the base JSON structure for the level.
+         * @return The JSON object with name, background, and duration.
+         */
+        [[nodiscard]] json createLevelJson() const;
+
+        /**
+         * @brief Populate the enemies section of the JSON.
+         * @param enemies The JSON object to populate.
+         */
+        void populateEnemiesJson(json &enemies) const;
+
+        /**
+         * @brief Populate the obstacles section of the JSON.
+         * @param obstacles The JSON object to populate.
+         */
+        void populateObstaclesJson(json &obstacles) const;
+
+        /**
+         * @brief Create the waves array for the level.
+         * @return The JSON array of waves.
+         */
+        [[nodiscard]] json createWavesJson() const;
+
+        /**
+         * @brief Write the JSON to a file.
+         * @param j The JSON object to write.
+         * @param filename The filename to write to.
+         * @return True if successful, false otherwise.
+         */
+        [[nodiscard]] bool writeJsonToFile(const json &j, const std::string &filename) const;
+
         std::shared_ptr<Graphics::IGraphics> _graphics; ///> Graphics interface
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer interface
         std::shared_ptr<MusicRegistry> _musicRegistry;  ///> Music registry

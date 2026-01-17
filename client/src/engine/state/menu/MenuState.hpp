@@ -12,6 +12,7 @@
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
+#include "LevelEditorState.hpp"
 #include "Menu.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomState.hpp"

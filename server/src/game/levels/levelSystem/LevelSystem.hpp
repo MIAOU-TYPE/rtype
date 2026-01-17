@@ -9,7 +9,6 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Background.hpp"

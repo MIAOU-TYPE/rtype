@@ -8,6 +8,9 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <stdexcept>
@@ -83,6 +86,23 @@ namespace Engine
          */
         [[nodiscard]] std::vector<RoomData> &rooms() noexcept;
 
+        /**
+         * @brief Sets the current room data.
+         * @param roomData The RoomData object to set as current.
+         */
+        void setCurrentData(const RoomData &roomData) noexcept;
+
+        /**
+         * @brief Retrieves the current room data.
+         * @return A constant reference to the current RoomData object.
+         */
+        [[nodiscard]] const RoomData &currentRoomData() const noexcept;
+
+        /**
+         * @brief Loads custom levels from the filesystem.
+         */
+        void loadCustomWorldFromFilesystem();
+
       private:
         /**
          * @brief Loads worlds and levels from embedded resources.
@@ -125,5 +145,7 @@ namespace Engine
             _levelsByWorldId; ///> Map of world IDs to their corresponding levels.
 
         std::vector<RoomData> _rooms; ///> List of available rooms.
+
+        RoomData _currentRoom{}; ///> Data of the current room being managed.
     };
 } // namespace Engine

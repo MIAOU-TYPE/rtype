@@ -12,13 +12,16 @@ namespace Engine
     Room::Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
         const std::shared_ptr<Net::Server::IServer> &udpServer,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
-        const GameConfig &gameConfig, std::string name, const size_t maxPlayers)
-        : _maxPlayers(maxPlayers), _name(std::move(name)), _gameConfig(gameConfig)
+        const GameConfig &gameConfig, const std::string &name, const size_t maxPlayers)
     {
         Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);
 
         _gameServer =
             std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers);
+        _roomData.maxPlayers = maxPlayers;
+        _roomData.currentPlayers = 0;
+        _roomData.roomName = name;
+        _roomData.gameConfig = gameConfig;
     }
 
     void Room::init(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
@@ -37,6 +40,39 @@ namespace Engine
                     for (const auto &player : room->_sessions) {
                         if (const auto addr = sessionManager->getUdpAddress(player)) {
                             auto clone = out->clone();
+                            clone->setAddress(*addr);
+                            (void) udpServer->sendPacket(*clone);
+                        }
+                    }
+                }
+            });
+        _gameServer->events().subscribe<GameOverEvent>(
+            [udpPacketFactory, sessionManager, udpServer, self](const GameOverEvent &) {
+                const auto room = self.lock();
+                if (!room)
+                    return;
+                std::vector<int> sessions;
+                {
+                    std::scoped_lock lk(room->_sessionsMutex);
+                    sessions.assign(room->_sessions.begin(), room->_sessions.end());
+                }
+                std::vector<std::pair<uint32_t, uint32_t>> finals;
+                finals.reserve(sessions.size());
+                for (const int sid : sessions) {
+                    const uint32_t score = sessionManager->getLastScore(sid).value_or(0);
+                    const auto netIdOpt = room->_gameServer->getPlayerNetId(sid);
+                    if (!netIdOpt.has_value())
+                        continue;
+                    finals.emplace_back(*netIdOpt, score);
+                }
+                const auto endPkt = udpPacketFactory->createGameEndPacket(finals);
+                if (!endPkt)
+                    return;
+
+                for (int repeat = 0; repeat < 3; ++repeat) {
+                    for (const int sid : sessions) {
+                        if (const auto addr = sessionManager->getUdpAddress(sid)) {
+                            auto clone = endPkt->clone();
                             clone->setAddress(*addr);
                             (void) udpServer->sendPacket(*clone);
                         }
@@ -66,18 +102,23 @@ namespace Engine
             _thread.join();
     }
 
-    void Room::join(const int sessionId)
+    void Room::join(const int sessionId, std::string_view username)
     {
         if (_sessions.contains(sessionId))
             throw RoomError("{Room::join} session " + std::to_string(sessionId) + " already in room");
         _sessions.insert(sessionId);
         _gameServer->onPlayerConnect(sessionId);
+        _roomData.playerNames.emplace_back(username);
     }
 
-    void Room::leave(const int sessionId)
+    void Room::leave(const int sessionId, std::string_view username)
     {
         _sessions.erase(sessionId);
         _gameServer->onPlayerDisconnect(sessionId);
+        auto &player = _roomData.playerNames;
+        std::erase_if(player, [username](const std::string &name) {
+            return name == username;
+        });
     }
 
     bool Room::empty() const
@@ -102,17 +143,23 @@ namespace Engine
 
     size_t Room::getMaxPlayers() const noexcept
     {
-        return _maxPlayers;
+        return _roomData.maxPlayers;
     }
 
     std::string Room::getName() const noexcept
     {
-        return _name;
+        return _roomData.roomName;
     }
 
     std::mutex &Room::getSessionMutex()
     {
         return _sessionsMutex;
+    }
+
+    RoomData Room::getRoomData() noexcept
+    {
+        _roomData.currentPlayers = _sessions.size();
+        return _roomData;
     }
 
     void Room::run() const

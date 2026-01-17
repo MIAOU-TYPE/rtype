@@ -283,4 +283,9 @@ namespace Game
     {
         return _time >= waveTime;
     }
+
+    bool LevelManager::isFinished() const noexcept
+    {
+        return _level.duration > 0.f && _time >= _level.duration;
+    }
 } // namespace Game

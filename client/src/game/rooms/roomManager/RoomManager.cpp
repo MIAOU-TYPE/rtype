@@ -25,18 +25,28 @@ namespace Engine
         return _worlds;
     }
 
-    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId) const
+    const std::vector<LevelInfo> &RoomManager::levelsFor(const std::string_view worldId) const
     {
         const auto it = _levelsByWorldId.find(std::string(worldId));
         if (it == _levelsByWorldId.end())
             throw RoomManagerError("{RoomManager::levelsFor} unknown worldId");
-        const WorldLevels &wl = it->second;
-        return wl.levels;
+        const auto &[levels] = it->second;
+        return levels;
     }
 
     std::vector<RoomData> &RoomManager::rooms() noexcept
     {
         return _rooms;
+    }
+
+    void RoomManager::setCurrentData(const RoomData &roomData) noexcept
+    {
+        _currentRoom = roomData;
+    }
+
+    const RoomData &RoomManager::currentRoomData() const noexcept
+    {
+        return _currentRoom;
     }
 
     std::string RoomManager::makePath(const std::string_view worldId, const std::string_view fileName)
@@ -142,6 +152,9 @@ namespace Engine
         _levelsByWorldId.clear();
 
         for (const auto &worldId : listEmbeddedWorldIds()) {
+            if (worldId == "custom")
+                continue;
+
             const auto content = readTextAsset(makePath(worldId, "levels.json"));
             if (!content)
                 continue;
@@ -155,6 +168,74 @@ namespace Engine
 
             _worlds.push_back(WorldEntry{worldId, displayName});
             _levelsByWorldId.emplace(worldId, std::move(wl));
+        }
+
+        loadCustomWorldFromFilesystem();
+    }
+
+    void RoomManager::loadCustomWorldFromFilesystem()
+    {
+        _worlds.erase(std::remove_if(_worlds.begin(), _worlds.end(),
+                          [](const WorldEntry &w) {
+                              return w.id == "custom";
+                          }),
+            _worlds.end());
+        _levelsByWorldId.erase("custom");
+
+        std::vector<LevelInfo> customLevels;
+
+        try {
+            const std::filesystem::path levelsDir("levels");
+            if (!std::filesystem::exists(levelsDir) || !std::filesystem::is_directory(levelsDir)) {
+                return;
+            }
+
+            for (const auto &entry : std::filesystem::directory_iterator(levelsDir)) {
+                if (!entry.is_regular_file() || entry.path().extension() != ".json") {
+                    continue;
+                }
+
+                const std::string filename = entry.path().filename().string();
+                const std::string filepath = entry.path().string();
+
+                std::ifstream file(filepath);
+                if (!file.is_open()) {
+                    continue;
+                }
+
+                std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+                file.close();
+
+                if (content.empty()) {
+                    continue;
+                }
+
+                try {
+                    json j = json::parse(content);
+                    std::string levelName = j.value("name", filename.substr(0, filename.size() - 5));
+
+                    LevelInfo lvl;
+                    lvl.id = filename.substr(0, filename.size() - 5);
+                    lvl.displayName = levelName;
+                    lvl.path = "levels/" + filename;
+
+                    customLevels.push_back(std::move(lvl));
+                } catch (const std::exception &e) {
+                    std::cerr << "{RoomManager::loadCustomWorldFromFilesystem} Failed to parse " << filepath << ": "
+                              << e.what() << std::endl;
+                }
+            }
+
+            if (!customLevels.empty()) {
+                WorldLevels wl;
+                wl.levels = std::move(customLevels);
+
+                _worlds.push_back(WorldEntry{"custom", "Custom Levels"});
+                _levelsByWorldId.emplace("custom", std::move(wl));
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "{RoomManager::loadCustomWorldFromFilesystem} Error scanning levels directory: " << e.what()
+                      << std::endl;
         }
     }
 } // namespace Engine

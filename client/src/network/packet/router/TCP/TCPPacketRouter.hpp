@@ -117,6 +117,13 @@ namespace Network
          */
         void onScoreboardList(uint32_t req, Net::TCP::Reader &r) const;
 
+        /**
+         * @brief Handler for Room Updated messages.
+         * @param req The request ID.
+         * @param r Reader for parsing the message payload.
+         */
+        void onRoomUpdated(uint32_t req, Net::TCP::Reader &r) const;
+
         std::shared_ptr<IMessageHandler> _sink = nullptr; ///> Shared pointer to the message handler.
     };
 } // namespace Network

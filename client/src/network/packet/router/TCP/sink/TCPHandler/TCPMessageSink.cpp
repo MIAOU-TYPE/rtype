@@ -59,6 +59,11 @@ namespace Network
         _scoreboardCbs.emplace_back(std::move(cb));
     }
 
+    void TCPMessageSink::onRoomUpdatedSubscribe(RoomUpdatedCb cb)
+    {
+        _roomUpdatedCbs.emplace_back(std::move(cb));
+    }
+
     void TCPMessageSink::onWelcome(
         const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
@@ -127,6 +132,11 @@ namespace Network
     void TCPMessageSink::onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores)
     {
         emit(_scoreboardCbs, req, scores);
+    }
+
+    void TCPMessageSink::onRoomUpdated(uint32_t req, const RoomData &room)
+    {
+        emit(_roomUpdatedCbs, req, room);
     }
 
     ConnectInfo TCPMessageSink::getConnectInfo() const noexcept

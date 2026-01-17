@@ -168,5 +168,12 @@ namespace Net::Server
          */
         [[nodiscard]]
         virtual std::optional<uint32_t> getLastScore(int sessionId) const = 0;
+
+        /**
+         * @brief Get the username associated with a session ID.
+         * @param sessionId The ID of the session.
+         * @return The username as a string.
+         */
+        virtual std::string getUsername(int sessionId) const = 0;
     };
 } // namespace Net::Server

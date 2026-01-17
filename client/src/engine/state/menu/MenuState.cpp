@@ -58,8 +58,8 @@ namespace Engine
         _menu->update(frame);
 
         if (_menu->wantsScoreboardRefresh()) {
-            _eventBus->emit<ScoreboardGetRequested>(ScoreboardGetRequested(10));
             _menu->consumeScoreboardRefresh();
+            _eventBus->emit<ScoreboardGetRequested>(ScoreboardGetRequested(10));
         }
         if (_scoreCtx) {
             if (const uint32_t ver = _scoreCtx->version.load(std::memory_order_acquire); ver != _lastScoreVersion) {
@@ -89,6 +89,11 @@ namespace Engine
         }
         if (_menu->wantsSettings()) {
             manager.queueState(std::make_unique<SettingsState>(
+                _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
+            return;
+        }
+        if (_menu->wantsLevelEditor()) {
+            manager.queueState(std::make_unique<LevelEditorState>(
                 _graphics, _renderer, _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreCtx));
             return;
         }

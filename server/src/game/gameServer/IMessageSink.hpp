@@ -7,7 +7,6 @@
 
 #pragma once
 #include <cstdint>
-#include <iostream>
 #include "InputComponent.hpp"
 
 namespace Net

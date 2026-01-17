@@ -9,12 +9,15 @@
 
 namespace Ecs
 {
-    ClientController::ClientController(Command::CommandBuffer<World::WorldCommand> &buffer) : _commandBuffer(buffer)
+    ClientController::ClientController(
+        Command::CommandBuffer<World::WorldCommand> &buffer, std::shared_ptr<Engine::EventBus> eventBus)
+        : _commandBuffer(buffer), _eventBus(std::move(eventBus))
     {
     }
 
     void ClientController::onAccept(const uint32_t sessionId)
     {
+        _gameOverQueued.store(false);
         _commandBuffer.get().push(World::WorldCommand{
             .type = World::WorldCommand::Type::Accept,
             .payload = sessionId,
@@ -26,13 +29,15 @@ namespace Ecs
         std::cout << "onReject" << std::endl;
     }
 
-    void ClientController::onPong()
+    void ClientController::onPong(const uint32_t timestamp)
     {
-        std::cout << "onPong" << std::endl;
+        _eventBus->emit<Engine::PongReceived>(Engine::PongReceived{timestamp});
     }
 
     void ClientController::onGameOver()
     {
+        if (_gameOverQueued.exchange(true))
+            return;
         _commandBuffer.get().push({World::WorldCommand::Type::GameOver, {}});
     }
 
@@ -48,9 +53,12 @@ namespace Ecs
         });
     }
 
-    void ClientController::onScore(const uint32_t score)
+    void ClientController::onScore(const uint32_t playerId, const uint32_t score)
     {
-        _commandBuffer.get().push({World::WorldCommand::Type::Score, score});
+        World::WorldCommand cmd;
+        cmd.type = World::WorldCommand::Type::Score;
+        cmd.payload = World::ScoreUpdate{playerId, score};
+        _commandBuffer.get().push(cmd);
     }
 
     void ClientController::onDamage(const size_t targetId, const bool wasKilled)
@@ -67,4 +75,4 @@ namespace Ecs
     {
         std::cout << "onHealth: " << currentLife << " / " << maxLife << std::endl;
     }
-}; // namespace Ecs
+} // namespace Ecs

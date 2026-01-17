@@ -14,6 +14,7 @@
 #include <unordered_set>
 
 #include "GameServer.hpp"
+#include "RoomData.hpp"
 
 namespace Engine
 {
@@ -67,7 +68,7 @@ namespace Engine
         explicit Room(const std::shared_ptr<Net::Server::ISessionManager> &sessionManager,
             const std::shared_ptr<Net::Server::IServer> &udpServer,
             const std::shared_ptr<Net::Factory::UDPPacketFactory> &udpPacketFactory, const std::string &levelPath,
-            const GameConfig &gameConfig, std::string name = "room", size_t maxPlayers = 4);
+            const GameConfig &gameConfig, const std::string &name = "room", size_t maxPlayers = 4);
 
         /**
          * @brief Initializes the Room with necessary components
@@ -96,21 +97,22 @@ namespace Engine
         /**
          * @brief Adds a player session to the room
          * @param sessionId The session ID of the player to be added
+         * @param username The username of the player
          */
-        void join(int sessionId);
+        void join(int sessionId, std::string_view username);
 
         /**
          * @brief Removes a player session from the room
          * @param sessionId The session ID of the player to be removed
+         * @param username The username of the player
          */
-        void leave(int sessionId);
+        void leave(int sessionId, std::string_view username);
 
         /**
          * @brief Checks if the room is empty (no player sessions)
          * @return true if the room has no player sessions, false otherwise
          */
-        bool empty() const;
-
+        [[nodiscard]] bool empty() const;
         /**
          * @brief Gets the set of player session IDs in the room
          * @return A constant reference to the set of session IDs
@@ -147,6 +149,12 @@ namespace Engine
          */
         [[nodiscard]] std::mutex &getSessionMutex();
 
+        /**
+         * @brief Gets the room data
+         * @return A copy of the RoomData structure
+         */
+        [[nodiscard]] RoomData getRoomData() noexcept;
+
       private:
         /**
          * @brief Main loop for the room's game server
@@ -162,8 +170,6 @@ namespace Engine
 
         std::atomic<bool> _running{false}; ///> Atomic flag indicating if the room is running
         std::thread _thread;               ///> Thread for the room's game server loop
-        size_t _maxPlayers = 0;            ///> Maximum number of players allowed in the room
-        std::string _name = "";            ///> Name of the room
-        GameConfig _gameConfig;            ///> Game configuration for the room
+        RoomData _roomData; ///> Data structure containing room information
     };
 } // namespace Engine

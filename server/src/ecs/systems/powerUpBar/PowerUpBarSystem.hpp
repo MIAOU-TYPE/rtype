@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include "Drawable.hpp"
 #include "Entity.hpp"
 #include "IGameWorld.hpp"

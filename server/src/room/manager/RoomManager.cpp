@@ -83,7 +83,8 @@ namespace Engine
         if (!room || room->getCurrentPlayers() >= room->getMaxPlayers())
             return false;
         try {
-            room->join(sessionId);
+            const auto name = _sessionManager->getUsername(sessionId);
+            room->join(sessionId, name);
         } catch (...) {
             return false;
         }
@@ -113,7 +114,8 @@ namespace Engine
         }
         try {
             roomId = getRoomIdOfPlayer(sessionId);
-            room->leave(sessionId);
+            const auto name = _sessionManager->getUsername(sessionId);
+            room->leave(sessionId, name);
             if (room->empty())
                 removeRoom(roomId);
         } catch (...) {

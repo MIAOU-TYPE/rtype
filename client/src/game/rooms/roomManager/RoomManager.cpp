@@ -233,7 +233,7 @@ namespace Engine
                 WorldLevels wl;
                 wl.levels = std::move(customLevels);
 
-                _worlds.push_back(WorldEntry{"custom", "Custom Levels"});
+                _worlds.push_back(WorldEntry{"custom", "Custom Levels", ::DEFAULT_GAME_MUSIC});
                 _levelsByWorldId.emplace("custom", std::move(wl));
             }
         } catch (const std::exception &e) {

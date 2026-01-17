@@ -195,7 +195,7 @@ namespace World
         std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
 
         int _entityPlayerId = -1;                                 ///> Client session ID
-        std::unordered_map<uint32_t, uint32_t> _scoresByPlayerId; ///> playerId -> score
+        std::unordered_map<uint32_t, uint32_t> _scoresByPlayerId; ///> Map of player IDs to their scores
 
         /**
          * @brief Reconciles the local player entity's position with the server's authoritative state.

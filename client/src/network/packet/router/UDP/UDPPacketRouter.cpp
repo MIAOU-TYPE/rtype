@@ -38,34 +38,21 @@ namespace Ecs
     {
         switch (header.type) {
             case Net::Protocol::UDP::ACCEPT: handleAccept(payload, payloadSize); break;
-
             case Net::Protocol::UDP::REJECT:
                 if (payloadSize == sizeof(DefaultData))
                     handleReject();
                 break;
-
-            case Net::Protocol::UDP::GAME_OVER:
-                if (payloadSize == sizeof(DefaultData))
-                    handleGameOver();
-                break;
-
+            case Net::Protocol::UDP::GAME_END: handleGameEnd(payload, payloadSize); break;
             case Net::Protocol::UDP::PONG:
                 if (payloadSize == sizeof(DefaultData))
                     handlePong();
                 break;
-
             case Net::Protocol::UDP::SNAPSHOT_RAW: handleSnapEntityRaw(payload, payloadSize); break;
-
             case Net::Protocol::UDP::SNAPSHOT_COMPRESSED: handleSnapEntityCompressed(payload, payloadSize); break;
-
             case Net::Protocol::UDP::DAMAGE_EVENT: handleDamage(payload, payloadSize); break;
-
             case Net::Protocol::UDP::SCORE: handleScore(payload, payloadSize); break;
-
             case Net::Protocol::UDP::DESTROY_ENTITY: handleDestroy(payload, payloadSize); break;
-
             case Net::Protocol::UDP::HEALTH: handleHealth(payload, payloadSize); break;
-
             default:
                 std::cerr << "{UDPPacketRouter::dispatchPacket} Unknown packet type: " << static_cast<int>(header.type)
                           << std::endl;
@@ -254,9 +241,10 @@ namespace Ecs
 
         ScoreData scoreData{};
         std::memcpy(&scoreData, payload, sizeof(scoreData));
-        const uint32_t score = ntohs(scoreData.score);
+        const uint32_t score = ntohl(scoreData.score);
+        const uint32_t playerId = ntohl(scoreData.playerId);
 
-        _sink->onScore(score);
+        _sink->onScore(playerId, score);
     }
 
     void UDPPacketRouter::handleDamage(const uint8_t *payload, const size_t size) const
@@ -300,6 +288,36 @@ namespace Ecs
         const uint16_t currentLife = ntohs(healthData.currentLife);
         const uint16_t maxLife = ntohs(healthData.maxLife);
         _sink->onHealth(currentLife, maxLife);
+    }
+
+    void UDPPacketRouter::handleGameEnd(const uint8_t *payload, const size_t size) const
+    {
+        if (!payload)
+            return;
+        if (size < sizeof(GameEndHeader)) {
+            _sink->onGameOver();
+            return;
+        }
+        GameEndHeader h{};
+        std::memcpy(&h, payload, sizeof(h));
+        const uint16_t count = ntohs(h.count);
+        const size_t expectedMin =
+            sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
+        if (size < expectedMin) {
+            std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: truncated\n";
+            _sink->onGameOver();
+            return;
+        }
+        const uint8_t *cur = payload + sizeof(GameEndHeader);
+        for (uint16_t i = 0; i < count; ++i) {
+            GameEndEntry e{};
+            std::memcpy(&e, cur, sizeof(e));
+            cur += sizeof(e);
+            const uint32_t playerId = ntohl(e.playerId);
+            const uint32_t score = ntohl(e.score);
+            _sink->onScore(playerId, score);
+        }
+        _sink->onGameOver();
     }
 
     void UDPPacketRouter::purgeExpired(const std::chrono::steady_clock::time_point now) const

@@ -40,6 +40,7 @@
 #include "TCPPacketRouter.hpp"
 #include "UDPPacketFactory.hpp"
 #include "UDPPacketRouter.hpp"
+#include "LobbyState.hpp"
 
 #include <condition_variable>
 
@@ -247,14 +248,8 @@ namespace Thread
          */
         void runTcp();
 
-        /**
-         * @brief Submits the last score to the server if there is a pending score submission.
-         * @details This method checks if there is a pending score submission and sends
-         * the last score to the server if needed.
-         */
-        void submitScoreOnce() const noexcept;
-
         std::atomic_bool _pendingGameStart{false};   ///> Atomic flag to indicate pending game start
+        std::atomic_bool _pendingJoinRoom{false};    ///> Atomic flag to indicate pending room join
         std::atomic_bool _pendingAuthOk{false};      ///> Atomic flag to indicate pending authentication OK
         std::atomic_uint32_t _lastScore{0};          ///> Atomic variable to store the last score
         std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission

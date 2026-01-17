@@ -15,15 +15,18 @@ namespace
 
         world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
             auto &reg = w->registry();
-
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
-            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB)
+            const auto &projA = reg.getComponents<Ecs::Projectile>().at(event.a);
+            const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
+            if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA)
+            const auto &projB = reg.getComponents<Ecs::Projectile>().at(event.b);
+            const auto &bossPartA = reg.getComponents<Ecs::BossPart>().at(event.a);
+            if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
         });
     }
@@ -41,7 +44,7 @@ namespace
                 const size_t bossIdx = static_cast<size_t>(bossPart->bossEntity);
                 auto &bossHealth = reg.getComponents<Ecs::Health>().at(bossIdx);
                 if (bossHealth) {
-                    int adjustedDamage = static_cast<int>(event.amount * bossPart->damageMultiplier);
+                    int adjustedDamage = static_cast<int>(static_cast<float>(event.amount) * bossPart->damageMultiplier);
                     if (bossHealth->hp <= adjustedDamage) {
                         bossHealth->hp = 0;
                     } else {

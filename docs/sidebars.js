@@ -109,6 +109,8 @@ module.exports = {
             'technical-docs/server/network/tcp',
             'technical-docs/server/network/udp',
             'technical-docs/server/network/protocol',
+            'technical-docs/server/network/udp-rfc',
+            'technical-docs/server/network/tcp-rfc',
           ],
         },
         {

@@ -125,7 +125,7 @@ namespace
                 w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{event.health, event.maxHealth});
             w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
-            if (event.spriteId == 23) {
+            if (event.spriteId == 29) {
                 std::vector<size_t> possibleTargets;
                 auto &reg = w->registry();
                 reg.view<Game::InputComponent, Ecs::Health, Ecs::Id>(

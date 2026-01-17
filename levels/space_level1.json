@@ -137,7 +137,7 @@
       "size": { "w": 130, "h": 50 },
       "killScore": 300,
       "sprite": "boss2",
-      "spriteId": 21,
+      "spriteId": 31,
       "shoot": {
         "type": "spread",
         "bulletsNbr": 5,

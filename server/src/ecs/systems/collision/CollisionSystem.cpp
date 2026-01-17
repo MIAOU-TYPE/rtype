@@ -50,16 +50,16 @@ namespace
             return false;
 
         const size_t shooterIdx = projectile->shooter;
-        const bool shooterIsPlayer = reg.hasComponent<Ecs::Controllable>(Ecs::Entity(shooterIdx));
-        const bool targetIsPlayer = reg.hasComponent<Ecs::Controllable>(Ecs::Entity(targetIdx));
+        const bool shooterIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(shooterIdx));
+        const bool targetIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(targetIdx));
 
         return shooterIsPlayer && targetIsPlayer;
     }
 
     [[nodiscard]] bool areBothPlayers(Ecs::Registry &reg, const size_t aIdx, const size_t bIdx)
     {
-        const bool aIsPlayer = reg.hasComponent<Ecs::Controllable>(Ecs::Entity(aIdx));
-        const bool bIsPlayer = reg.hasComponent<Ecs::Controllable>(Ecs::Entity(bIdx));
+        const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(aIdx));
+        const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(bIdx));
 
         return aIsPlayer && bIsPlayer;
     }

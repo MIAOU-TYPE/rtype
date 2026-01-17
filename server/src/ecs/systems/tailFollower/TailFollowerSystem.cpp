@@ -38,12 +38,10 @@ namespace Game
                 float targetY = 0.f;
                 if (tailFollower.segmentIndex == 0)
                     targetY = leaderPosition.y + 300.f
-                        + waveAmplitude
-                            * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
+                        + waveAmplitude * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
                 else
                     targetY = leaderPosition.y
-                        + waveAmplitude
-                            * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
+                        + waveAmplitude * std::sin(waveFrequency * dt + static_cast<float>(tailFollower.segmentIndex));
 
                 float baseOffsetX = 0.f;
                 if (tailFollower.segmentIndex == 0)

@@ -71,11 +71,13 @@ namespace Net::Factory
         }
     }
 
-    std::shared_ptr<IPacket> UDPPacketFactory::createScorePacket(const sockaddr_in &addr, uint32_t score) const noexcept
+    std::shared_ptr<IPacket> UDPPacketFactory::createScorePacket(
+        const sockaddr_in &addr, const uint32_t playerId, const uint32_t score) const noexcept
     {
-        ScoreData scoreData;
+        ScoreData scoreData{};
         scoreData.header = makeHeader(Protocol::UDP::SCORE, VERSION, sizeof(ScoreData));
-        scoreData.score = htons(static_cast<uint16_t>(score));
+        scoreData.playerId = htonl(playerId);
+        scoreData.score = htonl(score);
         try {
             auto packet = makePacket<ScoreData>(addr, scoreData);
             return packet;
@@ -141,6 +143,50 @@ namespace Net::Factory
             return packet;
         } catch (const FactoryError &e) {
             std::cerr << "{UDPPacketFactory::createHealthPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<IPacket> UDPPacketFactory::createGameEndPacket(
+        const std::vector<std::pair<uint32_t, uint32_t>> &scores) const noexcept
+    {
+        try {
+            auto packet = _packet->newPacket();
+            if (!packet) {
+                std::cerr << "{UDPPacketFactory::createGameEndPacket} Failed to create new packet\n";
+                return nullptr;
+            }
+            const size_t cap = packet->capacity();
+            if (cap < sizeof(GameEndHeader)) {
+                std::cerr << "{UDPPacketFactory::createGameEndPacket} Packet capacity too small\n";
+                return nullptr;
+            }
+            const size_t maxByCap = (cap - sizeof(GameEndHeader)) / sizeof(GameEndEntry);
+            const uint16_t count = static_cast<uint16_t>(std::min(scores.size(), maxByCap));
+            const size_t totalSize = sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
+            if (totalSize > std::numeric_limits<uint16_t>::max()) {
+                std::cerr << "{UDPPacketFactory::createGameEndPacket} Payload too large\n";
+                return nullptr;
+            }
+            uint8_t *buf = packet->buffer();
+            if (!buf)
+                throw FactoryError("{UDPPacketFactory::createGameEndPacket} Null buffer");
+            GameEndHeader hdr{};
+            hdr.header = makeHeader(Net::Protocol::UDP::GAME_END, VERSION, static_cast<uint16_t>(totalSize));
+            hdr.count = htons(count);
+            std::memcpy(buf, &hdr, sizeof(hdr));
+            size_t off = sizeof(hdr);
+            for (uint16_t i = 0; i < count; ++i) {
+                GameEndEntry e{};
+                e.playerId = htonl(scores.at(i).first);
+                e.score = htonl(scores.at(i).second);
+                std::memcpy(buf + off, &e, sizeof(e));
+                off += sizeof(e);
+            }
+            packet->setSize(totalSize);
+            return packet;
+        } catch (const std::exception &e) {
+            std::cerr << "{UDPPacketFactory::createGameEndPacket} " << e.what() << "\n";
             return nullptr;
         }
     }

@@ -23,6 +23,6 @@ namespace Ecs
         Ecs::Entity leaderEntity;    ///< The entity that this tail segment follows
         float followDistance = 50.f; ///< The distance to maintain from the leader entity
         float followSpeed = 100.f;   ///< The speed at which the tail segment follows the leader
-        int segmentIndex = 0;       ///< The index of this tail segment in the sequence
+        int segmentIndex = 0;        ///< The index of this tail segment in the sequence
     };
 } // namespace Ecs

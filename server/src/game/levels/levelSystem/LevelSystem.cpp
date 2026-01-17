@@ -269,7 +269,8 @@ namespace Game
             reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
             Ecs::Entity weakBox = world.createEntity();
             reg.emplaceComponent<Ecs::Position>(weakBox, Ecs::Position{x + 75.f, y + 100.f, 2});
-            reg.emplaceComponent<Ecs::Collision>(weakBox, Ecs::Collision{30.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
+            reg.emplaceComponent<Ecs::Collision>(
+                weakBox, Ecs::Collision{30.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
             reg.emplaceComponent<Ecs::BossPart>(weakBox, Ecs::BossPart{mob, 5.0f});
             reg.emplaceComponent<Ecs::Velocity>(weakBox, Ecs::Velocity{def.speed, 0.f});
 
@@ -302,7 +303,7 @@ namespace Game
                 bossPart.bossEntity = mob;
                 bossPart.damageMultiplier = 3.0f;
                 reg.emplaceComponent<Ecs::BossPart>(tailSegment, bossPart);
-                previousEntity = tailSegment;                
+                previousEntity = tailSegment;
             }
         }
     }

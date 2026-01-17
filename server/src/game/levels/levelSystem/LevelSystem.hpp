@@ -12,6 +12,7 @@
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Background.hpp"
+#include "BossPart.hpp"
 #include "BossPhase.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
@@ -33,7 +34,6 @@
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
-#include "BossPart.hpp"
 #include <unordered_map>
 
 namespace Game

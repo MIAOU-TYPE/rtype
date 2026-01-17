@@ -44,7 +44,8 @@ namespace
                 const size_t bossIdx = static_cast<size_t>(bossPart->bossEntity);
                 auto &bossHealth = reg.getComponents<Ecs::Health>().at(bossIdx);
                 if (bossHealth) {
-                    int adjustedDamage = static_cast<int>(static_cast<float>(event.amount) * bossPart->damageMultiplier);
+                    int adjustedDamage =
+                        static_cast<int>(static_cast<float>(event.amount) * bossPart->damageMultiplier);
                     if (bossHealth->hp <= adjustedDamage) {
                         bossHealth->hp = 0;
                     } else {

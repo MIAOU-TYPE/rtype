@@ -36,13 +36,17 @@ namespace Game
                     velocity.vx = 0.f;
 
                 const auto &leaderPosition =
-                reg.getComponents<Ecs::Position>().at(static_cast<size_t>(tailFollower.leaderEntity)).value();
+                    reg.getComponents<Ecs::Position>().at(static_cast<size_t>(tailFollower.leaderEntity)).value();
                 float targetY = 0.f;
-                if (tailFollower.segmentIndex == 0) 
-                    targetY = leaderPosition.y + 300.f + waveAmplitude * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
+                if (tailFollower.segmentIndex == 0)
+                    targetY = leaderPosition.y + 300.f
+                        + waveAmplitude
+                            * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
                 else
-                    targetY = leaderPosition.y + waveAmplitude * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
-                
+                    targetY = leaderPosition.y
+                        + waveAmplitude
+                            * std::sin(waveFrequency * time + static_cast<float>(tailFollower.segmentIndex));
+
                 float baseOffsetX = 0.f;
                 if (tailFollower.segmentIndex == 0)
                     baseOffsetX = 55.f;

@@ -14,8 +14,12 @@ namespace Utils
         const std::shared_ptr<Engine::SpriteRegistry> &spriteRegistry)
     {
         Engine::SpriteLoader::loadFromFile("client/assets/json/background_space.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/background_jungle.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/background_ruin.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/boss.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/boss2.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/boss3.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/enemy2.json", *spriteRegistry);
@@ -29,6 +33,7 @@ namespace Utils
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_big.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy.json", *spriteRegistry);
         Engine::SpriteLoader::loadFromFile("client/assets/json/missile_enemy2.json", *spriteRegistry);
+        Engine::SpriteLoader::loadFromFile("client/assets/json/homingbullet.json", *spriteRegistry);
 
         Engine::SpriteLoader::loadFromFile("client/assets/json/bar.json", *spriteRegistry);
 

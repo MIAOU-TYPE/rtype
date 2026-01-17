@@ -9,6 +9,10 @@
 
 namespace EmbeddedResources
 {
+    extern const unsigned char sprites_background_jungle_png[];
+    extern const unsigned int sprites_background_jungle_png_size;
+    extern const unsigned char sprites_background_ruin_png[];
+    extern const unsigned int sprites_background_ruin_png_size;
     extern const unsigned char sprites_bg_preview_png[];
     extern const unsigned int sprites_bg_preview_png_size;
     extern const unsigned char sprites_background_space_png[];
@@ -51,8 +55,14 @@ namespace EmbeddedResources
     extern const unsigned int sprites_missile_enemy2_png_size;
     extern const unsigned char sprites_explose_png[];
     extern const unsigned int sprites_explose_png_size;
+    extern const unsigned char sprites_homingbullet_png[];
+    extern const unsigned int sprites_homingbullet_png_size;
     extern const unsigned char sprites_boss_png[];
     extern const unsigned int sprites_boss_png_size;
+    extern const unsigned char sprites_boss2_png[];
+    extern const unsigned int sprites_boss2_png_size;
+    extern const unsigned char sprites_boss3_png[];
+    extern const unsigned int sprites_boss3_png_size;
     extern const unsigned char sprites_obstacle_png[];
     extern const unsigned int sprites_obstacle_png_size;
     extern const unsigned char sprites_power_up_png[];
@@ -118,6 +128,10 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_bg_preview_png, EmbeddedResources::sprites_bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
         EmbeddedResources::sprites_background_space_png, EmbeddedResources::sprites_background_space_png_size};
+    _resources["sprites/background_jungle.png"] = {
+        EmbeddedResources::sprites_background_jungle_png, EmbeddedResources::sprites_background_jungle_png_size};
+    _resources["sprites/background_ruin.png"] = {
+        EmbeddedResources::sprites_background_ruin_png, EmbeddedResources::sprites_background_ruin_png_size};
     _resources["sprites/menu_logo.png"] = {
         EmbeddedResources::sprites_menu_logo_png, EmbeddedResources::sprites_menu_logo_png_size};
     _resources["sprites/game_over.png"] = {
@@ -151,11 +165,21 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_missile_png, EmbeddedResources::sprites_missile_png_size};
     _resources["sprites/missile_enemy.png"] = {
         EmbeddedResources::sprites_missile_enemy_png, EmbeddedResources::sprites_missile_enemy_png_size};
+    _resources["sprites/homingbullet.png"] = {
+        EmbeddedResources::sprites_homingbullet_png, EmbeddedResources::sprites_homingbullet_png_size};
+    _resources["sprites/explose.png"] = {
+        EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
+    _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
+    _resources["sprites/boss2.png"] = {EmbeddedResources::sprites_boss2_png, EmbeddedResources::sprites_boss2_png_size};
+    _resources["sprites/boss3.png"] = {EmbeddedResources::sprites_boss3_png, EmbeddedResources::sprites_boss3_png_size};
+    _resources["sprites/obstacle.png"] = {
+        EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
+    _resources["sprites/power_up.png"] = {
+        EmbeddedResources::sprites_power_up_png, EmbeddedResources::sprites_power_up_png_size};
     _resources["sprites/missile_enemy2.png"] = {
         EmbeddedResources::sprites_missile_enemy2_png, EmbeddedResources::sprites_missile_enemy2_png_size};
     _resources["sprites/explose.png"] = {
         EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
-    _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
     _resources["sprites/obstacle.png"] = {
         EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
     _resources["sprites/power_up.png"] = {

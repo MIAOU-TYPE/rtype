@@ -6,8 +6,8 @@
 */
 
 #pragma once
-#include <iostream>
 #include <atomic>
+#include <iostream>
 #include "CommandBuffer.hpp"
 #include "Event.hpp"
 #include "EventBus.hpp"
@@ -97,8 +97,8 @@ namespace Ecs
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
-            _commandBuffer;                                               ///> Reference to the world command buffer
+            _commandBuffer;                          ///> Reference to the world command buffer
         std::shared_ptr<Engine::EventBus> _eventBus; ///> Shared pointer to the event bus
-        std::atomic_bool _gameOverQueued{false}; ///> Flag to prevent multiple game over commands
+        std::atomic_bool _gameOverQueued{false};     ///> Flag to prevent multiple game over commands
     };
 }; // namespace Ecs

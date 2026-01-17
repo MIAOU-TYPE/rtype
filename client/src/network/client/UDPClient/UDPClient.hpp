@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include <cstring>
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <variant>
@@ -17,7 +18,6 @@
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket.hpp"
-#include <iostream>
 
 #ifndef WIN32
     #include <arpa/inet.h>

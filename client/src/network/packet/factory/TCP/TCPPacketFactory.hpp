@@ -9,10 +9,10 @@
 
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <string_view>
-#include <iostream>
 
 #include "GameConfig.hpp"
 #include "IPacket.hpp"

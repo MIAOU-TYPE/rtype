@@ -9,8 +9,8 @@
 
 #include "Entity.hpp"
 #include "EventsRegistry.hpp"
-#include "Registry.hpp"
 #include "GameConfig.hpp"
+#include "Registry.hpp"
 
 /**
  * @brief Interface representing an abstract game world.
@@ -67,7 +67,9 @@ namespace Game
          * @brief Copy the state from another IGameWorld instance.
          * @param other The other IGameWorld to copy from.
          */
-        virtual void copyFrom(IGameWorld &) {}
+        virtual void copyFrom(IGameWorld &)
+        {
+        }
 
         /**
          * @brief Get the game configuration.

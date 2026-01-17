@@ -69,7 +69,8 @@ namespace Network
          * @return A shared pointer to the created CreateRoom packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(uint32_t req, std::string_view roomName,
-            uint8_t maxPlayers, Engine::Difficulty difficulty, Engine::GameMode gameMode, std::string_view levelPath) const;
+            uint8_t maxPlayers, Engine::Difficulty difficulty, Engine::GameMode gameMode,
+            std::string_view levelPath) const;
 
         /**
          * @brief Create a JoinRoom packet.

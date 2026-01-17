@@ -133,7 +133,8 @@ namespace Engine
          * @param mode The game mode for the room.
          * @param level The path to the level configuration file.
          */
-        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Difficulty diff, GameMode mode, std::string level)
+        explicit CreateRoomRequested(
+            std::string name, const uint8_t maxP, Difficulty diff, GameMode mode, std::string level)
             : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), gameMode(mode), levelPath(std::move(level))
         {
         }

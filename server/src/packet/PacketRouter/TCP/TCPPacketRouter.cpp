@@ -257,7 +257,8 @@ namespace Net
             levelPath = r.str16();
         } catch (...) {
             return sendError(addr, req, 4,
-                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + gameMode(u8) + "
+                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + gameMode(u8) "
+                "+ "
                 "levelPath(str16))");
         }
 
@@ -292,7 +293,8 @@ namespace Net
             case Engine::GameMode::FriendlyFire: modeParams.teamDamage = true; break;
             case Engine::GameMode::Coop: modeParams.sharedHealth = true; break;
             case Engine::GameMode::Survival: break;
-            case Engine::GameMode::Standard: default: break;
+            case Engine::GameMode::Standard:
+            default: break;
         }
 
         uint32_t roomId = 0;

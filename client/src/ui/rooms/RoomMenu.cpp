@@ -491,12 +491,8 @@ namespace Engine
                 _selectedDifficulty = shiftDifficulty(_selectedDifficulty, +1);
                 refreshCatalog = true;
                 break;
-            case Action::MPrev:
-                _selectedMode = shiftMode(_selectedMode, -1);
-                break;
-            case Action::MNext:
-                _selectedMode = shiftMode(_selectedMode, +1);
-                break;
+            case Action::MPrev: _selectedMode = shiftMode(_selectedMode, -1); break;
+            case Action::MNext: _selectedMode = shiftMode(_selectedMode, +1); break;
             case Action::PPrev:
                 if (_selectedMaxPlayers > 1)
                     --_selectedMaxPlayers;

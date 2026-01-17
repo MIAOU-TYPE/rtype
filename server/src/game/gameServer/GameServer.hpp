@@ -16,6 +16,7 @@
 #include "CommandBuffer.hpp"
 #include "Damage.hpp"
 #include "GameClock.hpp"
+#include "GameConfig.hpp"
 #include "GravitySystem.hpp"
 #include "HealthSystem.hpp"
 #include "HomingSystem.hpp"
@@ -34,7 +35,6 @@
 #include "PowerUpShootingSystem.hpp"
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
-#include "GameConfig.hpp"
 #include "SnapshotSystem.hpp"
 #include "UDPPacketFactory.hpp"
 
@@ -196,7 +196,7 @@ namespace Game
         std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
 
         Engine::GameConfig _gameConfig; ///> Game configuration.
-        bool _gameOver = false;     ///> True if the game is over.
+        bool _gameOver = false;         ///> True if the game is over.
     };
 
 } // namespace Game

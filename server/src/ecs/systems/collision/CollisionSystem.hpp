@@ -10,10 +10,10 @@
 #include "Collision.hpp"
 #include "Damage.hpp"
 #include "Events.hpp"
+#include "InputComponent.hpp"
 #include "KillScore.hpp"
 #include "Projectile.hpp"
 #include "World.hpp"
-#include "InputComponent.hpp"
 
 namespace Game
 {

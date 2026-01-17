@@ -6,8 +6,8 @@
 */
 
 #pragma once
-#include "IGameWorld.hpp"
 #include "GameConfig.hpp"
+#include "IGameWorld.hpp"
 
 namespace Test
 {
@@ -56,6 +56,7 @@ namespace Test
       private:
         Ecs::Registry _reg;
         Ecs::EventsRegistry _events;
-        Engine::GameConfig _config{Engine::Difficulty::Medium, Engine::GameMode::Standard, Engine::ModeParameters{}, ""};
+        Engine::GameConfig _config{
+            Engine::Difficulty::Medium, Engine::GameMode::Standard, Engine::ModeParameters{}, ""};
     };
 } // namespace Test

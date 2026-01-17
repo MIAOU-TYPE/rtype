@@ -172,12 +172,12 @@ TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenPlayerProjectileHitsPlayerInSta
 {
     const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
     const auto player2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
-    
+
     // Mark both as players
     world.registry().registerComponent<Game::InputComponent>();
     world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
     world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
-    
+
     // Create a projectile from player1
     const auto proj = makeEntity(world, 2.f, 2.f, 5.f, 5.f);
     addProjectile(world, proj, id(player1));
@@ -195,15 +195,15 @@ TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenPlayerProjectileHitsPlayerIn
     params.teamDamage = true;
     Engine::GameConfig config{Engine::Difficulty::Medium, Engine::GameMode::FriendlyFire, params, ""};
     world.setConfig(config);
-    
+
     const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
     const auto player2 = makeEntity(world, 50.f, 50.f, 10.f, 10.f);
-    
+
     // Mark both as players
     world.registry().registerComponent<Game::InputComponent>();
     world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
     world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
-    
+
     // Create a projectile from player1 that hits player2
     const auto proj = makeEntity(world, 52.f, 52.f, 5.f, 5.f);
     addProjectile(world, proj, id(player1));

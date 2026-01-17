@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "GameServer.hpp"
 #include "GameConfig.hpp"
+#include "GameServer.hpp"
 #include "Level.hpp"
 #include "MockServer.hpp"
 #include "MockSessionManager.hpp"

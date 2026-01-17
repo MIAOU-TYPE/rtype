@@ -14,7 +14,6 @@
 #include "World.hpp"
 
 #include <cmath>
-#include <iostream>
 #include <numbers>
 #include "AIShoot.hpp"
 

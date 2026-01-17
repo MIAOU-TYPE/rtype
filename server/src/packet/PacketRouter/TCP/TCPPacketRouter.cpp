@@ -84,6 +84,7 @@ namespace Net
             case Protocol::TCP::JOIN_ROOM: onJoinRoom(*addr, sessionId, h.requestId, r); break;
             case Protocol::TCP::LEAVE_ROOM: onLeaveRoom(*addr, sessionId, h.requestId); break;
             case Protocol::TCP::START_GAME: onStartGame(*addr, sessionId, h.requestId); break;
+            case Protocol::TCP::ROOM_INFO: onRoomInfo(*addr, sessionId, h.requestId, r); break;
             default: sendError(*addr, h.requestId, 2, "Unsupported TCP packet type"); break;
         }
     }
@@ -221,7 +222,7 @@ namespace Net
         std::vector<RoomData> outRooms;
         outRooms.reserve(rooms.size());
 
-        for (const auto &[id, name, currentPlayers, maxPlayers, gameConfig] : rooms) {
+        for (const auto &[id, name, currentPlayers, maxPlayers, gameConfig, names] : rooms) {
             RoomData ri{};
             ri.roomId = static_cast<uint32_t>(id);
             ri.roomName = name;
@@ -240,6 +241,8 @@ namespace Net
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
     {
+        if (const auto currentRoom = _rooms->getRoomIdOfPlayer(_sessions->getOrCreateSession(addr)); currentRoom != 0)
+            (void) _rooms->removePlayer(_sessions->getOrCreateSession(addr));
         std::string roomName;
         uint8_t maxPlayers = 0;
         uint8_t difficultyRaw = 0;
@@ -294,7 +297,7 @@ namespace Net
 
         uint32_t roomId = 0;
         try {
-            Engine::GameConfig config{difficulty, gameMode, modeParams, levelPath};
+            const Engine::GameConfig config{difficulty, gameMode, modeParams, levelPath};
             roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());
@@ -303,6 +306,7 @@ namespace Net
         if (roomId == 0)
             return sendError(addr, req, 9, "CREATE_ROOM: failed to create room");
 
+        (void) _rooms->addPlayerToRoom(roomId, _sessions->getOrCreateSession(addr));
         if (!_packetFactory)
             return;
 
@@ -311,6 +315,11 @@ namespace Net
             return;
 
         (void) _tcp->sendPacket(*out);
+
+        const auto updatePkt = _packetFactory->makeRoomUpdated(addr, req, _rooms->getRoomById(roomId)->getRoomData());
+        if (!updatePkt)
+            return;
+        (void) _tcp->sendPacket(*updatePkt);
     }
 
     void TCPPacketRouter::onJoinRoom(
@@ -342,18 +351,6 @@ namespace Net
             return;
 
         (void) _tcp->sendPacket(*out);
-        // TODO: alerter les joueurs que quand on appuie sur start pas automatique comme la pour le FU
-        _rooms->forEachRoom([&](Engine::Room &room) {
-            if (room.getCurrentPlayers() == room.getMaxPlayers()) {
-                for (const auto session : room.sessions()) {
-                    if (const auto memberAddr = _sessions->getAddress(session)) {
-                        if (auto packet = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
-                            (void) _tcp->sendPacket(*packet);
-                    }
-                }
-                room.start();
-            }
-        });
     }
 
     void TCPPacketRouter::onLeaveRoom(const sockaddr_in &addr, int sessionId, uint32_t req) const
@@ -428,6 +425,34 @@ namespace Net
         const auto out = _packetFactory->makeScoreboardList(addr, req, top);
         if (!out)
             return sendError(addr, req, 500, "SCOREBOARD_GET: build response failed");
+
+        (void) _tcp->sendPacket(*out);
+    }
+
+    void TCPPacketRouter::onRoomInfo(
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, const TCP::Reader &r) const
+    {
+        uint32_t roomId = 0;
+
+        try {
+            roomId = _rooms->getRoomIdOfPlayer(sessionId);
+        } catch (...) {
+            return sendError(addr, req, 20, "ROOM_INFO: malformed payload (expected roomId(u32))");
+        }
+
+        if (r.remaining() != 0)
+            return sendError(addr, req, 21, "ROOM_INFO: unexpected trailing bytes");
+
+        const auto room = _rooms->getRoomById(roomId);
+        if (!room)
+            return sendError(addr, req, 22, "ROOM_INFO: room not found");
+
+        if (!_packetFactory)
+            return sendError(addr, req, 500, "ROOM_INFO: service unavailable");
+
+        const auto out = _packetFactory->makeRoomUpdated(addr, req, room->getRoomData());
+        if (!out)
+            return sendError(addr, req, 22, "ROOM_INFO: room not updated");
 
         (void) _tcp->sendPacket(*out);
     }

@@ -287,3 +287,11 @@ std::optional<uint32_t> SessionManager::getLastScore(const int sessionId) const
         return it->second;
     return std::nullopt;
 }
+
+std::string SessionManager::getUsername(const int sessionId) const
+{
+    std::shared_lock lock(_mutex);
+    if (const auto it = _identityById.find(sessionId); it != _identityById.end())
+        return it->second.username;
+    return "";
+}

@@ -107,6 +107,17 @@ namespace World
          */
         void applyLocalMovementFromNetId(uint8_t input) noexcept;
 
+        /**
+         * @brief Resets the client world, clearing all entities and state.
+         */
+        void reset();
+
+        /**
+         * @brief Gets the scores of all rooms.
+         * @return A vector of pairs containing room IDs and their corresponding scores.
+         */
+        [[nodiscard]] std::vector<std::pair<uint32_t, uint32_t>> getRoomScores() const;
+
       private:
         /**
          * @brief Sets the position of an entity.
@@ -183,7 +194,8 @@ namespace World
 
         std::unordered_set<uint32_t> _destroyed; ///> Set of destroyed entity IDs
 
-        int _entityPlayerId = -1; ///> Client session ID
+        int _entityPlayerId = -1;                                 ///> Client session ID
+        std::unordered_map<uint32_t, uint32_t> _scoresByPlayerId; ///> Map of player IDs to their scores
 
         /**
          * @brief Reconciles the local player entity's position with the server's authoritative state.

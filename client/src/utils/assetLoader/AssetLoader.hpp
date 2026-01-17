@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <iostream>
 #include "IAudioManager.hpp"
 #include "ITextureManager.hpp"
 #include "SpriteLoader.hpp"

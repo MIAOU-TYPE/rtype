@@ -38,7 +38,8 @@ namespace
                 const sockaddr_in *addr = sessionsL->getUdpAddress(sessionId);
                 if (!addr)
                     return;
-                if (const auto pkt = factoryL->createScorePacket(*addr, totalScore))
+                if (const auto pkt =
+                        factoryL->createScorePacket(*addr, static_cast<uint32_t>(scoreUpdated.playerId), totalScore))
                     (void) serverL->sendPacket(*pkt);
             });
     }
@@ -92,19 +93,23 @@ namespace
     void registerAcceptOnNewPlayerConnection(Game::IGameWorld &world,
         const std::shared_ptr<Net::Factory::UDPPacketFactory> &UDPPacketFactory,
         const std::shared_ptr<Net::Server::IServer> &server,
-        const std::shared_ptr<Net::Server::ISessionManager> &sessions)
+        const std::shared_ptr<Net::Server::ISessionManager> &sessions,
+        std::unordered_map<int, uint32_t> &sessionToNetId)
     {
         std::weak_ptr wSessions = sessions;
         std::weak_ptr wFactory = UDPPacketFactory;
         std::weak_ptr wServer = server;
 
+        auto *mapPtr = &sessionToNetId;
         world.events().subscribe<PlayerConnectedEvent>(
-            [wSessions, wFactory, wServer](const PlayerConnectedEvent &event) {
+            [wSessions, wFactory, wServer, mapPtr](const PlayerConnectedEvent &event) {
                 const auto sessionsL = wSessions.lock();
                 const auto factoryL = wFactory.lock();
                 const auto serverL = wServer.lock();
-                if (!sessionsL || !factoryL || !serverL)
+                if (!sessionsL || !factoryL || !serverL || !mapPtr)
                     return;
+                const auto netIdU32 = static_cast<uint32_t>(event.netPlayerId);
+                (*mapPtr)[event.sessionId] = netIdU32;
                 const sockaddr_in *addr = sessionsL->getUdpAddress(event.sessionId);
                 if (!addr)
                     return;
@@ -160,13 +165,12 @@ namespace Game
         if (!levelPath.empty()) {
             if (!_levelManager.loadFromFile(levelPath))
                 std::cerr << "{GameServer::GameServer} Failed to load level file: " << levelPath << "\n";
-            else {
+            else
                 LevelSystem::spawnBackgrounds(*_worldWrite, _levelManager.getCurrentLevel());
-            }
             _levelManager.reset();
         }
         registerScoreUpdatePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
-        registerAcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions);
+        registerAcceptOnNewPlayerConnection(*_worldWrite, _udpPacketFactory, _server, _sessions, _sessionToNetId);
         registerMessageOnLifeUpdated(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
         registerDamagePacketDispatch(*_worldWrite, _sessions, _udpPacketFactory, _entityToSession, _server);
     }
@@ -176,6 +180,7 @@ namespace Game
         _levelManager.reset();
         _accumulator = 0.0;
         _clock = GameClock();
+        _gameOver = false;
     }
 
     void GameServer::onPlayerConnect(const int sessionId) noexcept
@@ -213,6 +218,10 @@ namespace Game
 
     void GameServer::update(const float dt)
     {
+        if (_gameOver) {
+            _worldWrite->events().process();
+            return;
+        }
         LevelSystem::update(*_worldWrite, _levelManager, dt, _spawned, _difficultyModifiers);
 
         BackgroundSystem::update(*_worldWrite, dt);
@@ -238,6 +247,20 @@ namespace Game
         LifetimeSystem::update(*_worldWrite, dt);
 
         _worldWrite->events().process();
+
+        bool anyPlayersAlive = false;
+        auto &inputs = _worldWrite->registry().getComponents<InputComponent>();
+        for (size_t i = 0; i < inputs.size(); ++i) {
+            if (inputs.at(i).has_value()) {
+                anyPlayersAlive = true;
+                break;
+            }
+        }
+        if (_levelManager.isFinished() || !anyPlayersAlive) {
+            _gameOver = true;
+            _worldWrite->events().emit(GameOverEvent{});
+            _worldWrite->events().process();
+        }
     }
 
     void GameServer::tick()
@@ -279,6 +302,7 @@ namespace Game
                 const auto it = _sessionToEntity.find(cmd.sessionId);
                 if (it == _sessionToEntity.end())
                     break;
+                _sessionToNetId.erase(cmd.sessionId);
                 const Ecs::Entity ent = it->second;
                 _entityToSession.erase(static_cast<size_t>(ent));
                 _sessionToEntity.erase(it);
@@ -317,5 +341,12 @@ namespace Game
     Ecs::EventsRegistry &GameServer::events() const noexcept
     {
         return _worldWrite->events();
+    }
+
+    std::optional<uint32_t> GameServer::getPlayerNetId(const int sessionId) const
+    {
+        if (const auto it = _sessionToNetId.find(sessionId); it != _sessionToNetId.end())
+            return it->second;
+        return std::nullopt;
     }
 } // namespace Game

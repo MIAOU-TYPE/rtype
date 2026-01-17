@@ -8,7 +8,6 @@
 #pragma once
 #include <atomic>
 #include <filesystem>
-#include <iostream>
 #include <memory>
 #include <thread>
 #include "AuthService.hpp"

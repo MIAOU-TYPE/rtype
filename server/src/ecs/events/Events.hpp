@@ -137,3 +137,9 @@ struct BubblePowerUpUpdatePosEvent {
 struct BubblePowerUpDestroyEvent {
     size_t playerId; ///> ID of the player entity
 };
+
+/**
+ * @struct GameOverEvent
+ * @brief Event triggered when the game ends (all players dead or level finished).
+ */
+struct GameOverEvent {};

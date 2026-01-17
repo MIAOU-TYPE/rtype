@@ -95,7 +95,7 @@ namespace Auth
     std::string hashPassword(const std::string_view password)
     {
         std::array<unsigned char, kSaltLen> salt{};
-        if (RAND_bytes(salt.data(), salt.size()) != 1)
+        if (RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1)
             throw PasswordError("{RAND_bytes} failed");
         std::array<unsigned char, kDkLen> dk{};
         if (!scryptDerive(password, salt.data(), salt.size(), kN, kr, kp, dk.data(), dk.size()))

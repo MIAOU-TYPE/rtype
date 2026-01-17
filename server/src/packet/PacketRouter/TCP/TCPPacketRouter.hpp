@@ -125,6 +125,15 @@ namespace Net
          */
         void onScoreboardGet(const sockaddr_in &addr, uint32_t req, TCP::Reader &r) const;
 
+        /**
+         * @brief Handles the ROOM_INFO packet from a client
+         * @param addr The address of the client
+         * @param sessionId The session ID of the client
+         * @param req The request ID
+         * @param r The TCP reader for the packet body
+         */
+        void onRoomInfo(const sockaddr_in &addr, int sessionId, uint32_t req, const TCP::Reader &r) const;
+
         std::shared_ptr<Server::ISessionManager> _sessions = nullptr;        ///> Session manager
         std::shared_ptr<Engine::RoomManager> _rooms = nullptr;               ///> Room manager
         std::shared_ptr<Server::IServer> _tcp = nullptr;                     ///> TCP server

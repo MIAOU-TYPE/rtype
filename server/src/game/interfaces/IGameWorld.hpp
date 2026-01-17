@@ -9,6 +9,7 @@
 
 #include "Entity.hpp"
 #include "EventsRegistry.hpp"
+#include "GameConfig.hpp"
 #include "Registry.hpp"
 
 /**
@@ -66,6 +67,14 @@ namespace Game
          * @brief Copy the state from another IGameWorld instance.
          * @param other The other IGameWorld to copy from.
          */
-        virtual void copyFrom(IGameWorld &other) = 0;
+        virtual void copyFrom(IGameWorld &)
+        {
+        }
+
+        /**
+         * @brief Get the game configuration.
+         * @return Reference to the game configuration.
+         */
+        [[nodiscard]] virtual const Engine::GameConfig &getGameConfig() const = 0;
     };
 } // namespace Game

@@ -331,7 +331,7 @@ namespace Thread
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(
-                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.levelPath, e.worldMusic));
+                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath, e.worldMusic));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {

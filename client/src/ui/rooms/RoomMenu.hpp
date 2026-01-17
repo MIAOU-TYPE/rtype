@@ -156,6 +156,12 @@ namespace Engine
         [[nodiscard]] Difficulty difficultySelected() const noexcept;
 
         /**
+         * @brief Gets the selected game mode.
+         * @return The selected game mode.
+         */
+        [[nodiscard]] GameMode modeSelected() const noexcept;
+
+        /**
          * @brief Gets the selected level ID (path to the level file).
          * @return The level ID, or empty string if no level is selected.
          */
@@ -244,6 +250,9 @@ namespace Engine
             std::unique_ptr<UI::UIButton> difficultyPrev; ///> Previous difficulty button.
             std::unique_ptr<UI::UIButton> difficultyNext; ///> Next difficulty button.
 
+            std::unique_ptr<UI::UIButton> modePrev; ///> Previous mode button.
+            std::unique_ptr<UI::UIButton> modeNext; ///> Next mode button.
+
             std::unique_ptr<UI::UIButton> playersPrev; ///> Previous players button.
             std::unique_ptr<UI::UIButton> playersNext; ///> Next players button.
 
@@ -253,6 +262,7 @@ namespace Engine
             std::unique_ptr<Graphics::IText> worldLabel;      ///> World label text.
             std::unique_ptr<Graphics::IText> levelLabel;      ///> Level label text.
             std::unique_ptr<Graphics::IText> difficultyLabel; ///> Difficulty label text.
+            std::unique_ptr<Graphics::IText> modeLabel;       ///> Mode label text.
             std::unique_ptr<Graphics::IText> playersLabel;    ///> Players label text.
         };
 
@@ -351,6 +361,7 @@ namespace Engine
         int _selectedWorld = 0;                            ///> Index of the selected world.
         int _selectedLevel = 0;                            ///> Index of the selected level.
         Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
+        GameMode _selectedMode = GameMode::Standard;       ///> Selected game mode.
         uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
         uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
 

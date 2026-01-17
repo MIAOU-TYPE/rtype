@@ -89,6 +89,21 @@ namespace Engine
         _entityTypes.push_back({"Laser Power-Up", 13, 33.0f, 28.0f, "laser", "power_up"});
         _entityTypes.push_back({"Shield Power-Up", 18, 33.0f, 28.0f, "shield", "power_up2"});
         _entityTypes.push_back({"Bubble Power-Up", 19, 33.0f, 28.0f, "bubble", "power_up3"});
+
+        _entitySpriteMap["smallEnemy"] = std::make_tuple("enemy", 65, 66);
+        _entitySpriteMap["mediumEnemy"] = std::make_tuple("enemy2", 65, 49);
+        _entitySpriteMap["mediumEnemyTriple"] = std::make_tuple("enemy2", 65, 49);
+        _entitySpriteMap["mediumEnemyWide"] = std::make_tuple("enemy2", 65, 49);
+        _entitySpriteMap["mediumEnemyFive"] = std::make_tuple("enemy2", 65, 49);
+        _entitySpriteMap["groupEnemy"] = std::make_tuple("enemy2", 65, 49);
+        _entitySpriteMap["fastEnemy"] = std::make_tuple("enemy3", 33, 22);
+        _entitySpriteMap["boss"] = std::make_tuple("boss", 177, 144);
+        _entitySpriteMap["boss2"] = std::make_tuple("boss2", 130, 50);
+        _entitySpriteMap["boss3"] = std::make_tuple("boss3", 160, 213);
+        _entitySpriteMap["gravityWell"] = std::make_tuple("obstacle", 34, 34);
+        _entitySpriteMap["laser"] = std::make_tuple("power_up", 33, 28);
+        _entitySpriteMap["shield"] = std::make_tuple("power_up2", 33, 28);
+        _entitySpriteMap["bubble"] = std::make_tuple("power_up3", 33, 28);
     }
 
     void LevelEditorState::initializeBackgrounds()
@@ -196,53 +211,11 @@ namespace Engine
         for (const auto &entity : _placedEntities) {
             RenderCommand cmd;
 
-            std::string spriteName;
-            int frameWidth = 0;
-            int frameHeight = 0;
+            auto spriteIt = _entitySpriteMap.find(entity.type);
+            if (spriteIt == _entitySpriteMap.end())
+                continue;
 
-            if (entity.type == "smallEnemy") {
-                spriteName = "enemy";
-                frameWidth = 65;
-                frameHeight = 66;
-            } else if (entity.type == "mediumEnemy" || entity.type == "mediumEnemyTriple"
-                || entity.type == "mediumEnemyWide" || entity.type == "mediumEnemyFive"
-                || entity.type == "groupEnemy") {
-                spriteName = "enemy2";
-                frameWidth = 65;
-                frameHeight = 49;
-            } else if (entity.type == "fastEnemy") {
-                spriteName = "enemy3";
-                frameWidth = 33;
-                frameHeight = 22;
-            } else if (entity.type == "boss") {
-                spriteName = "boss";
-                frameWidth = 177;
-                frameHeight = 144;
-            } else if (entity.type == "boss2") {
-                spriteName = "boss2";
-                frameWidth = 130;
-                frameHeight = 50;
-            } else if (entity.type == "boss3") {
-                spriteName = "boss3";
-                frameWidth = 160;
-                frameHeight = 213;
-            } else if (entity.type == "gravityWell") {
-                spriteName = "obstacle";
-                frameWidth = 34;
-                frameHeight = 34;
-            } else if (entity.type == "laser") {
-                spriteName = "power_up";
-                frameWidth = 33;
-                frameHeight = 28;
-            } else if (entity.type == "shield") {
-                spriteName = "power_up2";
-                frameWidth = 33;
-                frameHeight = 28;
-            } else if (entity.type == "bubble") {
-                spriteName = "power_up3";
-                frameWidth = 33;
-                frameHeight = 28;
-            }
+            auto [spriteName, frameWidth, frameHeight] = spriteIt->second;
 
             auto it = _entityTextures.find(spriteName);
             if (it != _entityTextures.end() && it->second != Graphics::InvalidTexture) {

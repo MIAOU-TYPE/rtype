@@ -63,7 +63,8 @@ namespace Engine
                     finals.emplace_back(*netIdOpt, score);
                 }
                 const auto endPkt = udpPacketFactory->createGameEndPacket(finals);
-                if (!endPkt) return;
+                if (!endPkt)
+                    return;
 
                 for (int repeat = 0; repeat < 3; ++repeat) {
                     for (const int sid : sessions) {
@@ -74,7 +75,7 @@ namespace Engine
                         }
                     }
                 }
-        });
+            });
     }
 
     Room::~Room()

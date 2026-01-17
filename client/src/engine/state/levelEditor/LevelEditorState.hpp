@@ -130,6 +130,14 @@ namespace Engine
         void render() override;
 
       private:
+        struct Background {
+            std::string name;
+            int spriteId;
+            float scrollSpeed;
+            float tileWidth;
+            float tileHeight;
+        };
+
         /**
          * @brief Initialize the entity types available for placement.
          */
@@ -139,6 +147,11 @@ namespace Engine
          * @brief Initialize the background options.
          */
         void initializeBackgrounds();
+
+        /**
+         * @brief Update the background display.
+         */
+        void updateBackgroundDisplay();
 
         /**
          * @brief Handle user input.
@@ -222,6 +235,7 @@ namespace Engine
         std::shared_ptr<ScoreboardContext> _scoreCtx;   ///> Scoreboard context
 
         std::vector<EntityType> _entityTypes;                ///> Available entity types
+        std::vector<Background> _backgrounds;               ///> Available backgrounds
         std::vector<PlacedEntity> _placedEntities;           ///> Entities placed in the level
         std::vector<std::unique_ptr<UI::UIButton>> _toolbar; ///> Toolbar buttons for entity types
 

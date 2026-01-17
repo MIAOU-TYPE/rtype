@@ -73,6 +73,8 @@ namespace Engine
             _entityTextures["enemy2"] = textures->load("sprites/enemy2.png");
             _entityTextures["enemy3"] = textures->load("sprites/enemy3.png");
             _entityTextures["boss"] = textures->load("sprites/boss.png");
+            _entityTextures["boss2"] = textures->load("sprites/boss2.png");
+            _entityTextures["boss3"] = textures->load("sprites/boss3.png");
             _entityTextures["obstacle"] = textures->load("sprites/obstacle.png");
             _entityTextures["power_up"] = textures->load("sprites/power_up.png");
             _entityTextures["power_up2"] = textures->load("sprites/power_up2.png");
@@ -91,6 +93,8 @@ namespace Engine
         _entityTypes.push_back({"Fast Enemy", 4, 33.0f, 22.0f, "fastEnemy", "enemy3"});
 
         _entityTypes.push_back({"Boss", 1, 177.0f, 144.0f, "boss", "boss"});
+        _entityTypes.push_back({"Boss 2", 21, 130.0f, 50.0f, "boss2", "boss2"});
+        _entityTypes.push_back({"Boss 3", 22, 160.0f, 213.0f, "boss3", "boss3"});
 
         _entityTypes.push_back({"Obstacle", 15, 34.0f, 34.0f, "gravityWell", "obstacle"});
 
@@ -210,6 +214,14 @@ namespace Engine
                 spriteName = "boss";
                 frameWidth = 177;
                 frameHeight = 144;
+            } else if (entity.type == "boss2") {
+                spriteName = "boss2";
+                frameWidth = 130;
+                frameHeight = 50;
+            } else if (entity.type == "boss3") {
+                spriteName = "boss3";
+                frameWidth = 160;
+                frameHeight = 213;
             } else if (entity.type == "gravityWell") {
                 spriteName = "obstacle";
                 frameWidth = 34;
@@ -615,12 +627,56 @@ namespace Engine
                     "\"damage\": 50, \"muzzle\": { \"x\": -20, \"y\": 15 }, \"projectileSpriteId\": 9 },\n";
             file << "      \"movement\": { \"type\": \"zigzag\", \"params\": { \"amplitude\": 50.0, \"frequency\": 0.5 "
                     "} } },\n";
-            file << "    \"boss\": { \"hp\": 500, \"speed\": -30, \"size\": { \"w\": 177, \"h\": 144 }, \"killScore\": "
-                    "300, \"sprite\": \"boss\", \"spriteId\": 1,\n";
-            file << "      \"shoot\": { \"type\": \"diagonal\", \"angles\": [-180, -157.5, -135, -112.5, -90, -67.5, "
-                    "-45, -22.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5],\n";
-            file << "        \"cooldown\": 1.6, \"projectileSpeed\": 140, \"damage\": 35, \"muzzle\": { \"x\": 105, "
-                    "\"y\": 112 }, \"projectileSpriteId\": 12 } },\n";
+            file << "    \"boss\": {\n";
+            file << "      \"hp\": 3000,\n";
+            file << "      \"speed\": -30,\n";
+            file << "      \"size\": { \"w\": 177, \"h\": 144 },\n";
+            file << "      \"killScore\": 300,\n";
+            file << "      \"sprite\": \"boss\",\n";
+            file << "      \"spriteId\": 1,\n";
+            file << "      \"shoot\": {\n";
+            file << "        \"type\": \"diagonal\",\n";
+            file << "        \"angles\": [-90, -45, 0, -315, -270],\n";
+            file << "        \"cooldown\": 1.6,\n";
+            file << "        \"projectileSpeed\": 140,\n";
+            file << "        \"damage\": 35,\n";
+            file << "        \"muzzle\": { \"x\": 105, \"y\": 112 },\n";
+            file << "        \"projectileSpriteId\": 12\n";
+            file << "      }\n";
+            file << "    },\n";
+            file << "    \"boss2\": {\n";
+            file << "      \"hp\": 3000,\n";
+            file << "      \"speed\": -30,\n";
+            file << "      \"size\": { \"w\": 130, \"h\": 50 },\n";
+            file << "      \"killScore\": 300,\n";
+            file << "      \"sprite\": \"boss2\",\n";
+            file << "      \"spriteId\": 21,\n";
+            file << "      \"shoot\": {\n";
+            file << "        \"type\": \"spread\",\n";
+            file << "        \"bulletsNbr\": 5,\n";
+            file << "        \"cooldown\": 0.5,\n";
+            file << "        \"projectileSpeed\": 150,\n";
+            file << "        \"damage\": 50,\n";
+            file << "        \"muzzle\": { \"x\": 65, \"y\": 25 },\n";
+            file << "        \"projectileSpriteId\": 12\n";
+            file << "      }\n";
+            file << "    },\n";
+            file << "    \"boss3\": {\n";
+            file << "      \"hp\": 3000,\n";
+            file << "      \"speed\": -30,\n";
+            file << "      \"size\": { \"w\": 160, \"h\": 213 },\n";
+            file << "      \"killScore\": 300,\n";
+            file << "      \"sprite\": \"boss3\",\n";
+            file << "      \"spriteId\": 22,\n";
+            file << "      \"shoot\": {\n";
+            file << "        \"type\": \"homing\",\n";
+            file << "        \"cooldown\": 4.0,\n";
+            file << "        \"projectileSpeed\": 170,\n";
+            file << "        \"damage\": 500,\n";
+            file << "        \"muzzle\": { \"x\": 60, \"y\": 70 },\n";
+            file << "        \"projectileSpriteId\": 23\n";
+            file << "      }\n";
+            file << "    },\n";
             file << "    \"groupEnemy\": { \"type\": \"group\", \"members\": [\n";
             file << "      { \"enemyType\": \"mediumEnemy\", \"offset\": { \"x\": 0, \"y\": 0 } },\n";
             file << "      { \"enemyType\": \"smallEnemy\", \"offset\": { \"x\": 0, \"y\": -130 } },\n";

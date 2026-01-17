@@ -6,7 +6,6 @@
 */
 
 #include "BossSystem.hpp"
-#include <iostream>
 
 namespace Game
 {

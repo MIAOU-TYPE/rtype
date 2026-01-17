@@ -94,6 +94,12 @@ namespace Network
         void onScoreboardListSubscribe(ScoreboardCb cb) override;
 
         /**
+         * @brief Subscribe to room updated message events.
+         * @param cb The callback function to be invoked on room updated messages.
+         */
+        void onRoomUpdatedSubscribe(RoomUpdatedCb cb) override;
+
+        /**
          * @brief Event handler methods for various TCP messages.
          * @param req The request ID associated with the message.
          * @param ver The protocol version.
@@ -172,6 +178,13 @@ namespace Network
         void onScoreboardList(uint32_t req, const std::vector<ScoreEntry> &scores) override;
 
         /**
+         * @brief Event handler for room updated messages.
+         * @param req The request ID associated with the message.
+         * @param room The updated room data.
+         */
+        void onRoomUpdated(uint32_t req, const RoomData &room) override;
+
+        /**
          * @brief Retrieves the current connection information.
          * @return A ConnectInfo structure containing session ID, token, and UDP port.
          */
@@ -194,16 +207,17 @@ namespace Network
         template <class Cbs, class... Args>
         static void emit(Cbs &cbs, Args &&...args);
 
-        std::vector<WelcomeCb> _welcomeCbs;        ///> Callbacks for welcome events
-        std::vector<ErrorCb> _errorCbs;            ///> Callbacks for error events
-        std::vector<RoomsListCb> _roomsListCbs;    ///> Callbacks for rooms list events
-        std::vector<RoomIdCb> _roomCreatedCbs;     ///> Callbacks for room created events
-        std::vector<RoomIdCb> _roomJoinedCbs;      ///> Callbacks for room joined events
-        std::vector<RoomIdCb> _roomLeftCbs;        ///> Callbacks for room left events
-        std::vector<RoomIdCb> _gameStartCbs;       ///> Callbacks for game start events
-        std::vector<ProtoErrCb> _protocolErrorCbs; ///> Callbacks for protocol error events
-        std::vector<AuthOkCb> _authOkCbs;          ///> Callbacks for authentication success events
-        std::vector<ScoreboardCb> _scoreboardCbs;  ///> Callbacks for scoreboard list events
+        std::vector<WelcomeCb> _welcomeCbs;         ///> Callbacks for welcome events
+        std::vector<ErrorCb> _errorCbs;             ///> Callbacks for error events
+        std::vector<RoomsListCb> _roomsListCbs;     ///> Callbacks for rooms list events
+        std::vector<RoomIdCb> _roomCreatedCbs;      ///> Callbacks for room created events
+        std::vector<RoomIdCb> _roomJoinedCbs;       ///> Callbacks for room joined events
+        std::vector<RoomIdCb> _roomLeftCbs;         ///> Callbacks for room left events
+        std::vector<RoomIdCb> _gameStartCbs;        ///> Callbacks for game start events
+        std::vector<ProtoErrCb> _protocolErrorCbs;  ///> Callbacks for protocol error events
+        std::vector<AuthOkCb> _authOkCbs;           ///> Callbacks for authentication success events
+        std::vector<ScoreboardCb> _scoreboardCbs;   ///> Callbacks for scoreboard list events
+        std::vector<RoomUpdatedCb> _roomUpdatedCbs; ///> Callbacks for room updated events
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information

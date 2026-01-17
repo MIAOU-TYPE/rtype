@@ -216,4 +216,9 @@ namespace Engine
 
         size_t limit; ///> The maximum number of scores to retrieve.
     };
+
+    /**
+     * @brief Event triggered when a request to start the game is made.
+     */
+    struct StartGameRequested : Event {};
 } // namespace Engine

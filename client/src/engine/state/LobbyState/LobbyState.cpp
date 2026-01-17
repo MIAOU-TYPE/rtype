@@ -7,8 +7,6 @@
 
 #include "LobbyState.hpp"
 
-#include "Lobby.hpp"
-
 namespace Engine
 {
     LobbyState::LobbyState(std::shared_ptr<Graphics::IGraphics> graphics, std::shared_ptr<Graphics::IRenderer> renderer,

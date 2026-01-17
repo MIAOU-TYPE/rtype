@@ -13,7 +13,7 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        const float dampingFactor = 0.95f;
+        constexpr float dampingFactor = 0.95f;
         reg.view<Ecs::Velocity, Ecs::GravityAffected>([&](const Ecs::Entity, Ecs::Velocity &vel, Ecs::GravityAffected) {
             vel.vx *= dampingFactor;
             vel.vy *= dampingFactor;
@@ -44,8 +44,7 @@ namespace Game
                         vel.vy += dy * pullFactor;
 
                         if (distance < field.innerRadius) {
-                            const int damage = static_cast<int>(field.damagePerSecond * dt);
-                            if (damage > 0)
+                            if (const int damage = static_cast<int>(field.damagePerSecond * dt); damage > 0)
                                 world.events().emit(DamageEvent{id.id, targetId.id, damage});
                         }
                     });

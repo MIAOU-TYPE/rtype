@@ -111,8 +111,6 @@ namespace EmbeddedResources
     extern const unsigned int levels_world2_levels_json_size;
     extern const unsigned char levels_world3_levels_json[];
     extern const unsigned int levels_world3_levels_json_size;
-    extern const unsigned char levels_custom_levels_json[];
-    extern const unsigned int levels_custom_levels_json_size;
 } // namespace EmbeddedResources
 
 using namespace Resources;
@@ -222,8 +220,6 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::levels_world2_levels_json, EmbeddedResources::levels_world2_levels_json_size};
     _resources["levels/world3/levels.json"] = {
         EmbeddedResources::levels_world3_levels_json, EmbeddedResources::levels_world3_levels_json_size};
-    _resources["levels/custom/levels.json"] = {
-        EmbeddedResources::levels_custom_levels_json, EmbeddedResources::levels_custom_levels_json_size};
 }
 
 ResourceData EmbeddedResourceManager::loadResource(const std::string &resourcePath) const noexcept

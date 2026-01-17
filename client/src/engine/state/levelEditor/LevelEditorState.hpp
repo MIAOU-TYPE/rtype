@@ -140,12 +140,12 @@ namespace Engine
          * @brief Represents a background option for the level.
          */
         struct Background {
-            std::string name;
-            int spriteId;
-            float scrollSpeed;
-            float tileWidth;
-            float tileHeight;
-            std::string texturePath;
+            std::string name;        ///> Name of the background
+            int spriteId;            ///> Sprite ID for rendering
+            float scrollSpeed;       ///> Scrolling speed of the background
+            float tileWidth;         ///> Width of the background tile
+            float tileHeight;        ///> Height of the background tile
+            std::string texturePath; ///> Path to the background texture
         };
 
         /**

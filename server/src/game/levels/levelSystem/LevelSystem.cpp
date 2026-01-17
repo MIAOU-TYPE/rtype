@@ -295,6 +295,13 @@ namespace Game
                 follower.followDistance = 40.f;
                 follower.segmentIndex = i;
                 reg.emplaceComponent<Ecs::TailFollower>(tailSegment, follower);
+                reg.emplaceComponent<Ecs::Collision>(
+                    tailSegment, Ecs::Collision{25.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
+                reg.emplaceComponent<Ecs::Damageable>(tailSegment, Ecs::Damageable{true});
+                Ecs::BossPart bossPart;
+                bossPart.bossEntity = mob;
+                bossPart.damageMultiplier = 3.0f;
+                reg.emplaceComponent<Ecs::BossPart>(tailSegment, bossPart);
                 previousEntity = tailSegment;                
             }
         }

@@ -513,7 +513,7 @@ namespace Engine
         std::unordered_set<uint32_t> seen;
         seen.reserve(rooms.size());
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig, names] : rooms) {
             seen.insert(roomId);
 
             const std::string label =

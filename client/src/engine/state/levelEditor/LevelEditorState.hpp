@@ -135,6 +135,10 @@ namespace Engine
         void render() override;
 
       private:
+        /**
+         * @struct Background
+         * @brief Represents a background option for the level.
+         */
         struct Background {
             std::string name;
             int spriteId;

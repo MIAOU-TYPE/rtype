@@ -7,6 +7,7 @@
 
 #pragma once
 #include "IGameWorld.hpp"
+#include "GameConfig.hpp"
 
 namespace Test
 {
@@ -42,8 +43,19 @@ namespace Test
         {
         }
 
+        const Engine::GameConfig &getGameConfig() const override
+        {
+            return _config;
+        }
+
+        void setConfig(const Engine::GameConfig &config)
+        {
+            _config = config;
+        }
+
       private:
         Ecs::Registry _reg;
         Ecs::EventsRegistry _events;
+        Engine::GameConfig _config{Engine::Difficulty::Medium, Engine::GameMode::Standard, Engine::ModeParameters{}, ""};
     };
 } // namespace Test

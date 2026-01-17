@@ -98,12 +98,18 @@ namespace EmbeddedResources
     extern const unsigned int sounds_game_theme_flac_size;
     extern const unsigned char sounds_hit_wav[];
     extern const unsigned int sounds_hit_wav_size;
+    extern const unsigned char sounds_jungle_theme_flac[];
+    extern const unsigned int sounds_jungle_theme_flac_size;
     extern const unsigned char sounds_menu_theme_flac[];
     extern const unsigned int sounds_menu_theme_flac_size;
     extern const unsigned char sounds_powerup_wav[];
     extern const unsigned int sounds_powerup_wav_size;
+    extern const unsigned char sounds_ruins_theme_flac[];
+    extern const unsigned int sounds_ruins_theme_flac_size;
     extern const unsigned char sounds_shoot_wav[];
     extern const unsigned int sounds_shoot_wav_size;
+    extern const unsigned char sounds_space_theme_flac[];
+    extern const unsigned int sounds_space_theme_flac_size;
 
     extern const unsigned char levels_world1_levels_json[];
     extern const unsigned int levels_world1_levels_json_size;
@@ -210,11 +216,17 @@ void EmbeddedResourceManager::registerResources()
     _resources["sounds/game_theme.flac"] = {
         EmbeddedResources::sounds_game_theme_flac, EmbeddedResources::sounds_game_theme_flac_size};
     _resources["sounds/hit.wav"] = {EmbeddedResources::sounds_hit_wav, EmbeddedResources::sounds_hit_wav_size};
+    _resources["sounds/jungle_theme.flac"] = {
+        EmbeddedResources::sounds_jungle_theme_flac, EmbeddedResources::sounds_jungle_theme_flac_size};
     _resources["sounds/menu_theme.flac"] = {
         EmbeddedResources::sounds_menu_theme_flac, EmbeddedResources::sounds_menu_theme_flac_size};
     _resources["sounds/powerup.wav"] = {
         EmbeddedResources::sounds_powerup_wav, EmbeddedResources::sounds_powerup_wav_size};
+    _resources["sounds/ruins_theme.flac"] = {
+        EmbeddedResources::sounds_ruins_theme_flac, EmbeddedResources::sounds_ruins_theme_flac_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::sounds_shoot_wav, EmbeddedResources::sounds_shoot_wav_size};
+    _resources["sounds/space_theme.flac"] = {
+        EmbeddedResources::sounds_space_theme_flac, EmbeddedResources::sounds_space_theme_flac_size};
 
     _resources["levels/world1/levels.json"] = {
         EmbeddedResources::levels_world1_levels_json, EmbeddedResources::levels_world1_levels_json_size};

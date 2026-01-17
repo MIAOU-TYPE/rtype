@@ -194,12 +194,9 @@ namespace Game
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
         std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
-<<<<<<< HEAD
 
         Engine::GameConfig _gameConfig; ///> Game configuration.
-=======
         bool _gameOver = false;     ///> True if the game is over.
->>>>>>> 8fc3e6018ebc258c6b3841853690cf187badc27d
     };
 
 } // namespace Game

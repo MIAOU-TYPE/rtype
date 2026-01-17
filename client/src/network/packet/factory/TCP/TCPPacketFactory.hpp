@@ -120,6 +120,13 @@ namespace Network
         [[nodiscard]]
         std::shared_ptr<Net::IPacket> makeScoreboardGet(uint32_t req, uint16_t limit = 10) const;
 
+        /**
+         * @brief Create a RoomUpdate packet.
+         * @param req The request ID for the RoomUpdate packet.
+         * @return A shared pointer to the created RoomUpdate packet.
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeRoomInfo(uint32_t req) const;
+
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets
     };

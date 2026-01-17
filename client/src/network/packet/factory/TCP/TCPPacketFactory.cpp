@@ -46,7 +46,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeListRooms(const uint32_t req) const
     {
         try {
-            static const std::vector<uint8_t> empty{};
+            static constexpr std::vector<uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LIST_ROOMS, req, empty);
             return make(payload);
         } catch (...) {
@@ -152,6 +152,17 @@ namespace Network
             return make(payload);
         } catch (...) {
             std::cerr << "{TCPPacketFactory::makeScoreboardGet} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeRoomInfo(const uint32_t req) const
+    {
+        try {
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::ROOM_INFO, req, {});
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeRoomUpdate} error creating packet" << std::endl;
             return nullptr;
         }
     }

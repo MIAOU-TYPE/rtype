@@ -29,7 +29,7 @@ namespace Engine
     {
         if (!_soundManager->isValid(handle))
             return;
-        
+
         _soundManager->stop(handle);
     }
 
@@ -37,7 +37,7 @@ namespace Engine
     {
         if (!_soundManager)
             return Graphics::InvalidAudio;
-        
+
         return _soundManager->load(resourcePath);
     }
 

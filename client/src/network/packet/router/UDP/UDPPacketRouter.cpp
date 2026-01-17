@@ -295,20 +295,24 @@ namespace Ecs
         if (!payload)
             return;
         if (size < sizeof(GameEndHeader)) {
-            _sink->onGameOver();
+            std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: header too small\n";
             return;
         }
         GameEndHeader h{};
         std::memcpy(&h, payload, sizeof(h));
-        const uint16_t count = ntohs(h.count);
-        const size_t expectedMin = sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
-        if (size < expectedMin) {
-            std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: truncated\n";
-            _sink->onGameOver();
+        const uint8_t count = h.count;
+        if (constexpr uint8_t MaxPlayers = 16; count == 0 || count > MaxPlayers) {
+            std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: invalid count=" << +count << "\n";
+            return;
+        }
+        if (const size_t expectedSize = sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
+            size != expectedSize) {
+            std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: size mismatch (expected=" << expectedSize
+                      << ", got=" << size << ")\n";
             return;
         }
         const uint8_t *cur = payload + sizeof(GameEndHeader);
-        for (uint16_t i = 0; i < count; ++i) {
+        for (uint8_t i = 0; i < count; ++i) {
             GameEndEntry e{};
             std::memcpy(&e, cur, sizeof(e));
             cur += sizeof(e);

@@ -19,7 +19,7 @@
  */
 struct GameEndHeader {
     HeaderData header; ///> Common header data
-    uint16_t count;    ///> Number of player score entries (network order)
+    uint8_t count;     ///> Number of player score entries (network order)
 };
 
 /**
@@ -33,5 +33,5 @@ struct GameEndEntry {
 
 #pragma pack(pop)
 
-static_assert(sizeof(GameEndHeader) == sizeof(HeaderData) + 2, "GameEndHeader layout mismatch");
+static_assert(sizeof(GameEndHeader) == sizeof(HeaderData) + 1, "GameEndHeader layout mismatch");
 static_assert(sizeof(GameEndEntry) == 8, "GameEndEntry layout mismatch");

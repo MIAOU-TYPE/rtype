@@ -162,7 +162,8 @@ namespace Net::Factory
                 return nullptr;
             }
             const size_t maxByCap = (cap - sizeof(GameEndHeader)) / sizeof(GameEndEntry);
-            const uint16_t count = static_cast<uint16_t>(std::min(scores.size(), maxByCap));
+            constexpr size_t maxByCount = std::numeric_limits<uint8_t>::max();
+            const uint8_t count = static_cast<uint8_t>(std::min(scores.size(), std::min(maxByCap, maxByCount)));
             const size_t totalSize = sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
             if (totalSize > std::numeric_limits<uint16_t>::max()) {
                 std::cerr << "{UDPPacketFactory::createGameEndPacket} Payload too large\n";
@@ -173,10 +174,10 @@ namespace Net::Factory
                 throw FactoryError("{UDPPacketFactory::createGameEndPacket} Null buffer");
             GameEndHeader hdr{};
             hdr.header = makeHeader(Net::Protocol::UDP::GAME_END, VERSION, static_cast<uint16_t>(totalSize));
-            hdr.count = htons(count);
+            hdr.count = count;
             std::memcpy(buf, &hdr, sizeof(hdr));
             size_t off = sizeof(hdr);
-            for (uint16_t i = 0; i < count; ++i) {
+            for (uint8_t i = 0; i < count; ++i) {
                 GameEndEntry e{};
                 e.playerId = htonl(scores.at(i).first);
                 e.score = htonl(scores.at(i).second);

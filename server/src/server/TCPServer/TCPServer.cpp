@@ -106,16 +106,14 @@ namespace Net::Server
         }
     }
 
-    void TCPServer::readPackets() noexcept
+    bool TCPServer::readPackets() noexcept
     {
-        if (!_isRunning.load())
-            return;
-
-        if (!_nonBlocking)
-            return;
+        if (!_isRunning.load() || !_nonBlocking)
+            return false;
 
         acceptLoop();
         readClients();
+        return true;
     }
 
     void TCPServer::acceptLoop()

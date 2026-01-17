@@ -65,7 +65,7 @@ namespace Net::Server
          * @brief Checks if the server is currently running.
          * @return True if the server is running, false otherwise.
          */
-        bool isRunning() const noexcept override;
+        [[nodiscard]] bool isRunning() const noexcept override;
 
         /**
          * @brief Sets the running status of the server.
@@ -76,33 +76,33 @@ namespace Net::Server
         /**
          * @brief reads packets from the server.
          */
-        void readPackets() noexcept override = 0;
+        [[nodiscard]] bool readPackets() noexcept override = 0;
 
         /**
          * @brief Sends a packet through the server.
          * @param pkt The packet to be sent.
          * @return True if the packet was sent successfully, false otherwise.
          */
-        bool sendPacket(const IPacket &pkt) noexcept override = 0;
+        [[nodiscard]] bool sendPacket(const IPacket &pkt) noexcept override = 0;
 
         /**
          * @brief Checks if the stored IP address is valid.
          * @return True if the stored IP address is valid, false otherwise.
          */
-        bool isStoredIpCorrect() const noexcept override;
+        [[nodiscard]] bool isStoredIpCorrect() const noexcept override;
 
         /**
          * @brief Checks if the stored port number is valid.
          * @return True if the stored port number is valid, false otherwise.
          */
-        bool isStoredPortCorrect() const noexcept override;
+        [[nodiscard]] bool isStoredPortCorrect() const noexcept override;
 
         /**
          * @brief Pops a received packet from the server's packet queue.
          * @param pkt Reference to a Net::IPacket where the popped packet will be stored.
          * @return True if a packet was successfully popped, false if the queue was empty.
          */
-        bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept override = 0;
+        [[nodiscard]] bool popPacket(std::shared_ptr<IPacket> &pkt) noexcept override = 0;
 
         /**
          * @brief Retrieves the port number the server is listening on.

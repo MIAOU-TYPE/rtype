@@ -9,6 +9,7 @@
 
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
+#include "BossSystem.hpp"
 #include "BubblePowerUpSystem.hpp"
 #include "Collision.hpp"
 #include "CollisionSystem.hpp"
@@ -17,6 +18,7 @@
 #include "GameClock.hpp"
 #include "GravitySystem.hpp"
 #include "HealthSystem.hpp"
+#include "HomingSystem.hpp"
 #include "IMessageSink.hpp"
 #include "IServer.hpp"
 #include "InputSystem.hpp"

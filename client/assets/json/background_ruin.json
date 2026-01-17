@@ -1,0 +1,14 @@
+{
+  "sprite": "background_ruin",
+  "spriteId": 102,
+  "texture": "sprites/background_ruin.png",
+  "default_animation": "static",
+  "animations": {
+    "static": {
+      "loop": false,
+      "frames": [
+        { "x": 0, "y": 0, "w": 1148, "h": 223, "duration": 1.0 }
+      ]
+    }
+  }
+}

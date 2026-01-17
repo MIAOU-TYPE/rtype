@@ -148,6 +148,13 @@ namespace Net::Server
         [[nodiscard]] virtual bool isAuthed(int sessionId) const = 0;
 
         /**
+         * Check if the UDP Addr has tokens left, if he doesn't fuzz, to prevent UDP flood attacks         * @param addr
+         * The address of the client.
+         * @return True if the packet was consumed, false otherwise.
+         */
+        [[nodiscard]] virtual bool consumeUdp(const sockaddr_in &addr) = 0;
+
+        /**
          * @brief Set the last score for a session.
          * @param sessionId The ID of the session.
          * @param score The score to set.

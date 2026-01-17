@@ -37,6 +37,8 @@ namespace
             for (const auto &angleValue : j.at("angles"))
                 shootDef.angles.push_back(angleValue.get<float>());
         }
+        if (j.contains("bulletsNbr") && j.at("bulletsNbr").is_number_integer())
+            shootDef.bulletsNbr = j.at("bulletsNbr").get<int>();
         if (j.contains("muzzle") && j.at("muzzle").is_object()) {
             const auto &muzzleNode = j.at("muzzle");
             shootDef.muzzle.first = muzzleNode.value("x", 0.f);
@@ -163,9 +165,6 @@ namespace
             wave.obstacleType = w.value("obstacleType", "");
             wave.obstacleX = w.value("obstacleX", 0.f);
             wave.obstacleY = w.value("obstacleY", 0.f);
-
-            if (!w.contains("enemies") || !w.at("enemies").is_object())
-                return false;
 
             if (w.contains("enemies") && w.at("enemies").is_object()) {
                 for (auto &[type, countValue] : w.at("enemies").items()) {

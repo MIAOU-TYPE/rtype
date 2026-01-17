@@ -217,6 +217,7 @@ namespace Game
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);
+        BossSystem::update(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
         PowerUpShootingSystem::update(*_worldWrite, dt);
@@ -224,6 +225,7 @@ namespace Game
 
         InputSystem::update(*_worldWrite);
         ShootingSystem::update(*_worldWrite, dt);
+        HomingSystem::update(*_worldWrite, dt);
 
         GravitySystem::update(*_worldWrite, dt);
         MovementPatternSystem::update(*_worldWrite, dt);

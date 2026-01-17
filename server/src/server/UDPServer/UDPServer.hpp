@@ -6,10 +6,13 @@
 */
 
 #pragma once
+#include <array>
 #include <iostream>
 #include <mutex>
 #include <string>
+#include <utility>
 #include "AServer.hpp"
+#include "HeaderData.hpp"
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket/UDPPacket.hpp"
@@ -62,7 +65,7 @@ namespace Net::Server
          * @brief Reads incoming packets from the UDP server.
          * @note This method polls the UDP socket for incoming datagrams and stores them in the reception buffer.
          */
-        void readPackets() noexcept override;
+        [[nodiscard]] bool readPackets() noexcept override;
 
         /**
          * @brief Sends a packet via the UDP server.
@@ -86,5 +89,8 @@ namespace Net::Server
 
         NetWrapper _netWrapper; ///> Network wrapper for socket operations
         std::mutex _rxMutex;    ///> Mutex for synchronizing access to the reception buffer
+
+        static constexpr size_t MaxDatagramSize = 2048;       ///> Maximum size of a UDP datagram
+        std::array<uint8_t, MaxDatagramSize> _rxTempBuffer{}; ///> Temporary buffer for receiving datagrams
     };
 } // namespace Net::Server

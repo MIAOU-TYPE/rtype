@@ -74,7 +74,7 @@ namespace Engine
 
             const std::size_t n = std::min(scores.size(), _scoreLines.size());
             for (std::size_t i = 0; i < n; ++i) {
-                const std::string name = "Player " + std::to_string(scores[i].first);
+                const std::string name = "Player " + std::to_string(i + 1);
                 _scoreLines[i]->setString(name + ": " + std::to_string(scores[i].second) + " pts");
             }
             for (std::size_t i = n; i < _scoreLines.size(); ++i)

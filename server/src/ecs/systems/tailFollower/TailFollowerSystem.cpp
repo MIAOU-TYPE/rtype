@@ -43,6 +43,7 @@ namespace Game
                         dy /= distance;
                     }
                     velocity.vx = dx * tailFollower.followSpeed;
+                    velocity.vy = dy * tailFollower.followSpeed;
                 } else {
                     velocity.vx = 0.f;
                     velocity.vy = 0.f;

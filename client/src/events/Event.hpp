@@ -217,8 +217,26 @@ namespace Engine
         size_t limit; ///> The maximum number of scores to retrieve.
     };
 
+    struct PongReceived : Event {
+        explicit PongReceived(const uint32_t timestamp) : timestamp(timestamp)
+        {
+        }
+
+        uint32_t timestamp; ///> The timestamp of the pong received.
+    };
+
     /**
      * @brief Event triggered when a request to start the game is made.
      */
     struct StartGameRequested : Event {};
+
+    /**
+     * @brief Event triggered when a request to leave the room is made.
+     */
+    struct LeaveRoomRequested : Event {};
+
+    /**
+     * @brief Event triggered when a request to update the room is made.
+     */
+    struct UpdateRoomRequested : Event {};
 } // namespace Engine

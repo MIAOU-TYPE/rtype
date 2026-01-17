@@ -46,7 +46,7 @@ namespace Thread
         _musicRegistry = std::make_shared<Engine::MusicRegistry>(_renderer->musics());
         _soundRegistry = std::make_shared<Engine::SoundRegistry>(_renderer->sounds());
 
-        _world = std::make_unique<World::ClientWorld>(_spriteRegistry, _soundRegistry);
+        _world = std::make_shared<World::ClientWorld>(_spriteRegistry, _soundRegistry);
         _stateManager = std::make_unique<Engine::StateManager>();
         _authCtx = std::make_shared<Engine::AuthContext>();
         _scoreboardCtx = std::make_shared<Engine::ScoreboardContext>();
@@ -156,7 +156,7 @@ namespace Thread
                     std::weak_ptr w = _world;
                     _stateManager->changeState(
                         std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
-                            if (auto s = w.lock())
+                            if (const auto s = w.lock())
                                 return static_cast<int>(s->getScore());
                             return 0;
                         }));
@@ -171,6 +171,10 @@ namespace Thread
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} state change failed\n";
                 }
+            }
+            if (_pendingGameOver.exchange(false, std::memory_order_acq_rel)) {
+                _stateManager->changeState(std::make_unique<Engine::GameOverState>(_graphics, _renderer, _musicRegistry,
+                    _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx, std::weak_ptr(_world)));
             }
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
@@ -341,6 +345,20 @@ namespace Thread
             if (const auto pkt = _tcpPacketFactory.makeScoreboardGet(req, static_cast<uint16_t>(clamped)))
                 (void) _tcpClient->sendPacket(*pkt);
         });
+
+        _eventBus->on<Engine::LeaveRoomRequested>([this](const Engine::LeaveRoomRequested &) {
+            const auto req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeLeaveRoom(req))
+                (void) _tcpClient->sendPacket(*pkt);
+            _world->reset();
+            {
+                std::scoped_lock lock(_frameMutex);
+                if (_readRenderCommands)
+                    _readRenderCommands->clear();
+                if (_writeRenderCommands)
+                    _writeRenderCommands->clear();
+            }
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
@@ -363,6 +381,11 @@ namespace Thread
         World::WorldCommand cmd;
 
         while (applied < maxCommands && clock::now() < deadline && _commandBuffer.pop(cmd)) {
+            if (cmd.type == World::WorldCommand::Type::GameOver) {
+                _pendingGameOver.store(true, std::memory_order_release);
+                applied++;
+                continue;
+            }
             _world->applyCommand(cmd);
             applied++;
         }

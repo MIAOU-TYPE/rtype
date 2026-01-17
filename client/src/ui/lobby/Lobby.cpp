@@ -6,7 +6,6 @@
 */
 
 #include "Lobby.hpp"
-#include <iostream>
 
 namespace
 {

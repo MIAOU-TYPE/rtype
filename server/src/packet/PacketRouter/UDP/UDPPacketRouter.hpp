@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <memory>
 
-#include <iostream>
 #include "ConnectData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"

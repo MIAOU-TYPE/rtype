@@ -6,7 +6,7 @@
 */
 
 #pragma once
-
+#include <iostream>
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
 #include "BossSystem.hpp"

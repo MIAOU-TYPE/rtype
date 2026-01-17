@@ -17,6 +17,7 @@
 #include "NetWrapper.hpp"
 #include "RingBuffer/RingBuffer.hpp"
 #include "UDPPacket.hpp"
+#include <iostream>
 
 #ifndef WIN32
     #include <arpa/inet.h>

@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <string_view>
+#include <iostream>
 
 #include "GameConfig.hpp"
 #include "IPacket.hpp"

@@ -9,7 +9,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
-#include <iostream>
 #include <memory>
 #include "EmbeddedResourceManager.hpp"
 #include "Event.hpp"

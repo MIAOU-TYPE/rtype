@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <iostream>
 #include "AIBrain.hpp"
 #include "Background.hpp"
 #include "BubblePowerUp.hpp"

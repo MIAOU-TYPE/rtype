@@ -122,17 +122,15 @@ namespace Engine
         _backgrounds.clear();
         _backgrounds.reserve(3);
 
-        _backgrounds.push_back({"Space", 100, -50.0f, 1140.0f, 207.0f});
-        _backgrounds.push_back({"Jungle", 101, -50.0f, 2584.0f, 720.0f});
-        _backgrounds.push_back({"Ruin", 102, -50.0f, 1148.0f, 223.0f});
+        _backgrounds.push_back({"Space", 100, -50.0f, 1140.0f, 207.0f, "sprites/background_space.png"});
+        _backgrounds.push_back({"Jungle", 101, -50.0f, 2584.0f, 720.0f, "sprites/background_jungle.png"});
+        _backgrounds.push_back({"Ruin", 102, -50.0f, 1148.0f, 223.0f, "sprites/background_ruin.png"});
     }
 
     void LevelEditorState::updateBackgroundDisplay()
     {
         const auto &bg = _backgrounds[static_cast<size_t>(_currentBackgroundIndex)];
-        std::string texName = "sprites/background_" + std::string(1, static_cast<char>(std::tolower(bg.name[0])))
-            + bg.name.substr(1) + ".png";
-        _backgroundTexture = _renderer->textures()->load(texName);
+        _backgroundTexture = _renderer->textures()->load(bg.texturePath);
         if (_backgroundTexture != Graphics::InvalidTexture) {
             const auto size = _renderer->textures()->getSize(_backgroundTexture);
             _backgroundCmd.textureId = _backgroundTexture;

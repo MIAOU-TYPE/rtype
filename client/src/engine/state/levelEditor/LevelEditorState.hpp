@@ -145,6 +145,7 @@ namespace Engine
             float scrollSpeed;
             float tileWidth;
             float tileHeight;
+            std::string texturePath;
         };
 
         /**

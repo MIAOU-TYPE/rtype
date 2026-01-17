@@ -235,7 +235,7 @@ namespace Engine
         std::shared_ptr<ScoreboardContext> _scoreCtx;   ///> Scoreboard context
 
         std::vector<EntityType> _entityTypes;                ///> Available entity types
-        std::vector<Background> _backgrounds;               ///> Available backgrounds
+        std::vector<Background> _backgrounds;                ///> Available backgrounds
         std::vector<PlacedEntity> _placedEntities;           ///> Entities placed in the level
         std::vector<std::unique_ptr<UI::UIButton>> _toolbar; ///> Toolbar buttons for entity types
 

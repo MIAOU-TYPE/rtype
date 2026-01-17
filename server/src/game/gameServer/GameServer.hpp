@@ -193,6 +193,7 @@ namespace Game
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
         std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
+        float _timeSpecialMove = 0.f;  ///> Timer for special enemy movements.
         bool _gameOver = false;     ///> True if the game is over.
     };
 

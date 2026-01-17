@@ -511,6 +511,140 @@ namespace Engine
         worldY = screenY;
     }
 
+    std::string LevelEditorState::generateLevelFilename() const
+    {
+        const auto now = std::time(nullptr);
+        const auto tm = std::localtime(&now);
+        std::ostringstream filename;
+        filename << "levels/" << _levelName << "_" << std::setfill('0') << std::setw(2) << tm->tm_mday << "-"
+                 << std::setfill('0') << std::setw(2) << (tm->tm_mon + 1) << "-" << std::setfill('0') << std::setw(2)
+                 << (tm->tm_year % 100) << ".json";
+        return filename.str();
+    }
+
+    json LevelEditorState::createLevelJson() const
+    {
+        json j;
+        j["name"] = _levelName;
+
+        const auto &bg = _backgrounds[static_cast<size_t>(_currentBackgroundIndex)];
+        j["background"] = {{"spriteId", bg.spriteId}, {"scrollSpeed", bg.scrollSpeed}, {"tileWidth", bg.tileWidth},
+            {"tileHeight", bg.tileHeight}};
+
+        float maxTime = 0.0f;
+        for (const auto &entity : _placedEntities) {
+            if (entity.spawnTime > maxTime)
+                maxTime = entity.spawnTime;
+        }
+        j["duration"] = static_cast<int>(maxTime + 10.0f);
+
+        return j;
+    }
+
+    void LevelEditorState::populateEnemiesJson(json &enemies) const
+    {
+        enemies["smallEnemy"] = {{"hp", 15}, {"speed", -100}, {"size", {{"w", 65}, {"h", 66}}}, {"killScore", 30},
+            {"sprite", "enemy"}, {"spriteId", 2},
+            {"shoot",
+                {{"type", "straight"}, {"cooldown", 2.0}, {"projectileSpeed", 130}, {"damage", 50},
+                    {"muzzle", {{"x", -20}, {"y", 50}}}, {"projectileSpriteId", 9}}}};
+        enemies["mediumEnemy"] = {{"hp", 40}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 50},
+            {"sprite", "enemy2"}, {"spriteId", 3},
+            {"shoot",
+                {{"type", "diagonal"}, {"angles", {-15, 15}}, {"cooldown", 2.0}, {"projectileSpeed", 100},
+                    {"damage", 50}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 9}}}};
+        enemies["mediumEnemyTriple"] = {{"hp", 40}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 65},
+            {"sprite", "enemy2"}, {"spriteId", 3},
+            {"shoot",
+                {{"type", "diagonal"}, {"angles", {-25, 0, 25}}, {"cooldown", 2.2}, {"projectileSpeed", 110},
+                    {"damage", 50}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
+        enemies["mediumEnemyWide"] = {{"hp", 45}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 80},
+            {"sprite", "enemy2"}, {"spriteId", 3},
+            {"shoot",
+                {{"type", "diagonal"}, {"angles", {-35, -15, 15, 35}}, {"cooldown", 2.6}, {"projectileSpeed", 105},
+                    {"damage", 45}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
+        enemies["mediumEnemyFive"] = {{"hp", 50}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 110},
+            {"sprite", "enemy2"}, {"spriteId", 3},
+            {"shoot",
+                {{"type", "diagonal"}, {"angles", {-40, -20, 0, 20, 40}}, {"cooldown", 3.0}, {"projectileSpeed", 110},
+                    {"damage", 40}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
+        enemies["fastEnemy"] = {{"hp", 10}, {"speed", -125}, {"size", {{"w", 33}, {"h", 22}}}, {"killScore", 10},
+            {"sprite", "enemy3"}, {"spriteId", 4},
+            {"shoot",
+                {{"type", "straight"}, {"cooldown", 0.8}, {"projectileSpeed", 160}, {"damage", 50},
+                    {"muzzle", {{"x", -20}, {"y", 15}}}, {"projectileSpriteId", 9}}},
+            {"movement", {{"type", "zigzag"}, {"params", {{"amplitude", 50.0}, {"frequency", 0.5}}}}}};
+        enemies["boss"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 177}, {"h", 144}}}, {"killScore", 300},
+            {"sprite", "boss"}, {"spriteId", 1},
+            {"shoot",
+                {{"type", "diagonal"}, {"angles", {-90, -45, 0, -315, -270}}, {"cooldown", 1.6},
+                    {"projectileSpeed", 140}, {"damage", 35}, {"muzzle", {{"x", 105}, {"y", 112}}},
+                    {"projectileSpriteId", 12}}}};
+        enemies["boss2"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 130}, {"h", 50}}}, {"killScore", 300},
+            {"sprite", "boss2"}, {"spriteId", 21},
+            {"shoot",
+                {{"type", "spread"}, {"bulletsNbr", 5}, {"cooldown", 0.5}, {"projectileSpeed", 150}, {"damage", 50},
+                    {"muzzle", {{"x", 65}, {"y", 25}}}, {"projectileSpriteId", 12}}}};
+        enemies["boss3"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 160}, {"h", 213}}}, {"killScore", 300},
+            {"sprite", "boss3"}, {"spriteId", 22},
+            {"shoot",
+                {{"type", "homing"}, {"cooldown", 4.0}, {"projectileSpeed", 170}, {"damage", 500},
+                    {"muzzle", {{"x", 60}, {"y", 70}}}, {"projectileSpriteId", 23}}}};
+        enemies["groupEnemy"] = {{"type", "group"},
+            {"members",
+                {{{"enemyType", "mediumEnemy"}, {"offset", {{"x", 0}, {"y", 0}}}},
+                    {{"enemyType", "smallEnemy"}, {"offset", {{"x", 0}, {"y", -130}}}},
+                    {{"enemyType", "smallEnemy"}, {"offset", {{"x", 0}, {"y", 130}}}}}}};
+    }
+
+    void LevelEditorState::populateObstaclesJson(json &obstacles) const
+    {
+        obstacles["gravityWell"] = {{"spriteId", 15}, {"size", {{"w", 34}, {"h", 34}}}, {"pullStrength", 200},
+            {"damagePerSecond", 10}, {"radius", 130}, {"innerRadius", 50}};
+    }
+
+    json LevelEditorState::createWavesJson() const
+    {
+        json waves = json::array();
+        auto sortedEntities = _placedEntities;
+        std::sort(sortedEntities.begin(), sortedEntities.end(), [](const PlacedEntity &a, const PlacedEntity &b) {
+            return a.spawnTime < b.spawnTime;
+        });
+
+        for (const auto &entity : sortedEntities) {
+            json wave;
+            wave["time"] = entity.spawnTime;
+
+            if (entity.type == "gravityWell") {
+                wave["obstacleType"] = entity.type;
+                wave["obstacleX"] = entity.x;
+                wave["obstacleY"] = entity.y;
+                wave["enemies"] = json::object();
+            } else if (entity.type == "laser" || entity.type == "shield" || entity.type == "bubble") {
+                wave["powerUp"] = {{"type", entity.type}};
+            } else {
+                wave["enemies"] = {{entity.type, 1}};
+                wave["spawnPattern"] = "line";
+                wave["spawnY"] = entity.y;
+            }
+
+            waves.push_back(wave);
+        }
+
+        return waves;
+    }
+
+    bool LevelEditorState::writeJsonToFile(const json &j, const std::string &filename) const
+    {
+        std::ofstream file(filename);
+        if (!file.is_open())
+            return false;
+
+        file << j.dump(2);
+        file.close();
+        return true;
+    }
+
     void LevelEditorState::updateCustomLevelsIndex(const std::string &levelPath, const std::string &levelName)
     {
         try {
@@ -566,165 +700,17 @@ namespace Engine
     bool LevelEditorState::saveLevel()
     {
         try {
-            const auto now = std::time(nullptr);
-            const auto tm = std::localtime(&now);
-            std::ostringstream filename;
-            filename << "levels/" << _levelName << "_" << std::setfill('0') << std::setw(2) << tm->tm_mday << "-"
-                     << std::setfill('0') << std::setw(2) << (tm->tm_mon + 1) << "-" << std::setfill('0')
-                     << std::setw(2) << (tm->tm_year % 100) << ".json";
+            std::string filename = generateLevelFilename();
+            json j = createLevelJson();
 
-            std::ofstream file(filename.str());
-            if (!file.is_open())
+            populateEnemiesJson(j["enemies"]);
+            populateObstaclesJson(j["obstacles"]);
+            j["waves"] = createWavesJson();
+
+            if (!writeJsonToFile(j, filename))
                 return false;
 
-            file << "{\n";
-            file << "  \"name\": \"" << _levelName << "\",\n";
-            file << "  \"background\": {\n";
-            file << "    \"spriteId\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].spriteId
-                 << ",\n";
-            file << "    \"scrollSpeed\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].scrollSpeed
-                 << ",\n";
-            file << "    \"tileWidth\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileWidth
-                 << ",\n";
-            file << "    \"tileHeight\": " << _backgrounds[static_cast<size_t>(_currentBackgroundIndex)].tileHeight
-                 << "\n";
-            file << "  },\n";
-
-            file << "  \"enemies\": {\n";
-            file << "    \"smallEnemy\": { \"hp\": 15, \"speed\": -100, \"size\": { \"w\": 65, \"h\": 66 }, "
-                    "\"killScore\": 30, \"sprite\": \"enemy\", \"spriteId\": 2,\n";
-            file << "      \"shoot\": { \"type\": \"straight\", \"cooldown\": 2.0, \"projectileSpeed\": 130, "
-                    "\"damage\": 50, \"muzzle\": { \"x\": -20, \"y\": 50 }, \"projectileSpriteId\": 9 } },\n";
-            file << "    \"mediumEnemy\": { \"hp\": 40, \"speed\": -70, \"size\": { \"w\": 65, \"h\": 49 }, "
-                    "\"killScore\": 50, \"sprite\": \"enemy2\", \"spriteId\": 3,\n";
-            file << "      \"shoot\": { \"type\": \"diagonal\", \"angles\": [-15, 15], \"cooldown\": 2.0, "
-                    "\"projectileSpeed\": 100, \"damage\": 50, \"muzzle\": { \"x\": -20, \"y\": 35 }, "
-                    "\"projectileSpriteId\": 9 } },\n";
-            file << "    \"mediumEnemyTriple\": { \"hp\": 40, \"speed\": -70, \"size\": { \"w\": 65, \"h\": 49 }, "
-                    "\"killScore\": 65, \"sprite\": \"enemy2\", \"spriteId\": 3,\n";
-            file << "      \"shoot\": { \"type\": \"diagonal\", \"angles\": [-25, 0, 25], \"cooldown\": 2.2, "
-                    "\"projectileSpeed\": 110, \"damage\": 50, \"muzzle\": { \"x\": -20, \"y\": 35 }, "
-                    "\"projectileSpriteId\": 12 } },\n";
-            file << "    \"mediumEnemyWide\": { \"hp\": 45, \"speed\": -70, \"size\": { \"w\": 65, \"h\": 49 }, "
-                    "\"killScore\": 80, \"sprite\": \"enemy2\", \"spriteId\": 3,\n";
-            file << "      \"shoot\": { \"type\": \"diagonal\", \"angles\": [-35, -15, 15, 35], \"cooldown\": 2.6, "
-                    "\"projectileSpeed\": 105, \"damage\": 45, \"muzzle\": { \"x\": -20, \"y\": 35 }, "
-                    "\"projectileSpriteId\": 12 } },\n";
-            file << "    \"mediumEnemyFive\": { \"hp\": 50, \"speed\": -70, \"size\": { \"w\": 65, \"h\": 49 }, "
-                    "\"killScore\": 110, \"sprite\": \"enemy2\", \"spriteId\": 3,\n";
-            file << "      \"shoot\": { \"type\": \"diagonal\", \"angles\": [-40, -20, 0, 20, 40], \"cooldown\": 3.0, "
-                    "\"projectileSpeed\": 110, \"damage\": 40, \"muzzle\": { \"x\": -20, \"y\": 35 }, "
-                    "\"projectileSpriteId\": 12 } },\n";
-            file << "    \"fastEnemy\": { \"hp\": 10, \"speed\": -125, \"size\": { \"w\": 33, \"h\": 22 }, "
-                    "\"killScore\": 10, \"sprite\": \"enemy3\", \"spriteId\": 4,\n";
-            file << "      \"shoot\": { \"type\": \"straight\", \"cooldown\": 0.8, \"projectileSpeed\": 160, "
-                    "\"damage\": 50, \"muzzle\": { \"x\": -20, \"y\": 15 }, \"projectileSpriteId\": 9 },\n";
-            file << "      \"movement\": { \"type\": \"zigzag\", \"params\": { \"amplitude\": 50.0, \"frequency\": 0.5 "
-                    "} } },\n";
-            file << "    \"boss\": {\n";
-            file << "      \"hp\": 3000,\n";
-            file << "      \"speed\": -30,\n";
-            file << "      \"size\": { \"w\": 177, \"h\": 144 },\n";
-            file << "      \"killScore\": 300,\n";
-            file << "      \"sprite\": \"boss\",\n";
-            file << "      \"spriteId\": 1,\n";
-            file << "      \"shoot\": {\n";
-            file << "        \"type\": \"diagonal\",\n";
-            file << "        \"angles\": [-90, -45, 0, -315, -270],\n";
-            file << "        \"cooldown\": 1.6,\n";
-            file << "        \"projectileSpeed\": 140,\n";
-            file << "        \"damage\": 35,\n";
-            file << "        \"muzzle\": { \"x\": 105, \"y\": 112 },\n";
-            file << "        \"projectileSpriteId\": 12\n";
-            file << "      }\n";
-            file << "    },\n";
-            file << "    \"boss2\": {\n";
-            file << "      \"hp\": 3000,\n";
-            file << "      \"speed\": -30,\n";
-            file << "      \"size\": { \"w\": 130, \"h\": 50 },\n";
-            file << "      \"killScore\": 300,\n";
-            file << "      \"sprite\": \"boss2\",\n";
-            file << "      \"spriteId\": 21,\n";
-            file << "      \"shoot\": {\n";
-            file << "        \"type\": \"spread\",\n";
-            file << "        \"bulletsNbr\": 5,\n";
-            file << "        \"cooldown\": 0.5,\n";
-            file << "        \"projectileSpeed\": 150,\n";
-            file << "        \"damage\": 50,\n";
-            file << "        \"muzzle\": { \"x\": 65, \"y\": 25 },\n";
-            file << "        \"projectileSpriteId\": 12\n";
-            file << "      }\n";
-            file << "    },\n";
-            file << "    \"boss3\": {\n";
-            file << "      \"hp\": 3000,\n";
-            file << "      \"speed\": -30,\n";
-            file << "      \"size\": { \"w\": 160, \"h\": 213 },\n";
-            file << "      \"killScore\": 300,\n";
-            file << "      \"sprite\": \"boss3\",\n";
-            file << "      \"spriteId\": 22,\n";
-            file << "      \"shoot\": {\n";
-            file << "        \"type\": \"homing\",\n";
-            file << "        \"cooldown\": 4.0,\n";
-            file << "        \"projectileSpeed\": 170,\n";
-            file << "        \"damage\": 500,\n";
-            file << "        \"muzzle\": { \"x\": 60, \"y\": 70 },\n";
-            file << "        \"projectileSpriteId\": 23\n";
-            file << "      }\n";
-            file << "    },\n";
-            file << "    \"groupEnemy\": { \"type\": \"group\", \"members\": [\n";
-            file << "      { \"enemyType\": \"mediumEnemy\", \"offset\": { \"x\": 0, \"y\": 0 } },\n";
-            file << "      { \"enemyType\": \"smallEnemy\", \"offset\": { \"x\": 0, \"y\": -130 } },\n";
-            file << "      { \"enemyType\": \"smallEnemy\", \"offset\": { \"x\": 0, \"y\": 130 } } ] }\n";
-            file << "  },\n";
-
-            file << "  \"obstacles\": {\n";
-            file << "    \"gravityWell\": { \"spriteId\": 15, \"size\": { \"w\": 34, \"h\": 34 }, \"pullStrength\": "
-                    "200 }\n";
-            file << "  },\n";
-
-            float maxTime = 0.0f;
-            for (const auto &entity : _placedEntities) {
-                if (entity.spawnTime > maxTime)
-                    maxTime = entity.spawnTime;
-            }
-            file << "  \"duration\": " << static_cast<int>(maxTime + 10.0f) << ",\n";
-
-            file << "  \"waves\": [\n";
-
-            auto sortedEntities = _placedEntities;
-            std::sort(sortedEntities.begin(), sortedEntities.end(), [](const PlacedEntity &a, const PlacedEntity &b) {
-                return a.spawnTime < b.spawnTime;
-            });
-
-            for (size_t i = 0; i < sortedEntities.size(); ++i) {
-                const auto &entity = sortedEntities[i];
-                file << "    {\n";
-                file << "      \"time\": " << entity.spawnTime << ",\n";
-
-                if (entity.type == "gravityWell") {
-                    file << "      \"obstacleType\": \"" << entity.type << "\",\n";
-                    file << "      \"obstacleX\": " << entity.x << ",\n";
-                    file << "      \"obstacleY\": " << entity.y << ",\n";
-                    file << "      \"enemies\": {}\n";
-                } else if (entity.type == "laser" || entity.type == "shield" || entity.type == "bubble") {
-                    file << "      \"powerUp\": { \"type\": \"" << entity.type << "\" }\n";
-                } else {
-                    file << "      \"enemies\": { \"" << entity.type << "\": 1 },\n";
-                    file << "      \"spawnPattern\": \"line\",\n";
-                    file << "      \"spawnY\": " << entity.y << "\n";
-                }
-
-                file << "    }";
-                if (i < sortedEntities.size() - 1)
-                    file << ",";
-                file << "\n";
-            }
-
-            file << "  ]\n";
-            file << "}\n";
-
-            file.close();
-            updateCustomLevelsIndex(filename.str(), _levelName);
+            updateCustomLevelsIndex(filename, _levelName);
             return true;
         } catch (const std::exception &) {
             return false;

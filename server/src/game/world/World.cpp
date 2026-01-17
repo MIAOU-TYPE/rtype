@@ -91,6 +91,20 @@ namespace
                     ks && ks->score > 0)
                     w->events().emit<UpdateScoreEvent>(UpdateScoreEvent{proj->shooter, ks->score});
             }
+
+            if (const auto &playerPowerUp = w->registry().getComponents<Ecs::PlayerPowerUp>().at(event.target)) {
+                if (playerPowerUp->powerUpEntity.has_value())
+                    w->events().emit<DestroyEvent>(
+                        DestroyEvent{static_cast<size_t>(playerPowerUp->powerUpEntity.value()), false});
+                if (playerPowerUp->hasBar && playerPowerUp->barEntity.has_value())
+                    w->events().emit<DestroyEvent>(
+                        DestroyEvent{static_cast<size_t>(playerPowerUp->barEntity.value()), false});
+            }
+            if (const auto &bubblePowerUp = w->registry().getComponents<Ecs::BubblePowerUp>().at(event.target)) {
+                if (bubblePowerUp->bubbleEntity.has_value())
+                    w->events().emit<DestroyEvent>(
+                        DestroyEvent{static_cast<size_t>(bubblePowerUp->bubbleEntity.value()), false});
+            }
         });
     }
 
@@ -269,6 +283,8 @@ namespace
         if (playerPowerUp)
             return;
 
+        reg.getComponents<Ecs::PowerUp>().remove(powerUpIdx);
+
         if (auto &drawable = reg.getComponents<Ecs::Drawable>().at(powerUpIdx))
             drawable->spriteId = 14;
 
@@ -316,6 +332,12 @@ namespace
             }
 
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
+            if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Standard) {
+                const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
+                if (playerPowerUp) {
+                    return;
+                }
+            }
 
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Laser) {
                 activateLaserPowerUp(w, powerUpIdx, playerIdx);

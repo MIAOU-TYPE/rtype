@@ -26,6 +26,13 @@ namespace Engine
             initializeEntityTypes();
             initializeBackgrounds();
 
+            _toolbar.clear();
+            _entityTextures.clear();
+            _backRequested = false;
+            _showSaveDialog = false;
+            _statusMessage.clear();
+            _statusMessageTimer = 0.0f;
+
             _saveButton = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "SAVE");
             _backButton = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
             _clearButton = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CLEAR");

@@ -167,7 +167,7 @@ namespace Thread
                             if (const auto s = w.lock())
                                 return static_cast<int>(s->getScore());
                             return 0;
-                        }));
+                        }, _roomManager));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }
@@ -331,7 +331,7 @@ namespace Thread
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(
-                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.levelPath));
+                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.levelPath, e.worldMusic));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {

@@ -212,8 +212,8 @@ namespace Engine
         row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
         row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
 
-        centerX(*_create.confirm, cx, h * 0.80f);
-        centerX(*_create.back, cx, h * 0.90f);
+        centerX(*_create.confirm, w * 0.75f, h * 0.85f);
+        centerX(*_create.back, w * 0.25f, h * 0.85f);
     }
 
     void RoomMenu::update(const InputFrame &frame)
@@ -698,7 +698,7 @@ namespace Engine
         return _selectedMaxPlayers;
     }
 
-    Engine::Difficulty RoomMenu::difficultySelected() const noexcept
+    Difficulty RoomMenu::difficultySelected() const noexcept
     {
         return _selectedDifficulty;
     }
@@ -709,6 +709,14 @@ namespace Engine
             return "";
         const int idx = std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1);
         return _levels.at(static_cast<size_t>(idx)).path;
+    }
+
+    std::string RoomMenu::musicSelected() const noexcept
+    {
+        if (_worlds.empty())
+            return "sounds/menu_theme.flac";
+        const int idx = std::clamp(_selectedWorld, 0, static_cast<int>(_worlds.size()) - 1);
+        return _worlds.at(static_cast<size_t>(idx)).music;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

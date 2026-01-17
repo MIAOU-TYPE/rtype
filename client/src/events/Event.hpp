@@ -131,9 +131,12 @@ namespace Engine
          * @param maxP The maximum number of players allowed in the room.
          * @param diff The difficulty level for the room.
          * @param level The path to the level configuration file.
+         * @param music The path to the background music for the world.
          */
-        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Difficulty diff, std::string level)
-            : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), levelPath(std::move(level))
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Difficulty diff, std::string level,
+            std::string music = ::DEFAULT_GAME_MUSIC)
+            : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), levelPath(std::move(level)),
+              worldMusic(std::move(music))
         {
         }
 
@@ -141,6 +144,7 @@ namespace Engine
         uint8_t maxPlayers;    ///> The maximum number of players allowed in the room.
         Difficulty difficulty; ///> The difficulty level for the room.
         std::string levelPath; ///> The path to the level configuration file.
+        std::string worldMusic; ///> The path to the background music for the world.
     };
 
     /**

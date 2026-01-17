@@ -65,10 +65,12 @@ namespace Network
          * @param maxPlayers The maximum number of players allowed in the room.
          * @param difficulty The difficulty level for the room.
          * @param levelPath The path to the level configuration file.
+         * @param worldMusic The path to the background music for the world.
          * @return A shared pointer to the created CreateRoom packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(uint32_t req, std::string_view roomName,
-            uint8_t maxPlayers, Engine::Difficulty difficulty, std::string_view levelPath) const;
+            uint8_t maxPlayers, Engine::Difficulty difficulty, std::string_view levelPath,
+            std::string_view worldMusic = ::DEFAULT_GAME_MUSIC) const;
 
         /**
          * @brief Create a JoinRoom packet.

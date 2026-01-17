@@ -9,7 +9,7 @@
 
 namespace
 {
-    Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
+    [[nodiscard]] Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
     {
         int v = static_cast<int>(d);
         v = (v + step) % 3;
@@ -18,7 +18,7 @@ namespace
         return static_cast<Engine::Difficulty>(v);
     }
 
-    Engine::GameMode shiftMode(Engine::GameMode m, const int step) noexcept
+    [[nodiscard]] Engine::GameMode shiftMode(Engine::GameMode m, const int step) noexcept
     {
         int v = static_cast<int>(m);
         v = (v + step) % 4;
@@ -27,7 +27,7 @@ namespace
         return static_cast<Engine::GameMode>(v);
     }
 
-    std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
+    [[nodiscard]] std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
     {
         switch (d) {
             case Engine::Difficulty::Easy: return "easy";
@@ -37,7 +37,7 @@ namespace
         return "unknown";
     }
 
-    std::string_view modeToStringUI(Engine::GameMode m) noexcept
+    [[nodiscard]] std::string_view modeToStringUI(Engine::GameMode m) noexcept
     {
         switch (m) {
             case Engine::GameMode::Standard: return "standard";

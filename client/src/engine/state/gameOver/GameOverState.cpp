@@ -15,8 +15,9 @@ namespace Engine
         std::shared_ptr<EventBus> eventBus, std::shared_ptr<AuthContext> authCtx,
         std::shared_ptr<ScoreboardContext> scoreCtx, std::weak_ptr<World::ClientWorld> world)
         : _graphics(std::move(graphics)), _renderer(std::move(renderer)), _musicRegistry(std::move(musicRegistry)),
-          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)), _eventBus(std::move(eventBus)),
-          _authCtx(std::move(authCtx)), _scoreCtx(std::move(scoreCtx)), _world(std::move(world))
+          _soundRegistry(std::move(soundRegistry)), _roomManager(std::move(roomManager)),
+          _eventBus(std::move(eventBus)), _authCtx(std::move(authCtx)), _scoreCtx(std::move(scoreCtx)),
+          _world(std::move(world))
     {
     }
 
@@ -43,4 +44,4 @@ namespace Engine
     {
         _menu->render();
     }
-}
+} // namespace Engine

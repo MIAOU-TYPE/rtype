@@ -17,9 +17,6 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <unordered_map>
-
-using json = nlohmann::json; ///> JSON library namespace
 #include "AuthContext.hpp"
 #include "EventRegistry.hpp"
 #include "IGameState.hpp"
@@ -36,6 +33,12 @@ using json = nlohmann::json; ///> JSON library namespace
 #include "StateManager.hpp"
 #include "UIButton.hpp"
 #include "UITextField.hpp"
+#include <unordered_map>
+
+/**
+ * @brief Type alias for nlohmann::json for convenience.
+ */
+using json = nlohmann::json;
 
 namespace Engine
 {

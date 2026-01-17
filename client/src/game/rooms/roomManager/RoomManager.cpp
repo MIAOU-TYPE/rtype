@@ -107,7 +107,7 @@ namespace Engine
         return std::string(reinterpret_cast<const char *>(data), size);
     }
 
-    std::pair<std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(const std::string_view jsonText)
+    std::tuple<std::string, std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(const std::string_view jsonText)
     {
         json j;
         try {
@@ -122,6 +122,8 @@ namespace Engine
         const std::string name = j.value("name", "");
         if (name.empty())
             throw RoomManagerError("{RoomManager::parseWorldLevelsJson} Missing or empty 'name' field");
+
+        const std::string music = j.value("music", ::DEFAULT_GAME_MUSIC);
 
         const auto levelsJson = j.find("levels");
         if (levelsJson == j.end() || !levelsJson->is_array())
@@ -143,7 +145,7 @@ namespace Engine
                 levels.push_back(std::move(lvl));
         }
 
-        return {name, levels};
+        return {name, music, levels};
     }
 
     void RoomManager::loadFromEmbedded()
@@ -156,14 +158,14 @@ namespace Engine
             if (!content)
                 continue;
 
-            auto [displayName, parsed] = parseWorldLevelsJson(*content);
+            auto [displayName, musicPath, parsed] = parseWorldLevelsJson(*content);
             if (parsed.empty())
                 continue;
 
             WorldLevels wl;
             wl.levels = std::move(parsed);
 
-            _worlds.push_back(WorldEntry{worldId, displayName});
+            _worlds.push_back(WorldEntry{worldId, displayName, musicPath});
             _levelsByWorldId.emplace(worldId, std::move(wl));
         }
     }

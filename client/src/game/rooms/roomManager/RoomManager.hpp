@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <utility>
 #include "IResourceManager.hpp"
+#include "MusicRegistry.hpp"
 #include "RoomData.hpp"
 #include "RoomTypes.hpp"
 #include <string_view>
@@ -115,12 +116,12 @@ namespace Engine
         [[nodiscard]] std::optional<std::string> readTextAsset(std::string_view assetPath) const;
 
         /**
-         * @brief Parses a JSON string to extract the world name and list of levels.
+         * @brief Parses a JSON string to extract the world name, music, and list of levels.
          * @param jsonText The JSON text to parse.
-         * @return A pair containing the world name and vector of LevelInfo objects parsed from the JSON.
+         * @return A tuple containing the world name, music path, and vector of LevelInfo objects.
          * @throws RoomManagerError if parsing fails or the JSON format is incorrect.
          */
-        [[nodiscard]] static std::pair<std::string, std::vector<LevelInfo>> parseWorldLevelsJson(
+        [[nodiscard]] static std::tuple<std::string, std::string, std::vector<LevelInfo>> parseWorldLevelsJson(
             std::string_view jsonText);
 
         /**

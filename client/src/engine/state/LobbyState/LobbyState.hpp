@@ -12,13 +12,13 @@
 #include "IGameState.hpp"
 #include "IGraphics.hpp"
 #include "IRenderer.hpp"
+#include "Lobby.hpp"
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
 #include "RoomMenu.hpp"
 #include "ScoreboardContext.hpp"
 #include "SoundRegistry.hpp"
-#include "Lobby.hpp"
 
 namespace Engine
 {
@@ -69,8 +69,8 @@ namespace Engine
         std::shared_ptr<SoundRegistry> _soundRegistry;  ///> Shared pointer to the sound registry.
 
         std::shared_ptr<RoomManager> _roomManager;    ///> Shared pointer to the room manager.
-        std::unique_ptr<RoomMenu> _lobby;              ///> Unique pointer to the room lobby.
-        std::unique_ptr<LobbyWaitPage> _lobbyPage; ///> Unique pointer to the lobby page.
+        std::unique_ptr<RoomMenu> _lobby;             ///> Unique pointer to the room lobby.
+        std::unique_ptr<LobbyWaitPage> _lobbyPage;    ///> Unique pointer to the lobby page.
         std::shared_ptr<EventBus> _eventBus;          ///> Shared pointer to the event bus.
         std::shared_ptr<AuthContext> _authCtx;        ///> Shared pointer to the auth context.
         std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Shared pointer to the scoreboard context.

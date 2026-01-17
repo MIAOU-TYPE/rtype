@@ -30,7 +30,7 @@ namespace Engine
 
     void LobbyState::update(StateManager &manager, const InputFrame &frame)
     {
-        (void)manager;
+        (void) manager;
 
         if (_lobbyPage->wantsStart()) {
             _lobbyPage->consumeStart();

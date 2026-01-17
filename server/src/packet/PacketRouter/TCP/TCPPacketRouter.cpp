@@ -430,11 +430,11 @@ namespace Net
             return sendError(addr, req, 22, "ROOM_INFO: room not found");
 
         if (!_packetFactory)
-            return;
+            return sendError(addr, req, 500, "ROOM_INFO: service unavailable");
 
         const auto out = _packetFactory->makeRoomUpdated(addr, req, room->getRoomData());
         if (!out)
-            return;
+            return sendError(addr, req, 22, "ROOM_INFO: room not updated");
 
         (void) _tcp->sendPacket(*out);
     }

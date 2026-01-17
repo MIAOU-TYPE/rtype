@@ -58,8 +58,8 @@ namespace Engine
         _hintText = _renderer->texts()->createText(18, {190, 190, 190, 255});
         _hintText->setString("");
 
-        _playerTexts.reserve(LobbyCapacity);
-        for (size_t i = 0; i < LobbyCapacity; ++i) {
+        _playerTexts.reserve(_lobbyCapacity);
+        for (size_t i = 0; i < _lobbyCapacity; ++i) {
             auto t = _renderer->texts()->createText(24, {255, 255, 255, 255});
             t->setString("");
             _playerTexts.push_back(std::move(t));
@@ -101,10 +101,10 @@ namespace Engine
 
     void Lobby::setMaxPlayers(const size_t maxPlayers)
     {
-        LobbyCapacity = maxPlayers;
+        _lobbyCapacity = maxPlayers;
         _playerTexts.clear();
-        _playerTexts.reserve(LobbyCapacity);
-        for (size_t i = 0; i < LobbyCapacity; ++i) {
+        _playerTexts.reserve(_lobbyCapacity);
+        for (size_t i = 0; i < _lobbyCapacity; ++i) {
             auto t = _renderer->texts()->createText(24, {255, 255, 255, 255});
             t->setString("");
             _playerTexts.push_back(std::move(t));
@@ -153,7 +153,7 @@ namespace Engine
         }
 
         if (_playersCountText)
-            _playersCountText->setString(std::to_string(_players.size()) + "/" + std::to_string(LobbyCapacity));
+            _playersCountText->setString(std::to_string(_players.size()) + "/" + std::to_string(_lobbyCapacity));
 
         for (const auto &t : _playerTexts)
             t->setString("");

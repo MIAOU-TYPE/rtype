@@ -32,7 +32,7 @@ namespace Net::Protocol::TCP
     constexpr uint8_t AUTH_REGISTER = 0x08;  ///> Client requests to register a new account
     constexpr uint8_t AUTH_LOGIN = 0x09;     ///> Client requests to log in to an existing account
     constexpr uint8_t SCOREBOARD_GET = 0x0A; ///> Client requests global scoreboard (top N)
-    constexpr uint8_t ROOM_INFO = 0x0B;
+    constexpr uint8_t ROOM_INFO = 0x0B;      ///> Client requests information about the current room
 
     /**
      * @brief Packet types for TCP communication from server to client.

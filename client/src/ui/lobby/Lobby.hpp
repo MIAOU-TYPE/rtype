@@ -167,6 +167,6 @@ namespace Engine
         std::chrono::steady_clock::time_point lastRefresh{};                  ///> Last refresh time point.
         static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
 
-        size_t LobbyCapacity = 4; ///> Maximum capacity of the lobby.
+        size_t _lobbyCapacity = 4; ///> Maximum capacity of the lobby.
     };
 } // namespace Engine

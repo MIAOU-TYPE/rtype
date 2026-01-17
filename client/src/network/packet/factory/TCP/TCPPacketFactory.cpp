@@ -162,7 +162,7 @@ namespace Network
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::ROOM_INFO, req, {});
             return make(payload);
         } catch (...) {
-            std::cerr << "{TCPPacketFactory::makeRoomUpdate} error creating packet" << std::endl;
+            std::cerr << "{TCPPacketFactory::makeRoomInfo} error creating packet" << std::endl;
             return nullptr;
         }
     }

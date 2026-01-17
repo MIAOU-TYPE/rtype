@@ -34,7 +34,7 @@ namespace Engine
             return;
         }
         if (_menu->wantsCreateRoom()) {
-            const std::string name = _menu->roomNameSelected();
+            const std::string name = _menu->roomNameSelected().empty() ? "default" : _menu->roomNameSelected();
             const std::string levelPath = _menu->levelSelected();
             _eventBus->emit<CreateRoomRequested>(CreateRoomRequested(name, _menu->maxPlayerSelected(),
                 _menu->difficultySelected(), levelPath.empty() ? "levels/space_level1.json" : levelPath));

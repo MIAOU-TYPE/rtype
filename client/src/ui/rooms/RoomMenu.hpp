@@ -85,12 +85,40 @@ namespace Engine
          * @brief Lays out the room menu UI elements.
          */
         void layout() override;
+
+        /**
+         * @brief Updates the room menu state based on user input.
+         * @param frame The current input frame.
+         */
         void update(const InputFrame &frame) override;
+
+        /**
+         * @brief Renders the room menu UI elements.
+         */
         void render() const override;
 
+        /**
+         * @brief Checks if the user wants to go back to the main menu.
+         * @return true if the user wants to go back, false otherwise.
+         */
         [[nodiscard]] bool wantsBackToMenu() const noexcept;
+
+        /**
+         * @brief Checks if the user wants to create a room.
+         * @return true if the user wants to create a room, false otherwise.
+         */
         [[nodiscard]] bool wantsCreateRoom() const noexcept;
+
+        /**
+         * @brief Checks if the user wants to join a room.
+         * @return true if the user wants to join a room, false otherwise.
+         */
         [[nodiscard]] bool wantsJoinRoom() const noexcept;
+
+        /**
+         * @brief Checks if the user wants to list available rooms.
+         * @return true if the user wants to list rooms, false otherwise.
+         */
         [[nodiscard]] bool wantsListRooms() const noexcept;
 
         /**
@@ -118,7 +146,7 @@ namespace Engine
          * @brief Gets the selected difficulty level.
          * @return The selected difficulty.
          */
-        [[nodiscard]] Engine::Difficulty difficultySelected() const noexcept;
+        [[nodiscard]] Difficulty difficultySelected() const noexcept;
 
         /**
          * @brief Gets the selected level ID (path to the level file).
@@ -165,31 +193,26 @@ namespace Engine
         enum class Page {
             Root,   ///> Root page with options to create or join a room.
             Create, ///> Create room page.
-            List
-        }; ///> List rooms page.
+            List    ///> List room page.
+        };
 
         /**
          * @struct HeaderUI
          * @brief Struct representing the header UI elements.
-         * @brief title Pointer to the title text element.
-         * @brief subtitle Pointer to the subtitle text element.
          */
         struct HeaderUI {
-            std::unique_ptr<Graphics::IText> title;
-            std::unique_ptr<Graphics::IText> subtitle;
+            std::unique_ptr<Graphics::IText> title;    ///> Title text.
+            std::unique_ptr<Graphics::IText> subtitle; ///> Subtitle text.
         };
 
         /**
          * @struct RootUI
          * @brief Struct representing the root UI elements.
-         * @brief create Pointer to the create button.
-         * @brief join Pointer to the join button.
-         * @brief back Pointer to the back button.
          */
         struct RootUI {
-            std::unique_ptr<UI::UIButton> create;
-            std::unique_ptr<UI::UIButton> join;
-            std::unique_ptr<UI::UIButton> back;
+            std::unique_ptr<UI::UIButton> create; ///> Create room button.
+            std::unique_ptr<UI::UIButton> join;   ///> Join room button.
+            std::unique_ptr<UI::UIButton> back;   ///> Back button.
         };
 
         /**
@@ -258,15 +281,47 @@ namespace Engine
          */
         void handleMouseReleased(float mx, float my);
 
+        /**
+         * @brief Handles key press events.
+         * @param frame The current input frame.
+         */
         void handleKeyPressed(const InputFrame &frame);
+
+        /**
+         * @brief Handles key release events.
+         * @param frame The current input frame.
+         */
         void handleKeyReleased(const InputFrame &frame) const;
 
+        /**
+         * @brief Handles the create button release event.
+         * @param mx The x-coordinate of the mouse.
+         * @param my The y-coordinate of the mouse.
+         */
         void handleCreateReleased(float mx, float my);
+
+        /**
+         * @brief Handles the join button release event.
+         * @param mx The x-coordinate of the mouse.
+         * @param my The y-coordinate of the mouse.
+         */
         void handleJoinReleased(float mx, float my);
 
+        /**
+         * @brief Updates hover states for UI elements based on mouse position.
+         * @param mx The x-coordinate of the mouse.
+         * @param my The y-coordinate of the mouse.
+         */
         void updateHover(float mx, float my) const;
 
+        /**
+         * @brief Refreshes the create room catalog based on selected options.
+         */
         void refreshCreateCatalog();
+
+        /**
+         * @brief Updates text strings in the UI elements based on current selections.
+         */
         void updateTextStrings() const;
 
         std::shared_ptr<RoomManager> _roomManager; ///> Shared pointer to the room manager.

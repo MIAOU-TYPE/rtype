@@ -241,6 +241,8 @@ namespace Net
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
     {
+        if (const auto currentRoom = _rooms->getRoomIdOfPlayer(_sessions->getOrCreateSession(addr)); currentRoom != 0)
+            (void) _rooms->removePlayer(_sessions->getOrCreateSession(addr));
         std::string roomName;
         uint8_t maxPlayers = 0;
         uint8_t difficultyRaw = 0;
@@ -276,7 +278,8 @@ namespace Net
 
         uint32_t roomId = 0;
         try {
-            Engine::GameConfig config{difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
+            const Engine::GameConfig config{
+                difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
             roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());
@@ -285,6 +288,7 @@ namespace Net
         if (roomId == 0)
             return sendError(addr, req, 9, "CREATE_ROOM: failed to create room");
 
+        (void) _rooms->addPlayerToRoom(roomId, _sessions->getOrCreateSession(addr));
         if (!_packetFactory)
             return;
 
@@ -293,6 +297,11 @@ namespace Net
             return;
 
         (void) _tcp->sendPacket(*out);
+
+        const auto updatePkt = _packetFactory->makeRoomUpdated(addr, req, _rooms->getRoomById(roomId)->getRoomData());
+        if (!updatePkt)
+            return;
+        (void) _tcp->sendPacket(*updatePkt);
     }
 
     void TCPPacketRouter::onJoinRoom(

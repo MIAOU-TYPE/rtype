@@ -59,6 +59,10 @@ namespace Engine
         {
         }
 
+        /**
+         * @brief Returns the error message.
+         * @return The error message as a C-style string.
+         */
         const char *what() const noexcept override
         {
             return _message.c_str();

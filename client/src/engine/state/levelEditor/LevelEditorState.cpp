@@ -76,6 +76,10 @@ namespace Engine
 
     void LevelEditorState::initializeEntityTypes()
     {
+        _entityTypes.clear();
+        _entitySpriteMap.clear();
+        _entityTypes.reserve(10);
+
         _entityTypes.push_back({"Small Enemy", 2, 65.0f, 66.0f, "smallEnemy", "enemy"});
         _entityTypes.push_back({"Medium Enemy", 3, 65.0f, 49.0f, "mediumEnemy", "enemy2"});
         _entityTypes.push_back({"Fast Enemy", 4, 33.0f, 22.0f, "fastEnemy", "enemy3"});

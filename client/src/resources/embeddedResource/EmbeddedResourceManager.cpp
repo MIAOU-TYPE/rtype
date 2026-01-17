@@ -102,14 +102,18 @@ namespace EmbeddedResources
     extern const unsigned int sounds_jungle_theme_flac_size;
     extern const unsigned char sounds_menu_theme_flac[];
     extern const unsigned int sounds_menu_theme_flac_size;
-    extern const unsigned char sounds_powerup_wav[];
-    extern const unsigned int sounds_powerup_wav_size;
     extern const unsigned char sounds_ruins_theme_flac[];
     extern const unsigned int sounds_ruins_theme_flac_size;
     extern const unsigned char sounds_shoot_wav[];
     extern const unsigned int sounds_shoot_wav_size;
     extern const unsigned char sounds_space_theme_flac[];
     extern const unsigned int sounds_space_theme_flac_size;
+    extern const unsigned char sounds_powerup_wav[];
+    extern const unsigned int sounds_powerup_wav_size;
+    extern const unsigned char sounds_powerup_laser_wav[];
+    extern const unsigned int sounds_powerup_laser_wav_size;
+    extern const unsigned char sounds_powerup_bubble_wav[];
+    extern const unsigned int sounds_powerup_bubble_wav_size;
 
     extern const unsigned char levels_world1_levels_json[];
     extern const unsigned int levels_world1_levels_json_size;
@@ -220,6 +224,10 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sounds_menu_theme_flac, EmbeddedResources::sounds_menu_theme_flac_size};
     _resources["sounds/powerup.wav"] = {
         EmbeddedResources::sounds_powerup_wav, EmbeddedResources::sounds_powerup_wav_size};
+    _resources["sounds/powerup_laser.wav"] = {
+        EmbeddedResources::sounds_powerup_laser_wav, EmbeddedResources::sounds_powerup_laser_wav_size};
+    _resources["sounds/powerup_bubble.wav"] = {
+        EmbeddedResources::sounds_powerup_bubble_wav, EmbeddedResources::sounds_powerup_bubble_wav_size};
     _resources["sounds/ruins_theme.flac"] = {
         EmbeddedResources::sounds_ruins_theme_flac, EmbeddedResources::sounds_ruins_theme_flac_size};
     _resources["sounds/shoot.wav"] = {EmbeddedResources::sounds_shoot_wav, EmbeddedResources::sounds_shoot_wav_size};

@@ -34,6 +34,12 @@ namespace World
         _registry.registerComponent<Ecs::Drawable>();
         _registry.registerComponent<Ecs::Render>();
         _registry.registerComponent<Ecs::AnimationState>();
+        
+        if (_soundRegistry) {
+            _powerUpStandardSoundHandle = _soundRegistry->loadSound("sounds/powerup.wav");
+            _powerUpLaserSoundHandle = _soundRegistry->loadSound("sounds/powerup_laser.wav");
+            _powerUpBubbleSoundHandle = _soundRegistry->loadSound("sounds/powerup_bubble.wav");
+        }
     }
 
     void ClientWorld::step(const float dt)
@@ -183,6 +189,11 @@ namespace World
 
             if (data.spriteId == 6 && _soundRegistry && sprite.shootSoundHandle != Graphics::InvalidAudio)
                 _soundRegistry->playSound(sprite.shootSoundHandle);
+            
+            if (_soundRegistry) {
+                if (data.spriteId == 21 && _powerUpStandardSoundHandle != Graphics::InvalidAudio)
+                    _soundRegistry->playSound(_powerUpStandardSoundHandle);
+            }
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }
@@ -303,6 +314,41 @@ namespace World
                 reconcileLocalPlayerWithServer(bs, positions);
                 if (auto it = _entityMap.find(netId); it != _entityMap.end())
                     refreshSpriteIfChanged(it->second, bs.spriteId, drawables, anims, renders);
+                
+                bool hasBubbleNow = false;
+                bool hasLaserNow = false;
+                for (const auto &[otherNetId, otherState] : B.entities) {
+                    const float dx = otherState.x - bs.x;
+                    const float dy = otherState.y - bs.y;
+                    const float distSq = dx * dx + dy * dy;
+                    
+                    if (otherState.spriteId == 20 && distSq < 50.f * 50.f)
+                        hasBubbleNow = true;
+                    else if (otherState.spriteId == 17 && distSq < 100.f * 100.f) {
+                        hasLaserNow = true;
+                }
+                
+                if (hasBubbleNow && !_bubbleSoundPlaying && _soundRegistry && _powerUpBubbleSoundHandle != Graphics::InvalidAudio) {
+                    _activePowerUpType = 19;
+                    _soundRegistry->playSound(_powerUpBubbleSoundHandle);
+                    _bubbleSoundPlaying = true;
+                } else if (!hasBubbleNow && _bubbleSoundPlaying) {
+                    _bubbleSoundPlaying = false;
+                    if (_activePowerUpType == 19)
+                        _activePowerUpType = 0;
+                }
+                
+                if (hasLaserNow && !_laserSoundPlaying && _soundRegistry && _powerUpLaserSoundHandle != Graphics::InvalidAudio) {
+                    _activePowerUpType = 18;
+                    _soundRegistry->playSound(_powerUpLaserSoundHandle);
+                    _laserSoundPlaying = true;
+                } else if (!hasLaserNow && _laserSoundPlaying && _soundRegistry) {
+                    _soundRegistry->stopSound(_powerUpLaserSoundHandle);
+                    _laserSoundPlaying = false;
+                    if (_activePowerUpType == 18)
+                        _activePowerUpType = 0;
+                }
+                
                 continue;
             }
 
@@ -390,6 +436,9 @@ namespace World
         _destroyed.clear();
         _score = 0;
         _entityPlayerId = -1;
+        _activePowerUpType = 0;
+        _bubbleSoundPlaying = false;
+        _laserSoundPlaying = false;
     }
 
     std::vector<std::pair<uint32_t, uint32_t>> ClientWorld::getRoomScores() const

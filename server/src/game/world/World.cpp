@@ -119,8 +119,8 @@ namespace
                     });
                 size_t targetId = 0;
                 if (!possibleTargets.empty()) {
-                    size_t randomIndex = Rand::rng() % possibleTargets.size();
-                    targetId = possibleTargets[randomIndex];
+                    const size_t randomIndex = Rand::rng() % possibleTargets.size();
+                    targetId = possibleTargets.at(randomIndex);
                 }
                 if (targetId > 0)
                     w->registry().emplaceComponent<Ecs::HomingProjectile>(
@@ -206,12 +206,12 @@ namespace
 
         world.events().subscribe<BubblePowerUpUpdatePosEvent>([w](const BubblePowerUpUpdatePosEvent &event) {
             auto &reg = w->registry();
-            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+            const auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
 
             if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
                 return;
 
-            const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
+            const auto bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
             if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
                 bubblePos->x = event.playerX;
                 bubblePos->y = event.playerY;
@@ -317,10 +317,8 @@ namespace
 
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Standard) {
-                const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
-                if (playerPowerUp) {
+                if (const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx))
                     return;
-                }
             }
 
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Laser) {
@@ -358,15 +356,17 @@ namespace Game
         return _events;
     }
 
-    Ecs::Entity World::createPlayer(const int sessionId)
+    Ecs::Entity World::createPlayer(const int sessionId, const size_t index)
     {
+        static std::vector<unsigned int> playerSpriteId = {7, 8, 48, 10};
+
         const Ecs::Entity ent = World::createEntity();
 
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{500, 500});
         _registry.emplaceComponent<InputComponent>(ent);
-        _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
+        _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(playerSpriteId.at(index % 4), true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});

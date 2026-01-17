@@ -234,10 +234,10 @@ namespace Engine
         row(*_create.levelPrev, *_create.levelNext, *_create.levelLabel, 1);
         row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
         row(*_create.modePrev, *_create.modeNext, *_create.modeLabel, 3);
-        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
+        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 4);
 
-        centerX(*_create.confirm, cx, h * 0.80f);
-        centerX(*_create.back, cx, h * 0.90f);
+        centerX(*_create.confirm, w * 0.75f, h * 0.85f);
+        centerX(*_create.back, w * 0.25f, h * 0.85f);
     }
 
     void RoomMenu::update(const InputFrame &frame)

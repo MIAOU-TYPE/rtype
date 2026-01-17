@@ -153,7 +153,7 @@ namespace Net::Factory
          * @param scores A vector of pairs representing player IDs and their corresponding scores.
          * @return A shared pointer to the created IPacket.
          */
-        [[nodiscard]]std::shared_ptr<IPacket> createGameEndPacket(
+        [[nodiscard]] std::shared_ptr<IPacket> createGameEndPacket(
             const std::vector<std::pair<uint32_t, uint32_t>> &scores) const noexcept;
 
       private:

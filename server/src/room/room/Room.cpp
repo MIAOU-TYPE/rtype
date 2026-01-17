@@ -43,6 +43,39 @@ namespace Engine
                     }
                 }
             });
+        _gameServer->events().subscribe<GameOverEvent>(
+            [udpPacketFactory, sessionManager, udpServer, self](const GameOverEvent &) {
+                const auto room = self.lock();
+                if (!room)
+                    return;
+                std::vector<int> sessions;
+                {
+                    std::scoped_lock lk(room->_sessionsMutex);
+                    sessions.assign(room->_sessions.begin(), room->_sessions.end());
+                }
+                std::vector<std::pair<uint32_t, uint32_t>> finals;
+                finals.reserve(sessions.size());
+                for (const int sid : sessions) {
+                    const uint32_t score = sessionManager->getLastScore(sid).value_or(0);
+                    const auto netIdOpt = room->_gameServer->getPlayerNetId(sid);
+                    if (!netIdOpt.has_value())
+                        continue;
+                    finals.emplace_back(*netIdOpt, score);
+                }
+                const auto endPkt = udpPacketFactory->createGameEndPacket(finals);
+                if (!endPkt)
+                    return;
+
+                for (int repeat = 0; repeat < 3; ++repeat) {
+                    for (const int sid : sessions) {
+                        if (const auto addr = sessionManager->getUdpAddress(sid)) {
+                            auto clone = endPkt->clone();
+                            clone->setAddress(*addr);
+                            (void) udpServer->sendPacket(*clone);
+                        }
+                    }
+                }
+            });
     }
 
     Room::~Room()

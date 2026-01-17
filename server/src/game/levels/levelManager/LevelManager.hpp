@@ -30,7 +30,7 @@ namespace Game
          * @param jsonContent The JSON content as a string.
          * @return true if loading was successful, false otherwise.
          */
-        bool load(const std::string &jsonContent);
+        [[nodiscard]] bool load(const std::string &jsonContent);
 
         /**
          * @brief Load level data from a file.
@@ -38,7 +38,7 @@ namespace Game
          * @param path The path to the level file.
          * @return true if loading was successful, false otherwise.
          */
-        bool loadFromFile(const std::string &path);
+        [[nodiscard]] bool loadFromFile(const std::string &path);
 
         /**
          * @brief Reset the level progression timer.
@@ -57,14 +57,14 @@ namespace Game
          *
          * @return The current level.
          */
-        const Level &getCurrentLevel() const;
+        [[nodiscard]] const Level &getCurrentLevel() const;
 
         /**
          * @brief Get the current time in the level.
          *
          * @return The current time.
          */
-        float getTime() const;
+        [[nodiscard]] float getTime() const;
 
         /**
          * @brief Determine if a wave should be spawned based on the current time.
@@ -72,7 +72,15 @@ namespace Game
          * @param waveTime Time of the wave to check.
          * @return true if the wave should be spawned, false otherwise.
          */
-        bool shouldSpawn(float waveTime) const;
+        [[nodiscard]] bool shouldSpawn(float waveTime) const;
+
+        /**
+         * @brief Check if the current level is finished.
+         *
+         * A level is considered finished when its duration is > 0 and the current time
+         * has reached or exceeded that duration.
+         */
+        [[nodiscard]] bool isFinished() const noexcept;
 
       private:
         Level _level;      ///> The current level data.

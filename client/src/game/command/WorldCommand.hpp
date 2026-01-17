@@ -40,6 +40,15 @@ namespace World
     };
 
     /**
+     * @struct ScoreUpdate
+     * @brief Information about a score update.
+     */
+    struct ScoreUpdate {
+        uint32_t playerId; ///> ID of the player whose score was updated
+        uint32_t score;    ///> The updated score
+    };
+
+    /**
      * @struct WorldCommand
      * @brief Represents a command sent to or from the game world.
      */
@@ -56,7 +65,7 @@ namespace World
         };
 
         Type type; ///> Type of the command
-        std::variant<std::monostate, SnapshotBatch, DestroyInfo, DamageInfo, uint32_t>
+        std::variant<std::monostate, SnapshotBatch, DestroyInfo, DamageInfo, uint32_t, ScoreUpdate>
             payload; ///> Command payload (uint32_t used for Score)
     };
 } // namespace World

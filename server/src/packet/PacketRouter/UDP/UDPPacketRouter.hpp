@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include "ConnectData.hpp"
+#include "GameEndData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "RoomManager.hpp"

@@ -169,6 +169,16 @@ namespace Engine
     };
 
     /**
+     * @brief Event triggered when a request to leave the current room is made.
+     */
+    struct LeaveRoomRequested : Event {
+        /**
+         * @brief Constructor for LeaveRoomRequested event.
+         */
+        LeaveRoomRequested() = default;
+    };
+
+    /**
      * @brief Event triggered when a request to register a new user is made.
      */
     struct AuthRegisterRequested : Event {

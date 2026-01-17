@@ -22,6 +22,7 @@
 #include "ClientWorld.hpp"
 #include "CommandBuffer.hpp"
 #include "EventRegistry.hpp"
+#include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
@@ -247,16 +248,10 @@ namespace Thread
          */
         void runTcp();
 
-        /**
-         * @brief Submits the last score to the server if there is a pending score submission.
-         * @details This method checks if there is a pending score submission and sends
-         * the last score to the server if needed.
-         */
-        void submitScoreOnce() const noexcept;
-
         std::atomic_bool _pendingGameStart{false};   ///> Atomic flag to indicate pending game start
         std::atomic_bool _pendingAuthOk{false};      ///> Atomic flag to indicate pending authentication OK
         std::atomic_uint32_t _lastScore{0};          ///> Atomic variable to store the last score
         std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
+        std::atomic_bool _pendingGameOver{false};    ///> Atomic flag to indicate pending game over
     };
 } // namespace Thread

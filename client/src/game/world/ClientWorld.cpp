@@ -50,9 +50,16 @@ namespace World
     {
         switch (cmd.type) {
             case WorldCommand::Type::Snapshot: applySnapshot(std::get<SnapshotBatch>(cmd.payload)); break;
-            case WorldCommand::Type::Damage: applyDamage(std::get<World::DamageInfo>(cmd.payload)); break;
-            case WorldCommand::Type::Destroy: applyDestroy(std::get<World::DestroyInfo>(cmd.payload)); break;
-            case WorldCommand::Type::Score: _score = std::get<uint32_t>(cmd.payload); break;
+            case WorldCommand::Type::Damage: applyDamage(std::get<DamageInfo>(cmd.payload)); break;
+            case WorldCommand::Type::Destroy: applyDestroy(std::get<DestroyInfo>(cmd.payload)); break;
+            case WorldCommand::Type::Score: {
+                const auto [playerId, score] = std::get<ScoreUpdate>(cmd.payload);
+                _scoresByPlayerId[playerId] = score;
+
+                if (_entityPlayerId != -1 && std::cmp_equal(playerId, _entityPlayerId))
+                    _score = score;
+                break;
+            }
             case WorldCommand::Type::Accept: applyAccept(std::get<uint32_t>(cmd.payload)); break;
             default: break;
         }
@@ -371,5 +378,26 @@ namespace World
             return;
         pos->x += dx * 5.f;
         pos->y += dy * 5.f;
+    }
+
+    void ClientWorld::reset()
+    {
+        _registry = Ecs::Registry{};
+        _entityMap.clear();
+        _entityLastSeen.clear();
+        _scoresByPlayerId.clear();
+        _snapshots.clear();
+        _destroyed.clear();
+        _score = 0;
+        _entityPlayerId = -1;
+    }
+
+    std::vector<std::pair<uint32_t, uint32_t>> ClientWorld::getRoomScores() const
+    {
+        std::vector<std::pair<uint32_t, uint32_t>> out;
+        out.reserve(_scoresByPlayerId.size());
+        for (const auto &kv : _scoresByPlayerId)
+            out.push_back(kv);
+        return out;
     }
 } // namespace World

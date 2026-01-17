@@ -21,6 +21,7 @@
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
 #include "Endian.hpp"
+#include "GameEndData.hpp"
 #include "HealthData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
@@ -73,7 +74,7 @@ namespace Net::Factory
          * @brief Constructs a new UDPPacketFactory object.
          * @param packet A shared pointer to an IPacket used as a template for creating packets.
          */
-        explicit UDPPacketFactory(const std::shared_ptr<Net::IPacket> &packet);
+        explicit UDPPacketFactory(const std::shared_ptr<IPacket> &packet);
 
         /**
          * @brief Destructor for UDPPacketFactory.
@@ -97,7 +98,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> makeDamage(
-            const sockaddr_in &addr, uint32_t id, uint16_t amount, const bool wasKilled) const noexcept;
+            const sockaddr_in &addr, uint32_t id, uint16_t amount, bool wasKilled) const noexcept;
 
         /**
          * @brief Creates snapshot packets from the given entities, server tick, and maximum packet size.
@@ -112,11 +113,12 @@ namespace Net::Factory
         /**
          * @brief Creates a score packet with the specified address and score.
          * @param addr The address to which the packet will be sent.
+         * @param playerId The ID of the player whose score is being sent.
          * @param score The score to include in the packet.
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> createScorePacket(
-            const sockaddr_in &addr, uint32_t score) const noexcept;
+            const sockaddr_in &addr, uint32_t playerId, uint32_t score) const noexcept;
 
         /**
          * @brief Creates a destroy entity packet with the specified address and entity ID.
@@ -125,7 +127,7 @@ namespace Net::Factory
          * @return A shared pointer to the created IPacket.
          */
         [[nodiscard]] std::shared_ptr<IPacket> createDestroyEntityPacket(
-            size_t entityId, const bool wasKilled) const noexcept;
+            size_t entityId, bool wasKilled) const noexcept;
 
         /**
          * @brief Creates an accept packet with the specified entity ID.
@@ -145,6 +147,14 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> createHealthPacket(
             const sockaddr_in &addr, uint16_t currentLife, uint16_t maxLife) const noexcept;
+
+        /**
+         * @brief Creates a game end packet with the specified scores.
+         * @param scores A vector of pairs representing player IDs and their corresponding scores.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createGameEndPacket(
+            const std::vector<std::pair<uint32_t, uint32_t>> &scores) const noexcept;
 
       private:
         /*

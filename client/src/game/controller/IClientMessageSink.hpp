@@ -51,9 +51,10 @@ namespace Ecs
 
         /**
          * @brief Called when a SCORE message is received.
+         * @param playerId The ID of the player whose score was updated.
          * @param score The score received from the server.
          */
-        virtual void onScore(uint32_t score) = 0;
+        virtual void onScore(uint32_t playerId, uint32_t score) = 0;
 
         /**
          * @brief Called when a DAMAGE_EVENT message is received.

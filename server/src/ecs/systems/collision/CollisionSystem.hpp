@@ -13,6 +13,7 @@
 #include "KillScore.hpp"
 #include "Projectile.hpp"
 #include "World.hpp"
+#include "Controllable.hpp"
 
 namespace Game
 {

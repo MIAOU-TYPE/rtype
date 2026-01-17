@@ -112,6 +112,9 @@ namespace Engine
 
     void LevelEditorState::initializeBackgrounds()
     {
+        _backgrounds.clear();
+        _backgrounds.reserve(3);
+
         _backgrounds.push_back({"Space", 100, -50.0f, 1140.0f, 207.0f});
         _backgrounds.push_back({"Jungle", 101, -50.0f, 2584.0f, 720.0f});
         _backgrounds.push_back({"Ruin", 102, -50.0f, 1148.0f, 223.0f});

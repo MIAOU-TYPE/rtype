@@ -23,7 +23,7 @@ namespace Engine
 
     void LobbyState::onEnter()
     {
-        _lobbyPage = std::make_unique<LobbyWaitPage>(_renderer);
+        _lobbyPage = std::make_unique<Lobby>(_renderer);
         _lobbyPage->layout();
         _lobbyPage->onEnter();
     }
@@ -36,6 +36,15 @@ namespace Engine
             _lobbyPage->consumeStart();
             _eventBus->emit<StartGameRequested>(StartGameRequested{});
             return;
+        }
+        if (_lobbyPage->wantsLeave()) {
+            _lobbyPage->consumeLeave();
+            _eventBus->emit<LeaveRoomRequested>(LeaveRoomRequested{});
+            return;
+        }
+        if (_lobbyPage->needsUpdate()) {
+            _lobbyPage->consumeUpdate();
+            _eventBus->emit<UpdateRoomRequested>(UpdateRoomRequested{});
         }
         _lobbyPage->update(frame);
         _lobbyPage->setLobbyName(_roomManager->currentRoomData().roomName);

@@ -70,7 +70,7 @@ namespace Engine
 
         std::shared_ptr<RoomManager> _roomManager;    ///> Shared pointer to the room manager.
         std::unique_ptr<RoomMenu> _lobby;             ///> Unique pointer to the room lobby.
-        std::unique_ptr<LobbyWaitPage> _lobbyPage;    ///> Unique pointer to the lobby page.
+        std::unique_ptr<Lobby> _lobbyPage;            ///> Unique pointer to the lobby page.
         std::shared_ptr<EventBus> _eventBus;          ///> Shared pointer to the event bus.
         std::shared_ptr<AuthContext> _authCtx;        ///> Shared pointer to the auth context.
         std::shared_ptr<ScoreboardContext> _scoreCtx; ///> Shared pointer to the scoreboard context.

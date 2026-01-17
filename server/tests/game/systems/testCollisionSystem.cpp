@@ -18,7 +18,6 @@
 
 #include "AIBrain.hpp"
 #include "Collision.hpp"
-#include "Controllable.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"

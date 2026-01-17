@@ -38,7 +38,7 @@ namespace Thread
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
         _udpPacketRouter =
-            std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer));
+            std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer, _eventBus));
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
@@ -151,6 +151,14 @@ namespace Thread
         while (_running && _stateManager->isRunning()) {
             nextTick += Tick;
 
+            if (_pendingHome.exchange(false, std::memory_order_acq_rel)) {
+                try {
+                    _stateManager->changeState(std::make_unique<Engine::MenuState>(_graphics, _renderer, _musicRegistry,
+                        _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx));
+                } catch (...) {
+                    std::cerr << "{ClientRuntime::runDisplay} state change failed\n";
+                }
+            }
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     std::weak_ptr w = _world;
@@ -162,6 +170,14 @@ namespace Thread
                         }));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
+                }
+            }
+            if (_pendingJoinRoom.exchange(false, std::memory_order_acq_rel)) {
+                try {
+                    _stateManager->changeState(std::make_unique<Engine::LobbyState>(_graphics, _renderer,
+                        _musicRegistry, _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx));
+                } catch (...) {
+                    std::cerr << "{ClientRuntime::runDisplay} state change failed\n";
                 }
             }
             if (_pendingAuthOk.exchange(false, std::memory_order_acq_rel)) {
@@ -321,6 +337,8 @@ namespace Thread
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req, e.roomId));
+            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(11))
+                _tcpClient->sendPacket(*pkt);
         });
 
         _eventBus->on<Engine::ListRoomRequested>([this](const Engine::ListRoomRequested &) {
@@ -344,6 +362,23 @@ namespace Thread
             const uint32_t req = nextReqId();
             if (const auto pkt = _tcpPacketFactory.makeScoreboardGet(req, static_cast<uint16_t>(clamped)))
                 (void) _tcpClient->sendPacket(*pkt);
+        });
+
+        _eventBus->on<Engine::StartGameRequested>([this](const Engine::StartGameRequested &) {
+            if (const auto pkt = _tcpPacketFactory.makeStartGame(nextReqId()))
+                _tcpClient->sendPacket(*pkt);
+        });
+
+        _eventBus->on<Engine::LeaveRoomRequested>([this](const Engine::LeaveRoomRequested &) {
+            if (const auto pkt = _tcpPacketFactory.makeLeaveRoom(nextReqId()))
+                _tcpClient->sendPacket(*pkt);
+            _pendingHome.store(true, std::memory_order_release);
+        });
+
+        _eventBus->on<Engine::UpdateRoomRequested>([this](const Engine::UpdateRoomRequested &) {
+            const auto req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(req))
+                _tcpClient->sendPacket(*pkt);
         });
 
         _eventBus->on<Engine::LeaveRoomRequested>([this](const Engine::LeaveRoomRequested &) {
@@ -418,6 +453,16 @@ namespace Thread
 
         _tcpPacketRouter->sink()->onRoomsListSubscribe([&](uint32_t, const std::vector<RoomData> &rooms) {
             _roomManager->rooms() = rooms;
+        });
+
+        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t roomId) {
+            (void) roomId;
+            _pendingJoinRoom.store(true, std::memory_order_release);
+        });
+
+        _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
+            _roomManager->setCurrentData(room);
+            _pendingJoinRoom.store(true, std::memory_order_release);
         });
 
         _tcpPacketRouter->sink()->onAuthOkSubscribe(

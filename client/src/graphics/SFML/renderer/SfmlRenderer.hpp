@@ -12,7 +12,6 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
-#include <iostream>
 #include <utility>
 #include "ColorBlindManager.hpp"
 #include "EmbeddedResourceManager.hpp"

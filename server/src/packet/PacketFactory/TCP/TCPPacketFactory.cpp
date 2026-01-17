@@ -62,7 +62,7 @@ namespace Net::Factory
         TCP::Writer b;
         b.u16(static_cast<uint16_t>(rooms.size()));
 
-        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig] : rooms) {
+        for (const auto &[roomId, roomName, currentPlayers, maxPlayers, gameConfig, names] : rooms) {
             b.u32(roomId);
             b.str16(roomName);
             b.u16(static_cast<uint16_t>(currentPlayers));
@@ -150,6 +150,20 @@ namespace Net::Factory
             b.u32(static_cast<uint32_t>(score));
         }
         const auto payload = TCP::buildPayload(Protocol::TCP::SCOREBOARD_LIST, req, b.bytes());
+        return make(addr, payload);
+    }
+
+    std::shared_ptr<IPacket> TCPPacketFactory::makeRoomUpdated(
+        const sockaddr_in &addr, const ReqId req, const RoomData &room) const
+    {
+        if (room.playerNames.size() > 0xFFFFu)
+            return makeError(addr, req, 16, "ROOM_UPDATED: too many players to fit in u16");
+        TCP::Writer b;
+        b.str16(room.roomName);
+        b.u8(static_cast<uint8_t>(room.maxPlayers));
+        for (const auto &name : room.playerNames)
+            b.str16(name);
+        const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_UPDATE, req, b.bytes());
         return make(addr, payload);
     }
 } // namespace Net::Factory

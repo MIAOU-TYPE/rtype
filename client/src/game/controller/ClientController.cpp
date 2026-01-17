@@ -9,7 +9,9 @@
 
 namespace Ecs
 {
-    ClientController::ClientController(Command::CommandBuffer<World::WorldCommand> &buffer) : _commandBuffer(buffer)
+    ClientController::ClientController(
+        Command::CommandBuffer<World::WorldCommand> &buffer, std::shared_ptr<Engine::EventBus> eventBus)
+        : _commandBuffer(buffer), _eventBus(std::move(eventBus))
     {
     }
 
@@ -27,9 +29,9 @@ namespace Ecs
         std::cout << "onReject" << std::endl;
     }
 
-    void ClientController::onPong()
+    void ClientController::onPong(const uint32_t timestamp)
     {
-        std::cout << "onPong" << std::endl;
+        _eventBus->emit<Engine::PongReceived>(Engine::PongReceived{timestamp});
     }
 
     void ClientController::onGameOver()

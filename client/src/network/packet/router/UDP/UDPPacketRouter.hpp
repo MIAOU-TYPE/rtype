@@ -25,6 +25,7 @@
 #include "HealthData.hpp"
 #include "IClientMessageSink.hpp"
 #include "IPacket.hpp"
+#include "PongData.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
@@ -115,7 +116,7 @@ namespace Ecs
         /**
          * @brief Handler for PONG packets.
          */
-        void handlePong() const;
+        void handlePong(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for GAME_OVER packets.

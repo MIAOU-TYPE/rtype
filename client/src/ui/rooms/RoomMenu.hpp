@@ -8,9 +8,13 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <exception>
-#include <iostream>
+#include <ranges>
+#include <string>
+#include <vector>
 #include "AMenu.hpp"
 #include "IRenderer.hpp"
 #include "IText.hpp"
@@ -18,6 +22,10 @@
 #include "RenderCommand.hpp"
 #include "RoomManager.hpp"
 #include "UIButton.hpp"
+#include "UITextField.hpp"
+#include <string_view>
+#include <unordered_map>
+#include <unordered_set>
 
 /**
  * @struct ListMetrics
@@ -86,7 +94,7 @@ namespace Engine
         void layout() override;
 
         /**
-         * @brief Updates the room menu based on input.
+         * @brief Updates the room menu state based on user input.
          * @param frame The current input frame.
          */
         void update(const InputFrame &frame) override;
@@ -98,25 +106,25 @@ namespace Engine
 
         /**
          * @brief Checks if the user wants to go back to the main menu.
-         * @return True if the user wants to go back, false otherwise.
+         * @return true if the user wants to go back, false otherwise.
          */
         [[nodiscard]] bool wantsBackToMenu() const noexcept;
 
         /**
          * @brief Checks if the user wants to create a room.
-         * @return True if the user wants to create a room, false otherwise.
+         * @return true if the user wants to create a room, false otherwise.
          */
         [[nodiscard]] bool wantsCreateRoom() const noexcept;
 
         /**
          * @brief Checks if the user wants to join a room.
-         * @return True if the user wants to join a room, false otherwise.
+         * @return true if the user wants to join a room, false otherwise.
          */
         [[nodiscard]] bool wantsJoinRoom() const noexcept;
 
         /**
          * @brief Checks if the user wants to list available rooms.
-         * @return True if the user wants to list rooms, false otherwise.
+         * @return true if the user wants to list rooms, false otherwise.
          */
         [[nodiscard]] bool wantsListRooms() const noexcept;
 
@@ -145,7 +153,7 @@ namespace Engine
          * @brief Gets the selected difficulty level.
          * @return The selected difficulty.
          */
-        [[nodiscard]] Engine::Difficulty difficultySelected() const noexcept;
+        [[nodiscard]] Difficulty difficultySelected() const noexcept;
 
         /**
          * @brief Gets the selected level ID (path to the level file).
@@ -158,6 +166,11 @@ namespace Engine
          * @return The room ID.
          */
         [[nodiscard]] uint32_t roomIdSelected() const noexcept;
+
+        /**
+         * @brief Gets the room name typed in the create page (valid when wantsCreateRoom() is true).
+         */
+        [[nodiscard]] const std::string &roomNameSelected() const noexcept;
 
       private:
         /**
@@ -184,37 +197,38 @@ namespace Engine
          * @enum Page
          * @brief Enum representing the current page of the room menu.
          */
-        enum class Page { Root, Create, List };
+        enum class Page {
+            Root,   ///> Root page with options to create or join a room.
+            Create, ///> Create room page.
+            List    ///> List room page.
+        };
 
         /**
          * @struct HeaderUI
          * @brief Struct representing the header UI elements.
-         * @brief title Pointer to the title text element.
-         * @brief subtitle Pointer to the subtitle text element.
          */
         struct HeaderUI {
-            std::unique_ptr<Graphics::IText> title;
-            std::unique_ptr<Graphics::IText> subtitle;
+            std::unique_ptr<Graphics::IText> title;    ///> Title text.
+            std::unique_ptr<Graphics::IText> subtitle; ///> Subtitle text.
         };
 
         /**
          * @struct RootUI
          * @brief Struct representing the root UI elements.
-         * @brief create Pointer to the create button.
-         * @brief join Pointer to the join button.
-         * @brief back Pointer to the back button.
          */
         struct RootUI {
-            std::unique_ptr<UI::UIButton> create;
-            std::unique_ptr<UI::UIButton> join;
-            std::unique_ptr<UI::UIButton> back;
+            std::unique_ptr<UI::UIButton> create; ///> Create room button.
+            std::unique_ptr<UI::UIButton> join;   ///> Join room button.
+            std::unique_ptr<UI::UIButton> back;   ///> Back button.
         };
 
         /**
          * @struct CreateUI
-         * @brief Struct representing the create room UI elements.
+         * @brief Struct representing the creation room UI elements.
          */
         struct CreateUI {
+            std::unique_ptr<UI::UITextField> roomNameField; ///> Text field for room name
+
             std::unique_ptr<UI::UIButton> worldPrev; ///> Previous world button.
             std::unique_ptr<UI::UIButton> worldNext; ///> Next world button.
 
@@ -275,33 +289,45 @@ namespace Engine
         void handleMouseReleased(float mx, float my);
 
         /**
-         * @brief Handles mouse release events on the create room page.
+         * @brief Handles key press events.
+         * @param frame The current input frame.
+         */
+        void handleKeyPressed(const InputFrame &frame);
+
+        /**
+         * @brief Handles key release events.
+         * @param frame The current input frame.
+         */
+        void handleKeyReleased(const InputFrame &frame) const;
+
+        /**
+         * @brief Handles the create button release event.
          * @param mx The x-coordinate of the mouse.
          * @param my The y-coordinate of the mouse.
          */
         void handleCreateReleased(float mx, float my);
 
         /**
-         * @brief Handles mouse release events on the join room page.
+         * @brief Handles the join button release event.
          * @param mx The x-coordinate of the mouse.
          * @param my The y-coordinate of the mouse.
          */
         void handleJoinReleased(float mx, float my);
 
         /**
-         * @brief Updates hover states for UI elements.
+         * @brief Updates hover states for UI elements based on mouse position.
          * @param mx The x-coordinate of the mouse.
          * @param my The y-coordinate of the mouse.
          */
         void updateHover(float mx, float my) const;
 
         /**
-         * @brief Refreshes the creation room catalog based on current selections.
+         * @brief Refreshes the create room catalog based on selected options.
          */
         void refreshCreateCatalog();
 
         /**
-         * @brief Updates text strings in the UI elements.
+         * @brief Updates text strings in the UI elements based on current selections.
          */
         void updateTextStrings() const;
 
@@ -316,11 +342,13 @@ namespace Engine
         std::vector<WorldEntry> _worlds; ///> List of available worlds.
         std::vector<LevelInfo> _levels;  ///> List of levels for the selected world and difficulty.
 
-        int _selectedWorld = 0;                                            ///> Index of the selected world.
-        int _selectedLevel = 0;                                            ///> Index of the selected level.
-        Engine::Difficulty _selectedDifficulty = Engine::Difficulty::Easy; ///> Selected difficulty level.
-        uint8_t _selectedMaxPlayers = 4;                                   ///> Selected maximum number of players.
-        uint32_t _joinRoomId = 0;                                          ///> ID of the room to join.
+        int _selectedWorld = 0;                            ///> Index of the selected world.
+        int _selectedLevel = 0;                            ///> Index of the selected level.
+        Difficulty _selectedDifficulty = Difficulty::Easy; ///> Selected difficulty level.
+        uint8_t _selectedMaxPlayers = 4;                   ///> Selected maximum number of players.
+        uint32_t _joinRoomId = 0;                          ///> ID of the room to join.
+
+        std::string _createRoomName; ///> Name of the room to create.
 
         bool _backToMenu = false; ///> Flag indicating if the user wants to go back to the main menu.
         bool _createRoom = false; ///> Flag indicating if the user wants to create a room.

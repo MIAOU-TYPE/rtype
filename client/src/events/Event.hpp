@@ -169,16 +169,6 @@ namespace Engine
     };
 
     /**
-     * @brief Event triggered when a request to leave the current room is made.
-     */
-    struct LeaveRoomRequested : Event {
-        /**
-         * @brief Constructor for LeaveRoomRequested event.
-         */
-        LeaveRoomRequested() = default;
-    };
-
-    /**
      * @brief Event triggered when a request to register a new user is made.
      */
     struct AuthRegisterRequested : Event {
@@ -226,4 +216,34 @@ namespace Engine
 
         size_t limit; ///> The maximum number of scores to retrieve.
     };
+
+    /**
+     * @brief Event triggered when a ping is sent.
+     */
+    struct PongReceived : Event {
+        /**
+         * @brief Constructor for PongReceived event.
+         * @param tmstmp The timestamp of the pong received.
+         */
+        explicit PongReceived(const uint32_t tmstmp) : timestamp(tmstmp)
+        {
+        }
+
+        uint32_t timestamp; ///> The timestamp of the pong received.
+    };
+
+    /**
+     * @brief Event triggered when a request to start the game is made.
+     */
+    struct StartGameRequested : Event {};
+
+    /**
+     * @brief Event triggered when a request to leave the room is made.
+     */
+    struct LeaveRoomRequested : Event {};
+
+    /**
+     * @brief Event triggered when a request to update the room is made.
+     */
+    struct UpdateRoomRequested : Event {};
 } // namespace Engine

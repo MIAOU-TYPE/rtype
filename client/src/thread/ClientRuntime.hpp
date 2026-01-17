@@ -10,7 +10,6 @@
 #include <atomic>
 #include <chrono>
 #include <exception>
-#include <iostream>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -28,6 +27,7 @@
 #include "INetClient.hpp"
 #include "IRenderer.hpp"
 #include "InputState.hpp"
+#include "LobbyState.hpp"
 #include "MenuState.hpp"
 #include "MusicRegistry.hpp"
 #include "RoomManager.hpp"
@@ -248,10 +248,13 @@ namespace Thread
          */
         void runTcp();
 
+        std::atomic_bool _pendingHome{false};        ///> Atomic flag to indicate pending home state
         std::atomic_bool _pendingGameStart{false};   ///> Atomic flag to indicate pending game start
+        std::atomic_bool _pendingJoinRoom{false};    ///> Atomic flag to indicate pending room join
         std::atomic_bool _pendingAuthOk{false};      ///> Atomic flag to indicate pending authentication OK
-        std::atomic_uint32_t _lastScore{0};          ///> Atomic variable to store the last score
         std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
         std::atomic_bool _pendingGameOver{false};    ///> Atomic flag to indicate pending game over
+
+        std::atomic_uint32_t _lastScore{0}; ///> Atomic variable to store the last score
     };
 } // namespace Thread

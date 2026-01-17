@@ -15,7 +15,9 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
+#include <unordered_map>
 
 using json = nlohmann::json;
 #include "AuthContext.hpp"
@@ -234,7 +236,9 @@ namespace Engine
         std::shared_ptr<AuthContext> _authCtx;          ///> Auth context
         std::shared_ptr<ScoreboardContext> _scoreCtx;   ///> Scoreboard context
 
-        std::vector<EntityType> _entityTypes;                ///> Available entity types
+        std::vector<EntityType> _entityTypes; ///> Available entity types
+        std::unordered_map<std::string, std::tuple<std::string, int, int>>
+            _entitySpriteMap;                                ///> Map from jsonType to (spriteName, width, height)
         std::vector<Background> _backgrounds;                ///> Available backgrounds
         std::vector<PlacedEntity> _placedEntities;           ///> Entities placed in the level
         std::vector<std::unique_ptr<UI::UIButton>> _toolbar; ///> Toolbar buttons for entity types

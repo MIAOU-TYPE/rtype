@@ -256,7 +256,15 @@ namespace Net
         } catch (...) {
             return sendError(addr, req, 4,
                 "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + "
-                "levelPath(str16))");
+                "levelPath(str16) + worldMusic(str16))");
+        }
+
+        std::string worldMusic = ::DEFAULT_GAME_MUSIC;
+        if (r.remaining() > 0) {
+            try {
+                worldMusic = r.str16();
+            } catch (...) {
+            }
         }
 
         if (roomName.empty() || roomName.size() > 32)
@@ -273,13 +281,10 @@ namespace Net
             default: return sendError(addr, req, 10, "CREATE_ROOM: invalid difficulty value");
         }
 
-        if (r.remaining() != 0)
-            return sendError(addr, req, 7, "CREATE_ROOM: unexpected trailing bytes");
-
         uint32_t roomId = 0;
         try {
             const Engine::GameConfig config{
-                difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
+                difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath, worldMusic};
             roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());

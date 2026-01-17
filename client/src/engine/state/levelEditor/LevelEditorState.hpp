@@ -98,7 +98,7 @@ namespace Engine
      * @class LevelEditorState
      * @brief State for creating and editing game levels.
      */
-    class LevelEditorState : public IGameState {
+    class LevelEditorState final : public IGameState {
       public:
         /**
          * @brief Construct a new Level Editor State object.

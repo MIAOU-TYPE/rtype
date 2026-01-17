@@ -17,7 +17,7 @@ namespace Engine
         Game::DifficultyModifiers modifiers = Game::DifficultyModifiers::fromDifficulty(gameConfig.difficulty);
 
         _gameServer =
-            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers, _gameConfig);
+            std::make_unique<Game::GameServer>(sessionManager, udpServer, udpPacketFactory, levelPath, modifiers, gameConfig);
         _roomData.maxPlayers = maxPlayers;
         _roomData.currentPlayers = 0;
         _roomData.roomName = name;

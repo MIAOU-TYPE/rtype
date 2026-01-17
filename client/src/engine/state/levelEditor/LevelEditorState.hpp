@@ -216,7 +216,7 @@ namespace Engine
          * @brief Save the current level to a JSON file.
          * @return True if save was successful, false otherwise.
          */
-        bool saveLevel();
+        [[nodiscard]] bool saveLevel();
 
         /**
          * @brief Update the custom levels index file with the new level.

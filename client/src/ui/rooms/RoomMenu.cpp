@@ -136,6 +136,8 @@ namespace Engine
         _root.join = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "JOIN");
         _root.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
 
+        _create.roomNameField = std::make_unique<UI::UITextField>(_renderer, "Room name", false);
+
         _create.worldPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
         _create.worldNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
         _create.levelPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
@@ -153,6 +155,7 @@ namespace Engine
         _create.playersLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
 
         _list.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+
         refreshCreateCatalog();
         _layoutDirty = true;
     }
@@ -169,6 +172,7 @@ namespace Engine
 
         updateTextStrings();
         layoutBackground();
+
         _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, h * 0.07f);
         _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, h * 0.16f);
 
@@ -189,8 +193,18 @@ namespace Engine
         auto centerX = [&](UI::UIButton &b, float x, float y) {
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
+
+        // Room name input
+        if (_create.roomNameField) {
+            const float fieldW = std::min(520.f, w * 0.70f);
+            const float fieldX = cx - fieldW * 0.5f;
+            _create.roomNameField->setPosition(fieldX, h * 0.24f);
+            _create.roomNameField->setWidth(fieldW);
+        }
+
+        // Shift rows down a bit to make space for the input
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = h * 0.24f + h * 0.11f * static_cast<float>(i);
+            const float y = h * 0.36f + h * 0.10f * static_cast<float>(i);
             prev.centerButtonLabel(w * 0.25f, y, label, cx);
             centerX(next, w * 0.75f, y);
         };
@@ -199,8 +213,9 @@ namespace Engine
         row(*_create.levelPrev, *_create.levelNext, *_create.levelLabel, 1);
         row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
         row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
-        centerX(*_create.confirm, cx, h * 0.75f);
-        centerX(*_create.back, cx, h * 0.88f);
+
+        centerX(*_create.confirm, cx, h * 0.80f);
+        centerX(*_create.back, cx, h * 0.90f);
     }
 
     void RoomMenu::update(const InputFrame &frame)
@@ -210,11 +225,14 @@ namespace Engine
             layout();
             _layoutDirty = false;
         }
+
         handleInput(frame);
+
         if (_page != oldPage) {
             layout();
             _layoutDirty = false;
         }
+
         updateHover(frame.mouseX, frame.mouseY);
 
         if (_page != Page::List)
@@ -279,6 +297,10 @@ namespace Engine
             handleMousePressed(frame);
         if (frame.mouseReleased)
             handleMouseReleased(frame.mouseX, frame.mouseY);
+        if (frame.keyPressed)
+            handleKeyPressed(frame);
+        if (frame.keyReleased)
+            handleKeyReleased(frame);
     }
 
     void RoomMenu::handleMousePressed(const InputFrame &frame) const
@@ -286,27 +308,36 @@ namespace Engine
         auto press = [&](UI::UIButton &b) {
             b.onMousePressed(frame.mouseX, frame.mouseY);
         };
+
         if (_page == Page::Root) {
             press(*_root.create);
             press(*_root.join);
             press(*_root.back);
             return;
         }
+
         if (_page == Page::Create) {
             press(*_create.worldPrev);
             press(*_create.worldNext);
+            press(*_create.levelPrev);
+            press(*_create.levelNext);
             press(*_create.difficultyPrev);
             press(*_create.difficultyNext);
             press(*_create.playersPrev);
             press(*_create.playersNext);
             press(*_create.confirm);
             press(*_create.back);
-        } else {
-            press(*_list.back);
-            for (const auto &btn : _list.roomButtons | std::views::values) {
-                if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
-                    press(*btn);
-            }
+
+            if (_create.roomNameField)
+                _create.roomNameField->onMousePressed(frame.mouseX, frame.mouseY);
+
+            return;
+        }
+
+        press(*_list.back);
+        for (const auto &btn : _list.roomButtons | std::views::values) {
+            if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
+                press(*btn);
         }
     }
 
@@ -316,9 +347,16 @@ namespace Engine
             if (_root.create->onClickReleased(mx, my, [&] {
                     _page = Page::Create;
                     refreshCreateCatalog();
+                    _createRoom = false;
+                    _createRoomName.clear();
+                    if (_create.roomNameField) {
+                        _create.roomNameField->clear();
+                        _create.roomNameField->setFocused(true);
+                    }
                     _layoutDirty = true;
                 }))
                 return;
+
             if (_root.join->onClickReleased(mx, my, [&] {
                     _page = Page::List;
                     _listRooms = true;
@@ -329,16 +367,58 @@ namespace Engine
                 })) {
                 return;
             }
+
             if (_root.back->onClickReleased(mx, my, [&] {
                     _backToMenu = true;
                 }))
                 return;
+
             return;
         }
+
         if (_page == Page::Create)
             handleCreateReleased(mx, my);
         if (_page == Page::List)
             handleJoinReleased(mx, my);
+    }
+
+    void RoomMenu::handleKeyPressed(const InputFrame &frame)
+    {
+        if (_page == Page::Create) {
+            if (frame.key == Key::Escape) {
+                _page = Page::Root;
+                if (_create.roomNameField)
+                    _create.roomNameField->setFocused(false);
+                _layoutDirty = true;
+                return;
+            }
+            if (frame.key == Key::Tab) {
+                if (_create.roomNameField)
+                    _create.roomNameField->setFocused(!_create.roomNameField->isFocused());
+                return;
+            }
+            if (frame.key == Key::Enter) {
+                _createRoom = true;
+                _createRoomName = _create.roomNameField ? _create.roomNameField->value() : "default";
+                return;
+            }
+        }
+
+        if (_page == Page::List) {
+            if (frame.key == Key::Escape) {
+                _page = Page::Root;
+                _layoutDirty = true;
+                return;
+            }
+        }
+    }
+
+    void RoomMenu::handleKeyReleased(const InputFrame &frame) const
+    {
+        if (_page != Page::Create)
+            return;
+        if (_create.roomNameField && _create.roomNameField->isFocused())
+            _create.roomNameField->onKeyPressed(frame.key);
     }
 
     void RoomMenu::handleCreateReleased(const float mx, const float my)
@@ -350,8 +430,10 @@ namespace Engine
                 {_create.difficultyPrev.get(), Action::DPrev}, {_create.difficultyNext.get(), Action::DNext},
                 {_create.playersPrev.get(), Action::PPrev}, {_create.playersNext.get(), Action::PNext},
                 {_create.confirm.get(), Action::Confirm}, {_create.back.get(), Action::Back}});
+
         if (a == Action::None)
             return;
+
         bool refreshCatalog = false;
         switch (a) {
             case Action::WPrev: {
@@ -394,12 +476,21 @@ namespace Engine
                 if (_selectedMaxPlayers < 4)
                     ++_selectedMaxPlayers;
                 break;
-            case Action::Back: _page = Page::Root; break;
-            case Action::Confirm: _createRoom = true; break;
-            default:;
+            case Action::Back:
+                _page = Page::Root;
+                if (_create.roomNameField)
+                    _create.roomNameField->setFocused(false);
+                break;
+            case Action::Confirm:
+                _createRoom = true;
+                _createRoomName = _create.roomNameField ? _create.roomNameField->value() : "default";
+                break;
+            default: break;
         }
+
         if (refreshCatalog)
             refreshCreateCatalog();
+
         _layoutDirty = true;
     }
 
@@ -417,10 +508,10 @@ namespace Engine
             }
         }
 
-        if (_list.back->onClickReleased(mx, my, [&] {
-                _page = Page::Root;
-                _layoutDirty = true;
-            })) {}
+        (void) _list.back->onClickReleased(mx, my, [&] {
+            _page = Page::Root;
+            _layoutDirty = true;
+        });
     }
 
     void RoomMenu::refreshCreateCatalog()
@@ -432,8 +523,10 @@ namespace Engine
             _levels.clear();
             return;
         }
+
         _selectedWorld = std::clamp(_selectedWorld, 0, static_cast<int>(_worlds.size()) - 1);
         _selectedMaxPlayers = static_cast<uint8_t>(std::clamp(static_cast<int>(_selectedMaxPlayers), 1, 4));
+
         _levels.clear();
         _selectedLevel = 0;
         try {
@@ -452,6 +545,7 @@ namespace Engine
 
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
+
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
         else if (static_cast<size_t>(_selectedWorld) < _worlds.size())
@@ -472,13 +566,18 @@ namespace Engine
         renderBackground();
         _renderer->draw(*_header.title);
         _renderer->draw(*_header.subtitle);
+
         if (_page == Page::Root) {
             _root.create->render();
             _root.join->render();
             _root.back->render();
             return;
         }
+
         if (_page == Page::Create) {
+            if (_create.roomNameField)
+                _create.roomNameField->render();
+
             _create.worldPrev->render();
             _create.worldNext->render();
             _create.levelPrev->render();
@@ -487,19 +586,24 @@ namespace Engine
             _create.difficultyNext->render();
             _create.playersPrev->render();
             _create.playersNext->render();
+
             _renderer->draw(*_create.worldLabel);
             _renderer->draw(*_create.levelLabel);
             _renderer->draw(*_create.difficultyLabel);
             _renderer->draw(*_create.playersLabel);
+
             _create.confirm->render();
             _create.back->render();
+            return;
         }
+
         if (_page == Page::List) {
             for (const auto &btn : _list.roomButtons | std::views::values) {
                 if (isVisible(btn->bounds(), _list.listTop, _list.listBottom))
                     btn->render();
             }
             _list.back->render();
+            return;
         }
     }
 
@@ -578,6 +682,7 @@ namespace Engine
     void RoomMenu::consumeCreateRoomState() noexcept
     {
         _createRoom = false;
+        _createRoomName.clear();
     }
 
     void RoomMenu::consumeJoinRoomState() noexcept
@@ -611,6 +716,11 @@ namespace Engine
     uint32_t RoomMenu::roomIdSelected() const noexcept
     {
         return _joinRoomId;
+    }
+
+    const std::string &RoomMenu::roomNameSelected() const noexcept
+    {
+        return _createRoomName;
     }
 
 } // namespace Engine

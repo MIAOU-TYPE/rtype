@@ -301,8 +301,7 @@ namespace Ecs
         GameEndHeader h{};
         std::memcpy(&h, payload, sizeof(h));
         const uint16_t count = ntohs(h.count);
-        const size_t expectedMin =
-            sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
+        const size_t expectedMin = sizeof(GameEndHeader) + static_cast<size_t>(count) * sizeof(GameEndEntry);
         if (size < expectedMin) {
             std::cerr << "{UDPPacketRouter::handleGameEnd} Dropped GAME_END: truncated\n";
             _sink->onGameOver();

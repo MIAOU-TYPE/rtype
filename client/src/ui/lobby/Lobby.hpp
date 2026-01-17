@@ -20,18 +20,18 @@
 namespace Engine
 {
     /**
-     * @class LobbyWaitPage
+     * @class Lobby
      * @brief Represents the lobby waiting page UI.
      * @details This class manages the UI elements and interactions for the lobby waiting page,
      * allowing players to see the lobby status and start the game.
      */
-    class LobbyWaitPage final : public AMenu {
+    class Lobby final : public AMenu {
       public:
         /**
-         * @brief Constructs a LobbyWaitPage with the given renderer.
+         * @brief Constructs a Lobby with the given renderer.
          * @param renderer Shared pointer to the graphics renderer.
          */
-        explicit LobbyWaitPage(const std::shared_ptr<Graphics::IRenderer> &renderer);
+        explicit Lobby(const std::shared_ptr<Graphics::IRenderer> &renderer);
 
         /**
          * @brief Called when entering the lobby page.
@@ -85,9 +85,31 @@ namespace Engine
         [[nodiscard]] bool wantsStart() const noexcept;
 
         /**
+         * @brief Checks if the leave button has been requested.
+         * @return True if the leave button was requested, false otherwise.
+         */
+        [[nodiscard]] bool wantsLeave() const noexcept;
+
+        /**
+         * @brief Checks if the lobby needs to be updated.
+         * @return True if an update is requested, false otherwise.
+         */
+        [[nodiscard]] bool needsUpdate() const noexcept;
+
+        /**
          * @brief Consumes the start request.
          */
         void consumeStart() noexcept;
+
+        /**
+         * @brief Consumes the leave request.
+         */
+        void consumeLeave() noexcept;
+
+        /**
+         * @brief Consumes the update request.
+         */
+        void consumeUpdate() noexcept;
 
       private:
         /**
@@ -120,6 +142,7 @@ namespace Engine
         void rebuildTexts() const;
 
         std::unique_ptr<UI::UIButton> _startBtn; ///> Start button UI element.
+        std::unique_ptr<UI::UIButton> _leaveBtn; ///> Leave button UI element.
 
         std::shared_ptr<Graphics::IText> _titleText;    ///> Title text element.
         std::shared_ptr<Graphics::IText> _subtitleText; ///> Subtitle text element.
@@ -137,6 +160,12 @@ namespace Engine
 
         bool _canStart = true;        ///> Indicates if the start button is enabled.
         bool _startRequested = false; ///> Indicates if the start button was requested.
+        bool _leaveRequested = false; ///> Indicates if the leave button was requested.
+
+        bool _needUpdate = false; ///> Indicates if the lobby needs to be updated.
+
+        std::chrono::steady_clock::time_point lastRefresh{};                  ///> Last refresh time point.
+        static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
 
         size_t LobbyCapacity = 4; ///> Maximum capacity of the lobby.
     };

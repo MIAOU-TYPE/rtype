@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** LobbyWaitPage
+** Lobby
 */
 
 #include "Lobby.hpp"
@@ -31,10 +31,11 @@ namespace
 
 namespace Engine
 {
-    LobbyWaitPage::LobbyWaitPage(const std::shared_ptr<Graphics::IRenderer> &renderer) : AMenu(renderer)
+    Lobby::Lobby(const std::shared_ptr<Graphics::IRenderer> &renderer) : AMenu(renderer)
     {
         loadBackground("sprites/bg-preview.png");
 
+        _leaveBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "LEAVE");
         _startBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "START");
 
         _titleText = _renderer->texts()->createText(40, {255, 255, 255, 255});
@@ -69,36 +70,37 @@ namespace Engine
         layout();
     }
 
-    void LobbyWaitPage::onEnter()
+    void Lobby::onEnter()
     {
         _startRequested = false;
         resetButtons(_startBtn.get());
+        resetButtons(_leaveBtn.get());
         rebuildTexts();
         layout();
     }
 
-    void LobbyWaitPage::setLobbyName(std::string name)
+    void Lobby::setLobbyName(std::string name)
     {
         _lobbyName = std::move(name);
         rebuildTexts();
         layout();
     }
 
-    void LobbyWaitPage::setPlayers(std::vector<std::string> players)
+    void Lobby::setPlayers(std::vector<std::string> players)
     {
         _players = std::move(players);
         rebuildTexts();
         layout();
     }
 
-    void LobbyWaitPage::setStartEnabled(const bool v)
+    void Lobby::setStartEnabled(const bool v)
     {
         _canStart = v;
         rebuildTexts();
         layout();
     }
 
-    void LobbyWaitPage::setMaxPlayers(const size_t maxPlayers)
+    void Lobby::setMaxPlayers(const size_t maxPlayers)
     {
         LobbyCapacity = maxPlayers;
         _playerTexts.clear();
@@ -112,17 +114,37 @@ namespace Engine
         layout();
     }
 
-    bool LobbyWaitPage::wantsStart() const noexcept
+    bool Lobby::wantsStart() const noexcept
     {
         return _startRequested;
     }
 
-    void LobbyWaitPage::consumeStart() noexcept
+    bool Lobby::wantsLeave() const noexcept
+    {
+        return _leaveRequested;
+    }
+
+    bool Lobby::needsUpdate() const noexcept
+    {
+        return _needUpdate;
+    }
+
+    void Lobby::consumeStart() noexcept
     {
         _startRequested = false;
     }
 
-    void LobbyWaitPage::rebuildTexts() const
+    void Lobby::consumeLeave() noexcept
+    {
+        _leaveRequested = false;
+    }
+
+    void Lobby::consumeUpdate() noexcept
+    {
+        _needUpdate = false;
+    }
+
+    void Lobby::rebuildTexts() const
     {
         if (_subtitleText) {
             if (_lobbyName.empty())
@@ -164,7 +186,7 @@ namespace Engine
         }
     }
 
-    void LobbyWaitPage::layout()
+    void Lobby::layout()
     {
         const auto vp = viewportF();
         const float w = vp.w;
@@ -182,7 +204,7 @@ namespace Engine
         float listMaxW = 0.f;
         for (const auto &t : _playerTexts)
             if (t)
-                listMaxW = std::max(listMaxW, static_cast<float>(t->getWidth()));
+                listMaxW = std::max(listMaxW, t->getWidth());
 
         const float headerRowW = maxWidth({_playersHeaderText, _playersCountText});
         const float contentW = std::max(listMaxW, headerRowW);
@@ -207,16 +229,26 @@ namespace Engine
         if (_hintText)
             _hintText->setPosition(vp.cx - _hintText->getWidth() * 0.5f, h * 0.82f);
 
-        placeCentered(*_startBtn, vp.cx, h * 0.90f);
+        placeCentered(*_startBtn, vp.cx, h * 0.80f);
+        placeCentered(*_leaveBtn, vp.cx, h * 0.90f);
     }
 
-    void LobbyWaitPage::update(const InputFrame &frame)
+    void Lobby::update(const InputFrame &frame)
     {
         handleInput(frame);
         updateButtons(frame.mouseX, frame.mouseY, _startBtn.get());
+        updateButtons(frame.mouseX, frame.mouseY, _leaveBtn.get());
+
+        const auto now = std::chrono::steady_clock::now();
+        if (lastRefresh.time_since_epoch().count() == 0)
+            lastRefresh = now;
+        if (now - lastRefresh >= refreshPeriod) {
+            lastRefresh = now;
+            _needUpdate = true;
+        }
     }
 
-    void LobbyWaitPage::render() const
+    void Lobby::render() const
     {
         renderBackground();
 
@@ -242,9 +274,10 @@ namespace Engine
             _renderer->draw(*_hintText);
 
         _startBtn->render();
+        _leaveBtn->render();
     }
 
-    void LobbyWaitPage::handleInput(const InputFrame &frame)
+    void Lobby::handleInput(const InputFrame &frame)
     {
         if (frame.mousePressed)
             handleMousePressed(frame);
@@ -254,21 +287,25 @@ namespace Engine
             handleKeyPressed(frame);
     }
 
-    void LobbyWaitPage::handleMousePressed(const InputFrame &frame) const
+    void Lobby::handleMousePressed(const InputFrame &frame) const
     {
         pressButtons(frame.mouseX, frame.mouseY, _startBtn.get());
+        pressButtons(frame.mouseX, frame.mouseY, _leaveBtn.get());
     }
 
-    void LobbyWaitPage::handleMouseReleased(const InputFrame &frame)
+    void Lobby::handleMouseReleased(const InputFrame &frame)
     {
-        enum class Action { None, Start };
-        const auto a = pickAction<Action>(frame.mouseX, frame.mouseY, {{_startBtn.get(), Action::Start}});
+        enum class Action { None, Start, Leave };
+        const auto start = pickAction<Action>(
+            frame.mouseX, frame.mouseY, {{_startBtn.get(), Action::Start}, {_leaveBtn.get(), Action::Leave}});
 
-        if (a == Action::Start && _canStart)
+        if (start == Action::Start && _canStart)
             _startRequested = true;
+        if (start == Action::Leave)
+            _leaveRequested = true;
     }
 
-    void LobbyWaitPage::handleKeyPressed(const InputFrame &frame)
+    void Lobby::handleKeyPressed(const InputFrame &frame)
     {
         if (frame.key == Key::Enter && _canStart)
             _startRequested = true;

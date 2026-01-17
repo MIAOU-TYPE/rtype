@@ -39,7 +39,7 @@ while IFS= read -r -d '' f; do
         FORMAT_ERRORS=1
         echo -e "${YELLOW}Needs format: $f${NC}"
     fi
-done < <(find client/src server/src -name "*.cpp" -o -name "*.hpp" -print0)
+done < <(find client server  shared \( -name "*.cpp" -o -name "*.hpp"  -o -name "*.tpp" \) -print0)
 
 [[ $FORMAT_ERRORS -eq 0 ]] && \
     echo -e "${GREEN}Format OK${NC}" || \

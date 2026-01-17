@@ -6,7 +6,7 @@
 */
 
 #pragma once
-
+#include <iostream>
 #include "AIShootSystem.hpp"
 #include "BackgroundSystem.hpp"
 #include "BossSystem.hpp"
@@ -161,6 +161,13 @@ namespace Game
          */
         [[nodiscard]] Ecs::EventsRegistry &events() const noexcept;
 
+        /**
+         * @brief Get the player entity ID associated with a session.
+         * @param sessionId The session ID.
+         * @return Optional entity ID if found.
+         */
+        [[nodiscard]] std::optional<uint32_t> getPlayerNetId(int sessionId) const;
+
       private:
         mutable std::mutex _snapshotMutex;       ///> Mutex for synchronizing snapshot access.
         std::unique_ptr<IGameWorld> _worldWrite; ///> The authoritative game world
@@ -176,15 +183,16 @@ namespace Game
         DifficultyModifiers _difficultyModifiers; ///> Difficulty modifiers for enemies.
 
         std::unordered_map<int, Ecs::Entity> _sessionToEntity; ///> Maps sessions to entities.
+        std::unordered_map<int, uint32_t> _sessionToNetId;     ///> Maps sessions to network player IDs.
         std::unordered_map<size_t, int> _entityToSession;      ///> Maps entities to sessions.
-
-        Command::CommandBuffer<GameCommand> _commandBuffer; ///> Buffers incoming game commands.
+        Command::CommandBuffer<GameCommand> _commandBuffer;    ///> Buffers incoming game commands.
 
         GameClock _clock;                              ///> Tracks elapsed time for fixed timestep.
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
         std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
+        bool _gameOver = false;     ///> True if the game is over.
     };
 
 } // namespace Game

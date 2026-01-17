@@ -25,18 +25,28 @@ namespace Engine
         return _worlds;
     }
 
-    const std::vector<LevelInfo> &RoomManager::levelsFor(std::string_view worldId) const
+    const std::vector<LevelInfo> &RoomManager::levelsFor(const std::string_view worldId) const
     {
         const auto it = _levelsByWorldId.find(std::string(worldId));
         if (it == _levelsByWorldId.end())
             throw RoomManagerError("{RoomManager::levelsFor} unknown worldId");
-        const WorldLevels &wl = it->second;
-        return wl.levels;
+        const auto &[levels] = it->second;
+        return levels;
     }
 
     std::vector<RoomData> &RoomManager::rooms() noexcept
     {
         return _rooms;
+    }
+
+    void RoomManager::setCurrentData(const RoomData &roomData) noexcept
+    {
+        _currentRoom = roomData;
+    }
+
+    const RoomData &RoomManager::currentRoomData() const noexcept
+    {
+        return _currentRoom;
     }
 
     std::string RoomManager::makePath(const std::string_view worldId, const std::string_view fileName)

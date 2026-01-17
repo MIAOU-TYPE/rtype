@@ -146,6 +146,16 @@ namespace Net::Factory
         [[nodiscard]] std::shared_ptr<IPacket> makeScoreboardList(
             const sockaddr_in &addr, ReqId req, const std::vector<ScoreEntry> &scores) const;
 
+        /**
+         * @brief Creates a ROOM_UPDATED packet.
+         * @param addr The address of the client.
+         * @param req The request ID.
+         * @param room The updated RoomData structure.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomUpdated(
+            const sockaddr_in &addr, ReqId req, const RoomData &room) const;
+
       private:
         /**
          * @brief Helper method to create a packet with the given address and payload.

@@ -6,6 +6,7 @@
 */
 
 #include "AssetLoader.hpp"
+#include <iostream>
 
 namespace Utils
 {

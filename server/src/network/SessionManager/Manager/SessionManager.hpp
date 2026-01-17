@@ -165,6 +165,13 @@ namespace Net::Server
         [[nodiscard]]
         std::optional<uint32_t> getLastScore(int sessionId) const override;
 
+        /**
+         * @brief Get the username associated with a session ID.
+         * @param sessionId The ID of the session.
+         * @return The username as a string.
+         */
+        [[nodiscard]] std::string getUsername(int sessionId) const override;
+
       private:
         mutable std::shared_mutex _mutex{};      ///> Mutex for thread-safe access
         using Clock = std::chrono::steady_clock; ///> Clock type for time management

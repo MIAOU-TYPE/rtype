@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <iostream>
 #include <vector>
 #include "SnapEntityData.hpp"
 
@@ -35,7 +34,7 @@ namespace Ecs
         /**
          * @brief Called when a PONG message is received.
          */
-        virtual void onPong() = 0;
+        virtual void onPong(uint32_t timestamp) = 0;
 
         /**
          * @brief Called when a GAME_OVER message is received.
@@ -51,9 +50,10 @@ namespace Ecs
 
         /**
          * @brief Called when a SCORE message is received.
+         * @param playerId The ID of the player whose score was updated.
          * @param score The score received from the server.
          */
-        virtual void onScore(uint32_t score) = 0;
+        virtual void onScore(uint32_t playerId, uint32_t score) = 0;
 
         /**
          * @brief Called when a DAMAGE_EVENT message is received.

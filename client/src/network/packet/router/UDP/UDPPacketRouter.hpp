@@ -20,10 +20,12 @@
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
 #include "Endian.hpp"
+#include "GameEndData.hpp"
 #include "HeaderData.hpp"
 #include "HealthData.hpp"
 #include "IClientMessageSink.hpp"
 #include "IPacket.hpp"
+#include "PongData.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
@@ -114,7 +116,7 @@ namespace Ecs
         /**
          * @brief Handler for PONG packets.
          */
-        void handlePong() const;
+        void handlePong(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Handler for GAME_OVER packets.
@@ -148,6 +150,13 @@ namespace Ecs
          * @param size Size of the payload data.
          */
         void handleHealth(const uint8_t *payload, size_t size) const;
+
+        /**
+         * @brief Handler for GAME_END packets.
+         * @param payload Pointer to the payload data of the GAME_END packet.
+         * @param size Size of the payload data.
+         */
+        void handleGameEnd(const uint8_t *payload, size_t size) const;
 
         /**
          * @brief Extracts the header from the incoming packet.

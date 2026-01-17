@@ -107,7 +107,8 @@ namespace Engine
         return std::string(reinterpret_cast<const char *>(data), size);
     }
 
-    std::tuple<std::string, std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(const std::string_view jsonText)
+    std::tuple<std::string, std::string, std::vector<LevelInfo>> RoomManager::parseWorldLevelsJson(
+        const std::string_view jsonText)
     {
         json j;
         try {

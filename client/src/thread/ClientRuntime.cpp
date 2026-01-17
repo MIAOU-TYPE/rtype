@@ -162,12 +162,14 @@ namespace Thread
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     std::weak_ptr w = _world;
-                    _stateManager->changeState(
-                        std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
+                    _stateManager->changeState(std::make_unique<Engine::GameState>(
+                        _musicRegistry, _soundRegistry, _renderer,
+                        [w]() {
                             if (const auto s = w.lock())
                                 return static_cast<int>(s->getScore());
                             return 0;
-                        }, _roomManager));
+                        },
+                        _roomManager));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }
@@ -330,8 +332,8 @@ namespace Thread
 
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
-            _tcpClient->sendPacket(
-                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath, e.worldMusic));
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(
+                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath, e.worldMusic));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {

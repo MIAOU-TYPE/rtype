@@ -17,6 +17,7 @@ namespace Ecs
 
     void ClientController::onAccept(const uint32_t sessionId)
     {
+        _gameOverQueued.store(false);
         _commandBuffer.get().push(World::WorldCommand{
             .type = World::WorldCommand::Type::Accept,
             .payload = sessionId,
@@ -35,6 +36,8 @@ namespace Ecs
 
     void ClientController::onGameOver()
     {
+        if (_gameOverQueued.exchange(true))
+            return;
         _commandBuffer.get().push({World::WorldCommand::Type::GameOver, {}});
     }
 
@@ -50,9 +53,12 @@ namespace Ecs
         });
     }
 
-    void ClientController::onScore(const uint32_t score)
+    void ClientController::onScore(const uint32_t playerId, const uint32_t score)
     {
-        _commandBuffer.get().push({World::WorldCommand::Type::Score, score});
+        World::WorldCommand cmd;
+        cmd.type = World::WorldCommand::Type::Score;
+        cmd.payload = World::ScoreUpdate{playerId, score};
+        _commandBuffer.get().push(cmd);
     }
 
     void ClientController::onDamage(const size_t targetId, const bool wasKilled)
@@ -69,4 +75,4 @@ namespace Ecs
     {
         std::cout << "onHealth: " << currentLife << " / " << maxLife << std::endl;
     }
-}; // namespace Ecs
+} // namespace Ecs

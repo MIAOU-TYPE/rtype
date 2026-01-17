@@ -21,6 +21,7 @@
 #include "ClientWorld.hpp"
 #include "CommandBuffer.hpp"
 #include "EventRegistry.hpp"
+#include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "IGraphics.hpp"
 #include "INetClient.hpp"
@@ -251,8 +252,9 @@ namespace Thread
         std::atomic_bool _pendingGameStart{false}; ///> Atomic flag to indicate pending game start
         std::atomic_bool _pendingJoinRoom{false};  ///> Atomic flag to indicate pending room join
         std::atomic_bool _pendingAuthOk{false};    ///> Atomic flag to indicate pending authentication OK
+        std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
+        std::atomic_bool _pendingGameOver{false};    ///> Atomic flag to indicate pending game over
 
         std::atomic_uint32_t _lastScore{0};          ///> Atomic variable to store the last score
-        std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
     };
 } // namespace Thread

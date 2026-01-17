@@ -7,6 +7,7 @@
 
 #pragma once
 #include <iostream>
+#include <atomic>
 #include "CommandBuffer.hpp"
 #include "Event.hpp"
 #include "EventBus.hpp"
@@ -68,9 +69,10 @@ namespace Ecs
 
         /**
          * @brief Called when a SCORE message is received.
+         * @param playerId The ID of the player whose score was updated.
          * @param score The score received from the server.
          */
-        void onScore(uint32_t score) override;
+        void onScore(uint32_t playerId, uint32_t score) override;
 
         /**
          * @brief Called when a DAMAGE_EVENT message is received.
@@ -95,7 +97,8 @@ namespace Ecs
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
-            _commandBuffer;                          ///> Reference to the world command buffer
+            _commandBuffer;                                               ///> Reference to the world command buffer
         std::shared_ptr<Engine::EventBus> _eventBus; ///> Shared pointer to the event bus
+        std::atomic_bool _gameOverQueued{false}; ///> Flag to prevent multiple game over commands
     };
 }; // namespace Ecs

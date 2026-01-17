@@ -44,7 +44,7 @@ namespace Engine
         _currentRoom = roomData;
     }
 
-    [[nodiscard]] const RoomData &RoomManager::currentRoomData() const noexcept
+    const RoomData &RoomManager::currentRoomData() const noexcept
     {
         return _currentRoom;
     }

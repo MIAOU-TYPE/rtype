@@ -88,6 +88,7 @@ namespace Engine
          * @param roomData The RoomData object to set as current.
          */
         void setCurrentData(const RoomData &roomData) noexcept;
+
         /**
          * @brief Retrieves the current room data.
          * @return A constant reference to the current RoomData object.

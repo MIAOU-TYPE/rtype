@@ -7,6 +7,7 @@
 
 #pragma once
 #include "CommandBuffer.hpp"
+#include "EventBus.hpp"
 #include "IClientMessageSink.hpp"
 #include "WorldCommand.hpp"
 
@@ -23,8 +24,10 @@ namespace Ecs
         /**
          * @brief Constructor.
          * @param buffer Reference to the WorldCommandBuffer to push commands into.
+         * @param eventBus Shared pointer to the Eventbus for event handling
          */
-        explicit ClientController(Command::CommandBuffer<World::WorldCommand> &buffer);
+        explicit ClientController(
+            Command::CommandBuffer<World::WorldCommand> &buffer, std::shared_ptr<Engine::EventBus> eventBus);
 
         /**
          * @brief Destructor.
@@ -45,7 +48,7 @@ namespace Ecs
         /**
          * @brief Called when a PONG message is received.
          */
-        void onPong() override;
+        void onPong(uint32_t timestamp) override;
 
         /**
          * @brief Called when a GAME_OVER message is received.
@@ -88,6 +91,7 @@ namespace Ecs
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
-            _commandBuffer; ///> Reference to the world command buffer
+            _commandBuffer;                          ///> Reference to the world command buffer
+        std::shared_ptr<Engine::EventBus> _eventBus; ///> Shared pointer to the event bus
     };
 }; // namespace Ecs

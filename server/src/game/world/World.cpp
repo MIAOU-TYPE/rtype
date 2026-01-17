@@ -296,7 +296,7 @@ namespace
 
 namespace Game
 {
-    World::World()
+    World::World(const Engine::GameConfig &gameConfig) : _gameConfig(gameConfig)
     {
         registerCollisionDamage(*this);
         registerDamageToScoreEvent(*this);
@@ -378,5 +378,10 @@ namespace Game
                 if (nid.id >= _nextId)
                     _nextId = nid.id + 1;
             });
+    }
+
+    const Engine::GameConfig &World::getGameConfig() const
+    {
+        return _gameConfig;
     }
 } // namespace Game

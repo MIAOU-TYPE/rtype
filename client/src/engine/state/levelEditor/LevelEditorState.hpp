@@ -19,7 +19,7 @@
 #include <vector>
 #include <unordered_map>
 
-using json = nlohmann::json;
+using json = nlohmann::json; ///> JSON library namespace
 #include "AuthContext.hpp"
 #include "EventRegistry.hpp"
 #include "IGameState.hpp"

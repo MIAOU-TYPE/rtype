@@ -23,6 +23,7 @@
 #include "UDPPacket.hpp"
 #include "UDPPacketFactory.hpp"
 #include "UDPPacketRouter.hpp"
+#include "AdminConsole.hpp"
 #include <condition_variable>
 
 namespace Net::Thread
@@ -132,6 +133,7 @@ namespace Net::Thread
 
         std::shared_ptr<Server::ISessionManager> _sessionManager; ///> Manages client sessions
         std::shared_ptr<Engine::RoomManager> _roomManager;        ///> Manages game rooms
+        std::unique_ptr<Admin::AdminConsole> _adminConsole; ///> Text-mode admin dashboard
 
         std::thread _receiverThread;  ///> Thread for receiving packets
         std::thread _processorThread; ///> Thread for processing packets

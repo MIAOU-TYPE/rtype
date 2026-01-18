@@ -771,7 +771,7 @@ namespace Engine
         return _selectedMode;
     }
 
-    std::string RoomMenu::levelSelected() const noexcept
+    std::string RoomMenu::levelSelected() const
     {
         if (_levels.empty())
             return "";

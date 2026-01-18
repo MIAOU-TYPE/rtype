@@ -165,7 +165,7 @@ namespace Engine
          * @brief Gets the selected level ID (path to the level file).
          * @return The level ID, or empty string if no level is selected.
          */
-        [[nodiscard]] std::string levelSelected() const noexcept;
+        [[nodiscard]] std::string levelSelected() const;
 
         /**
          * @brief Gets the selected room ID to join.

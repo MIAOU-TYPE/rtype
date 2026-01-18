@@ -113,6 +113,19 @@ namespace
                     phase.fireSpeedMultiplier = phaseNode.value("fireSpeedMultiplier", 1.0f);
                     phase.damageMultiplier = phaseNode.value("damageMultiplier", 1);
                     phase.spriteId = phaseNode.value("spriteId", 0u);
+                    if (phaseNode.contains("projectileSpriteId"))
+                        phase.projectileSpriteId = phaseNode.value("projectileSpriteId", 0u);
+                    if (phaseNode.contains("shootType")) {
+                        std::string typeStr = phaseNode.value("shootType", std::string(""));
+                        if (typeStr == "straight")
+                            phase.shootType = Ecs::AIShoot::Type::Straight;
+                        else if (typeStr == "diagonal")
+                            phase.shootType = Ecs::AIShoot::Type::Diagonal;
+                        else if (typeStr == "spread")
+                            phase.shootType = Ecs::AIShoot::Type::Spread;
+                        else if (typeStr == "homing")
+                            phase.shootType = Ecs::AIShoot::Type::Homing;
+                    }
                     if (phaseNode.contains("angles") && phaseNode.at("angles").is_array()) {
                         for (const auto &angle : phaseNode.at("angles")) {
                             phase.anglesToAdd.push_back(angle.get<float>());
@@ -122,11 +135,10 @@ namespace
                 }
             }
 
-            if (defNode.contains("movement")) {
+            if (defNode.contains("movement"))
                 def.movement = parseMovementDefinition(defNode.at("movement"));
-            } else {
+            else
                 def.movement = parseMovementDefinition("straight");
-            }
             level.enemyTypes[name] = def;
         }
         return !level.enemyTypes.empty();

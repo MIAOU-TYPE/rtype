@@ -13,9 +13,9 @@ namespace Game
     {
         auto &reg = world.registry();
 
-        reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Position, Ecs::MovementPattern, Ecs::Drawable>(
+        reg.view<Ecs::BossPhase, Ecs::Health, Ecs::Position, Ecs::MovementPattern, Ecs::Drawable, Ecs::WeaponConfig>(
             [&](const Ecs::Entity e, Ecs::BossPhase &bossPhase, const Ecs::Health &health, const Ecs::Position &pos,
-                Ecs::MovementPattern &pattern, Ecs::Drawable &drawable) {
+                Ecs::MovementPattern &pattern, Ecs::Drawable &drawable, Ecs::WeaponConfig &weapon) {
                 if (pos.x < 800.f)
                     pattern.baseVx = 0.f;
 
@@ -33,9 +33,12 @@ namespace Game
                         if (currentPhase.damageMultiplier > 0)
                             attack.at(static_cast<size_t>(e))->damage = static_cast<int>(
                                 attack.at(static_cast<size_t>(e))->damage * currentPhase.damageMultiplier);
-                        if (currentPhase.spriteId > 0) {
+                        if (currentPhase.spriteId > 0)
                             drawable.spriteId = currentPhase.spriteId;
-                        }
+                        if (currentPhase.shootType.has_value())
+                            attack.at(static_cast<size_t>(e))->type = currentPhase.shootType.value();
+                        if (currentPhase.projectileSpriteId.has_value())
+                            weapon.projectileSpriteId = currentPhase.projectileSpriteId.value();
                     }
                 }
             });

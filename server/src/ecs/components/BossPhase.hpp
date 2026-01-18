@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include <optional>
 #include <vector>
+#include "AIShoot.hpp"
 
 namespace Ecs
 {
@@ -18,11 +20,13 @@ namespace Ecs
      * fire speed multipliers, damage multipliers, and sprite IDs.
      */
     struct BossPhaseData {
-        int healthThreshold;            ///> Health threshold to enter this phase
-        std::vector<float> anglesToAdd; ///> Additional attack angles for this phase
-        float fireSpeedMultiplier;      ///> Multiplier for fire speed in this phase
-        int damageMultiplier;           ///> Multiplier for damage in this phase
-        unsigned int spriteId = 0;      ///> Sprite ID for this phase
+        int healthThreshold;                            ///> Health threshold to enter this phase
+        std::vector<float> anglesToAdd;                 ///> Additional attack angles for this phase
+        float fireSpeedMultiplier;                      ///> Multiplier for fire speed in this phase
+        int damageMultiplier;                           ///> Multiplier for damage in this phase
+        unsigned int spriteId = 0;                      ///> Sprite ID for this phase
+        std::optional<AIShoot::Type> shootType;         ///> Optional new shoot type for this phase
+        std::optional<unsigned int> projectileSpriteId; ///> Optional new projectile sprite for this phase
     };
 
     /** @brief Component representing the phase of a boss entity

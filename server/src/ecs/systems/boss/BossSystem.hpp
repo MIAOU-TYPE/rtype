@@ -16,6 +16,7 @@
 #include "MovementPattern.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
+#include "WeaponConfig.hpp"
 
 namespace Game
 {

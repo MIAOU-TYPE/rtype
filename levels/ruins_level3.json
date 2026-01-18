@@ -20,386 +20,262 @@
     }
   ],
   "enemies": {
-    "smallEnemy": {
-      "hp": 15,
-      "speed": -100,
-      "size": { "w": 65, "h": 66 },
-      "killScore": 30,
-      "sprite": "enemy",
-      "spriteId": 2,
-      "shoot": {
-        "type": "straight",
-        "cooldown": 2.0,
-        "projectileSpeed": 130,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 50 },
-        "projectileSpriteId": 9
-      }
-    },
-    "mediumEnemy": {
+    "voidCrawler": {
       "hp": 40,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
-      "killScore": 50,
-      "sprite": "enemy2",
-      "spriteId": 3,
-      "shoot": {
-        "type": "diagonal",
-        "angles": [-15, 15],
-        "cooldown": 2.0,
-        "projectileSpeed": 100,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 35 },
-        "projectileSpriteId": 9
-      }
-    },
-    "mediumEnemyTriple": {
-      "hp": 40,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
-      "killScore": 65,
-      "sprite": "enemy2",
-      "spriteId": 3,
-      "shoot": {
-        "type": "diagonal",
-        "angles": [-25, 0, 25],
-        "cooldown": 2.2,
-        "projectileSpeed": 110,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 35 },
-        "projectileSpriteId": 12
-      }
-    },
-    "mediumEnemyWide": {
-      "hp": 45,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
-      "killScore": 80,
-      "sprite": "enemy2",
-      "spriteId": 3,
-      "shoot": {
-        "type": "diagonal",
-        "angles": [-35, -15, 15, 35],
-        "cooldown": 2.6,
-        "projectileSpeed": 105,
-        "damage": 45,
-        "muzzle": { "x": -20, "y": 35 },
-        "projectileSpriteId": 12
-      }
-    },
-    "mediumEnemyFive": {
-      "hp": 50,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
-      "killScore": 110,
-      "sprite": "enemy2",
-      "spriteId": 3,
-      "shoot": {
-        "type": "diagonal",
-        "angles": [-40, -20, 0, 20, 40],
-        "cooldown": 3.0,
-        "projectileSpeed": 110,
-        "damage": 40,
-        "muzzle": { "x": -20, "y": 35 },
-        "projectileSpriteId": 12
-      }
-    },
-    "fastEnemy": {
-      "hp": 10,
-      "speed": -125,
+      "speed": -180,
       "size": { "w": 33, "h": 22 },
-      "killScore": 10,
+      "killScore": 80,
       "sprite": "enemy3",
       "spriteId": 4,
       "shoot": {
-        "type": "straight",
-        "cooldown": 0.8,
-        "projectileSpeed": 160,
-        "damage": 50,
+        "type": "diagonal",
+        "angles": [-20, 20],
+        "cooldown": 0.5,
+        "projectileSpeed": 180,
+        "damage": 40,
         "muzzle": { "x": -20, "y": 15 },
         "projectileSpriteId": 9
       },
       "movement": {
         "type": "zigzag",
         "params": {
-          "amplitude": 50.0,
-          "frequency": 0.5
+          "amplitude": 60.0,
+          "frequency": 2.0
         }
       }
     },
-    "boss3": {
-      "hp": 4998,
+    "ancientSentinel": {
+      "hp": 250,
+      "speed": -30,
+      "size": { "w": 65, "h": 66 },
+      "killScore": 300,
+      "sprite": "enemy",
+      "spriteId": 2,
+      "shoot": {
+        "type": "homing",
+        "cooldown": 3.0,
+        "projectileSpeed": 120,
+        "damage": 40,
+        "muzzle": { "x": -20, "y": 50 },
+        "projectileSpriteId": 29
+      }
+    },
+    "chaosOrb": {
+      "hp": 100,
+      "speed": -80,
+      "size": { "w": 65, "h": 49 },
+      "killScore": 150,
+      "sprite": "enemy2",
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [-135, -90, -45, 0, 45, 90, 135],
+        "cooldown": 2.0,
+        "projectileSpeed": 140,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 35 },
+        "projectileSpriteId": 12
+      }
+    },
+    "finalBoss": {
+      "hp": 50000,
       "speed": -30,
       "size": { "w": 160, "h": 213 },
-      "killScore": 300,
+      "killScore": 10000,
       "sprite": "boss3P1",
       "spriteId": 22,
       "shoot": {
         "type": "homing",
         "cooldown": 4.0,
         "projectileSpeed": 130,
-        "damage": 50,
+        "damage": 60,
         "muzzle": { "x": 60, "y": 70 },
         "projectileSpriteId": 29
       },
       "phases": [
         {
-          "hpThreshold": 4998,
+          "hpThreshold": 40000,
           "angles": [],
           "fireSpeedMultiplier": 1.0,
           "damageMultiplier": 1,
           "spriteId": 22
         },
         {
-          "hpThreshold": 4284,
-          "angles": [],
-          "fireSpeedMultiplier": 1.0,
+          "hpThreshold": 30000,
+          "angles": [-20, 20],
+          "fireSpeedMultiplier": 1.1,
           "damageMultiplier": 1,
-          "spriteId": 23
+          "spriteId": 23,
+          "shootType": "diagonal",
+          "projectileSpriteId": 12
         },
         {
-          "hpThreshold": 3570,
-          "angles": [],
+          "hpThreshold": 25000,
+          "angles": [-30, 0, 30],
           "fireSpeedMultiplier": 1.2,
-          "damageMultiplier": 2,
-          "spriteId": 24
+          "damageMultiplier": 1.2,
+          "spriteId": 24,
+          "shootType": "diagonal",
+          "projectileSpriteId": 12
         },
         {
-          "hpThreshold": 2856,
-          "angles": [],
-          "fireSpeedMultiplier": 1.5,
-          "damageMultiplier": 2,
+          "hpThreshold": 20000,
+          "angles": [-45, -15, 15, 45],
+          "fireSpeedMultiplier": 1.4,
+          "damageMultiplier": 1.5,
           "spriteId": 25
         },
         {
-          "hpThreshold": 2142,
-          "angles": [],
-          "fireSpeedMultiplier": 1.5,
-          "damageMultiplier": 3,
+          "hpThreshold": 15000,
+          "angles": [-60, -30, 0, 30, 60],
+          "fireSpeedMultiplier": 1.6,
+          "damageMultiplier": 2.0,
           "spriteId": 26
         },
         {
-          "hpThreshold": 1428,
-          "angles": [],
+          "hpThreshold": 10000,
+          "angles": [-90, -45, 0, 45, 90],
           "fireSpeedMultiplier": 2.0,
-          "damageMultiplier": 3,
+          "damageMultiplier": 2.5,
           "spriteId": 27
         },
         {
-          "hpThreshold": 714,
-          "angles": [],
-          "fireSpeedMultiplier": 2.0,
-          "damageMultiplier": 4,
+          "hpThreshold": 5000,
+          "angles": [-180, -90, 0, 90, 180],
+          "fireSpeedMultiplier": 3.0,
+          "damageMultiplier": 3.0,
           "spriteId": 28
         }
       ]
     },
-    "groupEnemy": {
+    "eliteSquad": {
       "type": "group",
       "members": [
         {
-          "enemyType": "mediumEnemy",
+          "enemyType": "ancientSentinel",
           "offset": { "x": 0, "y": 0 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": -130 }
+          "enemyType": "voidCrawler",
+          "offset": { "x": -50, "y": -100 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 130 }
+          "enemyType": "voidCrawler",
+          "offset": { "x": -50, "y": 100 }
+        },
+        {
+          "enemyType": "chaosOrb",
+          "offset": { "x": 100, "y": 0 }
+        },
+        {
+          "enemyType": "voidCrawler",
+          "offset": { "x": -150, "y": -150 }
+        },
+        {
+          "enemyType": "voidCrawler",
+          "offset": { "x": -150, "y": 150 }
         }
       ]
     },
-    "groupEnemy2": {
+    "bossTroop": {
       "type": "group",
       "members": [
         {
-          "enemyType": "mediumEnemyTriple",
-          "offset": { "x": -90, "y": 110 }
+          "enemyType": "ancientSentinel",
+          "offset": { "x": -200, "y": -150 }
         },
         {
-          "enemyType": "mediumEnemyTriple",
-          "offset": { "x": -90, "y": -110 }
+          "enemyType": "ancientSentinel",
+          "offset": { "x": -200, "y": 150 }
         },
         {
-          "enemyType": "mediumEnemyTriple",
-          "offset": { "x": 90, "y": 110 }
-        },
-        {
-          "enemyType": "mediumEnemyTriple",
-          "offset": { "x": 90, "y": -110 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 0 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 150, "y": 0 }
-        }
-      ]
-    },
-    "groupEnemy3": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 0, "y": 0 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": -120 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": 120 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 160, "y": -120 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 160, "y": 120 }
-        }
-      ]
-    },
-    "groupEnemy4": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -200, "y": -180 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -100, "y": -20 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 0, "y": 140 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 150, "y": 140 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 250, "y": -20 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 350, "y": -180 }
+          "enemyType": "chaosOrb",
+          "offset": { "x": -100, "y": 0 }
         }
       ]
     }
   },
   "obstacles": {
-    "gravityWell": {
+    "singularity": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 200,
-      "damagePerSecond": 10,
-      "radius": 130,
+      "pullStrength": 400,
+      "damagePerSecond": 50,
+      "radius": 220,
       "innerRadius": 50
     }
   },
-  "duration": 125,
+  "duration": 150,
   "waves": [
     {
-      "time": 3,
-      "enemies": { "smallEnemy": 3 },
+      "time": 5,
+      "enemies": { "voidCrawler": 5 },
       "spawnPattern": "spread"
     },
     {
-      "time": 6,
-      "enemies": { "fastEnemy": 4 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 9,
-      "enemies": { "mediumEnemy": 3 },
+      "time": 12,
+      "enemies": { "chaosOrb": 3 },
       "spawnPattern": "spread"
     },
     {
       "time": 15,
-      "enemies": {},
-      "obstacleType": "gravityWell",
-      "obstacleY": 360,
-      "obstacleX": 500
+      "powerUp": { "type": "shield" }
     },
     {
-      "time": 15,
-      "enemies": {},
-      "obstacleType": "gravityWell",
-      "obstacleY": 150,
-      "obstacleX": 700
+      "time": 25,
+      "enemies": { "eliteSquad": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
     },
     {
-      "time": 16,
-      "enemies": { "fastEnemy": 4 },
+      "time": 30,
+      "obstacleType": "singularity",
+      "obstacleY": 200,
+      "obstacleX": 600,
+      "enemies": { "voidCrawler": 4 },
       "spawnPattern": "spread"
     },
     {
-      "time": 17,
+      "time": 45,
       "powerUp": { "type": "laser" }
     },
     {
-      "time": 19,
-      "enemies": { "mediumEnemyFive": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 24,
-      "enemies": { "groupEnemy2": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 29,
-      "obstacleType": "gravityWell",
-      "obstacleY": 100,
-      "obstacleX": 250,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 37,
-      "enemies": { "groupEnemy2": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 50,
-      "enemies": { "mediumEnemyWide": 4 },
+      "time": 55,
+      "enemies": { "ancientSentinel": 2 },
       "spawnPattern": "spread"
     },
     {
-      "time": 55,
-      "enemies": { "groupEnemy2": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 65,
-      "enemies": { "groupEnemy4": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 70,
+      "enemies": { "eliteSquad": 1 },
+      "spawnPattern": "spread"
     },
     {
       "time": 80,
-      "enemies": { "groupEnemy3": 1 },
+      "powerUp": { "type": "power_up_attached" }
+    },
+    {
+      "time": 90,
+      "obstacleType": "singularity",
+      "obstacleY": 500,
+      "obstacleX": 500,
+      "enemies": { "chaosOrb": 5 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 100,
+      "powerUp": { "type": "shield" }
+    },
+    {
+      "time": 105,
+      "enemies": { "bossTroop": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     },
     {
-      "time": 90,
-      "enemies": { "boss3": 1 },
+      "time": 110,
+      "enemies": { "finalBoss": 1 },
       "spawnPattern": "line",
-      "spawnY": 120
+      "spawnY": 300
     }
   ]
 }

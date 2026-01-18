@@ -85,6 +85,10 @@ namespace Engine
          * @brief Copy constructor is deleted to prevent copying.
          */
         AMenu(const AMenu &) = delete;
+
+        /**
+         * @brief Copy assignment operator is deleted to prevent copying.
+         */
         AMenu &operator=(const AMenu &) = delete;
 
         /**
@@ -131,19 +135,34 @@ namespace Engine
          */
         void renderBackground() const;
 
+        /**
+         * @brief Load the panel texture and set up the render command.
+         * @param path Path to the panel texture.
+         * @param center Whether to center the panel in the viewport.
+         */
         void loadPanel(const std::string &path, bool center = true);
+
+        /**
+         * @brief Layout the panel within the viewport.
+         * @param maxWFrac Maximum width fraction of the viewport for the panel.
+         * @param maxHFrac Maximum height fraction of the viewport for the panel.
+         * @param insetXFrac Inset fraction in X direction for inner rectangle.
+         * @param insetYFrac Inset fraction in Y direction for inner rectangle.
+         */
         void layoutPanel(float maxWFrac = 0.90f, float maxHFrac = 0.90f, float insetXFrac = 0.08f,
             float insetYFrac = 0.10f) noexcept;
 
-        [[nodiscard]] RectF panelRect() const noexcept
-        {
-            return _panelRect;
-        }
+        /**
+         * @brief Get the rectangle of the panel.
+         * @return RectF representing the panel rectangle.
+         */
+        [[nodiscard]] RectF panelRect() const noexcept;
 
-        [[nodiscard]] RectF innerRect() const noexcept
-        {
-            return _innerRect;
-        }
+        /**
+         * @brief Get the inner rectangle within the panel.
+         * @return RectF representing the inner rectangle.
+         */
+        [[nodiscard]] RectF innerRect() const noexcept;
 
         /**
          * @brief Helper to place a button centered at a given x-coordinate.

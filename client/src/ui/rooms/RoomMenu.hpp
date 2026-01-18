@@ -165,7 +165,7 @@ namespace Engine
          * @brief Gets the selected level ID (path to the level file).
          * @return The level ID, or empty string if no level is selected.
          */
-        [[nodiscard]] std::string levelSelected() const;
+        [[nodiscard]] std::string levelSelected() const noexcept;
 
         /**
          * @brief Gets the music path for the selected world.

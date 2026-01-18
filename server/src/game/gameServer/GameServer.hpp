@@ -36,6 +36,7 @@
 #include "SessionManager.hpp"
 #include "ShootingSystem.hpp"
 #include "SnapshotSystem.hpp"
+#include "TailFollowerSystem.hpp"
 #include "UDPPacketFactory.hpp"
 
 namespace Game
@@ -193,10 +194,12 @@ namespace Game
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
-        std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
+        std::vector<bool> _spawned;   ///> Tracks which enemies slots are occupied.
 
         Engine::GameConfig _gameConfig; ///> Game configuration.
-        bool _gameOver = false;         ///> True if the game is over.
+
+        float _timeSpecialMove = 0.f; ///> Timer for special enemy movements.
+        bool _gameOver = false;       ///> True if the game is over.
     };
 
 } // namespace Game

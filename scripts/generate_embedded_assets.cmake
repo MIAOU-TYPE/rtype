@@ -10,6 +10,7 @@ file(MAKE_DIRECTORY "${EMBEDDED_RESOURCES_DIR}")
 # Automatically find all assets
 file(GLOB_RECURSE ASSET_FILES
     "${CLIENT_ASSETS_DIR}/sprites/*.png"
+    "${CLIENT_ASSETS_DIR}/sprites/**/*.png"
     "${CLIENT_ASSETS_DIR}/fonts/*.otf"
     "${CLIENT_ASSETS_DIR}/fonts/*.ttf"
     "${CLIENT_ASSETS_DIR}/sounds/*.wav"

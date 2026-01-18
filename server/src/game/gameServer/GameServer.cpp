@@ -226,6 +226,8 @@ namespace Game
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);
+        _timeSpecialMove += dt;
+        TailFollowerSystem::update(*_worldWrite, _timeSpecialMove);
         BossSystem::update(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 
@@ -292,7 +294,7 @@ namespace Game
     {
         switch (cmd.type) {
             case GameCommand::Type::PlayerConnect: {
-                const Ecs::Entity ent = _worldWrite->createPlayer(cmd.sessionId);
+                const Ecs::Entity ent = _worldWrite->createPlayer(cmd.sessionId, _sessionToEntity.size());
                 _sessionToEntity[cmd.sessionId] = ent;
                 _entityToSession[static_cast<size_t>(ent)] = cmd.sessionId;
                 break;

@@ -46,7 +46,7 @@ namespace Network
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeListRooms(const uint32_t req) const
     {
         try {
-            static constexpr std::vector<uint8_t> empty{};
+            static const std::vector<uint8_t> empty{};
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::LIST_ROOMS, req, empty);
             return make(payload);
         } catch (...) {

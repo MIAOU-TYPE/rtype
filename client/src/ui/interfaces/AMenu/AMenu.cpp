@@ -23,6 +23,26 @@ namespace Engine
         return {w, h, w * 0.5f, h * 0.5f};
     }
 
+    float RectF::cx() const noexcept
+    {
+        return x + w * 0.5f;
+    }
+
+    float RectF::cy() const noexcept
+    {
+        return y + h * 0.5f;
+    }
+
+    float RectF::right() const noexcept
+    {
+        return x + w;
+    }
+
+    float RectF::bottom() const noexcept
+    {
+        return y + h;
+    }
+
     void AMenu::loadBackground(const std::string &path)
     {
         const auto textures = _renderer->textures();
@@ -32,7 +52,7 @@ namespace Engine
         _backgroundCmd.textureId = _backgroundTexture;
     }
 
-    void AMenu::layoutBackground()
+    void AMenu::layoutBackground() noexcept
     {
         if (_backgroundTexture == Graphics::InvalidTexture)
             return;
@@ -49,6 +69,60 @@ namespace Engine
     {
         if (_backgroundTexture != Graphics::InvalidTexture)
             _renderer->draw(_backgroundCmd);
+    }
+
+    void AMenu::loadPanel(const std::string &path, const bool center)
+    {
+        const auto textures = _renderer->textures();
+        _panelTex = textures->load(path);
+        if (_panelTex == Graphics::InvalidTexture)
+            throw AMenuError("AMenu: failed to load panel texture: " + path);
+
+        const auto [w, h] = textures->getSize(_panelTex);
+        _panelCmd.textureId = _panelTex;
+        _panelCmd.frame = {0, 0, static_cast<int>(w), static_cast<int>(h)};
+        _panelCmd.position = {0.f, 0.f};
+        _panelCmd.scale = {1.f, 1.f};
+        _panelCenter = center;
+    }
+
+    void AMenu::layoutPanel(
+        const float maxWFrac, const float maxHFrac, const float insetXFrac, const float insetYFrac) noexcept
+    {
+        if (_panelTex == Graphics::InvalidTexture)
+            return;
+
+        _panelInsetXFrac = insetXFrac;
+        _panelInsetYFrac = insetYFrac;
+
+        const auto [w, h, cx, cy] = viewportF();
+        const auto [width, height] = _renderer->textures()->getSize(_panelTex);
+        const auto tw = static_cast<float>(width);
+        const auto th = static_cast<float>(height);
+        const float scale = std::min(w * maxWFrac / tw, h * maxHFrac / th);
+
+        _panelRect.w = tw * scale;
+        _panelRect.h = th * scale;
+        _panelRect.x = _panelCenter ? (cx - _panelRect.w * 0.5f) : 0.f;
+        _panelRect.y = _panelCenter ? (cy - _panelRect.h * 0.5f) : 0.f;
+        _panelCmd.textureId = _panelTex;
+        _panelCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
+        _panelCmd.position = {_panelRect.x, _panelRect.y};
+        _panelCmd.scale = {scale, scale};
+        _innerRect.x = _panelRect.x + _panelRect.w * _panelInsetXFrac;
+        _innerRect.y = _panelRect.y + _panelRect.h * _panelInsetYFrac;
+        _innerRect.w = _panelRect.w - _panelRect.w * _panelInsetXFrac * 2.f;
+        _innerRect.h = _panelRect.h - _panelRect.h * _panelInsetYFrac * 2.f;
+    }
+
+    RectF AMenu::panelRect() const noexcept
+    {
+        return _panelRect;
+    }
+
+    RectF AMenu::innerRect() const noexcept
+    {
+        return _innerRect;
     }
 
     void AMenu::placeCentered(UI::UIButton &b, const float cx, const float y) noexcept

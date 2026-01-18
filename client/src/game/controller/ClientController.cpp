@@ -29,7 +29,7 @@ namespace Ecs
         std::cout << "onReject" << std::endl;
     }
 
-    void ClientController::onPong(const uint32_t timestamp)
+    void ClientController::onPong(const uint64_t timestamp)
     {
         _eventBus->emit<Engine::PongReceived>(Engine::PongReceived{timestamp});
     }

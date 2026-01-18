@@ -85,4 +85,21 @@ namespace Network
             return nullptr;
         }
     }
+
+    std::shared_ptr<Net::IPacket> UDPPacketFactory::makePing() const noexcept
+    {
+        PongData packet{};
+        packet.header = makeHeader(Net::Protocol::UDP::PING, sizeof(PongData));
+        const auto now =
+            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+                .count();
+        packet.pongTimestamp = htonll(static_cast<uint64_t>(now));
+
+        try {
+            return makePacket<PongData>(packet);
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::makePing} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Network

@@ -192,6 +192,22 @@ namespace Net::Factory
         }
     }
 
+    std::shared_ptr<IPacket> UDPPacketFactory::createPongPacket(
+        const sockaddr_in &addr, uint64_t echoedPingTimestampMs) const noexcept
+    {
+        PongData pongPacket;
+        pongPacket.header = makeHeader(Protocol::UDP::PONG, VERSION, sizeof(PongData));
+        pongPacket.pongTimestamp = htonll(echoedPingTimestampMs);
+
+        try {
+            auto packet = makePacket<PongData>(addr, pongPacket);
+            return packet;
+        } catch (const FactoryError &e) {
+            std::cerr << "{UDPPacketFactory::createPongPacket} " << e.what() << std::endl;
+            return nullptr;
+        }
+    }
+
     std::optional<UDPPacketFactory::ChunkSizes> UDPPacketFactory::computeChunkSizes(
         const size_t maxPacketBytes) noexcept
     {

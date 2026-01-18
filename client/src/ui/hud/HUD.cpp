@@ -25,7 +25,7 @@ namespace Engine
         _healthText = _renderer->texts()->createText(24, {255, 255, 255, 255});
         _healthText->setFont(fontHandle);
         _healthText->setPosition(10.f, 40.f);
-        _healthText->setString("Health: 500/500");
+        _healthText->setString("Health: " + std::to_string(_getCurrentLife()) + "/" + std::to_string(_getMaxLife()));
     }
 
     void HUD::render()
@@ -35,12 +35,8 @@ namespace Engine
             _renderer->draw(*_scoreText);
         }
         if (_healthText) {
-            if (_getCurrentLife() == 0 && _getMaxLife() == 0) {
-                _healthText->setString("Health: 500/500");
-            } else {
-                _healthText->setString(
-                    "Health: " + std::to_string(_getCurrentLife()) + "/" + std::to_string(_getMaxLife()));
-            }
+            _healthText->setString(
+                "Health: " + std::to_string(_getCurrentLife()) + "/" + std::to_string(_getMaxLife()));
             _renderer->draw(*_healthText);
         }
     }

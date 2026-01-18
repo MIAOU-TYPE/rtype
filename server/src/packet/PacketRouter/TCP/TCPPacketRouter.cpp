@@ -85,6 +85,7 @@ namespace Net
             case Protocol::TCP::LEAVE_ROOM: onLeaveRoom(*addr, sessionId, h.requestId); break;
             case Protocol::TCP::START_GAME: onStartGame(*addr, sessionId, h.requestId); break;
             case Protocol::TCP::ROOM_INFO: onRoomInfo(*addr, sessionId, h.requestId, r); break;
+            case Protocol::TCP::ROOM_MESSAGE: onMessageRoom(*addr, sessionId, h.requestId, r); break;
             default: sendError(*addr, h.requestId, 2, "Unsupported TCP packet type"); break;
         }
     }
@@ -131,7 +132,8 @@ namespace Net
         if (!out)
             return;
 
-        (void) _tcp->sendPacket(*out);
+        for (size_t i = 0; i < 3; i++)
+            (void) _tcp->sendPacket(*out);
     }
 
     void TCPPacketRouter::onAuthRegister(
@@ -390,10 +392,12 @@ namespace Net
         if (!room || !_packetFactory)
             return;
 
-        for (const auto &session : room->sessions()) {
-            if (const auto memberAddr = _sessions->getAddress(session)) {
-                if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
-                    (void) _tcp->sendPacket(*out);
+        for (size_t i = 0; i < 3; i++) {
+            for (const auto &session : room->sessions()) {
+                if (const auto memberAddr = _sessions->getAddress(session)) {
+                    if (const auto out = _packetFactory->makeGameStart(*memberAddr, 0, roomId))
+                        (void) _tcp->sendPacket(*out);
+                }
             }
         }
     }
@@ -457,5 +461,33 @@ namespace Net
             return sendError(addr, req, 22, "ROOM_INFO: room not updated");
 
         (void) _tcp->sendPacket(*out);
+    }
+
+    void TCPPacketRouter::onMessageRoom(
+        const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
+    {
+        uint32_t roomId = 0;
+        std::string message = "";
+
+        try {
+            roomId = _rooms->getRoomIdOfPlayer(sessionId);
+            message = r.str16();
+        } catch (...) {
+            return sendError(addr, req, 30, "MESSAGE_ROOM: malformed payload (expected roomId(u32))");
+        }
+        if (r.remaining() != 0)
+            return sendError(addr, req, 31, "MESSAGE_ROOM: unexpected trailing bytes");
+        const auto room = _rooms->getRoomById(roomId);
+        if (!room)
+            return sendError(addr, req, 32, "MESSAGE_ROOM: room not found");
+
+        for (const auto session : room->sessions()) {
+            if (const auto memberAddr = _sessions->getAddress(session)) {
+                auto username = _sessions->getUsername(sessionId);
+                std::string fullMessage = username + ": " + message;
+                if (const auto out = _packetFactory->makeRoomMessage(*memberAddr, req, fullMessage))
+                    (void) _tcp->sendPacket(*out);
+            }
+        }
     }
 } // namespace Net

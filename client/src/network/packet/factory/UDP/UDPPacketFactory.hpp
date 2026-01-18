@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <cstring>
 #include <exception>
 #include <iostream>
@@ -18,6 +19,7 @@
 #include "HeaderData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "PongData.hpp"
 #include "UDPTypesData.hpp"
 
 namespace Network
@@ -88,6 +90,12 @@ namespace Network
          * @return A shared pointer to the created packet
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeConnect(const ConnectInfo &connect) const noexcept;
+
+        /**
+         * @brief Creates a disconnect packet
+         * @return A shared pointer to the created packet
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makePing() const noexcept;
 
       private:
         /**

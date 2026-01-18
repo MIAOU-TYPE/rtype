@@ -414,6 +414,7 @@ namespace Engine
             if (_root.join->onClickReleased(mx, my, [&] {
                     _page = Page::List;
                     _listRooms = true;
+                    _createRoom = false;
                     _list.scroll = 0.f;
                     _list.lastRefresh = {};
                     updateListRooms();
@@ -448,7 +449,7 @@ namespace Engine
                 return;
             }
             if (frame.key == Key::Enter) {
-                _createRoom = true;
+                _createRoom = !_createRoom;
                 _createRoomName = _create.roomNameField ? _create.roomNameField->value() : "default";
                 return;
             }

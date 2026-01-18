@@ -204,9 +204,17 @@ namespace World
          */
         void reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions);
 
-        struct Vel2 { float vx; float vy; };
+        struct Vel2 {
+            float vx;
+            float vy;
+        };
+
         std::unordered_map<uint32_t, Vel2> _velByNetId;
         std::unordered_map<uint32_t, std::chrono::steady_clock::time_point> _lastVelUpdate;
 
+        std::chrono::steady_clock::time_point _lastSnapArrival{};
+        bool _hasLastArrival = false;
+        float _emaJitterMs = 0.f;
+        float _interpDelayMs = 100.f;
     };
 } // namespace World

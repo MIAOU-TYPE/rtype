@@ -256,7 +256,6 @@ namespace Thread
         std::atomic_bool _pendingAuthOk{false};       ///> Atomic flag to indicate pending authentication OK
         std::atomic_bool _pendingScoreSubmit{false};  ///> Atomic flag to indicate pending score submission
         std::atomic_bool _pendingGameOver{false};     ///> Atomic flag to indicate pending game over
-        std::atomic_bool _inRoom{false};
 
         std::atomic_uint32_t _lastScore{0}; ///> Atomic variable to store the last score
 

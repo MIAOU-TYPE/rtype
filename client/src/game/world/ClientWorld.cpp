@@ -85,8 +85,21 @@ namespace World
         for (const auto &[id, x, y, z, spriteId] : batch.entities) {
             _destroyed.erase(static_cast<uint32_t>(id));
             snap.entities[id] = NetState{x, y, z, spriteId};
-            _entityLastSeen[id] = std::chrono::steady_clock::now();
+            _entityLastSeen[id] = snap.arrivalTime;
         }
+
+        if (_hasLastArrival) {
+            const float iaMs = std::chrono::duration<float, std::milli>(snap.arrivalTime - _lastSnapArrival).count();
+            const float targetMs = 16.666f;
+            const float j = std::fabs(iaMs - targetMs);
+            _emaJitterMs = _emaJitterMs * 0.9f + j * 0.1f;
+
+            const float base = 100.f;
+            const float extra = std::clamp(_emaJitterMs * 2.0f, 0.f, 180.f);
+            _interpDelayMs = std::clamp(base + extra, 80.f, 280.f);
+        }
+        _lastSnapArrival = snap.arrivalTime;
+        _hasLastArrival = true;
 
         if (!_snapshots.empty()) {
             const TickSnapshot &prev = _snapshots.back();
@@ -101,7 +114,9 @@ namespace World
                 const float dx = st.x - itPrev->second.x;
                 const float dy = st.y - itPrev->second.y;
 
-                _velByNetId[static_cast<uint32_t>(id)] = Vel2{dx / dt, dy / dt};
+                const uint32_t uid = static_cast<uint32_t>(id);
+                _velByNetId[uid] = Vel2{dx / dt, dy / dt};
+                _lastVelUpdate[uid] = snap.arrivalTime;
             }
         }
 
@@ -114,8 +129,9 @@ namespace World
                 it = prev;
             }
             _snapshots.insert(it, std::move(snap));
-        } else
+        } else {
             _snapshots.push_back(std::move(snap));
+        }
 
         while (_snapshots.size() > _maxSnapshots)
             _snapshots.pop_front();
@@ -274,26 +290,114 @@ namespace World
         posOpt->y += dy * SmoothFactor;
     }
 
-void ClientWorld::updateInterpolatedPositions(const float dt)
-{
-    if (_snapshots.empty())
-        return;
+    void ClientWorld::updateInterpolatedPositions(const float dt)
+    {
+        if (_snapshots.empty())
+            return;
 
-    auto &positions = _registry.getComponents<Ecs::Position>();
-    auto &drawables = _registry.getComponents<Ecs::Drawable>();
-    auto &renders = _registry.getComponents<Ecs::Render>();
-    auto &anims = _registry.getComponents<Ecs::AnimationState>();
+        auto &positions = _registry.getComponents<Ecs::Position>();
+        auto &drawables = _registry.getComponents<Ecs::Drawable>();
+        auto &renders = _registry.getComponents<Ecs::Render>();
+        auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
-    const auto now = std::chrono::steady_clock::now();
-    constexpr auto InterpDelay = std::chrono::milliseconds(100);
+        const auto now = std::chrono::steady_clock::now();
+        const auto interpDelay = std::chrono::milliseconds(static_cast<int>(_interpDelayMs));
 
-    if (_snapshots.size() < 2) {
-        const TickSnapshot &S = _snapshots.back();
+        const auto applyExtrapOrHold = [&](const TickSnapshot &S) {
+            const float age = std::chrono::duration<float>(now - S.arrivalTime).count();
+            const float horizon = 0.20f;
+            const float k = clamp(1.f - (age / horizon));
 
-        for (const auto &[netId, bs] : S.entities) {
-            const uint32_t id = static_cast<uint32_t>(netId);
-            if (_destroyed.contains(id))
+            for (const auto &[netId, bs] : S.entities) {
+                const uint32_t id = static_cast<uint32_t>(netId);
+                if (_destroyed.contains(id))
+                    continue;
+
+                if (!_entityMap.contains(netId))
+                    applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
+
+                const Ecs::Entity e = _entityMap[netId];
+                const auto entIdx = static_cast<size_t>(e);
+                auto &posOpt = positions.at(entIdx);
+                if (!posOpt)
+                    continue;
+
+                float vx = 0.f;
+                float vy = 0.f;
+
+                if (auto itV = _velByNetId.find(id); itV != _velByNetId.end()) {
+                    vx = itV->second.vx;
+                    vy = itV->second.vy;
+                }
+
+                if (auto itT = _lastVelUpdate.find(id);
+                    itT == _lastVelUpdate.end() || (now - itT->second) > std::chrono::milliseconds(250)) {
+                    vx = 0.f;
+                    vy = 0.f;
+                }
+
+                vx *= k;
+                vy *= k;
+                if (age > horizon) {
+                    vx = 0.f;
+                    vy = 0.f;
+                }
+
+                constexpr float MaxVisualStep = 12.f;
+
+                posOpt->x += std::clamp(vx * dt, -MaxVisualStep, MaxVisualStep);
+                posOpt->y += std::clamp(vy * dt, -MaxVisualStep, MaxVisualStep);
+                posOpt->z = bs.z;
+
+                refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
+            }
+        };
+
+        if (_snapshots.size() < 2) {
+            applyExtrapOrHold(_snapshots.back());
+            return;
+        }
+
+        std::optional<size_t> idxA;
+        std::optional<size_t> idxB;
+
+        for (size_t i = 1; i < _snapshots.size(); ++i) {
+            if (_snapshots.at(i).arrivalTime > now - interpDelay) {
+                idxA = i - 1;
+                idxB = i;
+                break;
+            }
+        }
+
+        if (!idxA || !idxB) {
+            applyExtrapOrHold(_snapshots.back());
+            return;
+        }
+
+        const TickSnapshot &A = _snapshots.at(*idxA);
+        const TickSnapshot &B = _snapshots.at(*idxB);
+
+        const float denom = std::chrono::duration<float>(B.arrivalTime - A.arrivalTime).count();
+        if (denom <= 0.f) {
+            applyExtrapOrHold(_snapshots.back());
+            return;
+        }
+
+        const float alpha = clamp(std::chrono::duration<float>(now - interpDelay - A.arrivalTime).count() / denom);
+
+        for (const auto &[netId, bs] : B.entities) {
+            if (const auto id = static_cast<uint32_t>(netId); _destroyed.contains(id))
                 continue;
+
+            if (std::cmp_equal(netId, _entityPlayerId)) {
+                if (!_entityMap.contains(netId))
+                    applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
+
+                reconcileLocalPlayerWithServer(bs, positions);
+                if (auto it = _entityMap.find(netId); it != _entityMap.end())
+                    refreshSpriteIfChanged(it->second, bs.spriteId, drawables, anims, renders);
+                continue;
+            }
 
             if (!_entityMap.contains(netId))
                 applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
@@ -304,138 +408,27 @@ void ClientWorld::updateInterpolatedPositions(const float dt)
             if (!posOpt)
                 continue;
 
-            float vx = 0.f;
-            float vy = 0.f;
+            const auto itA = A.entities.find(netId);
+            const NetState as = (itA != A.entities.end()) ? itA->second : bs;
 
-            if (auto itV = _velByNetId.find(id); itV != _velByNetId.end()) {
-                vx = itV->second.vx;
-                vy = itV->second.vy;
-            }
+            constexpr float MaxVisualStep = 20.f;
 
-            if (auto itT = _lastVelUpdate.find(id); itT == _lastVelUpdate.end()
-                || (now - itT->second) > std::chrono::milliseconds(250)) {
-                vx = 0.f;
-                vy = 0.f;
-            }
+            const float targetX = lerp(as.x, bs.x, alpha);
+            const float targetY = lerp(as.y, bs.y, alpha);
 
-            constexpr float MaxVisualStep = 12.f;
+            const float dx = targetX - posOpt->x;
+            const float dy = targetY - posOpt->y;
 
-            posOpt->x += std::clamp(vx * dt, -MaxVisualStep, MaxVisualStep);
-            posOpt->y += std::clamp(vy * dt, -MaxVisualStep, MaxVisualStep);
+            posOpt->x += std::clamp(dx, -MaxVisualStep, MaxVisualStep);
+            posOpt->y += std::clamp(dy, -MaxVisualStep, MaxVisualStep);
             posOpt->z = bs.z;
 
             refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
         }
-        return;
+
+        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime)
+            _snapshots.pop_front();
     }
-
-    std::optional<size_t> idxA;
-    std::optional<size_t> idxB;
-
-    for (size_t i = 1; i < _snapshots.size(); ++i) {
-        if (_snapshots.at(i).arrivalTime > now - InterpDelay) {
-            idxA = i - 1;
-            idxB = i;
-            break;
-        }
-    }
-
-    if (!idxA || !idxB) {
-        const TickSnapshot &S = _snapshots.back();
-
-        for (const auto &[netId, bs] : S.entities) {
-            const uint32_t id = static_cast<uint32_t>(netId);
-            if (_destroyed.contains(id))
-                continue;
-
-            if (!_entityMap.contains(netId))
-                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-
-            const Ecs::Entity e = _entityMap[netId];
-            const auto entIdx = static_cast<size_t>(e);
-            auto &posOpt = positions.at(entIdx);
-            if (!posOpt)
-                continue;
-
-            float vx = 0.f;
-            float vy = 0.f;
-
-            if (auto itV = _velByNetId.find(id); itV != _velByNetId.end()) {
-                vx = itV->second.vx;
-                vy = itV->second.vy;
-            }
-
-            if (auto itT = _lastVelUpdate.find(id); itT == _lastVelUpdate.end()
-                || (now - itT->second) > std::chrono::milliseconds(250)) {
-                vx = 0.f;
-                vy = 0.f;
-            }
-
-            constexpr float MaxVisualStep = 12.f;
-
-            posOpt->x += std::clamp(vx * dt, -MaxVisualStep, MaxVisualStep);
-            posOpt->y += std::clamp(vy * dt, -MaxVisualStep, MaxVisualStep);
-            posOpt->z = bs.z;
-
-            refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
-        }
-        return;
-    }
-
-    const TickSnapshot &A = _snapshots.at(*idxA);
-    const TickSnapshot &B = _snapshots.at(*idxB);
-
-    const float denom = std::chrono::duration<float>(B.arrivalTime - A.arrivalTime).count();
-    if (denom <= 0.f)
-        return;
-
-    const float alpha = clamp(std::chrono::duration<float>(now - InterpDelay - A.arrivalTime).count() / denom);
-
-    for (const auto &[netId, bs] : B.entities) {
-        const uint32_t id = static_cast<uint32_t>(netId);
-        if (_destroyed.contains(id))
-            continue;
-
-        if (std::cmp_equal(netId, _entityPlayerId)) {
-            if (!_entityMap.contains(netId))
-                applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-
-            reconcileLocalPlayerWithServer(bs, positions);
-            if (auto it = _entityMap.find(netId); it != _entityMap.end())
-                refreshSpriteIfChanged(it->second, bs.spriteId, drawables, anims, renders);
-            continue;
-        }
-
-        if (!_entityMap.contains(netId))
-            applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-
-        const Ecs::Entity e = _entityMap[netId];
-        const auto entIdx = static_cast<size_t>(e);
-        auto &posOpt = positions.at(entIdx);
-        if (!posOpt)
-            continue;
-
-        const auto itA = A.entities.find(netId);
-        const NetState as = (itA != A.entities.end()) ? itA->second : bs;
-
-        constexpr float MaxVisualStep = 20.f;
-
-        const float targetX = lerp(as.x, bs.x, alpha);
-        const float targetY = lerp(as.y, bs.y, alpha);
-
-        const float dx = targetX - posOpt->x;
-        const float dy = targetY - posOpt->y;
-
-        posOpt->x += std::clamp(dx, -MaxVisualStep, MaxVisualStep);
-        posOpt->y += std::clamp(dy, -MaxVisualStep, MaxVisualStep);
-        posOpt->z = bs.z;
-
-        refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
-    }
-
-    while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime)
-        _snapshots.pop_front();
-}
 
     void ClientWorld::purgeStaleEntities(const std::chrono::milliseconds maxAge)
     {

@@ -324,16 +324,16 @@ namespace World
 
                     if (otherState.spriteId == 20 && distSq < 50.f * 50.f)
                         hasBubbleNow = true;
-                    else if (otherState.spriteId == 17 && distSq < 100.f * 100.f) {
+                    else if (otherState.spriteId == 17 && distSq < 100.f * 100.f)
                         hasLaserNow = true;
-                    }
 
                     if (hasBubbleNow && !_bubbleSoundPlaying && _soundRegistry
                         && _powerUpBubbleSoundHandle != Graphics::InvalidAudio) {
                         _activePowerUpType = 19;
                         _soundRegistry->playSound(_powerUpBubbleSoundHandle);
                         _bubbleSoundPlaying = true;
-                    } else if (!hasBubbleNow && _bubbleSoundPlaying) {
+                    } else if (!hasBubbleNow && _bubbleSoundPlaying && _soundRegistry) {
+                        _soundRegistry->stopSound(_powerUpBubbleSoundHandle);
                         _bubbleSoundPlaying = false;
                         if (_activePowerUpType == 19)
                             _activePowerUpType = 0;
@@ -350,10 +350,8 @@ namespace World
                         if (_activePowerUpType == 18)
                             _activePowerUpType = 0;
                     }
-
                     continue;
                 }
-
                 continue;
             }
 

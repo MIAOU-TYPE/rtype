@@ -115,15 +115,15 @@ namespace Engine
         _innerRect.h = _panelRect.h - _panelRect.h * _panelInsetYFrac * 2.f;
     }
 
-        RectF AMenu::panelRect() const noexcept
-        {
-            return _panelRect;
-        }
+    RectF AMenu::panelRect() const noexcept
+    {
+        return _panelRect;
+    }
 
-        RectF AMenu::innerRect() const noexcept
-        {
-            return _innerRect;
-        }
+    RectF AMenu::innerRect() const noexcept
+    {
+        return _innerRect;
+    }
 
     void AMenu::placeCentered(UI::UIButton &b, const float cx, const float y) noexcept
     {

@@ -337,7 +337,7 @@ namespace
 
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Standard) {
-                if (const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx))
+                if (reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx).has_value())
                     return;
             }
 

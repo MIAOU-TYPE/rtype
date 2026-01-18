@@ -197,8 +197,8 @@ namespace Net::Factory
     {
         PongData pongPacket;
         pongPacket.header = makeHeader(Protocol::UDP::PONG, VERSION, sizeof(PongData));
-        std::cout << "Creating PONG packet with echoed timestamp: " << echoedPingTimestampMs << " ms" << std::endl;
         pongPacket.pongTimestamp = htonll(echoedPingTimestampMs);
+
         try {
             auto packet = makePacket<PongData>(addr, pongPacket);
             return packet;

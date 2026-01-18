@@ -10,6 +10,12 @@
 #include <cstdint>
 #include <string>
 
+/**
+ * @brief Default music paths
+ */
+constexpr const char *DEFAULT_GAME_MUSIC = "sounds/game_theme.flac";
+constexpr const char *MENU_MUSIC = "sounds/menu_theme.flac";
+
 namespace Engine
 {
     /**
@@ -59,5 +65,6 @@ namespace Engine
         GameMode mode;             ///> Game mode
         ModeParameters parameters; ///> Mode-specific parameters
         std::string levelId;       ///> ID of the level to play
+        std::string worldMusic;    ///> Background music path for the current world
     };
 } // namespace Engine

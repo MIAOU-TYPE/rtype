@@ -1,5 +1,6 @@
 {
   "name": "World 2 - Jungle World",
+  "music": "sounds/jungle_theme.flac",
   "levels": [
     {
       "id": "jungle_level1",

@@ -27,8 +27,8 @@ echo "==================================="
 ###############################################
 # APPLY clang-format
 ###############################################
-find client server shared -name "*.cpp" -o -name "*.hpp" -o -name "*.tpp" -print0 \
-    | xargs -0 clang-format-20 -i
+find client server shared \( -name "*.cpp" -o -name "*.hpp" -o -name "*.tpp" \) -print0 \
+    | xargs -0 clang-format-20 -i --style=file
 
 echo -e "${GREEN}Format applied${NC}"
 echo "==================================="

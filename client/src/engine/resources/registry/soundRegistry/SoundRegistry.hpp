@@ -68,6 +68,19 @@ namespace Engine
         void playSound(AudioHandle handle, float volume = 100.f) const;
 
         /**
+         * @brief Stop a playing sound effect.
+         * @param handle Handle to the sound to stop.
+         */
+        void stopSound(AudioHandle handle) const;
+
+        /**
+         * @brief Load a sound resource from a path.
+         * @param resourcePath Path to the sound resource.
+         * @return AudioHandle Handle to the loaded sound, or InvalidAudio on failure.
+         */
+        [[nodiscard]] AudioHandle loadSound(const std::string &resourcePath);
+
+        /**
          * @brief Set the global volume for all sound effects.
          * @param volume Volume level (0.0 to 100.0).
          */

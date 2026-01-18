@@ -32,7 +32,8 @@
     #include <ws2tcpip.h>
 #endif
 
-using ShutdownFn = std::function<void()>; ///> Shutdown function type
+using ShutdownFn = std::function<void()>;                  ///> Shutdown function type
+using Handler = std::function<void(std::istringstream &)>; ///> Command handler type
 
 namespace Net::Admin
 {
@@ -93,21 +94,6 @@ namespace Net::Admin
         void cmdSessions() const;
 
         /**
-         * @brief Kicks a user from the server.
-         * @param who Session ID or username of the user to kick.
-         * @return True if the user was successfully kicked, false otherwise.
-         */
-        [[nodiscard]] bool cmdKick(const std::string &who) const;
-
-        /**
-         * @brief Bans a user from the server.
-         * @param who Session ID or username of the user to ban.
-         * @param duration Duration of the ban.
-         * @return True if the user was successfully banned, false otherwise.
-         */
-        [[nodiscard]] bool cmdBan(const std::string &who, std::chrono::seconds duration) const;
-
-        /**
          * @brief Kicks a user from a specific room.
          * @param roomId ID of the room.
          * @param who Session ID or username of the user to kick.
@@ -130,26 +116,6 @@ namespace Net::Admin
          * @return True if the user was successfully unbanned from the room, false otherwise.
          */
         [[nodiscard]] bool cmdUnbanRoom(Engine::RoomId roomId, const std::string &who) const;
-
-        /**
-         * @brief Bans an IP address.
-         * @param ipStr IP address in string format.
-         * @param duration Duration of the ban.
-         * @return True if the IP was successfully banned, false otherwise.
-         */
-        [[nodiscard]] bool cmdBanIp(const std::string &ipStr, std::chrono::seconds duration) const;
-
-        /**
-         * @brief Unbans an IP address.
-         * @param ipStr IP address in string format.
-         * @return True if the IP was successfully unbanned, false otherwise.
-         */
-        [[nodiscard]] bool cmdUnbanIp(const std::string &ipStr) const;
-
-        /**
-         * @brief Lists all banned IP addresses.
-         */
-        void cmdBans() const;
 
         /**
          * @brief Converts an IP address from network byte order to string format.

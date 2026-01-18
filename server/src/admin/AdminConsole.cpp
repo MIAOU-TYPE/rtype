@@ -9,16 +9,6 @@
 
 namespace
 {
-    using Handler = std::function<void(std::istringstream &)>;
-
-    [[nodiscard]] std::optional<std::string> readToken(std::istringstream &iss)
-    {
-        std::string s;
-        if (!(iss >> s))
-            return std::nullopt;
-        return s;
-    }
-
     [[nodiscard]] std::optional<Engine::RoomId> readRoomId(
         std::istringstream &iss, const std::function<std::optional<Engine::RoomId>(const std::string &)> &parseRoomId)
     {
@@ -57,16 +47,6 @@ namespace
         return static_cast<bool>(std::getline(std::cin, out));
     }
 #endif
-
-    [[nodiscard]] std::chrono::seconds parseDurationSeconds(std::istringstream &iss)
-    {
-        int minutes = 0;
-        if (!(iss >> minutes))
-            return std::chrono::seconds(0);
-        if (minutes <= 0)
-            return std::chrono::seconds(0);
-        return std::chrono::seconds(minutes * 60);
-    }
 } // namespace
 
 namespace Net::Admin
@@ -94,7 +74,7 @@ namespace Net::Admin
     void AdminConsole::stop()
     {
         _running.store(false, std::memory_order_relaxed);
-        if (_thread.joinable())
+        if (_thread.joinable() && std::this_thread::get_id() != _thread.get_id())
             _thread.join();
     }
 
@@ -167,13 +147,9 @@ namespace Net::Admin
                   << "  status\n"
                   << "  rooms\n"
                   << "  sessions\n"
-                  << "  kick <sessionId|username>\n"
-                  << "  ban <sessionId|username> [minutes]        (default: 24h)\n"
                   << "  kickroom <roomId> <sessionId|username>\n"
                   << "  banroom <roomId> <sessionId|username>\n"
                   << "  unbanroom <roomId> <sessionId|username>\n"
-                  << "  banip <ip> [minutes]                      (default: 24h)\n"
-                  << "  unban <ip>\n"
                   << "  bans\n"
                   << "  shutdown\n";
     }
@@ -236,45 +212,6 @@ namespace Net::Admin
             std::cout << " authed=" << (_sessions->isAuthed(id) ? "1" : "0") << " user=\"" << username << "\""
                       << " roomId=" << roomId << "\n";
         }
-    }
-
-    bool AdminConsole::cmdKick(const std::string &who) const
-    {
-        const auto sidOpt = resolveSessionId(who);
-        if (!sidOpt.has_value()) {
-            std::cout << "not found\n";
-            return false;
-        }
-        const int sessionId = *sidOpt;
-        if (!_sessions->getAddress(sessionId)) {
-            std::cout << "not found\n";
-            return false;
-        }
-        _rooms->onPlayerDisconnect(sessionId);
-        _sessions->removeSession(sessionId);
-        std::cout << "kicked sid=" << sessionId << "\n";
-        return true;
-    }
-
-    bool AdminConsole::cmdBan(const std::string &who, const std::chrono::seconds duration) const
-    {
-        const auto sidOpt = resolveSessionId(who);
-        if (!sidOpt.has_value()) {
-            std::cout << "not found\n";
-            return false;
-        }
-        const int sessionId = *sidOpt;
-        const sockaddr_in *addr = _sessions->getAddress(sessionId);
-        if (!addr) {
-            std::cout << "not found\n";
-            return false;
-        }
-        const uint32_t ip = addr->sin_addr.s_addr;
-        if (!cmdKick(std::to_string(sessionId)))
-            return false;
-        _sessions->banIp(ip, duration);
-        std::cout << "banned ip=" << ipToString(ip) << "\n";
-        return true;
     }
 
     bool AdminConsole::cmdKickRoom(const Engine::RoomId roomId, const std::string &who) const
@@ -340,47 +277,6 @@ namespace Net::Admin
         return true;
     }
 
-    bool AdminConsole::cmdBanIp(const std::string &ipStr, const std::chrono::seconds duration) const
-    {
-        uint32_t ip = 0;
-        if (!parseIPv4(ipStr, ip)) {
-            std::cout << "invalid ip\n";
-            return false;
-        }
-
-        _sessions->banIp(ip, duration);
-
-        for (const auto &[id, tcp] : _sessions->getAllSessions()) {
-            if (tcp.sin_addr.s_addr == ip)
-                (void) cmdKick(std::to_string(id));
-        }
-        std::cout << "banned ip=" << ipStr << "\n";
-        return true;
-    }
-
-    bool AdminConsole::cmdUnbanIp(const std::string &ipStr) const
-    {
-        uint32_t ip = 0;
-        if (!parseIPv4(ipStr, ip)) {
-            std::cout << "invalid ip\n";
-            return false;
-        }
-        _sessions->unbanIp(ip);
-        std::cout << "unbanned ip=" << ipStr << "\n";
-        return true;
-    }
-
-    void AdminConsole::cmdBans() const
-    {
-        const auto bans = _sessions->listBans();
-        if (bans.empty()) {
-            std::cout << "no bans\n";
-            return;
-        }
-        for (const auto &[ip, secondsLeft] : bans)
-            std::cout << "ip=" << ipToString(ip) << " remaining_s=" << secondsLeft << "\n";
-    }
-
     void AdminConsole::run()
     {
         printHelp();
@@ -405,30 +301,10 @@ namespace Net::Admin
                 [&](std::istringstream &) {
                     cmdSessions();
                 }},
-            {"bans",
-                [&](std::istringstream &) {
-                    cmdBans();
-                }},
             {"shutdown",
                 [&](std::istringstream &) {
                     if (_shutdown)
                         _shutdown();
-                }},
-
-            {"kick",
-                [&](std::istringstream &iss) {
-                    const auto who = readToken(iss);
-                    if (!who)
-                        return usage("usage: kick <sessionId|username>");
-                    (void) cmdKick(*who);
-                }},
-            {"ban",
-                [&](std::istringstream &iss) {
-                    const auto who = readToken(iss);
-                    if (!who)
-                        return usage("usage: ban <sessionId|username> [minutes]");
-                    const auto dur = parseDurationSeconds(iss);
-                    (void) cmdBan(*who, dur);
                 }},
             {"kickroom",
                 [&](std::istringstream &iss) {
@@ -459,21 +335,6 @@ namespace Net::Admin
                     if (!rid || !(iss >> who))
                         return usage("usage: unbanroom <roomId> <sessionId|username>");
                     (void) cmdUnbanRoom(*rid, who);
-                }},
-            {"banip",
-                [&](std::istringstream &iss) {
-                    const auto ip = readToken(iss);
-                    if (!ip)
-                        return usage("usage: banip <ip> [minutes]");
-                    const auto dur = parseDurationSeconds(iss);
-                    (void) cmdBanIp(*ip, dur);
-                }},
-            {"unban",
-                [&](std::istringstream &iss) {
-                    const auto ip = readToken(iss);
-                    if (!ip)
-                        return usage("usage: unban <ip>");
-                    (void) cmdUnbanIp(*ip);
                 }},
         };
 

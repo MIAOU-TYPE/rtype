@@ -250,6 +250,7 @@ namespace Thread
             applyWorldCommands(deadline, 500);
 
             sendCombinedInput();
+            sendPingIfDue();
 
             _world->updateInterpolatedPositions();
 
@@ -271,6 +272,8 @@ namespace Thread
                 last = after;
                 accumulator = 0.f;
             }
+            if (_resetPingSchedule.exchange(false, std::memory_order_acq_rel))
+                _nextPing = clock::now() + _pingInterval;
         }
     }
 
@@ -450,9 +453,9 @@ namespace Thread
     {
         _tcpPacketRouter->sink()->onWelcomeSubscribe([this](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
             const auto ci = _tcpPacketRouter->sink()->getConnectInfo();
-            if (const auto pkt = _udpPacketFactory.makeConnect(ci)) {
+            if (const auto pkt = _udpPacketFactory.makeConnect(ci))
                 _udpClient->sendPacket(*pkt);
-            }
+            _resetPingSchedule.store(true, std::memory_order_release);
         });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
@@ -536,4 +539,23 @@ namespace Thread
         }
         _running.store(false, std::memory_order_release);
     }
+
+    void ClientRuntime::sendPingIfDue()
+    {
+        if (!_tcpPacketRouter->sink()->isConnected())
+            return;
+        using clock = std::chrono::steady_clock;
+        const auto now = clock::now();
+
+        if (now < _nextPing)
+            return;
+
+        do {
+            _nextPing += _pingInterval;
+        } while (_nextPing <= now);
+
+        if (const auto pingPkt = _udpPacketFactory.makePing())
+            (void) _udpClient->sendPacket(*pingPkt);
+    }
+
 } // namespace Thread

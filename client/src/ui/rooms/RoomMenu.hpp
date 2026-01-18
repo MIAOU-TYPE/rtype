@@ -174,19 +174,18 @@ namespace Engine
 
       private:
         /**
-         * @brief Lays out the creation room UI elements.
-         * @param w Width of the layout area.
-         * @param h Height of the layout area.
-         * @param cx Center x-coordinate of the layout area.
+         * @brief Layout the root page UI elements.
+         * @param cx The center x-coordinate.
+         * @param yOffset The y-offset for layout.
          */
-        void layoutCreate(float w, float h, float cx) const;
+        void layoutCreate(float cx, float yOffset) const;
 
         /**
-         * @brief Lays out the list rooms UI elements.
-         * @param h Height of the layout area.
-         * @param cx Center x-coordinate of the layout area.
+         * @brief Layout the create page UI elements.
+         * @param cx The center x-coordinate.
+         * @param yOffset The y-offset for layout.
          */
-        void layoutList(float h, float cx);
+        void layoutList(float cx, float yOffset);
 
         /**
          * @brief Update the list of available rooms from the room manager.

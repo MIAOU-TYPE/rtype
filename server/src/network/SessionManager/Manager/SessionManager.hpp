@@ -9,6 +9,7 @@
 #include <chrono>
 #include <cstdint>
 #include <mutex>
+#include <optional>
 #include "Endian.hpp"
 #include "ISessionManager.hpp"
 #include "UserStorage.hpp"
@@ -172,12 +173,58 @@ namespace Net::Server
          */
         [[nodiscard]] std::string getUsername(int sessionId) const override;
 
+        /**
+         * @brief Find a session ID by username.
+         * @param username The username to search for.
+         * @return An optional containing the session ID if found, otherwise std::nullopt.
+         */
+        [[nodiscard]] std::optional<int> findSessionIdByUsername(const std::string &username) const override;
+
+        /**
+         * @brief Ban an IP address (sin_addr.s_addr format).
+         * @param ip IPv4 address in network byte order.
+         * @param duration Duration of the ban. If <= 0, defaults to 24h.
+         */
+        void banIp(uint32_t ip, std::chrono::seconds duration) override;
+
+        /**
+         * @brief Remove a ban for an IP.
+         * @param ip IPv4 address in network byte order.
+         */
+        void unbanIp(uint32_t ip) override;
+
+        /**
+         * @brief Check if an IP is currently banned.
+         * @param ip IPv4 address in network byte order.
+         */
+        [[nodiscard]] bool isIpBanned(uint32_t ip) const override;
+
+        /**
+         * @brief Snapshot of banned IPs and remaining seconds.
+         */
+        [[nodiscard]] std::vector<std::pair<uint32_t, uint64_t>> listBans() const override;
+
       private:
         mutable std::shared_mutex _mutex{};      ///> Mutex for thread-safe access
         using Clock = std::chrono::steady_clock; ///> Clock type for time management
 
-        void clearAuthLocked(int sessionId);       ///> Clear authentication data for a session ID
-        bool isExpiredLocked(int sessionId) const; ///> Check if the authentication for a session ID has expired
+        /**
+         * @brief Clear the authentication for a session ID (locked version).
+         * @param sessionId The ID of the session.
+         */
+        void clearAuthLocked(int sessionId);
+
+        /**
+         * @brief Check if the authentication for a session ID has expired.
+         * @param sessionId The ID of the session.
+         * @return True if the authentication has expired, false otherwise.
+         */
+        [[nodiscard]] bool isExpiredLocked(int sessionId) const;
+
+        /**
+         * @brief Clean up expired bans from the banned IP list.
+         */
+        void cleanupBansLocked() const;
 
         std::unordered_map<int, Auth::Identity> _identityById{};      ///> Identity storage
         std::unordered_map<int, Clock::time_point> _authExpiryById{}; ///> Authentication expiry storage
@@ -193,7 +240,8 @@ namespace Net::Server
 
         std::unordered_map<int, uint32_t> _lastScoreById{}; ///> Last score storage
 
-        int _nextId = 1; ///> Next available session ID
+        mutable std::unordered_map<uint32_t, Clock::time_point> _bannedIpUntil{}; ///> Banned IPs storage
+        int _nextId = 1;                                                          ///> Next available session ID
 
         /**
          * @brief Structure to manage UDP rate limiting tokens and timestamps.

@@ -67,7 +67,6 @@ namespace Net
         }
 
         const int sessionId = _sessions->getOrCreateSession(*addr);
-
         const bool authFree = h.type == Protocol::TCP::HELLO || h.type == Protocol::TCP::AUTH_REGISTER
             || h.type == Protocol::TCP::AUTH_LOGIN;
 

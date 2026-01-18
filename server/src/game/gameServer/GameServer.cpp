@@ -113,8 +113,10 @@ namespace
                 const sockaddr_in *addr = sessionsL->getUdpAddress(event.sessionId);
                 if (!addr)
                     return;
-                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId))
-                    (void) serverL->sendPacket(*pkt);
+                if (const auto pkt = factoryL->createAcceptPacket(*addr, event.netPlayerId)) {
+                    for (int i = 0; i < 3; i++)
+                        (void) serverL->sendPacket(*pkt);
+                }
             });
     }
 

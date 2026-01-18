@@ -25,6 +25,59 @@ namespace
 using namespace Net::Server;
 
 static constexpr std::chrono::seconds kDefaultAuthTtl{24 * 60 * 60};
+static constexpr std::chrono::seconds kDefaultBanTtl{24 * 60 * 60};
+
+void SessionManager::cleanupBansLocked() const
+{
+    const auto now = Clock::now();
+    for (auto it = _bannedIpUntil.begin(); it != _bannedIpUntil.end();) {
+        if (now >= it->second)
+            it = _bannedIpUntil.erase(it);
+        else
+            ++it;
+    }
+}
+
+void SessionManager::banIp(const uint32_t ip, std::chrono::seconds duration)
+{
+    if (duration.count() <= 0)
+        duration = kDefaultBanTtl;
+    std::unique_lock lock(_mutex);
+    cleanupBansLocked();
+    _bannedIpUntil[ip] = Clock::now() + duration;
+}
+
+void SessionManager::unbanIp(const uint32_t ip)
+{
+    std::unique_lock lock(_mutex);
+    _bannedIpUntil.erase(ip);
+}
+
+bool SessionManager::isIpBanned(const uint32_t ip) const
+{
+    std::unique_lock lock(_mutex);
+    cleanupBansLocked();
+    const auto it = _bannedIpUntil.find(ip);
+    if (it == _bannedIpUntil.end())
+        return false;
+    return Clock::now() < it->second;
+}
+
+std::vector<std::pair<uint32_t, uint64_t>> SessionManager::listBans() const
+{
+    std::unique_lock lock(_mutex);
+    cleanupBansLocked();
+
+    std::vector<std::pair<uint32_t, uint64_t>> out;
+    out.reserve(_bannedIpUntil.size());
+
+    const auto now = Clock::now();
+    for (const auto &[ip, until] : _bannedIpUntil) {
+        const auto rem = (until > now) ? std::chrono::duration_cast<std::chrono::seconds>(until - now).count() : 0;
+        out.emplace_back(ip, static_cast<uint64_t>(std::max<int64_t>(0, rem)));
+    }
+    return out;
+}
 
 bool SessionManager::isExpiredLocked(const int sessionId) const
 {
@@ -42,6 +95,8 @@ void SessionManager::clearAuthLocked(const int sessionId)
 
 int SessionManager::getOrCreateSession(const sockaddr_in &address)
 {
+    if (isIpBanned(address.sin_addr.s_addr))
+        return -1;
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
     {
@@ -63,6 +118,8 @@ int SessionManager::getOrCreateSession(const sockaddr_in &address)
 
 int SessionManager::getSessionId(const sockaddr_in &address) const
 {
+    if (isIpBanned(address.sin_addr.s_addr))
+        return -1;
     const AddressKey key{address.sin_addr.s_addr, address.sin_port};
 
     std::shared_lock lock(_mutex);
@@ -149,6 +206,8 @@ uint64_t SessionManager::getUdpToken(const int sessionId) const
 
 bool SessionManager::bindUdp(const int sessionId, const sockaddr_in &udpAddr)
 {
+    if (isIpBanned(udpAddr.sin_addr.s_addr))
+        return false;
     std::unique_lock lock(_mutex);
 
     if (!_idToTcpAddress.contains(sessionId))
@@ -179,6 +238,8 @@ const sockaddr_in *SessionManager::getUdpAddress(const int sessionId) const
 
 int SessionManager::getSessionIdFromUdp(const sockaddr_in &udpAddr) const
 {
+    if (isIpBanned(udpAddr.sin_addr.s_addr))
+        return -1;
     const AddressKey key{udpAddr.sin_addr.s_addr, udpAddr.sin_port};
 
     std::shared_lock lock(_mutex);
@@ -225,6 +286,8 @@ bool SessionManager::isAuthed(const int sessionId) const
 
 bool SessionManager::consumeUdp(const sockaddr_in &addr)
 {
+    if (isIpBanned(addr.sin_addr.s_addr))
+        return false;
     const AddressKey key{addr.sin_addr.s_addr, addr.sin_port};
 
     const uint64_t now = nowNs();
@@ -294,4 +357,23 @@ std::string SessionManager::getUsername(const int sessionId) const
     if (const auto it = _identityById.find(sessionId); it != _identityById.end())
         return it->second.username;
     return "";
+}
+
+std::optional<int> SessionManager::findSessionIdByUsername(const std::string &username) const
+{
+    if (username.empty())
+        return std::nullopt;
+
+    std::shared_lock lock(_mutex);
+    for (const auto &[sid, ident] : _identityById) {
+        const auto itExp = _authExpiryById.find(sid);
+        if (itExp == _authExpiryById.end())
+            continue;
+        if (Clock::now() >= itExp->second)
+            continue;
+
+        if (ident.username == username)
+            return sid;
+    }
+    return std::nullopt;
 }

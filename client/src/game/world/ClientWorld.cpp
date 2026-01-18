@@ -431,7 +431,8 @@ namespace World
 
     void ClientWorld::reset()
     {
-        _registry = Ecs::Registry{};
+        _registry.clear();
+        _registry = Ecs::Registry();
         _entityMap.clear();
         _entityLastSeen.clear();
         _scoresByPlayerId.clear();

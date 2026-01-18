@@ -35,19 +35,62 @@ For example:
 **Components are pure data** structures.  
 Each component represents one aspect of an entity.  
 
-### Common Components in R-TYPE ECS
+### Complete List of Components in R-TYPE ECS
 
-- **Health**: Tracks life points, damage state, death flag.
-- **Position**: Stores X/Y coordinates.
-- **Velocity**: Movement speed and direction.
-- **Direction**: Orientation of entity or facing vector.
-- **AI_Brain**: Controls enemy behavior or NPC decision-making.
-- **Drawable**: Reference to sprite, animation, or visual asset.
-- **Damageable**: Marks entity as capable of receiving damage.
-- **Damage**: Represents damage dealt to other entities.
-- **Collision**: Defines hitboxes and interaction rules.
-- **Controllable**: Marks entity as controlled by a player.
-- **Attack**: Stores attack patterns, cooldowns, and projectiles.
+#### Core Components
+- **Id**: Unique entity identifier
+- **Position**: 2D position (x, y) coordinates
+- **Velocity**: Movement velocity (dx, dy)
+- **Direction**: Facing direction vector
+- **Lifetime**: Time-to-live for temporary entities
+
+#### Combat Components
+- **Health**: Current and maximum hit points
+- **Damage**: Damage value for projectiles
+- **Damageable**: Marks entities that can take damage
+- **Attack**: Attack properties and cooldowns
+- **Projectile**: Projectile-specific properties (speed, damage, type)
+- **HomingProjectile**: Homing behavior (target ID, strength, max speed)
+- **WeaponConfig**: Weapon configuration and upgrades
+
+#### Enemy AI Components
+- **AIBrain**: AI behavior state and decision-making
+- **AIShoot**: AI shooting patterns and timing
+- **MovementPattern**: Complex movement behaviors (sinusoidal, circular, etc.)
+- **Target**: Target tracking for homing projectiles
+- **Controllable**: Player-controlled entities
+
+#### Power-Up Components
+- **PowerUp**: Marks collectible power-up entities
+- **PowerUpType**: Defines power-up categories (force, laser, bubble)
+- **PlayerPowerUp**: Active power-up state on players
+- **BubblePowerUp**: Bubble shield mechanics
+- **LaserPowerUp**: Laser weapon mechanics
+- **PowerUpBar**: Power-up charge visualization
+
+#### Boss Components
+- **BossPart**: Multi-part boss hitboxes with damage multipliers
+- **BossPhase**: Boss phase transitions and behaviors
+- **TailFollower**: Boss tail segment following logic
+
+#### Physics Components
+- **Collision**: Collision detection properties
+- **PixelCollision**: Pixel-perfect collision data
+- **GravityAffected**: Entities affected by gravity fields
+- **GravityField**: Gravity source entities
+
+#### Rendering Components
+- **Drawable**: Rendering properties (sprite ID, layer)
+
+#### Scoring Components
+- **KillScore**: Points awarded for destroying enemies
+- **Score**: Player score tracking
+
+#### Input Components
+- **InputComponent**: Player input state
+
+#### Background Components
+- **Background**: Background layer properties
 - **Score**: Tracks points gained from actions.
 
 **Key points:**

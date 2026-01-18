@@ -15,6 +15,8 @@ namespace EmbeddedResources
     extern const unsigned int sprites_background_jungle_png_size;
     extern const unsigned char sprites_background_ruin_png[];
     extern const unsigned int sprites_background_ruin_png_size;
+    extern const unsigned char sprites_background_wall_png[];
+    extern const unsigned int sprites_background_wall_png_size;
     extern const unsigned char sprites_bg_preview_png[];
     extern const unsigned int sprites_bg_preview_png_size;
     extern const unsigned char sprites_background_space_png[];
@@ -155,6 +157,8 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_background_jungle_png, EmbeddedResources::sprites_background_jungle_png_size};
     _resources["sprites/background_ruin.png"] = {
         EmbeddedResources::sprites_background_ruin_png, EmbeddedResources::sprites_background_ruin_png_size};
+    _resources["sprites/background_wall.png"] = {
+        EmbeddedResources::sprites_background_wall_png, EmbeddedResources::sprites_background_wall_png_size};
     _resources["sprites/menu_logo.png"] = {
         EmbeddedResources::sprites_menu_logo_png, EmbeddedResources::sprites_menu_logo_png_size};
     _resources["sprites/game_over.png"] = {

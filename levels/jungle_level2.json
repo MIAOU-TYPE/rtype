@@ -1,10 +1,10 @@
 {
-  "name": "Level 1",
+  "name": "Level 2",
   "background": {
-    "spriteId": 100,
+    "spriteId": 101,
     "scrollSpeed": -50.0,
-    "tileWidth": 1140.0,
-    "tileHeight": 207.0
+    "tileWidth": 2584.0,
+    "tileHeight": 720.0
   },
   "enemies": {
     "smallEnemy": {
@@ -55,6 +55,29 @@
         "damage": 50,
         "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 12
+      }
+    },
+    "fastEnemy": {
+      "hp": 10,
+      "speed": -165,
+      "size": { "w": 33, "h": 22 },
+      "killScore": 10,
+      "sprite": "enemy3",
+      "spriteId": 4,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 0.8,
+        "projectileSpeed": 160,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 15 },
+        "projectileSpriteId": 9
+      },
+      "movement": {
+        "type": "zigzag",
+        "params": {
+          "amplitude": 50.0,
+          "frequency": 0.3
+        }
       }
     },
     "groupEnemy": {
@@ -127,29 +150,52 @@
           "offset": { "x": 160, "y": 120 }
         }
       ]
+    },
+    "groupEnemy4": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": -200, "y": -180 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": -100, "y": -20 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 0, "y": 140 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 150, "y": 140 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 250, "y": -20 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 350, "y": -180 }
+        }
+      ]
     }
   },
   "obstacles": {
     "gravityWell": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 250,
+      "pullStrength": 200,
       "damagePerSecond": 10,
-      "radius": 140,
+      "radius": 130,
       "innerRadius": 50
     }
   },
   "duration": 95,
   "waves": [
     {
-      "time": 1,
-      "enemies": { "smallEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
       "time": 6,
-      "enemies": { "smallEnemy": 2 },
+      "enemies": { "smallEnemy": 4 },
       "spawnPattern": "spread"
     },
     {
@@ -170,8 +216,12 @@
       "spawnPattern": "spread"
     },
     {
+      "time": 17,
+      "powerUp": { "type": "shield" }
+    },
+    {
       "time": 19,
-      "enemies": { "mediumEnemy": 1 },
+      "enemies": { "mediumEnemy": 3 },
       "spawnPattern": "line",
       "spawnY": 360
     },
@@ -184,11 +234,11 @@
     {
       "time": 29,
       "obstacleType": "gravityWell",
-      "obstacleY": 100,
+      "obstacleY": 355,
       "obstacleX": 250,
       "enemies": { "groupEnemy2": 1 },
       "spawnPattern": "line",
-      "spawnY": 360
+      "spawnY": 455
     },
     {
       "time": 37,
@@ -198,23 +248,17 @@
     },
     {
       "time": 50,
-      "enemies": { "mediumEnemyTriple": 3 },
+      "enemies": { "fastEnemy": 3 },
       "spawnPattern": "spread"
     },
     {
       "time": 65,
-      "enemies": { "groupEnemy3": 1 },
+      "enemies": { "groupEnemy4": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     },
     {
       "time": 80,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 83,
       "enemies": { "groupEnemy3": 1 },
       "spawnPattern": "line",
       "spawnY": 360

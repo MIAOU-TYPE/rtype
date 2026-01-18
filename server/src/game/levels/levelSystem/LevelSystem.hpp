@@ -26,6 +26,7 @@
 #include "Level.hpp"
 #include "LevelManager.hpp"
 #include "MovementPattern.hpp"
+#include "PixelCollision.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"
 #include "PowerUpType.hpp"
@@ -65,6 +66,13 @@ namespace Game
          * @param level The current level data containing background definitions.
          */
         static void spawnBackgrounds(IGameWorld &world, const Level &level);
+
+        /**
+         * @brief Spawn wall layers for the level (creates 2 tiles for seamless scrolling).
+         * @param world The game world to spawn walls in.
+         * @param level The current level data containing wall definitions.
+         */
+        static void spawnWalls(IGameWorld &world, const Level &level);
 
       private:
         /**
@@ -135,6 +143,17 @@ namespace Game
          */
         static void createBackgroundEntity(
             IGameWorld &world, const BackgroundLayer &layer, float xPosition, float scaledWidth, int tileIndex);
+
+        /**
+         * @brief Create a single wall entity with given parameters.
+         * @param world The game world to create the wall in.
+         * @param wall The wall layer definition.
+         * @param xPosition The x position for the wall tile.
+         * @param scaledWidth The scaled width of the wall tile.
+         * @param tileIndex The tile index (0 or 1) for seamless scrolling.
+         */
+        static void createWallEntity(IGameWorld &world, const BackgroundLayer &wall, const float xPosition,
+            const float scaledWidth, const int tileIndex);
 
         /**
          * @brief Handle special boss phases by adding necessary components.

@@ -28,6 +28,7 @@
 #include "LaserPowerUp.hpp"
 #include "Lifetime.hpp"
 #include "MovementPattern.hpp"
+#include "PixelCollision.hpp"
 #include "PlayerPowerUp.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"

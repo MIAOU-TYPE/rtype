@@ -74,7 +74,9 @@ namespace Engine
                     _scoreLines.at(i)->setString("");
             return;
         }
-        std::ranges::sort(scores, [](const auto &a, const auto &b) { return a.second > b.second; });
+        std::ranges::sort(scores, [](const auto &a, const auto &b) {
+            return a.second > b.second;
+        });
         const std::size_t n = std::min(scores.size(), _scoreLines.size());
         for (std::size_t i = 0; i < n; ++i) {
             if (!_scoreLines.at(i))

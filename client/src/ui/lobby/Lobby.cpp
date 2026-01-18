@@ -177,7 +177,6 @@ namespace Engine
 
         const float paddingL = inner.w * 0.10f;
         const float xLeft = inner.x + paddingL;
-        const float xRight = inner.x + inner.w - paddingL;
 
         if (_titleText)
             _titleText->setPosition(inner.cx() - _titleText->getWidth() * 0.5f, inner.y + inner.h * 0.10f - 115.f);
@@ -191,13 +190,12 @@ namespace Engine
         if (_playersHeaderText)
             _playersHeaderText->setPosition(xLeft, yHeader);
         if (_playersCountText)
-            _playersCountText->setPosition(xRight - _playersCountText->getWidth(), yHeader);
+            _playersCountText->setPosition(xLeft + 70.f, yHeader);
 
         const float startY = inner.y + inner.h * 0.36f;
-        constexpr float lineH = 34.f;
         for (size_t i = 0; i < _playerTexts.size(); ++i) {
-            const auto &t = _playerTexts.at(i);
-            if (t)
+            constexpr float lineH = 34.f;
+            if (const auto &t = _playerTexts.at(i))
                 t->setPosition(xLeft, startY + static_cast<float>(i) * lineH);
         }
 

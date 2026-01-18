@@ -171,7 +171,6 @@ namespace Thread
                                 return static_cast<int>(s->getScore());
                             return 0;
                         },
-                        _roomManager));
                         [c]() {
                             if (const auto ctrl = c.lock())
                                 return ctrl->getCurrentLife();
@@ -181,7 +180,8 @@ namespace Thread
                             if (const auto ctrl = c.lock())
                                 return ctrl->getMaxLife();
                             return 0;
-                        }));
+                        },
+                        _roomManager));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }

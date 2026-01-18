@@ -59,7 +59,8 @@ namespace Engine
          */
         explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
             const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore,
-            std::function<int()> getCurrentLife, std::function<int()> getMaxLife, std::shared_ptr<RoomManager> roomManager);
+            std::function<int()> getCurrentLife, std::function<int()> getMaxLife,
+            std::shared_ptr<RoomManager> roomManager);
 
         /**
          * @brief Called when entering the state.

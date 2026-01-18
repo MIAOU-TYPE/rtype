@@ -116,7 +116,6 @@ namespace Net::Admin
             try {
                 return std::stoi(who);
             } catch (...) {
-                std::cerr << "invalid session id\n";
                 return std::nullopt;
             }
         }
@@ -133,7 +132,6 @@ namespace Net::Admin
                 return std::nullopt;
             return static_cast<Engine::RoomId>(v);
         } catch (...) {
-            std::cerr << "invalid room id\n";
             return std::nullopt;
         }
     }
@@ -142,21 +140,23 @@ namespace Net::Admin
     {
         if (who.empty())
             return std::nullopt;
+
         if (isAllDigits(who)) {
             int sid = -1;
             try {
                 sid = std::stoi(who);
             } catch (...) {
-                std::cerr << "invalid session id\n";
                 return std::nullopt;
             }
             if (sid < 0)
                 return std::nullopt;
+
             const auto name = _sessions ? _sessions->getUsername(sid) : std::string();
             if (name.empty())
                 return std::nullopt;
             return name;
         }
+
         return who;
     }
 
@@ -171,6 +171,7 @@ namespace Net::Admin
                   << "  ban <sessionId|username> [minutes]        (default: 24h)\n"
                   << "  kickroom <roomId> <sessionId|username>\n"
                   << "  banroom <roomId> <sessionId|username>\n"
+                  << "  unbanroom <roomId> <sessionId|username>\n"
                   << "  banip <ip> [minutes]                      (default: 24h)\n"
                   << "  unban <ip>\n"
                   << "  bans\n"
@@ -312,10 +313,30 @@ namespace Net::Admin
         }
         const auto &username = *usernameOpt;
         room->banUsername(username);
-        if (const auto sidOpt = _sessions->findSessionIdByUsername(username); sidOpt.has_value())
-            if (const int sid = *sidOpt; _rooms->getRoomIdOfPlayer(sid) == roomId)
+        if (const auto sidOpt = _sessions->findSessionIdByUsername(username); sidOpt.has_value()) {
+            const int sid = *sidOpt;
+            if (_rooms->getRoomIdOfPlayer(sid) == roomId)
                 (void) _rooms->removePlayer(sid);
+        }
         std::cout << "room-banned user=\"" << username << "\" roomId=" << roomId << "\n";
+        return true;
+    }
+
+    bool AdminConsole::cmdUnbanRoom(const Engine::RoomId roomId, const std::string &who) const
+    {
+        const auto room = _rooms->getRoomById(roomId);
+        if (!room) {
+            std::cout << "not found\n";
+            return false;
+        }
+        const auto usernameOpt = resolveUsername(who);
+        if (!usernameOpt.has_value()) {
+            std::cout << "not found\n";
+            return false;
+        }
+        const auto &username = *usernameOpt;
+        room->unbanUsername(username);
+        std::cout << "room-unbanned user=\"" << username << "\" roomId=" << roomId << "\n";
         return true;
     }
 
@@ -328,16 +349,12 @@ namespace Net::Admin
         }
 
         _sessions->banIp(ip, duration);
-        bool kickedAny = false;
 
         for (const auto &[id, tcp] : _sessions->getAllSessions()) {
-            if (tcp.sin_addr.s_addr == ip) {
-                if (cmdKick(std::to_string(id)))
-                    kickedAny = true;
-            }
+            if (tcp.sin_addr.s_addr == ip)
+                (void) cmdKick(std::to_string(id));
         }
         std::cout << "banned ip=" << ipStr << "\n";
-        (void) kickedAny;
         return true;
     }
 
@@ -432,6 +449,16 @@ namespace Net::Admin
                     if (!rid || !(iss >> who))
                         return usage("usage: banroom <roomId> <sessionId|username>");
                     (void) cmdBanRoom(*rid, who);
+                }},
+            {"unbanroom",
+                [&](std::istringstream &iss) {
+                    const auto rid = readRoomId(iss, [&](const std::string &s) {
+                        return parseRoomId(s);
+                    });
+                    std::string who;
+                    if (!rid || !(iss >> who))
+                        return usage("usage: unbanroom <roomId> <sessionId|username>");
+                    (void) cmdUnbanRoom(*rid, who);
                 }},
             {"banip",
                 [&](std::istringstream &iss) {

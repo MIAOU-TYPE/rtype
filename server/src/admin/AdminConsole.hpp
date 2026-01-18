@@ -124,6 +124,14 @@ namespace Net::Admin
         [[nodiscard]] bool cmdBanRoom(Engine::RoomId roomId, const std::string &who) const;
 
         /**
+         * @brief Unbans a user from a specific room.
+         * @param roomId ID of the room.
+         * @param who Session ID or username of the user to unban.
+         * @return True if the user was successfully unbanned from the room, false otherwise.
+         */
+        [[nodiscard]] bool cmdUnbanRoom(Engine::RoomId roomId, const std::string &who) const;
+
+        /**
          * @brief Bans an IP address.
          * @param ipStr IP address in string format.
          * @param duration Duration of the ban.

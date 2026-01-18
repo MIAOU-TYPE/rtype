@@ -111,12 +111,13 @@ namespace Thread
         if (_stopRequested.exchange(true))
             return;
 
-        _running = false;
-        _cv.notify_all();
         if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(nextReqId()))
             (void) _tcpClient->sendPacket(*leavePkt);
         if (const auto discoPkt = _udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT))
             (void) _udpClient->sendPacket(*discoPkt);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        _running = false;
+        _cv.notify_all();
 
         if (_tcpThread.joinable())
             _tcpThread.join();

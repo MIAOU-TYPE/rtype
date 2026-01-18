@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** UIButton.cpp
+** R-Type
 ** File description:
 ** UIButton
 */
@@ -13,9 +13,10 @@ namespace UI
         const std::shared_ptr<Graphics::IRenderer> &renderer, const ButtonSize size, const std::string &label)
         : _renderer(renderer)
     {
-        const auto textures = renderer->textures();
-        const auto texts = renderer->texts();
-        const auto fonts = renderer->fonts();
+        if (!_renderer)
+            throw UIButtonError("UIButton: renderer is null");
+
+        const auto textures = _renderer->textures();
         const std::string prefix = (size == ButtonSize::Large) ? "sprites/button_l_" : "sprites/button_s_";
 
         _released = textures->load(prefix + "released.png");
@@ -24,59 +25,99 @@ namespace UI
 
         if (_released == Graphics::InvalidTexture || _hover == Graphics::InvalidTexture
             || _pressed == Graphics::InvalidTexture) {
-            throw UIButtonError("Failed to load button textures");
+            throw UIButtonError("UIButton: failed to load button textures");
         }
+        _baseSize = textures->getSize(_released);
 
         _cmd.textureId = _released;
-        _cmd.frame = {0, 0, static_cast<int>(textures->getSize(_released).width),
-            static_cast<int>(textures->getSize(_released).height)};
+        _cmd.frame = {0, 0, static_cast<int>(_baseSize.width), static_cast<int>(_baseSize.height)};
+        _designScaleX = 1.7f;
+        _designScaleY = 1.7f;
+        _uiScaleX = 1.f;
+        _uiScaleY = 1.f;
+        _cmd.scale = {_designScaleX * _uiScaleX, _designScaleY * _uiScaleY};
+        _text = _renderer->texts()->createText(size == ButtonSize::Large ? 42 : 34, {255, 255, 255, 255});
+        if (_text)
+            _text->setString(label);
+        setPosition(0.f, 0.f);
+    }
 
-        _text = _renderer->texts()->createText(size == ButtonSize::Large ? 42 : 28, {255, 255, 255, 255});
-        _text->setString(label);
+    void UIButton::applyStateVisual()
+    {
+        const auto textures = _renderer->textures();
+
+        Graphics::TextureHandle tex = _released;
+        switch (_state) {
+            case ButtonState::Released: tex = _released; break;
+            case ButtonState::Hover: tex = _hover; break;
+            case ButtonState::Pressed: tex = _pressed; break;
+        }
+
+        _cmd.textureId = tex;
+        const auto [width, height] = textures->getSize(tex);
+        _cmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
+
+        const float baseW = static_cast<float>(_baseSize.width);
+        const float baseH = static_cast<float>(_baseSize.height);
+        const float curW = static_cast<float>(width);
+        const float curH = static_cast<float>(height);
+
+        const float offX = (baseW - curW) * 0.5f * _cmd.scale.x;
+        const float offY = (baseH - curH) * 0.5f * _cmd.scale.y;
+
+        _cmd.position = {_boxX + offX, _boxY + offY};
     }
 
     void UIButton::setPosition(const float x, const float y)
     {
-        const float buttonW = static_cast<float>(_cmd.frame.w) * _cmd.scale.x;
-        const float buttonH = static_cast<float>(_cmd.frame.h) * _cmd.scale.y;
-        const auto charSize = static_cast<unsigned int>(buttonH * 0.45f);
+        _boxX = x;
+        _boxY = y;
 
-        _cmd.position = {x, y};
+        applyStateVisual();
+        const float buttonW = static_cast<float>(_baseSize.width) * _cmd.scale.x;
+        const float buttonH = static_cast<float>(_baseSize.height) * _cmd.scale.y;
 
         if (!_text)
             return;
+        const auto charSize = static_cast<unsigned int>(buttonH * 0.45f);
         _text->setCharacterSize(charSize);
-        const float textX = x + (buttonW - _text->getWidth()) / 2.f;
-        const float textY = y + (buttonH - _text->getHeight()) / 2.f - 25.f;
+        const float textX = _boxX + (buttonW - _text->getWidth()) * 0.5f;
+        const float textY = _boxY + (buttonH - _text->getHeight()) * 0.2f;
         _text->setPosition(textX, textY);
     }
 
     void UIButton::update(const float mouseX, const float mouseY)
     {
+        const auto prev = _state;
         if (_state != ButtonState::Pressed)
             _state = bounds().contains(mouseX, mouseY) ? ButtonState::Hover : ButtonState::Released;
-        switch (_state) {
-            case ButtonState::Released: _cmd.textureId = _released; break;
-            case ButtonState::Hover: _cmd.textureId = _hover; break;
-            case ButtonState::Pressed: _cmd.textureId = _pressed; break;
-        }
+        if (_state != prev)
+            applyStateVisual();
     }
 
     bool UIButton::onMousePressed(const float x, const float y)
     {
         if (!bounds().contains(x, y))
             return false;
+        const auto prev = _state;
         _state = ButtonState::Pressed;
+        if (_state != prev)
+            applyStateVisual();
         return true;
     }
 
     bool UIButton::onMouseReleased(const float x, const float y)
     {
+        const auto prev = _state;
         if (_state == ButtonState::Pressed && bounds().contains(x, y)) {
             _state = ButtonState::Hover;
+            if (_state != prev)
+                applyStateVisual();
             return true;
         }
         _state = ButtonState::Released;
+        if (_state != prev)
+            applyStateVisual();
         return false;
     }
 
@@ -91,29 +132,44 @@ namespace UI
     void UIButton::render() const
     {
         _renderer->draw(_cmd);
-        _renderer->draw(*_text);
+        if (_text)
+            _renderer->draw(*_text);
     }
 
     Engine::FloatRect UIButton::bounds() const noexcept
     {
-        return {_cmd.position.x, _cmd.position.y, static_cast<float>(_cmd.frame.w) * _cmd.scale.x,
-            static_cast<float>(_cmd.frame.h) * _cmd.scale.y};
+        return {_boxX, _boxY, static_cast<float>(_baseSize.width) * _cmd.scale.x,
+            static_cast<float>(_baseSize.height) * _cmd.scale.y};
     }
 
     void UIButton::setLabel(const std::string &text)
     {
         if (_text)
             _text->setString(text);
-        setPosition(_cmd.position.x, _cmd.position.y);
+        setPosition(_boxX, _boxY);
     }
 
     void UIButton::setScale(const float scaleX, const float scaleY)
     {
-        _cmd.scale = {scaleX, scaleY};
+        _designScaleX = scaleX;
+        _designScaleY = scaleY;
+        _cmd.scale = {_designScaleX * _uiScaleX, _designScaleY * _uiScaleY};
+        setPosition(_boxX, _boxY);
+    }
+
+    void UIButton::setUIScale(const float scaleX, const float scaleY)
+    {
+        _uiScaleX = scaleX;
+        _uiScaleY = scaleY;
+        _cmd.scale = {_designScaleX * _uiScaleX, _designScaleY * _uiScaleY};
+        setPosition(_boxX, _boxY);
     }
 
     void UIButton::reset()
     {
+        const auto prev = _state;
         _state = ButtonState::Released;
+        if (_state != prev)
+            applyStateVisual();
     }
 } // namespace UI

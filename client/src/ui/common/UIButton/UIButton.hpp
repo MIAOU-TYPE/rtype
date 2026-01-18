@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** MenuState.hpp
+** R-Type
 ** File description:
 ** UIButton
 */
@@ -152,20 +152,41 @@ namespace UI
         void setScale(float scaleX, float scaleY);
 
         /**
+         * @brief Set the design scale of the button.
+         * @param scaleX Design scale factor for X axis.
+         * @param scaleY Design scale factor for Y axis.
+         */
+        void setUIScale(float scaleX, float scaleY);
+
+        /**
          * @brief Reset the clicked state of the button.
          */
         void reset();
 
       private:
+        /**
+         * @brief Apply visual changes based on the button state.
+         */
+        void applyStateVisual();
+
+        Graphics::TextureSize _baseSize{0, 0};  ///> Base size of the button
+        float _boxX = 0.f;  ///> X position of the button
+        float _boxY = 0.f;  ///> Y position of the button
+
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Renderer for drawing
-        std::unique_ptr<Graphics::IText> _text;         ///> Text label of the button
+        std::shared_ptr<Graphics::IText> _text;         ///> Text label of the button
 
         Engine::RenderCommand _cmd;                 ///> Render command for the button
         ButtonState _state = ButtonState::Released; ///> Current state of the button
 
-        Graphics::TextureHandle _released; ///> Texture for released state
-        Graphics::TextureHandle _hover;    ///> Texture for hover state
-        Graphics::TextureHandle _pressed;  ///> Texture for pressed state
+        Graphics::TextureHandle _released = Graphics::InvalidTexture;   ///> Texture for released state
+        Graphics::TextureHandle _hover = Graphics::InvalidTexture;  ///> Texture for hover state
+        Graphics::TextureHandle _pressed = Graphics::InvalidTexture;    ///> Texture for pressed state
+
+        float _designScaleX = 1.f;  ///> Design scale factor for X axis
+        float _designScaleY = 1.f;  ///> Design scale factor for Y axis
+        float _uiScaleX = 1.f;  ///> UI scale factor for X axis
+        float _uiScaleY = 1.f;  ///> UI scale factor for Y axis
     };
 } // namespace UI
 

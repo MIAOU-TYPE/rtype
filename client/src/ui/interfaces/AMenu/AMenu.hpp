@@ -236,7 +236,7 @@ namespace Engine
          * @param b Variadic list of button pointers to reset.
          */
         template <typename... B>
-        void resetButtons(B *...b) const noexcept;
+        static void resetButtons(B *...b) noexcept;
 
         /**
          * @brief Helper to update multiple buttons at once.
@@ -245,7 +245,7 @@ namespace Engine
          * @param b Variadic list of button pointers to update.
          */
         template <typename... B>
-        void updateButtons(float mx, float my, B *...b) const noexcept;
+        static void updateButtons(float mx, float my, B *...b) noexcept;
 
         /**
          * @brief Helper to press multiple buttons at once.
@@ -254,7 +254,7 @@ namespace Engine
          * @param b Variadic list of button pointers to press.
          */
         template <typename... B>
-        void pressButtons(float mx, float my, B *...b) const noexcept;
+        static void pressButtons(float mx, float my, B *...b) noexcept;
 
         std::shared_ptr<Graphics::IRenderer> _renderer;                        ///> Shared renderer
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture

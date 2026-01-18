@@ -9,13 +9,42 @@
 
 namespace
 {
-    Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m)
+    [[nodiscard]] Graphics::ColorBlindMode nextMode(Graphics::ColorBlindMode m)
     {
         switch (m) {
             case Graphics::ColorBlindMode::NONE: return Graphics::ColorBlindMode::DEUTERANOPIA;
             case Graphics::ColorBlindMode::DEUTERANOPIA: return Graphics::ColorBlindMode::PROTANOPIA;
             case Graphics::ColorBlindMode::PROTANOPIA: return Graphics::ColorBlindMode::TRITANOPIA;
             default: return Graphics::ColorBlindMode::NONE;
+        }
+    }
+
+    [[nodiscard]] BindAction toBindAction(Engine::SettingsMenu::RebindState s)
+    {
+        using RS = Engine::SettingsMenu::RebindState;
+        switch (s) {
+            case RS::Up: return BindAction::Up;
+            case RS::Down: return BindAction::Down;
+            case RS::Left: return BindAction::Left;
+            case RS::Right: return BindAction::Right;
+            case RS::Shoot: return BindAction::Shoot;
+            default: return BindAction::Up;
+        }
+    }
+
+    void setCenteredText(Graphics::IText &t, const float cx, const float cy, const float approxH)
+    {
+        t.setPosition(cx - t.getWidth() * 0.5f, cy - approxH * 0.5f);
+    }
+
+    [[nodiscard]] std::string colorBlindLabel(const Graphics::ColorBlindMode mode)
+    {
+        switch (mode) {
+            case Graphics::ColorBlindMode::NONE: return "NORMAL";
+            case Graphics::ColorBlindMode::DEUTERANOPIA: return "DEUTER";
+            case Graphics::ColorBlindMode::PROTANOPIA: return "PROTAN";
+            case Graphics::ColorBlindMode::TRITANOPIA: return "TRITAN";
+            default: return "UNKNOWN";
         }
     }
 } // namespace
@@ -27,23 +56,26 @@ namespace Engine
         : AMenu(renderer), _musicRegistry(std::move(musicRegistry)), _soundRegistry(std::move(soundRegistry))
     {
         loadBackground("sprites/bg-preview.png");
-        _colorBlindMode = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
-        _colorBlindNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        _resolution = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
-        _resolutionNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        const auto preset = Utils::SettingsConfig::getInstance().getCurrentPreset();
-        const auto presetName = Utils::SettingsConfig::getPresetName(preset);
-        _controls = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, presetName);
-        _controlsNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
-        _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
-        _musicVolLabel = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "50");
+        loadPanel("sprites/popup.png", true);
+
+        _title = _renderer->texts()->createText(46, {255, 255, 255, 255});
+        _title->setString("SETTINGS");
+        _musicVolValueText = _renderer->texts()->createText(36, {255, 255, 255, 255});
+        _musicVolValueText->setString("50");
+        _sfxVolValueText = _renderer->texts()->createText(36, {255, 255, 255, 255});
+        _sfxVolValueText->setString("50");
+
         _musicVolUp = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _musicVolDown = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
-        _sfxVolLabel = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "50");
         _sfxVolUp = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _sfxVolDown = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
         _muteMusic = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF MUSIC");
-        _muteSFX = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF SFX");
+        _muteSFX = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "OFF SOUNDS");
+        _colorBlindCycle = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "NORMAL");
+        _resolutionCycle = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "1280x720");
+        _controlsCycle = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "ARROWS");
+        _back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
+
         const auto &config = Utils::SettingsConfig::getInstance();
         _rebindUp = std::make_unique<UI::UIButton>(
             _renderer, UI::ButtonSize::Small, Utils::SettingsConfig::keyToString(config.getKey(BindAction::Up)));
@@ -66,6 +98,12 @@ namespace Engine
         _rebindRightLabel->setString("RIGHT");
         _rebindShootLabel = _renderer->texts()->createText(16, {255, 255, 255, 255});
         _rebindShootLabel->setString("SHOOT");
+        _colorBlindTitleText = _renderer->texts()->createText(22, {200, 200, 200, 255});
+        _colorBlindTitleText->setString("COLOR");
+        _resolutionTitleText = _renderer->texts()->createText(22, {200, 200, 200, 255});
+        _resolutionTitleText->setString("RESOLUTION");
+        _controlsTitleText = _renderer->texts()->createText(22, {200, 200, 200, 255});
+        _controlsTitleText->setString("CONTROL");
 
         _rebindButtonMap[RebindState::Up] = _rebindUp.get();
         _rebindButtonMap[RebindState::Down] = _rebindDown.get();
@@ -81,11 +119,9 @@ namespace Engine
         _controlsChanged = false;
         _errorState = RebindState::None;
         _errorFrameCount = 0;
-        resetButtons(_colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(), _resolutionNext.get(),
-            _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(), _musicVolUp.get(),
-            _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(),
-            _muteSFX.get(), _rebindUp.get(), _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(),
-            _rebindShoot.get());
+        resetButtons(_back.get(), _musicVolUp.get(), _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(),
+            _muteMusic.get(), _muteSFX.get(), _colorBlindCycle.get(), _resolutionCycle.get(), _controlsCycle.get(),
+            _rebindUp.get(), _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(), _rebindShoot.get());
 
         const auto &config = Utils::SettingsConfig::getInstance();
         _musicVolume = config.getMusicVolume();
@@ -93,9 +129,9 @@ namespace Engine
         _musicMuted = config.isMusicMuted();
         _sfxMuted = config.isSfxMuted();
         _currentResolution = 0;
-        const auto res = config.getResolution();
+        const auto [width, height] = config.getResolution();
         for (size_t i = 0; i < _resolutions.size(); ++i) {
-            if (_resolutions[i].width == res.width && _resolutions[i].height == res.height) {
+            if (_resolutions.at(i).width == width && _resolutions.at(i).height == height) {
                 _currentResolution = i;
                 break;
             }
@@ -114,71 +150,101 @@ namespace Engine
         }
         _renderer->setColorBlindMode(_currentColorBlindMode);
 
-        _musicVolLabel->setLabel(std::to_string(_musicVolume));
-        _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+        _musicVolValueText->setString(std::to_string(_musicVolume));
+        _sfxVolValueText->setString(std::to_string(_sfxVolume));
         _muteMusic->setLabel(_musicMuted ? "ON MUSIC" : "OFF MUSIC");
         _muteSFX->setLabel(_sfxMuted ? "ON SFX" : "OFF SFX");
-        std::string label;
-        switch (_currentColorBlindMode) {
-            case Graphics::ColorBlindMode::NONE: label = "NORMAL"; break;
-            case Graphics::ColorBlindMode::DEUTERANOPIA: label = "DEUTER"; break;
-            case Graphics::ColorBlindMode::PROTANOPIA: label = "PROTAN"; break;
-            case Graphics::ColorBlindMode::TRITANOPIA: label = "TRITAN"; break;
-            default: label = "UNKNOWN"; break;
-        }
-        _colorBlindMode->setLabel(label);
+
+        _colorBlindCycle->setLabel(colorBlindLabel(_currentColorBlindMode));
         const auto &currentRes = _resolutions.at(_currentResolution);
-        _resolution->setLabel(std::to_string(currentRes.width) + "x" + std::to_string(currentRes.height));
-        _controls->setLabel(Utils::SettingsConfig::getPresetName(config.getCurrentPreset()));
+        _resolutionCycle->setLabel(std::to_string(currentRes.width) + "x" + std::to_string(currentRes.height));
+        _controlsCycle->setLabel(Utils::SettingsConfig::getPresetName(config.getCurrentPreset()));
         updateRebindLabels();
         layout();
     }
 
     void SettingsMenu::layout()
     {
-        const auto vp = viewportF();
-        const float w = vp.w;
-        const float h = vp.h;
-        const float cx = vp.cx;
-        const float leftColX = w * 0.25f;
-        const float rightColX = w * 0.75f;
-        const float audioYStart = h * 0.2f;
-        const float videoYStart = h * 0.3f;
-        const float spacingY = h * 0.12f;
-        const float labelMargin = w * 0.02f;
-        const float rightMargin = w * 0.05f;
-        const float videoButtonSpacing = w * 0.05f;
-
         layoutBackground();
-        layoutStepper(*_musicVolLabel, *_musicVolDown, *_musicVolUp, leftColX, audioYStart, labelMargin);
-        layoutStepper(*_sfxVolLabel, *_sfxVolDown, *_sfxVolUp, leftColX, audioYStart + spacingY, labelMargin);
-        placeCentered(*_muteMusic, leftColX, audioYStart + 2 * spacingY);
-        placeCentered(*_muteSFX, leftColX, audioYStart + 3 * spacingY);
-        layoutChoiceWithNext(*_colorBlindMode, *_colorBlindNext, rightColX, videoYStart, labelMargin,
-            videoButtonSpacing, w, rightMargin);
-        layoutChoiceWithNext(*_resolution, *_resolutionNext, rightColX, videoYStart + spacingY, labelMargin,
-            videoButtonSpacing, w, rightMargin);
-        layoutChoiceWithNext(*_controls, *_controlsNext, rightColX, videoYStart + 2 * spacingY, labelMargin,
-            videoButtonSpacing, w, rightMargin);
-        placeCentered(*_rebindUp, rightColX - w * 0.1f, videoYStart + 3 * spacingY);
-        placeCentered(*_rebindDown, rightColX, videoYStart + 3 * spacingY);
-        placeCentered(*_rebindLeft, rightColX + w * 0.1f, videoYStart + 3 * spacingY);
-        placeCentered(*_rebindRight, rightColX + w * 0.2f, videoYStart + 3 * spacingY);
-        placeCentered(*_rebindShoot, rightColX, videoYStart + 4 * spacingY);
+        layoutPanel(0.90f, 0.90f, 0.08f, 0.10f);
+        const auto vp = viewportF();
+        const float ui = std::clamp(std::min(vp.w / 1280.f, vp.h / 720.f), 0.65f, 1.0f);
+        auto applyUI = [&](UI::UIButton *b) {
+            if (b)
+                b->setUIScale(ui, ui);
+        };
+        applyUI(_musicVolUp.get());
+        applyUI(_musicVolDown.get());
+        applyUI(_sfxVolUp.get());
+        applyUI(_sfxVolDown.get());
+        applyUI(_muteMusic.get());
+        applyUI(_muteSFX.get());
+        applyUI(_colorBlindCycle.get());
+        applyUI(_resolutionCycle.get());
+        applyUI(_controlsCycle.get());
+        applyUI(_rebindUp.get());
+        applyUI(_rebindDown.get());
+        applyUI(_rebindLeft.get());
+        applyUI(_rebindRight.get());
+        applyUI(_rebindShoot.get());
+        applyUI(_back.get());
 
-        const float labelOffsetY = h * 0.06f;
-        _rebindUpLabel->setPosition(
-            rightColX - w * 0.1f - _rebindUpLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
-        _rebindDownLabel->setPosition(
-            rightColX - _rebindDownLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
-        _rebindLeftLabel->setPosition(
-            rightColX + w * 0.1f - _rebindLeftLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
-        _rebindRightLabel->setPosition(
-            rightColX + w * 0.2f - _rebindRightLabel->getWidth() * 0.5f, videoYStart + 3 * spacingY + labelOffsetY);
-        _rebindShootLabel->setPosition(
-            rightColX - _rebindShootLabel->getWidth() * 0.5f, videoYStart + 4 * spacingY + labelOffsetY);
+        const auto inner = innerRect();
+        const auto panel = panelRect();
+        _title->setPosition(inner.cx() - _title->getWidth() * 0.5f, inner.y + inner.h * 0.05f - 90.f);
 
-        placeCentered(*_back, cx, h * 0.8f);
+        const float insetX = panel.w * 0.08f;
+        const float insetY = panel.h * 0.10f;
+        const float cx0 = panel.x + insetX;
+        const float cy0 = panel.y + insetY;
+        const float cw = panel.w - insetX * 2.f;
+        const float ch = panel.h - insetY * 2.f;
+
+        setCenteredText(*_musicVolValueText, cx0 + cw * 0.25f, cy0 + ch * 0.10f + 25.f, 36.f);
+        placeCentered(*_musicVolDown, (cx0 + cw * 0.25f) - cw * 0.12f, cy0 + ch * 0.10f + 25.f);
+        placeCentered(*_musicVolUp, (cx0 + cw * 0.25f) + cw * 0.12f, cy0 + ch * 0.10f + 25.f);
+        placeCentered(*_muteMusic, cx0 + cw * 0.25f, cy0 + ch * 0.36f - 25.f);
+
+        setCenteredText(*_sfxVolValueText, cx0 + cw * 0.75f, cy0 + ch * 0.10f + 25.f, 36.f);
+        placeCentered(*_sfxVolDown, (cx0 + cw * 0.75f) - cw * 0.12f, cy0 + ch * 0.10f + 25.f);
+        placeCentered(*_sfxVolUp, (cx0 + cw * 0.75f) + cw * 0.12f, cy0 + ch * 0.10f + 25.f);
+        placeCentered(*_muteSFX, cx0 + cw * 0.75f, cy0 + ch * 0.36f - 25.f);
+
+        const float rebindRowY = cy0 + ch * 0.50f;
+        const float step = cw * 0.12f;
+        const float startX = inner.cx() - step * 2.f;
+
+        placeCentered(*_rebindUp, startX + step * 0.f, rebindRowY);
+        placeCentered(*_rebindDown, startX + step * 1.f, rebindRowY);
+        placeCentered(*_rebindLeft, startX + step * 2.f, rebindRowY);
+        placeCentered(*_rebindRight, startX + step * 3.f, rebindRowY);
+        placeCentered(*_rebindShoot, startX + step * 4.f, rebindRowY);
+
+        const float labelOffsetY = ch * 0.08f;
+        auto placeRebindLabel = [&](Graphics::IText &t, float cxBtn) {
+            t.setPosition(cxBtn - t.getWidth() * 0.5f, rebindRowY + labelOffsetY);
+        };
+        placeRebindLabel(*_rebindUpLabel, startX + step * 0.f);
+        placeRebindLabel(*_rebindDownLabel, startX + step * 1.f);
+        placeRebindLabel(*_rebindLeftLabel, startX + step * 2.f);
+        placeRebindLabel(*_rebindRightLabel, startX + step * 3.f);
+        placeRebindLabel(*_rebindShootLabel, startX + step * 4.f);
+
+        const float bottomY = cy0 + ch * 0.80f;
+        const float titleGap = ch * 0.05f;
+
+        if (_colorBlindTitleText)
+            setCenteredText(*_colorBlindTitleText, cx0 + cw * 0.20f, bottomY - titleGap, 18.f);
+        if (_resolutionTitleText)
+            setCenteredText(*_resolutionTitleText, cx0 + cw * 0.50f, bottomY - titleGap, 18.f);
+        if (_controlsTitleText)
+            setCenteredText(*_controlsTitleText, cx0 + cw * 0.80f, bottomY - titleGap, 18.f);
+
+        placeCentered(*_colorBlindCycle, cx0 + cw * 0.20f, bottomY);
+        placeCentered(*_resolutionCycle, cx0 + cw * 0.50f, bottomY);
+        placeCentered(*_controlsCycle, cx0 + cw * 0.80f, bottomY);
+
+        placeCentered(*_back, inner.cx(), cy0 + ch * 0.94f);
     }
 
     void SettingsMenu::applyMusicVolumeChange(const size_t volume, const bool isMuted) noexcept
@@ -211,19 +277,18 @@ namespace Engine
 
         if (_errorState != RebindState::None) {
             _errorFrameCount++;
-            if (_errorFrameCount >= ERROR_DISPLAY_FRAMES) {
-                UI::UIButton *button = _rebindButtonMap[_errorState];
-                if (button)
+            if (std::cmp_greater_equal(_errorFrameCount, ERROR_DISPLAY_FRAMES)) {
+                if (UI::UIButton *button = _rebindButtonMap[_errorState])
                     button->setLabel("...");
                 _errorState = RebindState::None;
                 _errorFrameCount = 0;
             }
         }
 
-        updateButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
-            _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolLabel.get(),
-            _musicVolUp.get(), _musicVolDown.get(), _sfxVolLabel.get(), _sfxVolUp.get(), _sfxVolDown.get(),
-            _muteMusic.get(), _muteSFX.get());
+        updateButtons(frame.mouseX, frame.mouseY, _back.get(), _musicVolUp.get(), _musicVolDown.get(), _sfxVolUp.get(),
+            _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get(), _colorBlindCycle.get(), _resolutionCycle.get(),
+            _controlsCycle.get(), _rebindUp.get(), _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(),
+            _rebindShoot.get());
     }
 
     void SettingsMenu::handleInput(const InputFrame &frame)
@@ -241,12 +306,12 @@ namespace Engine
         if (_rebindState != RebindState::None) {
             auto &config = Utils::SettingsConfig::getInstance();
             if (frame.key == Key::Escape) {
-                BindAction action = static_cast<BindAction>(_rebindState);
+                const auto action = toBindAction(_rebindState);
                 _rebindButtonMap[_rebindState]->setLabel(Utils::SettingsConfig::keyToString(config.getKey(action)));
                 _rebindState = RebindState::None;
                 return;
             }
-            Engine::Key currentKey = Engine::Key::Unknown;
+            auto currentKey = Key::Unknown;
             switch (_rebindState) {
                 case RebindState::Up: currentKey = config.getKey(BindAction::Up); break;
                 case RebindState::Down: currentKey = config.getKey(BindAction::Down); break;
@@ -259,8 +324,7 @@ namespace Engine
             if (config.isKeyAlreadyAssigned(frame.key, currentKey)) {
                 _errorState = _rebindState;
                 _errorFrameCount = 0;
-                UI::UIButton *button = _rebindButtonMap[_rebindState];
-                if (button)
+                if (UI::UIButton *button = _rebindButtonMap[_rebindState])
                     button->setLabel("/!\\");
                 return;
             }
@@ -282,8 +346,6 @@ namespace Engine
             case Key::B: _backRequested = true; break;
             case Key::Backspace: {
                 _currentResolution = (_currentResolution + 1) % _resolutions.size();
-                const auto &res = _resolutions.at(_currentResolution);
-                _resolution->setLabel(std::to_string(res.width) + "x" + std::to_string(res.height));
                 _resolutionChanged = true;
                 break;
             }
@@ -293,10 +355,10 @@ namespace Engine
 
     void SettingsMenu::handleMousePressed(const InputFrame &frame) const
     {
-        pressButtons(frame.mouseX, frame.mouseY, _colorBlindMode.get(), _colorBlindNext.get(), _resolution.get(),
-            _resolutionNext.get(), _controls.get(), _controlsNext.get(), _back.get(), _musicVolUp.get(),
-            _musicVolDown.get(), _sfxVolUp.get(), _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get(), _rebindUp.get(),
-            _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(), _rebindShoot.get());
+        pressButtons(frame.mouseX, frame.mouseY, _back.get(), _musicVolUp.get(), _musicVolDown.get(), _sfxVolUp.get(),
+            _sfxVolDown.get(), _muteMusic.get(), _muteSFX.get(), _colorBlindCycle.get(), _resolutionCycle.get(),
+            _controlsCycle.get(), _rebindUp.get(), _rebindDown.get(), _rebindLeft.get(), _rebindRight.get(),
+            _rebindShoot.get());
     }
 
     void SettingsMenu::handleMouseReleased(const InputFrame &frame)
@@ -315,26 +377,21 @@ namespace Engine
     bool SettingsMenu::handleVideoReleased(const float mx, const float my)
     {
         auto &config = Utils::SettingsConfig::getInstance();
-        if (_colorBlindNext->onMouseReleased(mx, my)) {
+        if (_colorBlindCycle->onMouseReleased(mx, my)) {
             _currentColorBlindMode = nextMode(_currentColorBlindMode);
             _renderer->setColorBlindMode(_currentColorBlindMode);
             config.setColorBlindMode(_currentColorBlindMode);
-            static const std::unordered_map<Graphics::ColorBlindMode, std::string> labels = {
-                {Graphics::ColorBlindMode::NONE, "NORMAL"},
-                {Graphics::ColorBlindMode::DEUTERANOPIA, "DEUTER"},
-                {Graphics::ColorBlindMode::PROTANOPIA, "PROTAN"},
-                {Graphics::ColorBlindMode::TRITANOPIA, "TRITAN"},
-            };
-            _colorBlindMode->setLabel(labels.at(_currentColorBlindMode));
-            _colorBlindNext->reset();
+            _colorBlindCycle->setLabel(colorBlindLabel(_currentColorBlindMode));
+            _colorBlindCycle->reset();
             return true;
         }
-        if (_resolutionNext->onMouseReleased(mx, my)) {
+        if (_resolutionCycle->onMouseReleased(mx, my)) {
             _currentResolution = (_currentResolution + 1) % _resolutions.size();
             _resolutionChanged = true;
             config.setResolution(_resolutions.at(_currentResolution));
             const auto &[width, height] = _resolutions.at(_currentResolution);
-            _resolution->setLabel(std::to_string(width) + "x" + std::to_string(height));
+            _resolutionCycle->setLabel(std::to_string(width) + "x" + std::to_string(height));
+            _resolutionCycle->reset();
             return true;
         }
         return false;
@@ -342,7 +399,7 @@ namespace Engine
 
     bool SettingsMenu::handleControlsReleased(const float mx, const float my)
     {
-        if (!_controlsNext->onMouseReleased(mx, my))
+        if (!_controlsCycle->onMouseReleased(mx, my))
             return false;
         auto &config = Utils::SettingsConfig::getInstance();
         const auto current = config.getCurrentPreset();
@@ -354,10 +411,10 @@ namespace Engine
             default: next = Utils::KeyPreset::Arrows; break;
         }
         config.setPreset(next);
-        _controls->setLabel(Utils::SettingsConfig::getPresetName(next));
+        _controlsCycle->setLabel(Utils::SettingsConfig::getPresetName(next));
         updateRebindLabels();
         _controlsChanged = true;
-        _controlsNext->reset();
+        _controlsCycle->reset();
         return true;
     }
 
@@ -366,7 +423,7 @@ namespace Engine
         auto &config = Utils::SettingsConfig::getInstance();
         if (_musicVolUp->onMouseReleased(mx, my)) {
             _musicVolume = std::min<size_t>(100, _musicVolume + 10);
-            _musicVolLabel->setLabel(std::to_string(_musicVolume));
+            _musicVolValueText->setString(std::to_string(_musicVolume));
             config.setMusicVolume(_musicVolume);
             applyMusicVolumeChange(_musicVolume, _musicMuted);
             _musicVolUp->reset();
@@ -374,7 +431,7 @@ namespace Engine
         }
         if (_musicVolDown->onMouseReleased(mx, my)) {
             _musicVolume = (_musicVolume >= 10) ? _musicVolume - 10 : 0;
-            _musicVolLabel->setLabel(std::to_string(_musicVolume));
+            _musicVolValueText->setString(std::to_string(_musicVolume));
             config.setMusicVolume(_musicVolume);
             applyMusicVolumeChange(_musicVolume, _musicMuted);
             _musicVolDown->reset();
@@ -382,7 +439,7 @@ namespace Engine
         }
         if (_sfxVolUp->onMouseReleased(mx, my)) {
             _sfxVolume = std::min<size_t>(100, _sfxVolume + 10);
-            _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+            _sfxVolValueText->setString(std::to_string(_sfxVolume));
             config.setSfxVolume(_sfxVolume);
             applySoundVolumeChange(_sfxVolume, _sfxMuted);
             _sfxVolUp->reset();
@@ -390,7 +447,7 @@ namespace Engine
         }
         if (_sfxVolDown->onMouseReleased(mx, my)) {
             _sfxVolume = (_sfxVolume >= 10) ? _sfxVolume - 10 : 0;
-            _sfxVolLabel->setLabel(std::to_string(_sfxVolume));
+            _sfxVolValueText->setString(std::to_string(_sfxVolume));
             config.setSfxVolume(_sfxVolume);
             applySoundVolumeChange(_sfxVolume, _sfxMuted);
             _sfxVolDown->reset();
@@ -439,7 +496,7 @@ namespace Engine
             return false;
 
         for (const auto &[state, button] : _rebindButtonMap) {
-            if (button->onMouseReleased(mx, my)) {
+            if (button && button->onMouseReleased(mx, my)) {
                 _rebindState = state;
                 button->setLabel("...");
                 button->reset();
@@ -490,21 +547,29 @@ namespace Engine
     void SettingsMenu::render() const
     {
         renderBackground();
-        _colorBlindMode->render();
-        _colorBlindNext->render();
-        _resolution->render();
-        _resolutionNext->render();
-        _controls->render();
-        _controlsNext->render();
-        _back->render();
-        _musicVolLabel->render();
+        if (_panelTex != Graphics::InvalidTexture)
+            _renderer->draw(_panelCmd);
+        _renderer->draw(*_title);
+        _renderer->draw(*_musicVolValueText);
+        _renderer->draw(*_sfxVolValueText);
+
         _musicVolUp->render();
         _musicVolDown->render();
-        _sfxVolLabel->render();
         _sfxVolUp->render();
         _sfxVolDown->render();
         _muteMusic->render();
         _muteSFX->render();
+
+        if (_colorBlindTitleText)
+            _renderer->draw(*_colorBlindTitleText);
+        if (_resolutionTitleText)
+            _renderer->draw(*_resolutionTitleText);
+        if (_controlsTitleText)
+            _renderer->draw(*_controlsTitleText);
+
+        _colorBlindCycle->render();
+        _resolutionCycle->render();
+        _controlsCycle->render();
 
         if (Utils::SettingsConfig::getInstance().getCurrentPreset() == Utils::KeyPreset::Custom) {
             _rebindUp->render();
@@ -518,5 +583,6 @@ namespace Engine
             _renderer->draw(*_rebindRightLabel);
             _renderer->draw(*_rebindShootLabel);
         }
+        _back->render();
     }
 } // namespace Engine

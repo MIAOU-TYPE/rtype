@@ -30,7 +30,7 @@ namespace Engine
                 }
                 _musicRegistry->stopMusic();
                 const float currentVolume = _musicRegistry->getMusicVolume();
-                (void) _musicRegistry->loadAndPlayMusic(musicPath, true, currentVolume);
+                _musicRegistry->loadAndPlayMusic(musicPath, true, currentVolume);
             }
         } catch (const std::exception &e) {
             throw GameStateError(std::string("{GameState::onEnter} ") + e.what());

@@ -38,7 +38,7 @@ namespace Engine
 
             if (_musicRegistry && !_musicRegistry->isMusicPlaying()) {
                 const float currentVolume = _musicRegistry->getMusicVolume();
-                (void) _musicRegistry->loadAndPlayMusic(::MENU_MUSIC, true, currentVolume);
+                _musicRegistry->loadAndPlayMusic(::MENU_MUSIC, true, currentVolume);
             }
         } catch (const std::exception &e) {
             throw MenuError(std::string("{MenuState::onEnter} ") + e.what());

@@ -246,16 +246,19 @@ namespace Net
         std::string roomName;
         uint8_t maxPlayers = 0;
         uint8_t difficultyRaw = 0;
+        uint8_t gameModeRaw = 0;
         std::string levelPath;
 
         try {
             roomName = r.str16();
             maxPlayers = r.u8();
             difficultyRaw = r.u8();
+            gameModeRaw = r.u8();
             levelPath = r.str16();
         } catch (...) {
             return sendError(addr, req, 4,
-                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + "
+                "CREATE_ROOM: malformed payload (expected name(str16) + maxPlayers(u8) + difficulty(u8) + gameMode(u8) "
+                "+ "
                 "levelPath(str16))");
         }
 
@@ -273,13 +276,30 @@ namespace Net
             default: return sendError(addr, req, 10, "CREATE_ROOM: invalid difficulty value");
         }
 
+        Engine::GameMode gameMode;
+        switch (gameModeRaw) {
+            case 0: gameMode = Engine::GameMode::Standard; break;
+            case 1: gameMode = Engine::GameMode::Coop; break;
+            case 2: gameMode = Engine::GameMode::FriendlyFire; break;
+            case 3: gameMode = Engine::GameMode::Survival; break;
+            default: return sendError(addr, req, 11, "CREATE_ROOM: invalid game mode value");
+        }
+
         if (r.remaining() != 0)
             return sendError(addr, req, 7, "CREATE_ROOM: unexpected trailing bytes");
 
+        Engine::ModeParameters modeParams{};
+        switch (gameMode) {
+            case Engine::GameMode::FriendlyFire: modeParams.teamDamage = true; break;
+            case Engine::GameMode::Coop: modeParams.sharedHealth = true; break;
+            case Engine::GameMode::Survival: break;
+            case Engine::GameMode::Standard:
+            default: break;
+        }
+
         uint32_t roomId = 0;
         try {
-            const Engine::GameConfig config{
-                difficulty, Engine::GameMode::Standard, Engine::ModeParameters{}, levelPath};
+            const Engine::GameConfig config{difficulty, gameMode, modeParams, levelPath};
             roomId = _rooms->createRoom(config, roomName, maxPlayers);
         } catch (const std::exception &e) {
             return sendError(addr, req, 8, e.what());

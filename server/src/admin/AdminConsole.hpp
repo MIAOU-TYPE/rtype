@@ -1,4 +1,4 @@
-/* server/src/admin/AdminConsole.hpp
+/*
 ** EPITECH PROJECT, 2026
 ** RType
 ** File description:

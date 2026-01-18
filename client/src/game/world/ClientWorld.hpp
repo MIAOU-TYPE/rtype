@@ -99,7 +99,7 @@ namespace World
         /**
          * @brief Updates interpolated positions of entities for smooth rendering.
          */
-        void updateInterpolatedPositions();
+        void updateInterpolatedPositions(float dt);
 
         /**
          * @brief Applies local movement based on input flags for the player entity.
@@ -203,5 +203,10 @@ namespace World
          * @param positions Sparse array of Position components.
          */
         void reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions);
+
+        struct Vel2 { float vx; float vy; };
+        std::unordered_map<uint32_t, Vel2> _velByNetId;
+        std::unordered_map<uint32_t, std::chrono::steady_clock::time_point> _lastVelUpdate;
+
     };
 } // namespace World

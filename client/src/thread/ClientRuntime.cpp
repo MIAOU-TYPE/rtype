@@ -261,7 +261,7 @@ namespace Thread
 
             sendCombinedInput();
 
-            _world->updateInterpolatedPositions();
+            _world->updateInterpolatedPositions(frameDt);
 
             int steps = 0;
             while (accumulator >= FixedDt && steps < MaxStepsPerTick && clock::now() < deadline) {

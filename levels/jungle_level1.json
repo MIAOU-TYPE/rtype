@@ -1,130 +1,107 @@
 {
-  "name": "Level 1",
+  "name": "Jungle - Level 1",
   "background": {
     "spriteId": 101,
-    "scrollSpeed": -50.0,
+    "scrollSpeed": -60.0,
     "tileWidth": 2584.0,
     "tileHeight": 720.0
   },
   "enemies": {
-    "smallEnemy": {
-      "hp": 15,
-      "speed": -100,
-      "size": { "w": 65, "h": 66 },
-      "killScore": 30,
-      "sprite": "enemy",
-      "spriteId": 2,
+    "mosquito": {
+      "hp": 20,
+      "speed": -150,
+      "size": { "w": 33, "h": 22 },
+      "killScore": 20,
+      "sprite": "enemy3",
+      "spriteId": 4,
       "shoot": {
         "type": "straight",
-        "cooldown": 2.0,
-        "projectileSpeed": 130,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 50 },
+        "cooldown": 1.5,
+        "projectileSpeed": 180,
+        "damage": 30,
+        "muzzle": { "x": -20, "y": 15 },
         "projectileSpriteId": 9
+      },
+      "movement": {
+        "type": "zigzag",
+        "params": {
+          "amplitude": 80.0,
+          "frequency": 1.0
+        }
       }
     },
-    "mediumEnemy": {
-      "hp": 40,
-      "speed": -70,
+    "jungleSoldier": {
+      "hp": 50,
+      "speed": -80,
       "size": { "w": 65, "h": 49 },
-      "killScore": 50,
+      "killScore": 60,
       "sprite": "enemy2",
       "spriteId": 3,
       "shoot": {
         "type": "diagonal",
-        "angles": [-15, 15],
-        "cooldown": 2.0,
-        "projectileSpeed": 100,
-        "damage": 50,
+        "angles": [-10, 10],
+        "cooldown": 1.8,
+        "projectileSpeed": 120,
+        "damage": 40,
         "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 9
       }
     },
-    "mediumEnemyTriple": {
-      "hp": 40,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
-      "killScore": 65,
-      "sprite": "enemy2",
-      "spriteId": 3,
-      "shoot": {
-        "type": "diagonal",
-        "angles": [-25, 0, 25],
-        "cooldown": 2.2,
-        "projectileSpeed": 110,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 35 },
-        "projectileSpriteId": 12
-      }
-    },
-    "groupEnemy": {
+    "infantrinsect": {
       "type": "group",
       "members": [
         {
-          "enemyType": "mediumEnemy",
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": -150 }
+        },
+        {
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": -75 }
+        },
+        {
+          "enemyType": "mosquito",
+          "offset": { "x": 200, "y": -30 }
+        },
+        {
+          "enemyType": "mosquito",
           "offset": { "x": 0, "y": 0 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": -130 }
+          "enemyType": "mosquito",
+          "offset": { "x": 200, "y": 30 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 130 }
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": 75 }
+        },
+        {
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": 150 }
         }
       ]
     },
-    "groupEnemy2": {
+    "jungleCommander": {
       "type": "group",
       "members": [
         {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -90, "y": 110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -90, "y": -110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 90, "y": 110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 90, "y": -110 }
-        },
-        {
-          "enemyType": "smallEnemy",
+          "enemyType": "jungleSoldier",
           "offset": { "x": 0, "y": 0 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 150, "y": 0 }
-        }
-      ]
-    },
-    "groupEnemy3": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 0, "y": 0 }
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": -50 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": -120 }
+          "enemyType": "jungleSoldier",
+          "offset": { "x": 0, "y": -100 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": 120 }
+          "enemyType": "mosquito",
+          "offset": { "x": 0, "y": 50 }
         },
         {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 160, "y": -120 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 160, "y": 120 }
+          "enemyType": "jungleSoldier",
+          "offset": { "x": 0, "y": 100 }
         }
       ]
     }
@@ -133,89 +110,128 @@
     "gravityWell": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 250,
-      "damagePerSecond": 10,
-      "radius": 140,
+      "pullStrength": 200,
+      "damagePerSecond": 15,
+      "radius": 130,
       "innerRadius": 50
     }
   },
-  "duration": 95,
+  "duration": 90,
   "waves": [
     {
-      "time": 1,
-      "enemies": { "smallEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 2,
+      "enemies": { "mosquito": 3 },
+      "spawnPattern": "spread"
     },
     {
       "time": 6,
-      "enemies": { "smallEnemy": 2 },
+      "enemies": { "jungleSoldier": 2 },
       "spawnPattern": "spread"
     },
     {
-      "time": 9,
-      "enemies": { "smallEnemy": 3 },
-      "spawnPattern": "spread"
-    },
-    {
-      "time": 15,
+      "time": 13,
       "enemies": {},
       "obstacleType": "gravityWell",
-      "obstacleY": 360,
-      "obstacleX": 500
+      "obstacleY": 400,
+      "obstacleX": 600
     },
     {
-      "time": 16,
-      "enemies": { "smallEnemy": 2 },
+      "time": 10,
+      "enemies": { "mosquito": 4 },
       "spawnPattern": "spread"
     },
     {
-      "time": 19,
-      "enemies": { "mediumEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 14,
+      "enemies": { "jungleSoldier": 3 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 24,
-      "enemies": { "groupEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 26,
+      "enemies": { "mosquito": 2 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 29,
+      "time": 30,
+      "enemies": { "mosquito": 3 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 34,
+      "enemies": { "mosquito": 2 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 32,
+      "enemies": {},
       "obstacleType": "gravityWell",
-      "obstacleY": 100,
-      "obstacleX": 250,
-      "enemies": { "groupEnemy2": 1 },
+      "obstacleY": 234,
+      "obstacleX": 67
+    },
+    {
+      "time": 34,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 567,
+      "obstacleX": 189
+    },
+    {
+      "time": 36,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 345,
+      "obstacleX": 245
+    },
+    {
+      "time": 38,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 456,
+      "obstacleX": 112
+    },
+    {
+      "time": 40,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 278,
+      "obstacleX": 298
+    },
+    {
+      "time": 42,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 589,
+      "obstacleX": 156
+    },
+    {
+      "time": 44,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 412,
+      "obstacleX": 73
+    },
+    {
+      "time": 40,
+      "enemies": { "infantrinsect": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     },
     {
-      "time": 37,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 45,
+      "powerUp": { "type": "power_up_attached" }
     },
     {
-      "time": 50,
-      "enemies": { "mediumEnemyTriple": 3 },
+      "time": 55,
+      "enemies": { "jungleSoldier": 4 },
       "spawnPattern": "spread"
     },
     {
-      "time": 65,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "time": 68,
+      "enemies": { "mosquito": 6 },
+      "spawnPattern": "spread"
     },
     {
-      "time": 80,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 83,
-      "enemies": { "groupEnemy3": 1 },
+      "time": 68,
+      "enemies": { "jungleCommander": 1 },
       "spawnPattern": "line",
       "spawnY": 360
     }

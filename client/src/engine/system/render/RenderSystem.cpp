@@ -6,6 +6,7 @@
 */
 
 #include "RenderSystem.hpp"
+#include <iostream>
 
 namespace Engine
 {
@@ -38,7 +39,7 @@ namespace Engine
                 cmd.position = {pos.x * scalePosX, pos.y * scalePosY, pos.z};
                 cmd.scale = {SCALE_FACTOR, SCALE_FACTOR};
 
-                if (drawable.spriteId >= 100 && drawable.spriteId < 103) {
+                if (drawable.spriteId >= 100 && drawable.spriteId <= 103) {
                     const auto viewportWidth = static_cast<float>(viewportSize.width);
                     const auto viewportHeight = static_cast<float>(viewportSize.height);
                     const auto frameWidth = static_cast<float>(cmd.frame.w);
@@ -49,7 +50,7 @@ namespace Engine
 
                     const float scale = std::max(scaleX, scaleY);
                     cmd.scale = {scale, scale};
-                }
+                }             
 
                 float finalX = pos.x;
                 float finalY = pos.y;

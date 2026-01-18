@@ -35,8 +35,12 @@ namespace Engine
             _renderer->draw(*_scoreText);
         }
         if (_healthText) {
-            _healthText->setString(
-                "Health: " + std::to_string(_getCurrentLife()) + "/" + std::to_string(_getMaxLife()));
+            if (_getCurrentLife() == 0 && _getMaxLife() == 0) {
+                _healthText->setString("Health: 500/500");
+            } else {
+                _healthText->setString(
+                    "Health: " + std::to_string(_getCurrentLife()) + "/" + std::to_string(_getMaxLife()));
+            }
             _renderer->draw(*_healthText);
         }
     }

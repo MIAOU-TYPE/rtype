@@ -76,4 +76,14 @@ namespace Ecs
         _currentLife = currentLife;
         _maxLife = maxLife;
     }
+
+    int ClientController::getCurrentLife() const
+    {
+        return static_cast<int>(_currentLife);
+    }
+
+    int ClientController::getMaxLife() const
+    {
+        return static_cast<int>(_maxLife);
+    }
 } // namespace Ecs

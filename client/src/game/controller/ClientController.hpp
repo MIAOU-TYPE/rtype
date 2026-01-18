@@ -96,10 +96,24 @@ namespace Ecs
          */
         void onHealth(uint16_t currentLife, uint16_t maxLife) override;
 
+        /**
+         * @brief Gets the current life.
+         * @return The current life.
+         */
+        [[nodiscard]] int getCurrentLife() const;
+
+        /**
+         * @brief Gets the maximum life.
+         * @return The maximum life.
+         */
+        [[nodiscard]] int getMaxLife() const;
+
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>
             _commandBuffer;                          ///> Reference to the world command buffer
         std::shared_ptr<Engine::EventBus> _eventBus; ///> Shared pointer to the event bus
         std::atomic_bool _gameOverQueued{false};     ///> Flag to prevent multiple game over commands
+        uint16_t _currentLife{0};                    ///> Current life of the player
+        uint16_t _maxLife{0};                        ///> Maximum life of the player
     };
 }; // namespace Ecs

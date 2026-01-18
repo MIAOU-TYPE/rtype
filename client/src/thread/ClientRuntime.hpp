@@ -162,6 +162,7 @@ namespace Thread
 
         std::shared_ptr<Network::INetClient> _udpClient = nullptr; ///> Network client interface
         Network::UDPPacketFactory _udpPacketFactory;               ///> Packet factory for creating network packets
+        std::shared_ptr<Ecs::ClientController> _clientController = nullptr; ///> Client controller for handling messages
         std::unique_ptr<Ecs::UDPPacketRouter> _udpPacketRouter =
             nullptr; ///> Packet router for handling incoming packets
 

@@ -18,6 +18,7 @@
 
 #include "AIBrain.hpp"
 #include "Collision.hpp"
+#include "InputComponent.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"
 #include "mockTestsWorld.hpp"
@@ -164,4 +165,44 @@ TEST_F(CollisionSystemEmitTests, EmitsForEachPair_AmongThreeOverlappingEntities)
     EXPECT_TRUE(containsPair(emitted, id(e0), id(e1)));
     EXPECT_TRUE(containsPair(emitted, id(e0), id(e2)));
     EXPECT_TRUE(containsPair(emitted, id(e1), id(e2)));
+}
+
+TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenPlayerProjectileHitsPlayerInStandardMode)
+{
+    const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto player2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
+
+    world.registry().registerComponent<Game::InputComponent>();
+    world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
+    world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
+
+    const auto proj = makeEntity(world, 2.f, 2.f, 5.f, 5.f);
+    addProjectile(world, proj, id(player1));
+
+    run();
+
+    EXPECT_TRUE(emitted.empty());
+}
+
+TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenPlayerProjectileHitsPlayerInFriendlyFireMode)
+{
+    Engine::ModeParameters params{};
+    params.teamDamage = true;
+    Engine::GameConfig config{Engine::Difficulty::Medium, Engine::GameMode::FriendlyFire, params, ""};
+    world.setConfig(config);
+
+    const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
+    const auto player2 = makeEntity(world, 50.f, 50.f, 10.f, 10.f);
+
+    world.registry().registerComponent<Game::InputComponent>();
+    world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
+    world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
+
+    const auto proj = makeEntity(world, 52.f, 52.f, 5.f, 5.f);
+    addProjectile(world, proj, id(player1));
+
+    run();
+
+    EXPECT_FALSE(emitted.empty());
+    EXPECT_TRUE(containsPair(emitted, id(proj), id(player2)));
 }

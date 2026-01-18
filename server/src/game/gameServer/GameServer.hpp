@@ -16,6 +16,7 @@
 #include "CommandBuffer.hpp"
 #include "Damage.hpp"
 #include "GameClock.hpp"
+#include "GameConfig.hpp"
 #include "GravitySystem.hpp"
 #include "HealthSystem.hpp"
 #include "HomingSystem.hpp"
@@ -88,11 +89,12 @@ namespace Game
          * @param udpPacketFactory Factory to build outgoing packets.
          * @param levelPath Path to the level configuration file.
          * @param modifiers Difficulty modifiers to apply to enemies.
+         * @param gameConfig Game configuration.
          */
         explicit GameServer(std::shared_ptr<Net::Server::ISessionManager> sessions,
             std::shared_ptr<Net::Server::IServer> server,
             std::shared_ptr<Net::Factory::UDPPacketFactory> udpPacketFactory, const std::string &levelPath,
-            const DifficultyModifiers &modifiers = {});
+            const DifficultyModifiers &modifiers, const Engine::GameConfig &gameConfig);
 
         /**
          * @brief Reset the game server to its initial state.
@@ -193,7 +195,10 @@ namespace Game
         double _accumulator = 0.0;                     ///> Accumulates time for fixed updates.
         static constexpr double FIXED_DT = 1.0 / 60.0; ///> Fixed timestep duration.
 
-        std::vector<bool> _spawned;   ///> Tracks which enemies slots are occupied.
+        std::vector<bool> _spawned; ///> Tracks which enemies slots are occupied.
+
+        Engine::GameConfig _gameConfig; ///> Game configuration.
+
         float _timeSpecialMove = 0.f; ///> Timer for special enemy movements.
         bool _gameOver = false;       ///> True if the game is over.
     };

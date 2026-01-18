@@ -44,6 +44,11 @@ class MockWorld final : public Game::IGameWorld {
         return _world.events();
     }
 
+    const Engine::GameConfig &getGameConfig() const override
+    {
+        return _world.getGameConfig();
+    }
+
   private:
     Game::World _world;
 };

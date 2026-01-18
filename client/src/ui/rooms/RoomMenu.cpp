@@ -9,7 +9,7 @@
 
 namespace
 {
-    Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
+    [[nodiscard]] Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
     {
         int v = static_cast<int>(d);
         v = (v + step) % 3;
@@ -18,12 +18,32 @@ namespace
         return static_cast<Engine::Difficulty>(v);
     }
 
-    std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
+    [[nodiscard]] Engine::GameMode shiftMode(Engine::GameMode m, const int step) noexcept
+    {
+        int v = static_cast<int>(m);
+        v = (v + step) % 4;
+        if (v < 0)
+            v += 4;
+        return static_cast<Engine::GameMode>(v);
+    }
+
+    [[nodiscard]] std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
     {
         switch (d) {
             case Engine::Difficulty::Easy: return "easy";
             case Engine::Difficulty::Medium: return "medium";
             case Engine::Difficulty::Hard: return "hard";
+        }
+        return "unknown";
+    }
+
+    [[nodiscard]] std::string_view modeToStringUI(Engine::GameMode m) noexcept
+    {
+        switch (m) {
+            case Engine::GameMode::Standard: return "standard";
+            case Engine::GameMode::Coop: return "cooperative";
+            case Engine::GameMode::FriendlyFire: return "friendly fire";
+            case Engine::GameMode::Survival: return "survival";
         }
         return "unknown";
     }
@@ -145,6 +165,8 @@ namespace Engine
         _create.levelNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
         _create.difficultyPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
         _create.difficultyNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
+        _create.modePrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "<");
+        _create.modeNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, ">");
         _create.playersPrev = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "-");
         _create.playersNext = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Small, "+");
         _create.confirm = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "CREATE");
@@ -153,6 +175,7 @@ namespace Engine
         _create.worldLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.levelLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.difficultyLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
+        _create.modeLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
         _create.playersLabel = _renderer->texts()->createText(32, {255, 255, 255, 255});
 
         _list.back = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "BACK");
@@ -180,6 +203,8 @@ namespace Engine
         applyUI(_create.levelNext.get());
         applyUI(_create.difficultyPrev.get());
         applyUI(_create.difficultyNext.get());
+        applyUI(_create.modePrev.get());
+        applyUI(_create.modeNext.get());
         applyUI(_create.playersPrev.get());
         applyUI(_create.playersNext.get());
         applyUI(_create.confirm.get());
@@ -227,12 +252,12 @@ namespace Engine
         if (_create.roomNameField) {
             const float fieldW = std::min(560.f, inner.w * 0.82f);
             const float fieldX = cx - fieldW * 0.5f;
-            _create.roomNameField->setPosition(fieldX, inner.y + inner.h * 0.35f + yOffset);
+            _create.roomNameField->setPosition(fieldX - inner.w * 0.05f, inner.y + inner.h * 0.20f + yOffset);
             _create.roomNameField->setWidth(fieldW);
         }
 
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = rowsStart + rowsStep * static_cast<float>(i) + yOffset;
+            const float y = rowsStart + rowsStep * static_cast<float>(i - 1) + yOffset;
             prev.centerButtonLabel(prevX, y, label, cx);
             centerX(next, nextX, y);
         };
@@ -240,7 +265,9 @@ namespace Engine
         row(*_create.worldPrev, *_create.worldNext, *_create.worldLabel, 0);
         row(*_create.levelPrev, *_create.levelNext, *_create.levelLabel, 1);
         row(*_create.difficultyPrev, *_create.difficultyNext, *_create.difficultyLabel, 2);
-        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 3);
+        row(*_create.modePrev, *_create.modeNext, *_create.modeLabel, 3);
+        row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 4);
+
         centerX(*_create.back, cx - dx, buttonsY);
         centerX(*_create.confirm, cx + dx, buttonsY);
     }
@@ -446,11 +473,12 @@ namespace Engine
 
     void RoomMenu::handleCreateReleased(const float mx, const float my)
     {
-        enum class Action { None, WPrev, WNext, LPrev, LNext, DPrev, DNext, PPrev, PNext, Confirm, Back };
+        enum class Action { None, WPrev, WNext, LPrev, LNext, DPrev, DNext, MPrev, MNext, PPrev, PNext, Confirm, Back };
         const auto a = pickAction<Action>(mx, my,
             {{_create.worldPrev.get(), Action::WPrev}, {_create.worldNext.get(), Action::WNext},
                 {_create.levelPrev.get(), Action::LPrev}, {_create.levelNext.get(), Action::LNext},
                 {_create.difficultyPrev.get(), Action::DPrev}, {_create.difficultyNext.get(), Action::DNext},
+                {_create.modePrev.get(), Action::MPrev}, {_create.modeNext.get(), Action::MNext},
                 {_create.playersPrev.get(), Action::PPrev}, {_create.playersNext.get(), Action::PNext},
                 {_create.confirm.get(), Action::Confirm}, {_create.back.get(), Action::Back}});
 
@@ -491,6 +519,8 @@ namespace Engine
                 _selectedDifficulty = shiftDifficulty(_selectedDifficulty, +1);
                 refreshCatalog = true;
                 break;
+            case Action::MPrev: _selectedMode = shiftMode(_selectedMode, -1); break;
+            case Action::MNext: _selectedMode = shiftMode(_selectedMode, +1); break;
             case Action::PPrev:
                 if (_selectedMaxPlayers > 1)
                     --_selectedMaxPlayers;
@@ -570,6 +600,7 @@ namespace Engine
 
         _create.playersLabel->setString("Players: " + std::to_string(_selectedMaxPlayers));
         _create.difficultyLabel->setString("Difficulty: " + std::string(difficultyToStringUI(_selectedDifficulty)));
+        _create.modeLabel->setString("Mode: " + std::string(modeToStringUI(_selectedMode)));
 
         if (_worlds.empty())
             _create.worldLabel->setString("World: (none)");
@@ -611,12 +642,15 @@ namespace Engine
             _create.levelNext->render();
             _create.difficultyPrev->render();
             _create.difficultyNext->render();
+            _create.modePrev->render();
+            _create.modeNext->render();
             _create.playersPrev->render();
             _create.playersNext->render();
 
             _renderer->draw(*_create.worldLabel);
             _renderer->draw(*_create.levelLabel);
             _renderer->draw(*_create.difficultyLabel);
+            _renderer->draw(*_create.modeLabel);
             _renderer->draw(*_create.playersLabel);
 
             _create.confirm->render();
@@ -732,6 +766,11 @@ namespace Engine
     Difficulty RoomMenu::difficultySelected() const noexcept
     {
         return _selectedDifficulty;
+    }
+
+    GameMode RoomMenu::modeSelected() const noexcept
+    {
+        return _selectedMode;
     }
 
     std::string RoomMenu::levelSelected() const

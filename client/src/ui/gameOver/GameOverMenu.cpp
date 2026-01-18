@@ -47,8 +47,8 @@ namespace Engine
         if (_scoresTitle)
             _scoresTitle->setPosition(v.cx - 30.f, titleY);
         for (std::size_t i = 0; i < _scoreLines.size(); ++i)
-            if (_scoreLines[i])
-                _scoreLines[i]->setPosition(v.cx - 90.f, lineStartY + static_cast<float>(i) * 34.f);
+            if (_scoreLines.at(i))
+                _scoreLines.at(i)->setPosition(v.cx - 90.f, lineStartY + static_cast<float>(i) * 34.f);
         layoutColumnCentered(v.w, v.h * 0.60f, 110.f, {_back.get(), _quit.get()});
     }
 
@@ -59,26 +59,32 @@ namespace Engine
             handleMousePressed(frame);
         if (frame.mouseReleased)
             handleMouseReleased(frame);
-        if (const auto w = _world.lock()) {
-            auto scores = w->getRoomScores();
-            if (scores.empty()) {
-                if (!_scoreLines.empty())
-                    _scoreLines[0]->setString("Player 1: 0 pts");
-                for (std::size_t i = 1; i < _scoreLines.size(); ++i)
-                    _scoreLines[i]->setString("");
-                return;
-            }
-            std::ranges::sort(scores, [](const auto &a, const auto &b) {
-                return a.second > b.second;
-            });
-            const std::size_t n = std::min(scores.size(), _scoreLines.size());
-            for (std::size_t i = 0; i < n; ++i) {
-                const std::string name = "Player " + std::to_string(i + 1);
-                _scoreLines[i]->setString(name + ": " + std::to_string(scores[i].second) + " pts");
-            }
-            for (std::size_t i = n; i < _scoreLines.size(); ++i)
-                _scoreLines[i]->setString("");
+        if (_backRequested || _quitRequested)
+            return;
+        const auto w = _world.lock();
+        if (!w)
+            return;
+        const auto scoresRefOrValue = w->getRoomScores();
+        auto scores = std::vector(scoresRefOrValue.begin(), scoresRefOrValue.end());
+        if (scores.empty()) {
+            if (!_scoreLines.empty() && _scoreLines.at(0))
+                _scoreLines.at(0)->setString("Player 1: 0 pts");
+            for (std::size_t i = 1; i < _scoreLines.size(); ++i)
+                if (_scoreLines.at(i))
+                    _scoreLines.at(i)->setString("");
+            return;
         }
+        std::ranges::sort(scores, [](const auto &a, const auto &b) { return a.second > b.second; });
+        const std::size_t n = std::min(scores.size(), _scoreLines.size());
+        for (std::size_t i = 0; i < n; ++i) {
+            if (!_scoreLines.at(i))
+                continue;
+            const std::string name = "Player " + std::to_string(i + 1);
+            _scoreLines.at(i)->setString(name + ": " + std::to_string(scores.at(i).second) + " pts");
+        }
+        for (std::size_t i = n; i < _scoreLines.size(); ++i)
+            if (_scoreLines.at(i))
+                _scoreLines.at(i)->setString("");
     }
 
     void GameOverMenu::handleMousePressed(const InputFrame &frame) const

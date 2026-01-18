@@ -463,7 +463,9 @@ namespace Net
 
         for (const auto session : room->sessions()) {
             if (const auto memberAddr = _sessions->getAddress(session)) {
-                if (const auto out = _packetFactory->makeRoomMessage(*memberAddr, req, message))
+                auto username = _sessions->getUsername(sessionId);
+                std::string fullMessage = username + ": " + message;
+                if (const auto out = _packetFactory->makeRoomMessage(*memberAddr, req, fullMessage))
                     (void) _tcp->sendPacket(*out);
             }
         }

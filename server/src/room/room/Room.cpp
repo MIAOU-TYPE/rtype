@@ -104,6 +104,11 @@ namespace Engine
 
     void Room::join(const int sessionId, std::string_view username)
     {
+        std::scoped_lock lock(_sessionsMutex);
+
+        if (!username.empty() && _bannedUsernames.contains(std::string(username)))
+            throw RoomError("{Room::join} username is banned from room");
+
         if (_sessions.contains(sessionId))
             throw RoomError("{Room::join} session " + std::to_string(sessionId) + " already in room");
         _sessions.insert(sessionId);
@@ -113,6 +118,7 @@ namespace Engine
 
     void Room::leave(const int sessionId, std::string_view username)
     {
+        std::scoped_lock lock(_sessionsMutex);
         _sessions.erase(sessionId);
         _gameServer->onPlayerDisconnect(sessionId);
         auto &player = _roomData.playerNames;
@@ -121,8 +127,29 @@ namespace Engine
         });
     }
 
-    bool Room::empty() const
+    void Room::banUsername(std::string_view username)
     {
+        std::scoped_lock lock(_sessionsMutex);
+        if (username.empty())
+            return;
+        _bannedUsernames.insert(std::string(username));
+    }
+
+    void Room::unbanUsername(std::string_view username)
+    {
+        std::scoped_lock lock(_sessionsMutex);
+        _bannedUsernames.erase(std::string(username));
+    }
+
+    bool Room::isUsernameBanned(const std::string_view username)
+    {
+        std::scoped_lock lock(_sessionsMutex);
+        return _bannedUsernames.contains(std::string(username));
+    }
+
+    bool Room::empty()
+    {
+        std::scoped_lock lock(_sessionsMutex);
         return _sessions.empty();
     }
 
@@ -136,8 +163,9 @@ namespace Engine
         return *_gameServer;
     }
 
-    size_t Room::getCurrentPlayers() const noexcept
+    size_t Room::getCurrentPlayers() noexcept
     {
+        std::scoped_lock lock(_sessionsMutex);
         return _sessions.size();
     }
 
@@ -158,6 +186,7 @@ namespace Engine
 
     RoomData Room::getRoomData() noexcept
     {
+        std::scoped_lock lock(_sessionsMutex);
         _roomData.currentPlayers = _sessions.size();
         return _roomData;
     }

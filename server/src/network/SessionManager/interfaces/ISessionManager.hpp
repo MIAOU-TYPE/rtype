@@ -174,6 +174,38 @@ namespace Net::Server
          * @param sessionId The ID of the session.
          * @return The username as a string.
          */
-        virtual std::string getUsername(int sessionId) const = 0;
+        [[nodiscard]] virtual std::string getUsername(int sessionId) const = 0;
+
+        /**
+         * @brief Find a session ID by username.
+         * @param username The username to search for.
+         * @return An optional containing the session ID if found, otherwise std::nullopt.
+         */
+        [[nodiscard]] virtual std::optional<int> findSessionIdByUsername(const std::string &username) const = 0;
+
+        /**
+         * @brief Ban an IP address (sin_addr.s_addr format).
+         * @param ip IPv4 address in network byte order.
+         * @param duration Duration of the ban. If <= 0, defaults to 24h.
+         */
+        virtual void banIp(uint32_t ip, std::chrono::seconds duration) = 0;
+
+        /**
+         * @brief Remove a ban for an IP.
+         * @param ip IPv4 address in network byte order.
+         */
+        virtual void unbanIp(uint32_t ip) = 0;
+
+        /**
+         * @brief Check if an IP is currently banned.
+         * @param ip IPv4 address in network byte order.
+         */
+        [[nodiscard]] virtual bool isIpBanned(uint32_t ip) const = 0;
+
+        /**
+         * @brief Get a list of banned IPs and their remaining ban durations.
+         * @return A vector of pairs containing the banned IP and remaining seconds of the ban.
+         */
+        [[nodiscard]] virtual std::vector<std::pair<uint32_t, uint64_t>> listBans() const = 0;
     };
 } // namespace Net::Server

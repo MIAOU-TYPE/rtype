@@ -109,10 +109,29 @@ namespace Engine
         void leave(int sessionId, std::string_view username);
 
         /**
+         * @brief Bans a username from the room
+         * @param username The username to be banned
+         */
+        void banUsername(std::string_view username);
+
+        /**
+         * @brief Unbans a username from the room
+         * @param username The username to be unbanned
+         */
+        void unbanUsername(std::string_view username);
+
+        /**
+         * @brief Checks if a username is banned from the room
+         * @param username The username to check
+         * @return true if the username is banned, false otherwise
+         */
+        [[nodiscard]] bool isUsernameBanned(std::string_view username);
+
+        /**
          * @brief Checks if the room is empty (no player sessions)
          * @return true if the room has no player sessions, false otherwise
          */
-        [[nodiscard]] bool empty() const;
+        [[nodiscard]] bool empty();
         /**
          * @brief Gets the set of player session IDs in the room
          * @return A constant reference to the set of session IDs
@@ -129,7 +148,7 @@ namespace Engine
          * @brief Gets the current number of players in the room
          * @return The number of player sessions in the room
          */
-        [[nodiscard]] size_t getCurrentPlayers() const noexcept;
+        [[nodiscard]] size_t getCurrentPlayers() noexcept;
 
         /**
          * @brief Gets the maximum number of players allowed in the room
@@ -163,7 +182,8 @@ namespace Engine
 
         std::mutex _sessionsMutex; ///> Mutex for synchronizing access to the sessions set
 
-        std::unordered_set<int> _sessions; ///> Set of player session IDs in the room
+        std::unordered_set<int> _sessions;                ///> Set of player session IDs in the room
+        std::unordered_set<std::string> _bannedUsernames; ///> Set of banned usernames
 
         std::unique_ptr<Game::GameServer> _gameServer = nullptr;        ///> Unique pointer to the room's game server
         std::shared_ptr<Net::Server::ISessionManager> _sessionsManager; ///> Shared pointer to the session manager

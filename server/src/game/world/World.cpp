@@ -24,7 +24,7 @@ namespace
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
             const auto &projA = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.a));
             const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
-            
+
             if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
 

@@ -53,12 +53,12 @@ namespace
         return rect.y >= top && (rect.y + rect.h) <= bottom;
     }
 
-    [[nodiscard]] ListMetrics computeListMetrics(
-        const float h, const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
+    [[nodiscard]] ListMetrics computeListMetrics(const float listTop, const float listBottom,
+        const std::unordered_map<uint32_t, std::unique_ptr<UI::UIButton>> &buttons)
     {
         ListMetrics m{};
-        m.listTop = h * 0.22f;
-        m.listBottom = h * 0.78f;
+        m.listTop = listTop;
+        m.listBottom = listBottom;
         m.listH = m.listBottom - m.listTop;
 
         float rowH = 80.f;
@@ -147,8 +147,9 @@ namespace Engine
         : AMenu(renderer), _roomManager(roomManager)
     {
         loadBackground("sprites/bg-preview.png");
+        loadPanel("sprites/popup.png", true);
 
-        _header.title = _renderer->texts()->createText(64, {255, 255, 255, 255});
+        _header.title = _renderer->texts()->createText(46, {255, 255, 255, 255});
         _header.title->setString("ROOMS");
         _header.subtitle = _renderer->texts()->createText(24, {200, 200, 200, 255});
 
@@ -185,49 +186,78 @@ namespace Engine
 
     void RoomMenu::layout()
     {
-        auto centerX = [&](UI::UIButton &b, float x, float y) {
-            b.setPosition(x - b.bounds().w * 0.5f, y);
-        };
-        const auto vp = _renderer->getViewportSize();
-        const auto w = static_cast<float>(vp.width);
-        const auto h = static_cast<float>(vp.height);
-        const float cx = w * 0.5f;
-
         updateTextStrings();
         layoutBackground();
+        layoutPanel();
+        const float ui = std::clamp(std::min(viewportF().w / 1280.f, viewportF().h / 720.f), 0.65f, 1.0f);
+        auto applyUI = [&](UI::UIButton *b) {
+            if (b)
+                b->setUIScale(ui, ui);
+        };
+        applyUI(_root.create.get());
+        applyUI(_root.join.get());
+        applyUI(_root.back.get());
+        applyUI(_create.worldPrev.get());
+        applyUI(_create.worldNext.get());
+        applyUI(_create.levelPrev.get());
+        applyUI(_create.levelNext.get());
+        applyUI(_create.difficultyPrev.get());
+        applyUI(_create.difficultyNext.get());
+        applyUI(_create.playersPrev.get());
+        applyUI(_create.playersNext.get());
+        applyUI(_create.confirm.get());
+        applyUI(_create.back.get());
+        applyUI(_list.back.get());
+        for (const auto &btn : _list.roomButtons | std::views::values)
+            btn->setUIScale(ui, ui);
 
-        _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, h * 0.07f);
-        _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, h * 0.16f);
+        const auto inner = innerRect();
+        const float cx = inner.cx();
+        constexpr float yOffset = -110.f;
+
+        _header.title->setPosition(cx - _header.title->getWidth() * 0.5f, inner.y + inner.h * 0.07f + yOffset + 10.f);
+        _header.subtitle->setPosition(cx - _header.subtitle->getWidth() * 0.5f, inner.y + inner.h * 0.25f + yOffset);
+        auto centerX = [&](UI::UIButton &b, const float x, const float y) {
+            b.setPosition(x - b.bounds().w * 0.5f, y);
+        };
 
         if (_page == Page::Root) {
-            centerX(*_root.create, cx, h * 0.35f);
-            centerX(*_root.join, cx, h * 0.51f);
-            centerX(*_root.back, cx, h * 0.67f);
+            centerX(*_root.create, cx, inner.y + inner.h * 0.55f + yOffset);
+            centerX(*_root.join, cx, inner.y + inner.h * 0.73f + yOffset);
+            centerX(*_root.back, cx, inner.y + inner.h * 0.91f + yOffset);
             return;
         }
         if (_page == Page::Create)
-            layoutCreate(w, h, cx);
+            layoutCreate(cx, yOffset);
         if (_page == Page::List)
-            layoutList(h, cx);
+            layoutList(cx, yOffset);
     }
 
-    void RoomMenu::layoutCreate(const float w, const float h, const float cx) const
+    void RoomMenu::layoutCreate(const float cx, const float yOffset) const
     {
+        const auto inner = innerRect();
+        constexpr float createDown = 70.f;
+        const float rowsStart = inner.y + inner.h * 0.38f + createDown;
+        const float rowsStep = inner.h * 0.15f;
+        const float prevX = inner.x + inner.w * 0.14f;
+        const float nextX = inner.x + inner.w * 0.86f;
+        const float buttonsY = inner.y + inner.h * 1.00f + yOffset + createDown;
+        const float dx = inner.w * 0.20f;
         auto centerX = [&](UI::UIButton &b, float x, float y) {
             b.setPosition(x - b.bounds().w * 0.5f, y);
         };
 
         if (_create.roomNameField) {
-            const float fieldW = std::min(520.f, w * 0.70f);
+            const float fieldW = std::min(560.f, inner.w * 0.82f);
             const float fieldX = cx - fieldW * 0.5f;
-            _create.roomNameField->setPosition(fieldX, h * 0.24f);
+            _create.roomNameField->setPosition(fieldX, inner.y + inner.h * 0.35f + yOffset);
             _create.roomNameField->setWidth(fieldW);
         }
 
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = h * 0.36f + h * 0.10f * static_cast<float>(i);
-            prev.centerButtonLabel(w * 0.25f, y, label, cx);
-            centerX(next, w * 0.75f, y);
+            const float y = rowsStart + rowsStep * static_cast<float>(i) + yOffset;
+            prev.centerButtonLabel(prevX, y, label, cx);
+            centerX(next, nextX, y);
         };
 
         row(*_create.worldPrev, *_create.worldNext, *_create.worldLabel, 0);
@@ -236,8 +266,8 @@ namespace Engine
         row(*_create.modePrev, *_create.modeNext, *_create.modeLabel, 3);
         row(*_create.playersPrev, *_create.playersNext, *_create.playersLabel, 4);
 
-        centerX(*_create.confirm, w * 0.75f, h * 0.85f);
-        centerX(*_create.back, w * 0.25f, h * 0.85f);
+        centerX(*_create.back, cx - dx, buttonsY);
+        centerX(*_create.confirm, cx + dx, buttonsY);
     }
 
     void RoomMenu::update(const InputFrame &frame)
@@ -386,15 +416,11 @@ namespace Engine
                     _list.lastRefresh = {};
                     updateListRooms();
                     _layoutDirty = true;
-                })) {
-                return;
-            }
-
-            if (_root.back->onClickReleased(mx, my, [&] {
-                    _backToMenu = true;
                 }))
                 return;
-
+            (void) _root.back->onClickReleased(mx, my, [&] {
+                _backToMenu = true;
+            });
             return;
         }
 
@@ -592,6 +618,8 @@ namespace Engine
     void RoomMenu::render() const
     {
         renderBackground();
+        if (_panelTex != Graphics::InvalidTexture)
+            _renderer->draw(_panelCmd);
         _renderer->draw(*_header.title);
         _renderer->draw(*_header.subtitle);
 
@@ -634,7 +662,6 @@ namespace Engine
                     btn->render();
             }
             _list.back->render();
-            return;
         }
     }
 
@@ -656,7 +683,7 @@ namespace Engine
 
             if (auto it = _list.roomButtons.find(roomId); it == _list.roomButtons.end()) {
                 auto btn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, label);
-                btn->setScale(2.f, 1.f);
+                btn->setScale(1.7f, 1.f);
                 _list.roomButtons.emplace(roomId, std::move(btn));
             } else {
                 it->second->setLabel(label);
@@ -671,9 +698,12 @@ namespace Engine
         }
     }
 
-    void RoomMenu::layoutList(const float h, const float cx)
+    void RoomMenu::layoutList(const float cx, const float yOffset)
     {
-        const auto m = computeListMetrics(h, _list.roomButtons);
+        const auto inner = innerRect();
+        const float listTop = inner.y + inner.h * 0.29f + yOffset;
+        const float listBottom = inner.y + inner.h * 0.83f + yOffset;
+        const auto m = computeListMetrics(listTop, listBottom, _list.roomButtons);
 
         _list.listTop = m.listTop;
         _list.listBottom = m.listBottom;
@@ -687,7 +717,7 @@ namespace Engine
         const float offset = computeVisibleBlockOffset(m.listTop, m.listBottom, m.listH, _list.roomButtons);
         applyYOffset(offset, _list.roomButtons);
 
-        _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, h * 0.85f);
+        _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, inner.y + inner.h * 0.90f + yOffset);
     }
 
     bool RoomMenu::wantsBackToMenu() const noexcept
@@ -758,5 +788,4 @@ namespace Engine
     {
         return _createRoomName;
     }
-
 } // namespace Engine

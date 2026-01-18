@@ -1,0 +1,22 @@
+{
+  "sprite": "boss3Tail",
+  "spriteId": 30,
+  "texture": "sprites/boss3/boss3Tail.png",
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 18, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 36, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 54, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 72, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 90, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 108, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 126, "y": 0, "w": 18, "h": 16, "duration": 0.3 },
+        { "x": 144, "y": 0, "w": 18, "h": 16, "duration": 0.3 }
+      ]
+    }
+  }
+}

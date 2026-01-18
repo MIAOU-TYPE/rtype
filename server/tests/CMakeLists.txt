@@ -21,6 +21,16 @@ add_executable(${PROJECT_NAME}
         ${SERVER_SOURCES}
 )
 
+option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
+
+if(BUILD_TESTING AND NOT WIN32)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -O0 -g --coverage)
+    target_link_options(${PROJECT_NAME} PRIVATE --coverage)
+  endif()
+endif()
+
+
 target_include_directories(${PROJECT_NAME} PRIVATE
             ${SERVER_INCLUDE_DIRS}
 )

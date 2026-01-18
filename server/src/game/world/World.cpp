@@ -15,15 +15,18 @@ namespace
 
         world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
             auto &reg = w->registry();
-
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
-            if (const auto &hpB = hpArr.at(event.b); dmgA && hpB)
+            const auto &projA = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.a));
+            const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
+            if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (const auto &hpA = hpArr.at(event.a); dmgB && hpA)
+            const auto &projB = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.b));
+            const auto &bossPartA = reg.getComponents<Ecs::BossPart>().at(event.a);
+            if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
         });
     }
@@ -36,6 +39,24 @@ namespace
             auto &reg = w->registry();
 
             const size_t targetIdx = event.target;
+
+            if (const auto &bossPart = reg.getComponents<Ecs::BossPart>().at(targetIdx); bossPart) {
+                const size_t bossIdx = static_cast<size_t>(bossPart->bossEntity);
+                auto &bossHealth = reg.getComponents<Ecs::Health>().at(bossIdx);
+                if (bossHealth) {
+                    int adjustedDamage =
+                        static_cast<int>(static_cast<float>(event.amount) * bossPart->damageMultiplier);
+                    if (bossHealth->hp <= adjustedDamage) {
+                        bossHealth->hp = 0;
+                    } else {
+                        bossHealth->hp -= adjustedDamage;
+                    }
+                    w->events().emit<DamageApplyEvent>(DamageApplyEvent{
+                        bossIdx, static_cast<uint32_t>(bossHealth->hp), static_cast<uint32_t>(bossHealth->maxHp)});
+                }
+                return;
+            }
+
             auto &bubbleComp = reg.getComponents<Ecs::BubblePowerUp>().at(targetIdx);
 
             if (bubbleComp && bubbleComp->hitsRemaining > 0) {
@@ -108,8 +129,7 @@ namespace
                 w->registry().emplaceComponent<Ecs::Health>(proj, Ecs::Health{event.health, event.maxHealth});
             w->registry().emplaceComponent<Ecs::Lifetime>(proj, Ecs::Lifetime{event.lifetime});
             w->registry().emplaceComponent<Ecs::Projectile>(proj, Ecs::Projectile{event.shooter});
-
-            if (event.spriteId == 23) {
+            if (event.spriteId == 29) {
                 std::vector<size_t> possibleTargets;
                 auto &reg = w->registry();
                 reg.view<Game::InputComponent, Ecs::Health, Ecs::Id>(
@@ -119,8 +139,8 @@ namespace
                     });
                 size_t targetId = 0;
                 if (!possibleTargets.empty()) {
-                    size_t randomIndex = Rand::rng() % possibleTargets.size();
-                    targetId = possibleTargets[randomIndex];
+                    const size_t randomIndex = Rand::rng() % possibleTargets.size();
+                    targetId = possibleTargets.at(randomIndex);
                 }
                 if (targetId > 0)
                     w->registry().emplaceComponent<Ecs::HomingProjectile>(
@@ -206,12 +226,12 @@ namespace
 
         world.events().subscribe<BubblePowerUpUpdatePosEvent>([w](const BubblePowerUpUpdatePosEvent &event) {
             auto &reg = w->registry();
-            auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
+            const auto &bubblePowerUp = reg.getComponents<Ecs::BubblePowerUp>().at(event.playerId);
 
             if (!bubblePowerUp || !bubblePowerUp->bubbleEntity.has_value())
                 return;
 
-            const size_t bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
+            const auto bubbleIdx = static_cast<size_t>(bubblePowerUp->bubbleEntity.value());
             if (auto &bubblePos = reg.getComponents<Ecs::Position>().at(bubbleIdx)) {
                 bubblePos->x = event.playerX;
                 bubblePos->y = event.playerY;
@@ -317,10 +337,8 @@ namespace
 
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Standard) {
-                const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx);
-                if (playerPowerUp) {
+                if (const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx))
                     return;
-                }
             }
 
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Laser) {
@@ -358,15 +376,17 @@ namespace Game
         return _events;
     }
 
-    Ecs::Entity World::createPlayer(const int sessionId)
+    Ecs::Entity World::createPlayer(const int sessionId, const size_t index)
     {
+        static std::vector<unsigned int> playerSpriteId = {7, 8, 48, 10};
+
         const Ecs::Entity ent = World::createEntity();
 
         _registry.emplaceComponent<Ecs::Position>(ent, Ecs::Position{100.f, Rand::enemyY(Rand::rng), 2});
         _registry.emplaceComponent<Ecs::Velocity>(ent, Ecs::Velocity{0.f, 0.f});
         _registry.emplaceComponent<Ecs::Health>(ent, Ecs::Health{500, 500});
         _registry.emplaceComponent<InputComponent>(ent);
-        _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(7, true));
+        _registry.emplaceComponent<Ecs::Drawable>(ent, Ecs::Drawable(playerSpriteId.at(index % 4), true));
         _registry.emplaceComponent<Ecs::Collision>(ent, Ecs::Collision{51, 25.5f});
         _registry.emplaceComponent<Ecs::Damageable>(ent);
         _registry.emplaceComponent<Ecs::Score>(ent, Ecs::Score{0, 0});

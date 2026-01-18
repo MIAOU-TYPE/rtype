@@ -23,8 +23,10 @@ namespace Test
             return _events;
         }
 
-        Ecs::Entity createPlayer(int sessionId) override
+        Ecs::Entity createPlayer(int sessionId, size_t index) override
         {
+            (void) sessionId;
+            (void) index;
             return _reg.createEntity();
         }
 

@@ -138,8 +138,7 @@ namespace Game
         reg.emplaceComponent<Ecs::Position>(mob, Ecs::Position{x, y, 2});
         reg.emplaceComponent<Ecs::Velocity>(mob, Ecs::Velocity{def.speed * modifiers.enemySpeedMultiplier, 0.f});
 
-        if (def.sprite == 1 || def.sprite == 21 || def.sprite == 22)
-            reg.emplaceComponent<Ecs::BossPhase>(mob, Ecs::BossPhase{});
+        handleBossPhases(world, def, mob, x, y);
 
         Ecs::MovementPattern pattern;
         pattern.type =
@@ -244,6 +243,51 @@ namespace Game
         draw.spriteId = layer.spriteId;
         draw.drawable = true;
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
+    }
+
+    void LevelSystem::handleBossPhases(
+        IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob, const float x, const float y)
+    {
+        auto &reg = world.registry();
+
+        if (!def.phases.empty()) {
+            Ecs::BossPhase bossConfig;
+            bossConfig.phases = def.phases;
+            reg.emplaceComponent<Ecs::BossPhase>(mob, bossConfig);
+        }
+        if (def.sprite == 22) {
+            Ecs::Entity previousEntity = mob;
+            const int numTailSegments = 5;
+            float tailStartX = x - 50.f;
+            float tailStartY = y + def.colH;
+            for (int i = 0; i < numTailSegments; ++i) {
+                const Ecs::Entity tailSegment = world.createEntity();
+                float offsetX = -20.f * (static_cast<float>(i) + 1);
+                float offsetY = 30.f * (static_cast<float>(i));
+                reg.emplaceComponent<Ecs::Position>(
+                    tailSegment, Ecs::Position{tailStartX + offsetX, tailStartY + offsetY, 2});
+                reg.emplaceComponent<Ecs::Velocity>(tailSegment, Ecs::Velocity{0.f, 0.f});
+                Ecs::Drawable draw;
+                draw.spriteId = 30;
+                draw.drawable = true;
+                reg.emplaceComponent<Ecs::Drawable>(tailSegment, draw);
+                Ecs::TailFollower follower;
+                follower.bossEntity = mob;
+                follower.leaderEntity = previousEntity;
+                follower.followSpeed = 80.f;
+                follower.followDistance = 40.f;
+                follower.segmentIndex = i;
+                reg.emplaceComponent<Ecs::TailFollower>(tailSegment, follower);
+                reg.emplaceComponent<Ecs::Collision>(
+                    tailSegment, Ecs::Collision{25.f * COLLISION_SCALE, 25.f * COLLISION_SCALE});
+                reg.emplaceComponent<Ecs::Damageable>(tailSegment, Ecs::Damageable{true});
+                Ecs::BossPart bossPart;
+                bossPart.bossEntity = mob;
+                bossPart.damageMultiplier = 3.0f;
+                reg.emplaceComponent<Ecs::BossPart>(tailSegment, bossPart);
+                previousEntity = tailSegment;
+            }
+        }
     }
 
     void LevelSystem::spawnPowerUp(IGameWorld &world, const std::string &type)

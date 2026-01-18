@@ -49,8 +49,9 @@ namespace Game
         /**
          * @brief Create a new gameplay entity (e.g., player).
          * @param sessionId The session ID associated with the player.
+         * @param index The player index (e.g., for multiplayer games).
          */
-        [[nodiscard]] virtual Ecs::Entity createPlayer(int sessionId) = 0;
+        [[nodiscard]] virtual Ecs::Entity createPlayer(int sessionId, size_t index) = 0;
 
         /**
          * @brief Destroy an entity and all its components.

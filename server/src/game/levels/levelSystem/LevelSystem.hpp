@@ -12,6 +12,7 @@
 #include "AIBrain.hpp"
 #include "AIShoot.hpp"
 #include "Background.hpp"
+#include "BossPart.hpp"
 #include "BossPhase.hpp"
 #include "Collision.hpp"
 #include "Damage.hpp"
@@ -29,6 +30,7 @@
 #include "PowerUp.hpp"
 #include "PowerUpType.hpp"
 #include "Rand.hpp"
+#include "TailFollower.hpp"
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
@@ -133,6 +135,17 @@ namespace Game
          */
         static void createBackgroundEntity(
             IGameWorld &world, const BackgroundLayer &layer, float xPosition, float scaledWidth, int tileIndex);
+
+        /**
+         * @brief Handle special boss phases by adding necessary components.
+         * @param world The game world containing the boss entity.
+         * @param def The enemy definition of the boss.
+         * @param mob The boss entity to configure.
+         * @param x The x position of the boss.
+         * @param y The y position of the boss.
+         */
+        static void handleBossPhases(
+            IGameWorld &world, const EnemyDefinition &def, const Ecs::Entity mob, const float x, const float y);
 
         /**
          * @brief Spawn a power-up.

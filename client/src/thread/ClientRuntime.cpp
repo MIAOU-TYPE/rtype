@@ -300,7 +300,7 @@ namespace Thread
         if (_input->isKeyHeld(big_shoot))
             input.powerShoot = true;
 
-        if (auto packet = _udpPacketFactory.makeInput(input))
+        if (const auto packet = _udpPacketFactory.makeInput(input))
             _udpClient->sendPacket(*packet);
     }
 

@@ -303,7 +303,6 @@ namespace Engine
         std::unique_ptr<UI::UIButton> _cancelSaveButton;  ///> Cancel save button
 
         int _selectedEntityType = 0;             ///> Index of currently selected entity type (-1 = none)
-        float _currentTime = 0.0f;               ///> Current spawn time for new entities
         int _currentBackgroundIndex = 0;         ///> Index of current background
         bool _backRequested = false;             ///> Back to menu requested flag
         bool _showSaveDialog = false;            ///> Whether the save dialog is shown

@@ -63,8 +63,8 @@ namespace Command
         bool empty() const noexcept;
 
       private:
-        mutable std::mutex _mutex; ///< Mutex for thread-safe access
-        std::queue<T> _queue;      ///< Queue to store commands
+        mutable std::mutex _mutex; ///> Mutex for thread-safe access
+        std::queue<T> _queue;      ///> Queue to store commands
     };
 } // namespace Command
 

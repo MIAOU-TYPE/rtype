@@ -9,6 +9,7 @@
 
 #include "AIShoot.hpp"
 #include "BossPhase.hpp"
+#include "Drawable.hpp"
 #include "Health.hpp"
 #include "IGameWorld.hpp"
 #include "Id.hpp"

@@ -43,10 +43,41 @@ This ensures:
 During construction, the world registers all components required by the simulation:
 
 ```cpp
+_registry.registerComponent<Id>();
 _registry.registerComponent<Position>();
 _registry.registerComponent<Velocity>();
+_registry.registerComponent<Direction>();
+_registry.registerComponent<Lifetime>();
 _registry.registerComponent<Health>();
+_registry.registerComponent<Damage>();
+_registry.registerComponent<Damageable>();
+_registry.registerComponent<Attack>();
+_registry.registerComponent<Projectile>();
+_registry.registerComponent<HomingProjectile>();
+_registry.registerComponent<WeaponConfig>();
+_registry.registerComponent<AIBrain>();
+_registry.registerComponent<AIShoot>();
+_registry.registerComponent<MovementPattern>();
+_registry.registerComponent<Target>();
+_registry.registerComponent<Controllable>();
+_registry.registerComponent<PowerUp>();
+_registry.registerComponent<PowerUpType>();
+_registry.registerComponent<PlayerPowerUp>();
+_registry.registerComponent<BubblePowerUp>();
+_registry.registerComponent<LaserPowerUp>();
+_registry.registerComponent<PowerUpBar>();
+_registry.registerComponent<BossPart>();
+_registry.registerComponent<BossPhase>();
+_registry.registerComponent<TailFollower>();
+_registry.registerComponent<Collision>();
+_registry.registerComponent<PixelCollision>();
+_registry.registerComponent<GravityAffected>();
+_registry.registerComponent<GravityField>();
+_registry.registerComponent<Drawable>();
+_registry.registerComponent<KillScore>();
+_registry.registerComponent<Score>();
 _registry.registerComponent<InputComponent>();
+_registry.registerComponent<Background>();
 ```
 
 This centralizes component lifecycle management and guarantees availability.

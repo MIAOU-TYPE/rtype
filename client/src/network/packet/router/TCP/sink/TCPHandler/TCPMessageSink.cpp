@@ -64,6 +64,11 @@ namespace Network
         _roomUpdatedCbs.emplace_back(std::move(cb));
     }
 
+    void TCPMessageSink::onMessageSubscribe(MessageCb cb)
+    {
+        _messageCbs.emplace_back(std::move(cb));
+    }
+
     void TCPMessageSink::onWelcome(
         const uint32_t req, const uint16_t ver, const uint32_t sessionId, const uint16_t udpPort, const uint64_t token)
     {
@@ -137,6 +142,11 @@ namespace Network
     void TCPMessageSink::onRoomUpdated(uint32_t req, const RoomData &room)
     {
         emit(_roomUpdatedCbs, req, room);
+    }
+
+    void TCPMessageSink::onMessageRoom(uint32_t req, std::string_view message)
+    {
+        emit(_messageCbs, req, message);
     }
 
     ConnectInfo TCPMessageSink::getConnectInfo() const noexcept

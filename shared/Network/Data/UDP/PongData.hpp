@@ -16,9 +16,9 @@
  */
 struct PongData {
     HeaderData header;      ///> The packet header containing type, version, and size.
-    uint32_t pongTimestamp; ///> The timestamp sent in the pong response.
+    uint64_t pongTimestamp; ///> The timestamp sent in the pong response.
 };
 
 #pragma pack(pop)
 
-static_assert(sizeof(PongData) == sizeof(HeaderData) + 4, "PongData layout mismatch");
+static_assert(sizeof(PongData) == sizeof(HeaderData) + 8, "PongData layout mismatch");

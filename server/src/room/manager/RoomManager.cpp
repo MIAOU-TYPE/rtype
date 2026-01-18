@@ -163,10 +163,10 @@ namespace Engine
             room->gameServer().onPlayerInput(sessionId, input);
     }
 
-    void RoomManager::onPing(const int sessionId) const noexcept
+    void RoomManager::onPing(const int sessionId, uint64_t timestamp) const noexcept
     {
         if (const auto room = getRoomOfPlayer(sessionId))
-            room->gameServer().onPing(sessionId);
+            room->gameServer().onPing(sessionId, timestamp);
     }
 
     std::vector<RoomData> RoomManager::listRooms() const noexcept

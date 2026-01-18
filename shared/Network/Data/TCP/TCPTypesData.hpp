@@ -33,6 +33,7 @@ namespace Net::Protocol::TCP
     constexpr uint8_t AUTH_LOGIN = 0x09;     ///> Client requests to log in to an existing account
     constexpr uint8_t SCOREBOARD_GET = 0x0A; ///> Client requests global scoreboard (top N)
     constexpr uint8_t ROOM_INFO = 0x0B;      ///> Client requests information about the current room
+    constexpr uint8_t ROOM_MESSAGE = 0x0C;   ///> Client sends a message to the room
 
     /**
      * @brief Packet types for TCP communication from server to client.
@@ -47,4 +48,5 @@ namespace Net::Protocol::TCP
     constexpr uint8_t GAME_START = 0x17;      ///> Server notifies clients that the game is starting
     constexpr uint8_t AUTH_OK = 0x18;         ///> Server confirms successful authentication
     constexpr uint8_t SCOREBOARD_LIST = 0x19; ///> Server sends the global scoreboard (top N)
+    constexpr uint8_t MESSAGE_ROOM = 0x1A;    ///> Server broadcasts a message to the room
 } // namespace Net::Protocol::TCP

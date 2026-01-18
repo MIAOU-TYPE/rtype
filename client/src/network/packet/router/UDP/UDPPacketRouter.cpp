@@ -134,8 +134,7 @@ namespace Ecs
 
         PongData pongData{};
         std::memcpy(&pongData, payload, sizeof(pongData));
-        const uint32_t timestamp = ntohl(pongData.pongTimestamp);
-        _sink->onPong(timestamp);
+        _sink->onPong(ntohll(pongData.pongTimestamp));
     }
 
     void UDPPacketRouter::handleGameOver() const

@@ -40,13 +40,42 @@ namespace UI
         layout();
     }
 
-    void UITextField::layout()
+    void UITextField::setHeight(float h)
+    {
+        _h = h;
+        layout();
+    }
+
+    void UITextField::setTextSize(const size_t size) const
     {
         if (!_labelText || !_valueText)
             return;
-        _labelText->setPosition(_x, _y);
-        _valueText->setPosition(_x, _y + 32.f);
-        _h = 32.f + 34.f;
+
+        const auto v = static_cast<unsigned int>(size);
+        const unsigned int l = (v > 2) ? (v - 2) : v;
+
+        _labelText->setCharacterSize(l);
+        _valueText->setCharacterSize(v);
+
+        layout();
+    }
+
+    void UITextField::layout() const
+    {
+        if (!_labelText || !_valueText)
+            return;
+
+        constexpr float topPad = 0.f;
+        constexpr float lineGap = 6.f;
+        const float labelY = _y + topPad;
+
+        _labelText->setPosition(_x, labelY);
+
+        constexpr float defaultLabelToValue = 32.f;
+        const float maxLabelToValue = std::max(0.f, _h - 20.f);
+        const float labelToValue = std::min(defaultLabelToValue, maxLabelToValue);
+
+        _valueText->setPosition(_x, _y + labelToValue + lineGap);
     }
 
     void UITextField::render() const

@@ -249,13 +249,19 @@ namespace Thread
          */
         void runTcp();
 
-        std::atomic_bool _pendingHome{false};        ///> Atomic flag to indicate pending home state
-        std::atomic_bool _pendingGameStart{false};   ///> Atomic flag to indicate pending game start
-        std::atomic_bool _pendingJoinRoom{false};    ///> Atomic flag to indicate pending room join
-        std::atomic_bool _pendingAuthOk{false};      ///> Atomic flag to indicate pending authentication OK
-        std::atomic_bool _pendingScoreSubmit{false}; ///> Atomic flag to indicate pending score submission
-        std::atomic_bool _pendingGameOver{false};    ///> Atomic flag to indicate pending game over
+        std::atomic_bool _pendingHome{false};         ///> Atomic flag to indicate pending home state
+        std::atomic_bool _pendingGameStart{false};    ///> Atomic flag to indicate pending game start
+        std::atomic_bool _pendingJoinRoom{false};     ///> Atomic flag to indicate pending room join
+        std::atomic_bool _pendingLobbyRefresh{false}; ///> Atomic flag to indicate pending lobby refresh
+        std::atomic_bool _pendingAuthOk{false};       ///> Atomic flag to indicate pending authentication OK
+        std::atomic_bool _pendingScoreSubmit{false};  ///> Atomic flag to indicate pending score submission
+        std::atomic_bool _pendingGameOver{false};     ///> Atomic flag to indicate pending game over
 
         std::atomic_uint32_t _lastScore{0}; ///> Atomic variable to store the last score
+
+        std::chrono::milliseconds _pingInterval{1000};     ///> Ping interval duration
+        std::chrono::steady_clock::time_point _nextPing{}; ///> Next ping time point
+        void sendPingIfDue();                              ///> Sends a ping if the ping interval has elapsed
+        std::atomic_bool _resetPingSchedule{false};        ///> Atomic flag to indicate if ping schedule reset is needed
     };
 } // namespace Thread

@@ -16,6 +16,7 @@
 #include "IText.hpp"
 #include "InputState.hpp"
 #include "UIButton.hpp"
+#include "UITextField.hpp"
 
 namespace Engine
 {
@@ -111,6 +112,29 @@ namespace Engine
          */
         void consumeUpdate() noexcept;
 
+        /**
+         * @brief Sets the chat messages to display.
+         * @param messages A vector of chat messages.
+         */
+        void setChatMessages(const std::vector<std::string> &messages);
+
+        /**
+         * @brief Checks if a chat message has been submitted.
+         * @return True if a chat message was submitted, false otherwise.
+         */
+        [[nodiscard]] bool hasChatSubmission() const noexcept;
+
+        /**
+         * @brief Consumes the chat submission flag.
+         */
+        void consumeChatSubmission() noexcept;
+
+        /**
+         * @brief Retrieves the submitted chat message.
+         * @return The submitted chat message.
+         */
+        [[nodiscard]] const std::string &submittedChatMessage() const noexcept;
+
       private:
         /**
          * @brief Handles input events for the lobby page.
@@ -137,6 +161,12 @@ namespace Engine
         void handleKeyPressed(const InputFrame &frame);
 
         /**
+         * @brief Handles key release events.
+         * @param frame The last input frame.
+         */
+        void handleKeyReleased(const InputFrame &frame) const;
+
+        /**
          * @brief Rebuilds the text elements based on the current state.
          */
         void rebuildTexts() const;
@@ -147,6 +177,7 @@ namespace Engine
         std::shared_ptr<Graphics::IText> _titleText;    ///> Title text element.
         std::shared_ptr<Graphics::IText> _subtitleText; ///> Subtitle text element.
         std::shared_ptr<Graphics::IText> _dividerText;  ///> Divider text element.
+        std::shared_ptr<Graphics::IText> _dividerChat;  ///> Divider text element.
 
         std::shared_ptr<Graphics::IText> _playersHeaderText;        ///> Players header text element.
         std::shared_ptr<Graphics::IText> _playersCountText;         ///> Players count text element.
@@ -168,5 +199,17 @@ namespace Engine
         static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
 
         size_t _lobbyCapacity = 4; ///> Maximum capacity of the lobby.
+
+        std::vector<std::string> _chatMessages;                   ///> List of chat messages.
+        std::shared_ptr<Graphics::IText> _chatHeaderText;         ///> Chat header text element.
+        std::vector<std::shared_ptr<Graphics::IText>> _chatTexts; ///> Chat message text elements.
+        size_t _chatCapacity = 8;                                 ///> Maximum number of chat messages to display.
+        size_t _chatVisible = 0;                                  ///> Number of visible chat messages (0 = all).
+
+        std::unique_ptr<UI::UITextField> _chatField; ///> Chat input field UI element.
+        std::unique_ptr<UI::UIButton> _chatSendBtn;  ///> Chat send button UI element.
+
+        bool _chatSubmitted = false;       ///> Indicates if a chat message was submitted.
+        std::string _chatSubmittedMessage; ///> The submitted chat message.
     };
 } // namespace Engine

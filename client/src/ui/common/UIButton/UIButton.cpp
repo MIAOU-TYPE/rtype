@@ -82,7 +82,7 @@ namespace UI
         const auto charSize = static_cast<unsigned int>(buttonH * 0.45f);
         _text->setCharacterSize(charSize);
         const float textX = _boxX + (buttonW - _text->getWidth()) * 0.5f;
-        const float textY = _boxY + (buttonH - _text->getHeight()) * 0.2f;
+        const float textY = _boxY + (buttonH - _text->getHeight()) * 0.3f;
         _text->setPosition(textX, textY);
     }
 

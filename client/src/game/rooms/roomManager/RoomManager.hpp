@@ -103,6 +103,18 @@ namespace Engine
          */
         void loadCustomWorldFromFilesystem();
 
+        /**
+         * @brief Retrieves the list of messages.
+         * @return A reference to the vector of message strings.
+         */
+        [[nodiscard]] std::vector<std::string> &messages() noexcept;
+
+        /**
+         * @brief Adds a message to the message list.
+         * @param message The message string to add.
+         */
+        void addMessage(const std::string &message);
+
       private:
         /**
          * @brief Loads worlds and levels from embedded resources.
@@ -147,5 +159,7 @@ namespace Engine
         std::vector<RoomData> _rooms; ///> List of available rooms.
 
         RoomData _currentRoom{}; ///> Data of the current room being managed.
+
+        std::vector<std::string> _messages{}; ///> List of messages received.
     };
 } // namespace Engine

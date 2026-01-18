@@ -243,7 +243,6 @@ namespace Net
 
     void TCPPacketRouter::onCreateRoom(const sockaddr_in &addr, const uint32_t req, TCP::Reader &r) const
     {
-        std::cout << "Received CREATE_ROOM request\n";
         if (const auto currentRoom = _rooms->getRoomIdOfPlayer(_sessions->getOrCreateSession(addr)); currentRoom != 0)
             (void) _rooms->removePlayer(_sessions->getOrCreateSession(addr));
         std::string roomName;

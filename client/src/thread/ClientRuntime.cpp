@@ -387,6 +387,7 @@ namespace Thread
         _eventBus->on<Engine::StartGameRequested>([this](const Engine::StartGameRequested &) {
             if (!_stateManager->is<Engine::LobbyState>())
                 return;
+            _world->reset();
             if (const auto pkt = _tcpPacketFactory.makeStartGame(nextReqId()))
                 _tcpClient->sendPacket(*pkt);
         });

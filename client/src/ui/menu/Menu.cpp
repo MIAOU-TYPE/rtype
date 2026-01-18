@@ -14,10 +14,17 @@ namespace Engine
         try {
             const auto textures = _renderer->textures();
             loadBackground("sprites/bg-preview.png");
+            loadPanel("sprites/popup.png", true);
+
             _logoTexture = textures->load("sprites/menu_logo.png");
             if (_logoTexture == Graphics::InvalidTexture)
                 throw MenuError("{Menu::Menu} failed to load sprites/menu_logo.png texture");
             _logoCmd.textureId = _logoTexture;
+
+            _header.title = _renderer->texts()->createText(46, {255, 255, 255, 255});
+            _header.title->setString("MENU");
+            _header.subtitle = _renderer->texts()->createText(24, {200, 200, 200, 255});
+            _header.subtitle->setString("Welcome to R-Type!");
 
             _login = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "LOGIN");
             _register = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "REGISTER");
@@ -36,7 +43,7 @@ namespace Engine
 
             _authErrorText = _renderer->texts()->createText(22, {255, 80, 80, 255});
             _authErrorText->setString("");
-            _scoreTitleText = _renderer->texts()->createText(32, {255, 255, 255, 255});
+            _scoreTitleText = _renderer->texts()->createText(46, {255, 255, 255, 255});
             _scoreTitleText->setString("SCOREBOARD");
             _scoreRowTexts.reserve(10);
             for (int i = 0; i < 10; ++i) {
@@ -85,31 +92,7 @@ namespace Engine
         if (_authed == v)
             return;
         _authed = v;
-        _page = _authed ? Page::AuthedRoot : Page::UnauthedRoot;
-        _startRequested = false;
-        _quitRequested = false;
-        _settingsRequested = false;
-        _levelEditorRequested = false;
-        _submitted = false;
-        _submittedMode = AuthMode::None;
-        _submittedUser.clear();
-        _submittedPass.clear();
-        _scoreboardRefreshRequested = false;
-        _scoreboardLoading = false;
-        _scores.clear();
-        rebuildScoreboardTexts();
-        _authErrorMessage.clear();
-        if (_authErrorText)
-            _authErrorText->setString("");
-        if (_userField) {
-            _userField->clear();
-            _userField->setFocused(false);
-        }
-        if (_passField) {
-            _passField->clear();
-            _passField->setFocused(false);
-        }
-        layout();
+        onEnter();
     }
 
     bool Menu::isAuthed() const noexcept
@@ -182,11 +165,14 @@ namespace Engine
         const float w = vp.w;
         const float h = vp.h;
         layoutBackground();
-        const auto [width, height] = _renderer->textures()->getSize(_logoTexture);
-        _logoCmd.frame = {0, 0, static_cast<int>(width), static_cast<int>(height)};
-        constexpr float LOGO_SCALE = 1.0f;
-        _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
-        _logoCmd.position = {(w - static_cast<float>(width) * LOGO_SCALE) * 0.5f, h * 0.05f};
+
+        if (_logoTexture != Graphics::InvalidTexture) {
+            const auto [lw, lh] = _renderer->textures()->getSize(_logoTexture);
+            _logoCmd.frame = {0, 0, static_cast<int>(lw), static_cast<int>(lh)};
+            constexpr float LOGO_SCALE = 1.0f;
+            _logoCmd.scale = {LOGO_SCALE, LOGO_SCALE};
+            _logoCmd.position = {(w - static_cast<float>(lw) * LOGO_SCALE) * 0.5f, h * 0.05f};
+        }
 
         if (_page == Page::UnauthedRoot) {
             layoutRowCentered(*_login, *_register, vp.cx, h * 0.50f, w * 0.05f);
@@ -202,31 +188,41 @@ namespace Engine
             placeCentered(*_quit, vp.cx, h * 0.84f);
             return;
         }
+        layoutPanel(0.85f, 0.85f, 0.08f, 0.10f);
+        const auto inner = innerRect();
+        const float icx = inner.cx();
+        const float fieldW = std::min(440.f, inner.w * 0.80f);
+        const float fieldX = icx - fieldW * 0.55f + 200.f;
+
         if (_page == Page::Scoreboard) {
             if (_scoreTitleText)
-                _scoreTitleText->setPosition(vp.cx - _scoreTitleText->getWidth() * 0.5f, h * 0.30f);
-            placeCentered(*_scoreRefreshBtn, vp.cx, h * 0.79f);
-            placeCentered(*_backBtn, vp.cx, h * 0.90f);
-            const float startY = h * 0.50f;
+                _scoreTitleText->setPosition(
+                    icx - _scoreTitleText->getWidth() * 0.5f, inner.y + inner.h * 0.10f - 115.f);
+
+            placeCentered(*_scoreRefreshBtn, icx - inner.w * 0.18f, inner.y + inner.h * 0.82f);
+            placeCentered(*_backBtn, icx + inner.w * 0.18f, inner.y + inner.h * 0.82f);
+
+            const float startY = inner.y + inner.h * 0.26f - 70.f;
             for (size_t i = 0; i < _scoreRowTexts.size(); ++i) {
-                constexpr float lineH = 30.0f;
                 const auto &t = _scoreRowTexts.at(i);
-                if (!t)
-                    continue;
-                t->setPosition(vp.cx - t->getWidth() * 0.5f, startY + static_cast<float>(i) * lineH);
+                if (t)
+                    t->setPosition(icx - t->getWidth() * 0.5f, startY + static_cast<float>(i) * 30.0f);
             }
             return;
         }
-        const float fieldX = w * 0.5f - 220.f;
-        constexpr float fieldW = 440.f;
-        _userField->setPosition(fieldX, h * 0.40f);
+        if (_header.title)
+            _header.title->setPosition(icx - _header.title->getWidth() * 0.5f, inner.y + inner.h * 0.10f - 115.f);
+        if (_header.subtitle)
+            _header.subtitle->setPosition(icx - _header.subtitle->getWidth() * 0.5f, inner.y + inner.h * 0.18f - 60.f);
+        _userField->setPosition(fieldX, inner.y + inner.h * 0.25f);
         _userField->setWidth(fieldW);
-        _passField->setPosition(fieldX, h * 0.55f);
+        _passField->setPosition(fieldX, inner.y + inner.h * 0.45f);
         _passField->setWidth(fieldW);
         if (_authErrorText && !_authErrorMessage.empty())
-            _authErrorText->setPosition(vp.cx - _authErrorText->getWidth() * 0.5f, h * 0.27f);
-        placeCentered(*_submitBtn, vp.cx, h * 0.63f);
-        placeCentered(*_backBtn, vp.cx, h * 0.76f);
+            _authErrorText->setPosition(icx - _authErrorText->getWidth() * 0.5f, inner.y + inner.h * 0.25f - 25.f);
+
+        placeCentered(*_submitBtn, icx, inner.y + inner.h * 0.66f);
+        placeCentered(*_backBtn, icx, inner.y + inner.h * 0.82f);
     }
 
     void Menu::update(const InputFrame &frame)
@@ -247,7 +243,8 @@ namespace Engine
     void Menu::render() const
     {
         renderBackground();
-        _renderer->draw(_logoCmd);
+        if (_logoTexture != Graphics::InvalidTexture)
+            _renderer->draw(_logoCmd);
         if (_page == Page::UnauthedRoot) {
             _login->render();
             _register->render();
@@ -263,6 +260,8 @@ namespace Engine
             _quit->render();
             return;
         }
+        if (_panelTex != Graphics::InvalidTexture)
+            _renderer->draw(_panelCmd);
         if (_page == Page::Scoreboard) {
             if (_scoreTitleText)
                 _renderer->draw(*_scoreTitleText);
@@ -273,6 +272,10 @@ namespace Engine
             _backBtn->render();
             return;
         }
+        if (_header.title)
+            _renderer->draw(*_header.title);
+        if (_header.subtitle)
+            _renderer->draw(*_header.subtitle);
         if (_authErrorText && !_authErrorMessage.empty())
             _renderer->draw(*_authErrorText);
         _userField->render();
@@ -375,6 +378,11 @@ namespace Engine
 
     void Menu::handleKeyPressed(const InputFrame &frame)
     {
+        if (_page == Page::Scoreboard) {
+            if (frame.key == Key::Escape)
+                backToRoot();
+            return;
+        }
         if (_page != Page::LoginForm && _page != Page::RegisterForm)
             return;
         if (frame.key == Key::Tab) {
@@ -383,27 +391,17 @@ namespace Engine
                 _userField->setFocused(true);
                 return;
             }
-            if (uf) {
-                _userField->setFocused(false);
-                _passField->setFocused(true);
-            } else {
-                _passField->setFocused(false);
-                _userField->setFocused(true);
-            }
+            _userField->setFocused(!uf);
+            _passField->setFocused(uf);
             return;
         }
         if (frame.key == Key::Enter) {
             submit();
             return;
         }
-        if (_page == Page::Scoreboard) {
-            if (frame.key == Key::Escape)
-                backToRoot();
-            return;
-        }
-        if (frame.key == Key::Escape) {
+
+        if (frame.key == Key::Escape)
             backToRoot();
-        }
     }
 
     void Menu::handleKeyReleased(const InputFrame &frame) const

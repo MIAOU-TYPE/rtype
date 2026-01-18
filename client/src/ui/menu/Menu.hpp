@@ -70,6 +70,7 @@ namespace Engine
          * Register: Registration mode.
          */
         enum class AuthMode { None, Login, Register };
+
         /**
          * @brief Construct a new Menu object.
          *
@@ -272,10 +273,21 @@ namespace Engine
         Page _page = Page::UnauthedRoot; ///> Current page in the menu.
         bool _authed = false;            ///> Flag indicating if the user is authenticated.
 
+        /**
+         * @brief Structure representing the header UI elements.
+         */
+        struct HeaderUI {
+            std::shared_ptr<Graphics::IText> title; ///> Title text.
+            std::shared_ptr<Graphics::IText> subtitle;  ///> Subtitle text.
+        };
+
+        HeaderUI _header;   ///> Header UI elements.
+
         std::unique_ptr<UI::UIButton> _login;    ///> Button to access the login form.
         std::unique_ptr<UI::UIButton> _register; ///> Button to access the registration form.
 
         std::unique_ptr<UI::UIButton> _play;        ///> Button to start the game.
+        std::unique_ptr<UI::UIButton> _scoreboard; ///> Button to access the scoreboard page.
         std::unique_ptr<UI::UIButton> _settings;    ///> Button to access settings.
         std::unique_ptr<UI::UIButton> _levelEditor; ///> Button to access level editor.
         std::unique_ptr<UI::UIButton> _quit;        ///> Button to quit the game.
@@ -285,7 +297,6 @@ namespace Engine
         std::unique_ptr<UI::UITextField> _userField; ///> Text field for entering the username.
         std::unique_ptr<UI::UITextField> _passField; ///> Text field for entering the password.
 
-        std::unique_ptr<UI::UIButton> _scoreboard;                    ///> Button to access the scoreboard page.
         std::unique_ptr<UI::UIButton> _scoreRefreshBtn;               ///> Button to refresh the scoreboard.
         std::shared_ptr<Graphics::IText> _scoreTitleText;             ///> Text object for the scoreboard title.
         std::vector<std::shared_ptr<Graphics::IText>> _scoreRowTexts; ///> Text objects for each row in the scoreboard.

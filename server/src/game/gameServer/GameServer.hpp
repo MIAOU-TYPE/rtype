@@ -76,6 +76,7 @@ namespace Game
             Type type = Type::None; ///> Command type
             InputComponent input{}; ///> Player input data
             int sessionId = 0;      ///> Associated session ID
+            uint64_t timestamp = 0; ///> Timestamp for ping commands
         };
 
         /**
@@ -123,7 +124,7 @@ namespace Game
          *
          * Sends a PONG packet back to the corresponding client.
          */
-        void onPing(int sessionId) noexcept override;
+        void onPing(int sessionId, uint64_t timestamp) noexcept override;
 
         /**
          * @brief Executes one simulation step.

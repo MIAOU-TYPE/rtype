@@ -446,7 +446,6 @@ namespace Net
     void TCPPacketRouter::onMessageRoom(
         const sockaddr_in &addr, const int sessionId, const uint32_t req, TCP::Reader &r) const
     {
-        std::cout << "[TCPPacketRouter]" << std::endl;
         uint32_t roomId = 0;
         std::string message = "";
 
@@ -462,7 +461,6 @@ namespace Net
         if (!room)
             return sendError(addr, req, 32, "MESSAGE_ROOM: room not found");
 
-        std::cout << "Received MESSAGE_ROOM for room ID " << roomId << " from session ID " << sessionId << std::endl;
         for (const auto session : room->sessions()) {
             if (const auto memberAddr = _sessions->getAddress(session)) {
                 if (const auto out = _packetFactory->makeRoomMessage(*memberAddr, req, message))

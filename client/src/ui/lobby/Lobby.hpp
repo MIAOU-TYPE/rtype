@@ -112,27 +112,24 @@ namespace Engine
          */
         void consumeUpdate() noexcept;
 
-        void setChatMessages(const std::vector<std::string> &messages)
-        {
-            _chatMessages = messages;
-            rebuildTexts();
-            layout();
-        }
+        /**
+         * @brief Sets the chat messages to display.
+         * @param messages A vector of chat messages.
+         */
+        void setChatMessages(const std::vector<std::string> &messages);
 
-        [[nodiscard]] bool hasChatSubmission() const noexcept
-        {
-            return _chatSubmitted;
-        }
+        [[nodiscard]] bool hasChatSubmission() const noexcept;
 
-        void consumeChatSubmission() noexcept
-        {
-            _chatSubmitted = false;
-        }
+        /**
+         * @brief Consumes the chat submission flag.
+         */
+        void consumeChatSubmission() noexcept;
 
-        [[nodiscard]] const std::string &submittedChatMessage() const noexcept
-        {
-            return _chatSubmittedMessage;
-        }
+        /**
+         * @brief Retrieves the submitted chat message.
+         * @return The submitted chat message.
+         */
+        [[nodiscard]] const std::string &submittedChatMessage() const noexcept;
 
       private:
         /**
@@ -159,6 +156,10 @@ namespace Engine
          */
         void handleKeyPressed(const InputFrame &frame);
 
+        /**
+         * @brief Handles key release events.
+         * @param frame The last input frame.
+         */
         void handleKeyReleased(const InputFrame &frame) const;
 
         /**
@@ -194,16 +195,16 @@ namespace Engine
 
         size_t _lobbyCapacity = 4; ///> Maximum capacity of the lobby.
 
-        std::vector<std::string> _chatMessages;
-        std::shared_ptr<Graphics::IText> _chatHeaderText;
-        std::vector<std::shared_ptr<Graphics::IText>> _chatTexts;
-        size_t _chatCapacity = 8; // lignes visibles
-        size_t _chatVisible = 0;
+        std::vector<std::string> _chatMessages;                   ///> List of chat messages.
+        std::shared_ptr<Graphics::IText> _chatHeaderText;         ///> Chat header text element.
+        std::vector<std::shared_ptr<Graphics::IText>> _chatTexts; ///> Chat message text elements.
+        size_t _chatCapacity = 8;                                 ///> Maximum number of chat messages to display.
+        size_t _chatVisible = 0;                                  ///> Number of visible chat messages (0 = all).
 
-        std::unique_ptr<UI::UITextField> _chatField;
-        std::unique_ptr<UI::UIButton> _chatSendBtn;
+        std::unique_ptr<UI::UITextField> _chatField; ///> Chat input field UI element.
+        std::unique_ptr<UI::UIButton> _chatSendBtn;  ///> Chat send button UI element.
 
-        bool _chatSubmitted = false;
-        std::string _chatSubmittedMessage;
+        bool _chatSubmitted = false;       ///> Indicates if a chat message was submitted.
+        std::string _chatSubmittedMessage; ///> The submitted chat message.
     };
 } // namespace Engine

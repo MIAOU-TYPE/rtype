@@ -164,6 +164,28 @@ namespace Engine
         _needUpdate = false;
     }
 
+    void Lobby::setChatMessages(const std::vector<std::string> &messages)
+    {
+        _chatMessages = messages;
+        rebuildTexts();
+        layout();
+    }
+
+    bool Lobby::hasChatSubmission() const noexcept
+    {
+        return _chatSubmitted;
+    }
+
+    void Lobby::consumeChatSubmission() noexcept
+    {
+        _chatSubmitted = false;
+    }
+
+    [[nodiscard]] const std::string &Lobby::submittedChatMessage() const noexcept
+    {
+        return _chatSubmittedMessage;
+    }
+
     void Lobby::rebuildTexts() const
     {
         if (_subtitleText) {

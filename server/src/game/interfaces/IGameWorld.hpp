@@ -68,9 +68,7 @@ namespace Game
          * @brief Copy the state from another IGameWorld instance.
          * @param other The other IGameWorld to copy from.
          */
-        virtual void copyFrom(IGameWorld &)
-        {
-        }
+        virtual void copyFrom(IGameWorld &other) = 0;
 
         /**
          * @brief Get the game configuration.

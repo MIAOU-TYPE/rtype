@@ -38,8 +38,8 @@ namespace Thread
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
-        _udpPacketRouter =
-            std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer, _eventBus));
+        _clientController = std::make_shared<Ecs::ClientController>(_commandBuffer, _eventBus);
+        _udpPacketRouter = std::make_unique<Ecs::UDPPacketRouter>(_clientController);
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
@@ -163,6 +163,7 @@ namespace Thread
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     std::weak_ptr w = _world;
+                    std::weak_ptr c = _clientController;
                     _stateManager->changeState(std::make_unique<Engine::GameState>(
                         _musicRegistry, _soundRegistry, _renderer,
                         [w]() {
@@ -171,6 +172,16 @@ namespace Thread
                             return 0;
                         },
                         _roomManager));
+                        [c]() {
+                            if (const auto ctrl = c.lock())
+                                return ctrl->getCurrentLife();
+                            return 0;
+                        },
+                        [c]() {
+                            if (const auto ctrl = c.lock())
+                                return ctrl->getMaxLife();
+                            return 0;
+                        }));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }

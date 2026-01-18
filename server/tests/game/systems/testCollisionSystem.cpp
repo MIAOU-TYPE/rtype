@@ -18,7 +18,6 @@
 
 #include "AIBrain.hpp"
 #include "Collision.hpp"
-#include "Controllable.hpp"
 #include "InputComponent.hpp"
 #include "Position.hpp"
 #include "Projectile.hpp"
@@ -173,24 +172,20 @@ TEST_F(CollisionSystemEmitTests, DoesNotEmit_WhenPlayerProjectileHitsPlayerInSta
     const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
     const auto player2 = makeEntity(world, 5.f, 5.f, 10.f, 10.f);
 
-    // Mark both as players
     world.registry().registerComponent<Game::InputComponent>();
     world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
     world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
 
-    // Create a projectile from player1
     const auto proj = makeEntity(world, 2.f, 2.f, 5.f, 5.f);
     addProjectile(world, proj, id(player1));
 
     run();
 
-    // In standard mode (default), player projectiles should NOT damage other players
     EXPECT_TRUE(emitted.empty());
 }
 
 TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenPlayerProjectileHitsPlayerInFriendlyFireMode)
 {
-    // Override config to FriendlyFire mode with proper parameters
     Engine::ModeParameters params{};
     params.teamDamage = true;
     Engine::GameConfig config{Engine::Difficulty::Medium, Engine::GameMode::FriendlyFire, params, ""};
@@ -199,18 +194,15 @@ TEST_F(CollisionSystemEmitTests, EmitsCollision_WhenPlayerProjectileHitsPlayerIn
     const auto player1 = makeEntity(world, 0.f, 0.f, 10.f, 10.f);
     const auto player2 = makeEntity(world, 50.f, 50.f, 10.f, 10.f);
 
-    // Mark both as players
     world.registry().registerComponent<Game::InputComponent>();
     world.registry().emplaceComponent<Game::InputComponent>(player1, Game::InputComponent{});
     world.registry().emplaceComponent<Game::InputComponent>(player2, Game::InputComponent{});
 
-    // Create a projectile from player1 that hits player2
     const auto proj = makeEntity(world, 52.f, 52.f, 5.f, 5.f);
     addProjectile(world, proj, id(player1));
 
     run();
 
-    // In FriendlyFire mode, player projectiles SHOULD damage other players
     EXPECT_FALSE(emitted.empty());
     EXPECT_TRUE(containsPair(emitted, id(proj), id(player2)));
 }

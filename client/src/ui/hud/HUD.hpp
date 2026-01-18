@@ -47,11 +47,14 @@ namespace Engine
     class HUD {
       public:
         /**
-         * @brief Constructs a HUD with the given renderer and score getter.
+         * @brief Constructs a HUD with the given renderer, score getter, and health getters.
          * @param renderer Shared pointer to the renderer.
          * @param getScore Function to get the current score.
+         * @param getCurrentLife Function to get the current life.
+         * @param getMaxLife Function to get the maximum life.
          */
-        explicit HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore);
+        explicit HUD(std::shared_ptr<Graphics::IRenderer> renderer, std::function<int()> getScore,
+            std::function<int()> getCurrentLife, std::function<int()> getMaxLife);
 
         /**
          * @brief Renders the HUD elements.
@@ -61,6 +64,9 @@ namespace Engine
       private:
         std::shared_ptr<Graphics::IRenderer> _renderer; ///> Shared pointer to the renderer.
         std::function<int()> _getScore;                 ///> Function to get the current score.
+        std::function<int()> _getCurrentLife;           ///> Function to get the current life.
+        std::function<int()> _getMaxLife;               ///> Function to get the maximum life.
         std::unique_ptr<Graphics::IText> _scoreText;    ///> Text object for displaying the score.
+        std::unique_ptr<Graphics::IText> _healthText;   ///> Text object for displaying the health.
     };
 } // namespace Engine

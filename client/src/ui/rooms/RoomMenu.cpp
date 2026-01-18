@@ -9,7 +9,7 @@
 
 namespace
 {
-    Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
+    [[nodiscard]] Engine::Difficulty shiftDifficulty(Engine::Difficulty d, const int step) noexcept
     {
         int v = static_cast<int>(d);
         v = (v + step) % 3;
@@ -18,7 +18,7 @@ namespace
         return static_cast<Engine::Difficulty>(v);
     }
 
-    Engine::GameMode shiftMode(Engine::GameMode m, const int step) noexcept
+    [[nodiscard]] Engine::GameMode shiftMode(Engine::GameMode m, const int step) noexcept
     {
         int v = static_cast<int>(m);
         v = (v + step) % 4;
@@ -27,7 +27,7 @@ namespace
         return static_cast<Engine::GameMode>(v);
     }
 
-    std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
+    [[nodiscard]] std::string_view difficultyToStringUI(Engine::Difficulty d) noexcept
     {
         switch (d) {
             case Engine::Difficulty::Easy: return "easy";
@@ -37,7 +37,7 @@ namespace
         return "unknown";
     }
 
-    std::string_view modeToStringUI(Engine::GameMode m) noexcept
+    [[nodiscard]] std::string_view modeToStringUI(Engine::GameMode m) noexcept
     {
         switch (m) {
             case Engine::GameMode::Standard: return "standard";
@@ -203,6 +203,8 @@ namespace Engine
         applyUI(_create.levelNext.get());
         applyUI(_create.difficultyPrev.get());
         applyUI(_create.difficultyNext.get());
+        applyUI(_create.modePrev.get());
+        applyUI(_create.modeNext.get());
         applyUI(_create.playersPrev.get());
         applyUI(_create.playersNext.get());
         applyUI(_create.confirm.get());
@@ -250,12 +252,12 @@ namespace Engine
         if (_create.roomNameField) {
             const float fieldW = std::min(560.f, inner.w * 0.82f);
             const float fieldX = cx - fieldW * 0.5f;
-            _create.roomNameField->setPosition(fieldX, inner.y + inner.h * 0.35f + yOffset);
+            _create.roomNameField->setPosition(fieldX - inner.w * 0.05f, inner.y + inner.h * 0.20f + yOffset);
             _create.roomNameField->setWidth(fieldW);
         }
 
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = rowsStart + rowsStep * static_cast<float>(i) + yOffset;
+            const float y = rowsStart + rowsStep * static_cast<float>(i - 1) + yOffset;
             prev.centerButtonLabel(prevX, y, label, cx);
             centerX(next, nextX, y);
         };
@@ -771,7 +773,7 @@ namespace Engine
         return _selectedMode;
     }
 
-    std::string RoomMenu::levelSelected() const noexcept
+    std::string RoomMenu::levelSelected() const
     {
         if (_levels.empty())
             return "";

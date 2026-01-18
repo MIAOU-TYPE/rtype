@@ -80,8 +80,10 @@ namespace Game
          * - InputComponent
          *
          * @return The newly created ECS entity.
+         * @param sessionId The session ID associated with the player.
+         * @param index The player index (e.g., for multiplayer games).
          */
-        [[nodiscard]] Ecs::Entity createPlayer(int sessionId) override;
+        [[nodiscard]] Ecs::Entity createPlayer(int sessionId, size_t index) override;
 
         /**
          * @brief Destroy an entity and all its components.

@@ -1,0 +1,392 @@
+{
+  "name": "Level 3",
+  "background": {
+    "spriteId": 102,
+    "scrollSpeed": -50.0,
+    "tileWidth": 1148.0,
+    "tileHeight": 223.0
+  },
+  "enemies": {
+    "smallEnemy": {
+      "hp": 15,
+      "speed": -100,
+      "size": { "w": 65, "h": 66 },
+      "killScore": 30,
+      "sprite": "enemy",
+      "spriteId": 2,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 2.0,
+        "projectileSpeed": 130,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 50 },
+        "projectileSpriteId": 9
+      }
+    },
+    "mediumEnemy": {
+      "hp": 40,
+      "speed": -70,
+      "size": { "w": 65, "h": 49 },
+      "killScore": 50,
+      "sprite": "enemy2",
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [-15, 15],
+        "cooldown": 2.0,
+        "projectileSpeed": 100,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 35 },
+        "projectileSpriteId": 9
+      }
+    },
+    "mediumEnemyTriple": {
+      "hp": 40,
+      "speed": -70,
+      "size": { "w": 65, "h": 49 },
+      "killScore": 65,
+      "sprite": "enemy2",
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [-25, 0, 25],
+        "cooldown": 2.2,
+        "projectileSpeed": 110,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 35 },
+        "projectileSpriteId": 12
+      }
+    },
+    "mediumEnemyWide": {
+      "hp": 45,
+      "speed": -70,
+      "size": { "w": 65, "h": 49 },
+      "killScore": 80,
+      "sprite": "enemy2",
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [-35, -15, 15, 35],
+        "cooldown": 2.6,
+        "projectileSpeed": 105,
+        "damage": 45,
+        "muzzle": { "x": -20, "y": 35 },
+        "projectileSpriteId": 12
+      }
+    },
+    "mediumEnemyFive": {
+      "hp": 50,
+      "speed": -70,
+      "size": { "w": 65, "h": 49 },
+      "killScore": 110,
+      "sprite": "enemy2",
+      "spriteId": 3,
+      "shoot": {
+        "type": "diagonal",
+        "angles": [-40, -20, 0, 20, 40],
+        "cooldown": 3.0,
+        "projectileSpeed": 110,
+        "damage": 40,
+        "muzzle": { "x": -20, "y": 35 },
+        "projectileSpriteId": 12
+      }
+    },
+    "fastEnemy": {
+      "hp": 10,
+      "speed": -125,
+      "size": { "w": 33, "h": 22 },
+      "killScore": 10,
+      "sprite": "enemy3",
+      "spriteId": 4,
+      "shoot": {
+        "type": "straight",
+        "cooldown": 0.8,
+        "projectileSpeed": 160,
+        "damage": 50,
+        "muzzle": { "x": -20, "y": 15 },
+        "projectileSpriteId": 9
+      },
+      "movement": {
+        "type": "zigzag",
+        "params": {
+          "amplitude": 50.0,
+          "frequency": 0.5
+        }
+      }
+    },
+    "boss3": {
+      "hp": 4998,
+      "speed": -30,
+      "size": { "w": 160, "h": 213 },
+      "killScore": 300,
+      "sprite": "boss3P1",
+      "spriteId": 22,
+      "shoot": {
+        "type": "homing",
+        "cooldown": 4.0,
+        "projectileSpeed": 130,
+        "damage": 50,
+        "muzzle": { "x": 60, "y": 70 },
+        "projectileSpriteId": 29
+      },
+      "phases": [
+        {
+          "hpThreshold": 4998,
+          "angles": [],
+          "fireSpeedMultiplier": 1.0,
+          "damageMultiplier": 1,
+          "spriteId": 22
+        },
+        {
+          "hpThreshold": 4284,
+          "angles": [],
+          "fireSpeedMultiplier": 1.0,
+          "damageMultiplier": 1,
+          "spriteId": 23
+        },
+        {
+          "hpThreshold": 3570,
+          "angles": [],
+          "fireSpeedMultiplier": 1.2,
+          "damageMultiplier": 2,
+          "spriteId": 24
+        },
+        {
+          "hpThreshold": 2856,
+          "angles": [],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 2,
+          "spriteId": 25
+        },
+        {
+          "hpThreshold": 2142,
+          "angles": [],
+          "fireSpeedMultiplier": 1.5,
+          "damageMultiplier": 3,
+          "spriteId": 26
+        },
+        {
+          "hpThreshold": 1428,
+          "angles": [],
+          "fireSpeedMultiplier": 2.0,
+          "damageMultiplier": 3,
+          "spriteId": 27
+        },
+        {
+          "hpThreshold": 714,
+          "angles": [],
+          "fireSpeedMultiplier": 2.0,
+          "damageMultiplier": 4,
+          "spriteId": 28
+        }
+      ]
+    },
+    "groupEnemy": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 0, "y": 0 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 0, "y": -130 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 0, "y": 130 }
+        }
+      ]
+    },
+    "groupEnemy2": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "mediumEnemyTriple",
+          "offset": { "x": -90, "y": 110 }
+        },
+        {
+          "enemyType": "mediumEnemyTriple",
+          "offset": { "x": -90, "y": -110 }
+        },
+        {
+          "enemyType": "mediumEnemyTriple",
+          "offset": { "x": 90, "y": 110 }
+        },
+        {
+          "enemyType": "mediumEnemyTriple",
+          "offset": { "x": 90, "y": -110 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 0, "y": 0 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": 150, "y": 0 }
+        }
+      ]
+    },
+    "groupEnemy3": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 0, "y": 0 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": -160, "y": -120 }
+        },
+        {
+          "enemyType": "smallEnemy",
+          "offset": { "x": -160, "y": 120 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 160, "y": -120 }
+        },
+        {
+          "enemyType": "fastEnemy",
+          "offset": { "x": 160, "y": 120 }
+        }
+      ]
+    },
+    "groupEnemy4": {
+      "type": "group",
+      "members": [
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": -200, "y": -180 }
+        },
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": -100, "y": -20 }
+        },
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 0, "y": 140 }
+        },
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 150, "y": 140 }
+        },
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 250, "y": -20 }
+        },
+        {
+          "enemyType": "mediumEnemy",
+          "offset": { "x": 350, "y": -180 }
+        }
+      ]
+    }
+  },
+  "obstacles": {
+    "gravityWell": {
+      "spriteId": 15,
+      "size": { "w": 34, "h": 34 },
+      "pullStrength": 200,
+      "damagePerSecond": 10,
+      "radius": 130,
+      "innerRadius": 50
+    }
+  },
+  "duration": 125,
+  "waves": [
+    {
+      "time": 3,
+      "enemies": { "smallEnemy": 3 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 6,
+      "enemies": { "fastEnemy": 4 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 9,
+      "enemies": { "mediumEnemy": 3 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 15,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 360,
+      "obstacleX": 500
+    },
+    {
+      "time": 15,
+      "enemies": {},
+      "obstacleType": "gravityWell",
+      "obstacleY": 150,
+      "obstacleX": 700
+    },
+    {
+      "time": 16,
+      "enemies": { "fastEnemy": 4 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 17,
+      "powerUp": { "type": "laser" }
+    },
+    {
+      "time": 19,
+      "enemies": { "mediumEnemyFive": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 24,
+      "enemies": { "groupEnemy2": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 29,
+      "obstacleType": "gravityWell",
+      "obstacleY": 100,
+      "obstacleX": 250,
+      "enemies": { "groupEnemy3": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 37,
+      "enemies": { "groupEnemy2": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 50,
+      "enemies": { "mediumEnemyWide": 4 },
+      "spawnPattern": "spread"
+    },
+    {
+      "time": 55,
+      "enemies": { "groupEnemy2": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 65,
+      "enemies": { "groupEnemy4": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 80,
+      "enemies": { "groupEnemy3": 1 },
+      "spawnPattern": "line",
+      "spawnY": 360
+    },
+    {
+      "time": 90,
+      "enemies": { "boss3": 1 },
+      "spawnPattern": "line",
+      "spawnY": 120
+    }
+  ]
+}

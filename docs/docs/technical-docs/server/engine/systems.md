@@ -13,6 +13,23 @@ Current implemented systems:
 
 - `InputSystem`
 - `MovementSystem`
+- `MovementPatternSystem`
+- `CollisionSystem`
+- `ShootingSystem`
+- `PowerUpShootingSystem`
+- `AIShootSystem`
+- `HomingSystem`
+- `GravitySystem`
+- `LifetimeSystem`
+- `BossSystem`
+- `TailFollowerSystem`
+- `HealthSystem`
+- `PowerUpAttachmentSystem`
+- `PowerUpBarSystem`
+- `BubblePowerUpSystem`
+- `LaserPowerUpSystem`
+- `BackgroundSystem`
+- `SnapshotSystem`
 
 ---
 
@@ -69,22 +86,100 @@ Current update loop in `GameServer`:
 ```cpp
 InputSystem::update(world);
 MovementSystem::update(world, dt);
+MovementPatternSystem::update(world, dt);
+ShootingSystem::update(world, dt);
+PowerUpShootingSystem::update(world, dt);
+AIShootSystem::update(world, dt);
+HomingSystem::update(world, dt);
+GravitySystem::update(world, dt);
+CollisionSystem::update(world);
+HealthSystem::update(world);
+LifetimeSystem::update(world);
+BossSystem::update(world, dt);
+TailFollowerSystem::update(world, dt);
+PowerUpAttachmentSystem::update(world);
+PowerUpBarSystem::update(world, dt);
+BubblePowerUpSystem::update(world, dt);
+LaserPowerUpSystem::update(world, dt);
+BackgroundSystem::update(world, dt);
+SnapshotSystem::update(world);
 ```
 
 This order ensures:
 
 1. Input modifies velocity
 2. Movement uses updated velocity to modify positions
+3. Complex movements are applied
+4. Projectiles are created and updated
+5. AI decisions are made
+6. Homing projectiles track targets
+7. Gravity affects entities
+8. Collisions are detected and resolved
+9. Damage is applied and entities die
+10. Temporary entities expire
+11. Boss logic and tail following
+12. Power-ups are collected and managed
+13. Visual updates for backgrounds
+14. Snapshots are prepared for networking
 
-Future systems might include:
+## Detailed System Descriptions
 
-* Collision resolution
-* AI steering
-* Projectile updates
-* Damage processing
-* Snapshot generation for the network
+### InputSystem
+Processes player input from `InputComponent` and updates `Velocity` components. Converts keyboard/gamepad input into movement intent.
 
-These must also follow deterministic ordering rules for multiplayer synchronization.
+### MovementSystem
+Applies velocity to position over time: `pos.x += vel.vx * dt; pos.y += vel.vy * dt;`
+
+### MovementPatternSystem
+Handles complex enemy movement patterns like sinusoidal waves, circular paths, and scripted behaviors defined in `MovementPattern` components.
+
+### CollisionSystem
+Detects collisions between entities using `Collision` components. Applies damage and triggers effects when entities overlap.
+
+### ShootingSystem
+Manages weapon firing, cooldowns, and projectile creation for basic weapons.
+
+### PowerUpShootingSystem
+Handles special power-up weapons (laser, bubble) with unique firing mechanics and charge management.
+
+### AIShootSystem
+Controls enemy shooting patterns and timing based on `AIShoot` components.
+
+### HomingSystem
+Updates homing projectile trajectories to track targets specified in `HomingProjectile` components.
+
+### GravitySystem
+Applies gravitational forces from `GravityField` entities to `GravityAffected` entities.
+
+### LifetimeSystem
+Removes entities when their `Lifetime` expires.
+
+### BossSystem
+Manages boss behaviors, phase transitions, and multi-part logic.
+
+### TailFollowerSystem
+Updates boss tail segments to follow the main body with physics-based following.
+
+### HealthSystem
+Applies damage from `Damage` components and handles entity destruction when health reaches zero.
+
+### PowerUpAttachmentSystem
+Manages power-up collection and attachment to player entities.
+
+### PowerUpBarSystem
+Updates power-up charge bars and UI state.
+
+### BubblePowerUpSystem
+Handles bubble shield mechanics and collision immunity.
+
+### LaserPowerUpSystem
+Manages laser weapon charging and firing.
+
+### BackgroundSystem
+Updates scrolling background layers.
+
+### SnapshotSystem
+Prepares world state snapshots for network synchronization.
 
 ---
 

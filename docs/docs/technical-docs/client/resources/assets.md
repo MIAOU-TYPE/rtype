@@ -67,6 +67,104 @@ This avoids leaking filesystem details into gameplay or UI code.
 
 ---
 
+## Asset Embedding
+
+To ensure assets are bundled with the executable and avoid external dependencies,
+assets are embedded directly into the client binary at compile time.
+
+### Embedding Process
+
+1. **Asset Discovery**: CMake script (`generate_embedded_assets.cmake`) scans the `client/assets/` directory
+2. **Binary Conversion**: Python script (`bin2header.py`) converts binary files to C++ header arrays
+3. **Code Generation**: Generated `.cpp` files contain asset data as `unsigned char` arrays
+4. **Compilation**: Embedded assets are compiled into the client executable
+
+### Supported Asset Types
+
+The embedding system supports:
+- **Images**: PNG sprites and textures
+- **Fonts**: OTF and TTF font files
+- **Audio**: WAV and FLAC sound files
+- **Shaders**: Fragment shaders
+- **Data**: JSON configuration files (animations, levels)
+
+### Generated Code Structure
+
+Each asset generates a header file with:
+```cpp
+namespace EmbeddedResources {
+    extern const unsigned char asset_name[];
+    extern const unsigned int asset_name_size;
+}
+```
+
+### Usage in Code
+
+Embedded assets are accessed through the `EmbeddedResourceManager`:
+```cpp
+auto texture = resourceManager.loadTexture("sprites/player.png");
+auto font = resourceManager.loadFont("fonts/main.otf");
+auto soundBuffer = resourceManager.loadSound("sounds/shoot.wav");
+```
+
+### Build Integration
+
+- Run `generate_embedded_assets.cmake` during the CMake configure step
+- Generated files are placed in `build/client/embedded_resources/`
+- Assets are automatically linked into the client executable
+
+This approach ensures:
+- No external asset files required at runtime
+- Faster loading (no filesystem I/O)
+- Self-contained executables
+- Consistent asset availability across platforms
+
+---
+
+## JSON Asset Definitions
+
+In addition to binary assets, the client uses JSON files to define complex asset behaviors:
+
+### Animation Definitions
+
+JSON files define sprite animations with frame sequences and timing:
+
+```json
+{
+  "sprite": "player",
+  "spriteId": 7,
+  "default_animation": "idle",
+  "animations": {
+    "idle": {
+      "loop": true,
+      "frames": [
+        { "x": 0, "y": 0, "w": 33, "h": 18, "duration": 0.5 },
+        { "x": 33, "y": 0, "w": 33, "h": 18, "duration": 0.5 }
+      ]
+    }
+  }
+}
+```
+
+### Background Definitions
+
+Background layers are defined with scrolling properties:
+
+```json
+{
+  "spriteId": 101,
+  "scrollSpeed": -50.0,
+  "tileWidth": 2584.0,
+  "tileHeight": 720.0
+}
+```
+
+### Entity Definitions
+
+Game entities (players, enemies, power-ups) have JSON definitions for sprites, sounds, and behaviors.
+
+---
+
 ## Failure Handling
 
 - Missing or invalid assets must not crash the client

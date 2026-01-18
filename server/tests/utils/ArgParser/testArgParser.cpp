@@ -15,7 +15,6 @@
 
 #include "ArgParser.hpp"
 
-
 namespace
 {
     struct CaptureStdout {
@@ -80,7 +79,7 @@ namespace
         std::vector<std::string> _args;
         std::vector<char *> _argv;
     };
-}
+} // namespace
 
 TEST(ArgParser, DefaultNoArgsSuccessAndKeepsDefaults)
 {

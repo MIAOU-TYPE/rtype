@@ -357,7 +357,7 @@ namespace Thread
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(*_tcpPacketFactory.makeJoinRoom(req, e.roomId));
-            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(11))
+            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(nextReqId()))
                 _tcpClient->sendPacket(*pkt);
         });
 
@@ -385,6 +385,9 @@ namespace Thread
         });
 
         _eventBus->on<Engine::StartGameRequested>([this](const Engine::StartGameRequested &) {
+            if (!_stateManager->is<Engine::LobbyState>())
+                return;
+            _world->reset();
             if (const auto pkt = _tcpPacketFactory.makeStartGame(nextReqId()))
                 _tcpClient->sendPacket(*pkt);
         });
@@ -393,18 +396,6 @@ namespace Thread
             if (const auto pkt = _tcpPacketFactory.makeLeaveRoom(nextReqId()))
                 _tcpClient->sendPacket(*pkt);
             _pendingHome.store(true, std::memory_order_release);
-        });
-
-        _eventBus->on<Engine::UpdateRoomRequested>([this](const Engine::UpdateRoomRequested &) {
-            const auto req = nextReqId();
-            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(req))
-                _tcpClient->sendPacket(*pkt);
-        });
-
-        _eventBus->on<Engine::LeaveRoomRequested>([this](const Engine::LeaveRoomRequested &) {
-            const auto req = nextReqId();
-            if (const auto pkt = _tcpPacketFactory.makeLeaveRoom(req))
-                (void) _tcpClient->sendPacket(*pkt);
             _world->reset();
             {
                 std::scoped_lock lock(_frameMutex);
@@ -413,6 +404,15 @@ namespace Thread
                 if (_writeRenderCommands)
                     _writeRenderCommands->clear();
             }
+        });
+
+        _eventBus->on<Engine::UpdateRoomRequested>([this](const Engine::UpdateRoomRequested &) {
+            if (!_stateManager->is<Engine::LobbyState>() || _pendingHome)
+                return;
+
+            const auto req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeRoomInfo(req))
+                _tcpClient->sendPacket(*pkt);
         });
 
         _eventBus->on<Engine::SendingMessage>([this](const Engine::SendingMessage &e) {
@@ -489,6 +489,8 @@ namespace Thread
         });
 
         _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
+            if (_stateManager->is<Engine::GameState>())
+                return;
             _roomManager->setCurrentData(room);
             if (!_stateManager->is<Engine::LobbyState>())
                 _pendingJoinRoom.store(true, std::memory_order_release);

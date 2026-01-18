@@ -418,6 +418,7 @@ namespace Engine
             if (_root.join->onClickReleased(mx, my, [&] {
                     _page = Page::List;
                     _listRooms = true;
+                    _createRoom = false;
                     _list.scroll = 0.f;
                     _list.lastRefresh = {};
                     updateListRooms();

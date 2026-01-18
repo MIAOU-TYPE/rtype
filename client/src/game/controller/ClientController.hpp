@@ -113,7 +113,7 @@ namespace Ecs
             _commandBuffer;                          ///> Reference to the world command buffer
         std::shared_ptr<Engine::EventBus> _eventBus; ///> Shared pointer to the event bus
         std::atomic_bool _gameOverQueued{false};     ///> Flag to prevent multiple game over commands
-        uint16_t _currentLife{0};                    ///> Current life of the player
-        uint16_t _maxLife{0};                        ///> Maximum life of the player
+        uint16_t _currentLife{500};                  ///> Current life of the player
+        uint16_t _maxLife{500};                      ///> Maximum life of the player
     };
 }; // namespace Ecs

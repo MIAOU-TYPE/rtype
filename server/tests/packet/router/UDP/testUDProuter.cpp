@@ -7,7 +7,11 @@
 
 #include <gtest/gtest.h>
 
-#include <arpa/inet.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <netinet/in.h>
+#endif
 #include <chrono>
 #include <cstdint>
 #include <cstring>

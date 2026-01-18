@@ -84,6 +84,10 @@ namespace Engine
             return false;
         try {
             const auto name = _sessionManager->getUsername(sessionId);
+            if (name.empty())
+                return false;
+            if (room->isUsernameBanned(name))
+                return false;
             room->join(sessionId, name);
         } catch (...) {
             return false;

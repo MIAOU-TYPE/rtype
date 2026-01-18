@@ -16,9 +16,9 @@
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
-#include "PongData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "PongData.hpp"
 #include "UDPTypesData.hpp"
 
 namespace Network

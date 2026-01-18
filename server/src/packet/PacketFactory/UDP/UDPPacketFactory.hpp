@@ -17,7 +17,6 @@
 #include <utility>
 #include <vector>
 #include "AcceptData.hpp"
-#include "PongData.hpp"
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"
@@ -26,6 +25,7 @@
 #include "HealthData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "PongData.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"

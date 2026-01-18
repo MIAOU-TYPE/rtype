@@ -486,6 +486,8 @@ namespace Thread
         });
 
         _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
+            if (_stateManager->is<Engine::GameState>())
+                return;
             _roomManager->setCurrentData(room);
             if (!_stateManager->is<Engine::LobbyState>())
                 _pendingJoinRoom.store(true, std::memory_order_release);

@@ -21,6 +21,7 @@ namespace Engine
 
     void LobbyState::onEnter()
     {
+        _roomManager->messages().clear();
         _lobbyPage = std::make_unique<Lobby>(_renderer);
         _lobbyPage->layout();
         _lobbyPage->onEnter();
@@ -44,10 +45,17 @@ namespace Engine
             _lobbyPage->consumeUpdate();
             _eventBus->emit<UpdateRoomRequested>(UpdateRoomRequested{});
         }
+        if (_lobbyPage->hasChatSubmission()) {
+            const auto msg = _lobbyPage->submittedChatMessage();
+            _lobbyPage->consumeChatSubmission();
+            _eventBus->emit<SendingMessage>(SendingMessage{msg});
+        }
+
         _lobbyPage->update(frame);
         _lobbyPage->setLobbyName(_roomManager->currentRoomData().roomName);
         _lobbyPage->setPlayers(_roomManager->currentRoomData().playerNames);
         _lobbyPage->setMaxPlayers(_roomManager->currentRoomData().maxPlayers);
+        _lobbyPage->setChatMessages(_roomManager->messages());
     }
 
     void LobbyState::render()

@@ -25,14 +25,24 @@ namespace
             const auto &projA = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.a));
             const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
 
-            if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
+            if (dmgA && projA && (hpArr.at(event.b) || bossPartB)) {
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
+                const auto &drawableA = reg.getComponents<Ecs::Drawable>().at(event.a);
+                const auto &bossPhaseB = reg.getComponents<Ecs::BossPhase>().at(event.b);
+                if (drawableA && drawableA->spriteId == 9 && bossPhaseB)
+                    w->events().emit(DestroyEvent{event.a, false});
+            }
 
             const auto &dmgB = reg.getComponents<Ecs::Damage>().at(event.b);
             const auto &projB = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.b));
             const auto &bossPartA = reg.getComponents<Ecs::BossPart>().at(event.a);
-            if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
+            if (dmgB && projB && (hpArr.at(event.a) || bossPartA)) {
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
+                const auto &drawableB = reg.getComponents<Ecs::Drawable>().at(event.b);
+                const auto &bossPhaseA = reg.getComponents<Ecs::BossPhase>().at(event.a);
+                if (drawableB && drawableB->spriteId == 9 && bossPhaseA)
+                    w->events().emit(DestroyEvent{event.b, false});
+            }
 
             const auto &pixelCollisionA = reg.getComponents<Ecs::PixelCollision>().at(event.a);
             if (pixelCollisionA && projB) {

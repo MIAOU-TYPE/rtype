@@ -6,6 +6,19 @@
     "tileWidth": 1148.0,
     "tileHeight": 223.0
   },
+  "walls": [
+    {
+      "spriteId": 103,
+      "scrollSpeed": -50.0,
+      "tileWidth": 2540.0,
+      "tileHeight": 207.0,
+      "depth": 1,
+      "collisionBoxes": [
+        { "w": 2540.0, "h": 40.0, "x": 0.0, "y": 0.0 },
+        { "w": 2540.0, "h": 50.0, "x": 0.0, "y": 700.0 }
+      ]
+    }
+  ],
   "enemies": {
     "smallEnemy": {
       "hp": 15,

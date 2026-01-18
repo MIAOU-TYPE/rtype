@@ -10,6 +10,7 @@
 #include "AIBrain.hpp"
 #include "Background.hpp"
 #include "BossPart.hpp"
+#include "BossPhase.hpp"
 #include "BubblePowerUp.hpp"
 #include "Collision.hpp"
 #include "Controllable.hpp"

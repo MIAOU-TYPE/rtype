@@ -131,6 +131,7 @@ module.exports = {
             'technical-docs/server/resources/overview',
             'technical-docs/server/resources/config',
             'technical-docs/server/resources/persistence',
+            'technical-docs/server/resources/levels',
           ],
         },
         {
@@ -146,11 +147,14 @@ module.exports = {
           label: 'Engine',
           items: [
             'technical-docs/server/engine/overview',
+            'technical-docs/server/engine/engine',
             'technical-docs/server/engine/ecs',
             'technical-docs/server/engine/systems',
             'technical-docs/server/engine/world',
             'technical-docs/server/engine/game-server',
             'technical-docs/server/engine/runtime-integration',
+            'technical-docs/server/engine/rendering',
+            'technical-docs/server/engine/audio',
           ],
         },
       ],

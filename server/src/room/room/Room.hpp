@@ -182,8 +182,8 @@ namespace Engine
 
         std::mutex _sessionsMutex; ///> Mutex for synchronizing access to the sessions set
 
-        std::unordered_set<int> _sessions; ///> Set of player session IDs in the room
-        std::unordered_set<std::string> _bannedUsernames;   ///> Set of banned usernames
+        std::unordered_set<int> _sessions;                ///> Set of player session IDs in the room
+        std::unordered_set<std::string> _bannedUsernames; ///> Set of banned usernames
 
         std::unique_ptr<Game::GameServer> _gameServer = nullptr;        ///> Unique pointer to the room's game server
         std::shared_ptr<Net::Server::ISessionManager> _sessionsManager; ///> Shared pointer to the session manager

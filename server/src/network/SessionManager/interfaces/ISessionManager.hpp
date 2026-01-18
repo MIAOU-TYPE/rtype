@@ -207,6 +207,5 @@ namespace Net::Server
          * @return A vector of pairs containing the banned IP and remaining seconds of the ban.
          */
         [[nodiscard]] virtual std::vector<std::pair<uint32_t, uint64_t>> listBans() const = 0;
-
     };
 } // namespace Net::Server

@@ -7,21 +7,21 @@
 
 #pragma once
 
+#include <algorithm>
 #include <atomic>
+#include <cctype>
 #include <chrono>
-#include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <thread>
-#include <algorithm>
-#include <cctype>
-#include <iostream>
-#include <sstream>
 #include "RoomManager.hpp"
 #include "SessionManager.hpp"
+#include <condition_variable>
 
 #ifndef _WIN32
     #include <arpa/inet.h>
@@ -42,15 +42,14 @@ namespace Net::Admin
      */
     class AdminConsole {
       public:
-
         /**
          * @brief Constructs an AdminConsole.
          * @param sessions Shared pointer to the session manager.
          * @param rooms Shared pointer to the room manager.
          * @param shutdownFn Function to call for server shutdown.
          */
-        AdminConsole(std::shared_ptr<Server::ISessionManager> sessions,
-            std::shared_ptr<Engine::RoomManager> rooms, ShutdownFn shutdownFn);
+        AdminConsole(std::shared_ptr<Server::ISessionManager> sessions, std::shared_ptr<Engine::RoomManager> rooms,
+            ShutdownFn shutdownFn);
 
         /**
          * @brief Destructor for AdminConsole.
@@ -188,10 +187,10 @@ namespace Net::Admin
         [[nodiscard]] std::optional<std::string> resolveUsername(const std::string &who) const;
 
         std::shared_ptr<Server::ISessionManager> _sessions; ///> Session manager
-        std::shared_ptr<Engine::RoomManager> _rooms;    ///> Room manager
-        ShutdownFn _shutdown;   ///> Function to call for server shutdown
+        std::shared_ptr<Engine::RoomManager> _rooms;        ///> Room manager
+        ShutdownFn _shutdown;                               ///> Function to call for server shutdown
 
-        std::atomic<bool> _running{false};  ///> Flag indicating if the console is running
-        std::thread _thread;    ///> Thread for the admin console
+        std::atomic<bool> _running{false}; ///> Flag indicating if the console is running
+        std::thread _thread;               ///> Thread for the admin console
     };
 } // namespace Net::Admin

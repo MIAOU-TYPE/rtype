@@ -111,9 +111,8 @@ namespace Engine
          * @param path Path to the music file.
          * @param loop Whether the music should loop.
          * @param volume Volume level (0.0 to 100.0).
-         * @return true if the music was loaded and started playing, false otherwise.
          */
-        [[nodiscard]] bool loadAndPlayMusic(const std::string &path, bool loop = true, float volume = 50.f) noexcept;
+        void loadAndPlayMusic(const std::string &path, bool loop = true, float volume = 50.f) noexcept;
 
       private:
         std::shared_ptr<Graphics::IAudioManager> _musicManager = nullptr; ///> Music manager

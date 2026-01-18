@@ -35,11 +35,11 @@ namespace World
         _registry.registerComponent<Ecs::Render>();
         _registry.registerComponent<Ecs::AnimationState>();
 
-        // if (_soundRegistry) {
-        //     _powerUpStandardSoundHandle = _soundRegistry->lo("sounds/powerup.wav");
-        //     _powerUpLaserSoundHandle = _soundRegistry->loadSound("sounds/powerup_laser.wav");
-        //     _powerUpBubbleSoundHandle = _soundRegistry->loadSound("sounds/powerup_bubble.wav");
-        // }
+        if (_soundRegistry) {
+            _powerUpStandardSoundHandle = _soundRegistry->loadSound("sounds/powerup.wav");
+            _powerUpLaserSoundHandle = _soundRegistry->loadSound("sounds/powerup_laser.wav");
+            _powerUpBubbleSoundHandle = _soundRegistry->loadSound("sounds/powerup_bubble.wav");
+        }
     }
 
     void ClientWorld::step(const float dt)
@@ -333,7 +333,7 @@ namespace World
                         _soundRegistry->playSound(_powerUpBubbleSoundHandle);
                         _bubbleSoundPlaying = true;
                     } else if (!hasBubbleNow && _bubbleSoundPlaying && _soundRegistry) {
-                        // _soundRegistry->stopSound(_powerUpBubbleSoundHandle);
+                        _soundRegistry->stopSound(_powerUpBubbleSoundHandle);
                         _bubbleSoundPlaying = false;
                         if (_activePowerUpType == 19)
                             _activePowerUpType = 0;
@@ -345,7 +345,7 @@ namespace World
                         _soundRegistry->playSound(_powerUpLaserSoundHandle);
                         _laserSoundPlaying = true;
                     } else if (!hasLaserNow && _laserSoundPlaying && _soundRegistry) {
-                        // _soundRegistry->stopSound(_powerUpLaserSoundHandle);
+                        _soundRegistry->stopSound(_powerUpLaserSoundHandle);
                         _laserSoundPlaying = false;
                         if (_activePowerUpType == 18)
                             _activePowerUpType = 0;
@@ -439,6 +439,9 @@ namespace World
         _destroyed.clear();
         _score = 0;
         _entityPlayerId = -1;
+        _activePowerUpType = 0;
+        _bubbleSoundPlaying = false;
+        _laserSoundPlaying = false;
     }
 
     std::vector<std::pair<uint32_t, uint32_t>> ClientWorld::getRoomScores() const
@@ -450,4 +453,3 @@ namespace World
         return out;
     }
 } // namespace World
-    

@@ -328,6 +328,8 @@ namespace Engine
                 fn(*_create.levelNext);
                 fn(*_create.difficultyPrev);
                 fn(*_create.difficultyNext);
+                fn(*_create.modePrev);
+                fn(*_create.modeNext);
                 fn(*_create.playersPrev);
                 fn(*_create.playersNext);
                 fn(*_create.confirm);
@@ -377,6 +379,8 @@ namespace Engine
             press(*_create.levelNext);
             press(*_create.difficultyPrev);
             press(*_create.difficultyNext);
+            press(*_create.modePrev);
+            press(*_create.modeNext);
             press(*_create.playersPrev);
             press(*_create.playersNext);
             press(*_create.confirm);
@@ -780,6 +784,14 @@ namespace Engine
             return "";
         const int idx = std::clamp(_selectedLevel, 0, static_cast<int>(_levels.size()) - 1);
         return _levels.at(static_cast<size_t>(idx)).path;
+    }
+
+    std::string RoomMenu::musicSelected() const noexcept
+    {
+        if (_worlds.empty())
+            return "sounds/menu_theme.flac";
+        const int idx = std::clamp(_selectedWorld, 0, static_cast<int>(_worlds.size()) - 1);
+        return _worlds.at(static_cast<size_t>(idx)).music;
     }
 
     uint32_t RoomMenu::roomIdSelected() const noexcept

@@ -33,7 +33,8 @@ namespace Thread
         : _graphics(graphics), _udpClient(udpClient), _udpPacketFactory(udpClient->getTemplatedPacket()),
           _tcpClient(tcpClient), _tcpPacketFactory(tcpClient->getTemplatedPacket())
     {
-        _graphics->create(Graphics::Extent2u{1280, 720}, "R-Type", false);
+        const auto &config = Utils::SettingsConfig::getInstance();
+        _graphics->create(config.getResolution(), "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
@@ -180,7 +181,8 @@ namespace Thread
                             if (const auto ctrl = c.lock())
                                 return ctrl->getMaxLife();
                             return 0;
-                        }));
+                        },
+                        _roomManager));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }
@@ -349,7 +351,7 @@ namespace Thread
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(
-                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath));
+                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath, e.worldMusic));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {

@@ -9,6 +9,8 @@
 
 namespace EmbeddedResources
 {
+    extern const unsigned char sprites_popup_png[];
+    extern const unsigned int sprites_popup_png_size;
     extern const unsigned char sprites_background_jungle_png[];
     extern const unsigned int sprites_background_jungle_png_size;
     extern const unsigned char sprites_background_ruin_png[];
@@ -85,8 +87,6 @@ namespace EmbeddedResources
     extern const unsigned char shaders_colorblind_frag[];
     extern const unsigned int shaders_colorblind_frag_size;
 
-    extern const unsigned char fonts_r_type_otf[];
-    extern const unsigned int fonts_r_type_otf_size;
     extern const unsigned char fonts_font_ttf[];
     extern const unsigned int fonts_font_ttf_size;
 
@@ -122,6 +122,7 @@ EmbeddedResourceManager::EmbeddedResourceManager()
 
 void EmbeddedResourceManager::registerResources()
 {
+    _resources["sprites/popup.png"] = {EmbeddedResources::sprites_popup_png, EmbeddedResources::sprites_popup_png_size};
     _resources["sprites/bg-preview.png"] = {
         EmbeddedResources::sprites_bg_preview_png, EmbeddedResources::sprites_bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
@@ -198,7 +199,6 @@ void EmbeddedResourceManager::registerResources()
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::shaders_colorblind_frag, EmbeddedResources::shaders_colorblind_frag_size};
 
-    _resources["fonts/r-type.otf"] = {EmbeddedResources::fonts_r_type_otf, EmbeddedResources::fonts_r_type_otf_size};
     _resources["fonts/font.ttf"] = {EmbeddedResources::fonts_font_ttf, EmbeddedResources::fonts_font_ttf_size};
 
     _resources["sounds/boss_theme.flac"] = {

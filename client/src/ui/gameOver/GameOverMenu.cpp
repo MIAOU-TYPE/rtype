@@ -41,14 +41,14 @@ namespace Engine
         layoutBackground();
         const auto v = viewportF();
         if (_title)
-            _title->setPosition(v.cx - 145.f, v.h * 0.14f);
+            _title->setPosition(v.cx - 85.f, v.h * 0.14f);
         const float titleY = v.h * 0.32f;
         const float lineStartY = v.h * 0.38f;
         if (_scoresTitle)
-            _scoresTitle->setPosition(v.cx - 60.f, titleY);
+            _scoresTitle->setPosition(v.cx - 30.f, titleY);
         for (std::size_t i = 0; i < _scoreLines.size(); ++i)
             if (_scoreLines[i])
-                _scoreLines[i]->setPosition(v.cx - 260.f, lineStartY + static_cast<float>(i) * 34.f);
+                _scoreLines[i]->setPosition(v.cx - 90.f, lineStartY + static_cast<float>(i) * 34.f);
         layoutColumnCentered(v.w, v.h * 0.60f, 110.f, {_back.get(), _quit.get()});
     }
 

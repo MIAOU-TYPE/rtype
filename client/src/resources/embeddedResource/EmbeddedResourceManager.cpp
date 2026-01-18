@@ -9,6 +9,8 @@
 
 namespace EmbeddedResources
 {
+    extern const unsigned char sprites_popup_png[];
+    extern const unsigned int sprites_popup_png_size;
     extern const unsigned char sprites_background_jungle_png[];
     extern const unsigned int sprites_background_jungle_png_size;
     extern const unsigned char sprites_background_ruin_png[];
@@ -61,8 +63,22 @@ namespace EmbeddedResources
     extern const unsigned int sprites_boss_png_size;
     extern const unsigned char sprites_boss2_png[];
     extern const unsigned int sprites_boss2_png_size;
-    extern const unsigned char sprites_boss3_png[];
-    extern const unsigned int sprites_boss3_png_size;
+    extern const unsigned char sprites_boss3_boss3P1_png[];
+    extern const unsigned int sprites_boss3_boss3P1_png_size;
+    extern const unsigned char sprites_boss3_boss3P2_png[];
+    extern const unsigned int sprites_boss3_boss3P2_png_size;
+    extern const unsigned char sprites_boss3_boss3P3_png[];
+    extern const unsigned int sprites_boss3_boss3P3_png_size;
+    extern const unsigned char sprites_boss3_boss3P4_png[];
+    extern const unsigned int sprites_boss3_boss3P4_png_size;
+    extern const unsigned char sprites_boss3_boss3P5_png[];
+    extern const unsigned int sprites_boss3_boss3P5_png_size;
+    extern const unsigned char sprites_boss3_boss3P6_png[];
+    extern const unsigned int sprites_boss3_boss3P6_png_size;
+    extern const unsigned char sprites_boss3_boss3P7_png[];
+    extern const unsigned int sprites_boss3_boss3P7_png_size;
+    extern const unsigned char sprites_boss3_boss3Tail_png[];
+    extern const unsigned int sprites_boss3_boss3Tail_png_size;
     extern const unsigned char sprites_obstacle_png[];
     extern const unsigned int sprites_obstacle_png_size;
     extern const unsigned char sprites_power_up_png[];
@@ -85,8 +101,6 @@ namespace EmbeddedResources
     extern const unsigned char shaders_colorblind_frag[];
     extern const unsigned int shaders_colorblind_frag_size;
 
-    extern const unsigned char fonts_r_type_otf[];
-    extern const unsigned int fonts_r_type_otf_size;
     extern const unsigned char fonts_font_ttf[];
     extern const unsigned int fonts_font_ttf_size;
 
@@ -122,6 +136,7 @@ EmbeddedResourceManager::EmbeddedResourceManager()
 
 void EmbeddedResourceManager::registerResources()
 {
+    _resources["sprites/popup.png"] = {EmbeddedResources::sprites_popup_png, EmbeddedResources::sprites_popup_png_size};
     _resources["sprites/bg-preview.png"] = {
         EmbeddedResources::sprites_bg_preview_png, EmbeddedResources::sprites_bg_preview_png_size};
     _resources["sprites/background_space.png"] = {
@@ -169,7 +184,22 @@ void EmbeddedResourceManager::registerResources()
         EmbeddedResources::sprites_explose_png, EmbeddedResources::sprites_explose_png_size};
     _resources["sprites/boss.png"] = {EmbeddedResources::sprites_boss_png, EmbeddedResources::sprites_boss_png_size};
     _resources["sprites/boss2.png"] = {EmbeddedResources::sprites_boss2_png, EmbeddedResources::sprites_boss2_png_size};
-    _resources["sprites/boss3.png"] = {EmbeddedResources::sprites_boss3_png, EmbeddedResources::sprites_boss3_png_size};
+    _resources["sprites/boss3/boss3P1.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P1_png, EmbeddedResources::sprites_boss3_boss3P1_png_size};
+    _resources["sprites/boss3/boss3P2.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P2_png, EmbeddedResources::sprites_boss3_boss3P2_png_size};
+    _resources["sprites/boss3/boss3P3.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P3_png, EmbeddedResources::sprites_boss3_boss3P3_png_size};
+    _resources["sprites/boss3/boss3P4.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P4_png, EmbeddedResources::sprites_boss3_boss3P4_png_size};
+    _resources["sprites/boss3/boss3P5.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P5_png, EmbeddedResources::sprites_boss3_boss3P5_png_size};
+    _resources["sprites/boss3/boss3P6.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P6_png, EmbeddedResources::sprites_boss3_boss3P6_png_size};
+    _resources["sprites/boss3/boss3P7.png"] = {
+        EmbeddedResources::sprites_boss3_boss3P7_png, EmbeddedResources::sprites_boss3_boss3P7_png_size};
+    _resources["sprites/boss3/boss3Tail.png"] = {
+        EmbeddedResources::sprites_boss3_boss3Tail_png, EmbeddedResources::sprites_boss3_boss3Tail_png_size};
     _resources["sprites/obstacle.png"] = {
         EmbeddedResources::sprites_obstacle_png, EmbeddedResources::sprites_obstacle_png_size};
     _resources["sprites/power_up.png"] = {
@@ -198,7 +228,6 @@ void EmbeddedResourceManager::registerResources()
     _resources["shaders/colorblind.frag"] = {
         EmbeddedResources::shaders_colorblind_frag, EmbeddedResources::shaders_colorblind_frag_size};
 
-    _resources["fonts/r-type.otf"] = {EmbeddedResources::fonts_r_type_otf, EmbeddedResources::fonts_r_type_otf_size};
     _resources["fonts/font.ttf"] = {EmbeddedResources::fonts_font_ttf, EmbeddedResources::fonts_font_ttf_size};
 
     _resources["sounds/boss_theme.flac"] = {

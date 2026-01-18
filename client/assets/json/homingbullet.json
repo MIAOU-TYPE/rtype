@@ -1,6 +1,6 @@
 {
   "sprite": "homingbullet",
-  "spriteId": 23,
+  "spriteId": 29,
   "texture": "sprites/homingbullet.png",
   "default_animation": "idle",
   "animations": {

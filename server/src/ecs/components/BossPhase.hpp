@@ -11,6 +11,20 @@
 
 namespace Ecs
 {
+    /**
+     * @brief Structure to hold data for each boss phase
+     * This structure is used to define the properties of each phase
+     * of a boss, including health thresholds, attack angles,
+     * fire speed multipliers, damage multipliers, and sprite IDs.
+     */
+    struct BossPhaseData {
+        int healthThreshold;            ///> Health threshold to enter this phase
+        std::vector<float> anglesToAdd; ///> Additional attack angles for this phase
+        float fireSpeedMultiplier;      ///> Multiplier for fire speed in this phase
+        int damageMultiplier;           ///> Multiplier for damage in this phase
+        unsigned int spriteId = 0;      ///> Sprite ID for this phase
+    };
+
     /** @brief Component representing the phase of a boss entity
      *
      * This component tracks the current phase of a boss, along with
@@ -18,17 +32,7 @@ namespace Ecs
      * and damage. It is used to manage boss behavior as its health changes.
      */
     struct BossPhase {
-        /**
-         * @brief Enumeration of boss phases
-         */
-        enum class Phase {
-            Phase1, ///> Initial phase of the boss
-            Phase2, ///> Second phase of the boss
-            Phase3  ///> Final phase of the boss
-        };
-        Phase currentPhase = Phase::Phase1;                   ///> Current phase of the boss
-        std::vector<int> phaseThresholds = {2500, 1000, 200}; ///> Health thresholds for phase transitions
-        float fireSpeedMultiplier = 1.5f;                     ///> Multiplier for fire rate in current phase
-        int damageMultiplier = 2;                             ///> Multiplier for damage in current phase
+        std::vector<BossPhaseData> phases; ///> Data for each boss phase
+        size_t currentPhaseIndex = 0;      ///> Index of the current phase
     };
 } // namespace Ecs

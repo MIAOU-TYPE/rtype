@@ -69,7 +69,7 @@ namespace Engine
             _entityTextures["enemy3"] = textures->load("sprites/enemy3.png");
             _entityTextures["boss"] = textures->load("sprites/boss.png");
             _entityTextures["boss2"] = textures->load("sprites/boss2.png");
-            _entityTextures["boss3"] = textures->load("sprites/boss3.png");
+            _entityTextures["boss3P1"] = textures->load("sprites/boss3/boss3P1.png");
             _entityTextures["obstacle"] = textures->load("sprites/obstacle.png");
             _entityTextures["power_up"] = textures->load("sprites/power_up.png");
             _entityTextures["power_up2"] = textures->load("sprites/power_up2.png");
@@ -92,8 +92,8 @@ namespace Engine
         _entityTypes.push_back({"Fast Enemy", 4, 33.0f, 22.0f, "fastEnemy", "enemy3"});
 
         _entityTypes.push_back({"Boss", 1, 177.0f, 144.0f, "boss", "boss"});
-        _entityTypes.push_back({"Boss 2", 21, 130.0f, 50.0f, "boss2", "boss2"});
-        _entityTypes.push_back({"Boss 3", 22, 160.0f, 213.0f, "boss3", "boss3"});
+        _entityTypes.push_back({"Boss 2", 31, 130.0f, 50.0f, "boss2", "boss2"});
+        _entityTypes.push_back({"Boss 3", 22, 160.0f, 213.0f, "boss3", "boss3P1"});
 
         _entityTypes.push_back({"Obstacle", 15, 34.0f, 34.0f, "gravityWell", "obstacle"});
 
@@ -110,7 +110,7 @@ namespace Engine
         _entitySpriteMap["fastEnemy"] = std::make_tuple("enemy3", 33, 22);
         _entitySpriteMap["boss"] = std::make_tuple("boss", 177, 144);
         _entitySpriteMap["boss2"] = std::make_tuple("boss2", 130, 50);
-        _entitySpriteMap["boss3"] = std::make_tuple("boss3", 160, 213);
+        _entitySpriteMap["boss3"] = std::make_tuple("boss3P1", 160, 213);
         _entitySpriteMap["gravityWell"] = std::make_tuple("obstacle", 34, 34);
         _entitySpriteMap["laser"] = std::make_tuple("power_up", 33, 28);
         _entitySpriteMap["shield"] = std::make_tuple("power_up2", 33, 28);
@@ -543,58 +543,171 @@ namespace Engine
 
     void LevelEditorState::populateEnemiesJson(json &enemies) const
     {
-        enemies["smallEnemy"] = {{"hp", 15}, {"speed", -100}, {"size", {{"w", 65}, {"h", 66}}}, {"killScore", 30},
-            {"sprite", "enemy"}, {"spriteId", 2},
-            {"shoot",
-                {{"type", "straight"}, {"cooldown", 2.0}, {"projectileSpeed", 130}, {"damage", 50},
-                    {"muzzle", {{"x", -20}, {"y", 50}}}, {"projectileSpriteId", 9}}}};
-        enemies["mediumEnemy"] = {{"hp", 40}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 50},
-            {"sprite", "enemy2"}, {"spriteId", 3},
-            {"shoot",
-                {{"type", "diagonal"}, {"angles", {-15, 15}}, {"cooldown", 2.0}, {"projectileSpeed", 100},
-                    {"damage", 50}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 9}}}};
-        enemies["mediumEnemyTriple"] = {{"hp", 40}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 65},
-            {"sprite", "enemy2"}, {"spriteId", 3},
-            {"shoot",
-                {{"type", "diagonal"}, {"angles", {-25, 0, 25}}, {"cooldown", 2.2}, {"projectileSpeed", 110},
-                    {"damage", 50}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
-        enemies["mediumEnemyWide"] = {{"hp", 45}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 80},
-            {"sprite", "enemy2"}, {"spriteId", 3},
-            {"shoot",
-                {{"type", "diagonal"}, {"angles", {-35, -15, 15, 35}}, {"cooldown", 2.6}, {"projectileSpeed", 105},
-                    {"damage", 45}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
-        enemies["mediumEnemyFive"] = {{"hp", 50}, {"speed", -70}, {"size", {{"w", 65}, {"h", 49}}}, {"killScore", 110},
-            {"sprite", "enemy2"}, {"spriteId", 3},
-            {"shoot",
-                {{"type", "diagonal"}, {"angles", {-40, -20, 0, 20, 40}}, {"cooldown", 3.0}, {"projectileSpeed", 110},
-                    {"damage", 40}, {"muzzle", {{"x", -20}, {"y", 35}}}, {"projectileSpriteId", 12}}}};
-        enemies["fastEnemy"] = {{"hp", 10}, {"speed", -125}, {"size", {{"w", 33}, {"h", 22}}}, {"killScore", 10},
-            {"sprite", "enemy3"}, {"spriteId", 4},
-            {"shoot",
-                {{"type", "straight"}, {"cooldown", 0.8}, {"projectileSpeed", 160}, {"damage", 50},
-                    {"muzzle", {{"x", -20}, {"y", 15}}}, {"projectileSpriteId", 9}}},
-            {"movement", {{"type", "zigzag"}, {"params", {{"amplitude", 50.0}, {"frequency", 0.5}}}}}};
-        enemies["boss"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 177}, {"h", 144}}}, {"killScore", 300},
-            {"sprite", "boss"}, {"spriteId", 1},
-            {"shoot",
-                {{"type", "diagonal"}, {"angles", {-90, -45, 0, -315, -270}}, {"cooldown", 1.6},
-                    {"projectileSpeed", 140}, {"damage", 35}, {"muzzle", {{"x", 105}, {"y", 112}}},
-                    {"projectileSpriteId", 12}}}};
-        enemies["boss2"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 130}, {"h", 50}}}, {"killScore", 300},
-            {"sprite", "boss2"}, {"spriteId", 21},
-            {"shoot",
-                {{"type", "spread"}, {"bulletsNbr", 5}, {"cooldown", 0.5}, {"projectileSpeed", 150}, {"damage", 50},
-                    {"muzzle", {{"x", 65}, {"y", 25}}}, {"projectileSpriteId", 12}}}};
-        enemies["boss3"] = {{"hp", 3000}, {"speed", -30}, {"size", {{"w", 160}, {"h", 213}}}, {"killScore", 300},
-            {"sprite", "boss3"}, {"spriteId", 22},
-            {"shoot",
-                {{"type", "homing"}, {"cooldown", 4.0}, {"projectileSpeed", 170}, {"damage", 500},
-                    {"muzzle", {{"x", 60}, {"y", 70}}}, {"projectileSpriteId", 23}}}};
+        enemies = json::object();
+
+        auto addEnemy = [&](const std::string &key, int hp, int speed, int w, int h, int killScore,
+                            const std::string &sprite, int spriteId, const json &shoot,
+                            const json &movement = json::object(), const json &phases = json::array()) {
+            json e;
+            e["hp"] = hp;
+            e["speed"] = speed;
+            e["size"] = {{"w", w}, {"h", h}};
+            e["killScore"] = killScore;
+            e["sprite"] = sprite;
+            e["spriteId"] = spriteId;
+
+            if (!shoot.is_null() && !shoot.empty())
+                e["shoot"] = shoot;
+            if (!movement.is_null() && !movement.empty())
+                e["movement"] = movement;
+            if (!phases.is_null() && phases.is_array() && !phases.empty())
+                e["phases"] = phases;
+
+            enemies[key] = std::move(e);
+        };
+
+        addEnemy("smallEnemy", 15, -100, 65, 66, 30, "enemy", 2,
+            {
+                {"type", "straight"},
+                {"cooldown", 2.0},
+                {"projectileSpeed", 130},
+                {"damage", 50},
+                {"muzzle", {{"x", -20}, {"y", 50}}},
+                {"projectileSpriteId", 9},
+            });
+
+        addEnemy("mediumEnemy", 40, -70, 65, 49, 50, "enemy2", 3,
+            {
+                {"type", "diagonal"},
+                {"angles", json::array({-15, 15})},
+                {"cooldown", 2.0},
+                {"projectileSpeed", 100},
+                {"damage", 50},
+                {"muzzle", {{"x", -20}, {"y", 35}}},
+                {"projectileSpriteId", 9},
+            });
+
+        addEnemy("mediumEnemyTriple", 40, -70, 65, 49, 65, "enemy2", 3,
+            {
+                {"type", "diagonal"},
+                {"angles", json::array({-25, 0, 25})},
+                {"cooldown", 2.2},
+                {"projectileSpeed", 110},
+                {"damage", 50},
+                {"muzzle", {{"x", -20}, {"y", 35}}},
+                {"projectileSpriteId", 12},
+            });
+
+        addEnemy("mediumEnemyWide", 45, -70, 65, 49, 80, "enemy2", 3,
+            {
+                {"type", "diagonal"},
+                {"angles", json::array({-35, -15, 15, 35})},
+                {"cooldown", 2.6},
+                {"projectileSpeed", 105},
+                {"damage", 45},
+                {"muzzle", {{"x", -20}, {"y", 35}}},
+                {"projectileSpriteId", 12},
+            });
+
+        addEnemy("mediumEnemyFive", 50, -70, 65, 49, 110, "enemy2", 3,
+            {
+                {"type", "diagonal"},
+                {"angles", json::array({-40, -20, 0, 20, 40})},
+                {"cooldown", 3.0},
+                {"projectileSpeed", 110},
+                {"damage", 40},
+                {"muzzle", {{"x", -20}, {"y", 35}}},
+                {"projectileSpriteId", 12},
+            });
+
+        addEnemy("fastEnemy", 10, -125, 33, 22, 10, "enemy3", 4,
+            {
+                {"type", "straight"},
+                {"cooldown", 0.8},
+                {"projectileSpeed", 160},
+                {"damage", 50},
+                {"muzzle", {{"x", -20}, {"y", 15}}},
+                {"projectileSpriteId", 9},
+            },
+            {
+                {"type", "zigzag"},
+                {"params", {{"amplitude", 50.0}, {"frequency", 0.5}}},
+            });
+
+        addEnemy("boss", 3000, -30, 177, 144, 300, "boss", 1,
+            {
+                {"type", "diagonal"},
+                {"angles", json::array({-90, -45, 0, -315, -270})},
+                {"cooldown", 1.6},
+                {"projectileSpeed", 140},
+                {"damage", 35},
+                {"muzzle", {{"x", 105}, {"y", 112}}},
+                {"projectileSpriteId", 12},
+            },
+            json::object(),
+            json::array({
+                {{"hpThreshold", 2500}, {"angles", json::array({-15, 0, 15})}, {"fireSpeedMultiplier", 1.2},
+                    {"damageMultiplier", 1}, {"spriteId", 1}},
+                {{"hpThreshold", 1500}, {"angles", json::array({-30, 30})}, {"fireSpeedMultiplier", 1.5},
+                    {"damageMultiplier", 2}, {"spriteId", 1}},
+                {{"hpThreshold", 500}, {"angles", json::array({-45, 45})}, {"fireSpeedMultiplier", 2.0},
+                    {"damageMultiplier", 2}, {"spriteId", 1}},
+            }));
+
+        addEnemy("boss2", 3000, -30, 130, 50, 300, "boss2", 31,
+            {
+                {"type", "spread"},
+                {"bulletsNbr", 5},
+                {"cooldown", 0.5},
+                {"projectileSpeed", 150},
+                {"damage", 50},
+                {"muzzle", {{"x", 65}, {"y", 25}}},
+                {"projectileSpriteId", 12},
+            },
+            json::object(),
+            json::array({
+                {{"hpThreshold", 2500}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.0},
+                    {"damageMultiplier", 1}, {"spriteId", 31}},
+                {{"hpThreshold", 1500}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.3},
+                    {"damageMultiplier", 3}, {"spriteId", 31}},
+                {{"hpThreshold", 500}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.5}, {"damageMultiplier", 1},
+                    {"spriteId", 31}},
+            }));
+
+        addEnemy("boss3", 4998, -30, 160, 213, 300, "boss3P1", 22,
+            {
+                {"type", "homing"},
+                {"cooldown", 4.0},
+                {"projectileSpeed", 130},
+                {"damage", 50},
+                {"muzzle", {{"x", 60}, {"y", 70}}},
+                {"projectileSpriteId", 29},
+            },
+            json::object(),
+            json::array({
+                {{"hpThreshold", 4998}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.0},
+                    {"damageMultiplier", 1}, {"spriteId", 22}},
+                {{"hpThreshold", 4284}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.0},
+                    {"damageMultiplier", 1}, {"spriteId", 23}},
+                {{"hpThreshold", 3570}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.2},
+                    {"damageMultiplier", 2}, {"spriteId", 24}},
+                {{"hpThreshold", 2856}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.5},
+                    {"damageMultiplier", 2}, {"spriteId", 25}},
+                {{"hpThreshold", 2142}, {"angles", json::array()}, {"fireSpeedMultiplier", 1.5},
+                    {"damageMultiplier", 3}, {"spriteId", 26}},
+                {{"hpThreshold", 1428}, {"angles", json::array()}, {"fireSpeedMultiplier", 2.0},
+                    {"damageMultiplier", 3}, {"spriteId", 27}},
+                {{"hpThreshold", 714}, {"angles", json::array()}, {"fireSpeedMultiplier", 2.0}, {"damageMultiplier", 4},
+                    {"spriteId", 28}},
+            }));
+
         enemies["groupEnemy"] = {{"type", "group"},
             {"members",
-                {{{"enemyType", "mediumEnemy"}, {"offset", {{"x", 0}, {"y", 0}}}},
+                json::array({
+                    {{"enemyType", "mediumEnemy"}, {"offset", {{"x", 0}, {"y", 0}}}},
                     {{"enemyType", "smallEnemy"}, {"offset", {{"x", 0}, {"y", -130}}}},
-                    {{"enemyType", "smallEnemy"}, {"offset", {{"x", 0}, {"y", 130}}}}}}};
+                    {{"enemyType", "smallEnemy"}, {"offset", {{"x", 0}, {"y", 130}}}},
+                })}};
     }
 
     void LevelEditorState::populateObstaclesJson(json &obstacles) const
@@ -621,9 +734,9 @@ namespace Engine
                 wave["obstacleY"] = entity.y;
                 wave["enemies"] = json::object();
             } else if (entity.type == "laser" || entity.type == "shield" || entity.type == "bubble") {
-                wave["powerUp"] = {{"type", entity.type}};
+                wave["powerUp"] = json{{"type", entity.type}};
             } else {
-                wave["enemies"] = {{entity.type, 1}};
+                wave["enemies"] = json{{entity.type, 1}};
                 wave["spawnPattern"] = "line";
                 wave["spawnY"] = entity.y;
             }

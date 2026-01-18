@@ -227,6 +227,8 @@ namespace Game
 
         BackgroundSystem::update(*_worldWrite, dt);
         BackgroundSystem::resetScroll(*_worldWrite);
+        _timeSpecialMove += dt;
+        TailFollowerSystem::update(*_worldWrite, _timeSpecialMove);
         BossSystem::update(*_worldWrite);
         AIShootSystem::update(*_worldWrite, dt);
 

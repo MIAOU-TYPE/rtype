@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include "BossPhase.hpp"
 #include "GameConfig.hpp"
 #include <unordered_map>
 
@@ -69,17 +70,18 @@ namespace Game
      * @brief Definition of an enemy type.
      */
     struct EnemyDefinition {
-        int hp = 0;                       ///> Hit points
-        int damage = 200;                 ///> Collision damage
-        float speed = 0.f;                ///> Movement speed
-        float colW = 0.f;                 ///> Collision width
-        float colH = 0.f;                 ///> Collision height
-        unsigned int sprite;              ///> Sprite asset path
-        unsigned int killScore = 0;       ///> Score awarded for killing this enemy
-        ShootDefinition shoot;            ///> Shooting behavior
-        bool isGroup = false;             ///> Is this a group of enemies?
-        std::vector<GroupMember> members; ///> Members if this is a group
-        MovementDefinition movement;      ///> Movement behavior
+        int hp = 0;                             ///> Hit points
+        int damage = 200;                       ///> Collision damage
+        float speed = 0.f;                      ///> Movement speed
+        float colW = 0.f;                       ///> Collision width
+        float colH = 0.f;                       ///> Collision height
+        unsigned int sprite;                    ///> Sprite asset path
+        unsigned int killScore = 0;             ///> Score awarded for killing this enemy
+        ShootDefinition shoot;                  ///> Shooting behavior
+        bool isGroup = false;                   ///> Is this a group of enemies?
+        std::vector<GroupMember> members;       ///> Members if this is a group
+        MovementDefinition movement;            ///> Movement behavior
+        std::vector<Ecs::BossPhaseData> phases; ///> Boss phase data if this is a boss
     };
 
     /**

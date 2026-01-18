@@ -15,17 +15,6 @@ namespace
             return "0" + std::to_string(v);
         return std::to_string(v);
     }
-
-    [[nodiscard]] float maxWidth(const std::initializer_list<std::shared_ptr<Graphics::IText>> &texts)
-    {
-        float m = 0.f;
-        for (const auto &t : texts) {
-            if (!t)
-                continue;
-            m = std::max(m, static_cast<float>(t->getWidth()));
-        }
-        return m;
-    }
 } // namespace
 
 namespace Engine
@@ -33,6 +22,7 @@ namespace Engine
     Lobby::Lobby(const std::shared_ptr<Graphics::IRenderer> &renderer) : AMenu(renderer)
     {
         loadBackground("sprites/bg-preview.png");
+        loadPanel("sprites/popup.png", true);
 
         _leaveBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "LEAVE");
         _startBtn = std::make_unique<UI::UIButton>(_renderer, UI::ButtonSize::Large, "START");
@@ -85,16 +75,15 @@ namespace Engine
     void Lobby::onEnter()
     {
         _startRequested = false;
-        resetButtons(_startBtn.get());
-        resetButtons(_leaveBtn.get());
         _chatSubmitted = false;
         _chatSubmittedMessage.clear();
         if (_chatField) {
             _chatField->clear();
             _chatField->setFocused(false);
         }
+        _leaveRequested = false;
+        resetButtons(_startBtn.get(), _leaveBtn.get());
         resetButtons(_chatSendBtn.get());
-
         rebuildTexts();
         layout();
     }
@@ -189,10 +178,7 @@ namespace Engine
     void Lobby::rebuildTexts() const
     {
         if (_subtitleText) {
-            if (_lobbyName.empty())
-                _subtitleText->setString("Waiting room");
-            else
-                _subtitleText->setString(_lobbyName);
+            _subtitleText->setString(_lobbyName.empty() ? "Waiting room" : _lobbyName);
         }
 
         if (_playersCountText)
@@ -213,21 +199,13 @@ namespace Engine
                 _playerTexts.at(i)->setString(twoDigits(i + 1) + "  — empty —");
         }
 
-        if (_statusText) {
-            if (_canStart)
-                _statusText->setString("");
-            else
-                _statusText->setString("Only the host can start.");
-        }
+        if (_statusText)
+            _statusText->setString(_canStart ? "" : "Only the host can start.");
 
-        if (_hintText) {
-            if (_canStart)
-                _hintText->setString("Press ENTER or click START");
-            else
-                _hintText->setString("Waiting for the host...");
-        }
+        if (_hintText)
+            _hintText->setString(_canStart ? "Press ENTER or click START" : "Waiting for the host...");
 
-        for (auto &t : _chatTexts)
+                    for (auto &t : _chatTexts)
             if (t)
                 t->setString("");
 
@@ -243,119 +221,63 @@ namespace Engine
 
     void Lobby::layout()
     {
-        const auto vp = viewportF();
-        const float w = vp.w;
-        const float h = vp.h;
-
         layoutBackground();
+        layoutPanel();
+        const auto vp = viewportF();
+        const float ui = std::clamp(std::min(vp.w / 1280.f, vp.h / 720.f), 0.55f, 1.0f);
+        _startBtn->setUIScale(ui, ui);
+        _leaveBtn->setUIScale(ui, ui);
+
+        const auto inner = innerRect();
+
+        const float paddingL = inner.w * 0.10f;
+        const float xLeft = inner.x + paddingL;
 
         if (_titleText)
-            _titleText->setPosition(vp.cx - _titleText->getWidth() * 0.5f, h * 0.16f);
+            _titleText->setPosition(inner.cx() - _titleText->getWidth() * 0.5f, inner.y + inner.h * 0.10f - 115.f);
+        const float ySubtitle = inner.y + inner.h * 0.16f;
+        const float yDivider = inner.y + inner.h * 0.22f;
+        const float yHeader = inner.y + inner.h * 0.30f;
         if (_subtitleText)
-            _subtitleText->setPosition(vp.cx - _subtitleText->getWidth() * 0.5f, h * 0.23f);
+            _subtitleText->setPosition(xLeft, ySubtitle);
         if (_dividerText)
-            _dividerText->setPosition(vp.cx - _dividerText->getWidth() * 0.5f, h * 0.28f);
-
-        float listMaxW = 0.f;
-        for (const auto &t : _playerTexts)
-            if (t)
-                listMaxW = std::max(listMaxW, t->getWidth());
-
-        const float headerRowW = maxWidth({_playersHeaderText, _playersCountText});
-        const float contentW = std::max(listMaxW, headerRowW);
-
-        const float playersX = vp.cx - contentW * 0.5f;
-
+            _dividerText->setPosition(xLeft, yDivider);
         if (_playersHeaderText)
-            _playersHeaderText->setPosition(playersX, h * 0.34f);
+            _playersHeaderText->setPosition(xLeft, yHeader);
         if (_playersCountText)
-            _playersCountText->setPosition(playersX + contentW - _playersCountText->getWidth(), h * 0.34f);
+            _playersCountText->setPosition(xLeft + 70.f, yHeader);
 
-        const float startY = h * 0.40f;
+        const float startY = inner.y + inner.h * 0.36f;
         for (size_t i = 0; i < _playerTexts.size(); ++i) {
-            constexpr float playerLineH = 34.f;
-            const auto &t = _playerTexts.at(i);
-            if (!t)
-                continue;
-            t->setPosition(playersX, startY + static_cast<float>(i) * playerLineH);
+            constexpr float lineH = 34.f;
+            if (const auto &t = _playerTexts.at(i))
+                t->setPosition(xLeft, startY + static_cast<float>(i) * lineH);
         }
 
         if (_statusText)
-            _statusText->setPosition(vp.cx - _statusText->getWidth() * 0.5f, h * 0.78f);
+            _statusText->setPosition(xLeft, inner.y + inner.h * 0.74f);
         if (_hintText)
-            _hintText->setPosition(vp.cx - _hintText->getWidth() * 0.5f, h * 0.82f);
+            _hintText->setPosition(xLeft, inner.y + inner.h * 0.78f);
 
-        placeCentered(*_startBtn, vp.cx, h * 0.80f);
-        placeCentered(*_leaveBtn, vp.cx, h * 0.90f);
+        const float buttonsY = inner.y + inner.h * 0.90f;
+        const float bwLeave = _leaveBtn->bounds().w;
+        const float gap = inner.w * 0.04f;
 
-        constexpr float marginX = 24.f;
-        constexpr float marginY = 24.f;
-        constexpr float headerGap = 24.f;
-        constexpr float chatLineH = 20.f;
-
-        const float chatW = w * 0.30f;
-        const float chatX = (w - marginX) - chatW;
-
-        const float leaveBtnTopY = (h * 0.90f) - 70.f;
-        const float chatBottomY = leaveBtnTopY - marginY;
-
-        const float chatTopY = std::max(h * 0.55f, chatBottomY - 220.f);
-
-        if (_chatHeaderText) {
-            _chatHeaderText->setPosition(chatX + chatW - _chatHeaderText->getWidth(), chatTopY);
-        }
-
-        const float linesTopY = chatTopY + headerGap;
-        constexpr float inputH = 42.f;
-        constexpr float inputMarginTop = 6.f;
-        const float availableH = chatBottomY - linesTopY - (inputMarginTop + inputH);
-        size_t maxLines = 0;
-        if (availableH > 0.f)
-            maxLines = static_cast<size_t>(availableH / chatLineH);
-
-        _chatVisible = std::min(_chatCapacity, maxLines);
-
-        for (size_t i = 0; i < _chatTexts.size(); ++i) {
-            const auto &t = _chatTexts[i];
-            if (!t)
-                continue;
-
-            if (i < _chatVisible) {
-                const float y = linesTopY + static_cast<float>(i) * chatLineH;
-                const float x = chatX + chatW - t->getWidth();
-                t->setPosition(x, y);
-            } else {
-                t->setPosition(-10000.f, -10000.f);
-            }
-        }
-
-        constexpr float inputGap = 10.f;
-        constexpr float sendW = 110.f;
-
-        const float inputY = linesTopY + static_cast<float>(_chatVisible) * chatLineH + 6.f;
-
-        if (_chatField) {
-            _chatField->setPosition(chatX, inputY);
-            _chatField->setWidth(chatW - sendW - inputGap);
-        }
-
-        if (_chatSendBtn) {
-            const float sendCx = chatX + chatW - sendW * 0.5f;
-            const float sendCy = inputY + inputH * 0.5f;
-            placeCentered(*_chatSendBtn, sendCx, sendCy);
-        }
+        _leaveBtn->setPosition(xLeft, buttonsY);
+        _startBtn->setPosition(xLeft + bwLeave + gap, buttonsY);
     }
 
     void Lobby::update(const InputFrame &frame)
     {
         updateButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get(), _chatSendBtn.get());
         handleInput(frame);
+        updateButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get());
 
         const auto now = std::chrono::steady_clock::now();
-        if (lastRefresh.time_since_epoch().count() == 0)
-            lastRefresh = now;
-        if (now - lastRefresh >= refreshPeriod) {
-            lastRefresh = now;
+        if (_lastRefresh.time_since_epoch().count() == 0)
+            _lastRefresh = now;
+        if (now - _lastRefresh >= refreshPeriod) {
+            _lastRefresh = now;
             _needUpdate = true;
         }
     }
@@ -363,6 +285,8 @@ namespace Engine
     void Lobby::render() const
     {
         renderBackground();
+        if (_panelTex != Graphics::InvalidTexture)
+            _renderer->draw(_panelCmd);
 
         if (_titleText)
             _renderer->draw(*_titleText);
@@ -414,12 +338,7 @@ namespace Engine
 
     void Lobby::handleMousePressed(const InputFrame &frame) const
     {
-        pressButtons(frame.mouseX, frame.mouseY, _startBtn.get());
-        pressButtons(frame.mouseX, frame.mouseY, _leaveBtn.get());
-        pressButtons(frame.mouseX, frame.mouseY, _chatSendBtn.get());
-
-        if (_chatField)
-            _chatField->onMousePressed(frame.mouseX, frame.mouseY);
+        pressButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get());
     }
 
     void Lobby::handleMouseReleased(const InputFrame &frame)

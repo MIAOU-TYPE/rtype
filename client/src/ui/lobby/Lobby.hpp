@@ -190,7 +190,7 @@ namespace Engine
 
         bool _needUpdate = false; ///> Indicates if the lobby needs to be updated.
 
-        std::chrono::steady_clock::time_point lastRefresh{};                  ///> Last refresh time point.
+        std::chrono::steady_clock::time_point _lastRefresh{};                 ///> Last refresh time point.
         static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
 
         size_t _lobbyCapacity = 4; ///> Maximum capacity of the lobby.

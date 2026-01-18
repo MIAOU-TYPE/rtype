@@ -178,16 +178,13 @@ namespace Engine
 
     void RoomManager::loadCustomWorldFromFilesystem()
     {
-        _worlds.erase(std::remove_if(_worlds.begin(), _worlds.end(),
-                          [](const WorldEntry &w) {
-                              return w.id == "custom";
-                          }),
-            _worlds.end());
+        std::erase_if(_worlds, [](const WorldEntry &w) {
+            return w.id == "custom";
+        });
         _levelsByWorldId.erase("custom");
 
-        std::vector<LevelInfo> customLevels;
-
         try {
+            std::vector<LevelInfo> customLevels;
             const std::filesystem::path levelsDir("levels");
             if (!std::filesystem::exists(levelsDir) || !std::filesystem::is_directory(levelsDir)) {
                 return;
@@ -240,5 +237,15 @@ namespace Engine
             std::cerr << "{RoomManager::loadCustomWorldFromFilesystem} Error scanning levels directory: " << e.what()
                       << std::endl;
         }
+    }
+
+    std::vector<std::string> &RoomManager::messages() noexcept
+    {
+        return _messages;
+    }
+
+    void RoomManager::addMessage(const std::string &message)
+    {
+        _messages.emplace_back(message);
     }
 } // namespace Engine

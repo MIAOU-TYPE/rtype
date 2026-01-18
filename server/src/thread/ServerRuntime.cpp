@@ -194,9 +194,10 @@ void ServerRuntime::runTcp() const
         std::this_thread::sleep_until(nextTick);
         nextTick += Tick;
         (void) _tcpServer->readPackets();
-        if (std::shared_ptr<IPacket> pkt = nullptr; _tcpServer->popPacket(pkt))
+        std::shared_ptr<IPacket> pkt = nullptr;
+        while (_tcpServer->popPacket(pkt))
             _tcpPacketRouter->handle(pkt);
-        else if (auto now = clock::now(); now > nextTick + Tick)
+        if (auto now = clock::now(); now > nextTick + Tick)
             nextTick = now;
     }
 }

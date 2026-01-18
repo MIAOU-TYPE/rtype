@@ -131,6 +131,14 @@ namespace Network
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeRoomInfo(uint32_t req) const;
 
+        /**
+         * @brief Create a RoomMessage packet.
+         * @param req The request ID for the RoomMessage packet.
+         * @param message The message to be sent in the room.
+         * @return A shared pointer to the created RoomMessage packet.
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeRoomMessage(uint32_t req, std::string_view message) const;
+
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets
     };

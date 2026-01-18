@@ -231,11 +231,11 @@ namespace Engine
          * @brief Constructor for PongReceived event.
          * @param tmstmp The timestamp of the pong received.
          */
-        explicit PongReceived(const uint32_t tmstmp) : timestamp(tmstmp)
+        explicit PongReceived(const uint64_t tmstmp) : timestamp(tmstmp)
         {
         }
 
-        uint32_t timestamp; ///> The timestamp of the pong received.
+        uint64_t timestamp; ///> The timestamp of the pong received.
     };
 
     /**
@@ -252,4 +252,24 @@ namespace Engine
      * @brief Event triggered when a request to update the room is made.
      */
     struct UpdateRoomRequested : Event {};
+
+    /**
+     * @brief Event triggered when room data is updated.
+     */
+    struct RoomDataUpdated : Event {};
+
+    /**
+     * @brief Event triggered when a chat message is sent.
+     */
+    struct SendingMessage : Event {
+        /**
+         * @brief Constructor for SendingMessage event.
+         * @param msg The message to be sent.
+         */
+        explicit SendingMessage(std::string msg) : message(std::move(msg))
+        {
+        }
+
+        std::string message; ///> The message to be sent.
+    };
 } // namespace Engine

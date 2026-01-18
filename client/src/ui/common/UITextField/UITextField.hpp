@@ -64,6 +64,17 @@ namespace UI
         void setWidth(float w);
 
         /**
+         * @brief Set the height of the text field.
+         * @param h The height to set.
+         */
+        void setHeight(float h);
+
+        /**
+         * @brief Set the text size for the text field.
+         * @param size The text size to set.
+         */
+        void setTextSize(size_t size) const;
+        /**
          * @brief Clear the text field's value.
          */
         void clear();
@@ -96,7 +107,7 @@ namespace UI
         /**
          * @brief Layout the text field (calculate sizes and positions).
          */
-        void layout();
+        void layout() const;
 
         /**
          * @brief Render the text field.

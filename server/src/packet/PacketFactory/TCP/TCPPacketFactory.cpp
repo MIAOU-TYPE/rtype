@@ -163,4 +163,15 @@ namespace Net::Factory
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_UPDATE, req, b.bytes());
         return make(addr, payload);
     }
+
+    std::shared_ptr<IPacket> TCPPacketFactory::makeRoomMessage(
+        const sockaddr_in &addr, const ReqId req, const std::string_view message) const
+    {
+        if (message.empty() || message.size() > 256)
+            return makeError(addr, req, 7, "ROOM_MESSAGE: message must be 1..256 characters");
+        TCP::Writer b;
+        b.str16(message);
+        const auto payload = TCP::buildPayload(Protocol::TCP::MESSAGE_ROOM, req, b.bytes());
+        return make(addr, payload);
+    }
 } // namespace Net::Factory

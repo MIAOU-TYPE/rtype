@@ -169,4 +169,21 @@ namespace Network
             return nullptr;
         }
     }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeRoomMessage(
+        const uint32_t req, const std::string_view message) const
+    {
+        try {
+            if (message.empty())
+                return nullptr;
+            Net::TCP::Writer b;
+            b.str16(message);
+
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::ROOM_MESSAGE, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeRoomMessage} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
 } // namespace Network

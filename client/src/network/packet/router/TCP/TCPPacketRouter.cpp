@@ -79,6 +79,7 @@ namespace Network
                 case Net::Protocol::TCP::GAME_START: onGameStart(h.requestId, r); break;
                 case Net::Protocol::TCP::SCOREBOARD_LIST: onScoreboardList(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOM_UPDATE: onRoomUpdated(h.requestId, r); break;
+                case Net::Protocol::TCP::MESSAGE_ROOM: onMessageRoom(h.requestId, r); break;
                 default: protocolError(h.requestId, "Unsupported TCP packet type (client)"); break;
             }
         } catch (const std::exception &e) {
@@ -303,6 +304,20 @@ namespace Network
             return protocolError(req, "ROOM_UPDATED: unexpected trailing bytes");
 
         _sink->onRoomUpdated(req, room);
+    }
+
+    void TCPPacketRouter::onMessageRoom(const uint32_t req, Net::TCP::Reader &r) const
+    {
+        std::string message;
+        try {
+            message = r.str16();
+        } catch (...) {
+            return protocolError(req, "MESSAGE_ROOM: malformed payload (expected roomId(u32)+message(str16))");
+        }
+
+        if (r.remaining() != 0)
+            return protocolError(req, "MESSAGE_ROOM: unexpected trailing bytes");
+        _sink->onMessageRoom(req, message);
     }
 
 } // namespace Network

@@ -41,7 +41,7 @@ namespace Engine
         layoutBackground();
         const auto v = viewportF();
         if (_title)
-            _title->setPosition(v.cx - 135.f, v.h * 0.14f);
+            _title->setPosition(v.cx - 145.f, v.h * 0.14f);
         const float titleY = v.h * 0.32f;
         const float lineStartY = v.h * 0.38f;
         if (_scoresTitle)

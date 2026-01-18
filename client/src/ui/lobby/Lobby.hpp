@@ -16,6 +16,7 @@
 #include "IText.hpp"
 #include "InputState.hpp"
 #include "UIButton.hpp"
+#include "UITextField.hpp"
 
 namespace Engine
 {
@@ -111,6 +112,28 @@ namespace Engine
          */
         void consumeUpdate() noexcept;
 
+        void setChatMessages(const std::vector<std::string> &messages)
+        {
+            _chatMessages = messages;
+            rebuildTexts();
+            layout();
+        }
+
+        [[nodiscard]] bool hasChatSubmission() const noexcept
+        {
+            return _chatSubmitted;
+        }
+
+        void consumeChatSubmission() noexcept
+        {
+            _chatSubmitted = false;
+        }
+
+        [[nodiscard]] const std::string &submittedChatMessage() const noexcept
+        {
+            return _chatSubmittedMessage;
+        }
+
       private:
         /**
          * @brief Handles input events for the lobby page.
@@ -135,6 +158,8 @@ namespace Engine
          * @param frame The last input frame.
          */
         void handleKeyPressed(const InputFrame &frame);
+
+        void handleKeyReleased(const InputFrame &frame) const;
 
         /**
          * @brief Rebuilds the text elements based on the current state.
@@ -168,5 +193,17 @@ namespace Engine
         static constexpr auto refreshPeriod = std::chrono::milliseconds(500); ///> Refresh period.
 
         size_t _lobbyCapacity = 4; ///> Maximum capacity of the lobby.
+
+        std::vector<std::string> _chatMessages;
+        std::shared_ptr<Graphics::IText> _chatHeaderText;
+        std::vector<std::shared_ptr<Graphics::IText>> _chatTexts;
+        size_t _chatCapacity = 8; // lignes visibles
+        size_t _chatVisible = 0;
+
+        std::unique_ptr<UI::UITextField> _chatField;
+        std::unique_ptr<UI::UIButton> _chatSendBtn;
+
+        bool _chatSubmitted = false;
+        std::string _chatSubmittedMessage;
     };
 } // namespace Engine

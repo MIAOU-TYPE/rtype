@@ -41,31 +41,42 @@ namespace Engine
         std::string _message; ///> Error message
     };
 
+    /**
+     * @brief Structure representing a rectangle with floating-point coordinates.
+     */
     struct RectF {
-        float x = 0.f;
-        float y = 0.f;
-        float w = 0.f;
-        float h = 0.f;
+        float x = 0.f; ///> X-coordinate
+        float y = 0.f; ///> Y-coordinate
+        float w = 0.f; ///> Width
+        float h = 0.f; ///> Height
 
-        [[nodiscard]] float cx() const noexcept
-        {
-            return x + w * 0.5f;
-        }
+        /**
+         * @brief Get the center x-coordinate of the rectangle.
+         *
+         * @return float The center x-coordinate.
+         */
+        [[nodiscard]] float cx() const noexcept;
 
-        [[nodiscard]] float cy() const noexcept
-        {
-            return y + h * 0.5f;
-        }
+        /**
+         * @brief Get the center y-coordinate of the rectangle.
+         *
+         * @return float The center y-coordinate.
+         */
+        [[nodiscard]] float cy() const noexcept;
 
-        [[nodiscard]] float right() const noexcept
-        {
-            return x + w;
-        }
+        /**
+         * @brief Get the right x-coordinate of the rectangle.
+         *
+         * @return float The right x-coordinate.
+         */
+        [[nodiscard]] float right() const noexcept;
 
-        [[nodiscard]] float bottom() const noexcept
-        {
-            return y + h;
-        }
+        /**
+         * @brief Get the bottom y-coordinate of the rectangle.
+         *
+         * @return float The bottom y-coordinate.
+         */
+        [[nodiscard]] float bottom() const noexcept;
     };
 
     class AMenu : public IMenu {

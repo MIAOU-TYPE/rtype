@@ -23,6 +23,26 @@ namespace Engine
         return {w, h, w * 0.5f, h * 0.5f};
     }
 
+    float RectF::cx() const noexcept
+    {
+        return x + w * 0.5f;
+    }
+
+    float RectF::cy() const noexcept
+    {
+        return y + h * 0.5f;
+    }
+
+    float RectF::right() const noexcept
+    {
+        return x + w;
+    }
+
+    float RectF::bottom() const noexcept
+    {
+        return y + h;
+    }
+
     void AMenu::loadBackground(const std::string &path)
     {
         const auto textures = _renderer->textures();

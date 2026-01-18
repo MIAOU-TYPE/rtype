@@ -480,7 +480,7 @@ namespace Thread
         });
 
         _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t) {
-            if (!_stateManager->is<Engine::LobbyState>())
+            if (!_stateManager->is<Engine::LobbyState>() && !_stateManager->is<Engine::GameState>())
                 _pendingJoinRoom.store(true, std::memory_order_release);
             else
                 _pendingLobbyRefresh.store(true, std::memory_order_release);
@@ -488,7 +488,7 @@ namespace Thread
 
         _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
             _roomManager->setCurrentData(room);
-            if (!_stateManager->is<Engine::LobbyState>())
+            if (!_stateManager->is<Engine::LobbyState>() && !_stateManager->is<Engine::GameState>())
                 _pendingJoinRoom.store(true, std::memory_order_release);
             else
                 _pendingLobbyRefresh.store(true, std::memory_order_release);

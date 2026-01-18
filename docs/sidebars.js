@@ -147,7 +147,6 @@ module.exports = {
           label: 'Engine',
           items: [
             'technical-docs/server/engine/overview',
-            'technical-docs/server/engine/engine',
             'technical-docs/server/engine/ecs',
             'technical-docs/server/engine/systems',
             'technical-docs/server/engine/world',

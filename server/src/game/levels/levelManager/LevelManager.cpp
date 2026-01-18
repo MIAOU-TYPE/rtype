@@ -230,6 +230,39 @@ namespace
         return true;
     }
 
+    void parseWalls(const json &j, Game::Level &level)
+    {
+        level.wallLayers.clear();
+
+        if (!j.contains("walls") || !j.at("walls").is_array())
+            return;
+
+        for (const auto &layerNode : j.at("walls")) {
+            if (!layerNode.is_object())
+                return;
+            Game::BackgroundLayer layer;
+            layer.spriteId = layerNode.value("spriteId", 0u);
+            layer.scrollSpeed = layerNode.value("scrollSpeed", -50.f);
+            layer.tileWidth = layerNode.value("tileWidth", 1920.f);
+            layer.tileHeight = layerNode.value("tileHeight", 1080.f);
+            layer.depth = layerNode.value("depth", 0);
+            if (layerNode.contains("collisionBoxes") && layerNode.at("collisionBoxes").is_array()) {
+                for (const auto &boxNode : layerNode.at("collisionBoxes")) {
+                    if (!boxNode.is_object()) continue;
+                    Game::CollisionBox box;
+                    box.x = boxNode.value("x", 0.f);
+                    box.y = boxNode.value("y", 0.f);
+                    box.w = boxNode.value("w", 0.f);
+                    box.h = boxNode.value("h", 0.f);
+                    layer.collisionBoxes.push_back(box);
+                }
+            }
+
+            level.wallLayers.push_back(layer);
+        }
+        return;
+    }
+
     bool parseLevelJson(const json &j, Game::Level &level)
     {
         if (!j.contains("name") || !j.at("name").is_string())
@@ -240,6 +273,7 @@ namespace
 
         if (!parseBackground(j, level))
             return false;
+        parseWalls(j, level);
         if (!parseEnemies(j, level))
             return false;
         parseObstacles(j, level);

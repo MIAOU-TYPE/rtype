@@ -203,6 +203,8 @@ namespace Engine
         applyUI(_create.levelNext.get());
         applyUI(_create.difficultyPrev.get());
         applyUI(_create.difficultyNext.get());
+        applyUI(_create.modePrev.get());
+        applyUI(_create.modeNext.get());
         applyUI(_create.playersPrev.get());
         applyUI(_create.playersNext.get());
         applyUI(_create.confirm.get());
@@ -250,12 +252,12 @@ namespace Engine
         if (_create.roomNameField) {
             const float fieldW = std::min(560.f, inner.w * 0.82f);
             const float fieldX = cx - fieldW * 0.5f;
-            _create.roomNameField->setPosition(fieldX, inner.y + inner.h * 0.35f + yOffset);
+            _create.roomNameField->setPosition(fieldX - inner.w * 0.05f, inner.y + inner.h * 0.20f + yOffset);
             _create.roomNameField->setWidth(fieldW);
         }
 
         auto row = [&](UI::UIButton &prev, UI::UIButton &next, Graphics::IText &label, int i) {
-            const float y = rowsStart + rowsStep * static_cast<float>(i) + yOffset;
+            const float y = rowsStart + rowsStep * static_cast<float>(i - 1) + yOffset;
             prev.centerButtonLabel(prevX, y, label, cx);
             centerX(next, nextX, y);
         };

@@ -60,6 +60,8 @@ namespace Engine
 
         _chatHeaderText = _renderer->texts()->createText(18, {200, 235, 255, 255});
         _chatHeaderText->setString("CHAT");
+        _dividerChat = _renderer->texts()->createText(18, {150, 190, 230, 255});
+        _dividerChat->setString("------------------------------");
 
         _chatTexts.reserve(_chatCapacity);
         for (size_t i = 0; i < _chatCapacity; ++i) {
@@ -205,7 +207,7 @@ namespace Engine
         if (_hintText)
             _hintText->setString(_canStart ? "Press ENTER or click START" : "Waiting for the host...");
 
-                    for (auto &t : _chatTexts)
+        for (auto &t : _chatTexts)
             if (t)
                 t->setString("");
 
@@ -247,11 +249,11 @@ namespace Engine
         if (_playersCountText)
             _playersCountText->setPosition(xLeft + 70.f, yHeader);
 
-        const float startY = inner.y + inner.h * 0.36f;
+        const float playersStartY = inner.y + inner.h * 0.36f;
         for (size_t i = 0; i < _playerTexts.size(); ++i) {
-            constexpr float lineH = 34.f;
+            constexpr float playersLineH = 34.f;
             if (const auto &t = _playerTexts.at(i))
-                t->setPosition(xLeft, startY + static_cast<float>(i) * lineH);
+                t->setPosition(xLeft, playersStartY + static_cast<float>(i) * playersLineH);
         }
 
         if (_statusText)
@@ -265,13 +267,68 @@ namespace Engine
 
         _leaveBtn->setPosition(xLeft, buttonsY);
         _startBtn->setPosition(xLeft + bwLeave + gap, buttonsY);
+
+        const float splitX = inner.x + inner.w * 0.52f;
+        const float rightX = splitX + inner.w * 0.035f;
+        const float rightW = (inner.x + inner.w - paddingL) - rightX;
+
+        if (_chatHeaderText)
+            _chatHeaderText->setPosition(rightX, yHeader);
+        if (_dividerChat)
+            _dividerChat->setPosition(rightX, yDivider);
+
+        const float inputY = buttonsY - 82.f * ui;
+
+        const float chatUi = ui * 0.80f;
+
+        if (_chatSendBtn)
+            _chatSendBtn->setUIScale(chatUi, chatUi);
+
+        if (_chatField) {
+            _chatField->setTextSize(static_cast<size_t>(22.f * chatUi));
+            _chatField->setHeight(44.f * chatUi);
+        }
+
+        const float sendW = _chatSendBtn ? _chatSendBtn->bounds().w : 0.f;
+        const float inputW = std::max(140.f, rightW - sendW - 16.f);
+
+        if (_chatField) {
+            _chatField->setPosition(rightX, inputY);
+            _chatField->setWidth(inputW);
+        }
+
+        if (_chatSendBtn) {
+            const float by = inputY + (_chatField ? (_chatField->bounds().h - _chatSendBtn->bounds().h) * 0.5f : 0.f);
+            _chatSendBtn->setPosition(rightX + inputW + 16.f, by);
+        }
+
+        const float chatTopY = playersStartY;
+        const float chatBottomY = inputY - 18.f * ui;
+
+        const float availableH = std::max(0.f, chatBottomY - chatTopY);
+        const float lineH = 22.f * ui;
+        const size_t maxLinesFit = (lineH > 0.f) ? static_cast<size_t>(availableH / lineH) : _chatTexts.size();
+
+        const size_t lines = std::min(_chatTexts.size(), std::max<size_t>(1, maxLinesFit));
+        const float chatStartY = chatBottomY - static_cast<float>(lines) * lineH;
+
+        const size_t offset = _chatTexts.size() - lines;
+        for (size_t i = 0; i < _chatTexts.size(); ++i) {
+            if (const auto &t = _chatTexts.at(i)) {
+                if (i < offset) {
+                    t->setPosition(-10000.f, -10000.f);
+                } else {
+                    const size_t j = i - offset;
+                    t->setPosition(rightX, chatStartY + static_cast<float>(j) * lineH);
+                }
+            }
+        }
     }
 
     void Lobby::update(const InputFrame &frame)
     {
         updateButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get(), _chatSendBtn.get());
         handleInput(frame);
-        updateButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get());
 
         const auto now = std::chrono::steady_clock::now();
         if (_lastRefresh.time_since_epoch().count() == 0)
@@ -314,6 +371,8 @@ namespace Engine
 
         if (_chatHeaderText)
             _renderer->draw(*_chatHeaderText);
+        if (_dividerChat)
+            _renderer->draw(*_dividerChat);
 
         for (const auto &t : _chatTexts)
             if (t)
@@ -338,7 +397,9 @@ namespace Engine
 
     void Lobby::handleMousePressed(const InputFrame &frame) const
     {
-        pressButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get());
+        pressButtons(frame.mouseX, frame.mouseY, _startBtn.get(), _leaveBtn.get(), _chatSendBtn.get());
+        if (_chatField)
+            _chatField->onMousePressed(frame.mouseX, frame.mouseY);
     }
 
     void Lobby::handleMouseReleased(const InputFrame &frame)

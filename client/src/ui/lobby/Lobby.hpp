@@ -173,6 +173,7 @@ namespace Engine
         std::shared_ptr<Graphics::IText> _titleText;    ///> Title text element.
         std::shared_ptr<Graphics::IText> _subtitleText; ///> Subtitle text element.
         std::shared_ptr<Graphics::IText> _dividerText;  ///> Divider text element.
+        std::shared_ptr<Graphics::IText> _dividerChat;  ///> Divider text element.
 
         std::shared_ptr<Graphics::IText> _playersHeaderText;        ///> Players header text element.
         std::shared_ptr<Graphics::IText> _playersCountText;         ///> Players count text element.

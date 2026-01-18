@@ -99,7 +99,7 @@ namespace World
         /**
          * @brief Updates interpolated positions of entities for smooth rendering.
          */
-        void updateInterpolatedPositions(float dt);
+        void updateInterpolatedPositions();
 
         /**
          * @brief Applies local movement based on input flags for the player entity.
@@ -197,24 +197,20 @@ namespace World
         int _entityPlayerId = -1;                                 ///> Client session ID
         std::unordered_map<uint32_t, uint32_t> _scoresByPlayerId; ///> Map of player IDs to their scores
 
+        Graphics::AudioHandle _powerUpStandardSoundHandle =
+            Graphics::InvalidAudio;                                              ///> Handle for standard power-up sound
+        Graphics::AudioHandle _powerUpLaserSoundHandle = Graphics::InvalidAudio; ///> Handle for laser power-up sound
+        Graphics::AudioHandle _powerUpBubbleSoundHandle = Graphics::InvalidAudio; ///> Handle for bubble power-up sound
+
+        uint32_t _activePowerUpType = 0;  ///> Currently active power-up type (0=none, 18=laser, 19=bubble)
+        bool _bubbleSoundPlaying = false; ///> Whether bubble sound is currently playing
+        bool _laserSoundPlaying = false;  ///> Whether laser sound is currently playing
+
         /**
          * @brief Reconciles the local player entity's position with the server's authoritative state.
          * @param bs The network state received from the server.
          * @param positions Sparse array of Position components.
          */
         void reconcileLocalPlayerWithServer(const NetState &bs, Ecs::SparseArray<Ecs::Position> &positions);
-
-        struct Vel2 {
-            float vx;
-            float vy;
-        };
-
-        std::unordered_map<uint32_t, Vel2> _velByNetId;
-        std::unordered_map<uint32_t, std::chrono::steady_clock::time_point> _lastVelUpdate;
-
-        std::chrono::steady_clock::time_point _lastSnapArrival{};
-        bool _hasLastArrival = false;
-        float _emaJitterMs = 0.f;
-        float _interpDelayMs = 100.f;
     };
 } // namespace World

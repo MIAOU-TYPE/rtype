@@ -34,6 +34,12 @@ namespace World
         _registry.registerComponent<Ecs::Drawable>();
         _registry.registerComponent<Ecs::Render>();
         _registry.registerComponent<Ecs::AnimationState>();
+
+        // if (_soundRegistry) {
+        //     _powerUpStandardSoundHandle = _soundRegistry->lo("sounds/powerup.wav");
+        //     _powerUpLaserSoundHandle = _soundRegistry->loadSound("sounds/powerup_laser.wav");
+        //     _powerUpBubbleSoundHandle = _soundRegistry->loadSound("sounds/powerup_bubble.wav");
+        // }
     }
 
     void ClientWorld::step(const float dt)
@@ -85,39 +91,7 @@ namespace World
         for (const auto &[id, x, y, z, spriteId] : batch.entities) {
             _destroyed.erase(static_cast<uint32_t>(id));
             snap.entities[id] = NetState{x, y, z, spriteId};
-            _entityLastSeen[id] = snap.arrivalTime;
-        }
-
-        if (_hasLastArrival) {
-            const float iaMs = std::chrono::duration<float, std::milli>(snap.arrivalTime - _lastSnapArrival).count();
-            const float targetMs = 16.666f;
-            const float j = std::fabs(iaMs - targetMs);
-            _emaJitterMs = _emaJitterMs * 0.9f + j * 0.1f;
-
-            const float base = 100.f;
-            const float extra = std::clamp(_emaJitterMs * 2.0f, 0.f, 180.f);
-            _interpDelayMs = std::clamp(base + extra, 80.f, 280.f);
-        }
-        _lastSnapArrival = snap.arrivalTime;
-        _hasLastArrival = true;
-
-        if (!_snapshots.empty()) {
-            const TickSnapshot &prev = _snapshots.back();
-            constexpr float dtTick = 1.f / 60.f;
-            const float dt = std::max(dtTick, dtTick * static_cast<float>(snap.tick - prev.tick));
-
-            for (const auto &[id, st] : snap.entities) {
-                const auto itPrev = prev.entities.find(id);
-                if (itPrev == prev.entities.end())
-                    continue;
-
-                const float dx = st.x - itPrev->second.x;
-                const float dy = st.y - itPrev->second.y;
-
-                const uint32_t uid = static_cast<uint32_t>(id);
-                _velByNetId[uid] = Vel2{dx / dt, dy / dt};
-                _lastVelUpdate[uid] = snap.arrivalTime;
-            }
+            _entityLastSeen[id] = std::chrono::steady_clock::now();
         }
 
         if (!_snapshots.empty() && snap.tick <= _snapshots.back().tick) {
@@ -129,14 +103,12 @@ namespace World
                 it = prev;
             }
             _snapshots.insert(it, std::move(snap));
-        } else {
+        } else
             _snapshots.push_back(std::move(snap));
-        }
 
         while (_snapshots.size() > _maxSnapshots)
             _snapshots.pop_front();
-
-        purgeStaleEntities(std::chrono::milliseconds(3000));
+        purgeStaleEntities(std::chrono::milliseconds(500));
     }
 
     void ClientWorld::applyDestroy(const DestroyInfo &destroyInfo)
@@ -217,6 +189,11 @@ namespace World
 
             if (data.spriteId == 6 && _soundRegistry && sprite.shootSoundHandle != Graphics::InvalidAudio)
                 _soundRegistry->playSound(sprite.shootSoundHandle);
+
+            if (_soundRegistry) {
+                if (data.spriteId == 21 && _powerUpStandardSoundHandle != Graphics::InvalidAudio)
+                    _soundRegistry->playSound(_powerUpStandardSoundHandle);
+            }
         } catch (const std::exception &e) {
             std::cerr << "{ClientWorld::applyCreate} " << e.what() << std::endl;
         }
@@ -290,9 +267,9 @@ namespace World
         posOpt->y += dy * SmoothFactor;
     }
 
-    void ClientWorld::updateInterpolatedPositions(const float dt)
+    void ClientWorld::updateInterpolatedPositions()
     {
-        if (_snapshots.empty())
+        if (_snapshots.size() < 2)
             return;
 
         auto &positions = _registry.getComponents<Ecs::Position>();
@@ -301,92 +278,33 @@ namespace World
         auto &anims = _registry.getComponents<Ecs::AnimationState>();
 
         const auto now = std::chrono::steady_clock::now();
-        const auto interpDelay = std::chrono::milliseconds(static_cast<int>(_interpDelayMs));
-
-        const auto applyExtrapOrHold = [&](const TickSnapshot &S) {
-            const float age = std::chrono::duration<float>(now - S.arrivalTime).count();
-            const float horizon = 0.20f;
-            const float k = clamp(1.f - (age / horizon));
-
-            for (const auto &[netId, bs] : S.entities) {
-                const uint32_t id = static_cast<uint32_t>(netId);
-                if (_destroyed.contains(id))
-                    continue;
-
-                if (!_entityMap.contains(netId))
-                    applyCreate(EntityCreate{netId, bs.x, bs.y, bs.z, bs.spriteId});
-
-                const Ecs::Entity e = _entityMap[netId];
-                const auto entIdx = static_cast<size_t>(e);
-                auto &posOpt = positions.at(entIdx);
-                if (!posOpt)
-                    continue;
-
-                float vx = 0.f;
-                float vy = 0.f;
-
-                if (auto itV = _velByNetId.find(id); itV != _velByNetId.end()) {
-                    vx = itV->second.vx;
-                    vy = itV->second.vy;
-                }
-
-                if (auto itT = _lastVelUpdate.find(id);
-                    itT == _lastVelUpdate.end() || (now - itT->second) > std::chrono::milliseconds(250)) {
-                    vx = 0.f;
-                    vy = 0.f;
-                }
-
-                vx *= k;
-                vy *= k;
-                if (age > horizon) {
-                    vx = 0.f;
-                    vy = 0.f;
-                }
-
-                constexpr float MaxVisualStep = 12.f;
-
-                posOpt->x += std::clamp(vx * dt, -MaxVisualStep, MaxVisualStep);
-                posOpt->y += std::clamp(vy * dt, -MaxVisualStep, MaxVisualStep);
-                posOpt->z = bs.z;
-
-                refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
-            }
-        };
-
-        if (_snapshots.size() < 2) {
-            applyExtrapOrHold(_snapshots.back());
-            return;
-        }
+        constexpr auto InterpDelay = std::chrono::milliseconds(100);
 
         std::optional<size_t> idxA;
         std::optional<size_t> idxB;
 
         for (size_t i = 1; i < _snapshots.size(); ++i) {
-            if (_snapshots.at(i).arrivalTime > now - interpDelay) {
+            if (_snapshots.at(i).arrivalTime > now - InterpDelay) {
                 idxA = i - 1;
                 idxB = i;
                 break;
             }
         }
 
-        if (!idxA || !idxB) {
-            applyExtrapOrHold(_snapshots.back());
+        if (!idxA || !idxB)
             return;
-        }
 
         const TickSnapshot &A = _snapshots.at(*idxA);
         const TickSnapshot &B = _snapshots.at(*idxB);
 
         const float denom = std::chrono::duration<float>(B.arrivalTime - A.arrivalTime).count();
-        if (denom <= 0.f) {
-            applyExtrapOrHold(_snapshots.back());
+        if (denom <= 0.f)
             return;
-        }
 
-        const float alpha = clamp(std::chrono::duration<float>(now - interpDelay - A.arrivalTime).count() / denom);
+        const float alpha = clamp(std::chrono::duration<float>(now - InterpDelay - A.arrivalTime).count() / denom);
 
         for (const auto &[netId, bs] : B.entities) {
-            if (const auto id = static_cast<uint32_t>(netId); _destroyed.contains(id))
+            if (_destroyed.contains(static_cast<uint32_t>(netId)))
                 continue;
 
             if (std::cmp_equal(netId, _entityPlayerId)) {
@@ -396,6 +314,44 @@ namespace World
                 reconcileLocalPlayerWithServer(bs, positions);
                 if (auto it = _entityMap.find(netId); it != _entityMap.end())
                     refreshSpriteIfChanged(it->second, bs.spriteId, drawables, anims, renders);
+
+                bool hasBubbleNow = false;
+                bool hasLaserNow = false;
+                for (const auto &[otherNetId, otherState] : B.entities) {
+                    const float dx = otherState.x - bs.x;
+                    const float dy = otherState.y - bs.y;
+                    const float distSq = dx * dx + dy * dy;
+
+                    if (otherState.spriteId == 20 && distSq < 50.f * 50.f)
+                        hasBubbleNow = true;
+                    else if (otherState.spriteId == 17 && distSq < 100.f * 100.f)
+                        hasLaserNow = true;
+
+                    if (hasBubbleNow && !_bubbleSoundPlaying && _soundRegistry
+                        && _powerUpBubbleSoundHandle != Graphics::InvalidAudio) {
+                        _activePowerUpType = 19;
+                        _soundRegistry->playSound(_powerUpBubbleSoundHandle);
+                        _bubbleSoundPlaying = true;
+                    } else if (!hasBubbleNow && _bubbleSoundPlaying && _soundRegistry) {
+                        // _soundRegistry->stopSound(_powerUpBubbleSoundHandle);
+                        _bubbleSoundPlaying = false;
+                        if (_activePowerUpType == 19)
+                            _activePowerUpType = 0;
+                    }
+
+                    if (hasLaserNow && !_laserSoundPlaying && _soundRegistry
+                        && _powerUpLaserSoundHandle != Graphics::InvalidAudio) {
+                        _activePowerUpType = 18;
+                        _soundRegistry->playSound(_powerUpLaserSoundHandle);
+                        _laserSoundPlaying = true;
+                    } else if (!hasLaserNow && _laserSoundPlaying && _soundRegistry) {
+                        // _soundRegistry->stopSound(_powerUpLaserSoundHandle);
+                        _laserSoundPlaying = false;
+                        if (_activePowerUpType == 18)
+                            _activePowerUpType = 0;
+                    }
+                    continue;
+                }
                 continue;
             }
 
@@ -426,8 +382,9 @@ namespace World
             refreshSpriteIfChanged(e, bs.spriteId, drawables, anims, renders);
         }
 
-        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime)
+        while (_snapshots.size() > 2 && _snapshots.front().arrivalTime < A.arrivalTime) {
             _snapshots.pop_front();
+        }
     }
 
     void ClientWorld::purgeStaleEntities(const std::chrono::milliseconds maxAge)
@@ -493,3 +450,4 @@ namespace World
         return out;
     }
 } // namespace World
+    

@@ -6,6 +6,7 @@
 */
 
 #include "World.hpp"
+#include <iostream>
 
 namespace
 {
@@ -28,6 +29,32 @@ namespace
             const auto &bossPartA = reg.getComponents<Ecs::BossPart>().at(event.a);
             if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
+
+            const auto &pixelCollisionA = reg.getComponents<Ecs::PixelCollision>().at(event.a);
+            if (pixelCollisionA && projB) {
+                w->events().emit(DestroyEvent{event.b, false});
+                return;
+            }
+
+            const auto &pixelCollisionB = reg.getComponents<Ecs::PixelCollision>().at(event.b);
+            if (pixelCollisionB && projA) {
+                w->events().emit(DestroyEvent{event.a, false});
+                return;
+            }
+
+            const auto &healthA = reg.getComponents<Ecs::Health>().at(event.a);
+            const auto &inputA = reg.getComponents<Game::InputComponent>().at(event.a);
+            if (pixelCollisionB && healthA && inputA) {
+                w->events().emit(DamageEvent{event.b, event.a, 5});
+                return;
+            }
+
+            const auto &healthB = reg.getComponents<Ecs::Health>().at(event.b);
+            const auto &inputB = reg.getComponents<Game::InputComponent>().at(event.b);
+            if (pixelCollisionA && healthB && inputB) {
+                w->events().emit(DamageEvent{event.a, event.b, 5});
+                return;
+            }
         });
     }
 

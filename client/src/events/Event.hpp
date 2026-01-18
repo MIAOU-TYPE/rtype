@@ -246,4 +246,24 @@ namespace Engine
      * @brief Event triggered when a request to update the room is made.
      */
     struct UpdateRoomRequested : Event {};
+
+    /**
+     * @brief Event triggered when room data is updated.
+     */
+    struct RoomDataUpdated : Event {};
+
+    /**
+     * @brief Event triggered when a chat message is sent.
+     */
+    struct SendingMessage : Event {
+        /**
+         * @brief Constructor for SendingMessage event.
+         * @param msg The message to be sent.
+         */
+        explicit SendingMessage(std::string msg) : message(std::move(msg))
+        {
+        }
+
+        std::string message; ///> The message to be sent.
+    };
 } // namespace Engine

@@ -160,6 +160,6 @@ namespace Engine
 
         RoomData _currentRoom{}; ///> Data of the current room being managed.
 
-        std::vector<std::string> _messages{};
+        std::vector<std::string> _messages{}; ///> List of messages received.
     };
 } // namespace Engine

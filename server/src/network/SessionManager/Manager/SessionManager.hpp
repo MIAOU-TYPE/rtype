@@ -209,9 +209,8 @@ namespace Net::Server
         using Clock = std::chrono::steady_clock; ///> Clock type for time management
 
         /**
-         * @brief Check if the authentication for a session ID has expired.
+         * @brief Clear the authentication for a session ID (locked version).
          * @param sessionId The ID of the session.
-         * @return True if the authentication has expired, false otherwise.
          */
         void clearAuthLocked(int sessionId);
 

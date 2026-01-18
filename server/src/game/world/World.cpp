@@ -6,7 +6,6 @@
 */
 
 #include "World.hpp"
-#include <iostream>
 
 namespace
 {

@@ -6,7 +6,6 @@
 */
 
 #include "RenderSystem.hpp"
-#include <iostream>
 
 namespace Engine
 {

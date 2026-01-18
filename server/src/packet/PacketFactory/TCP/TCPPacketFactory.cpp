@@ -157,7 +157,6 @@ namespace Net::Factory
         b.u16(static_cast<uint16_t>(room.playerNames.size()));
         for (const auto &name : room.playerNames)
             b.str16(name);
-        // Serialize GameConfig (only used fields)
         b.u8(static_cast<uint8_t>(room.gameConfig.difficulty));
         b.str16(room.gameConfig.levelId);
         b.str16(room.gameConfig.worldMusic);

@@ -14,6 +14,7 @@
 #include "ConnectData.hpp"
 #include "GameEndData.hpp"
 #include "IPacket.hpp"
+#include "PongData.hpp"
 #include "InputData.hpp"
 #include "RoomManager.hpp"
 #include "SessionManager.hpp"
@@ -85,8 +86,10 @@ namespace Net
         /**
          * @brief Handler for player ping packets.
          * @param sessionId The ID of the player.
+         * @param payload Pointer to the payload data of the ping packet.
+         * @param payloadSize Size of the payload data.
          */
-        void handlePing(int sessionId) const;
+        void handlePing(const int sessionId, const uint8_t *payload, const size_t payloadSize) const;
 
         /**
          * @brief Handler for player disconnection packets.

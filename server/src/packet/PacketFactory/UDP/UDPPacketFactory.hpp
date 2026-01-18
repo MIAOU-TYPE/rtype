@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 #include "AcceptData.hpp"
+#include "PongData.hpp"
 #include "DamageData.hpp"
 #include "DefaultData.hpp"
 #include "DestroyData.hpp"

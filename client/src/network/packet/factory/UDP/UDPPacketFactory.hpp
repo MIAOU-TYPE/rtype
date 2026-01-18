@@ -16,6 +16,7 @@
 #include "DefaultData.hpp"
 #include "Endian.hpp"
 #include "HeaderData.hpp"
+#include "PongData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
 #include "UDPTypesData.hpp"
@@ -88,6 +89,12 @@ namespace Network
          * @return A shared pointer to the created packet
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeConnect(const ConnectInfo &connect) const noexcept;
+
+        /**
+         * @brief Creates a disconnect packet
+         * @return A shared pointer to the created packet
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makePing() const noexcept;
 
       private:
         /**

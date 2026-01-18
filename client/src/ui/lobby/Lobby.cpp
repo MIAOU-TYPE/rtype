@@ -225,62 +225,79 @@ namespace Engine
     {
         layoutBackground();
         layoutPanel();
+
         const auto vp = viewportF();
         const float ui = std::clamp(std::min(vp.w / 1280.f, vp.h / 720.f), 0.55f, 1.0f);
+
         _startBtn->setUIScale(ui, ui);
         _leaveBtn->setUIScale(ui, ui);
 
         const auto inner = innerRect();
 
-        const float paddingL = inner.w * 0.10f;
-        const float xLeft = inner.x + paddingL;
+        const float marginX = inner.w * 0.08f;
+        const float gapX = inner.w * 0.06f;
+        const float colW = (inner.w - 2.f * marginX - gapX) * 0.5f;
+
+        const float leftX = inner.x + marginX;
+        const float rightX = leftX + colW + gapX;
+
+        const float chatW = colW * 0.78f;
+        const float chatX = rightX + (colW - chatW);
 
         if (_titleText)
             _titleText->setPosition(inner.cx() - _titleText->getWidth() * 0.5f, inner.y + inner.h * 0.10f - 115.f);
+
         const float ySubtitle = inner.y + inner.h * 0.16f;
         const float yDivider = inner.y + inner.h * 0.22f;
         const float yHeader = inner.y + inner.h * 0.30f;
-        if (_subtitleText)
-            _subtitleText->setPosition(xLeft, ySubtitle);
-        if (_dividerText)
-            _dividerText->setPosition(xLeft, yDivider);
-        if (_playersHeaderText)
-            _playersHeaderText->setPosition(xLeft, yHeader);
-        if (_playersCountText)
-            _playersCountText->setPosition(xLeft + 70.f, yHeader);
 
-        const float playersStartY = inner.y + inner.h * 0.36f;
-        for (size_t i = 0; i < _playerTexts.size(); ++i) {
-            constexpr float playersLineH = 34.f;
-            if (const auto &t = _playerTexts.at(i))
-                t->setPosition(xLeft, playersStartY + static_cast<float>(i) * playersLineH);
+        if (_subtitleText)
+            _subtitleText->setPosition(leftX, ySubtitle);
+
+        if (_dividerText)
+            _dividerText->setPosition(leftX, yDivider);
+
+        if (_playersHeaderText)
+            _playersHeaderText->setPosition(leftX, yHeader);
+
+        if (_playersCountText) {
+            constexpr float gapPlayersCount = 18.f;
+            const float x = (_playersHeaderText ? (leftX + _playersHeaderText->getWidth() + gapPlayersCount)
+                                                : (leftX + gapPlayersCount));
+            _playersCountText->setPosition(x, yHeader);
         }
 
+        const float playersStartY = inner.y + inner.h * 0.36f;
+        constexpr float playersLineH = 34.f;
+        for (size_t i = 0; i < _playerTexts.size(); ++i)
+            if (const auto &t = _playerTexts.at(i))
+                t->setPosition(leftX, playersStartY + static_cast<float>(i) * playersLineH);
+
         if (_statusText)
-            _statusText->setPosition(xLeft, inner.y + inner.h * 0.74f);
+            _statusText->setPosition(leftX, inner.y + inner.h * 0.74f);
         if (_hintText)
-            _hintText->setPosition(xLeft, inner.y + inner.h * 0.78f);
+            _hintText->setPosition(leftX, inner.y + inner.h * 0.78f);
 
         const float buttonsY = inner.y + inner.h * 0.90f;
         const float bwLeave = _leaveBtn->bounds().w;
-        const float gap = inner.w * 0.04f;
+        const float bwStart = _startBtn->bounds().w;
+        const float gapBtn = inner.w * 0.04f;
 
-        _leaveBtn->setPosition(xLeft, buttonsY);
-        _startBtn->setPosition(xLeft + bwLeave + gap, buttonsY);
+        const float totalBtnW = bwLeave + gapBtn + bwStart;
+        const float btnGroupX = inner.cx() - totalBtnW * 0.5f;
 
-        const float splitX = inner.x + inner.w * 0.52f;
-        const float rightX = splitX + inner.w * 0.035f;
-        const float rightW = (inner.x + inner.w - paddingL) - rightX;
+        _leaveBtn->setPosition(btnGroupX, buttonsY);
+        _startBtn->setPosition(btnGroupX + bwLeave + gapBtn, buttonsY);
 
         if (_chatHeaderText)
-            _chatHeaderText->setPosition(rightX, yHeader);
+            _chatHeaderText->setPosition(chatX + chatW - _chatHeaderText->getWidth(), ySubtitle);
+
         if (_dividerChat)
-            _dividerChat->setPosition(rightX, yDivider);
+            _dividerChat->setPosition(chatX + chatW - _dividerChat->getWidth(), yDivider);
 
         const float inputY = buttonsY - 82.f * ui;
 
         const float chatUi = ui * 0.80f;
-
         if (_chatSendBtn)
             _chatSendBtn->setUIScale(chatUi, chatUi);
 
@@ -290,16 +307,19 @@ namespace Engine
         }
 
         const float sendW = _chatSendBtn ? _chatSendBtn->bounds().w : 0.f;
-        const float inputW = std::max(140.f, rightW - sendW - 16.f);
+        constexpr float gapInputSend = 16.f;
+        float inputW = std::max(140.f, chatW - sendW - gapInputSend);
+        inputW = std::min(inputW, chatW);
 
         if (_chatField) {
-            _chatField->setPosition(rightX, inputY);
+            _chatField->setPosition(chatX, inputY);
             _chatField->setWidth(inputW);
         }
 
         if (_chatSendBtn) {
             const float by = inputY + (_chatField ? (_chatField->bounds().h - _chatSendBtn->bounds().h) * 0.5f : 0.f);
-            _chatSendBtn->setPosition(rightX + inputW + 16.f, by);
+            const float sendX = std::min(chatX + inputW + gapInputSend, chatX + chatW - _chatSendBtn->bounds().w);
+            _chatSendBtn->setPosition(sendX, by);
         }
 
         const float chatTopY = playersStartY;
@@ -319,7 +339,7 @@ namespace Engine
                     t->setPosition(-10000.f, -10000.f);
                 } else {
                     const size_t j = i - offset;
-                    t->setPosition(rightX, chatStartY + static_cast<float>(j) * lineH);
+                    t->setPosition(chatX, chatStartY + static_cast<float>(j) * lineH);
                 }
             }
         }

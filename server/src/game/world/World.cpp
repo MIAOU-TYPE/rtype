@@ -12,11 +12,11 @@ namespace
     void registerCollisionDamage(Game::IGameWorld &world)
     {
         auto *w = &world;
-        
+
         world.events().subscribe<CollisionEvent>([w](const CollisionEvent &event) {
             auto &reg = w->registry();
             auto &hpArr = reg.getComponents<Ecs::Health>();
-            
+
             const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.a));
             const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.b));
             const bool aIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.a));
@@ -24,6 +24,7 @@ namespace
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
             const auto &projA = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.a));
             const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
+            
             if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
 

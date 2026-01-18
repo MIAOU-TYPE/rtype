@@ -58,6 +58,14 @@ namespace Engine
          */
         void requestQuit();
 
+        /**
+         * @brief Check if the current state is of type T.
+         * @tparam T The type to check against.
+         * @return true if the current state is of type T, false otherwise.
+         */
+        template <class T>
+        bool is() const noexcept;
+
       private:
         std::unique_ptr<IGameState> _current; ///> The current game state.
         std::unique_ptr<IGameState> _pending; ///> The pending game state to switch to.
@@ -65,3 +73,5 @@ namespace Engine
         bool _running = true;                 ///> Indicates if the state manager is running.
     };
 } // namespace Engine
+
+#include "StateManager.tpp"

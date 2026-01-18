@@ -216,9 +216,8 @@ namespace Engine
         const size_t start = (_chatMessages.size() > n) ? (_chatMessages.size() - n) : 0;
 
         const size_t pad = visible - n;
-        for (size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; i++)
             _chatTexts.at(pad + i)->setString(_chatMessages.at(start + i));
-        }
     }
 
     void Lobby::layout()

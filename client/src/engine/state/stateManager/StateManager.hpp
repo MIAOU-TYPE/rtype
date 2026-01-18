@@ -64,7 +64,7 @@ namespace Engine
          * @return true if the current state is of type T, false otherwise.
          */
         template <class T>
-        bool is() const noexcept;
+        [[nodiscard]] bool is() const noexcept;
 
       private:
         std::unique_ptr<IGameState> _current; ///> The current game state.

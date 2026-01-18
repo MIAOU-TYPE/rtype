@@ -118,6 +118,10 @@ namespace Engine
          */
         void setChatMessages(const std::vector<std::string> &messages);
 
+        /**
+         * @brief Checks if a chat message has been submitted.
+         * @return True if a chat message was submitted, false otherwise.
+         */
         [[nodiscard]] bool hasChatSubmission() const noexcept;
 
         /**

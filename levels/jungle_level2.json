@@ -116,6 +116,10 @@
       "powerUp": { "type": "shield" }
     },
     {
+      "time": 40,
+      "powerUp": { "type": "power_up_attached" }
+    },
+    {
       "time": 45,
       "obstacleType": "vineTrap",
       "obstacleY": 500,

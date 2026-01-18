@@ -156,6 +156,16 @@ namespace Net::Factory
         [[nodiscard]] std::shared_ptr<IPacket> makeRoomUpdated(
             const sockaddr_in &addr, ReqId req, const RoomData &room) const;
 
+        /**
+         * @brief Creates a ROOM_MESSAGE packet.
+         * @param addr The address of the client.
+         * @param req The request ID.
+         * @param message The message to be sent to the room.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> makeRoomMessage(
+            const sockaddr_in &addr, ReqId req, std::string_view message) const;
+
       private:
         /**
          * @brief Helper method to create a packet with the given address and payload.

@@ -488,7 +488,7 @@ TEST(TCPPacketRouter, HelloSendsWelcomeWithExistingTokenAndUdpPortIsTcpPlus1)
 
     router.handle(pkt);
 
-    ASSERT_EQ(tcp->sent.size(), 1u);
+    ASSERT_EQ(tcp->sent.size(), 3u);
 
     Net::TCP::Writer outBody;
     outBody.u16(ver);

@@ -43,7 +43,8 @@ namespace Net
         /**
          * @brief Called when a ping message is received.
          * @param sessionId The ID of the player.
+         * @param timestamp The timestamp sent in the ping message.
          */
-        virtual void onPing(int sessionId) noexcept = 0;
+        virtual void onPing(int sessionId, uint64_t timestamp) noexcept = 0;
     };
 } // namespace Net

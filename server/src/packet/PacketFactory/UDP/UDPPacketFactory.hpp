@@ -25,6 +25,7 @@
 #include "HealthData.hpp"
 #include "IPacket.hpp"
 #include "InputData.hpp"
+#include "PongData.hpp"
 #include "ScoreData.hpp"
 #include "SnapEntityData.hpp"
 #include "UDPTypesData.hpp"
@@ -155,6 +156,15 @@ namespace Net::Factory
          */
         [[nodiscard]] std::shared_ptr<IPacket> createGameEndPacket(
             const std::vector<std::pair<uint32_t, uint32_t>> &scores) const noexcept;
+
+        /**
+         * @brief Creates a pong packet in response to a ping.
+         * @param addr The address to which the packet will be sent.
+         * @param echoedPingTimestampMs The timestamp echoed from the ping packet.
+         * @return A shared pointer to the created IPacket.
+         */
+        [[nodiscard]] std::shared_ptr<IPacket> createPongPacket(
+            const sockaddr_in &addr, uint64_t echoedPingTimestampMs) const noexcept;
 
       private:
         /*

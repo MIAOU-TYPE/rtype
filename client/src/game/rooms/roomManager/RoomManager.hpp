@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <utility>
 #include "IResourceManager.hpp"
+#include "MusicRegistry.hpp"
 #include "RoomData.hpp"
 #include "RoomTypes.hpp"
 #include <string_view>
@@ -103,6 +104,18 @@ namespace Engine
          */
         void loadCustomWorldFromFilesystem();
 
+        /**
+         * @brief Retrieves the list of messages.
+         * @return A reference to the vector of message strings.
+         */
+        [[nodiscard]] std::vector<std::string> &messages() noexcept;
+
+        /**
+         * @brief Adds a message to the message list.
+         * @param message The message string to add.
+         */
+        void addMessage(const std::string &message);
+
       private:
         /**
          * @brief Loads worlds and levels from embedded resources.
@@ -123,12 +136,12 @@ namespace Engine
         [[nodiscard]] std::optional<std::string> readTextAsset(std::string_view assetPath) const;
 
         /**
-         * @brief Parses a JSON string to extract the world name and list of levels.
+         * @brief Parses a JSON string to extract the world name, music, and list of levels.
          * @param jsonText The JSON text to parse.
-         * @return A pair containing the world name and vector of LevelInfo objects parsed from the JSON.
+         * @return A tuple containing the world name, music path, and vector of LevelInfo objects.
          * @throws RoomManagerError if parsing fails or the JSON format is incorrect.
          */
-        [[nodiscard]] static std::pair<std::string, std::vector<LevelInfo>> parseWorldLevelsJson(
+        [[nodiscard]] static std::tuple<std::string, std::string, std::vector<LevelInfo>> parseWorldLevelsJson(
             std::string_view jsonText);
 
         /**
@@ -147,5 +160,7 @@ namespace Engine
         std::vector<RoomData> _rooms; ///> List of available rooms.
 
         RoomData _currentRoom{}; ///> Data of the current room being managed.
+
+        std::vector<std::string> _messages{}; ///> List of messages received.
     };
 } // namespace Engine

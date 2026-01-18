@@ -132,18 +132,21 @@ namespace Engine
          * @param diff The difficulty level for the room.
          * @param mode The game mode for the room.
          * @param level The path to the level configuration file.
+         * @param music The path to the background music for the world.
          */
-        explicit CreateRoomRequested(
-            std::string name, const uint8_t maxP, Difficulty diff, GameMode mode, std::string level)
-            : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), gameMode(mode), levelPath(std::move(level))
+        explicit CreateRoomRequested(std::string name, const uint8_t maxP, Difficulty diff, GameMode mode,
+            std::string level, std::string music = ::DEFAULT_GAME_MUSIC)
+            : roomName(std::move(name)), maxPlayers(maxP), difficulty(diff), gameMode(mode),
+              levelPath(std::move(level)), worldMusic(std::move(music))
         {
         }
 
-        std::string roomName;  ///> The name of the new room.
-        uint8_t maxPlayers;    ///> The maximum number of players allowed in the room.
-        Difficulty difficulty; ///> The difficulty level for the room.
-        GameMode gameMode;     ///> The game mode for the room.
-        std::string levelPath; ///> The path to the level configuration file.
+        std::string roomName;   ///> The name of the new room.
+        uint8_t maxPlayers;     ///> The maximum number of players allowed in the room.
+        Difficulty difficulty;  ///> The difficulty level for the room.
+        GameMode gameMode;      ///> The game mode for the room.
+        std::string levelPath;  ///> The path to the level configuration file.
+        std::string worldMusic; ///> The path to the background music for the world.
     };
 
     /**
@@ -228,11 +231,11 @@ namespace Engine
          * @brief Constructor for PongReceived event.
          * @param tmstmp The timestamp of the pong received.
          */
-        explicit PongReceived(const uint32_t tmstmp) : timestamp(tmstmp)
+        explicit PongReceived(const uint64_t tmstmp) : timestamp(tmstmp)
         {
         }
 
-        uint32_t timestamp; ///> The timestamp of the pong received.
+        uint64_t timestamp; ///> The timestamp of the pong received.
     };
 
     /**
@@ -249,4 +252,24 @@ namespace Engine
      * @brief Event triggered when a request to update the room is made.
      */
     struct UpdateRoomRequested : Event {};
+
+    /**
+     * @brief Event triggered when room data is updated.
+     */
+    struct RoomDataUpdated : Event {};
+
+    /**
+     * @brief Event triggered when a chat message is sent.
+     */
+    struct SendingMessage : Event {
+        /**
+         * @brief Constructor for SendingMessage event.
+         * @param msg The message to be sent.
+         */
+        explicit SendingMessage(std::string msg) : message(std::move(msg))
+        {
+        }
+
+        std::string message; ///> The message to be sent.
+    };
 } // namespace Engine

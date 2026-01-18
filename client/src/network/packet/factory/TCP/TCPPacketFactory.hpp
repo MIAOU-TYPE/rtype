@@ -66,11 +66,12 @@ namespace Network
          * @param difficulty The difficulty level for the room.
          * @param gameMode The game mode for the room.
          * @param levelPath The path to the level configuration file.
+         * @param worldMusic The path to the background music for the world.
          * @return A shared pointer to the created CreateRoom packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeCreateRoom(uint32_t req, std::string_view roomName,
-            uint8_t maxPlayers, Engine::Difficulty difficulty, Engine::GameMode gameMode,
-            std::string_view levelPath) const;
+            uint8_t maxPlayers, Engine::Difficulty difficulty, Engine::GameMode gameMode, std::string_view levelPath,
+            std::string_view worldMusic = ::DEFAULT_GAME_MUSIC) const;
 
         /**
          * @brief Create a JoinRoom packet.
@@ -129,6 +130,14 @@ namespace Network
          * @return A shared pointer to the created RoomUpdate packet.
          */
         [[nodiscard]] std::shared_ptr<Net::IPacket> makeRoomInfo(uint32_t req) const;
+
+        /**
+         * @brief Create a RoomMessage packet.
+         * @param req The request ID for the RoomMessage packet.
+         * @param message The message to be sent in the room.
+         * @return A shared pointer to the created RoomMessage packet.
+         */
+        [[nodiscard]] std::shared_ptr<Net::IPacket> makeRoomMessage(uint32_t req, std::string_view message) const;
 
       private:
         std::shared_ptr<Net::IPacket> _packet = nullptr; ///> Prototype packet for creating new packets

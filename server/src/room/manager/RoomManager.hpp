@@ -96,8 +96,9 @@ namespace Engine
         /**
          * @brief Handles ping from a player
          * @param sessionId The session ID of the player
+         * @param timestamp The timestamp sent in the ping
          */
-        void onPing(int sessionId) const noexcept;
+        void onPing(int sessionId, uint64_t timestamp) const noexcept;
 
         /**
          * @brief Lists all game rooms with their details

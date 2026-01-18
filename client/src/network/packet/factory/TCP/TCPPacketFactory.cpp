@@ -57,7 +57,7 @@ namespace Network
 
     std::shared_ptr<Net::IPacket> TCPPacketFactory::makeCreateRoom(const uint32_t req, const std::string_view roomName,
         const uint8_t maxPlayers, const Engine::Difficulty difficulty, const Engine::GameMode gameMode,
-        const std::string_view levelPath) const
+        const std::string_view levelPath, const std::string_view worldMusic) const
     {
         try {
             Net::TCP::Writer b;
@@ -66,6 +66,7 @@ namespace Network
             b.u8(static_cast<uint8_t>(difficulty));
             b.u8(static_cast<uint8_t>(gameMode));
             b.str16(levelPath);
+            b.str16(worldMusic);
 
             const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::CREATE_ROOM, req, b.bytes());
             return make(payload);
@@ -165,6 +166,23 @@ namespace Network
             return make(payload);
         } catch (...) {
             std::cerr << "{TCPPacketFactory::makeRoomInfo} error creating packet" << std::endl;
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<Net::IPacket> TCPPacketFactory::makeRoomMessage(
+        const uint32_t req, const std::string_view message) const
+    {
+        try {
+            if (message.empty())
+                return nullptr;
+            Net::TCP::Writer b;
+            b.str16(message);
+
+            const auto payload = Net::TCP::buildPayload(Net::Protocol::TCP::ROOM_MESSAGE, req, b.bytes());
+            return make(payload);
+        } catch (...) {
+            std::cerr << "{TCPPacketFactory::makeRoomMessage} error creating packet" << std::endl;
             return nullptr;
         }
     }

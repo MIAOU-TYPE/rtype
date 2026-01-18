@@ -168,6 +168,12 @@ namespace Engine
         [[nodiscard]] std::string levelSelected() const;
 
         /**
+         * @brief Gets the music path for the selected world.
+         * @return The music path for the current world.
+         */
+        [[nodiscard]] std::string musicSelected() const noexcept;
+
+        /**
          * @brief Gets the selected room ID to join.
          * @return The room ID.
          */

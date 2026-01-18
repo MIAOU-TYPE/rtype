@@ -34,7 +34,7 @@ namespace Ecs
         /**
          * @brief Called when a PONG message is received.
          */
-        virtual void onPong(uint32_t timestamp) = 0;
+        virtual void onPong(uint64_t timestamp) = 0;
 
         /**
          * @brief Called when a GAME_OVER message is received.

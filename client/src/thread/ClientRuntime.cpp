@@ -33,7 +33,8 @@ namespace Thread
         : _graphics(graphics), _udpClient(udpClient), _udpPacketFactory(udpClient->getTemplatedPacket()),
           _tcpClient(tcpClient), _tcpPacketFactory(tcpClient->getTemplatedPacket())
     {
-        _graphics->create(Graphics::Extent2u{1280, 720}, "R-Type", false);
+        const auto &config = Utils::SettingsConfig::getInstance();
+        _graphics->create(config.getResolution(), "R-Type", false);
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
@@ -111,12 +112,13 @@ namespace Thread
         if (_stopRequested.exchange(true))
             return;
 
-        _running = false;
-        _cv.notify_all();
         if (const auto leavePkt = _tcpPacketFactory.makeLeaveRoom(nextReqId()))
             (void) _tcpClient->sendPacket(*leavePkt);
         if (const auto discoPkt = _udpPacketFactory.makeBase(Net::Protocol::UDP::DISCONNECT))
             (void) _udpClient->sendPacket(*discoPkt);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        _running = false;
+        _cv.notify_all();
 
         if (_tcpThread.joinable())
             _tcpThread.join();
@@ -179,7 +181,8 @@ namespace Thread
                             if (const auto ctrl = c.lock())
                                 return ctrl->getMaxLife();
                             return 0;
-                        }));
+                        },
+                        _roomManager));
                 } catch (...) {
                     std::cerr << "{ClientRuntime::runDisplay} unknown exception\n";
                 }
@@ -204,6 +207,8 @@ namespace Thread
                 _stateManager->changeState(std::make_unique<Engine::GameOverState>(_graphics, _renderer, _musicRegistry,
                     _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx, std::weak_ptr(_world)));
             }
+            if (_pendingLobbyRefresh.exchange(false, std::memory_order_acq_rel))
+                _eventBus->emit<Engine::RoomDataUpdated>(Engine::RoomDataUpdated{});
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
             _stateManager->update(_input->consumeFrame());
@@ -260,6 +265,7 @@ namespace Thread
             applyWorldCommands(deadline, 500);
 
             sendCombinedInput();
+            sendPingIfDue();
 
             _world->updateInterpolatedPositions();
 
@@ -281,6 +287,8 @@ namespace Thread
                 last = after;
                 accumulator = 0.f;
             }
+            if (_resetPingSchedule.exchange(false, std::memory_order_acq_rel))
+                _nextPing = clock::now() + _pingInterval;
         }
     }
 
@@ -343,7 +351,7 @@ namespace Thread
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
             _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(
-                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath));
+                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath, e.worldMusic));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {
@@ -406,6 +414,12 @@ namespace Thread
                     _writeRenderCommands->clear();
             }
         });
+
+        _eventBus->on<Engine::SendingMessage>([this](const Engine::SendingMessage &e) {
+            const auto req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeRoomMessage(req, e.message))
+                (void) _tcpClient->sendPacket(*pkt);
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
@@ -454,9 +468,9 @@ namespace Thread
     {
         _tcpPacketRouter->sink()->onWelcomeSubscribe([this](uint32_t, uint16_t, uint32_t, uint16_t, uint64_t) {
             const auto ci = _tcpPacketRouter->sink()->getConnectInfo();
-            if (const auto pkt = _udpPacketFactory.makeConnect(ci)) {
+            if (const auto pkt = _udpPacketFactory.makeConnect(ci))
                 _udpClient->sendPacket(*pkt);
-            }
+            _resetPingSchedule.store(true, std::memory_order_release);
         });
 
         _tcpPacketRouter->sink()->onGameStartSubscribe([this](uint32_t, uint32_t) {
@@ -467,14 +481,23 @@ namespace Thread
             _roomManager->rooms() = rooms;
         });
 
-        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t roomId) {
-            (void) roomId;
-            _pendingJoinRoom.store(true, std::memory_order_release);
+        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t) {
+            if (!_stateManager->is<Engine::LobbyState>())
+                _pendingJoinRoom.store(true, std::memory_order_release);
+            else
+                _pendingLobbyRefresh.store(true, std::memory_order_release);
         });
 
         _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
             _roomManager->setCurrentData(room);
-            _pendingJoinRoom.store(true, std::memory_order_release);
+            if (!_stateManager->is<Engine::LobbyState>())
+                _pendingJoinRoom.store(true, std::memory_order_release);
+            else
+                _pendingLobbyRefresh.store(true, std::memory_order_release);
+        });
+
+        _tcpPacketRouter->sink()->onMessageSubscribe([&](uint32_t, const std::string_view msg) {
+            _roomManager->addMessage(std::string(msg));
         });
 
         _tcpPacketRouter->sink()->onAuthOkSubscribe(
@@ -531,4 +554,23 @@ namespace Thread
         }
         _running.store(false, std::memory_order_release);
     }
+
+    void ClientRuntime::sendPingIfDue()
+    {
+        if (!_tcpPacketRouter->sink()->isConnected())
+            return;
+        using clock = std::chrono::steady_clock;
+        const auto now = clock::now();
+
+        if (now < _nextPing)
+            return;
+
+        do {
+            _nextPing += _pingInterval;
+        } while (_nextPing <= now);
+
+        if (const auto pingPkt = _udpPacketFactory.makePing())
+            (void) _udpClient->sendPacket(*pingPkt);
+    }
+
 } // namespace Thread

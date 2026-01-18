@@ -79,6 +79,7 @@ namespace Network
                 case Net::Protocol::TCP::GAME_START: onGameStart(h.requestId, r); break;
                 case Net::Protocol::TCP::SCOREBOARD_LIST: onScoreboardList(h.requestId, r); break;
                 case Net::Protocol::TCP::ROOM_UPDATE: onRoomUpdated(h.requestId, r); break;
+                case Net::Protocol::TCP::MESSAGE_ROOM: onMessageRoom(h.requestId, r); break;
                 default: protocolError(h.requestId, "Unsupported TCP packet type (client)"); break;
             }
         } catch (const std::exception &e) {
@@ -167,15 +168,8 @@ namespace Network
                 info.currentPlayers = r.u16();
                 info.maxPlayers = r.u16();
                 info.gameConfig.difficulty = static_cast<Engine::Difficulty>(r.u8());
-                info.gameConfig.mode = static_cast<Engine::GameMode>(r.u8());
-                info.gameConfig.parameters.timeLimit = r.u32();
-                info.gameConfig.parameters.scoreLimit = r.u32();
-                info.gameConfig.parameters.sharedHealth = r.u8() != 0;
-                info.gameConfig.parameters.teamDamage = r.u8() != 0;
-                info.gameConfig.parameters.friendlyFireMultiplier = static_cast<float>(r.u8()) / 100.0f;
-                info.gameConfig.parameters.waveCount = r.u8();
-                info.gameConfig.parameters.spawnRateMultiplier = static_cast<float>(r.u8()) / 100.0f;
                 info.gameConfig.levelId = r.str16();
+                info.gameConfig.worldMusic = r.str16();
             } catch (...) {
                 return protocolError(req,
                     "ROOMS_LIST: malformed room entry (expected id(u32)+name(str16)+current(u16)+max(u16)+gameConfig)");
@@ -293,18 +287,37 @@ namespace Network
         try {
             room.roomName = r.str16();
             room.maxPlayers = r.u8();
+            const uint16_t playerCount = r.u16();
             room.playerNames.clear();
-            while (r.remaining() > 0)
+            room.playerNames.reserve(playerCount);
+            for (uint16_t i = 0; i < playerCount; ++i)
                 room.playerNames.push_back(r.str16());
-            room.currentPlayers = static_cast<uint16_t>(room.playerNames.size());
+            room.currentPlayers = playerCount;
+            room.gameConfig.difficulty = static_cast<Engine::Difficulty>(r.u8());
+            room.gameConfig.levelId = r.str16();
+            room.gameConfig.worldMusic = r.str16();
         } catch (...) {
-            return protocolError(req, "ROOM_UPDATED: malformed payload (expected name(str16)+players*(str16))");
+            return protocolError(req, "ROOM_UPDATED: malformed payload");
         }
 
         if (r.remaining() != 0)
             return protocolError(req, "ROOM_UPDATED: unexpected trailing bytes");
 
         _sink->onRoomUpdated(req, room);
+    }
+
+    void TCPPacketRouter::onMessageRoom(const uint32_t req, Net::TCP::Reader &r) const
+    {
+        std::string message;
+        try {
+            message = r.str16();
+        } catch (...) {
+            return protocolError(req, "MESSAGE_ROOM: malformed payload (expected roomId(u32)+message(str16))");
+        }
+
+        if (r.remaining() != 0)
+            return protocolError(req, "MESSAGE_ROOM: unexpected trailing bytes");
+        _sink->onMessageRoom(req, message);
     }
 
 } // namespace Network

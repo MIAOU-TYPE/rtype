@@ -28,6 +28,7 @@ namespace Engine
     struct WorldEntry {
         std::string id;          ///> World identifier
         std::string displayName; ///> World display name
+        std::string music;       ///> Background music path for this world
     };
 
     /**

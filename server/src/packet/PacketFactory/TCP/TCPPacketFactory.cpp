@@ -68,15 +68,8 @@ namespace Net::Factory
             b.u16(static_cast<uint16_t>(currentPlayers));
             b.u16(static_cast<uint16_t>(maxPlayers));
             b.u8(static_cast<uint8_t>(gameConfig.difficulty));
-            b.u8(static_cast<uint8_t>(gameConfig.mode));
-            b.u32(gameConfig.parameters.timeLimit);
-            b.u32(gameConfig.parameters.scoreLimit);
-            b.u8(gameConfig.parameters.sharedHealth ? 1 : 0);
-            b.u8(gameConfig.parameters.teamDamage ? 1 : 0);
-            b.u8(static_cast<uint8_t>(gameConfig.parameters.friendlyFireMultiplier * 100));
-            b.u8(static_cast<uint8_t>(gameConfig.parameters.waveCount));
-            b.u8(static_cast<uint8_t>(gameConfig.parameters.spawnRateMultiplier * 100));
             b.str16(gameConfig.levelId);
+            b.str16(gameConfig.worldMusic);
         }
 
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOMS_LIST, req, b.bytes());
@@ -161,9 +154,24 @@ namespace Net::Factory
         TCP::Writer b;
         b.str16(room.roomName);
         b.u8(static_cast<uint8_t>(room.maxPlayers));
+        b.u16(static_cast<uint16_t>(room.playerNames.size()));
         for (const auto &name : room.playerNames)
             b.str16(name);
+        b.u8(static_cast<uint8_t>(room.gameConfig.difficulty));
+        b.str16(room.gameConfig.levelId);
+        b.str16(room.gameConfig.worldMusic);
         const auto payload = TCP::buildPayload(Protocol::TCP::ROOM_UPDATE, req, b.bytes());
+        return make(addr, payload);
+    }
+
+    std::shared_ptr<IPacket> TCPPacketFactory::makeRoomMessage(
+        const sockaddr_in &addr, const ReqId req, const std::string_view message) const
+    {
+        if (message.empty() || message.size() > 256)
+            return makeError(addr, req, 7, "ROOM_MESSAGE: message must be 1..256 characters");
+        TCP::Writer b;
+        b.str16(message);
+        const auto payload = TCP::buildPayload(Protocol::TCP::MESSAGE_ROOM, req, b.bytes());
         return make(addr, payload);
     }
 } // namespace Net::Factory

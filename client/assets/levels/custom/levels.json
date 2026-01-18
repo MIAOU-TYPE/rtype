@@ -1,5 +1,6 @@
 {
   "name": "Custom World",
+  "music": "sounds/game_theme.flac",
   "levels": [
     {
       "id": "custom_level1",

@@ -225,11 +225,11 @@ namespace Engine
          * @brief Constructor for PongReceived event.
          * @param tmstmp The timestamp of the pong received.
          */
-        explicit PongReceived(const uint32_t tmstmp) : timestamp(tmstmp)
+        explicit PongReceived(const uint64_t tmstmp) : timestamp(tmstmp)
         {
         }
 
-        uint32_t timestamp; ///> The timestamp of the pong received.
+        uint64_t timestamp; ///> The timestamp of the pong received.
     };
 
     /**

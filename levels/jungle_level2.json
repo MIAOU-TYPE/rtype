@@ -1,267 +1,138 @@
 {
-  "name": "Level 2",
+  "name": "Jungle - Level 2",
   "background": {
     "spriteId": 101,
-    "scrollSpeed": -50.0,
+    "scrollSpeed": -70.0,
     "tileWidth": 2584.0,
     "tileHeight": 720.0
   },
   "enemies": {
-    "smallEnemy": {
-      "hp": 15,
-      "speed": -100,
-      "size": { "w": 65, "h": 66 },
-      "killScore": 30,
-      "sprite": "enemy",
-      "spriteId": 2,
+    "hunter": {
+      "hp": 20,
+      "speed": -150,
+      "size": { "w": 33, "h": 22 },
+      "killScore": 40,
+      "sprite": "enemy3",
+      "spriteId": 4,
       "shoot": {
         "type": "straight",
         "cooldown": 2.0,
-        "projectileSpeed": 130,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 50 },
+        "projectileSpeed": 180,
+        "damage": 40,
+        "muzzle": { "x": -20, "y": 15 },
         "projectileSpriteId": 9
       }
     },
-    "mediumEnemy": {
-      "hp": 40,
-      "speed": -70,
-      "size": { "w": 65, "h": 49 },
+    "pyrotechnician": {
+      "hp": 30,
+      "speed": -100,
+      "size": { "w": 65, "h": 66 },
       "killScore": 50,
-      "sprite": "enemy2",
-      "spriteId": 3,
+      "sprite": "enemy",
+      "spriteId": 2,
       "shoot": {
         "type": "diagonal",
         "angles": [-15, 15],
-        "cooldown": 2.0,
+        "cooldown": 2.5,
         "projectileSpeed": 100,
         "damage": 50,
-        "muzzle": { "x": -20, "y": 35 },
+        "muzzle": { "x": -20, "y": 15 },
         "projectileSpriteId": 9
       }
     },
-    "mediumEnemyTriple": {
-      "hp": 40,
-      "speed": -70,
+    "heavyGunner": {
+      "hp": 80,
+      "speed": -60,
       "size": { "w": 65, "h": 49 },
-      "killScore": 65,
+      "killScore": 100,
       "sprite": "enemy2",
       "spriteId": 3,
       "shoot": {
         "type": "diagonal",
-        "angles": [-25, 0, 25],
-        "cooldown": 2.2,
+        "angles": [-30, -10, 10, 30],
+        "cooldown": 2.5,
         "projectileSpeed": 110,
         "damage": 50,
         "muzzle": { "x": -20, "y": 35 },
         "projectileSpriteId": 12
       }
     },
-    "fastEnemy": {
-      "hp": 10,
-      "speed": -165,
-      "size": { "w": 33, "h": 22 },
-      "killScore": 10,
-      "sprite": "enemy3",
-      "spriteId": 4,
-      "shoot": {
-        "type": "straight",
-        "cooldown": 0.8,
-        "projectileSpeed": 160,
-        "damage": 50,
-        "muzzle": { "x": -20, "y": 15 },
-        "projectileSpriteId": 9
-      },
-      "movement": {
-        "type": "zigzag",
-        "params": {
-          "amplitude": 50.0,
-          "frequency": 0.3
-        }
-      }
-    },
-    "groupEnemy": {
+    "ambushSquad": {
       "type": "group",
       "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 0, "y": 0 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": -130 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 130 }
-        }
-      ]
-    },
-    "groupEnemy2": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -90, "y": 110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": -90, "y": -110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 90, "y": 110 }
-        },
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 90, "y": -110 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 0, "y": 0 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 150, "y": 0 }
-        }
-      ]
-    },
-    "groupEnemy3": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "mediumEnemy",
-          "offset": { "x": 0, "y": 0 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": -120 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": -160, "y": 120 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 160, "y": -120 }
-        },
-        {
-          "enemyType": "smallEnemy",
-          "offset": { "x": 160, "y": 120 }
-        }
-      ]
-    },
-    "groupEnemy4": {
-      "type": "group",
-      "members": [
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": -200, "y": -180 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": -100, "y": -20 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 0, "y": 140 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 150, "y": 140 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 250, "y": -20 }
-        },
-        {
-          "enemyType": "fastEnemy",
-          "offset": { "x": 350, "y": -180 }
-        }
+        { "enemyType": "heavyGunner", "offset": { "x": 0, "y": 0 } },
+        { "enemyType": "hunter", "offset": { "x": -50, "y": -100 } },
+        { "enemyType": "hunter", "offset": { "x": -50, "y": 100 } },
+        { "enemyType": "pyrotechnician", "offset": { "x": -100, "y": 0 } },
+        { "enemyType": "pyrotechnician", "offset": { "x": -150, "y": -150 } },
+        { "enemyType": "pyrotechnician", "offset": { "x": -150, "y": 150 } }
       ]
     }
   },
   "obstacles": {
-    "gravityWell": {
+    "vineTrap": {
       "spriteId": 15,
       "size": { "w": 34, "h": 34 },
-      "pullStrength": 200,
-      "damagePerSecond": 10,
-      "radius": 130,
+      "pullStrength": 220,
+      "damagePerSecond": 20,
+      "radius": 150,
       "innerRadius": 50
     }
   },
-  "duration": 95,
+  "duration": 100,
   "waves": [
     {
-      "time": 6,
-      "enemies": { "smallEnemy": 4 },
+      "time": 4,
+      "enemies": { "hunter": 4 },
       "spawnPattern": "spread"
     },
     {
-      "time": 9,
-      "enemies": { "smallEnemy": 3 },
+      "time": 4,
+      "enemies": { "pyrotechnician": 4 },
       "spawnPattern": "spread"
     },
     {
-      "time": 15,
-      "enemies": {},
-      "obstacleType": "gravityWell",
-      "obstacleY": 360,
-      "obstacleX": 500
+      "time": 10,
+      "enemies": { "heavyGunner": 2 },
+      "spawnPattern": "spread" ,
+      "spawnY": 300
     },
     {
-      "time": 16,
-      "enemies": { "smallEnemy": 2 },
+      "time": 18,
+      "obstacleType": "vineTrap",
+      "obstacleY": 200,
+      "obstacleX": 600,
+      "enemies": { "hunter": 3 },
       "spawnPattern": "spread"
     },
     {
-      "time": 17,
+      "time": 25,
+      "enemies": { "ambushSquad": 1 },
+      "spawnPattern": "spread",
+      "spawnY": 400
+    },
+    {
+      "time": 35,
       "powerUp": { "type": "shield" }
     },
     {
-      "time": 19,
-      "enemies": { "mediumEnemy": 3 },
+      "time": 45,
+      "obstacleType": "vineTrap",
+      "obstacleY": 500,
+      "obstacleX": 500,
+      "enemies": { "ambushSquad": 1 },
       "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 24,
-      "enemies": { "groupEnemy": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 29,
-      "obstacleType": "gravityWell",
-      "obstacleY": 355,
-      "obstacleX": 250,
-      "enemies": { "groupEnemy2": 1 },
-      "spawnPattern": "line",
-      "spawnY": 455
-    },
-    {
-      "time": 37,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
-    },
-    {
-      "time": 50,
-      "enemies": { "fastEnemy": 3 },
-      "spawnPattern": "spread"
+      "spawnY": 200
     },
     {
       "time": 65,
-      "enemies": { "groupEnemy4": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "enemies": { "heavyGunner": 3 },
+      "spawnPattern": "spread"
     },
     {
       "time": 80,
-      "enemies": { "groupEnemy3": 1 },
-      "spawnPattern": "line",
-      "spawnY": 360
+      "enemies": { "ambushSquad": 1 },
+      "spawnPattern": "spread"
     }
   ]
 }

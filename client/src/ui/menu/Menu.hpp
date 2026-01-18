@@ -277,17 +277,17 @@ namespace Engine
          * @brief Structure representing the header UI elements.
          */
         struct HeaderUI {
-            std::shared_ptr<Graphics::IText> title; ///> Title text.
-            std::shared_ptr<Graphics::IText> subtitle;  ///> Subtitle text.
+            std::shared_ptr<Graphics::IText> title;    ///> Title text.
+            std::shared_ptr<Graphics::IText> subtitle; ///> Subtitle text.
         };
 
-        HeaderUI _header;   ///> Header UI elements.
+        HeaderUI _header; ///> Header UI elements.
 
         std::unique_ptr<UI::UIButton> _login;    ///> Button to access the login form.
         std::unique_ptr<UI::UIButton> _register; ///> Button to access the registration form.
 
         std::unique_ptr<UI::UIButton> _play;        ///> Button to start the game.
-        std::unique_ptr<UI::UIButton> _scoreboard; ///> Button to access the scoreboard page.
+        std::unique_ptr<UI::UIButton> _scoreboard;  ///> Button to access the scoreboard page.
         std::unique_ptr<UI::UIButton> _settings;    ///> Button to access settings.
         std::unique_ptr<UI::UIButton> _levelEditor; ///> Button to access level editor.
         std::unique_ptr<UI::UIButton> _quit;        ///> Button to quit the game.

@@ -133,6 +133,7 @@ namespace Engine
         {
             return _innerRect;
         }
+
         /**
          * @brief Helper to place a button centered at a given x-coordinate.
          * @param b The button to place.
@@ -229,12 +230,12 @@ namespace Engine
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture
         RenderCommand _backgroundCmd{};                                        ///> Background render command
 
-        Graphics::TextureHandle _panelTex = Graphics::InvalidTexture;   ///> Panel texture
-        RenderCommand _panelCmd{};  ///> Panel render command
-        bool _panelCenter = true;   ///> Whether to center the panel
+        Graphics::TextureHandle _panelTex = Graphics::InvalidTexture; ///> Panel texture
+        RenderCommand _panelCmd{};                                    ///> Panel render command
+        bool _panelCenter = true;                                     ///> Whether to center the panel
 
-        RectF _panelRect{}; ///> Panel rectangle
-        RectF _innerRect{}; ///> Inner rectangle within the panel
+        RectF _panelRect{};             ///> Panel rectangle
+        RectF _innerRect{};             ///> Inner rectangle within the panel
         float _panelInsetXFrac = 0.08f; ///> Panel inset fraction in X
         float _panelInsetYFrac = 0.10f; ///> Panel inset fraction in Y
     };

@@ -28,6 +28,7 @@
 #include "LaserPowerUp.hpp"
 #include "Lifetime.hpp"
 #include "MovementPattern.hpp"
+#include "PixelCollision.hpp"
 #include "PlayerPowerUp.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"
@@ -37,7 +38,6 @@
 #include "Score.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
-#include "PixelCollision.hpp"
 
 namespace Game
 {

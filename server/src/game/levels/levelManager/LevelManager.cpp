@@ -248,7 +248,8 @@ namespace
             layer.depth = layerNode.value("depth", 0);
             if (layerNode.contains("collisionBoxes") && layerNode.at("collisionBoxes").is_array()) {
                 for (const auto &boxNode : layerNode.at("collisionBoxes")) {
-                    if (!boxNode.is_object()) continue;
+                    if (!boxNode.is_object())
+                        continue;
                     Game::CollisionBox box;
                     box.x = boxNode.value("x", 0.f);
                     box.y = boxNode.value("y", 0.f);

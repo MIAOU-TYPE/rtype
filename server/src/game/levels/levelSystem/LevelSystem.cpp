@@ -243,12 +243,14 @@ namespace Game
             for (const auto &box : layer.collisionBoxes) {
                 auto &reg = world.registry();
                 const Ecs::Entity collisionEntity = world.createEntity();
-                reg.emplaceComponent<Ecs::Position>(collisionEntity, Ecs::Position{0.f + box.x, box.y, static_cast<uint8_t>(layer.depth)});
+                reg.emplaceComponent<Ecs::Position>(
+                    collisionEntity, Ecs::Position{0.f + box.x, box.y, static_cast<uint8_t>(layer.depth)});
                 reg.emplaceComponent<Ecs::Collision>(collisionEntity, Ecs::Collision{box.w, box.h});
                 reg.emplaceComponent<Ecs::PixelCollision>(collisionEntity, Ecs::PixelCollision{});
 
                 const Ecs::Entity collisionEntity2 = world.createEntity();
-                reg.emplaceComponent<Ecs::Position>(collisionEntity2, Ecs::Position{scaledWidth + box.x, box.y, static_cast<uint8_t>(layer.depth)});
+                reg.emplaceComponent<Ecs::Position>(
+                    collisionEntity2, Ecs::Position{scaledWidth + box.x, box.y, static_cast<uint8_t>(layer.depth)});
                 reg.emplaceComponent<Ecs::Collision>(collisionEntity2, Ecs::Collision{box.w, box.h});
                 reg.emplaceComponent<Ecs::PixelCollision>(collisionEntity2, Ecs::PixelCollision{});
             }

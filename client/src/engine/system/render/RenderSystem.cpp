@@ -50,7 +50,7 @@ namespace Engine
 
                     const float scale = std::max(scaleX, scaleY);
                     cmd.scale = {scale, scale};
-                }             
+                }
 
                 float finalX = pos.x;
                 float finalY = pos.y;

@@ -124,21 +124,21 @@ namespace Game
      * @brief Collision box definition.
      */
     struct CollisionBox {
-        float w = 0.f;         ///> Width of the collision box
-        float h = 0.f;      ///> Height of the collision box
-        float x = 0.f;       ///> X position offset
-        float y = 0.f;     ///> Y position offset
+        float w = 0.f; ///> Width of the collision box
+        float h = 0.f; ///> Height of the collision box
+        float x = 0.f; ///> X position offset
+        float y = 0.f; ///> Y position offset
     };
 
     /**
      * @brief Definition of a background layer.
      */
     struct BackgroundLayer {
-        unsigned int spriteId; ///> Sprite asset identifier
-        float scrollSpeed;     ///> Scrolling speed of the layer
-        float tileWidth;       ///> Width of a single background tile
-        float tileHeight;      ///> Height of a single background tile
-        int depth = 0;         ///> Depth layer (0 = farthest)
+        unsigned int spriteId;                    ///> Sprite asset identifier
+        float scrollSpeed;                        ///> Scrolling speed of the layer
+        float tileWidth;                          ///> Width of a single background tile
+        float tileHeight;                         ///> Height of a single background tile
+        int depth = 0;                            ///> Depth layer (0 = farthest)
         std::vector<CollisionBox> collisionBoxes; ///> Optional collision boxes for the layer
     };
 

@@ -26,6 +26,7 @@
 #include "Level.hpp"
 #include "LevelManager.hpp"
 #include "MovementPattern.hpp"
+#include "PixelCollision.hpp"
 #include "Position.hpp"
 #include "PowerUp.hpp"
 #include "PowerUpType.hpp"
@@ -34,7 +35,6 @@
 #include "Target.hpp"
 #include "Velocity.hpp"
 #include "WeaponConfig.hpp"
-#include "PixelCollision.hpp"
 #include <unordered_map>
 
 namespace Game

@@ -7,6 +7,7 @@
     "sqlite3",
     "openssl",
     "nlohmann-json",
-    "lz4"
+    "lz4",
+    "cpp-httplib"
   ]
 }

@@ -66,6 +66,10 @@ void ServerRuntime::start()
             requestStop();
         });
         _adminConsole->start();
+        _adminWeb = std::make_unique<Admin::AdminWebServer>(_sessionManager, _roomManager, [this]() {
+            requestStop();
+        });
+        _adminWeb->start();
         _receiverThread = std::thread(&ServerRuntime::runReceiver, this);
         _processorThread = std::thread(&ServerRuntime::runProcessor, this);
         _snapshotThread = std::thread(&ServerRuntime::runSnapshot, this);

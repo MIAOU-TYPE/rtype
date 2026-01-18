@@ -1,0 +1,6 @@
+body { font-family: sans-serif; margin: 20px; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+th, td { border: 1px solid #ccc; padding: 6px; }
+th { background: #eee; text-align: left; }
+button { margin-right: 6px; }
+pre { background: #111; color: #0f0; padding: 10px; }

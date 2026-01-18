@@ -328,6 +328,8 @@ namespace Engine
                 fn(*_create.levelNext);
                 fn(*_create.difficultyPrev);
                 fn(*_create.difficultyNext);
+                fn(*_create.modePrev);
+                fn(*_create.modeNext);
                 fn(*_create.playersPrev);
                 fn(*_create.playersNext);
                 fn(*_create.confirm);
@@ -377,6 +379,8 @@ namespace Engine
             press(*_create.levelNext);
             press(*_create.difficultyPrev);
             press(*_create.difficultyNext);
+            press(*_create.modePrev);
+            press(*_create.modeNext);
             press(*_create.playersPrev);
             press(*_create.playersNext);
             press(*_create.confirm);

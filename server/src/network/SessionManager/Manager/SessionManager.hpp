@@ -220,7 +220,7 @@ namespace Net::Server
          * @param sessionId The ID of the session.
          * @return True if the authentication has expired, false otherwise.
          */
-        bool isExpiredLocked(int sessionId) const;
+        [[nodiscard]] bool isExpiredLocked(int sessionId) const;
 
         /**
          * @brief Clean up expired bans from the banned IP list.

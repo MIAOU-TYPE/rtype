@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** UDPPacketFactory.cpp
+** R-Type
 ** File description:
 ** StateManager
 */

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <cstring>
 #include <exception>
 #include <iostream>

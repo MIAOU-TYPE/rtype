@@ -90,15 +90,15 @@ namespace Network
     {
         PongData packet{};
         packet.header = makeHeader(Net::Protocol::UDP::PING, sizeof(PongData));
-        auto now =
+        const auto now =
             std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
                 .count();
-        packet.pongTimestamp = htonll(now);
+        packet.pongTimestamp = htonll(static_cast<uint64_t>(now));
 
         try {
             return makePacket<PongData>(packet);
         } catch (const FactoryError &e) {
-            std::cerr << "{UDPPacketFactory::makePong} " << e.what() << std::endl;
+            std::cerr << "{UDPPacketFactory::makePing} " << e.what() << std::endl;
             return nullptr;
         }
     }

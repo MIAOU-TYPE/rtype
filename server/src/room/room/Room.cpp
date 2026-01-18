@@ -184,7 +184,7 @@ namespace Engine
         return _sessionsMutex;
     }
 
-    RoomData Room::getRoomData()
+    RoomData Room::getRoomData() noexcept
     {
         std::scoped_lock lock(_sessionsMutex);
         _roomData.currentPlayers = _sessions.size();

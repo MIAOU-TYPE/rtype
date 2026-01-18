@@ -172,7 +172,7 @@ namespace Engine
          * @brief Gets the room data
          * @return A copy of the RoomData structure
          */
-        [[nodiscard]] RoomData getRoomData();
+        [[nodiscard]] RoomData getRoomData() noexcept;
 
       private:
         /**

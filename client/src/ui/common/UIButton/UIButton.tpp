@@ -14,7 +14,6 @@ namespace UI
     {
         if (!onMouseReleased(x, y))
             return false;
-        reset();
         std::forward<Fn>(fn)();
         return true;
     }

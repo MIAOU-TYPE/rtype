@@ -42,10 +42,43 @@ namespace Engine
     };
 
     /**
-     * @brief Abstract base class for menus in the game.
-     * This class provides common functionality for all menus, such as background rendering
-     * and button management.
+     * @brief Structure representing a rectangle with floating-point coordinates.
      */
+    struct RectF {
+        float x = 0.f; ///> X-coordinate
+        float y = 0.f; ///> Y-coordinate
+        float w = 0.f; ///> Width
+        float h = 0.f; ///> Height
+
+        /**
+         * @brief Get the center x-coordinate of the rectangle.
+         *
+         * @return float The center x-coordinate.
+         */
+        [[nodiscard]] float cx() const noexcept;
+
+        /**
+         * @brief Get the center y-coordinate of the rectangle.
+         *
+         * @return float The center y-coordinate.
+         */
+        [[nodiscard]] float cy() const noexcept;
+
+        /**
+         * @brief Get the right x-coordinate of the rectangle.
+         *
+         * @return float The right x-coordinate.
+         */
+        [[nodiscard]] float right() const noexcept;
+
+        /**
+         * @brief Get the bottom y-coordinate of the rectangle.
+         *
+         * @return float The bottom y-coordinate.
+         */
+        [[nodiscard]] float bottom() const noexcept;
+    };
+
     class AMenu : public IMenu {
       public:
         /**
@@ -54,16 +87,16 @@ namespace Engine
         AMenu(const AMenu &) = delete;
 
         /**
+         * @brief Copy assignment operator is deleted to prevent copying.
+         */
+        AMenu &operator=(const AMenu &) = delete;
+
+        /**
          * @brief Construct a new AMenu object.
          *
          * @param renderer Shared pointer to the renderer used for rendering the menu.
          */
         explicit AMenu(std::shared_ptr<Graphics::IRenderer> renderer);
-
-        /**
-         * @brief Assignment operator is deleted to prevent copying.
-         */
-        AMenu &operator=(const AMenu &) = delete;
 
         /**
          * @brief Virtual destructor for AMenu.
@@ -95,12 +128,41 @@ namespace Engine
         /**
          * @brief Compute the background RenderCommand so it covers the full viewport.
          */
-        void layoutBackground();
+        void layoutBackground() noexcept;
 
         /**
          * @brief Render the background.
          */
         void renderBackground() const;
+
+        /**
+         * @brief Load the panel texture and set up the render command.
+         * @param path Path to the panel texture.
+         * @param center Whether to center the panel in the viewport.
+         */
+        void loadPanel(const std::string &path, bool center = true);
+
+        /**
+         * @brief Layout the panel within the viewport.
+         * @param maxWFrac Maximum width fraction of the viewport for the panel.
+         * @param maxHFrac Maximum height fraction of the viewport for the panel.
+         * @param insetXFrac Inset fraction in X direction for inner rectangle.
+         * @param insetYFrac Inset fraction in Y direction for inner rectangle.
+         */
+        void layoutPanel(float maxWFrac = 0.90f, float maxHFrac = 0.90f, float insetXFrac = 0.08f,
+            float insetYFrac = 0.10f) noexcept;
+
+        /**
+         * @brief Get the rectangle of the panel.
+         * @return RectF representing the panel rectangle.
+         */
+        [[nodiscard]] RectF panelRect() const noexcept;
+
+        /**
+         * @brief Get the inner rectangle within the panel.
+         * @return RectF representing the inner rectangle.
+         */
+        [[nodiscard]] RectF innerRect() const noexcept;
 
         /**
          * @brief Helper to place a button centered at a given x-coordinate.
@@ -166,15 +228,15 @@ namespace Engine
          * @return The action corresponding to the clicked button, or Action::None if no button was clicked.
          */
         template <typename Action>
-        static Action pickAction(
-            float mx, float my, std::initializer_list<std::pair<UI::UIButton *, Action>> items) noexcept;
+        [[nodiscard]] Action pickAction(
+            float mx, float my, std::initializer_list<std::pair<UI::UIButton *, Action>> items) const noexcept;
 
         /**
          * @brief Helper to reset multiple buttons at once.
          * @param b Variadic list of button pointers to reset.
          */
         template <typename... B>
-        static void resetButtons(B *...b) noexcept;
+        void resetButtons(B *...b) const noexcept;
 
         /**
          * @brief Helper to update multiple buttons at once.
@@ -183,7 +245,7 @@ namespace Engine
          * @param b Variadic list of button pointers to update.
          */
         template <typename... B>
-        static void updateButtons(float mx, float my, B *...b) noexcept;
+        void updateButtons(float mx, float my, B *...b) const noexcept;
 
         /**
          * @brief Helper to press multiple buttons at once.
@@ -192,11 +254,20 @@ namespace Engine
          * @param b Variadic list of button pointers to press.
          */
         template <typename... B>
-        static void pressButtons(float mx, float my, B *...b) noexcept;
+        void pressButtons(float mx, float my, B *...b) const noexcept;
 
         std::shared_ptr<Graphics::IRenderer> _renderer;                        ///> Shared renderer
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture
         RenderCommand _backgroundCmd{};                                        ///> Background render command
+
+        Graphics::TextureHandle _panelTex = Graphics::InvalidTexture; ///> Panel texture
+        RenderCommand _panelCmd{};                                    ///> Panel render command
+        bool _panelCenter = true;                                     ///> Whether to center the panel
+
+        RectF _panelRect{};             ///> Panel rectangle
+        RectF _innerRect{};             ///> Inner rectangle within the panel
+        float _panelInsetXFrac = 0.08f; ///> Panel inset fraction in X
+        float _panelInsetYFrac = 0.10f; ///> Panel inset fraction in Y
     };
 } // namespace Engine
 

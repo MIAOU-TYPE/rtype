@@ -241,7 +241,7 @@ namespace Net::Server
 
         std::unordered_map<int, uint32_t> _lastScoreById{}; ///> Last score storage
 
-        mutable std::unordered_map<uint32_t, Clock::time_point> _bannedIpUntil{};   //
+        mutable std::unordered_map<uint32_t, Clock::time_point> _bannedIpUntil{};   ///> Banned IPs storage
         int _nextId = 1; ///> Next available session ID
 
         /**

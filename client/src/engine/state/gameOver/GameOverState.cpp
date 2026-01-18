@@ -25,6 +25,9 @@ namespace Engine
     {
         _menu = std::make_unique<GameOverMenu>(_renderer, _world);
         _menu->onEnter();
+        if (_musicRegistry)
+            _musicRegistry->stopMusic();
+        _musicRegistry->loadAndPlayMusic(::MENU_MUSIC, true, 50.f);
     }
 
     void GameOverState::update(StateManager &manager, const InputFrame &frame)

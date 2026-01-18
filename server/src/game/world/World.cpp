@@ -28,6 +28,17 @@ namespace
             const auto &bossPartA = reg.getComponents<Ecs::BossPart>().at(event.a);
             if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
+
+            const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.a));
+            const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.b));
+            const bool aIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.a));
+            const bool bIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.b));
+            const auto &dmgCollideA = reg.getComponents<Ecs::Damage>().at(event.a);
+            const auto &dmgCollideB = reg.getComponents<Ecs::Damage>().at(event.b);
+            if (dmgCollideA && aIsEnemy && bIsPlayer && hpArr.at(event.b))
+                w->events().emit(DamageEvent{event.a, event.b, dmgCollideA->amount});
+            if (dmgCollideB && bIsEnemy && aIsPlayer && hpArr.at(event.a))
+                w->events().emit(DamageEvent{event.b, event.a, dmgCollideB->amount});
         });
     }
 

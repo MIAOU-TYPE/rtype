@@ -11,6 +11,7 @@
 #include "HUD.hpp"
 #include "IGameState.hpp"
 #include "MusicRegistry.hpp"
+#include "RoomManager.hpp"
 #include "SoundRegistry.hpp"
 
 namespace Engine
@@ -54,10 +55,12 @@ namespace Engine
          * @param getScore Function to get the current score.
          * @param getCurrentLife Function to get the current life.
          * @param getMaxLife Function to get the maximum life.
+         * @param roomManager Shared pointer to the room manager (to get world music).
          */
         explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
             const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore,
-            std::function<int()> getCurrentLife, std::function<int()> getMaxLife);
+            std::function<int()> getCurrentLife, std::function<int()> getMaxLife,
+            std::shared_ptr<RoomManager> roomManager);
 
         /**
          * @brief Called when entering the state.
@@ -80,5 +83,6 @@ namespace Engine
         std::shared_ptr<MusicRegistry> _musicRegistry; ///> Shared pointer to the music registry.
         std::shared_ptr<SoundRegistry> _soundRegistry; ///> Shared pointer to the sound registry.
         std::unique_ptr<HUD> _hud;                     ///> Unique pointer to the HUD.
+        std::shared_ptr<RoomManager> _roomManager;     ///> Shared pointer to the room manager.
     };
 } // namespace Engine

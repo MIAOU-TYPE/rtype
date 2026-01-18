@@ -1,5 +1,6 @@
 {
   "name": "World 3 - Ruins World",
+  "music": "sounds/ruins_theme.flac",
   "levels": [
     {
       "id": "ruins_level1",

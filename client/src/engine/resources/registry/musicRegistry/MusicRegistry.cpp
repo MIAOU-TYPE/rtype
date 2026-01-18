@@ -69,13 +69,12 @@ namespace Engine
         return _volumeBeforeMute;
     }
 
-    bool MusicRegistry::loadAndPlayMusic(const std::string &path, bool loop, float volume) noexcept
+    void MusicRegistry::loadAndPlayMusic(const std::string &path, bool loop, float volume) noexcept
     {
         auto handle = _musicManager->load(path);
         if (handle == InvalidAudio)
-            return false;
+            return;
 
         playMusic(handle, loop, volume);
-        return true;
     }
 } // namespace Engine

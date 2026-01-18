@@ -25,6 +25,22 @@ namespace Engine
         (void) _soundManager->play(handle);
     }
 
+    void SoundRegistry::stopSound(const AudioHandle handle) const
+    {
+        if (!_soundManager->isValid(handle))
+            return;
+
+        _soundManager->stop(handle);
+    }
+
+    SoundRegistry::AudioHandle SoundRegistry::loadSound(const std::string &resourcePath)
+    {
+        if (!_soundManager)
+            return Graphics::InvalidAudio;
+
+        return _soundManager->load(resourcePath);
+    }
+
     void SoundRegistry::setSoundVolume(float volume)
     {
         _globalSoundVolume = volume;

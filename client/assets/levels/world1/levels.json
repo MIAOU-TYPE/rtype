@@ -1,5 +1,6 @@
 {
   "name": "World 1 - Space World",
+  "music": "sounds/space_theme.flac",
   "levels": [
     {
       "id": "space_level1",

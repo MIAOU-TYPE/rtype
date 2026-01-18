@@ -41,17 +41,40 @@ namespace Engine
         std::string _message; ///> Error message
     };
 
-    /**
-     * @brief Abstract base class for menus in the game.
-     * This class provides common functionality for all menus, such as background rendering
-     * and button management.
-     */
+    struct RectF {
+        float x = 0.f;
+        float y = 0.f;
+        float w = 0.f;
+        float h = 0.f;
+
+        [[nodiscard]] float cx() const noexcept
+        {
+            return x + w * 0.5f;
+        }
+
+        [[nodiscard]] float cy() const noexcept
+        {
+            return y + h * 0.5f;
+        }
+
+        [[nodiscard]] float right() const noexcept
+        {
+            return x + w;
+        }
+
+        [[nodiscard]] float bottom() const noexcept
+        {
+            return y + h;
+        }
+    };
+
     class AMenu : public IMenu {
       public:
         /**
          * @brief Copy constructor is deleted to prevent copying.
          */
         AMenu(const AMenu &) = delete;
+        AMenu &operator=(const AMenu &) = delete;
 
         /**
          * @brief Construct a new AMenu object.
@@ -59,11 +82,6 @@ namespace Engine
          * @param renderer Shared pointer to the renderer used for rendering the menu.
          */
         explicit AMenu(std::shared_ptr<Graphics::IRenderer> renderer);
-
-        /**
-         * @brief Assignment operator is deleted to prevent copying.
-         */
-        AMenu &operator=(const AMenu &) = delete;
 
         /**
          * @brief Virtual destructor for AMenu.
@@ -95,13 +113,26 @@ namespace Engine
         /**
          * @brief Compute the background RenderCommand so it covers the full viewport.
          */
-        void layoutBackground();
+        void layoutBackground() noexcept;
 
         /**
          * @brief Render the background.
          */
         void renderBackground() const;
 
+        void loadPanel(const std::string &path, bool center = true);
+        void layoutPanel(float maxWFrac = 0.90f, float maxHFrac = 0.90f, float insetXFrac = 0.08f,
+            float insetYFrac = 0.10f) noexcept;
+
+        [[nodiscard]] RectF panelRect() const noexcept
+        {
+            return _panelRect;
+        }
+
+        [[nodiscard]] RectF innerRect() const noexcept
+        {
+            return _innerRect;
+        }
         /**
          * @brief Helper to place a button centered at a given x-coordinate.
          * @param b The button to place.
@@ -166,15 +197,15 @@ namespace Engine
          * @return The action corresponding to the clicked button, or Action::None if no button was clicked.
          */
         template <typename Action>
-        static Action pickAction(
-            float mx, float my, std::initializer_list<std::pair<UI::UIButton *, Action>> items) noexcept;
+        [[nodiscard]] Action pickAction(
+            float mx, float my, std::initializer_list<std::pair<UI::UIButton *, Action>> items) const noexcept;
 
         /**
          * @brief Helper to reset multiple buttons at once.
          * @param b Variadic list of button pointers to reset.
          */
         template <typename... B>
-        static void resetButtons(B *...b) noexcept;
+        void resetButtons(B *...b) const noexcept;
 
         /**
          * @brief Helper to update multiple buttons at once.
@@ -183,7 +214,7 @@ namespace Engine
          * @param b Variadic list of button pointers to update.
          */
         template <typename... B>
-        static void updateButtons(float mx, float my, B *...b) noexcept;
+        void updateButtons(float mx, float my, B *...b) const noexcept;
 
         /**
          * @brief Helper to press multiple buttons at once.
@@ -192,11 +223,20 @@ namespace Engine
          * @param b Variadic list of button pointers to press.
          */
         template <typename... B>
-        static void pressButtons(float mx, float my, B *...b) noexcept;
+        void pressButtons(float mx, float my, B *...b) const noexcept;
 
         std::shared_ptr<Graphics::IRenderer> _renderer;                        ///> Shared renderer
         Graphics::TextureHandle _backgroundTexture = Graphics::InvalidTexture; ///> Background texture
         RenderCommand _backgroundCmd{};                                        ///> Background render command
+
+        Graphics::TextureHandle _panelTex = Graphics::InvalidTexture;   ///> Panel texture
+        RenderCommand _panelCmd{};  ///> Panel render command
+        bool _panelCenter = true;   ///> Whether to center the panel
+
+        RectF _panelRect{}; ///> Panel rectangle
+        RectF _innerRect{}; ///> Inner rectangle within the panel
+        float _panelInsetXFrac = 0.08f; ///> Panel inset fraction in X
+        float _panelInsetYFrac = 0.10f; ///> Panel inset fraction in Y
     };
 } // namespace Engine
 

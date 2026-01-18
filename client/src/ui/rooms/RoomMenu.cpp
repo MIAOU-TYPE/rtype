@@ -669,8 +669,8 @@ namespace Engine
     void RoomMenu::layoutList(const float cx, const float yOffset)
     {
         const auto inner = innerRect();
-        const float listTop = inner.y + inner.h * 0.24f + yOffset;
-        const float listBottom = inner.y + inner.h * 0.78f + yOffset;
+        const float listTop = inner.y + inner.h * 0.29f + yOffset;
+        const float listBottom = inner.y + inner.h * 0.83f + yOffset;
         const auto m = computeListMetrics(listTop, listBottom, _list.roomButtons);
 
         _list.listTop = m.listTop;
@@ -685,7 +685,7 @@ namespace Engine
         const float offset = computeVisibleBlockOffset(m.listTop, m.listBottom, m.listH, _list.roomButtons);
         applyYOffset(offset, _list.roomButtons);
 
-        _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, inner.y + inner.h * 0.86f + yOffset);
+        _list.back->setPosition(cx - _list.back->bounds().w * 0.5f, inner.y + inner.h * 0.90f + yOffset);
     }
 
     bool RoomMenu::wantsBackToMenu() const noexcept
@@ -734,7 +734,7 @@ namespace Engine
         return _selectedDifficulty;
     }
 
-    std::string RoomMenu::levelSelected() const noexcept
+    std::string RoomMenu::levelSelected() const
     {
         if (_levels.empty())
             return "";

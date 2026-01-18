@@ -1,0 +1,14 @@
+{
+  "sprite": "background_wall",
+  "spriteId": 103,
+  "texture": "sprites/background_wall.png",
+  "default_animation": "static",
+  "animations": {
+    "static": {
+      "loop": false,
+      "frames": [
+        { "x": 0, "y": 0, "w": 2540, "h": 207, "duration": 1.0 }
+      ]
+    }
+  }
+}

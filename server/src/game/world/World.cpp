@@ -17,9 +17,14 @@ namespace
             auto &reg = w->registry();
             auto &hpArr = reg.getComponents<Ecs::Health>();
 
+            const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.a));
+            const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.b));
+            const bool aIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.a));
+            const bool bIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.b));
             const auto &dmgA = reg.getComponents<Ecs::Damage>().at(event.a);
             const auto &projA = reg.hasComponent<Ecs::Projectile>(static_cast<Ecs::Entity>(event.a));
             const auto &bossPartB = reg.getComponents<Ecs::BossPart>().at(event.b);
+
             if (dmgA && projA && (hpArr.at(event.b) || bossPartB))
                 w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
 
@@ -29,16 +34,35 @@ namespace
             if (dmgB && projB && (hpArr.at(event.a) || bossPartA))
                 w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
 
-            const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.a));
-            const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(event.b));
-            const bool aIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.a));
-            const bool bIsEnemy = reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(event.b));
-            const auto &dmgCollideA = reg.getComponents<Ecs::Damage>().at(event.a);
-            const auto &dmgCollideB = reg.getComponents<Ecs::Damage>().at(event.b);
-            if (dmgCollideA && aIsEnemy && bIsPlayer && hpArr.at(event.b))
-                w->events().emit(DamageEvent{event.a, event.b, dmgCollideA->amount});
-            if (dmgCollideB && bIsEnemy && aIsPlayer && hpArr.at(event.a))
-                w->events().emit(DamageEvent{event.b, event.a, dmgCollideB->amount});
+            const auto &pixelCollisionA = reg.getComponents<Ecs::PixelCollision>().at(event.a);
+            if (pixelCollisionA && projB) {
+                w->events().emit(DestroyEvent{event.b, false});
+                return;
+            }
+
+            const auto &pixelCollisionB = reg.getComponents<Ecs::PixelCollision>().at(event.b);
+            if (pixelCollisionB && projA) {
+                w->events().emit(DestroyEvent{event.a, false});
+                return;
+            }
+
+            const auto &healthA = reg.getComponents<Ecs::Health>().at(event.a);
+            const auto &inputA = reg.getComponents<Game::InputComponent>().at(event.a);
+            if (pixelCollisionB && healthA && inputA) {
+                w->events().emit(DamageEvent{event.b, event.a, 5});
+                return;
+            }
+
+            const auto &healthB = reg.getComponents<Ecs::Health>().at(event.b);
+            const auto &inputB = reg.getComponents<Game::InputComponent>().at(event.b);
+            if (pixelCollisionA && healthB && inputB) {
+                w->events().emit(DamageEvent{event.a, event.b, 5});
+                return;
+            }
+            if (dmgA && aIsEnemy && bIsPlayer && hpArr.at(event.b))
+                w->events().emit(DamageEvent{event.a, event.b, dmgA->amount});
+            if (dmgB && bIsEnemy && aIsPlayer && hpArr.at(event.a))
+                w->events().emit(DamageEvent{event.b, event.a, dmgB->amount});
         });
     }
 

@@ -21,8 +21,8 @@ namespace
             for (int i = 0; i < count; i++)
                 positions.push_back(startY + static_cast<float>(i) * spacing);
         } else if (pattern == "spread") {
-            constexpr float minY = 50.f;
-            constexpr float maxY = 600.f;
+            constexpr float minY = 90.f;
+            constexpr float maxY = 500.f;
 
             if (count <= 0)
                 return positions;
@@ -222,6 +222,41 @@ namespace Game
         }
     }
 
+    void LevelSystem::spawnWalls(IGameWorld &world, const Level &level)
+    {
+        if (level.wallLayers.empty())
+            return;
+
+        constexpr float REFERENCE_VIEWPORT_WIDTH = Game::Config::VIEWPORT_WIDTH;
+        constexpr float REFERENCE_VIEWPORT_HEIGHT = Game::Config::VIEWPORT_HEIGHT;
+
+        for (const auto &layer : level.wallLayers) {
+            const float scaleX = REFERENCE_VIEWPORT_WIDTH / layer.tileWidth;
+            const float scaleY = REFERENCE_VIEWPORT_HEIGHT / layer.tileHeight;
+            const float scale = std::max(scaleX, scaleY);
+
+            const float scaledWidth = layer.tileWidth * scale;
+
+            createWallEntity(world, layer, 0.f, scaledWidth, 0);
+            createWallEntity(world, layer, scaledWidth, scaledWidth, 1);
+
+            for (const auto &box : layer.collisionBoxes) {
+                auto &reg = world.registry();
+                const Ecs::Entity collisionEntity = world.createEntity();
+                reg.emplaceComponent<Ecs::Position>(
+                    collisionEntity, Ecs::Position{0.f + box.x, box.y, static_cast<uint8_t>(layer.depth)});
+                reg.emplaceComponent<Ecs::Collision>(collisionEntity, Ecs::Collision{box.w, box.h});
+                reg.emplaceComponent<Ecs::PixelCollision>(collisionEntity, Ecs::PixelCollision{});
+
+                const Ecs::Entity collisionEntity2 = world.createEntity();
+                reg.emplaceComponent<Ecs::Position>(
+                    collisionEntity2, Ecs::Position{scaledWidth + box.x, box.y, static_cast<uint8_t>(layer.depth)});
+                reg.emplaceComponent<Ecs::Collision>(collisionEntity2, Ecs::Collision{box.w, box.h});
+                reg.emplaceComponent<Ecs::PixelCollision>(collisionEntity2, Ecs::PixelCollision{});
+            }
+        }
+    }
+
     void LevelSystem::createBackgroundEntity(IGameWorld &world, const BackgroundLayer &layer, const float xPosition,
         const float scaledWidth, const int tileIndex)
     {
@@ -243,6 +278,35 @@ namespace Game
         draw.spriteId = layer.spriteId;
         draw.drawable = true;
         reg.emplaceComponent<Ecs::Drawable>(bg, draw);
+    }
+
+    void LevelSystem::createWallEntity(IGameWorld &world, const BackgroundLayer &wall, const float xPosition,
+        const float scaledWidth, const int tileIndex)
+    {
+        auto &reg = world.registry();
+        const Ecs::Entity wallEntity = world.createEntity();
+
+        reg.emplaceComponent<Ecs::Position>(wallEntity, Ecs::Position{xPosition, 0.f, 1});
+
+        Ecs::Background bgComp;
+        bgComp.scrollSpeed = wall.scrollSpeed;
+        bgComp.tileWidth = scaledWidth;
+        bgComp.tileHeight = wall.tileHeight;
+        bgComp.originalTileWidth = wall.tileWidth;
+        bgComp.originalTileHeight = wall.tileHeight;
+        bgComp.tileIndex = tileIndex;
+        reg.emplaceComponent<Ecs::Background>(wallEntity, bgComp);
+
+        Ecs::PixelCollision pixelCol;
+        pixelCol.useAlpha = true;
+        pixelCol.tileWidth = wall.tileWidth;
+        pixelCol.tileHeight = wall.tileHeight;
+        reg.emplaceComponent<Ecs::PixelCollision>(wallEntity, pixelCol);
+
+        Ecs::Drawable draw;
+        draw.spriteId = wall.spriteId;
+        draw.drawable = true;
+        reg.emplaceComponent<Ecs::Drawable>(wallEntity, draw);
     }
 
     void LevelSystem::handleBossPhases(
@@ -283,7 +347,7 @@ namespace Game
                 reg.emplaceComponent<Ecs::Damageable>(tailSegment, Ecs::Damageable{true});
                 Ecs::BossPart bossPart;
                 bossPart.bossEntity = mob;
-                bossPart.damageMultiplier = 3.0f;
+                bossPart.damageMultiplier = 2.0f;
                 reg.emplaceComponent<Ecs::BossPart>(tailSegment, bossPart);
                 previousEntity = tailSegment;
             }

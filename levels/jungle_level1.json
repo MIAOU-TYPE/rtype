@@ -1,10 +1,10 @@
 {
   "name": "Level 1",
   "background": {
-    "spriteId": 100,
+    "spriteId": 101,
     "scrollSpeed": -50.0,
-    "tileWidth": 1140.0,
-    "tileHeight": 207.0
+    "tileWidth": 2584.0,
+    "tileHeight": 720.0
   },
   "enemies": {
     "smallEnemy": {

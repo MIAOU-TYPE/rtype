@@ -1,0 +1,9 @@
+INPUT                  = server client shared
+RECURSIVE              = YES
+FILE_PATTERNS          = *.hpp *.cpp
+
+EXCLUDE                = build cmake-build-debug cmake-build-release
+EXCLUDE               += cmake-build-* build* out* Debug Release
+
+EXCLUDE               += */build/* */cmake-build-*/*
+EXCLUDE               += */_deps/* */vcpkg_installed/* */.cache/*

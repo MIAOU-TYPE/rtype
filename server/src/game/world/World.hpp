@@ -56,8 +56,9 @@ namespace Game
       public:
         /**
          * @brief Construct a new World.
+         * @param gameConfig The game configuration to use.
          */
-        World();
+        explicit World(const Engine::GameConfig &gameConfig = Engine::GameConfig{});
 
         /**
          * @brief Access the underlying ECS registry.
@@ -104,10 +105,17 @@ namespace Game
          */
         void copyFrom(IGameWorld &other) override;
 
+        /**
+         * @brief Get the game configuration.
+         * @return Reference to the game configuration.
+         */
+        [[nodiscard]] const Engine::GameConfig &getGameConfig() const override;
+
       private:
         Ecs::Registry _registry;                              ///> The ECS registry (component storage).
         Ecs::EventsRegistry _events;                          ///> Event bus for ECS events.
         size_t _nextId = 1;                                   ///> Counter for generating unique entity IDs.
         std::unordered_map<size_t, Ecs::Entity> _netToEntity; ///> Map network IDs to ECS entities.
+        Engine::GameConfig _gameConfig;                       ///> Game configuration.
     };
 } // namespace Game

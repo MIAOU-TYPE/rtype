@@ -21,8 +21,8 @@ namespace
             for (int i = 0; i < count; i++)
                 positions.push_back(startY + static_cast<float>(i) * spacing);
         } else if (pattern == "spread") {
-            constexpr float minY = 50.f;
-            constexpr float maxY = 600.f;
+            constexpr float minY = 90.f;
+            constexpr float maxY = 500.f;
 
             if (count <= 0)
                 return positions;
@@ -283,7 +283,7 @@ namespace Game
                 reg.emplaceComponent<Ecs::Damageable>(tailSegment, Ecs::Damageable{true});
                 Ecs::BossPart bossPart;
                 bossPart.bossEntity = mob;
-                bossPart.damageMultiplier = 3.0f;
+                bossPart.damageMultiplier = 2.0f;
                 reg.emplaceComponent<Ecs::BossPart>(tailSegment, bossPart);
                 previousEntity = tailSegment;
             }

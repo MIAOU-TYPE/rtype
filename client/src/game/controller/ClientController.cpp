@@ -73,6 +73,7 @@ namespace Ecs
 
     void ClientController::onHealth(const uint16_t currentLife, const uint16_t maxLife)
     {
-        std::cout << "onHealth: " << currentLife << " / " << maxLife << std::endl;
+        _currentLife = currentLife;
+        _maxLife = maxLife;
     }
 } // namespace Ecs

@@ -67,6 +67,8 @@ namespace Net
         }
 
         const int sessionId = _sessions->getOrCreateSession(*addr);
+        if (sessionId < 0)
+            return sendError(*addr, h.requestId, 403, "BANNED");
 
         const bool authFree = h.type == Protocol::TCP::HELLO || h.type == Protocol::TCP::AUTH_REGISTER
             || h.type == Protocol::TCP::AUTH_LOGIN;

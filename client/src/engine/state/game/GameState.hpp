@@ -52,9 +52,12 @@ namespace Engine
          * @param soundRegistry Shared pointer to the sound registry.
          * @param renderer Shared pointer to the renderer.
          * @param getScore Function to get the current score.
+         * @param getCurrentLife Function to get the current life.
+         * @param getMaxLife Function to get the maximum life.
          */
         explicit GameState(std::shared_ptr<MusicRegistry> musicRegistry, std::shared_ptr<SoundRegistry> soundRegistry,
-            const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore);
+            const std::shared_ptr<Graphics::IRenderer> &renderer, std::function<int()> getScore,
+            std::function<int()> getCurrentLife, std::function<int()> getMaxLife);
 
         /**
          * @brief Called when entering the state.

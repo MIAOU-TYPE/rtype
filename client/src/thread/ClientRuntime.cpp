@@ -37,8 +37,8 @@ namespace Thread
         _renderer = _graphics->createRenderer();
         _eventBus = std::make_shared<Engine::EventBus>();
         _eventRegistry = std::make_unique<Engine::EventRegistry>(_eventBus);
-        _udpPacketRouter =
-            std::make_unique<Ecs::UDPPacketRouter>(std::make_shared<Ecs::ClientController>(_commandBuffer, _eventBus));
+        _clientController = std::make_shared<Ecs::ClientController>(_commandBuffer, _eventBus);
+        _udpPacketRouter = std::make_unique<Ecs::UDPPacketRouter>(_clientController);
         _tcpPacketRouter = std::make_unique<Network::TCPPacketRouter>();
         _input = std::make_unique<Engine::InputState>();
         _spriteRegistry = std::make_shared<Engine::SpriteRegistry>();
@@ -162,10 +162,22 @@ namespace Thread
             if (_pendingGameStart.exchange(false, std::memory_order_acq_rel)) {
                 try {
                     std::weak_ptr w = _world;
-                    _stateManager->changeState(
-                        std::make_unique<Engine::GameState>(_musicRegistry, _soundRegistry, _renderer, [w]() {
+                    std::weak_ptr c = _clientController;
+                    _stateManager->changeState(std::make_unique<Engine::GameState>(
+                        _musicRegistry, _soundRegistry, _renderer,
+                        [w]() {
                             if (const auto s = w.lock())
                                 return static_cast<int>(s->getScore());
+                            return 0;
+                        },
+                        [c]() {
+                            if (const auto ctrl = c.lock())
+                                return ctrl->getCurrentLife();
+                            return 0;
+                        },
+                        [c]() {
+                            if (const auto ctrl = c.lock())
+                                return ctrl->getMaxLife();
                             return 0;
                         }));
                 } catch (...) {
@@ -330,8 +342,8 @@ namespace Thread
 
         _eventBus->on<Engine::CreateRoomRequested>([this](const Engine::CreateRoomRequested &e) {
             const auto req = nextReqId();
-            _tcpClient->sendPacket(
-                *_tcpPacketFactory.makeCreateRoom(req, e.roomName, e.maxPlayers, e.difficulty, e.levelPath));
+            _tcpClient->sendPacket(*_tcpPacketFactory.makeCreateRoom(
+                req, e.roomName, e.maxPlayers, e.difficulty, e.gameMode, e.levelPath));
         });
 
         _eventBus->on<Engine::JoinRoomRequested>([this](const Engine::JoinRoomRequested &e) {

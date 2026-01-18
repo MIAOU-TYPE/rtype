@@ -337,7 +337,7 @@ namespace
 
             const auto &powerUpType = reg.getComponents<Ecs::PowerUpType>().at(powerUpIdx);
             if (powerUpType && powerUpType->type == Ecs::PowerUpTypeEnum::Standard) {
-                if (const auto &playerPowerUp = reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx))
+                if (reg.getComponents<Ecs::PlayerPowerUp>().at(playerIdx).has_value())
                     return;
             }
 
@@ -354,7 +354,7 @@ namespace
 
 namespace Game
 {
-    World::World()
+    World::World(const Engine::GameConfig &gameConfig) : _gameConfig(gameConfig)
     {
         registerCollisionDamage(*this);
         registerDamageToScoreEvent(*this);
@@ -438,5 +438,10 @@ namespace Game
                 if (nid.id >= _nextId)
                     _nextId = nid.id + 1;
             });
+    }
+
+    const Engine::GameConfig &World::getGameConfig() const
+    {
+        return _gameConfig;
     }
 } // namespace Game

@@ -42,6 +42,27 @@ namespace
         const auto shooterIdx = projectile->shooter;
         return reg.hasComponent<Ecs::AIBrain>(Ecs::Entity(shooterIdx));
     }
+
+    [[nodiscard]] bool isPlayerToPlayerDamage(Ecs::Registry &reg, const size_t projectileIdx, const size_t targetIdx)
+    {
+        const auto &projectile = reg.getComponents<Ecs::Projectile>().at(projectileIdx);
+        if (!projectile)
+            return false;
+
+        const size_t shooterIdx = projectile->shooter;
+        const bool shooterIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(shooterIdx));
+        const bool targetIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(targetIdx));
+
+        return shooterIsPlayer && targetIsPlayer;
+    }
+
+    [[nodiscard]] bool areBothPlayers(Ecs::Registry &reg, const size_t aIdx, const size_t bIdx)
+    {
+        const bool aIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(aIdx));
+        const bool bIsPlayer = reg.hasComponent<Game::InputComponent>(Ecs::Entity(bIdx));
+
+        return aIsPlayer && bIsPlayer;
+    }
 } // namespace
 
 namespace Game
@@ -50,9 +71,12 @@ namespace Game
     void CollisionSystem::update(IGameWorld &world)
     {
         auto &reg = world.registry();
+        const auto &gameConfig = world.getGameConfig();
 
         auto &posArr = reg.getComponents<Ecs::Position>();
         auto &colArr = reg.getComponents<Ecs::Collision>();
+
+        const bool isFriendlyFireMode = (gameConfig.mode == Engine::GameMode::FriendlyFire);
 
         for (size_t i = 0; i < posArr.size(); i++) {
             const auto &posA = posArr.at(i);
@@ -75,6 +99,13 @@ namespace Game
                     continue;
                 if (shootFromAiToAi(reg, i, j) || shootFromAiToAi(reg, j, i))
                     continue;
+                if (!isFriendlyFireMode) {
+                    if (isPlayerToPlayerDamage(reg, i, j) || isPlayerToPlayerDamage(reg, j, i))
+                        continue;
+                    if (areBothPlayers(reg, i, j))
+                        continue;
+                }
+
                 world.events().emit(CollisionEvent{i, j});
             }
         }

@@ -107,6 +107,12 @@ class TestWorld final : public Game::IGameWorld {
     {
     }
 
+    [[nodiscard]] const Engine::GameConfig &getGameConfig() const override
+    {
+        static const Engine::GameConfig config{};
+        return config;
+    }
+
   private:
     Ecs::Registry _reg;
     Ecs::EventsRegistry _events;

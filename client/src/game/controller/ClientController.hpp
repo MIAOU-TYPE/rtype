@@ -100,19 +100,13 @@ namespace Ecs
          * @brief Gets the current life.
          * @return The current life.
          */
-        [[nodiscard]] int getCurrentLife() const
-        {
-            return _currentLife;
-        }
+        [[nodiscard]] int getCurrentLife() const;
 
         /**
          * @brief Gets the maximum life.
          * @return The maximum life.
          */
-        [[nodiscard]] int getMaxLife() const
-        {
-            return _maxLife;
-        }
+        [[nodiscard]] int getMaxLife() const;
 
       private:
         std::reference_wrapper<Command::CommandBuffer<World::WorldCommand>>

@@ -109,6 +109,8 @@ module.exports = {
             'technical-docs/server/network/tcp',
             'technical-docs/server/network/udp',
             'technical-docs/server/network/protocol',
+            'technical-docs/server/network/udp-rfc',
+            'technical-docs/server/network/tcp-rfc',
           ],
         },
         {
@@ -151,6 +153,13 @@ module.exports = {
             'technical-docs/server/engine/runtime-integration',
           ],
         },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      items: [
+        'technical-docs/architecture/decision'
       ],
     },
   ],

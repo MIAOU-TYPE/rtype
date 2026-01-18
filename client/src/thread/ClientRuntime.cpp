@@ -192,6 +192,8 @@ namespace Thread
                 _stateManager->changeState(std::make_unique<Engine::GameOverState>(_graphics, _renderer, _musicRegistry,
                     _soundRegistry, _roomManager, _eventBus, _authCtx, _scoreboardCtx, std::weak_ptr(_world)));
             }
+            if (_pendingLobbyRefresh.exchange(false, std::memory_order_acq_rel))
+                _eventBus->emit<Engine::RoomDataUpdated>(Engine::RoomDataUpdated{});
             _graphics->pollEvents(*_eventBus);
             _eventBus->dispatch();
             _stateManager->update(_input->consumeFrame());
@@ -394,6 +396,12 @@ namespace Thread
                     _writeRenderCommands->clear();
             }
         });
+
+        _eventBus->on<Engine::SendingMessage>([this](const Engine::SendingMessage &e) {
+            const auto req = nextReqId();
+            if (const auto pkt = _tcpPacketFactory.makeRoomMessage(req, e.message))
+                (void) _tcpClient->sendPacket(*pkt);
+        });
     }
 
     void ClientRuntime::processNetworkPackets(const steadyClock::time_point deadline, const int maxPackets) const
@@ -455,14 +463,23 @@ namespace Thread
             _roomManager->rooms() = rooms;
         });
 
-        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t roomId) {
-            (void) roomId;
-            _pendingJoinRoom.store(true, std::memory_order_release);
+        _tcpPacketRouter->sink()->onRoomJoinedSubscribe([&](uint32_t, const uint32_t) {
+            if (!_stateManager->is<Engine::LobbyState>())
+                _pendingJoinRoom.store(true, std::memory_order_release);
+            else
+                _pendingLobbyRefresh.store(true, std::memory_order_release);
         });
 
         _tcpPacketRouter->sink()->onRoomUpdatedSubscribe([&](uint32_t, const RoomData &room) {
             _roomManager->setCurrentData(room);
-            _pendingJoinRoom.store(true, std::memory_order_release);
+            if (!_stateManager->is<Engine::LobbyState>())
+                _pendingJoinRoom.store(true, std::memory_order_release);
+            else
+                _pendingLobbyRefresh.store(true, std::memory_order_release);
+        });
+
+        _tcpPacketRouter->sink()->onMessageSubscribe([&](uint32_t, const std::string_view msg) {
+            _roomManager->addMessage(std::string(msg));
         });
 
         _tcpPacketRouter->sink()->onAuthOkSubscribe(

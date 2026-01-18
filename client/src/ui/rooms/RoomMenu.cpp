@@ -453,7 +453,7 @@ namespace Engine
                 return;
             }
             if (frame.key == Key::Enter) {
-                _createRoom = !_createRoom;
+                _createRoom = true;
                 _createRoomName = _create.roomNameField ? _create.roomNameField->value() : "default";
                 return;
             }

@@ -216,8 +216,55 @@ namespace
         bool _running = false;
     };
 
-    class FakeSessions final : public Net::Server::ISessionManager {
+    class FakeSessions : public Net::Server::ISessionManager {
       public:
+        void banIp(uint32_t ip, std::chrono::seconds duration) override
+        {
+            const auto until = std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::system_clock::now().time_since_epoch() + duration)
+                                   .count();
+            _bans[ip] = static_cast<uint64_t>(until);
+        }
+
+        void unbanIp(uint32_t ip) override
+        {
+            _bans.erase(ip);
+        }
+
+        [[nodiscard]] bool isIpBanned(uint32_t ip) const override
+        {
+            const auto it = _bans.find(ip);
+            if (it == _bans.end())
+                return false;
+
+            const auto now = static_cast<uint64_t>(
+                std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+                    .count());
+
+            if (it->second <= now)
+                return false;
+
+            return true;
+        }
+
+        [[nodiscard]] std::vector<std::pair<uint32_t, uint64_t>> listBans() const override
+        {
+            std::vector<std::pair<uint32_t, uint64_t>> out;
+            out.reserve(_bans.size());
+            for (const auto &kv : _bans)
+                out.push_back(kv);
+            return out;
+        }
+
+        std::optional<int> findSessionIdByUsername(const std::string &username) const override
+        {
+            for (const auto &kv : _identities) {
+                if (kv.second.username == username)
+                    return kv.first;
+            }
+            return std::nullopt;
+        }
+
         int getOrCreateSession(const sockaddr_in &addr) override
         {
             _sessions[_sessionId] = addr;
@@ -371,6 +418,8 @@ namespace
         }
 
       private:
+        std::unordered_map<uint32_t, uint64_t> _bans;
+
         static uint64_t addrKey(const sockaddr_in &a)
         {
             const uint64_t ip = static_cast<uint64_t>(a.sin_addr.s_addr);

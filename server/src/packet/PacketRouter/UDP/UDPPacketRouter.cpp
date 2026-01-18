@@ -71,13 +71,7 @@ void UDPPacketRouter::dispatchPacket(
     switch (header.type) {
         case Protocol::UDP::INPUT: handleInput(sessionId, payload, payloadSize); break;
 
-        case Protocol::UDP::PING:
-            if (payloadSize != sizeof(DefaultData)) {
-                std::cerr << "{UDPPacketRouter} Dropped PING: bad size" << std::endl;
-                break;
-            }
-            handlePing(sessionId);
-            break;
+        case Protocol::UDP::PING: handlePing(sessionId, payload, payloadSize); break;
 
         case Protocol::UDP::DISCONNECT:
             if (payloadSize != sizeof(DefaultData)) {
@@ -178,9 +172,17 @@ void UDPPacketRouter::handleInput(const int sessionId, const uint8_t *payload, c
     _roomManager->onPlayerInput(sessionId, Game::InputComponent{up, down, left, right, shoot, powerShoot});
 }
 
-void UDPPacketRouter::handlePing(const int sessionId) const
+void UDPPacketRouter::handlePing(const int sessionId, const uint8_t *payload, const size_t payloadSize) const
 {
-    _roomManager->onPing(sessionId);
+    if (!payload || payloadSize != sizeof(PongData)) {
+        std::cerr << "{UDPPacketRouter::handlePing} Dropped PING: bad size\n";
+        return;
+    }
+    PongData pkt{};
+    std::memcpy(&pkt, payload, sizeof(pkt));
+    const uint64_t timestamp = ntohll(pkt.pongTimestamp);
+
+    _roomManager->onPing(sessionId, timestamp);
 }
 
 void UDPPacketRouter::handleDisconnect(const int sessionId) const

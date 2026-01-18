@@ -11,6 +11,7 @@
 #include "EventBus.hpp"
 #include "EventRegistry.hpp"
 #include "SfmlGraphics.hpp"
+#include "SignalHandler.hpp"
 #include "TCPClient.hpp"
 #include "UDPClient.hpp"
 
@@ -37,13 +38,23 @@ namespace
             clientRuntime.stop();
         });
     }
+
+    std::shared_ptr<Signal::SignalHandler> startSignalHandler(Thread::ClientRuntime &runtime)
+    {
+        auto signalHandler = std::make_shared<Signal::SignalHandler>();
+
+        signalHandler->start();
+        signalHandler->registerCallback(Signal::SignalType::Interrupt, [&runtime]() {
+            runtime.stop();
+        });
+        return signalHandler;
+    }
 } // namespace
 
 int main(const int argc, char **argv)
 {
     try {
         Utils::ArgParser argParser(argc, argv);
-
         if (const auto result = parseArgs(argParser); result != Utils::ArgParseResult::Success)
             return result == Utils::ArgParseResult::HelpDisplayed ? 0 : 84;
 
@@ -59,10 +70,13 @@ int main(const int argc, char **argv)
 
         tcpClient->configure(argParser.getHost(), argParser.getPort());
         udpClient->configure(argParser.getHost(), argParser.getPort() + 1);
+        const auto signalHandler = startSignalHandler(clientRuntime);
         clientRuntime.start();
 
         clientRuntime.runDisplay();
         clientRuntime.wait();
+        clientRuntime.stop();
+        signalHandler->stop();
         return 0;
     } catch (std::exception &e) {
         std::cerr << "{Main}: " << e.what() << std::endl;

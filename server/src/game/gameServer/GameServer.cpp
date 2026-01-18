@@ -208,11 +208,12 @@ namespace Game
         _commandBuffer.push(cmd);
     }
 
-    void GameServer::onPing(const int sessionId) noexcept
+    void GameServer::onPing(const int sessionId, const uint64_t timestamp) noexcept
     {
         GameCommand cmd;
         cmd.type = GameCommand::Type::Ping;
         cmd.sessionId = sessionId;
+        cmd.timestamp = timestamp;
         _commandBuffer.push(cmd);
     }
 
@@ -331,7 +332,7 @@ namespace Game
             }
             case GameCommand::Type::Ping: {
                 if (const auto *addr = _sessions->getUdpAddress(cmd.sessionId)) {
-                    if (const auto pkt = _udpPacketFactory->makeDefault(*addr, Net::Protocol::UDP::PONG))
+                    if (const auto pkt = _udpPacketFactory->createPongPacket(*addr, cmd.timestamp))
                         (void) _server->sendPacket(*pkt);
                 }
                 break;

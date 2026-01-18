@@ -106,6 +106,13 @@ namespace Network
         virtual void onRoomUpdated(uint32_t req, const RoomData &room) = 0;
 
         /**
+         * @brief onMessageRoom is called when a message is received in a room.
+         * @param req The request ID.
+         * @param message The message content.
+         */
+        virtual void onMessageRoom(uint32_t req, std::string_view message) = 0;
+
+        /**
          * @brief onProtocolError is called when a protocol error occurs.
          * @param req The request ID.
          * @param msg The error message.
@@ -125,7 +132,8 @@ namespace Network
         using ScoreboardCb = std::function<void(
             uint32_t, const std::vector<ScoreEntry> &)>; ///> Callback type for scoreboard list messages
         using RoomUpdatedCb =
-            std::function<void(uint32_t, const RoomData &)>; ///> Callback type for room updated messages
+            std::function<void(uint32_t, const RoomData &)>;               ///> Callback type for room updated messages
+        using MessageCb = std::function<void(uint32_t, std::string_view)>; ///> Callback type for room message events
 
         /**
          * @brief Subscribe to welcome message events.
@@ -192,6 +200,12 @@ namespace Network
          * @param cb The callback function to be invoked on room updated messages.
          */
         virtual void onRoomUpdatedSubscribe(RoomUpdatedCb cb) = 0;
+
+        /**
+         * @brief Subscribe to room message events.
+         * @param cb The callback function to be invoked on room messages.
+         */
+        virtual void onMessageSubscribe(MessageCb cb) = 0;
 
         /**
          * @brief Get the connection information.

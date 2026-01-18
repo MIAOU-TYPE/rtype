@@ -99,6 +99,12 @@ namespace Network
         void onRoomUpdatedSubscribe(RoomUpdatedCb cb) override;
 
         /**
+         * @brief Subscribe to room message events.
+         * @param cb The callback function to be invoked on room messages.
+         */
+        void onMessageSubscribe(MessageCb cb) override;
+
+        /**
          * @brief Event handler methods for various TCP messages.
          * @param req The request ID associated with the message.
          * @param ver The protocol version.
@@ -184,6 +190,13 @@ namespace Network
         void onRoomUpdated(uint32_t req, const RoomData &room) override;
 
         /**
+         * @brief Event handler for room message events.
+         * @param req The request ID associated with the message.
+         * @param message The message content.
+         */
+        void onMessageRoom(uint32_t req, std::string_view message) override;
+
+        /**
          * @brief Retrieves the current connection information.
          * @return A ConnectInfo structure containing session ID, token, and UDP port.
          */
@@ -217,6 +230,7 @@ namespace Network
         std::vector<AuthOkCb> _authOkCbs;           ///> Callbacks for authentication success events
         std::vector<ScoreboardCb> _scoreboardCbs;   ///> Callbacks for scoreboard list events
         std::vector<RoomUpdatedCb> _roomUpdatedCbs; ///> Callbacks for room updated events
+        std::vector<MessageCb> _messageCbs;         ///> Callbacks for room message events
 
         bool _isConnected = false;    ///> Connection status
         ConnectInfo _connectData{};   ///> Connection information
